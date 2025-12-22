@@ -1,0 +1,53 @@
+name: RSS Update
+
+on:
+  schedule:
+    - cron: '0 */4 * * *'  # Every 4 hours
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  update-rss:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run script
+        run: node index.mjs
+
+      - name: Configure Git user
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Create temporary directory for output
+        run: mkdir -p /tmp/out-copy
+
+      - name: Copy out directory contents to temporary location
+        run: cp -r ./out/* /tmp/out-copy/
+
+      - name: Checkout or create rss branch
+        run: git checkout rss || git checkout -b rss
+
+      - name: Clear current directory
+        run: rm -rf ./*
+
+      - name: Copy output files to rss branch
+        run: cp -r /tmp/out-copy/* ./
+
+      - name: Add all files to Git
+        run: git add .
+
+      - name: Commit and push changes
+        run: |
+          git commit -m 'Update RSS feeds'
+          git push origin rss
