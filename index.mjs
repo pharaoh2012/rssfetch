@@ -6,7 +6,7 @@ async function main() {
     // console.log(rss);
     for (const item of rss) {
         try {
-            console.log(item);
+            //console.log(item);
             await doFetch(item);
         } catch (error) {
             console.error(error);
@@ -18,6 +18,7 @@ async function main() {
 }
 
 async function doFetch(item) {
+    console.log("1️⃣开始获取：" + item.name);
     const res = await fetch(item.url).then(r => r.text());
 
     if (!item.type || item.type === "rss") {
