@@ -12,6 +12,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Checkout out branch
+        uses: actions/checkout@v4
+        with:
+          ref: out
+          path: out
+          token: ${{ secrets.GITHUB_TOKEN }}  # 添加 token 用于认证        
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -24,30 +31,15 @@ jobs:
       - name: Run script
         run: node index.mjs
 
-      - name: Configure Git user
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-
-      - name: Create temporary directory for output
-        run: mkdir -p /tmp/out-copy
-
-      - name: Copy out directory contents to temporary location
-        run: cp -r ./out/* /tmp/out-copy/
-
-      - name: Checkout or create rss branch
-        run: git checkout rss || git checkout -b rss
-
-      - name: Clear current directory
-        run: rm -rf ./*
-
-      - name: Copy output files to rss branch
-        run: cp -r /tmp/out-copy/* ./
-
-      - name: Add all files to Git
-        run: git add .
-
       - name: Commit and push changes
         run: |
-          git commit -m 'Update RSS feeds'
-          git push origin rss
+          cd out
+          echo "尝试提交更改："
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add .
+          current_time=$(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S')
+          git commit -m "Update RSS feeds at ${current_time}" || echo "No changes to commit"
+          git push origin rss || echo "推送失败"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
