@@ -3,20 +3,20 @@
     <channel>
         <title><![CDATA[ 主页 - 博客园 ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2025-12-23T12:34:14.816Z</lastBuildDate>
+        <lastBuildDate>2025-12-23T15:15:30.334Z</lastBuildDate>
         <description><![CDATA[
         主页 - 博客园 RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
-    <title><![CDATA[ 基于深度学习的安检危险品检测系统演示与介绍(YOLOv12/v11/v8/v5模型+Pyqt5界面+训练代码+数据集) ]]></title>
-    <link>https://www.cnblogs.com/codingtea/p/19389006</link>
-    <guid>15f168c73d2fb6177458cf493c891d2f</guid>
+    <title><![CDATA[ Flink源码阅读：状态管理 ]]></title>
+    <link>https://www.cnblogs.com/Jackeyzhe/p/19389264</link>
+    <guid>4f7ca851b49f4e4c2d63ce955b59e45d</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/codingtea/p/19389006" title="发布于 2025-12-23 20:30">
-    <span role="heading" aria-level="2">基于深度学习的安检危险品检测系统演示与介绍(YOLOv12/v11/v8/v5模型+Pyqt5界面+训练代码+数据集)</span>
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/Jackeyzhe/p/19389264" title="发布于 2025-12-23 21:44">
+    <span role="heading" aria-level="2">Flink源码阅读：状态管理</span>
     
 
 </a>
@@ -25,338 +25,965 @@
             <div class="clear"></div>
             <div class="postBody">
                     <div id="cnblogs_post_description" style="display: none">
-        <img src="https://img2024.cnblogs.com/blog/3687401/202512/3687401-20251223203000066-364490210.png" alt="基于深度学习的安检危险品检测系统演示与介绍(YOLOv12/v11/v8/v5模型+Pyqt5界面+训练代码+数据集)" class="desc_img">
-        摘要：本文介绍了一个基于YOLO算法的智能安检危险品检测系统。该系统采用三栏式界面设计，支持图片、视频及实时摄像头检测，可识别枪支、刀具等危险品，检测结果可标注保存并导出Excel。系统内置YOLOv5/v8/v11/v12多种模型，其中YOLO12n精度最高(mAP40.6%)，YOLO11n速度最快(56.1ms)。通过7000张训练数据，系统在IoU阈值为0.5时达到90.6%的mAP准确率。项目采用Python3.10+PyQt5技术栈，提供完整的训练脚本和用户管理功能，实现安检流程的智能化升级。
+        <img src="https://img2024.cnblogs.com/blog/1828322/202512/1828322-20251223214418733-1509708883.png" alt="Flink源码阅读：状态管理" class="desc_img">
+        前面我们介绍了 Flink 状态的分类和应用。今天从源码层面再看一下 Flink 是如何管理状态的。
     </div>
-<div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
-<h2 id="%E8%A7%86%E9%A2%91%E6%BC%94%E7%A4%BA">视频演示</h2>
-<p><a href="https://www.bilibili.com/video/BV1x32vBREyx" target="_blank" rel="noopener nofollow">基于深度学习的安检危险品检测系统</a></p>
-<h2>1. 前言​</h2>
-<p><span style="font-size: 16px">大家好，欢迎来到 Coding 茶水间。</span></p>
-<p><span style="font-size: 16px">在公共交通与公共安全的日常守护中，安检是防止危险品流入人群的关键防线。传统依靠人工判图的安检方式，不仅工作强度大，还容易因疲劳或经验差异漏检风险物品。今天我们要分享的项目，就是基于 <strong>YOLO 算法</strong>​ 的<strong>安检危险品检测系统</strong>——它能自动分析安检通道拍摄的箱包图像，精准识别其中的枪支、刀具等危险品，把“人眼筛查”升级为高效、稳定、可追溯的智能检测流程。</span></p>
-<p><span style="font-size: 16px">这套系统的主界面分为左、中、右三大功能区：左侧是操作入口，支持单图、视频、批量图片、摄像头实时检测，可切换模型与保存带标注的检测结果；中间是检测展示区，可调节置信度与交并比，实时显示检测耗时与目标数量，并用表格列出每个目标的详细信息；右侧负责统计与过滤，可按类别汇总危险品数量，聚焦查看某一类目标的置信度与坐标，还支持将检测结果导出为 Excel，方便后续核查与归档。</span></p>
-<p><span style="font-size: 16px">除了可视化检测，我们加入了登录与个人中心，可对账号信息、密码、头像进行管理；同时提供脚本化检测方式，无需界面即可批量处理图片、视频或摄像头画面；更有训练脚本，可按需配置模型数量、批次大小与训练轮次，用自己的安检图像数据训练出更贴合实际场景的检测模型。训练结果会保存在指定目录，包含最佳权重文件、评估曲线与混淆矩阵，让模型表现透明可查。</span></p>
-<p><span style="font-size: 16px">接下来，我们会从界面布局讲到功能演示，再到脚本检测与模型训练，完整呈现这套“能看、能用、能改”的安检危险品检测系统，希望它能让大家看到 YOLO 在公共安全智能化中的落地力量与应用潜力。</span></p>
-<h2 id="2.%20%E9%A1%B9%E7%9B%AE%E6%BC%94%E7%A4%BA">2. 项目演示</h2>
-<h3 id="2.1%20%E7%99%BB%E5%BD%95%E7%95%8C%E9%9D%A2">2.1&nbsp;<strong>用户登录界面</strong></h3>
-<p><span style="font-size: 16px">登录界面布局简洁清晰，左侧展示系统主题，用户需输入用户名、密码及验证码完成身份验证后登录系统。</span></p>
-<p><img alt="ScreenShot_2025-12-02_120251_071" data-src="https://img2024.cnblogs.com/blog/3687401/202512/3687401-20251223201733870-890755599.png" class="lazyload"></p>
-<h3 id="2.2%20%E7%94%A8%E6%88%B7%E6%B3%A8%E5%86%8C">2.2&nbsp;<strong>新用户注册</strong></h3>
-<p><span style="font-size: 16px">注册时可自定义用户名与密码，支持上传个人头像；如未上传，系统将自动使用默认头像完成账号创建。</span></p>
-<p><img alt="ScreenShot_2025-12-02_120312_056" data-src="https://img2024.cnblogs.com/blog/3687401/202512/3687401-20251223201742516-415071628.png" class="lazyload"></p>
-<h3 id="2.3%20%E4%B8%BB%E7%95%8C%E9%9D%A2">2.3&nbsp;<strong>主界面布局</strong></h3>
-<p><span style="font-size: 16px">主界面采用三栏结构，左侧为功能操作区，中间用于展示检测画面，右侧呈现目标详细信息，布局合理，交互流畅。</span></p>
-<p><img alt="ScreenShot_2025-12-02_120345_617" data-src="https://img2024.cnblogs.com/blog/3687401/202512/3687401-20251223201749341-356872392.png" class="lazyload"></p>
-<h3 id="2.4%20%E4%BF%AE%E6%94%B9%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF">2.4&nbsp;<strong>个人信息管理</strong></h3>
-<p><span style="font-size: 16px">用户可在此模块中修改密码或更换头像，个人信息支持随时更新与保存。</span></p>
-<p><img alt="ScreenShot_2025-12-02_120353_461" data-src="https://img2024.cnblogs.com/blog/3687401/202512/3687401-20251223201756297-1649964158.png" class="lazyload"></p>
-<h3 id="2.5%20%E6%A3%80%E6%B5%8B%E5%8A%9F%E8%83%BD%E5%B1%95%E7%A4%BA">2.5&nbsp;<strong>多模态检测展示</strong></h3>
-<p><span style="font-size: 16px">系统支持图片、视频及摄像头实时画面的目标检测。识别结果将在画面中标注显示，并在下方列表中逐项列出。点击具体目标可查看其类别、置信度及位置坐标等详细信息。</span></p>
-<p><img alt="ScreenShot_2025-12-02_120519_418" data-src="https://img2024.cnblogs.com/blog/3687401/202512/3687401-20251223201803846-7776126.png" class="lazyload"></p>
-<h3>2.6 检测结果保存</h3>
-<p><span style="font-size: 16px">可以将检测后的图片、视频进行保存，生成新的图片和视频，新生成的图片和视频中会带有检测结果的标注信息，并且还可以将所有检测结果的数据信息保存到excel中进行，方便查看检测结果。</span></p>
-<p>&nbsp;</p>
-<h3 id="2.6%20%E6%A8%A1%E5%9E%8B%E9%80%89%E6%8B%A9">2.7&nbsp;<strong>多模型切换</strong></h3>
-<p><span style="font-size: 16px">系统内置多种已训练模型，用户可根据实际需求灵活切换，以适应不同检测场景或对比识别效果。</span></p>
-<p><img alt="ScreenShot_2025-12-02_120415_074" data-src="https://img2024.cnblogs.com/blog/3687401/202512/3687401-20251223201814136-889908556.png" class="lazyload"></p>
-<h2 id="3.%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E6%A0%B8%E5%BF%83%E4%BB%A3%E7%A0%81">3.模型训练核心代码</h2>
-<p><span style="font-size: 16px">本脚本是YOLO模型批量训练工具，可自动修正数据集路径为绝对路径，从pretrained文件夹加载预训练模型，按设定参数（100轮/640尺寸/批次8）一键批量训练YOLOv5nu/v8n/v11n/v12n模型。</span></p>
-<div class="cke_widget_wrapper cke_widget_block cke_widget_codeSnippet cke_widget_selected" data-cke-display-name="代码段" data-cke-filter="off" data-cke-widget-id="8" data-cke-widget-wrapper="1">
-<pre class="cke_widget_element highlighter-hljs" data-cke-widget-data="%7B%22lang%22%3A%22python%22%2C%22code%22%3A%22%23%20-*-%20coding%3A%20utf-8%20-*-%5Cn%5C%22%5C%22%5C%22%5Cn%E8%AF%A5%E8%84%9A%E6%9C%AC%E7%94%A8%E4%BA%8E%E6%89%A7%E8%A1%8CYOLO%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%AE%AD%E7%BB%83%E3%80%82%5Cn%5Cn%E5%AE%83%E4%BC%9A%E8%87%AA%E5%8A%A8%E5%A4%84%E7%90%86%E4%BB%A5%E4%B8%8B%E4%BB%BB%E5%8A%A1%EF%BC%9A%5Cn1.%20%E5%8A%A8%E6%80%81%E4%BF%AE%E6%94%B9%E6%95%B0%E6%8D%AE%E9%9B%86%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%20(data.yaml)%EF%BC%8C%E5%B0%86%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84%E6%9B%B4%E6%96%B0%E4%B8%BA%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84%EF%BC%8C%E4%BB%A5%E7%A1%AE%E4%BF%9D%E8%AE%AD%E7%BB%83%E6%97%B6%E8%83%BD%E6%AD%A3%E7%A1%AE%E6%89%BE%E5%88%B0%E6%95%B0%E6%8D%AE%E3%80%82%5Cn2.%20%E4%BB%8E%20'pretrained'%20%E6%96%87%E4%BB%B6%E5%A4%B9%E5%8A%A0%E8%BD%BD%E6%8C%87%E5%AE%9A%E7%9A%84%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B%E3%80%82%5Cn3.%20%E4%BD%BF%E7%94%A8%E9%A2%84%E8%AE%BE%E7%9A%84%E5%8F%82%E6%95%B0%EF%BC%88%E5%A6%82epochs%2C%20imgsz%2C%20batch%EF%BC%89%E5%90%AF%E5%8A%A8%E8%AE%AD%E7%BB%83%E8%BF%87%E7%A8%8B%E3%80%82%5Cn%5Cn%E8%A6%81%E5%BC%80%E5%A7%8B%E8%AE%AD%E7%BB%83%EF%BC%8C%E5%8F%AA%E9%9C%80%E7%9B%B4%E6%8E%A5%E8%BF%90%E8%A1%8C%E6%AD%A4%E8%84%9A%E6%9C%AC%E3%80%82%5Cn%5C%22%5C%22%5C%22%5Cnimport%20os%5Cnimport%20yaml%5Cnfrom%20pathlib%20import%20Path%5Cnfrom%20ultralytics%20import%20YOLO%5Cn%5Cndef%20main()%3A%5Cn%20%20%20%20%5C%22%5C%22%5C%22%5Cn%20%20%20%20%E4%B8%BB%E8%AE%AD%E7%BB%83%E5%87%BD%E6%95%B0%E3%80%82%5Cn%20%20%20%20%5Cn%20%20%20%20%E8%AF%A5%E5%87%BD%E6%95%B0%E8%B4%9F%E8%B4%A3%E6%89%A7%E8%A1%8CYOLO%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%AE%AD%E7%BB%83%E6%B5%81%E7%A8%8B%EF%BC%8C%E5%8C%85%E6%8B%AC%EF%BC%9A%5Cn%20%20%20%201.%20%E9%85%8D%E7%BD%AE%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B%E3%80%82%5Cn%20%20%20%202.%20%E5%8A%A8%E6%80%81%E4%BF%AE%E6%94%B9%E6%95%B0%E6%8D%AE%E9%9B%86%E7%9A%84YAML%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%EF%BC%8C%E7%A1%AE%E4%BF%9D%E8%B7%AF%E5%BE%84%E4%B8%BA%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84%E3%80%82%5Cn%20%20%20%203.%20%E5%8A%A0%E8%BD%BD%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B%E3%80%82%5Cn%20%20%20%204.%20%E4%BD%BF%E7%94%A8%E6%8C%87%E5%AE%9A%E5%8F%82%E6%95%B0%E5%BC%80%E5%A7%8B%E8%AE%AD%E7%BB%83%E3%80%82%5Cn%20%20%20%20%5C%22%5C%22%5C%22%5Cn%20%20%20%20%23%20---%201.%20%E9%85%8D%E7%BD%AE%E6%A8%A1%E5%9E%8B%E5%92%8C%E8%B7%AF%E5%BE%84%20---%5Cn%20%20%20%20%5Cn%20%20%20%20%23%20%E8%A6%81%E8%AE%AD%E7%BB%83%E7%9A%84%E6%A8%A1%E5%9E%8B%E5%88%97%E8%A1%A8%5Cn%20%20%20%20models_to_train%20%3D%20%5B%5Cn%20%20%20%20%20%20%20%20%7B'name'%3A%20'yolov5nu.pt'%2C%20'train_name'%3A%20'train_yolov5nu'%7D%2C%5Cn%20%20%20%20%20%20%20%20%7B'name'%3A%20'yolov8n.pt'%2C%20'train_name'%3A%20'train_yolov8n'%7D%2C%5Cn%20%20%20%20%20%20%20%20%7B'name'%3A%20'yolo11n.pt'%2C%20'train_name'%3A%20'train_yolo11n'%7D%2C%5Cn%20%20%20%20%20%20%20%20%7B'name'%3A%20'yolo12n.pt'%2C%20'train_name'%3A%20'train_yolo12n'%7D%5Cn%20%20%20%20%5D%5Cn%20%20%20%20%5Cn%20%20%20%20%23%20%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E5%B7%A5%E4%BD%9C%E7%9B%AE%E5%BD%95%E7%9A%84%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84%EF%BC%8C%E4%BB%A5%E9%81%BF%E5%85%8D%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84%E5%B8%A6%E6%9D%A5%E7%9A%84%E9%97%AE%E9%A2%98%5Cn%20%20%20%20current_dir%20%3D%20os.path.abspath(os.getcwd())%5Cn%20%20%20%20%5Cn%20%20%20%20%23%20---%202.%20%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AE%E6%95%B0%E6%8D%AE%E9%9B%86YAML%E6%96%87%E4%BB%B6%20---%5Cn%20%20%20%20%5Cn%20%20%20%20%23%20%E6%9E%84%E5%BB%BA%E6%95%B0%E6%8D%AE%E9%9B%86yaml%E6%96%87%E4%BB%B6%E7%9A%84%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84%5Cn%20%20%20%20data_yaml_path%20%3D%20os.path.join(current_dir%2C%20'train_data'%2C%20'data.yaml')%5Cn%20%20%20%20%5Cn%20%20%20%20%23%20%E8%AF%BB%E5%8F%96%E5%8E%9F%E5%A7%8Byaml%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%5Cn%20%20%20%20with%20open(data_yaml_path%2C%20'r'%2C%20encoding%3D'utf-8')%20as%20f%3A%5Cn%20%20%20%20%20%20%20%20data_config%20%3D%20yaml.safe_load(f)%5Cn%20%20%20%20%5Cn%20%20%20%20%23%20%E5%B0%86yaml%E6%96%87%E4%BB%B6%E4%B8%AD%E7%9A%84%20'path'%20%E5%AD%97%E6%AE%B5%E4%BF%AE%E6%94%B9%E4%B8%BA%E6%95%B0%E6%8D%AE%E9%9B%86%E7%9B%AE%E5%BD%95%E7%9A%84%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84%5Cn%20%20%20%20%23%20%E8%BF%99%E6%98%AF%E4%B8%BA%E4%BA%86%E7%A1%AE%E4%BF%9Dultralytics%E5%BA%93%E8%83%BD%E6%AD%A3%E7%A1%AE%E5%AE%9A%E4%BD%8D%E5%88%B0%E8%AE%AD%E7%BB%83%E3%80%81%E9%AA%8C%E8%AF%81%E5%92%8C%E6%B5%8B%E8%AF%95%E9%9B%86%5Cn%20%20%20%20data_config%5B'path'%5D%20%3D%20os.path.join(current_dir%2C%20'train_data')%5Cn%20%20%20%20%5Cn%20%20%20%20%23%20%E5%B0%86%E4%BF%AE%E6%94%B9%E5%90%8E%E7%9A%84%E9%85%8D%E7%BD%AE%E5%86%99%E5%9B%9Eyaml%E6%96%87%E4%BB%B6%5Cn%20%20%20%20with%20open(data_yaml_path%2C%20'w'%2C%20encoding%3D'utf-8')%20as%20f%3A%5Cn%20%20%20%20%20%20%20%20yaml.dump(data_config%2C%20f%2C%20default_flow_style%3DFalse%2C%20allow_unicode%3DTrue)%5Cn%20%20%20%20%5Cn%20%20%20%20%23%20---%203.%20%E5%BE%AA%E7%8E%AF%E8%AE%AD%E7%BB%83%E6%AF%8F%E4%B8%AA%E6%A8%A1%E5%9E%8B%20---%5Cn%20%20%20%20%5Cn%20%20%20%20for%20model_info%20in%20models_to_train%3A%5Cn%20%20%20%20%20%20%20%20model_name%20%3D%20model_info%5B'name'%5D%5Cn%20%20%20%20%20%20%20%20train_name%20%3D%20model_info%5B'train_name'%5D%5Cn%20%20%20%20%20%20%20%20%5Cn%20%20%20%20%20%20%20%20print(f%5C%22%5C%5Cn%7B'%3D'*60%7D%5C%22)%5Cn%20%20%20%20%20%20%20%20print(f%5C%22%E5%BC%80%E5%A7%8B%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B%3A%20%7Bmodel_name%7D%5C%22)%5Cn%20%20%20%20%20%20%20%20print(f%5C%22%E8%AE%AD%E7%BB%83%E5%90%8D%E7%A7%B0%3A%20%7Btrain_name%7D%5C%22)%5Cn%20%20%20%20%20%20%20%20print(f%5C%22%7B'%3D'*60%7D%5C%22)%5Cn%20%20%20%20%20%20%20%20%5Cn%20%20%20%20%20%20%20%20%23%20%E6%9E%84%E5%BB%BA%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%AE%8C%E6%95%B4%E8%B7%AF%E5%BE%84%5Cn%20%20%20%20%20%20%20%20pretrained_model_path%20%3D%20os.path.join(current_dir%2C%20'pretrained'%2C%20model_name)%5Cn%20%20%20%20%20%20%20%20if%20not%20os.path.exists(pretrained_model_path)%3A%5Cn%20%20%20%20%20%20%20%20%20%20%20%20print(f%5C%22%E8%AD%A6%E5%91%8A%3A%20%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B%E6%96%87%E4%BB%B6%E4%B8%8D%E5%AD%98%E5%9C%A8%3A%20%7Bpretrained_model_path%7D%5C%22)%5Cn%20%20%20%20%20%20%20%20%20%20%20%20print(f%5C%22%E8%B7%B3%E8%BF%87%E6%A8%A1%E5%9E%8B%20%7Bmodel_name%7D%20%E7%9A%84%E8%AE%AD%E7%BB%83%5C%22)%5Cn%20%20%20%20%20%20%20%20%20%20%20%20continue%5Cn%20%20%20%20%20%20%20%20%5Cn%20%20%20%20%20%20%20%20try%3A%5Cn%20%20%20%20%20%20%20%20%20%20%20%20%23%20%E5%8A%A0%E8%BD%BD%E6%8C%87%E5%AE%9A%E7%9A%84%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B%5Cn%20%20%20%20%20%20%20%20%20%20%20%20model%20%3D%20YOLO(pretrained_model_path)%5Cn%20%20%20%20%20%20%20%20%20%20%20%20%5Cn%20%20%20%20%20%20%20%20%20%20%20%20%23%20---%204.%20%E5%BC%80%E5%A7%8B%E8%AE%AD%E7%BB%83%20---%5Cn%20%20%20%20%20%20%20%20%20%20%20%20%5Cn%20%20%20%20%20%20%20%20%20%20%20%20print(f%5C%22%E5%BC%80%E5%A7%8B%E8%AE%AD%E7%BB%83%20%7Bmodel_name%7D...%5C%22)%5Cn%20%20%20%20%20%20%20%20%20%20%20%20%23%20%E8%B0%83%E7%94%A8train%E6%96%B9%E6%B3%95%E5%BC%80%E5%A7%8B%E8%AE%AD%E7%BB%83%5Cn%20%20%20%20%20%20%20%20%20%20%20%20model.train(%5Cn%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20data%3Ddata_yaml_path%2C%20%20%23%20%E6%95%B0%E6%8D%AE%E9%9B%86%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%5Cn%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20epochs%3D100%2C%20%20%20%20%20%20%20%20%20%20%20%23%20%E8%AE%AD%E7%BB%83%E8%BD%AE%E6%AC%A1%5Cn%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20imgsz%3D640%2C%20%20%20%20%20%20%20%20%20%20%20%20%23%20%E8%BE%93%E5%85%A5%E5%9B%BE%E5%83%8F%E5%B0%BA%E5%AF%B8%5Cn%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20batch%3D8%2C%20%20%20%20%20%20%20%20%20%20%20%20%20%23%20%E6%AF%8F%E6%89%B9%E6%AC%A1%E7%9A%84%E5%9B%BE%E5%83%8F%E6%95%B0%E9%87%8F%5Cn%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20name%3Dtrain_name%2C%20%20%20%20%20%20%23%20%E6%A8%A1%E5%9E%8B%E5%90%8D%E7%A7%B0%5Cn%20%20%20%20%20%20%20%20%20%20%20%20)%5Cn%20%20%20%20%20%20%20%20%20%20%20%20%5Cn%20%20%20%20%20%20%20%20%20%20%20%20print(f%5C%22%7Bmodel_name%7D%20%E8%AE%AD%E7%BB%83%E5%AE%8C%E6%88%90%EF%BC%81%5C%22)%5Cn%20%20%20%20%20%20%20%20%20%20%20%20%5Cn%20%20%20%20%20%20%20%20except%20Exception%20as%20e%3A%5Cn%20%20%20%20%20%20%20%20%20%20%20%20print(f%5C%22%E8%AE%AD%E7%BB%83%20%7Bmodel_name%7D%20%E6%97%B6%E5%87%BA%E7%8E%B0%E9%94%99%E8%AF%AF%3A%20%7Bstr(e)%7D%5C%22)%5Cn%20%20%20%20%20%20%20%20%20%20%20%20print(f%5C%22%E8%B7%B3%E8%BF%87%E6%A8%A1%E5%9E%8B%20%7Bmodel_name%7D%EF%BC%8C%E7%BB%A7%E7%BB%AD%E8%AE%AD%E7%BB%83%E4%B8%8B%E4%B8%80%E4%B8%AA%E6%A8%A1%E5%9E%8B%5C%22)%5Cn%20%20%20%20%20%20%20%20%20%20%20%20continue%5Cn%20%20%20%20%5Cn%20%20%20%20print(f%5C%22%5C%5Cn%7B'%3D'*60%7D%5C%22)%5Cn%20%20%20%20print(%5C%22%E6%89%80%E6%9C%89%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E5%AE%8C%E6%88%90%EF%BC%81%5C%22)%5Cn%20%20%20%20print(f%5C%22%7B'%3D'*60%7D%5C%22)%5Cn%5Cnif%20__name__%20%3D%3D%20%5C%22__main__%5C%22%3A%5Cn%20%20%20%20%23%20%E5%BD%93%E8%AF%A5%E8%84%9A%E6%9C%AC%E8%A2%AB%E7%9B%B4%E6%8E%A5%E6%89%A7%E8%A1%8C%E6%97%B6%EF%BC%8C%E8%B0%83%E7%94%A8main%E5%87%BD%E6%95%B0%5Cn%20%20%20%20main()%5Cn%22%2C%22classes%22%3Anull%7D" data-cke-widget-keep-attr="0" data-cke-widget-upcasted="1" data-widget="codeSnippet"><code># -*- coding: utf-8 -*-
-"""
-该脚本用于执行YOLO模型的训练。
-
-它会自动处理以下任务：
-1. 动态修改数据集配置文件 (data.yaml)，将相对路径更新为绝对路径，以确保训练时能正确找到数据。
-2. 从 'pretrained' 文件夹加载指定的预训练模型。
-3. 使用预设的参数（如epochs, imgsz, batch）启动训练过程。
-
-要开始训练，只需直接运行此脚本。
-"""
-import os
-import yaml
-from pathlib import Path
-from ultralytics import YOLO
-
-def main():
-    """
-    主训练函数。
-    
-    该函数负责执行YOLO模型的训练流程，包括：
-    1. 配置预训练模型。
-    2. 动态修改数据集的YAML配置文件，确保路径为绝对路径。
-    3. 加载预训练模型。
-    4. 使用指定参数开始训练。
-    """
-    # --- 1. 配置模型和路径 ---
-    
-    # 要训练的模型列表
-    models_to_train = [
-        {'name': 'yolov5nu.pt', 'train_name': 'train_yolov5nu'},
-        {'name': 'yolov8n.pt', 'train_name': 'train_yolov8n'},
-        {'name': 'yolo11n.pt', 'train_name': 'train_yolo11n'},
-        {'name': 'yolo12n.pt', 'train_name': 'train_yolo12n'}
-    ]
-    
-    # 获取当前工作目录的绝对路径，以避免相对路径带来的问题
-    current_dir = os.path.abspath(os.getcwd())
-    
-    # --- 2. 动态配置数据集YAML文件 ---
-    
-    # 构建数据集yaml文件的绝对路径
-    data_yaml_path = os.path.join(current_dir, 'train_data', 'data.yaml')
-    
-    # 读取原始yaml文件内容
-    with open(data_yaml_path, 'r', encoding='utf-8') as f:
-        data_config = yaml.safe_load(f)
-    
-    # 将yaml文件中的 'path' 字段修改为数据集目录的绝对路径
-    # 这是为了确保ultralytics库能正确定位到训练、验证和测试集
-    data_config['path'] = os.path.join(current_dir, 'train_data')
-    
-    # 将修改后的配置写回yaml文件
-    with open(data_yaml_path, 'w', encoding='utf-8') as f:
-        yaml.dump(data_config, f, default_flow_style=False, allow_unicode=True)
-    
-    # --- 3. 循环训练每个模型 ---
-    
-    for model_info in models_to_train:
-        model_name = model_info['name']
-        train_name = model_info['train_name']
-        
-        print(f"\n{'='*60}")
-        print(f"开始训练模型: {model_name}")
-        print(f"训练名称: {train_name}")
-        print(f"{'='*60}")
-        
-        # 构建预训练模型的完整路径
-        pretrained_model_path = os.path.join(current_dir, 'pretrained', model_name)
-        if not os.path.exists(pretrained_model_path):
-            print(f"警告: 预训练模型文件不存在: {pretrained_model_path}")
-            print(f"跳过模型 {model_name} 的训练")
-            continue
-        
-        try:
-            # 加载指定的预训练模型
-            model = YOLO(pretrained_model_path)
-            
-            # --- 4. 开始训练 ---
-            
-            print(f"开始训练 {model_name}...")
-            # 调用train方法开始训练
-            model.train(
-                data=data_yaml_path,  # 数据集配置文件
-                epochs=100,           # 训练轮次
-                imgsz=640,            # 输入图像尺寸
-                batch=8,             # 每批次的图像数量
-                name=train_name,      # 模型名称
-            )
-            
-            print(f"{model_name} 训练完成！")
-            
-        except Exception as e:
-            print(f"训练 {model_name} 时出现错误: {str(e)}")
-            print(f"跳过模型 {model_name}，继续训练下一个模型")
-            continue
-    
-    print(f"\n{'='*60}")
-    print("所有模型训练完成！")
-    print(f"{'='*60}")
-
-if __name__ == "__main__":
-    # 当该脚本被直接执行时，调用main函数
-    main()</code></pre>
-<span class="cke_reset cke_widget_drag_handler_container"><img class="cke_reset cke_widget_drag_handler lazyload" height="15" width="15" data-cke-widget-drag-handler="1" data-src="https://img2024.cnblogs.com/blog/3687401/202508/3687401-20250822165457676-1808144825.gif"></span></div>
-<h2 id="3.%20%E6%8A%80%E6%9C%AF%E6%A0%88">4. 技术栈</h2>
-<ul>
-<li>
-<p><span style="font-size: 16px">语言：Python 3.10</span></p>
-</li>
-<li>
-<p><span style="font-size: 16px">前端界面：PyQt5</span></p>
-</li>
-<li>
-<p><span style="font-size: 16px">数据库：SQLite（存储用户信息）</span></p>
-</li>
-<li>
-<p><span style="font-size: 16px">模型：YOLOv5、YOLOv8、YOLOv11、YOLOv12</span></p>
-</li>
-</ul>
-<h2 id="4.%20YOLO%E6%A8%A1%E5%9E%8B%E5%AF%B9%E6%AF%94%E4%B8%8E%E8%AF%86%E5%88%AB%E6%95%88%E6%9E%9C%E8%A7%A3%E6%9E%90">5. YOLO模型对比与识别效果解析</h2>
-<h3 id="4.1%20YOLOv5%2FYOLOv8%2FYOLOv11%2FYOLOv12%E6%A8%A1%E5%9E%8B%E5%AF%B9%E6%AF%94">5.1 YOLOv5/YOLOv8/YOLOv11/YOLOv12模型对比</h3>
-<p><span style="font-size: 16px">基于Ultralytics官方COCO数据集训练结果：</span></p>
-<table>
-<thead>
-<tr>
-<th>
-<p><span style="font-size: 16px">模型</span></p>
-</th>
-<th>
-<p><span style="font-size: 16px">尺寸(像素)</span></p>
-</th>
-<th>
-<p><span style="font-size: 16px">mAPval 50-95</span></p>
-</th>
-<th>
-<p><span style="font-size: 16px">速度(CPU ONNX/毫秒)</span></p>
-</th>
-<th>
-<p><span style="font-size: 16px">参数(M)</span></p>
-</th>
-<th>
-<p><span style="font-size: 16px">FLOPs(B)</span></p>
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<p><span style="font-size: 16px">YOLO12n</span></p>
-</td>
-<td>
-<p><span style="font-size: 16px">640</span></p>
-</td>
-<td>
-<p><span style="font-size: 16px">40.6</span></p>
-</td>
-<td>
-<p><span style="font-size: 16px">-</span></p>
-</td>
-<td>
-<p><span style="font-size: 16px">2.6</span></p>
-</td>
-<td>
-<p><span style="font-size: 16px">6.5</span></p>
-</td>
-</tr>
-<tr>
-<td>
-<p><span style="font-size: 16px">YOLO11n</span></p>
-</td>
-<td>
-<p><span style="font-size: 16px">640</span></p>
-</td>
-<td>
-<p><span style="font-size: 16px">39.5</span></p>
-</td>
-<td>
-<p><span style="font-size: 16px">56.1 ± 0.8</span></p>
-</td>
-<td>
-<p><span style="font-size: 16px">2.6</span></p>
-</td>
-<td>
-<p><span style="font-size: 16px">6.5</span></p>
-</td>
-</tr>
-<tr>
-<td>
-<p><span style="font-size: 16px">YOLOv8n</span></p>
-</td>
-<td>
-<p><span style="font-size: 16px">640</span></p>
-</td>
-<td>
-<p><span style="font-size: 16px">37.3</span></p>
-</td>
-<td>
-<p><span style="font-size: 16px">80.4</span></p>
-</td>
-<td>
-<p><span style="font-size: 16px">3.2</span></p>
-</td>
-<td>
-<p><span style="font-size: 16px">8.7</span></p>
-</td>
-</tr>
-<tr>
-<td>
-<p><span style="font-size: 16px">YOLOv5nu</span></p>
-</td>
-<td>
-<p><span style="font-size: 16px">640</span></p>
-</td>
-<td>
-<p><span style="font-size: 16px">34.3</span></p>
-</td>
-<td>
-<p><span style="font-size: 16px">73.6</span></p>
-</td>
-<td>
-<p><span style="font-size: 16px">2.6</span></p>
-</td>
-<td>
-<p><span style="font-size: 16px">7.7</span></p>
-</td>
-</tr>
-</tbody>
-</table>
-<p><span style="font-size: 16px"><strong>关键结论</strong>：</span></p>
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>前面我们介绍了 Flink 状态的分类和应用。今天从源码层面再看一下 Flink 是如何管理状态的。</p>
+<h3 id="state-概述">State 概述</h3>
+<p>关于 State 的详细介绍可以参考 <a href="https://jackeyzhe.github.io/2025/08/04/Flink%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9A%E7%8A%B6%E6%80%81%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%BA%94%E7%94%A8/" target="_blank" rel="noopener nofollow">Flink学习笔记：状态类型和应用</a> 和 <a href="https://jackeyzhe.github.io/2025/08/24/Flink%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9A%E7%8A%B6%E6%80%81%E5%90%8E%E7%AB%AF/" target="_blank" rel="noopener nofollow">Flink学习笔记：状态后端</a>这两篇文章，为了方面阅读，这里我们再简单介绍一下。</p>
+<h4 id="state-使用">State 使用</h4>
+<p>State 是 Flink 做复杂逻辑所依赖的核心组件。它的分类如下</p>
+<p><img alt="State 分类" loading="lazy" data-src="https://res.cloudinary.com/dxydgihag/image/upload/v1754928263/Blog/flink/4/%E7%8A%B6%E6%80%81%E5%88%86%E7%B1%BB.png" class="lazyload"></p>
+<p>常见的是 Keyed State 和 Operator State，Keyed State 作用于 KeyedStream 上，Operator State 可以作用于所有的 Operator 上。Keyed State 使用时，需要先创建 StateDescriptor，然后再调用 getState 获取。</p>
+<pre><code class="language-java">ValueStateDescriptor&lt;Tuple2&lt;Long, Long&gt;&gt; descriptor =
+        new ValueStateDescriptor&lt;&gt;(
+                "average",
+                TypeInformation.of(new TypeHint&lt;Tuple2&lt;Long, Long&gt;&gt;() {}));
+ValueState&lt;Tuple2&lt;Long, Long&gt;&gt; sum = getRuntimeContext().getState(descriptor);
+</code></pre>
+<p>Opeartor State 的获取方式与 Keyed State 类似，都需要 StateDescriptor。Operator State 在定义时需要实现 CheckpointedFunction。</p>
+<h4 id="state-存储">State 存储</h4>
+<p>State Backend 用来管理 State 存储，根据存储格式和存储类型的组合，可以分为三类：</p>
 <ol>
 <li>
-<p><span style="font-size: 16px"><strong>精度最高</strong>：YOLO12n（mAP 40.6%），显著领先其他模型（较YOLOv5nu高约6.3个百分点）；</span></p>
+<p>MemoryStateBackend：HashMapStateBackend 和 JobManagerCheckpointStorage 的组合，即将 State 以 Java 对象的形式存储在 JobManager 内存中。</p>
 </li>
 <li>
-<p><span style="font-size: 16px"><strong>速度最优</strong>：YOLO11n（CPU推理56.1ms），比YOLOv8n快42%，适合实时轻量部署；</span></p>
+<p>FsStateBackend：HashMapStateBackend 和 FileSystemCheckpointStorage 的组合，将 State 以 Java 对象的形式存储在远端文件系统中。</p>
 </li>
 <li>
-<p><span style="font-size: 16px"><strong>效率均衡</strong>：YOLO12n/YOLO11n/YOLOv8n/YOLOv5nu参数量均为2.6M，FLOPs较低（YOLO12n/11n仅6.5B）；YOLOv8n参数量（3.2M）与计算量（8.7B）最高，但精度优势不明显。</span></p>
+<p>RocksDBStateBackend：EmbeddedRocksDBStateBackend 和 FileSystemCheckpointStorage 的组合，State 序列化后存储在 RocksDB。</p>
 </li>
 </ol>
-<p><span style="font-size: 16px"><strong>综合推荐</strong>：</span></p>
-<ul>
-<li>
-<p><span style="font-size: 16px">追求高精度：优先选YOLO12n（精度与效率兼顾）；</span></p>
-</li>
-<li>
-<p><span style="font-size: 16px">需高速低耗：选YOLO11n（速度最快且精度接近YOLO12n）；</span></p>
-</li>
-<li>
-<p><span style="font-size: 16px">YOLOv5nu/YOLOv8n因性能劣势，无特殊需求时不建议首选。</span></p>
-</li>
-</ul>
-<h3 id="5.2%C2%A0%E6%95%B0%E6%8D%AE%E9%9B%86%E5%88%86%E6%9E%90">5.2&nbsp;数据集分析</h3>
-<p><img alt="labels" data-src="https://img2024.cnblogs.com/blog/3687401/202512/3687401-20251223201829047-1114898500.jpg" class="lazyload"></p>
-<p><span style="font-size: 16px">数据集中训练集和验证集一共7000张图片，数据集目标类别两种：正常肾脏，肾结石<span style="font-family: &quot;PingFang SC&quot;, &quot;Smart Quotes&quot;, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;Microsoft YaHei&quot;, &quot;Source Han Sans SC&quot;, &quot;Noto Sans CJK SC&quot;, &quot;WenQuanYi Micro Hei&quot;, sans-serif">，</span>数据集配置代码如下：</span></p>
-<div class="cke_widget_wrapper cke_widget_block cke_widget_codeSnippet cke_widget_selected" data-cke-display-name="代码段" data-cke-filter="off" data-cke-widget-id="6" data-cke-widget-wrapper="1">
-<pre class="language-xml highlighter-hljs"><code>names:
-- Gun
-- Knife
-- Pliers
-- Scissors
-- Wrench
-nc: 5
-path: D:\project\python\yolo_Security_Check_Hazardous_Materials_Detection\train_data
-test: ../test/images
-train: ../train/images
-val: ../valid/images</code></pre>
-</div>
-<p id="5.%20%E7%BB%93%E6%9D%9F%E8%AF%AD">&nbsp;<img alt="train_batch0" data-src="https://img2024.cnblogs.com/blog/3687401/202512/3687401-20251223201957233-1873529705.jpg" class="lazyload"></p>
-<p><img alt="train_batch1" data-src="https://img2024.cnblogs.com/blog/3687401/202512/3687401-20251223202006414-79421839.jpg" class="lazyload"></p>
-<p><span style="font-size: 16px">上面的图片就是部分样本集训练中经过数据增强后的效果标注。</span></p>
-<h3 id="5.3%20%E8%AE%AD%E7%BB%83%E7%BB%93%E6%9E%9C">5.3 训练结果</h3>
-<p><img alt="confusion_matrix_normalized" data-src="https://img2024.cnblogs.com/blog/3687401/202512/3687401-20251223202014608-191428620.png" class="lazyload"></p>
-<p><span style="font-size: 16px">混淆矩阵显示中识别精准度显示是一条对角线，方块颜色越深代表对应的类别识别的精准度越高<span style="font-family: &quot;PingFang SC&quot;, &quot;Smart Quotes&quot;, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;Microsoft YaHei&quot;, &quot;Source Han Sans SC&quot;, &quot;Noto Sans CJK SC&quot;, &quot;WenQuanYi Micro Hei&quot;, sans-serif">。</span></span></p>
-<p><img alt="BoxF1_curve" data-src="https://img2024.cnblogs.com/blog/3687401/202512/3687401-20251223202022480-1628698164.png" class="lazyload"></p>
-<p><span style="font-size: 16px">F1指数（F1 Score）是统计学和机器学习中用于评估分类模型性能的核心指标，综合了模型的精确率（Precision）和召回率（Recall），通过调和平均数平衡两者的表现。&nbsp;</span></p>
-<p><span style="font-size: 16px">当置信度为0.433时，所有类别的综合F1值达到了0.87（蓝色曲线）。</span></p>
-<p><img alt="BoxPR_curve" data-src="https://img2024.cnblogs.com/blog/3687401/202512/3687401-20251223202037988-112684370.png" class="lazyload"></p>
-<p><span style="font-size: 16px">mAP@0.5：是目标检测任务中常用的评估指标，表示在交并比（IoU）阈值为0.5时计算的平均精度均值（mAP）。其核心含义是：只有当预测框与真实框的重叠面积（IoU）≥50%时，才认为检测结果正确。</span></p>
-<p><span style="font-size: 16px">图中可以看到综合mAP@0.5达到了0.906（90.6%），准确率非常高。</span></p>
-<h2 id="4.%20YOLO%E6%A8%A1%E5%9E%8B%E5%AF%B9%E6%AF%94%E4%B8%8E%E8%AF%86%E5%88%AB%E6%95%88%E6%9E%9C%E8%A7%A3%E6%9E%90">6. 源码获取方式</h2>
-<p><span data-cke-copybin-end="1"><a href="https://www.bilibili.com/video/BV1x32vBREyx" target="_blank" rel="noopener nofollow">源码获取方式：https://www.bilibili.com/video/BV1x32vBREyx</a>​</span></p>
+<h3 id="创建-state-backend">创建 State Backend</h3>
+<p>创建 State Backend 的入口在 StreamTask，StreamTask 是 Flink 部署和运行在 TaskManager 的基本单元。</p>
+<p>在 StreamTask 的 invoke 方法中，会先调用 restoreStateAndGates 方法去创建 State Backend。完整的调用链路如下图所示。</p>
+<p><img alt="stateBackend" loading="lazy" data-src="https://res.cloudinary.com/dxydgihag/image/upload/v1764852973/Blog/flink/12/statebackend.png" class="lazyload"></p>
+<p>在 streamOperatorStateContext 方法中，分别调用了 keyedStatedBackend 和 operatorStateBackend 来创建两种 State Backend。</p>
+<p>我们先来看 keyedStateBackend 的逻辑。</p>
+<pre><code class="language-java">protected &lt;K, R extends Disposable &amp; Closeable&gt; R keyedStatedBackend(
+        TypeSerializer&lt;K&gt; keySerializer,
+        String operatorIdentifierText,
+        PrioritizedOperatorSubtaskState prioritizedOperatorSubtaskStates,
+        CloseableRegistry backendCloseableRegistry,
+        MetricGroup metricGroup,
+        double managedMemoryFraction,
+        StateObject.StateObjectSizeStatsCollector statsCollector,
+        KeyedStateBackendCreator&lt;K, R&gt; keyedStateBackendCreator)
+        throws Exception {
+
+    if (keySerializer == null) {
+        return null;
+    }
+
+    ......
+
+    final KeyGroupRange keyGroupRange =
+            KeyGroupRangeAssignment.computeKeyGroupRangeForOperatorIndex(
+                    taskInfo.getMaxNumberOfParallelSubtasks(),
+                    taskInfo.getNumberOfParallelSubtasks(),
+                    taskInfo.getIndexOfThisSubtask());
+
+    // Now restore processing is included in backend building/constructing process, so we need
+    // to make sure
+    // each stream constructed in restore could also be closed in case of task cancel, for
+    // example the data
+    // input stream opened for serDe during restore.
+    CloseableRegistry cancelStreamRegistryForRestore = new CloseableRegistry();
+    backendCloseableRegistry.registerCloseable(cancelStreamRegistryForRestore);
+    BackendRestorerProcedure&lt;R, KeyedStateHandle&gt; backendRestorer =
+            new BackendRestorerProcedure&lt;&gt;(
+                    (stateHandles) -&gt; {
+                        KeyedStateBackendParametersImpl&lt;K&gt; parameters =
+                                new KeyedStateBackendParametersImpl&lt;&gt;(...);
+                        return keyedStateBackendCreator.create(...),
+                                parameters);
+                    },
+                    backendCloseableRegistry,
+                    logDescription);
+
+    try {
+        return backendRestorer.createAndRestore(
+                prioritizedOperatorSubtaskStates.getPrioritizedManagedKeyedState(),
+                statsCollector);
+    } finally {
+        if (backendCloseableRegistry.unregisterCloseable(cancelStreamRegistryForRestore)) {
+            IOUtils.closeQuietly(cancelStreamRegistryForRestore);
+        }
+    }
+}
+</code></pre>
+<p>这里的创建过程也比较简单，先是获取 KeyGroupRange，它表示的是当前 Operator 上处理的 key 的范围。然后就是创建 StateBackend 实例，这里通过 BackendRestorerProcedure 封装统一的恢复、异常处理和资源清理逻辑。operatorStateBackend 方法的逻辑相比较来说，只是少了 KeyGroupRange 的处理，直接创建 StateBackend 实例。</p>
+<h3 id="创建和使用-state">创建和使用 State</h3>
+<h4 id="创建-keyedstate">创建 KeyedState</h4>
+<p>KeyedState 是通过调用 StreamingRuntimeContext.getState 方法获取的。我们先来看完整的调用流程。</p>
+<p><img alt="getState" loading="lazy" data-src="https://res.cloudinary.com/dxydgihag/image/upload/v1765164156/Blog/flink/12/getstate.png" class="lazyload"></p>
+<p>在调用 getState 这些方法时，都会先调用 keyedStateStore 提供的方法，它是 Flink 提供的一个封装 keyedStateBackend 的接口。调用流程的最后，是调用 keyedStateBackend 中的 createOrUpdateInternalState 方法（这里我们以 HeapStateBackend 为例）。</p>
+<pre><code class="language-java">public &lt;N, SV, SEV, S extends State, IS extends S&gt; IS createOrUpdateInternalState(
+        @Nonnull TypeSerializer&lt;N&gt; namespaceSerializer,
+        @Nonnull StateDescriptor&lt;S, SV&gt; stateDesc,
+        @Nonnull StateSnapshotTransformFactory&lt;SEV&gt; snapshotTransformFactory,
+        boolean allowFutureMetadataUpdates)
+        throws Exception {
+    StateTable&lt;K, N, SV&gt; stateTable =
+            tryRegisterStateTable(
+                    namespaceSerializer,
+                    stateDesc,
+                    getStateSnapshotTransformFactory(stateDesc, snapshotTransformFactory),
+                    allowFutureMetadataUpdates);
+
+    @SuppressWarnings("unchecked")
+    IS createdState = (IS) createdKVStates.get(stateDesc.getName());
+    if (createdState == null) {
+        StateCreateFactory stateCreateFactory = STATE_CREATE_FACTORIES.get(stateDesc.getType());
+        if (stateCreateFactory == null) {
+            throw new FlinkRuntimeException(stateNotSupportedMessage(stateDesc));
+        }
+        createdState =
+                stateCreateFactory.createState(stateDesc, stateTable, getKeySerializer());
+    } else {
+        StateUpdateFactory stateUpdateFactory = STATE_UPDATE_FACTORIES.get(stateDesc.getType());
+        if (stateUpdateFactory == null) {
+            throw new FlinkRuntimeException(stateNotSupportedMessage(stateDesc));
+        }
+        createdState = stateUpdateFactory.updateState(stateDesc, stateTable, createdState);
+    }
+
+    createdKVStates.put(stateDesc.getName(), createdState);
+    return createdState;
+}
+
+
+private static final Map&lt;StateDescriptor.Type, StateCreateFactory&gt; STATE_CREATE_FACTORIES =
+        Stream.of(
+                        Tuple2.of(
+                                StateDescriptor.Type.VALUE,
+                                (StateCreateFactory) HeapValueState::create),
+                        Tuple2.of(
+                                StateDescriptor.Type.LIST,
+                                (StateCreateFactory) HeapListState::create),
+                        Tuple2.of(
+                                StateDescriptor.Type.MAP,
+                                (StateCreateFactory) HeapMapState::create),
+                        Tuple2.of(
+                                StateDescriptor.Type.AGGREGATING,
+                                (StateCreateFactory) HeapAggregatingState::create),
+                        Tuple2.of(
+                                StateDescriptor.Type.REDUCING,
+                                (StateCreateFactory) HeapReducingState::create))
+                .collect(Collectors.toMap(t -&gt; t.f0, t -&gt; t.f1));
+</code></pre>
+<p>这里首先是注册了一个 StateTable，这个是 State 中一个非常重要的成员变量，它内部是一个类似 Map 的结构，用来保存 key 和 key 的状态。</p>
+<p>STATE_CREATE_FACTORIES 这个变量保存了不同类型的 State 和它对应的创建方法，同理 STATE_UPDATE_FACTORIES 保存的是不同 State 对应的 更新方法。</p>
+<h4 id="创建-operatorstate">创建 OperatorState</h4>
+<p>看完了 KeyedState 的创建过程后，我们再来看下 OperatorState 的创建过程。</p>
+<p>OperatorState 的创建方法是通过 FunctionInitializationContext 先获取到 OperatorStateStore，它与 KeyedStateStore 类似，都是对 StateBackend 的方法进行了封装。</p>
+<pre><code class="language-java">@Override
+public void initializeState(FunctionInitializationContext context) throws Exception {
+    ListStateDescriptor&lt;Tuple2&lt;String, Integer&gt;&gt; descriptor =
+            new ListStateDescriptor&lt;&gt;(
+                    "buffered-elements",
+                    TypeInformation.of(new TypeHint&lt;Tuple2&lt;String, Integer&gt;&gt;() {}));
+
+    checkpointedState = context.getOperatorStateStore().getListState(descriptor);
+
+    if (context.isRestored()) {
+        for (Tuple2&lt;String, Integer&gt; element : checkpointedState.get()) {
+            bufferedElements.add(element);
+        }
+    }
+}
+</code></pre>
+<p>OperatorStateStore 的 getListState 方法中，直接创建出了 PartitionableListState，同时也做了一些缓存操作。</p>
+<pre><code class="language-java">private &lt;S&gt; ListState&lt;S&gt; getListState(
+        ListStateDescriptor&lt;S&gt; stateDescriptor, OperatorStateHandle.Mode mode)
+        throws StateMigrationException {
+
+    ......
+    PartitionableListState&lt;S&gt; partitionableListState =
+            (PartitionableListState&lt;S&gt;) registeredOperatorStates.get(name);
+
+    if (null == partitionableListState) {
+        // no restored state for the state name; simply create new state holder
+
+        partitionableListState =
+                new PartitionableListState&lt;&gt;(
+                        new RegisteredOperatorStateBackendMetaInfo&lt;&gt;(
+                                name, partitionStateSerializer, mode));
+
+        registeredOperatorStates.put(name, partitionableListState);
+    } else {
+        ......
+    }
+
+    accessedStatesByName.put(name, partitionableListState);
+    return partitionableListState;
+}
+</code></pre>
+<p>PartitionableListState 内部有一个 ArrayList 用于保存数据。</p>
+<h4 id="使用-keyedstate">使用 KeyedState</h4>
+<p>了解完 State 的创建之后，接下来就是 State 的使用了。我们以 HeapValueState 为例来看如何获取 State。</p>
+<pre><code class="language-java">// HeapValueState 类
+public V value() {
+    final V result = stateTable.get(currentNamespace);
+
+    if (result == null) {
+        return getDefaultValue();
+    }
+
+    return result;
+}
+</code></pre>
+<p>在 HeapValueState 类的 value 方法中，直接调用 StateTable 的 get 方法，最终调用的是 CopyOnWriteStateMap 的 get 方法，这个方法与 HashMap 的 get 方法比较类似。</p>
+<pre><code class="language-java">public S get(K key, N namespace) {
+
+    final int hash = computeHashForOperationAndDoIncrementalRehash(key, namespace);
+    final int requiredVersion = highestRequiredSnapshotVersion;
+    final StateMapEntry&lt;K, N, S&gt;[] tab = selectActiveTable(hash);
+    int index = hash &amp; (tab.length - 1);
+
+    for (StateMapEntry&lt;K, N, S&gt; e = tab[index]; e != null; e = e.next) {
+        final K eKey = e.key;
+        final N eNamespace = e.namespace;
+        if ((e.hash == hash &amp;&amp; key.equals(eKey) &amp;&amp; namespace.equals(eNamespace))) {
+
+            // copy-on-write check for state
+            if (e.stateVersion &lt; requiredVersion) {
+                // copy-on-write check for entry
+                if (e.entryVersion &lt; requiredVersion) {
+                    e = handleChainedEntryCopyOnWrite(tab, hash &amp; (tab.length - 1), e);
+                }
+                e.stateVersion = stateMapVersion;
+                e.state = getStateSerializer().copy(e.state);
+            }
+
+            return e.state;
+        }
+    }
+
+    return null;
+}
+</code></pre>
+<h4 id="使用-operatorstate">使用 OperatorState</h4>
+<p>OperatorState 底层使用的是 PartitionableListState，前面也提到了，它的内部用了一个 ArrayList 来保存数据，对于 OperatorState 的各种操作也都是来操作这个 ArrayList。</p>
+<pre><code class="language-java">@Override
+public void clear() {
+    internalList.clear();
+}
+
+@Override
+public Iterable&lt;S&gt; get() {
+    return internalList;
+}
+
+@Override
+public void add(S value) {
+    Preconditions.checkNotNull(value, "You cannot add null to a ListState.");
+    internalList.add(value);
+}
+
+@Override
+public void update(List&lt;S&gt; values) {
+    internalList.clear();
+
+    addAll(values);
+}
+
+@Override
+public void addAll(List&lt;S&gt; values) {
+    Preconditions.checkNotNull(values, "List of values to add cannot be null.");
+    if (!values.isEmpty()) {
+        for (S value : values) {
+            checkNotNull(value, "Any value to add to a list cannot be null.");
+            add(value);
+        }
+    }
+}
+</code></pre>
+<h3 id="总结">总结</h3>
+<p>本文对 State 的相关代码进行了梳理。包括 StateBackend 的创建，KeyedState 和 OperatorState 的创建和使用。State 和 Checkpoint 两者需要结合使用，因此后面我们会再梳理 Checkpoint 的相关代码。</p>
+
 </div>
 <div class="clear"></div>
 
             </div>
             <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2025-12-23 20:30">2025-12-23 20:30</span>&nbsp;
-<a href="https://www.cnblogs.com/codingtea">Coding茶水间</a>&nbsp;
-阅读(<span id="post_view_count">0</span>)&nbsp;
+<span id="post-date" data-last-update-days="0" data-date-updated="2025-12-23 21:45">2025-12-23 21:44</span>&nbsp;
+<a href="https://www.cnblogs.com/Jackeyzhe">Jackeyzhe</a>&nbsp;
+阅读(<span id="post_view_count">12</span>)&nbsp;
 评论(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19389006);return false;">收藏</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19389006', targetLink: 'https://www.cnblogs.com/codingtea/p/19389006', title: '基于深度学习的安检危险品检测系统演示与介绍(YOLOv12/v11/v8/v5模型+Pyqt5界面+训练代码+数据集)' })">举报</a>
+<a href="javascript:void(0)" onclick="AddToWz(19389264);return false;">收藏</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19389264', targetLink: 'https://www.cnblogs.com/Jackeyzhe/p/19389264', title: 'Flink源码阅读：状态管理' })">举报</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ 不用 Typora 的 html 导出功能，手搓纯 HTML5 转换器 ]]></title>
+    <link>https://www.cnblogs.com/zhally/p/19389248</link>
+    <guid>58655b7150a432539f646e50690a7abd</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/zhally/p/19389248" title="发布于 2025-12-23 21:38">
+    <span role="heading" aria-level="2">不用 Typora 的 html 导出功能，手搓纯 HTML5 转换器</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h1 id="不用-typora-的-html-导出功能手搓纯-html5-转换器">不用 Typora 的 html 导出功能，手搓纯 HTML5 转换器</h1>
+<p>原创 夏群林 2025.12.23</p>
+<h2 id="一缘起">一、缘起</h2>
+<p>我日常工作使用 Typora， 一款很好的 Markdown 编辑器。建网站，写博文，用 Typora 打底稿。然后导出成 html 格式文件，所见即所得，一个静态网站就成了！</p>
+<p>不过，Typora 自带的 HTML 导出功能存在核心缺陷：夹带 Typora  编辑器 UI 冗余代码、HTML 语义不合规、依赖非标准化样式体系、导出文件体积大、可维护性差。基于此，我们手搓纯HTML5转换器，核心目标：</p>
+<ol>
+<li>剔除 UI 冗余，仅保留 Markdown 内容渲染逻辑；</li>
+<li>纯 ES6+ 原生实现，无第三方库依赖；</li>
+<li>符合HTML5语义标准；</li>
+<li>还原 Typora 纯 Markdown 内容的渲染风格。</li>
+</ol>
+<h2 id="二纯-es6-实现无第三方库">二、纯 ES6+ 实现，无第三方库</h2>
+<h3 id="21-核心优势">2.1 核心优势</h3>
+<ul>
+<li>轻量化：产物仅包含核心业务逻辑，无冗余依赖代码，体积较 Typora 导出缩减 80% 以上；</li>
+<li>可控性：全流程掌控 Markdown 语法解析、HTML 重构、样式生成；</li>
+<li>无依赖风险：避免第三方库版本迭代、兼容性问题，转换器长期稳定可用。</li>
+</ul>
+<h3 id="22-es6-核心特性应用">2.2 ES6+ 核心特性应用</h3>
+<table>
+<thead>
+<tr>
+<th>ES6+特性</th>
+<th>应用场景</th>
+<th>价值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>模块化（ES Module）</td>
+<td>拆分解析、工具、入口模块</td>
+<td>解耦代码，便于维护</td>
+</tr>
+<tr>
+<td>模板字符串</td>
+<td>HTML/CSS生成</td>
+<td>替代字符串拼接，提升可读性</td>
+</tr>
+<tr>
+<td>正则表达式增强</td>
+<td>Markdown解析、合规修复</td>
+<td>精准匹配语法，解决反向引用冲突</td>
+</tr>
+</tbody>
+</table>
+<h2 id="三整体架构设计">三、整体架构设计</h2>
+<h3 id="31-目录结构">3.1 目录结构</h3>
+<pre><code>md2html/
+├── index.html        // 交互界面（MD输入、HTML预览/导出）
+├── js/
+│   ├── app.js        // 入口（DOM操作、转换/下载逻辑）
+│   ├── utils.js      // 工具函数（格式化、提示）
+│   └── marked.es6.js // MD核心解析（合规修复核心）
+└── css/  
+    ├── style.css     // 转换器界面样式
+    ├── concise.css   // 简洁版MD渲染样式
+    └── typora.css    // Typora纯内容渲染样式
+</code></pre>
+<h3 id="32-核心流程">3.2 核心流程</h3>
+<div class="mermaid">flowchart TD
+    A[MD输入] --&gt; B[marked.es6.js解析（合规修复）]
+    B --&gt; C[utils.js格式化]
+    C --&gt; D[app.js生成HTML/下载]
+    D --&gt; E[预览/导出纯HTML5文件]
+</div><h2 id="四核心技术点">四、核心技术点</h2>
+<h3 id="41-基于正则的-markdown-语法解析">4.1 基于正则的 Markdown 语法解析</h3>
+<p>放弃第三方库，通过精准的正则表达式匹配Markdown核心语法，是实现“纯原生”的基础。</p>
+<p>核心思路为：按“块级语法（标题、列表、表格）→ 行内语法（加粗、链接、代码）”的顺序解析，确保语法嵌套的正确性。</p>
+<p>示例：表格语法解析正则</p>
+<pre><code class="language-javascript">// 解析表格
+const parseTables = (md, options) =&gt; {
+    if (!md.includes('|') || md.includes('&lt;table&gt;')) return md;
+
+    const tableRegex = /^(\|.*\|)\n(\|[-:| ]*\|)\n((?:\|.*\|\n?)+)/gm;
+    return md.replace(tableRegex, (match, headerLine, separatorLine, bodyLines) =&gt; {
+        const alignments = separatorLine.split('|')
+            .filter(cell =&gt; cell.trim() !== '')
+            .map(cell =&gt; {
+                const trimCell = cell.trim();
+                return trimCell.startsWith(':') &amp;&amp; trimCell.endsWith(':') ? 'center' :
+                       trimCell.startsWith(':') ? 'left' :
+                       trimCell.endsWith(':') ? 'right' : 'left';
+            });
+
+        const headerCells = headerLine.split('|').filter(cell =&gt; cell.trim() !== '');
+        let headerHtml = '&lt;thead&gt;&lt;tr&gt;';
+        headerCells.forEach((cell, index) =&gt; {
+            const align = alignments[index] || 'left';
+            const inlineContent = parseInlineOnly(cell, options);
+            headerHtml += `&lt;th class="text-${align}"&gt;${inlineContent}&lt;/th&gt;`;
+        });
+        headerHtml += '&lt;/tr&gt;&lt;/thead&gt;';
+
+        const bodyRows = bodyLines.split('\n').filter(row =&gt; row.trim() !== '');
+        let bodyHtml = '&lt;tbody&gt;';
+        bodyRows.forEach(row =&gt; {
+            const cells = row.split('|').filter(cell =&gt; cell.trim() !== '');
+            bodyHtml += '&lt;tr&gt;';
+            cells.forEach((cell, index) =&gt; {
+                const align = alignments[index] || 'left';
+                const inlineContent = parseInlineOnly(cell, options);
+                bodyHtml += `&lt;td class="text-${align}"&gt;${inlineContent}&lt;/td&gt;`;
+            });
+            bodyHtml += '&lt;/tr&gt;';
+        });
+        bodyHtml += '&lt;/tbody&gt;';
+
+        return `&lt;table&gt;${headerHtml}${bodyHtml}&lt;/table&gt;`;
+    });
+};
+</code></pre>
+<h3 id="42-html语义合规化重构">4.2 HTML语义合规化重构</h3>
+<p>例如，Typora 导出的<code>&lt;ul&gt;/&lt;ol&gt;</code>被<code>&lt;p&gt;</code>包裹，换行生成空<code>&lt;p&gt;</code>标签，违反HTML语义规范。</p>
+<p>核心逻辑：解析列表时仅生成<code>&lt;li&gt;</code>子元素，段落解析排除列表标签，避免误判。</p>
+<pre><code class="language-javascript">// marked.es6.js 核心修复代码
+const parseLists = (md) =&gt; {
+    // 生成纯&lt;li&gt;，移除多余换行
+    let listItems = md.replace(/^( {0,3})(-|\*|\+)\s+(.*?$)/gm, (_, indent, marker, text) =&gt; {
+        const inlineContent = parseInlineOnly(text).replace(/\n+/g, ' ');
+        return `${indent}&lt;li&gt;${inlineContent}&lt;/li&gt;`;
+    });
+    // 包裹列表容器，清理换行干扰
+    return listItems.replace(/((?: {0,3}&lt;li&gt;[\s\S]*?&lt;\/li&gt;\s*)+)/gm, (_, items) =&gt; {
+        const cleanItems = items.replace(/\n+/g, '').replace(/&gt;\s+&lt;/g, '&gt;&lt;');
+        return /[-*+]/.test(_) ? `&lt;ul&gt;${cleanItems}&lt;/ul&gt;` : `&lt;ol&gt;${cleanItems}&lt;/ol&gt;`;
+    });
+};
+
+// 段落解析排除列表标签，避免空&lt;p&gt;
+const parseParagraphs = (md) =&gt; {
+    const paraRegex = /^(?!&lt;(ul|ol|li)&gt;)(?!&lt;\/(ul|ol|li)&gt;)([^&lt;\n]+?)(?=\n{2,}|$)/gm;
+    return md.replace(paraRegex, (_, __, ___, content) =&gt; {
+        const trimmed = content?.trim().replace(/\n+/g, ' ') || '';
+        return trimmed ? `&lt;p&gt;${trimmed}&lt;/p&gt;` : '';
+    });
+};
+</code></pre>
+<h3 id="43-仅保留-typora--内容渲染核心样式">4.3 仅保留 Typora  内容渲染核心样式</h3>
+<p>Typora 导出样式包含编辑器 UI 规则，冗余且非标准化，予以剥离。基于Typora原生的Markdown渲染风格，构建模块化的CSS体系：</p>
+<pre><code class="language-css">/* typora.css 核心代码 */
+:root {
+    --typora-text-color: #333;
+    --typora-heading-color: #2c3e50;
+    --typora-code-bg: #f8f8f8;
+    --typora-table-border: #ddd;
+}
+/* 暗黑模式适配 */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --typora-text-color: #e0e0e0;
+        --typora-code-bg: #2d2d2d;
+        --typora-table-border: #444;
+    }
+}
+/* 列表合规兜底 */
+ul&gt;li, ol&gt;li { margin: 0.4em 0; }
+ul&gt;br, ol&gt;br, ul&gt;p, ol&gt;p { display: none; }
+/* 表格对齐类 */
+.text-left { text-align: left !important; }
+.text-center { text-align: center !important; }
+.text-right { text-align: right !important; }
+</code></pre>
+<h3 id="44-原生-es6-模块化整合">4.4 原生 ES6+ 模块化整合</h3>
+<pre><code class="language-javascript">// app.js 核心逻辑
+import { parseMarkdown } from './marked.es6.js';
+import { formatHtml, showAlert } from './utils.js';
+
+// 转换逻辑
+dom.convertBtn.addEventListener('click', () =&gt; {
+    const mdContent = dom.mdInput.value.trim();
+    if (!mdContent) return showAlert('请输入Markdown内容');
+    
+    // 核心流程：解析（合规）→ 格式化 → 预览/导出
+    const htmlFragment = parseMarkdown(mdContent); // 生成即合规
+    const finalHtml = formatHtml(`&lt;!DOCTYPE html&gt;
+&lt;html lang="zh-CN"&gt;
+&lt;head&gt;&lt;meta charset="UTF-8"&gt;&lt;link rel="stylesheet" href="./css/typora.css"&gt;&lt;/head&gt;
+&lt;body&gt;${htmlFragment}&lt;/body&gt;&lt;/html&gt;`);
+    
+    dom.preview.innerHTML = htmlFragment;
+    dom.htmlCode.value = finalHtml;
+    dom.downloadBtn.disabled = false;
+});
+</code></pre>
+<h2 id="五使用说明">五、使用说明</h2>
+<ol>
+<li>按指定目录结构存放文件，确保<code>js/</code>和<code>css/</code>子文件夹路径正确；</li>
+<li>用支持ES6模块的浏览器（Chrome/Firefox/Edge）打开<code>index.html</code>；</li>
+<li>输入Markdown内容，勾选“保留 Typora 原格式”，点击“转换为 HTML5”；</li>
+<li>预览区查看效果，点击“下载 HTML 文件”获取符合 HTML5 规范的文件。</li>
+</ol>
+<h2 id="六总结">六、总结</h2>
+<ol>
+<li>核心价值：精准解决 Typora 导出的编辑器UI样式冗余痛点，生成纯内容的符合 HTML5 规范的文件；</li>
+<li>技术亮点：纯 ES6+ 原生实现；</li>
+<li>优势：轻量化、可控性强、跨环境兼容，可直接部署使用。</li>
+</ol>
+<p>本方案源代码开源，按照 MIT 协议许可。地址： <a href="https://github.com/xiaql/md2html5" target="_blank" rel="noopener nofollow">xiaql/md2html5: A typora to pure html5 converter</a></p>
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2025-12-23 21:39">2025-12-23 21:38</span>&nbsp;
+<a href="https://www.cnblogs.com/zhally">zhally</a>&nbsp;
+阅读(<span id="post_view_count">14</span>)&nbsp;
+评论(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19389248);return false;">收藏</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19389248', targetLink: 'https://www.cnblogs.com/zhally/p/19389248', title: '不用 Typora 的 html 导出功能，手搓纯 HTML5 转换器' })">举报</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ 流量洪峰冲不垮的秘密：揭秘系统过载保护的核心防线 ]]></title>
+    <link>https://www.cnblogs.com/poemyang/p/19389175</link>
+    <guid>9290c5fbceb53775fbac0cc2690c58c1</guid>
+    <description>
+    <![CDATA[ 
+        <h2 class="post-title">
+            <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/poemyang/p/19389175" title="发布于 2025-12-23 21:16">
+    <span role="heading" aria-level="2">流量洪峰冲不垮的秘密：揭秘系统过载保护的核心防线</span>
+    
+
+</a>
+
+        </h2>
+        <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>系统流量如潮汐般涨落，瞬时的洪峰可能将最坚固的系统冲垮。如何确保核心服务在极限压力下依然稳如磐石？答案在于构建一套分层协同、动态弹性的过载保护机制。这并非单一技术的堆砌，而是一门融汇了预判、隔离、调度与自愈的系统工程艺术。<br>
+本文将深入剖析这套多层防护体系的构建之道：从最外层的流量调度（负载均衡），到精细化的请求管控（限流），再到保障核心业务的“丢车保帅”策略（降级与熔断），最终迈向智能化的自我调节（自适应限流）。这些机制环环相扣，实时联动，旨在系统资源耗尽前，建立起一道有序的防线，确保关键业务在流量风暴中依然能够持续稳定地创造价值。</p>
+<p><strong>过载原因：为什么我们的系统会堵车？</strong><br>
+系统过载（System Overload），如同城市交通在高峰期陷入瘫痪，其本质是请求压力与处理能力之间动态平衡的打破。在系统设计阶段，需全面评估其处理能力，具体涵盖每秒处理能力、请求峰值、平均处理时延等关键指标。这些指标不仅有助于预估系统的最大处理能力，还能为确定所需机器数量以及是否进行扩容提供可靠依据。然而，在实际评估中，往往仅聚焦于请求量峰值，却忽略了系统处理能力的动态变化。现实中，系统的处理能力并非恒定不变，它会因内部损耗和外部依赖而动态衰减。实际上，系统处理能力的降低同样会引发过载问题。<br>
+系统过载的原因主要可归为两类：硬件系统极限能力被突破和软件系统极限能力被超越。由于硬件能力被超越的情况相对较少，因此更应重点关注软件系统，包括操作系统和应用软件。操作系统负责统一调配与管理硬件资源，而应用系统则通过系统调用使用这些资源。当资源使用超出操作系统的承受限度时，系统的整体处理能力将急剧降低。应用系统的瓶颈通常表现为以下四种类型，且某些应用系统可能同时存在多个瓶颈因素。<br>
+‌ 1）处理器瓶颈：密集的计算任务（如复杂算法、加解密）、频繁的线程上下文切换，都会将处理器利用率推向100%，导致新请求排队等待，响应时间急剧拉长。<br>
+2）内存瓶颈：频繁的垃圾回收（GC Pause）会冻结应用，而操作系统层面的内存交换（Swapping）更是将处理速度从纳秒级拖慢至毫秒级，对性能造成毁灭性打击。<br>
+‌ 3）网络I/O：带宽耗尽、网络延迟，或是连接数（如文件句柄）被占满，导致无法建立新的请求连接。<br>
+4）磁盘I/O：大量的数据库读写、日志记录、文件操作，特别是随机I/O，会显著降低磁盘吞吐率，拖慢整个业务流程。</p>
+<p><strong>过载解决策略</strong><br>
+面对系统过载，解决思路可归为两大方向：“开源”与“节流”。“开源”旨在提升系统的承载上限，而“节流”则是在资源有限的前提下，智慧地管理和调度进入系统的请求。一个成熟的系统，往往是这两种策略的有机结合。<br>
+开源策略是指提升系统承载力。这是最直观的应对方式，核心是增加系统可用的物理或虚拟资源。<br>
+1）扩容（Scaling）： 直接增加硬件投入，分为垂直扩容（升级单机配置）和水平扩容（增加更多服务器节点）。扩容能立竿见影地提升处理能力，但成本高昂，且资源终有上限。更重要的是，它无法解决由软件设计缺陷（如锁竞争、慢查询）引发的瓶颈。<br>
+2）负载均衡（Load Balancing）： 它是水平扩容的必然搭档。通过智能的调度算法，将请求流量均匀地分发到后端各个服务节点，避免单点过载，最大化利用整个集群的处理能力。<br>
+节流策略是指优化请求处理流。当“开源”达到极限或不符合成本效益时，“节流”便成为保障系统韧性的关键。它不再追求处理所有请求，而是选择性地处理，确保核心功能不受影响。<br>
+1）流量控制（Traffic Shaping）： 这是过载保护的核心手段，通过限流、排队等方式，主动控制进入系统的请求速率，防止流量洪峰直接冲击后端服务。它像一个智能阀门，确保水流平稳可控。<br>
+2）服务降级（Graceful Degradation）： 这是一种“舍车保帅”的智慧。在系统压力巨大时，有策略地关闭或简化非核心功能（如商品推荐、用户评论），将宝贵的系统资源集中用于保障核心业务流程（如下单、支付）的稳定。<br>
+尽管扩容和负载均衡是构建高并发系统的基础，但它们更像是提高了堤坝的高度。而真正的过载保护，则是在洪水来临时，如何科学地泄洪、导流，确保大坝本身和其守护的核心区域安然无恙。这正是“节流”策略的价值所在。</p>
+<p><strong>过载保护的核心价值</strong><br>
+传统系统设计的理想是永不失败，但这在真实复杂的系统世界中不切实际。过载保护承认失败的必然性，并将设计的焦点从“如何避免失败”转移到“当失败发生时，如何可控地、有预见性地应对”。它用有序的降级取代无序的崩溃，用可预期的局部不可用换取整体系统的稳定。<br>
+在没有保护的情况下，过载意味着所有请求一同变慢，最终一同失败，系统陷入混沌。而过载保护机制，如同一位冷静的调度员，它根据预设的优先级和规则，决定了哪些请求被立即处理，哪些需要排队等待，哪些被礼貌地拒绝。这种机制将混乱的流量冲击波，转化为一个有序的、可管理的业务处理队列。<br>
+在系统面临过载时，首要任务是在有限资源条件下，通过优化和保护策略，确保系统的关键功能能够稳定运行。例如，可对系统的各个部分进行优先级排序，明确哪些功能是至关重要的，哪些功能在必要时可暂时关闭或降级。同时，设定合理的阈值和规则，以便在系统过载时，能够自动丢弃超出处理能力的请求。<br>
+一切技术策略都为业务服务。过载保护的终极目标，是在资源极限的边缘，将每一分计算力都用在“刀刃”上，确保支付、下单等核心功能畅通无阻。对用户而言，一个能明确告知“系统繁忙，请稍后再试”的系统，远比一个永远在加载中、最终超时的系统更值得信赖。</p>
+<p><strong>未完待续</strong></p>
+<p><strong>很高兴与你相遇！如果你喜欢本文内容，记得关注哦!!!</strong></p>
+
+</div>
+<div id="MySignature" role="contentinfo">
+    <p>本文来自博客园，作者：<a href="https://www.cnblogs.com/poemyang/" target="_blank">poemyang</a>，转载请注明原文链接：<a href="https://www.cnblogs.com/poemyang/p/19389175" target="_blank">https://www.cnblogs.com/poemyang/p/19389175</a></p>
+</div>
+<div class="clear"></div>
+
+        <p class="postfoot">
+            posted on 
+<span id="post-date" data-last-update-days="0" data-date-updated="2025-12-23 21:16">2025-12-23 21:16</span>&nbsp;
+<a href="https://www.cnblogs.com/poemyang">poemyang</a>&nbsp;
+阅读(<span id="post_view_count">20</span>)&nbsp;
+评论(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19389175);return false;">收藏</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19389175', targetLink: 'https://www.cnblogs.com/poemyang/p/19389175', title: '流量洪峰冲不垮的秘密：揭秘系统过载保护的核心防线' })">举报</a>
+
+        </p>
+     ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ Kafka入门必知概念——Topic、分区、Offset、消费组的协作机制与影响 ]]></title>
+    <link>https://www.cnblogs.com/shiyuelp/p/19389157</link>
+    <guid>25e522bbeafcc3a94dfbcb00adc2117e</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/shiyuelp/p/19389157" title="发布于 2025-12-23 21:10">
+    <span role="heading" aria-level="2">Kafka入门必知概念——Topic、分区、Offset、消费组的协作机制与影响</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p><strong>写在前面，本人目前处于求职中，如有合适内推岗位，请加：lpshiyue 感谢</strong></p>
+<blockquote>
+<p>理解Kafka的核心概念如同掌握分布式系统的通用语言，这些基础组件的高效协作正是Kafka海量数据处理能力的源泉</p>
+</blockquote>
+<p>在消息队列选型框架中，Kafka以其高吞吐、可扩展架构成为大数据场景的首选。然而，要真正发挥Kafka的潜力，必须深入理解其核心概念之间的协作关系。本文将全面解析Topic、分区、Offset和消费组四大核心概念，揭示它们如何共同构建Kafka的高性能架构。</p>
+<h2 id="1-kafka架构概览与设计哲学">1 Kafka架构概览与设计哲学</h2>
+<h3 id="11-分层架构与数据流">1.1 分层架构与数据流</h3>
+<p>Kafka采用<strong>生产者-消费者</strong>经典架构，整体可分为逻辑三层：生产者层负责消息发送，Broker集群层处理消息存储与路由，消费者层实现消息消费。这种清晰的分层架构使得Kafka能够高效处理海量消息流。</p>
+<p>Kafka的设计哲学围绕<strong>分布式、可扩展和高吞吐</strong>展开。与传统消息系统不同，Kafka将消息持久化到磁盘，通过顺序I/O和零拷贝技术实现高性能。这种设计使Kafka既能作为消息队列，又能作为存储系统使用，支持消息回溯和重复消费。</p>
+<h3 id="12-物理存储与逻辑视图的分离">1.2 物理存储与逻辑视图的分离</h3>
+<p>Kafka创新性地实现了<strong>逻辑Topic与物理分区的分离</strong>。Topic作为逻辑概念，方便业务分类；而分区作为物理概念，实现了数据的分布式存储和并行处理。这种分离是Kafka高扩展性的关键，允许集群通过增加分区和Broker来线性扩展吞吐量。</p>
+<p><strong>分区机制</strong>将每个Topic划分为多个有序的日志序列，分布在不同Broker上。当生产者发送消息时，实际上是将消息写入特定Topic的特定分区；消费者也是从特定分区读取消息。这种设计既保证了分区内消息顺序，又通过并行处理提升了整体吞吐量。</p>
+<h2 id="2-topic与分区数据分布的核心机制">2 Topic与分区：数据分布的核心机制</h2>
+<h3 id="21-topic的逻辑抽象与物理实现">2.1 Topic的逻辑抽象与物理实现</h3>
+<p><strong>Topic是消息的逻辑容器</strong>，类似于数据库中的表。生产者将消息发送到指定Topic，消费者从Topic订阅消息。Topic本身不存储数据，而是通过其下的分区实际承载消息。</p>
+<p>每个Topic由一个或多个<strong>分区（Partition）</strong> 组成，分区是Kafka并行处理的基本单位。分区在物理上对应磁盘上的目录，命名规则为<code>&lt;topic_name&gt;-&lt;partition_id&gt;</code>。例如，名为"user_behavior"的Topic若有3个分区，则对应三个目录：user_behavior-0、user_behavior-1、user_behavior-2。</p>
+<h3 id="22-分区策略与消息路由">2.2 分区策略与消息路由</h3>
+<p>Kafka提供灵活的分区策略，决定消息如何路由到特定分区。<strong>默认分区策略</strong>基于Key的哈希值：当消息指定Key时，使用<code>hash(key) % 分区数</code>计算目标分区；未指定Key时，采用轮询策略均匀分布。</p>
+<pre><code class="language-java">// 分区策略核心逻辑示例
+List&lt;PartitionInfo&gt; partitions = cluster.partitionsForTopic(topic);
+if (key != null) {
+    // 按Key哈希分区，保证同一Key的消息进入同一分区
+    return Math.abs(key.hashCode()) % partitions.size();
+} else {
+    // 轮询策略，均匀分布
+    return nextRoundRobinIndex() % partitions.size();
+}
+</code></pre>
+<p><strong>分区策略的选择直接影响消息顺序性和负载均衡</strong>。按Key哈希分区保证相同Key的消息顺序处理，适合需要保序的场景；轮询策略则提供更好的负载均衡，适合无顺序要求的场景。</p>
+<h3 id="23-分区数量的权衡艺术">2.3 分区数量的权衡艺术</h3>
+<p>分区数量是Kafka性能调优的关键参数。<strong>分区过少</strong>会导致无法充分利用集群并行能力；<strong>分区过多</strong>则增加元数据开销和Rebalance成本。</p>
+<p>实践经验表明，分区数量应当与消费者数量相匹配，且考虑未来扩展需求。通常建议单个Broker的分区总数不超过2000-4000个，以避免文件句柄和内存开销过大。</p>
+<h2 id="3-消费者组与负载均衡机制">3 消费者组与负载均衡机制</h2>
+<h3 id="31-消费者组模型及其优势">3.1 消费者组模型及其优势</h3>
+<p><strong>消费者组（Consumer Group）</strong> 是Kafka实现负载均衡和容错的核心机制。组内多个消费者实例共同消费一个或多个Topic，每个分区在同一时间只能被组内一个消费者消费。</p>
+<p>消费者组模型同时支持<strong>发布-订阅</strong>和<strong>点对点</strong>两种消息模式：当不同应用使用不同Group ID时，实现广播效果；当同一应用多个实例使用相同Group ID时，实现负载均衡。</p>
+<h3 id="32-rebalance机制与分区分配">3.2 Rebalance机制与分区分配</h3>
+<p><strong>Rebalance是消费者组的核心协调机制</strong>，在以下情况下触发：消费者加入或离开组、Topic分区数变化、订阅Topic变化。Rebalance过程包括三个阶段：</p>
+<ol>
+<li><strong>Join阶段</strong>：所有消费者向协调者注册</li>
+<li><strong>Sync阶段</strong>：组Leader计算分配方案并同步给所有成员</li>
+<li><strong>执行阶段</strong>：消费者开始从分配的分区消费</li>
+</ol>
+<p>Kafka提供多种<strong>分区分配策略</strong>，满足不同场景需求：</p>
+<ul>
+<li><strong>Range策略</strong>（默认）：按Topic维度顺序分配，可能导致负载不均</li>
+<li><strong>RoundRobin策略</strong>：所有分区轮询分配，负载更均衡</li>
+<li><strong>Sticky策略</strong>：尽量减少分区移动，减少Rebalance开销</li>
+</ul>
+<h3 id="33-消费者位移管理">3.3 消费者位移管理</h3>
+<p><strong>Offset是消费者在分区中的消费位置</strong>，是分区内消息的唯一标识。Kafka将位移信息存储在特殊的<code>__consumer_offsets</code> Topic中，默认50个分区，通过<code>Math.abs(groupId.hashCode()) % 50</code>计算存储位置。</p>
+<p>位移提交方式影响消息处理的<strong>精确一次性</strong>语义：</p>
+<ul>
+<li><strong>自动提交</strong>：简单但可能重复消费或丢失消息</li>
+<li><strong>手动提交</strong>：更精确控制，支持同步和异步方式</li>
+</ul>
+<h2 id="4-副本机制与高可用性">4 副本机制与高可用性</h2>
+<h3 id="41-leader-follower架构">4.1 Leader-Follower架构</h3>
+<p>Kafka通过<strong>副本机制</strong>保证数据高可用。每个分区有多个副本，分为Leader和Follower两种角色。Leader处理所有读写请求，Follower从Leader同步数据。当Leader失效时，Kafka从ISR（In-Sync Replicas）中选择新的Leader。</p>
+<p><strong>ISR机制</strong>维护与Leader保持同步的副本集合。Follower必须定期向Leader发送心跳，若超过<code>replica.lag.time.max.ms</code>（默认10秒）未同步，则被移出ISR。这种设计既保证数据一致性，又提供故障转移能力。</p>
+<h3 id="42-数据可靠性配置">4.2 数据可靠性配置</h3>
+<p>生产者可通过<strong>acks参数</strong>配置数据可靠性级别：</p>
+<ul>
+<li><strong>acks=0</strong>：无确认，最高吞吐但可能丢失数据</li>
+<li><strong>acks=1</strong>：Leader确认，均衡选择</li>
+<li><strong>acks=all</strong>：所有ISR副本确认，最可靠</li>
+</ul>
+<p>在要求高可靠性的场景中，建议配置<code>acks=all</code>并设置<code>min.insync.replicas</code>（默认1），确保写入多个副本后才返回成功。</p>
+<h2 id="5-核心概念的协同效应">5 核心概念的协同效应</h2>
+<h3 id="51-四者协作的高性能奥秘">5.1 四者协作的高性能奥秘</h3>
+<p>Topic、分区、Offset和消费组四个概念相互协作，形成Kafka高性能的基石：<strong>Topic提供逻辑分类，分区实现并行处理，Offset记录消费进度，消费组保障负载均衡</strong>。</p>
+<p>这种协作机制的实际效果体现在：<strong>横向扩展能力</strong>通过增加分区和消费者实现；<strong>容错性</strong>通过副本机制保障；<strong>消息顺序性</strong>在分区内得到保证；<strong>负载均衡</strong>通过消费组自动实现。</p>
+<h3 id="52-实际应用中的配置策略">5.2 实际应用中的配置策略</h3>
+<p>在实际应用中，需要根据业务特点合理配置这些概念参数：<strong>高吞吐场景</strong>可增加分区数并使用轮询策略；<strong>保序要求高</strong>的场景应采用Key哈希分区；<strong>容错要求高</strong>需配置多副本和acks=all。</p>
+<p>以下是一个典型电商平台的Kafka配置示例：</p>
+<pre><code class="language-yaml"># 订单Topic配置
+order.topic.partitions: 12        # 匹配消费者数量
+order.topic.replication: 3        # 高可用配置
+order.consumer.group: order-processors
+order.consume.threads: 12         # 与分区数匹配
+
+# 日志Topic配置  
+log.topic.partitions: 24          # 高吞吐需求
+log.topic.replication: 2           # 可接受一定数据丢失
+log.consumer.group: log-analyzers
+</code></pre>
+<h2 id="6-实践中的常见问题与解决方案">6 实践中的常见问题与解决方案</h2>
+<h3 id="61-数据倾斜与热点分区">6.1 数据倾斜与热点分区</h3>
+<p><strong>数据倾斜</strong>是常见问题，表现为部分分区负载过高。解决方案包括：使用更均匀的Key分布、采用轮询策略、增加分区数或实现自定义分区策略。</p>
+<h3 id="62-rebalance风暴与消费者稳定性">6.2 Rebalance风暴与消费者稳定性</h3>
+<p><strong>频繁Rebalance</strong>会导致消费者频繁停顿。优化方案包括：调整<code>session.timeout.ms</code>和<code>heartbeat.interval.ms</code>参数、使用Sticky分配策略、避免消费者频繁启停。</p>
+<h3 id="63-位移管理的最佳实践">6.3 位移管理的最佳实践</h3>
+<p>位移管理不当可能导致<strong>重复消费或消息丢失</strong>。建议采用手动提交位移，在消息处理完成后同步提交，并在消费者重启时从正确位置开始消费。</p>
+<h2 id="总结">总结</h2>
+<p>Kafka的核心概念体系构成了一个完整的高性能消息处理生态系统。Topic与分区的分离实现了逻辑与物理的解耦，消费组机制提供了灵活的负载均衡方案，Offset管理确保了消息处理的可靠性，副本机制保障了系统的高可用性。</p>
+<p>理解这些概念不仅有助于正确使用Kafka，更能为分布式系统设计提供重要启示。<strong>分布式系统的本质是通过分片实现扩展，通过副本实现容错，通过协调机制实现一致性</strong>——这正是Kafka架构思想的精髓。</p>
+<p>随着业务规模的增长，对这些核心概念的深入理解将帮助开发者在性能、可靠性和复杂度之间找到最佳平衡点，构建真正稳定高效的数据处理平台。</p>
+<hr>
+<p><strong>📚 下篇预告</strong><br>
+《可靠性与顺序性保障——幂等、事务与Exactly-once语义的适用边界》—— 我们将深入探讨：</p>
+<ul>
+<li>🔄 <strong>幂等生产原理</strong>：PID、序列号与Broker去重机制的协同工作</li>
+<li>⚡ <strong>事务消息机制</strong>：跨分区原子写入与持久化保证的实现路径</li>
+<li>🎯 <strong>Exactly-once语义</strong>：流处理场景下的精确一次性交付保障</li>
+<li>📊 <strong>性能与可靠性权衡</strong>：不同可靠性级别的吞吐量影响量化分析</li>
+<li>🛡️ <strong>实践配置指南</strong>：生产者ACK、ISR配置与故障恢复的最佳实践</li>
+</ul>
+<p><strong>点击关注，掌握Kafka数据可靠性的核心技术！</strong></p>
+<blockquote>
+<p><strong>今日行动建议</strong>：</p>
+<ol>
+<li>审查现有Kafka Topic的分区配置，确保与消费者数量匹配</li>
+<li>评估数据分布情况，识别可能的热点分区问题</li>
+<li>优化消费者组配置，减少不必要的Rebalance操作</li>
+<li>建立位移监控机制，确保消息消费进度可观测</li>
+</ol>
+</blockquote>
+
+</div>
+<div id="MySignature" role="contentinfo">
+    进阶之路，神挡杀神佛挡杀佛，欢迎大家一起加ＱＱ群共同讨论成长，群号：<a href="https://jq.qq.com/?_wv=1027&amp;k=4AiobC0" target="view_window">620095084</a>
+<br>
+欢迎搜索关注微信公众号 基础全知道 ：JavaBasis ，第一时间阅读最新文章
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2025-12-23 21:11">2025-12-23 21:10</span>&nbsp;
+<a href="https://www.cnblogs.com/shiyuelp">十月南城</a>&nbsp;
+阅读(<span id="post_view_count">14</span>)&nbsp;
+评论(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19389157);return false;">收藏</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19389157', targetLink: 'https://www.cnblogs.com/shiyuelp/p/19389157', title: 'Kafka入门必知概念——Topic、分区、Offset、消费组的协作机制与影响' })">举报</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ 吴恩达深度学习课程四：计算机视觉  第三周：检测算法 （二）目标检测算法 ]]></title>
+    <link>https://www.cnblogs.com/Goblinscholar/p/19389081</link>
+    <guid>d861b65450e2a1bf99d423d32b8fb709</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/Goblinscholar/p/19389081" title="发布于 2025-12-23 20:53">
+    <span role="heading" aria-level="2">吴恩达深度学习课程四：计算机视觉  第三周：检测算法 （二）目标检测算法</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>此分类用于记录吴恩达深度学习课程的学习笔记。<br>
+课程相关信息链接如下：</p>
+<ol>
+<li>原课程视频链接：<a href="https://www.bilibili.com/video/BV1FT4y1E74V?buvid=XU762317353676D786954061C192FE625463B&amp;from_spmid=playlist.playlist-detail.0.0&amp;is_story_h5=false&amp;mid=zqernykrmpf7XfIorMR%2FnA%3D%3D&amp;plat_id=116&amp;share_from=ugc&amp;share_medium=android&amp;share_plat=android&amp;share_session_id=ce0bc526-db69-428a-962e-c65ed8c267bc&amp;share_source=COPY&amp;share_tag=s_i&amp;spmid=united.player-video-detail.0.0&amp;timestamp=1713085655&amp;unique_k=DfBgvFW&amp;up_id=8654113&amp;vd_source=e035e9878d32f414b4354b839a4c31a4" target="_blank" rel="noopener nofollow">[双语字幕]吴恩达深度学习deeplearning.ai</a></li>
+<li>github课程资料，含课件与笔记:<a href="https://github.com/robbertliu/deeplearning.ai-andrewNG" target="_blank" rel="noopener nofollow">吴恩达深度学习教学资料</a></li>
+<li>课程配套练习（中英）与答案：<a href="https://blog.csdn.net/u013733326/article/details/79827273" target="_blank" rel="noopener nofollow">吴恩达深度学习课后习题与答案</a></li>
+</ol>
+<p>本篇为第四课的第三周内容，<a href="https://www.bilibili.com/video/BV1FT4y1E74V?spm_id_from=333.788.videopod.episodes&amp;vd_source=e035e9878d32f414b4354b839a4c31a4&amp;p=132" target="_blank" rel="noopener nofollow">3.3</a>到<a href="https://www.bilibili.com/video/BV1FT4y1E74V?spm_id_from=333.788.videopod.episodes&amp;vd_source=e035e9878d32f414b4354b839a4c31a4&amp;p=134" target="_blank" rel="noopener nofollow">3.5</a>的内容。</p>
+<hr>
+<p>本周为第四课的第三周内容，这一课所有内容的中心只有一个：<strong>计算机视觉</strong>。应用在深度学习里，就是专门用来进行图学习的模型和技术，是在之前全连接基础上的“特化”，也是相关专业里的一个重要研究大类。<br>
+<strong>这一整节课都存在大量需要反复理解的内容和机器学习、数学基础。</strong> 因此我会尽可能的补足基础，用比喻和实例来演示每个部分，从而帮助理解。<br>
+第三周的内容将从<strong>图像分类</strong>进一步拓展到<strong>目标检测（Object Detection）</strong> 这一更具挑战性的计算机视觉任务。<br>
+与分类任务只需回答“图中有什么”不同，目标检测需要同时解决“ <strong>有什么</strong>”以及“<strong>在什么位置</strong>”两个问题，因此在模型结构设计、训练方式和评价标准上都更为复杂。<br>
+本篇的内容关于目标检测算法。</p>
+<h1 id="1-检测算法10对窗口分类">1. 检测算法1.0：对窗口分类</h1>
+<p>我们知道，想要实现目标检测，首先就要完成<strong>目标识别</strong>。<br>
+只有当模型能够回答“<strong>要找什么</strong>”后，我们才有可能进一步让它回答“<strong>它在哪里</strong>”。</p>
+<p>在早期，人们并没有一套专门为“检测”设计的网络结构，于是有人提出了这样一种想法：<strong>既然分类网络已经很成熟，那能不能把“找位置”这个问题，转化成一堆“分类问题”？</strong></p>
+<p>而实现这种逻辑的具体做法就是<strong>滑动窗口（Sliding Window）</strong>。<br>
+在这种方法中，我们用一个<strong>固定大小的窗口</strong>在整张图像上从左到右、从上到下不断<strong>滑动</strong>，把图像裁剪成一块一块的小区域。<br>
+然后，将每一个窗口都单独送入一个已经训练好的<strong>图像分类网络</strong>中，判断这个窗口里“有没有目标”。<br>
+如果某个窗口被分类器判断为“汽车”“行人”等目标类别，那么我们就认为：<strong>目标就出现在这个窗口所对应的位置上。</strong><br>
+就像这样：<br>
+<img src="https://img2024.cnblogs.com/blog/3708248/202512/3708248-20251223205038950-257158416.png" alt="image.png" loading="lazy"></p>
+<p>从整体上看，这种检测流程可以被理解为：</p>
+<ol>
+<li>用滑动窗口 <strong>枚举可能的位置</strong></li>
+<li>用分类网络 <strong>判断每个位置是什么</strong></li>
+<li>将被判定为目标的窗口位置，作为最终的检测结果</li>
+</ol>
+<p>但显然，即使假设分类器完全准确，这种算法仍有它的不足之处。<br>
+对于滑动窗口，我们可以设置它的<strong>尺寸和步长</strong>来调整它在图像中的运动轨迹，这种固定的设置都十分死板，且同时很难兼顾<strong>不同大小目标的完整覆盖</strong>。<br>
+<img src="https://img2024.cnblogs.com/blog/3708248/202512/3708248-20251223205039012-1879118197.png" alt="image.png" loading="lazy"></p>
+<p>因此，你会发现这种检测方法其实是一种“取巧”，它本质上并没有“直接学位置”，而是通过<strong>大量的局部分类结果</strong>，间接拼凑出目标的位置，在依赖单独训练的分类器准确率的前提下还需要极大的计算量。<br>
+于是下一步改进出现了。</p>
+<h1 id="2-检测算法20对整幅图像应用卷积">2. 检测算法2.0：对整幅图像应用卷积</h1>
+<p>为了更好地进行目标检测，面对 1.0 中出现的极大计算量问题，人们运用数学逻辑，发现了这样一种情况：<strong>当为了更精准的检测而应用更小步长的窗口时，相邻的窗口存在公共区域，让部分计算重复进行。</strong><br>
+<img src="https://img2024.cnblogs.com/blog/3708248/202512/3708248-20251223205041096-1719506100.png" alt="image.png" loading="lazy"><br>
+而如果不希望出现公共区域，那就又要增大步长至和尺寸同大小，就又回到了漏检小目标、定位不精确的问题。<br>
+有没有一种办法，<strong>既能享有小步长带来的精确度，又能让重复计算的结果复用从而及减小计算量呢？</strong><br>
+有的兄弟，有的。</p>
+<p>在 2014 年，一篇名为 <a href="https://arxiv.org/pdf/1312.6229" target="_blank" rel="noopener nofollow">OverFeat: Integrated Recognition, Localization and Detection using Convolutional Networks</a> 的论文发表，提出了一个利用卷积神经网络同时实现<strong>分类、定位和检测</strong>的统一框架。<br>
+而相比 1.0 算法，2.0 最大的改变就是<strong>不再把每个窗口裁出来送进网络，而是直接把整张图像送进网络，让卷积层自动完成“滑动 + 特征提取”的过程，直接输出图像各部分的分类结果。</strong></p>
+<p>我们来详细展开这一部分：</p>
+<h2 id="21-修改网络结构适应输出要求">2.1 修改网络结构适应输出要求</h2>
+<p>明确了目标之后，你会发现，不同于原本使用全连接层输出一维分类结果，现在我们希望<strong>让输出为一个二维特征图，图中每一个元素就代表一个窗口的分类结果</strong>。<br>
+就像这样：<br>
+<img src="https://img2024.cnblogs.com/blog/3708248/202512/3708248-20251223205039801-1655184845.png" alt="image.png" loading="lazy"></p>
+<p>因此，现在我们需要修改网络结构，<strong>使用卷积层取代原本的全连接层，保证输出同样为特征图</strong>。<br>
+而要合理地实现这一部分，首先，就要了解<strong>如何用卷积层等效代替全连接层</strong>。</p>
+<p>先说结论：<strong>使用和输入特征图尺寸等大小的卷积核</strong>。<br>
+就像这样：<br>
+<img src="https://img2024.cnblogs.com/blog/3708248/202512/3708248-20251223205039223-13958052.png" alt="image.png" loading="lazy"></p>
+<p>再展开说说原理：<br>
+在分类网络中，当特征提取部分结束后，输入全连接层的，通常是一个形状为  <span class="math inline">\(H \times W \times C\)</span>  的特征图。<br>
+全连接层做的事情，本质上是：  <strong>把这整个特征图“摊平”，然后与一组权重做一次线性组合，输出一个结果。</strong><br>
+如果用公式表示，就是：</p>
+<p></p><div class="math display">\[y = \sum_{i,j,k} w_{i,j,k} \cdot x_{i,j,k} + b
+\]</div><p></p><p>换一个角度看，这个过程其实非常像什么？  ——<strong>用一个和输入特征图尺寸完全一致的卷积核，在特征图上做一次卷积。</strong><br>
+因此，当卷积核的尺寸等于输入特征图的空间尺寸时：</p>
+<ul>
+<li>卷积核只会在输入上“滑动”一次。</li>
+<li>卷积输出自然就是一个 <span class="math inline">\(1 \times 1\)</span> 的结果。</li>
+<li>这个结果与全连接层的输出在数学形式上是<strong>完全等价的</strong>。</li>
+</ul>
+<p>因此可以得到一个直观的结论：<strong>全连接层可以被看作一种特殊形式的卷积层。</strong><br>
+现在，我们就了解了如何修改我们原本一直使用的全连接层作为输出层的网络结构，从而适应输出为带有空间结构的特征图的要求。<br>
+现在，就来看看，输入整幅图像进入完善后的网络得到分类输出的具体过程。</p>
+<h2 id="22-窗口在网络中的传播">2.2 窗口在网络中的传播</h2>
+<p>我们就用课程里的例子来演示一下网络如何一次输出整幅图像各个窗口的分类结果：<br>
+<img src="https://img2024.cnblogs.com/blog/3708248/202512/3708248-20251223205055320-655995691.png" alt="image.png" loading="lazy"></p>
+<p>你会发现，得益于卷积操作的特性，输入图像的局部特征本身就在传播中被一步步集中，<strong>第一层特征图中的每一个像素，本身就对应着输入图像中的一个小窗口</strong>。<br>
+而随着网络不断加深，卷积层不断堆叠，每一个特征点所对应的输入区域不断变大。<br>
+最终，在靠近输出层的位置，特征图中的<strong>一个位置</strong>实际上已经“覆盖”了输入图像中的一个<strong>较大窗口区域</strong>。<br>
+只不过现在窗口不再由我们手动裁剪，而是由网络结构<strong>决定</strong>。</p>
+<h2 id="23-拓展特征图输出的标签问题">2.3 拓展：特征图输出的标签问题</h2>
+<p>到这里，我想你可能会有这样一个问题：<strong>我们虽然改变了网络结构，但是我们这时使用的还是原本分类器的数据，即对一幅图像的标签只有一个0或1来表示图像里是否存在目标。现在我们修改了输出格式，是否需要也修改标签，改为给每个窗口打标签？</strong><br>
+<strong>答案是不用。</strong><br>
+为什么？<br>
+虽然在训练阶段，网络接收到的仍然只是<strong>图像级别的分类标签</strong>，但由于输出已经被展开为一个带空间结构的特征图，这个标签会被<strong>隐式地约束到整张特征图上</strong>：只要某一个位置对应的窗口能够正确响应目标类别，这一次预测就被认为是“成功的”。</p>
+<p>换句话说，卷积化之后的分类网络，并不是在学习“这整张图像是不是目标”，而是在学习：<strong>“在这张图像的哪些位置，存在一个可以被识别为目标的窗口”。</strong></p>
+<p>有些抽象，我们可以来看一个具体的例子：<br>
+假设训练集中有一张图片，内容是一辆汽车，整张图像的<strong>唯一标签</strong>就是「car」。<br>
+当这张图像被送入卷积化后的网络时，输出的不再是一个标量，而是一个 <span class="math inline">\(H' \times W'\)</span> 的分类特征图，其中<strong>每一个位置</strong>都对应输入图像中的一个窗口。<br>
+在初始训练阶段，这张特征图上的绝大多数位置，输出的分类结果其实都是错误的：</p>
+<ul>
+<li>有的位置覆盖的是背景</li>
+<li>有的位置只覆盖了汽车的一部分</li>
+<li>还有的位置甚至只包含天空或道路</li>
+</ul>
+<p>但这并不会破坏训练过程。<br>
+因为此时网络的目标并不是要求每一个位置都预测为 car，<strong>而是至少存在某一个位置，其对应的窗口能够对 car 类别产生足够强的响应。</strong></p>
+<p><strong>更准确地说，在训练阶段，并不是直接将整个 <span class="math inline">\(H' \times W'\)</span> 的输出特征图与图像级标签逐位置对齐计算损失。</strong><br>
+网络通常会先在空间维度上进行一次聚合操作（最常见的是取最大响应），将整张特征图压缩为一个标量预测，再与图像级标签计算分类损失。<br>
+这种训练方式可以被理解为一种<strong>弱监督学习</strong>：<br>
+<strong>只要输出特征图中存在某一个空间位置，对目标类别产生了足够强的响应，这张图像就被认为预测正确。</strong><br>
+<img src="https://img2024.cnblogs.com/blog/3708248/202512/3708248-20251223205038766-641170151.png" alt="image.png" loading="lazy"></p>
+<p>在反向传播过程中，梯度主要会通过这些高响应位置回传，从而推动网络逐渐强化那些<strong>确实覆盖了完整目标或关键判别区域的空间位置</strong>，而对背景区域的响应自然被压低。</p>
+<p>最终，在输出特征图上，你会看到：只有少数几个位置对 car 类别产生明显高响应，而这些位置恰好落在汽车所在的区域附近。<br>
+此时，虽然训练标签始终只是一个“图像级标签”，但网络已经<strong>自动学会了在空间维度上区分“哪里值得响应”</strong>。</p>
+<p>于是我们就解决了 1.0 算法导致的极大计算量问题，但是还有一个问题仍然存在，就是固定尺寸的窗口仍无法实现对目标的较精准定位。<br>
+怎么解决？来看看 3.0 算法。</p>
+<h1 id="3-检测算法30yolo-算法">3. 检测算法3.0：YOLO 算法</h1>
+<p><strong>YOLO 算法是目前真正主流的算法之一</strong>，你可以在目前几乎目标检测的所有领域看到它的身影，时至今日，它仍在不断地更新。</p>
+<p>虽然在 2.0 中，窗口已经不再由人手工滑动，而是由网络结构隐式决定，但本质并没有变：<br>
+网络输出的是： <strong>“这个窗口里有没有目标”</strong>，而不是：<strong>“目标在哪里、是什么、边界在哪。”</strong></p>
+<p>也就是说，2.0 的网络会告诉你： “这里大概有个 car”，但不会直接告诉你：“car 的中心在这，宽高是多少。”<br>
+它的定位准确度问题仍然存在且不可忽视。<br>
+于是，在 2015 年，一篇名为<a href="https://homes.cs.washington.edu/~ali/papers/YOLO.pdf" target="_blank" rel="noopener nofollow">You Only Look Once</a>的论文被发表，它的核心观点就是：<strong>能不能让网络别再纠结“窗口”，而是直接预测目标本身？</strong></p>
+<p>论文本身较为复杂，我们来看看 YOLO 相对 1.0、2.0 最关键的改变:<strong>规范目标检测任务的标签</strong>。</p>
+<p>YOLO 算法本身为目标检测任务提出了专用的标签，正是我们在<a href="https://www.cnblogs.com/Goblinscholar/p/19384242" target="_blank">上一篇中</a>介绍的“<strong>位置信息</strong>”。<br>
+<img src="https://img2024.cnblogs.com/blog/3708248/202512/3708248-20251223205057400-299808113.png" alt="image.png" loading="lazy"></p>
+<ol>
+<li><span class="math inline">\(p_c\)</span>：表示<strong>当前图像中是否存在需要检测的目标</strong>，这是一个二值变量，通常取值为 <span class="math inline">\(0\)</span> 或 <span class="math inline">\(1\)</span>。<br>
+当 <span class="math inline">\(p_c = 1\)</span> 时，表示图像中确实存在目标，此时后续的位置信息和类别信息才是“有效”的；<br>
+当 <span class="math inline">\(p_c = 0\)</span> 时，表示图像中不存在目标，<strong>其余参数通常被忽略或置为 0。</strong></li>
+<li><span class="math inline">\(b_x,b_y,b_h,b_w\)</span> :表示检测目标的<strong>位置信息</strong>。</li>
+<li><span class="math inline">\(c_n\)</span>：表示目标所属的<strong>类别信息</strong>。<br>
+在二分类问题中，它可以是一个标量；<br>
+在多分类问题中，通常采用 <strong>独热编码</strong> 的形式，用一个向量来表示目标属于哪一类。</li>
+</ol>
+<p>规范好标签本身后，我们来看看算法如何使用标签：<br>
+<img src="https://img2024.cnblogs.com/blog/3708248/202512/3708248-20251223205038504-641386161.png" alt="image.png" loading="lazy"></p>
+<p><img src="https://img2024.cnblogs.com/blog/3708248/202512/3708248-20251223205147720-180508610.png" alt="image.png" loading="lazy"><br>
+因此，一个样本在 <span class="math inline">\(S \times S\)</span> 网格划分下，其标签张量维度为：</p>
+<p></p><div class="math display">\[S \times S \times (5 + c_n) 
+\]</div><p></p><p>看到这里，你可能会疑惑，<strong>划分网格的作用是什么？我们最开始说 YOLO 避开了窗口又是指什么？</strong><br>
+别急，关键点就在于我们刚刚规范的新标签：<span class="math inline">\(b_x,b_y,b_h,b_w\)</span> 。<br>
+<img src="https://img2024.cnblogs.com/blog/3708248/202512/3708248-20251223205053651-1469789459.png" alt="image.png" loading="lazy"><br>
+你会发现，通过几个位置信息参数，<strong>我们虽然划分了网格，但是网格却不会像窗口的步长一样限制目标的边界框，每个网格单元相当于一个预测单元来预测中心点在本单元格里的目标的类别和边界框。</strong><br>
+现在，我们就可以继续应用 2.0 中的网络,调整输出特征图为新的标签维度,即可以此计算损失并反向传播了。<br>
+你会发现，YOLO 的核心优势是：</p>
+<ul>
+<li>不再枚举窗口，不再重复计算。</li>
+<li>每个网格单元独立负责预测目标，同时输出边界框和类别。</li>
+<li>训练时即可端到端优化，预测阶段一次前向传播完成整图检测。</li>
+</ul>
+<p>可以说，YOLO 的提出让“检测”真正从“分类的延伸”脱离出来，成为计算机视觉领域的核心任务之一，它的内容还有很多，我们遇到再慢慢展开。</p>
+<h1 id="4总结">4.总结</h1>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>原理</th>
+<th>比喻</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1.0 滑动窗口检测</strong></td>
+<td>使用固定大小窗口在图像上滑动，将每个窗口送入分类网络判断是否包含目标；通过局部分类结果间接拼凑目标位置</td>
+<td>就像用放大镜逐块检查整张图，找到目标再标记位置</td>
+</tr>
+<tr>
+<td><strong>问题</strong></td>
+<td>计算量巨大，每个窗口都要单独处理；定位精度依赖分类结果拼凑</td>
+<td>翻阅整本书寻找关键词，每页都要仔细看一遍</td>
+</tr>
+<tr>
+<td><strong>2.0 卷积化检测</strong></td>
+<td>将整幅图像送入卷积网络，卷积层自动完成滑动和特征提取，输出二维特征图表示各位置分类结果；全连接层可被等效卷积替代</td>
+<td>不用逐页检查，而是扫描整本书，自动标记出现关键词的区域</td>
+</tr>
+<tr>
+<td><strong>窗口在特征图中传播</strong></td>
+<td>随着卷积层堆叠，每个特征图位置对应输入图像的一个大窗口区域；训练阶段采用弱监督，只需部分高响应位置预测正确即可</td>
+<td>小窗口信息逐渐汇聚，像放大镜自动跟踪关键区域</td>
+</tr>
+<tr>
+<td><strong>标签设计</strong></td>
+<td>输出特征图使用图像级标签，卷积网络自动学会空间位置响应，无需对每个窗口手工标注</td>
+<td>给整本书一个主题标签，网络自动找到相关章节</td>
+</tr>
+<tr>
+<td><strong>3.0 YOLO</strong></td>
+<td>网络直接预测每个网格单元内目标的类别和边界框；端到端训练，不再依赖滑动窗口或重复计算</td>
+<td>每个网格像一个小探员，直接告诉你目标在这里，并画出轮廓</td>
+</tr>
+<tr>
+<td><strong>YOLO 标签规范</strong></td>
+<td>每个网格包含 <span class="math inline">\(p_c\)</span>（是否有目标）、<span class="math inline">\(b_x,b_y,b_h,b_w\)</span>（边界框位置）、<span class="math inline">\(c_n\)</span>（类别）；输出维度 <span class="math inline">\(S \times S \times (5 + c_n)\)</span></td>
+<td>每个小探员携带完整信息卡片，报告目标位置和类型</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2025-12-23 20:54">2025-12-23 20:53</span>&nbsp;
+<a href="https://www.cnblogs.com/Goblinscholar">哥布林学者</a>&nbsp;
+阅读(<span id="post_view_count">16</span>)&nbsp;
+评论(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19389081);return false;">收藏</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19389081', targetLink: 'https://www.cnblogs.com/Goblinscholar/p/19389081', title: '吴恩达深度学习课程四：计算机视觉  第三周：检测算法 （二）目标检测算法' })">举报</a>
 </div>
          ]]>
     </description>
@@ -2012,1236 +2639,6 @@ formRef.value!.validate()
     </description>
     </item>
 <item>
-    <title><![CDATA[ Oracle数据库初始化参数深度解析：部分说明与隐藏参数实战 ]]></title>
-    <link>https://www.cnblogs.com/liuziyi1/p/19387152</link>
-    <guid>65d88f29a3074b712d45532a623387a8</guid>
-    <description>
-    <![CDATA[ 
-		<h2>
-			<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/liuziyi1/p/19387152" title="发布于 2025-12-23 15:02">
-    <span role="heading" aria-level="2">Oracle数据库初始化参数深度解析：部分说明与隐藏参数实战</span>
-    
-
-</a>
-
-		</h2>
-		<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h2 id="引言">引言</h2>
-<p>Oracle数据库的初始化参数是配置实例运行特性的核心，直接影响数据库的安全性、性能、可用性等关键指标。在庞大的参数体系中，部分参数仅在文档中得到部分说明，另有大量隐藏参数（以下划线开头）未被官方文档详细记载。这些参数往往包含Oracle数据库的“底层机密”，合理运用能解决常规配置无法处理的问题——从精细化审计到内存优化，从故障诊断到测试环境搭建。</p>
-<h2 id="一部分说明的初始化参数">一、部分说明的初始化参数</h2>
-<h3 id="11-audit_syslog_level安全审计的进阶配置">1.1 AUDIT_SYSLOG_LEVEL：安全审计的进阶配置</h3>
-<h4 id="核心功能">核心功能</h4>
-<p>AUDIT_SYSLOG_LEVEL参数用于将数据库审计日志写入操作系统的syslog（UNIX）或事件日志（Windows），核心价值是避免特权用户删除审计记录——syslog日志默认由root用户所有，DBA无法篡改，能有效追踪特权操作与入侵行为。</p>
-<h4 id="文档说明的局限性">文档说明的局限性</h4>
-<p>官方文档存在三点不准确描述：</p>
-<ul>
-<li>错误宣称该参数依赖AUDIT_TRAIL设置，实际即使AUDIT_TRAIL=NONE，CONNECT、STARTUP、SHUTDOWN操作仍会通过syslog记录；</li>
-<li>未说明与AUDIT_SYS_OPERATIONS的协同作用——两者结合时，SYSDBA/SYSOPER特权用户的所有SQL/PLSQL操作都会被审计；</li>
-<li>未明确设备与优先级的有效组合，无效组合会触发ORA-28错误并阻止实例启动。</li>
-</ul>
-<h4 id="实战配置示例">实战配置示例</h4>
-<ol>
-<li><strong>UNIX系统配置</strong>：
-<ul>
-<li>编辑syslog.conf文件，添加日志输出规则：<code>user.notice /var/log/oracle_dbms</code>；</li>
-<li>重启syslogd服务：<code>kill -HUP $(cat /var/run/syslogd.pid)</code>；</li>
-<li>设置数据库参数：<code>ALTER SYSTEM SET audit_syslog_level='user.notice' SCOPE=SPFILE;</code>（需重启实例生效）。</li>
-</ul>
-</li>
-<li><strong>Windows系统配置</strong>：
-<ul>
-<li>无需额外配置syslog，参数会自动将日志写入“应用程序”类别的Windows事件日志；</li>
-<li>启用特权操作审计：<code>ALTER SYSTEM SET audit_sys_operations=TRUE;</code>。</li>
-</ul>
-</li>
-</ol>
-<h4 id="关键注意事项">关键注意事项</h4>
-<ul>
-<li>非特权用户审计优先使用AUDIT_TRAIL=DB，审计记录存储于SYS.AUD$，便于通过数据字典视图查询；</li>
-<li>维护操作（如数据库升级）时可临时设置AUDIT_SYS_OPERATIONS=FALSE，避免生成大量冗余日志。</li>
-</ul>
-<h3 id="12-pga_aggregate_target自动pga内存管理的底层逻辑">1.2 PGA_AGGREGATE_TARGET：自动PGA内存管理的底层逻辑</h3>
-<h4 id="核心功能-1">核心功能</h4>
-<p>PGA_AGGREGATE_TARGET是自动PGA内存管理的核心参数，指定所有服务器进程PGA内存的总目标值，用于优化排序、哈希连接等操作的内存分配。</p>
-<h4 id="文档未说明的关键机制">文档未说明的关键机制</h4>
-<p>官方文档未披露三个隐藏参数对PGA分配的限制，这是导致实际内存使用与预期不符的核心原因：</p>
-<ul>
-<li>_PGA_MAX_SIZE：单个进程可使用的最大PGA内存（字节），默认值随PGA_AGGREGATE_TARGET动态调整（如PAT&lt;1GB时默认200MB）；</li>
-<li>_SMM_MAX_SIZE：单个串行操作的最大工作区大小（千字节），默认值为PGA_AGGREGATE_TARGET的20%（PAT&lt;512MB时）；</li>
-<li>_SMM_PX_MAX_SIZE：并行执行的最大工作区大小（千字节），默认值为PGA_AGGREGATE_TARGET的50%。</li>
-</ul>
-<h4 id="实战优化示例">实战优化示例</h4>
-<ol>
-<li><strong>查询隐藏参数当前值</strong>：<pre><code class="language-sql">SELECT x.ksppinm name,
-       CASE WHEN x.ksppinm LIKE '%pga%' THEN to_number(y.ksppstvl)/1024 ELSE to_number(y.ksppstvl) END AS value,
-       x.ksppdesc description
-FROM x$ksppi x, x$ksppcv y
-WHERE x.inst_id = userenv('Instance')
-  AND y.inst_id = userenv('Instance')
-  AND x.indx = y.indx
-  AND x.ksppinm IN ('_pga_max_size', '_smm_max_size', '_smm_px_max_size');
-</code></pre>
-</li>
-<li><strong>调整并行执行内存限制</strong>：
-<ul>
-<li>若并行排序频繁溢出到磁盘，可手动增大_SMM_PX_MAX_SIZE：<br>
-<code>ALTER SYSTEM SET "_smm_px_max_size"=2097152 SCOPE=SPFILE;</code>（2GB，需重启实例）。</li>
-</ul>
-</li>
-</ol>
-<h4 id="关键注意事项-1">关键注意事项</h4>
-<ul>
-<li>PGA_AGGREGATE_TARGET是“目标值”而非“硬限制”，高负载下实际内存使用可能临时超出；</li>
-<li>共享服务器模式下，Oracle 10g及以上支持自动PGA管理，Oracle 9i需手动配置SORT_AREA_SIZE等参数。</li>
-</ul>
-<h3 id="13-event实例级事件配置的灵活运用">1.3 EVENT：实例级事件配置的灵活运用</h3>
-<h4 id="核心功能-2">核心功能</h4>
-<p>EVENT参数用于在实例级别设置事件，适用于故障诊断、功能启用/禁用、性能数据收集等场景，配置在实例生命周期内持续有效。</p>
-<h4 id="文档未说明的关键内容">文档未说明的关键内容</h4>
-<ul>
-<li>事件语法：支持多事件配置（分号分隔），语法为<code>event='event_number trace name context forever,level event_level'</code>；</li>
-<li>有效事件范围：多数事件编号在10000-10999之间，可通过<code>oerr ora &lt;事件号&gt;</code>查询描述；</li>
-<li>实例级事件的适用场景：需在进程启动时生效的事件（如RMAN备份相关事件）、全实例范围的跟踪（如SQL跟踪）。</li>
-</ul>
-<h4 id="实战配置示例-1">实战配置示例</h4>
-<ol>
-<li><strong>启用死锁诊断事件</strong>：
-<ul>
-<li>设置事件10027（控制死锁跟踪信息级别）：<code>ALTER SYSTEM SET events='10027 trace name context forever,level 2' SCOPE=SPFILE;</code></li>
-<li>级别2会包含系统状态转储，便于定位死锁根源。</li>
-</ul>
-</li>
-<li><strong>临时禁用某优化器特性</strong>：
-<ul>
-<li>关闭索引跳跃扫描：<code>ALTER SYSTEM SET events='10196 trace name context forever,level 1';</code></li>
-</ul>
-</li>
-</ol>
-<h4 id="关键注意事项-2">关键注意事项</h4>
-<ul>
-<li>避免在实例级别设置事件10046（SQL跟踪），会产生大量跟踪文件，建议使用会话级或DBMS_MONITOR包；</li>
-<li>事件配置需在Oracle Support指导下进行，部分事件可能影响数据库稳定性。</li>
-</ul>
-<h3 id="14-os_authent_prefix操作系统与密码文件认证的结合">1.4 OS_AUTHENT_PREFIX：操作系统与密码文件认证的结合</h3>
-<h4 id="核心功能-3">核心功能</h4>
-<p>OS_AUTHENT_PREFIX指定操作系统身份认证的用户名前缀，默认值为“ops$”，文档未说明其支持“操作系统认证+密码文件认证”的混合模式。</p>
-<h4 id="文档未说明的关键特性">文档未说明的关键特性</h4>
-<p>当OS_AUTHENT_PREFIX为默认值“ops$”时，以“ops$”为前缀的数据库用户（如ops$ndebes）可：</p>
-<ul>
-<li>本地连接时无需密码（操作系统身份认证）；</li>
-<li>远程连接时使用密码文件认证（需设置REMOTE_OS_AUTHENT=FALSE）；</li>
-<li>被授予SYSDBA/SYSOPER特权，无需加入操作系统DBA/OPER用户组。</li>
-</ul>
-<h4 id="实战配置示例-2">实战配置示例</h4>
-<ol>
-<li><strong>创建混合模式用户</strong>：<pre><code class="language-sql">CREATE USER ops$ndebes IDENTIFIED BY secret;
-GRANT CONNECT, SYSOPER TO ops$ndebes;
-</code></pre>
-</li>
-<li><strong>本地无密码连接</strong>：
-<ul>
-<li>操作系统用户ndebes执行：<code>sqlplus /</code>，自动以ops$ndebes身份登录；</li>
-</ul>
-</li>
-<li><strong>远程密码连接</strong>：
-<ul>
-<li><code>sqlplus ops$ndebes/secret@ten.oradbpro.com</code>。</li>
-</ul>
-</li>
-</ol>
-<h4 id="关键注意事项-3">关键注意事项</h4>
-<ul>
-<li>安全敏感环境可修改前缀（如<code>ALTER SYSTEM SET os_authent_prefix='' SCOPE=SPFILE;</code>），禁用混合认证；</li>
-<li>外部验证用户（IDENTIFIED EXTERNALLY）无法使用密码文件认证，需根据需求选择认证方式。</li>
-</ul>
-<h2 id="二隐藏的初始化参数">二、隐藏的初始化参数</h2>
-<h3 id="21-_trace_files_public跟踪文件权限控制">2.1 _TRACE_FILES_PUBLIC：跟踪文件权限控制</h3>
-<h4 id="核心功能-4">核心功能</h4>
-<p>_TRACE_FILES_PUBLIC参数控制新生成的SQL跟踪文件的访问权限，默认值为FALSE（仅Oracle安装用户和所属组可读取）。</p>
-<h4 id="实战应用场景">实战应用场景</h4>
-<p>测试环境中，开发人员需自行分析SQL跟踪文件（如使用TKPROF），可通过以下配置开放权限：</p>
-<ol>
-<li>设置参数：<code>ALTER SYSTEM SET "_trace_files_public"=TRUE SCOPE=SPFILE;</code></li>
-<li>重启实例后，新生成的跟踪文件权限为“rw-r--r--”，所有系统用户均可读取。</li>
-</ol>
-<h4 id="关键注意事项-4">关键注意事项</h4>
-<ul>
-<li>生产环境不建议启用，避免跟踪文件中的敏感信息（如绑定变量值）泄露；</li>
-<li>仅影响新生成的跟踪文件，历史文件权限需手动修改。</li>
-</ul>
-<h3 id="22-_asm_allow_only_raw_disksasm测试环境搭建">2.2 _ASM_ALLOW_ONLY_RAW_DISKS：ASM测试环境搭建</h3>
-<h4 id="核心功能-5">核心功能</h4>
-<p>_ASM_ALLOW_ONLY_RAW_DISKS参数控制ASM是否仅支持裸设备，默认值为TRUE，文档未说明其可禁用该限制，便于在无裸设备的环境中搭建ASM测试环境。</p>
-<h4 id="实战配置步骤">实战配置步骤</h4>
-<ol>
-<li><strong>创建模拟磁盘文件</strong>（Windows系统）：
-<ul>
-<li>使用asmtool工具：<code>asmtool -create C:\oradata\ARRAY1_DISK1 512</code>（创建512MB的模拟磁盘）；</li>
-</ul>
-</li>
-<li><strong>配置ASM实例参数文件</strong>（pfile+ASM.ora）：<pre><code>instance_type=ASM
-asm_diskstring='c:\oradata\*'
-_asm_allow_only_raw_disks=FALSE
-</code></pre>
-</li>
-<li><strong>启动ASM实例并创建磁盘组</strong>：<pre><code class="language-sql">STARTUP NOMOUNT PFILE='C:\ORACLE\PRODUCT\DB10.2\DATABASE\pfile+ASM.ora';
-CREATE DISKGROUP cooked_dg NORMAL REDUNDANCY
-FAILGROUP array1 DISK 'C:\ORADATA\ARRAY1_DISK1' NAME array1_disk1,
-FAILGROUP array2 DISK 'C:\ORADATA\ARRAY2_DISK1' NAME array2_disk1;
-</code></pre>
-</li>
-</ol>
-<h4 id="关键注意事项-5">关键注意事项</h4>
-<ul>
-<li>仅适用于测试环境，生产环境建议使用裸设备或SAN存储，确保性能与稳定性；</li>
-<li>可通过该环境模拟磁盘失效（如拔掉USB存储设备），测试ASM故障恢复能力。</li>
-</ul>
-<h2 id="三总结与最佳实践">三、总结与最佳实践</h2>
-<p>Oracle数据库的部分说明参数与隐藏参数是解决复杂问题的“利器”，但使用时需遵循以下原则：</p>
-<ol>
-<li><strong>安全优先</strong>：涉及审计、认证的参数（如AUDIT_SYSLOG_LEVEL、OS_AUTHENT_PREFIX）需结合企业安全策略配置，避免权限泄露；</li>
-<li><strong>性能可控</strong>：PGA相关隐藏参数的调整需通过测试验证，避免盲目增大内存导致系统分页；</li>
-<li><strong>环境区分</strong>：隐藏参数（如_TRACE_FILES_PUBLIC、_ASM_ALLOW_ONLY_RAW_DISKS）优先在测试环境使用，生产环境需谨慎评估；</li>
-<li><strong>文档补充</strong>：配置参数前需结合官方Metalink文档与实际测试，避免依赖未公开特性导致升级风险。</li>
-</ol>
-
-</div>
-<div class="clear"></div>
-
-		<p class="postfoot">
-			posted on 
-<span id="post-date" data-last-update-days="0" data-date-updated="2025-12-23 15:03">2025-12-23 15:02</span>&nbsp;
-<a href="https://www.cnblogs.com/liuziyi1">刘子毅</a>&nbsp;
-阅读(<span id="post_view_count">43</span>)&nbsp;
-评论(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19387152);return false;">收藏</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19387152', targetLink: 'https://www.cnblogs.com/liuziyi1/p/19387152', title: 'Oracle数据库初始化参数深度解析：部分说明与隐藏参数实战' })">举报</a>
-
-		</p>
-	 ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ 论索引的重要性 ]]></title>
-    <link>https://www.cnblogs.com/zhuancloud/p/19386304</link>
-    <guid>979c570a7d233b63a5c1ee0612e35918</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/zhuancloud/p/19386304" title="发布于 2025-12-23 12:14">
-    <span role="heading" aria-level="2">论索引的重要性</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
-<h1>开篇小测验</h1>
-<p>下面这样一个小SQL 你该怎么样添加最优索引</p>
-<p>两个表上现在只有聚集索引</p>
-<p>bigproduct 表上已经有聚集索引 ProductID</p>
-<p>bigtransactionhistory 表上已经有聚集索引 TransactionID</p>
-<p><img src="https://img2024.cnblogs.com/blog/980582/202512/980582-20251223120456999-725818889.png" alt="b44130128656738d3f4b780d89ab2eac" loading="lazy"></p>
-<p>&nbsp;</p>
-<p>你是否一眼就能看出来呢？</p>
-<p>答案将在文章中逐步揭晓~~~</p>
-<p><span style="font-size: 18px; color: rgba(128, 0, 128, 1)">简单粗暴的添加索引</span></p>
-<p>首先我们看一下没有优化前的执行计划</p>
-<p><img src="https://img2024.cnblogs.com/blog/980582/202512/980582-20251223120641375-577465385.png" alt="ca7e2b86cd792b5d4d254d5f5d94ad86" loading="lazy"></p>
-<p>&nbsp;</p>
-<p>clustered index scan 这其实就是表扫描，不是table scan 只是因为表上有聚集索引<br><br></p>
-<p>可以看出这个查询俩表都使用了表扫描！</p>
-<p><strong>where </strong><strong>条件添加索引</strong></p>
-<p>首先大多数人都知道 where 条件中的字段需要添加索引! 我们添加一下看看效果创建</p>
-<p>在 bigproduct 表上创建 name 列索引，在bigtransactionhistory表上创建TransactionDate 列索引。</p>
-<p>再次执行语句看一下效果！</p>
-<p>&nbsp;</p>
-<p><img src="https://img2024.cnblogs.com/blog/980582/202512/980582-20251223120724790-1339715259.jpg" alt="530d49249ae3bf15365abcf4643f1f8c" loading="lazy"></p>
-<p>&nbsp;</p>
-<p><img src="https://img2024.cnblogs.com/blog/980582/202512/980582-20251223120744822-2049170817.png" alt="fabf0aadf5ac5e8beb9fac5fc3003a45" loading="lazy"></p>
-<p>&nbsp;</p>
-<p>添加where索引以后可以看到以下几个现象</p>
-<ul class="list-paddingleft-1">
-<li>
-<p>bigproduct 从原来的clustered index scan 变成 index seek</p>
-</li>
-<li>
-<p>另外多出来个KEY Lookup(clustered)</p>
-</li>
-<li>
-<p>bigproduct 上添加的索引起了作用，逻辑读bigproduct 由 601 变成10。</p>
-</li>
-<li>
-<p>bigtransactionhistory 没啥变化啊还是clustered index scan</p>
-</li>
-</ul>
-<p>解释一下出现的现象 ：首先一点bigproduct 边添加的where条件索引，起到了作用，执行的时候不是全表扫描了，逻辑读有明显的下降，出现的 KEY Lookup 是因为选择（select）的列，在索引中没有，而需要通过聚集索引再查找一次，再找一次也意味着多一部分开销！那么同样添加了where 条件索引的bigtransactionhistory表为什么没起作用呢？那是因为SQL优化器在选择计划的时候认为，不使用TransactionDate 列索引查找效率会更好!</p>
-<p>真的么？我们来验证一下，通过指定选择索引，来让优化器选择索引查找！</p>
-<p><img src="https://img2024.cnblogs.com/blog/980582/202512/980582-20251223120817365-1926397905.jpg" alt="a27b79c2f98f8e77339b6c2820691ba2" loading="lazy"></p>
-<p>&nbsp;</p>
-<p><img src="https://img2024.cnblogs.com/blog/980582/202512/980582-20251223120831833-1982298943.png" alt="f05e632e55f36c304b12af2bd3444c92" loading="lazy"></p>
-<p>&nbsp;强制使用索引以后，可以看出逻辑读由 14W 变成1961W，语句时间也变得很长，这就是优化器为什么不选用你加的索引！优化器还是很智能的吧。</p>
-<p>高能预警：优化器可不是什么时候都这么智能的...由于缓存计划或优化器抽风等原因，也会出现优化器用了这种索引，导致你的语句奇慢，读飙升直接影响到你的内存、磁盘、CPU资源！另外如果这样一条语句是系统中一条很频繁运行的语句，你的系统就挂了！没错就挂了！这就是开篇抛出的问题就是因为一条语句！</p>
-<p><strong>消灭</strong><strong>Key Lookup </strong><strong>添加</strong><strong>select </strong><strong>字段</strong></p>
-<p>这就是传说中的覆盖索引！</p>
-<p>看到执行计划中存在Key Lookup　而且消耗占比很高，如上面强制索引的计划，那么我们就要想到的 在索引中包含那些SELECT 的列！如果消耗低，逻辑读少，如上面bigproduct 表中的Key Lookup 就可以忽略（如果你追求完美，也一样优化就可以了）。</p>
-<p>包含列的图形化创建：@秋仙 特意给你的说明</p>
-<p><img src="https://img2024.cnblogs.com/blog/980582/202512/980582-20251223120901669-431129901.png" alt="d3e35652e888862bf5ce375e2a02fb82" loading="lazy"></p>
-<p>语句创建就是：</p>
-<p><img src="https://img2024.cnblogs.com/blog/980582/202512/980582-20251223120924631-188723058.png" alt="bbe701c20ca02bfb982aa5c37db8cfd8" loading="lazy"></p>
-<p>下面我们添加一下看看效果：</p>
-<p>&nbsp;</p>
-<p><img src="https://img2024.cnblogs.com/blog/980582/202512/980582-20251223121001485-1463459080.jpg" alt="90d3a313bebda1b8554337aa18862e91" loading="lazy"></p>
-<p>&nbsp;</p>
-<p><img src="https://img2024.cnblogs.com/blog/980582/202512/980582-20251223121015442-2136458470.png" alt="f27448095c8648b6a608a7eb6c3dd77e" loading="lazy"></p>
-<p>&nbsp;</p>
-<p>添加select 索引字段后可以看出的现象：</p>
-<ul class="list-paddingleft-1">
-<li>
-<p>优化器自己选择了index seek</p>
-</li>
-<li>
-<p>bigtransactionhistory占比最高的Key Lookup消失了</p>
-</li>
-<li>
-<p>逻辑读由原来无索引的14W变成1W</p>
-</li>
-<li>
-<p>bigtransactionhistory表还提示缺少索引？</p>
-</li>
-</ul>
-<p>通过优化索引添加select 字段，我们看出语句又一次得到了提升bigtransactionhistory 从表扫描变成索引查找，逻辑读由14W变成 1W！这是一个质的飞跃啊！</p>
-<p>CREATE NONCLUSTERED INDEXTransactionDate包含ProductID_QuantityON[dbo].[bigTransactionHistory] ([TransactionDate])------INCLUDE 就是包含列INCLUDE ([ProductID],[Quantity])GO</p>
-<p>那为什么还提示缺少索引呢？创建一下试试吧！</p>
-<p><strong>索引再优化加入表关联列</strong></p>
-<p>按照提示我们创建索引：和上一个索引的不同 ProductID 列由包含列变成了索引列！</p>
-<p><img src="https://img2024.cnblogs.com/blog/980582/202512/980582-20251223121101411-980327210.png" alt="287b334380012753900062827964990f" loading="lazy"></p>
-<p>&nbsp;</p>
-<p>我们看一下效果：</p>
-<p>&nbsp;</p>
-<p><img src="https://img2024.cnblogs.com/blog/980582/202512/980582-20251223121123047-1821728972.png" alt="88760d389647159b33b8e1ce933c2fa0" loading="lazy"></p>
-<p>&nbsp;</p>
-<p><img src="https://img2024.cnblogs.com/blog/980582/202512/980582-20251223121135989-2002256099.png" alt="aa14f00db9b127ff440e7e6ae7713bba" loading="lazy"></p>
-<p>&nbsp;</p>
-<p>再次优化索引以后可以看到以下几个现象</p>
-<ul class="list-paddingleft-1">
-<li>
-<p>bigtransactionhistory表还是索引查找index seek</p>
-</li>
-<li>
-<p>bigtransactionhistory依然没有了Key Lookup</p>
-</li>
-<li>
-<p>两表关联的hash join 变成了nested loops</p>
-</li>
-<li>
-<p>并行计划变成了串行</p>
-</li>
-<li>
-<p>逻辑读又从1W 变成18</p>
-</li>
-</ul>
-<p>又一次质的飞跃！读从原来的14W 变成1W 又变成18，这样大大减少了内存和IO的消耗，另外并行计划也变成了串行，无疑又减少了大量CPU的消耗！语句时间，我想这里就不用多说了吧？</p>
-<p>高能预警：这里所说的hash join，并行变串行，不懂的朋友可以在百度自行学习，这里只是针对当前语句的情况，不能一概而论！</p>
-<p><strong>精简你的索引</strong></p>
-<p>大家都知道，索引会导致update、insert、delete操作变慢！那么尽量精简你的索引就是一个很重要的话题了！</p>
-<p>上面的优化过程中我们创建了几个索引，以bigTransactionHistory为例来看一下：</p>
-<p><img src="https://img2024.cnblogs.com/blog/980582/202512/980582-20251223121217953-1004101723.png" alt="a10260f123cbe86d9d08f309403aa708" loading="lazy"></p>
-<p>&nbsp;</p>
-<p>脚本这里就不贴了，其实我们最后创建的索引 ProductID_TransactionDate包含Quantity 已经包含了前两个索引，而且可以说无论任何类似语句都使用ProductID_TransactionDate包含Quantity 就可以了！</p>
-<p>那么我们就可以清除前两个索引！</p>
-<p>至此语句的优化算是结束了，留下的就是bigproduct 依然有一个Key Lookup可以优化，可以仿照上面的继续优化，这里就不细说了。</p>
-<p>这就是索引的重要性！</p>
-<p>开篇小测试你做对了么？如果没做对那么这么请你自行模拟一个场景再现本篇的话题吧！</p>
-<h1>总结</h1>
-<p>数据库整体缓慢往往都是因为索引问题导致的，不要小看一条语句的威力，一条高频的语句足可以让你的数据库彻底无法工作。在和大量的运维人员交流的过程中发现，对于索引的重要性恰恰没有足够的重视，一提到优化就是修改SQL语句、读写分离、分布式数据库等舍近求远的方案，优化索引才是对数据库最高性价比的优化。</p>
-<p>&nbsp;</p>
-<p>北京格瑞趋势科技有限公司是聚焦于数据服务的高新技术企业，成立于2008年，创始团队及核心技术人员来自微软和雅虎。微软数据平台长期合作伙伴，卫宁健康数据平台战略合作伙伴。通过产品+服务双轮驱动的业务模式，14年间累计服务4000+客户，覆盖互联网、市政、交通、电信、医疗、教育、电力、制造业等各个领域。</p>
-<p>&nbsp;</p>
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2025-12-23 12:14">2025-12-23 12:14</span>&nbsp;
-<a href="https://www.cnblogs.com/zhuancloud">格瑞趋势技术团队</a>&nbsp;
-阅读(<span id="post_view_count">161</span>)&nbsp;
-评论(<span id="post_comment_count">1</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19386304);return false;">收藏</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19386304', targetLink: 'https://www.cnblogs.com/zhuancloud/p/19386304', title: '论索引的重要性' })">举报</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ 反向传播 ]]></title>
-    <link>https://www.cnblogs.com/tokepson/p/19364232</link>
-    <guid>9582a51fcca2e442dfadaa0af5ec5026</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/tokepson/p/19364232" title="发布于 2025-12-23 11:31">
-    <span role="heading" aria-level="2">反向传播</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<blockquote>
-<p>懂了懂了，还是这样好理解。。。。那么反向传播的计算呢？通过y1, y2, y3 求出x1 ?</p>
-</blockquote>
-<hr>
-<p>太好了！现在我们来推导<strong>反向传播</strong>的计算。这是深度学习中最核心的部分！</p>
-<hr>
-<h2 id="1-问题设定"><strong>1. 问题设定</strong></h2>
-<p>我们有一个简单的三层结构：</p>
-<pre><code>输入 x → 线性层（得 z）→ softmax → 交叉熵损失 L
-</code></pre>
-<p>其中：</p>
-<ul>
-<li>$ z = Wx + b $（为了简化，我们先只考虑从 z 开始的反向传播）</li>
-<li>$ p = \text{softmax}(z) $</li>
-<li>$ L = -\sum y_i \log p_i $</li>
-</ul>
-<p>我们要求 $ \frac{\partial L}{\partial z_j} $，也就是损失对<strong>原始输出 z</strong> 的梯度。</p>
-<hr>
-<h2 id="2-已知关系"><strong>2. 已知关系</strong></h2>
-<p>设类别数 $ C = 3 $，则：</p>
-<p></p><div class="math display">\[p_i = \frac{e^{z_i}}{\sum_{k=1}^C e^{z_k}}
-\]</div><p></p><p></p><div class="math display">\[L = -\sum_{i=1}^C y_i \log p_i
-\]</div><p></p><hr>
-<h2 id="3-计算梯度-"><strong>3. 计算梯度</strong> <span class="math inline">\(\frac{\partial L}{\partial z_j}\)</span></h2>
-<p>这是一个<strong>非常重要的结果</strong>，也是 softmax 与交叉熵结合的美妙之处。</p>
-<p><strong>推导过程</strong>：</p>
-<p></p><div class="math display">\[\frac{\partial L}{\partial z_j} = \sum_{i=1}^C \frac{\partial L}{\partial p_i} \cdot \frac{\partial p_i}{\partial z_j}
-\]</div><p></p><p>第一步：<span class="math inline">\(\frac{\partial L}{\partial p_i} = -\frac{y_i}{p_i}\)</span></p>
-<p>第二步：需要计算 <span class="math inline">\(\frac{\partial p_i}{\partial z_j}\)</span>，分两种情况：</p>
-<ul>
-<li><strong>当 $ i = j $时</strong>：</li>
-</ul>
-<p></p><div class="math display">\[\frac{\partial p_i}{\partial z_i} = p_i(1 - p_i)
-\]</div><p></p><ul>
-<li><strong>当 $ i \neq j $时</strong>：</li>
-</ul>
-<p></p><div class="math display">\[\frac{\partial p_i}{\partial z_j} = -p_i p_j
-\]</div><p></p><p>现在代入：</p>
-<p></p><div class="math display">\[\frac{\partial L}{\partial z_j} = \sum_{i=1}^C \left( -\frac{y_i}{p_i} \right) \cdot \frac{\partial p_i}{\partial z_j}
-\]</div><p></p><p>分开求和：</p>
-<ol>
-<li>当 <span class="math inline">\(i = j\)</span> 时：项为 <span class="math inline">\(-\frac{y_j}{p_j} \cdot p_j(1-p_j) = -y_j(1-p_j)\)</span></li>
-<li>当 <span class="math inline">\(i \neq j\)</span> 时：项为 <span class="math inline">\(-\frac{y_i}{p_i} \cdot (-p_i p_j) = y_i p_j\)</span></li>
-</ol>
-<p>所以：</p>
-<p></p><div class="math display">\[\frac{\partial L}{\partial z_j} = -y_j(1-p_j) + \sum_{i \neq j} y_i p_j
-\]</div><p></p><p>注意 <span class="math inline">\(\sum_{i \neq j} y_i = 1 - y_j\)</span>（因为 y 是 one-hot，总和为1）</p>
-<p>因此：</p>
-<p></p><div class="math display">\[\frac{\partial L}{\partial z_j} = -y_j + y_j p_j + p_j(1 - y_j)
-\]</div><p></p><p></p><div class="math display">\[= -y_j + p_j(y_j + 1 - y_j)
-\]</div><p></p><p></p><div class="math display">\[= p_j - y_j
-\]</div><p></p><hr>
-<h2 id="4-最终简洁结果"><strong>4. 最终简洁结果</strong></h2>
-<p></p><div class="math display">\[\boxed{\frac{\partial L}{\partial z_j} = p_j - y_j}
-\]</div><p></p><p><strong>太漂亮了！</strong> 这个结果意味着：</p>
-<ul>
-<li>梯度 = <strong>预测概率 - 真实标签</strong></li>
-<li>对于真实类别（<span class="math inline">\(y_j=1\)</span>）：梯度 = <span class="math inline">\(p_j - 1\)</span>（负数，需要增大 <span class="math inline">\(z_j\)</span>）</li>
-<li>对于其他类别（<span class="math inline">\(y_j=0\)</span>）：梯度 = <span class="math inline">\(p_j - 0 = p_j\)</span>（正数，需要减小 <span class="math inline">\(z_j\)</span>）</li>
-</ul>
-<hr>
-<h2 id="5-例子验证"><strong>5. 例子验证</strong></h2>
-<p>用我们刚才的例子：</p>
-<ul>
-<li>$ z = [3.0, 1.0, -1.0] $</li>
-<li>$ y = [1, 0, 0] $</li>
-<li>$ p = [0.88, 0.12, 0.00] $</li>
-</ul>
-<p>梯度：</p>
-<p></p><div class="math display">\[\frac{\partial L}{\partial z} = p - y = [0.88-1, 0.12-0, 0.00-0] = [-0.12, 0.12, 0.00]
-\]</div><p></p><p><strong>解释</strong>：</p>
-<ul>
-<li>对真实类别（猫）：梯度 -0.12 → 需要稍微增大 <span class="math inline">\(z_0\)</span></li>
-<li>对其他类别（狗）：梯度 +0.12 → 需要减小 <span class="math inline">\(z_1\)</span></li>
-<li>对鸟：梯度 0 → 不需要改变</li>
-</ul>
-<hr>
-<h2 id="6-扩展到-x-的梯度"><strong>6. 扩展到 x 的梯度</strong></h2>
-<p>如果我们有 $ z = Wx + b $，那么：</p>
-<p></p><div class="math display">\[\frac{\partial L}{\partial x} = W^T \cdot \frac{\partial L}{\partial z}
-\]</div><p></p><p>因为 $ \frac{\partial z}{\partial x} = W^T $。</p>
-<hr>
-<h2 id="总结反向传播流程"><strong>总结反向传播流程</strong>：</h2>
-<ol>
-<li>前向计算：$ z → softmax → p → L = -\sum y_i \log p_i $</li>
-<li>反向传播：
-<ul>
-<li>$ \frac{\partial L}{\partial z} = p - y $（极其简洁！）</li>
-<li>然后继续向后传播到 $ W, b, x $</li>
-</ul>
-</li>
-</ol>
-<p>这就是为什么 softmax + 交叉熵在深度学习中被广泛使用——梯度计算既简洁又数值稳定！</p>
-<hr>
-<h2 id="相关参考">相关参考：</h2>
-<ul>
-<li><a href="http://neuralnetworksanddeeplearning.com/chap2.html" target="_blank" rel="noopener nofollow">How the backpropagation algorithm works</a></li>
-<li><a href="https://blog.csdn.net/qq_36803941/article/details/136191848?spm=1001.2101.3001.6650.2&amp;utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7EPaidSort-2-136191848-blog-107242858.235%5Ev43%5Epc_blog_bottom_relevance_base5&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7EPaidSort-2-136191848-blog-107242858.235%5Ev43%5Epc_blog_bottom_relevance_base5&amp;utm_relevant_index=4" target="_blank" rel="noopener nofollow">深度学习：完全理解反向传播算法（一）</a></li>
-</ul>
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2025-12-23 11:31">2025-12-23 11:31</span>&nbsp;
-<a href="https://www.cnblogs.com/tokepson">TokE648</a>&nbsp;
-阅读(<span id="post_view_count">8</span>)&nbsp;
-评论(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19364232);return false;">收藏</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19364232', targetLink: 'https://www.cnblogs.com/tokepson/p/19364232', title: '反向传播' })">举报</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ vite7+deepseek流式ai模板|vue3.5+deepseek3.2+markdown打字输出ai助手 ]]></title>
-    <link>https://www.cnblogs.com/xiaoyan2017/p/19385909</link>
-    <guid>bae9aa4667b7b08dfd6fd88728d55b79</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/xiaoyan2017/p/19385909" title="发布于 2025-12-23 11:06">
-    <span role="heading" aria-level="2">vite7+deepseek流式ai模板|vue3.5+deepseek3.2+markdown打字输出ai助手</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
-<p><span style="font-size: 18px; font-family: 宋体, &quot;Songti SC&quot;; color: rgba(149, 20, 234, 1)">2026最新款爆肝<span style="background-color: rgba(251, 217, 250, 1)">vite7.2+deepseek-v3.2+vant4+markdown</span>流式打字输出AI对话模板。</span></p>
-<p><span style="font-size: 12px"><strong>vue3-mobile-deepseek</strong>：基于<span style="background-color: rgba(204, 255, 204, 1)">vue3.5+vite7.2+vant4+markdown+openai</span>深度集成<strong>deepseek-v3.2</strong>聊天大模型。支持<span style="background-color: rgba(255, 255, 153, 1)"><strong>浅色+深色主题、stream流式输出、代码高亮、复制代码、katex公式、mermaid图表</strong></span>等功能。</span></p>
-<p><img alt="未标题-2" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223095028752-606844753.png" class="lazyload"></p>
-<p><img alt="p2_2" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223095502103-480557904.gif" class="lazyload"></p>
-<h3>技术栈</h3>
-<ul>
-<li><span style="font-size: 12px">编辑器：vscode</span></li>
-<li><span style="font-size: 12px">技术框架：vite^7.2.4+vue^3.5.24+vue-router^4.6.4</span></li>
-<li><span style="font-size: 12px">大模型框架：deepseek-v3.2 + openai</span></li>
-<li><span style="font-size: 12px">UI组件库：vant^4.9.21 (有赞vue3移动端组件库)</span></li>
-<li><span style="font-size: 12px">状态管理：pinia^3.0.4</span></li>
-<li><span style="font-size: 12px">高亮插件：highlight.js^11.11.1</span></li>
-<li><span style="font-size: 12px">markdown解析：markdown-it</span></li>
-<li><span style="font-size: 12px">katex公式：@mdit/plugin-katex^0.24.1</span></li>
-<li><span style="font-size: 12px">本地缓存：pinia-plugin-persistedstate^4.7.1</span></li>
-</ul>
-<p><img alt="p3" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223095301964-489954613.gif" class="lazyload"></p>
-<p><img alt="p5" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223100008878-2134758406.gif" class="lazyload"></p>
-<h3>功能性</h3>
-<ol>
-<li><span style="font-size: 12px">Vue3.5+DeepSeek-V3.2流式打字输出效果</span></li>
-<li><span style="font-size: 12px">基于Vite7.2构建，集成DeepSeek-Chat模型，性能更优，对话丝滑流畅</span></li>
-<li><span style="font-size: 12px">支持各种代码高亮（<strong>复制代码+收缩功能</strong>），方便展示和分享代码片段</span></li>
-<li><span style="font-size: 12px">支持输出<strong>Katex数学公式、Mermaid图表</strong></span></li>
-<li><span style="font-size: 12px">使用vant4组件库，风格统一，时尚大气</span></li>
-<li><span style="font-size: 12px">支持<strong>移动端+PC端750px像素</strong>适配</span></li>
-</ol>
-<p><img alt="未标题-4" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223100653751-1334957329.png" class="lazyload"></p>
-<blockquote>
-<h3><em>目前vue3-deepseek流式ai对话项目已经更新到我的原创作品集，欢迎下载使用。</em></h3>
-<p><span style="font-size: 12px"><a href="https://mall.bilibili.com/neul-next/detailuniversal/detail.html?isMerchant=1&amp;page=detailuniversal_detail&amp;saleType=10&amp;itemsId=11721604&amp;loadingShow=1&amp;noTitleBar=1&amp;msource=merchant_share" target="_blank" rel="noopener nofollow">Vue3+DeepSeek+Vant4智能聊天AI流式对话模板</a></span></p>
-</blockquote>
-<h3>项目框架结构</h3>
-<p><span style="font-size: 12px">整个项目使用最新<strong>vite7.2</strong>搭建项目模板，遵循<span style="background-color: rgba(204, 255, 204, 1)">vue3 setup</span>语法编码。</span></p>
-<p><img alt="360截图20251222233502584" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223101243748-1689844727.png" class="lazyload"></p>
-<h3>vue3环境变量.env配置</h3>
-<p><span style="font-size: 12px">申请一个deepseek apikey，替换掉项目根目录下<strong>.env</strong>文件里的key即可畅快体验deepseek-v3.2流式输出功能。</span></p>
-<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223101608080-727506622.png" class="lazyload"></p>
-<div class="cnblogs_code">
-<pre><span style="color: rgba(0, 0, 0, 1)"># title
-VITE_APP_TITLE </span>= 'Vue3-DeepSeek-Chat'<span style="color: rgba(0, 0, 0, 1)">
-
-# port 默认http:</span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)">localhost:5173/</span>
-VITE_PORT = 3001<span style="color: rgba(0, 0, 0, 1)">
-
-# 运行时自动打开浏览器
-VITE_OPEN </span>= <span style="color: rgba(0, 0, 255, 1)">true</span><span style="color: rgba(0, 0, 0, 1)">
-
-# 开启https
-VITE_HTTPS </span>= <span style="color: rgba(0, 0, 255, 1)">false</span><span style="color: rgba(0, 0, 0, 1)">
-
-# 是否删除生产环境 console
-VITE_DROP_CONSOLE </span>= <span style="color: rgba(0, 0, 255, 1)">true</span><span style="color: rgba(0, 0, 0, 1)">
-
-# DeepSeek API配置
-VITE_DEEPSEEK_API_KEY </span>=<span style="color: rgba(0, 0, 0, 1)"> 替换为你的 API Key
-VITE_DEEPSEEK_BASE_URL </span>= https:<span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)">api.deepseek.com</span></pre>
-</div>
-<h3>项目入口main.js</h3>
-<div class="cnblogs_code">
-<pre>import { createApp } from 'vue'<span style="color: rgba(0, 0, 0, 1)">
-import </span>'./style.scss'<span style="color: rgba(0, 0, 0, 1)">
-import App from </span>'./App.vue'
-
-<span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 引入路由/状态管理</span>
-import Router from './router'<span style="color: rgba(0, 0, 0, 1)">
-import Pinia from </span>'./pinia'<span style="color: rgba(0, 0, 0, 1)">
-
-import Plugins from </span>'./plugins'<span style="color: rgba(0, 0, 0, 1)">
-
-const app </span>=<span style="color: rgba(0, 0, 0, 1)"> createApp(App)
-
-app
-.use(Router)
-.use(Pinia)
-.use(Plugins)
-.mount(</span>'#app')</pre>
-</div>
-<p><img alt="未标题-3" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223101727948-845129722.png" class="lazyload"></p>
-<p><img alt="015360截图20251222210330994" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223102137659-2062357504.png" class="lazyload"></p>
-<h3>项目布局结构</h3>
-<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223102355099-271621583.png" class="lazyload"></p>
-<p><span style="font-size: 12px">整体项目结构分为<strong>顶部导航栏+聊天会话区+底部编辑栏</strong>三个模块。</span></p>
-<div class="cnblogs_code">
-<pre><span style="color: rgba(0, 0, 255, 1)">&lt;</span><span style="color: rgba(128, 0, 0, 1)">template</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span>
-  <span style="color: rgba(0, 0, 255, 1)">&lt;</span><span style="color: rgba(128, 0, 0, 1)">div </span><span style="color: rgba(255, 0, 0, 1)">class</span><span style="color: rgba(0, 0, 255, 1)">="flexbox flex-col"</span><span style="color: rgba(255, 0, 0, 1)"> style</span><span style="color: rgba(0, 0, 255, 1)">="height:100%;"</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span>
-    <span style="color: rgba(0, 0, 255, 1)">&lt;</span><span style="color: rgba(128, 0, 0, 1)">Toolbar </span><span style="color: rgba(255, 0, 0, 1)">:title</span><span style="color: rgba(0, 0, 255, 1)">="chatSession?.title"</span> <span style="color: rgba(0, 0, 255, 1)">/&gt;</span>
-
-    <span style="color: rgba(0, 0, 255, 1)">&lt;</span><span style="color: rgba(128, 0, 0, 1)">div </span><span style="color: rgba(255, 0, 0, 1)">class</span><span style="color: rgba(0, 0, 255, 1)">="v3ai__scrollview flex1"</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span>
-      <span style="color: rgba(0, 128, 0, 1)">&lt;!--</span><span style="color: rgba(0, 128, 0, 1)"> Chat对话 </span><span style="color: rgba(0, 128, 0, 1)">--&gt;</span>
-      <span style="color: rgba(0, 0, 255, 1)">&lt;</span><span style="color: rgba(128, 0, 0, 1)">div </span><span style="color: rgba(255, 0, 0, 1)">v-if</span><span style="color: rgba(0, 0, 255, 1)">="chatSession &amp;&amp; !isEmpty(chatSession.data)"</span><span style="color: rgba(255, 0, 0, 1)"> class</span><span style="color: rgba(0, 0, 255, 1)">="v3ai__chatbot"</span><span style="color: rgba(255, 0, 0, 1)"> ref</span><span style="color: rgba(0, 0, 255, 1)">="scrollRef"</span><span style="color: rgba(255, 0, 0, 1)"> @scroll</span><span style="color: rgba(0, 0, 255, 1)">="onScroll"</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span>
-        <span style="color: rgba(0, 0, 255, 1)">&lt;</span><span style="color: rgba(128, 0, 0, 1)">div </span><span style="color: rgba(255, 0, 0, 1)">class</span><span style="color: rgba(0, 0, 255, 1)">="v3ai__chatbot-sessions"</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span><span style="color: rgba(0, 0, 0, 1)">
-          ...
-        </span><span style="color: rgba(0, 0, 255, 1)">&lt;/</span><span style="color: rgba(128, 0, 0, 1)">div</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span>
-        <span style="color: rgba(0, 128, 0, 1)">&lt;!--</span><span style="color: rgba(0, 128, 0, 1)"> 滚动底部 </span><span style="color: rgba(0, 128, 0, 1)">--&gt;</span>
-        <span style="color: rgba(0, 0, 255, 1)">&lt;</span><span style="color: rgba(128, 0, 0, 1)">div </span><span style="color: rgba(255, 0, 0, 1)">class</span><span style="color: rgba(0, 0, 255, 1)">="v3ai__scrollbottom"</span><span style="color: rgba(255, 0, 0, 1)"> :class</span><span style="color: rgba(0, 0, 255, 1)">="{'is-bottom': reachBottom}"</span><span style="color: rgba(255, 0, 0, 1)"> @click</span><span style="color: rgba(0, 0, 255, 1)">="scrollToBottom"</span><span style="color: rgba(0, 0, 255, 1)">&gt;&lt;</span><span style="color: rgba(128, 0, 0, 1)">i </span><span style="color: rgba(255, 0, 0, 1)">class</span><span style="color: rgba(0, 0, 255, 1)">="iconfont ai-arrD"</span><span style="color: rgba(0, 0, 255, 1)">&gt;&lt;/</span><span style="color: rgba(128, 0, 0, 1)">i</span><span style="color: rgba(0, 0, 255, 1)">&gt;&lt;/</span><span style="color: rgba(128, 0, 0, 1)">div</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span>
-      <span style="color: rgba(0, 0, 255, 1)">&lt;/</span><span style="color: rgba(128, 0, 0, 1)">div</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span>
-      <span style="color: rgba(0, 128, 0, 1)">&lt;!--</span><span style="color: rgba(0, 128, 0, 1)"> 导语 </span><span style="color: rgba(0, 128, 0, 1)">--&gt;</span>
-      <span style="color: rgba(0, 0, 255, 1)">&lt;</span><span style="color: rgba(128, 0, 0, 1)">div </span><span style="color: rgba(255, 0, 0, 1)">v-else class</span><span style="color: rgba(0, 0, 255, 1)">="v3ai__chatbot-intro"</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span>
-        <span style="color: rgba(0, 0, 255, 1)">&lt;</span><span style="color: rgba(128, 0, 0, 1)">i </span><span style="color: rgba(255, 0, 0, 1)">class</span><span style="color: rgba(0, 0, 255, 1)">="logo iconfont ai-deepseek"</span><span style="color: rgba(0, 0, 255, 1)">&gt;&lt;/</span><span style="color: rgba(128, 0, 0, 1)">i</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span>
-        <span style="color: rgba(0, 0, 255, 1)">&lt;</span><span style="color: rgba(128, 0, 0, 1)">h3 </span><span style="color: rgba(255, 0, 0, 1)">class</span><span style="color: rgba(0, 0, 255, 1)">="name"</span><span style="color: rgba(0, 0, 255, 1)">&gt;&lt;</span><span style="color: rgba(128, 0, 0, 1)">span </span><span style="color: rgba(255, 0, 0, 1)">class</span><span style="color: rgba(0, 0, 255, 1)">="txt text-gradient"</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span>嗨~ Vue3-DeepSeek<span style="color: rgba(0, 0, 255, 1)">&lt;/</span><span style="color: rgba(128, 0, 0, 1)">span</span><span style="color: rgba(0, 0, 255, 1)">&gt;&lt;/</span><span style="color: rgba(128, 0, 0, 1)">h3</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span>
-        <span style="color: rgba(0, 0, 255, 1)">&lt;</span><span style="color: rgba(128, 0, 0, 1)">p </span><span style="color: rgba(255, 0, 0, 1)">class</span><span style="color: rgba(0, 0, 255, 1)">="desc"</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span>你身边的智能小帮手，我可以帮你搜索、答疑、写作，请把你的任务交给我吧~<span style="color: rgba(0, 0, 255, 1)">&lt;/</span><span style="color: rgba(128, 0, 0, 1)">p</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span>
-        <span style="color: rgba(0, 0, 255, 1)">&lt;</span><span style="color: rgba(128, 0, 0, 1)">div </span><span style="color: rgba(255, 0, 0, 1)">class</span><span style="color: rgba(0, 0, 255, 1)">="prompt"</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span>
-          <span style="color: rgba(0, 0, 255, 1)">&lt;</span><span style="color: rgba(128, 0, 0, 1)">p </span><span style="color: rgba(255, 0, 0, 1)">class</span><span style="color: rgba(0, 0, 255, 1)">="tip"</span><span style="color: rgba(0, 0, 255, 1)">&gt;&lt;</span><span style="color: rgba(128, 0, 0, 1)">span</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span>你可以这样问<span style="color: rgba(0, 0, 255, 1)">&lt;/</span><span style="color: rgba(128, 0, 0, 1)">span</span><span style="color: rgba(0, 0, 255, 1)">&gt;&lt;</span><span style="color: rgba(128, 0, 0, 1)">span</span><span style="color: rgba(255, 0, 0, 1)"> @click</span><span style="color: rgba(0, 0, 255, 1)">="refreshPrompt"</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span>换一换<span style="color: rgba(0, 0, 255, 1)">&lt;</span><span style="color: rgba(128, 0, 0, 1)">i </span><span style="color: rgba(255, 0, 0, 1)">class</span><span style="color: rgba(0, 0, 255, 1)">="iconfont ai-shuaxin"</span><span style="color: rgba(0, 0, 255, 1)">&gt;&lt;/</span><span style="color: rgba(128, 0, 0, 1)">i</span><span style="color: rgba(0, 0, 255, 1)">&gt;&lt;/</span><span style="color: rgba(128, 0, 0, 1)">span</span><span style="color: rgba(0, 0, 255, 1)">&gt;&lt;/</span><span style="color: rgba(128, 0, 0, 1)">p</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span>
-          <span style="color: rgba(0, 0, 255, 1)">&lt;</span><span style="color: rgba(128, 0, 0, 1)">ul </span><span style="color: rgba(255, 0, 0, 1)">class</span><span style="color: rgba(0, 0, 255, 1)">="list"</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span>
-            <span style="color: rgba(0, 0, 255, 1)">&lt;</span><span style="color: rgba(128, 0, 0, 1)">li </span><span style="color: rgba(255, 0, 0, 1)">v-for</span><span style="color: rgba(0, 0, 255, 1)">="(item,index) in promptList"</span><span style="color: rgba(255, 0, 0, 1)"> :key</span><span style="color: rgba(0, 0, 255, 1)">="index"</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span>
-              <span style="color: rgba(0, 0, 255, 1)">&lt;</span><span style="color: rgba(128, 0, 0, 1)">div </span><span style="color: rgba(255, 0, 0, 1)">class</span><span style="color: rgba(0, 0, 255, 1)">="txt"</span><span style="color: rgba(255, 0, 0, 1)"> @click</span><span style="color: rgba(0, 0, 255, 1)">="changePrompt(item.prompt)"</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span>{{item.emoji}} {{item.prompt}}<span style="color: rgba(0, 0, 255, 1)">&lt;/</span><span style="color: rgba(128, 0, 0, 1)">div</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span>
-            <span style="color: rgba(0, 0, 255, 1)">&lt;/</span><span style="color: rgba(128, 0, 0, 1)">li</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span>
-          <span style="color: rgba(0, 0, 255, 1)">&lt;/</span><span style="color: rgba(128, 0, 0, 1)">ul</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span>
-        <span style="color: rgba(0, 0, 255, 1)">&lt;/</span><span style="color: rgba(128, 0, 0, 1)">div</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span>
-      <span style="color: rgba(0, 0, 255, 1)">&lt;/</span><span style="color: rgba(128, 0, 0, 1)">div</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span>
-    <span style="color: rgba(0, 0, 255, 1)">&lt;/</span><span style="color: rgba(128, 0, 0, 1)">div</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span>
-
-    <span style="color: rgba(0, 128, 0, 1)">&lt;!--</span><span style="color: rgba(0, 128, 0, 1)"> 编辑器 </span><span style="color: rgba(0, 128, 0, 1)">--&gt;</span>
-    <span style="color: rgba(0, 0, 255, 1)">&lt;</span><span style="color: rgba(128, 0, 0, 1)">ChatEditor </span><span style="color: rgba(255, 0, 0, 1)">ref</span><span style="color: rgba(0, 0, 255, 1)">="editorRef"</span><span style="color: rgba(255, 0, 0, 1)"> :value</span><span style="color: rgba(0, 0, 255, 1)">="promptValue"</span><span style="color: rgba(255, 0, 0, 1)"> :reachBottom</span><span style="color: rgba(0, 0, 255, 1)">="reachBottom"</span><span style="color: rgba(255, 0, 0, 1)"> :scrollBottom</span><span style="color: rgba(0, 0, 255, 1)">="scrollToBottom"</span> <span style="color: rgba(0, 0, 255, 1)">/&gt;</span>
-  <span style="color: rgba(0, 0, 255, 1)">&lt;/</span><span style="color: rgba(128, 0, 0, 1)">div</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span>
-<span style="color: rgba(0, 0, 255, 1)">&lt;/</span><span style="color: rgba(128, 0, 0, 1)">template</span><span style="color: rgba(0, 0, 255, 1)">&gt;</span></pre>
-</div>
-<p><img alt="p4" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223102648231-1480552356.gif" class="lazyload"></p>
-<h3>自定义katex公式+mermaid图表</h3>
-<p><span style="font-size: 12px">在页面引入katex和mermaid插件。</span></p>
-<div class="cnblogs_code">
-<pre>import { imgSize } from '@mdit/plugin-img-size' <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 支持带尺寸图片</span>
-import { katex } from "@mdit/plugin-katex"; <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 支持数学公式</span>
-import 'katex/dist/katex.min.css'
-<span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 渲染mermaid图表</span>
-import { markdownItMermaidPlugin } from '@/components/markdown/plugins/mermaidPlugin'</pre>
-</div>
-<p>渲染markdown流式</p>
-<div class="cnblogs_code">
-<pre><span style="color: rgba(0, 0, 255, 1)">&lt;</span><span style="color: rgba(128, 0, 0, 1)">Markdown
-  </span><span style="color: rgba(255, 0, 0, 1)">:source</span><span style="color: rgba(0, 0, 255, 1)">="item.content"</span><span style="color: rgba(255, 0, 0, 1)">
-  :html</span><span style="color: rgba(0, 0, 255, 1)">="true"</span><span style="color: rgba(255, 0, 0, 1)">
-  :linkify</span><span style="color: rgba(0, 0, 255, 1)">="true"</span><span style="color: rgba(255, 0, 0, 1)">
-  :typographer</span><span style="color: rgba(0, 0, 255, 1)">="true"</span><span style="color: rgba(255, 0, 0, 1)">
-  :plugins</span><span style="color: rgba(0, 0, 255, 1)">="[
-    imgSize,
-    [katex, {delimiters: 'all'}],
-    [markdownItMermaidPlugin, { ... }]
-  ]"</span><span style="color: rgba(255, 0, 0, 1)">
-  @copy</span><span style="color: rgba(0, 0, 255, 1)">="onCopy"</span>
-<span style="color: rgba(0, 0, 255, 1)">/&gt;</span></pre>
-</div>
-<p>封装一个mermaid图表解析插件</p>
-<div class="cnblogs_code">
-<pre>export const markdownItMermaidPlugin = (md, options) =&gt;<span style="color: rgba(0, 0, 0, 1)"> {
-  const defaultFence </span>=<span style="color: rgba(0, 0, 0, 1)"> md.renderer.rules.fence
-  md.renderer.rules.fence </span>= (...args) =&gt;<span style="color: rgba(0, 0, 0, 1)"> {
-    const [tokens, idx] </span>=<span style="color: rgba(0, 0, 0, 1)"> args
-    const token </span>=<span style="color: rgba(0, 0, 0, 1)"> tokens[idx]
-    const lang </span>= token.info.replace(/\[.*\]/, '').trim() || ''
-
-    <span style="color: rgba(0, 0, 255, 1)">if</span>(lang === 'mermaid'<span style="color: rgba(0, 0, 0, 1)">) {
-      const code </span>=<span style="color: rgba(0, 0, 0, 1)"> token.content.trim()
-      const hash </span>=<span style="color: rgba(0, 0, 0, 1)"> generateHash(code)
-      const uuid </span>= `${hash}-${Date.now()}-${Math.random().toString(36).substring(2, 9<span style="color: rgba(0, 0, 0, 1)">)}`
-
-      </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 如果有缓存，加载缓存图表</span>
-      <span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)">(renderCache.has(hash)) {
-        </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> console.log('加载缓存mermaid图表')</span>
-        <span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)"> `
-          ${ defaultFence(...args) }
-          </span>&lt;div class="mermaid-container"&gt;${renderCache.get(hash)}&lt;/div&gt;
-<span style="color: rgba(0, 0, 0, 1)">        `
-      }
-</span>
-<span style="color: rgba(0, 0, 0, 1)">      nextTickRender(uuid)
-
-      </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)"> `
-        ${ defaultFence(...args) }
-        </span>&lt;div class="mermaid-container" id="${uuid}" data-mermaid-hash="${hash}" data-mermaid-code="${encodeURIComponent(code)}"&gt;
-          &lt;div class="mermaid-loading"&gt;📊Mermaid 图表加载中...&lt;/div&gt;
-        &lt;/div&gt;
-<span style="color: rgba(0, 0, 0, 1)">      `
-    }
-
-    </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)"> defaultFence(...args)
-  }
-
-  </span><span style="color: rgba(0, 0, 255, 1)">function</span><span style="color: rgba(0, 0, 0, 1)"> nextTickRender(containerId) {
-    </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 如果容器存在，直接渲染</span>
-    <span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)">(document.getElementById(containerId)) {
-      renderMermaidDiagram(containerId)
-      </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)">
-    }
-    </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 使用MutationObserver监听DOM更新</span>
-    const observer = <span style="color: rgba(0, 0, 255, 1)">new</span> MutationObserver((mutations, ob) =&gt;<span style="color: rgba(0, 0, 0, 1)"> {
-      const container </span>=<span style="color: rgba(0, 0, 0, 1)"> document.getElementById(containerId)
-      </span><span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)">(container) {
-        ob.disconnect()
-        renderMermaidDiagram(containerId)
-      }
-    })
-    observer.observe(document.body, {
-      childList: </span><span style="color: rgba(0, 0, 255, 1)">true</span><span style="color: rgba(0, 0, 0, 1)">,
-      subtree: </span><span style="color: rgba(0, 0, 255, 1)">true</span><span style="color: rgba(0, 0, 0, 1)">
-    })
-  }
-  
-  async </span><span style="color: rgba(0, 0, 255, 1)">function</span><span style="color: rgba(0, 0, 0, 1)"> renderMermaidDiagram(containerId) {
-    const container </span>=<span style="color: rgba(0, 0, 0, 1)"> document.getElementById(containerId)
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (!<span style="color: rgba(0, 0, 0, 1)">container) {
-      console.warn(`Mermaid container #${containerId} not found`)
-      </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)">
-    }
-  
-    const code </span>=<span style="color: rgba(0, 0, 0, 1)"> decodeURIComponent(container.dataset.mermaidCode)
-    const hash </span>=<span style="color: rgba(0, 0, 0, 1)"> container.dataset.mermaidHash
-
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (!<span style="color: rgba(0, 0, 0, 1)">code) {
-      </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)">
-    }
-
-    </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 检查 mermaid 是否可用</span>
-    <span style="color: rgba(0, 0, 255, 1)">if</span> (<span style="color: rgba(0, 0, 255, 1)">typeof</span> window.mermaid === 'undefined'<span style="color: rgba(0, 0, 0, 1)">) {
-      showError(container, </span>'Mermaid 库未加载!'<span style="color: rgba(0, 0, 0, 1)">)
-      </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)">
-    }
-  
-    </span><span style="color: rgba(0, 0, 255, 1)">try</span><span style="color: rgba(0, 0, 0, 1)"> {
-      </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 配置 mermaid（如果还未配置）</span>
-      <span style="color: rgba(0, 0, 255, 1)">if</span> (!<span style="color: rgba(0, 0, 0, 1)">window.mermaid.initialized) {
-        window.mermaid.initialize({
-          startOnLoad: </span><span style="color: rgba(0, 0, 255, 1)">false</span><span style="color: rgba(0, 0, 0, 1)">,
-          theme: </span>'default'<span style="color: rgba(0, 0, 0, 1)">,
-          securityLevel: </span>'loose'<span style="color: rgba(0, 0, 0, 1)">,</span><span style="color: rgba(0, 0, 0, 1)">
-        })
-        window.mermaid.initialized </span>= <span style="color: rgba(0, 0, 255, 1)">true</span><span style="color: rgba(0, 0, 0, 1)">
-      }
-  
-      let svg
-  
-      </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 检查缓存</span>
-      <span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)">(renderCache.has(hash)) {
-        svg </span>=<span style="color: rgba(0, 0, 0, 1)"> renderCache.get(hash)
-      }</span><span style="color: rgba(0, 0, 255, 1)">else</span><span style="color: rgba(0, 0, 0, 1)"> {
-        const { isValid } </span>=<span style="color: rgba(0, 0, 0, 1)"> await verifyMermaid(code)
-
-        </span><span style="color: rgba(0, 0, 255, 1)">if</span>(!<span style="color: rgba(0, 0, 0, 1)">isValid) {
-          showError(container, `</span>&lt;pre&gt;渲染语法错误：\n${ code }\n&lt;/pre&gt;`)
-          <span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)">
-        }
-
-        </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 使用唯一ID渲染(避免图表冲突)</span>
-        const {svg: renderedSvg} = await window.mermaid.render(`mermaid-<span style="color: rgba(0, 0, 0, 1)">${containerId}`, code)
-        svg </span>=<span style="color: rgba(0, 0, 0, 1)"> renderedSvg
-        renderCache.set(hash, svg)
-      }
-
-      </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 更新容器内容</span>
-      container.innerHTML =<span style="color: rgba(0, 0, 0, 1)"> svg
-      container.removeAttribute(</span>'data-mermaid-hash'<span style="color: rgba(0, 0, 0, 1)">)
-      container.removeAttribute(</span>'data-mermaid-code'<span style="color: rgba(0, 0, 0, 1)">)
-
-      </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 触发回调</span>
-      <span style="color: rgba(0, 0, 255, 1)">if</span>(options?<span style="color: rgba(0, 0, 0, 1)">.reachBottom) {
-        options</span>?.onRender?<span style="color: rgba(0, 0, 0, 1)">.()
-      }
-    } </span><span style="color: rgba(0, 0, 255, 1)">catch</span><span style="color: rgba(0, 0, 0, 1)"> (error) {
-      console.error(</span>'Mermaid 渲染失败:'<span style="color: rgba(0, 0, 0, 1)">, error)
-      showError(container, `</span>&lt;pre&gt;渲染图表时出错: \n ${error.message}\n&lt;/pre&gt;`)
-<span style="color: rgba(0, 0, 0, 1)">    }
-  }
-}</span></pre>
-</div>
-<p><img alt="001360截图20251222193621367" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223103538181-209659643.png" class="lazyload"></p>
-<p><img alt="001360截图20251222193715663" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223103552216-1545436278.png" class="lazyload"></p>
-<p><img alt="002360截图20251222193937688" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223103612440-1597186190.png" class="lazyload"></p>
-<p><img alt="004360截图20251222194733968" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223103703349-1708451451.png" class="lazyload"></p>
-<p><img alt="007360截图20251222201320598" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223103717238-1614729462.png" class="lazyload"></p>
-<p><img alt="005360截图20251222194921868" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223103756064-1584305930.png" class="lazyload"></p>
-<p><img alt="006360截图20251222195419077" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223103816759-904170540.png" class="lazyload"></p>
-<p><img alt="009360截图20251222202431855" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223103852560-1881261749.png" class="lazyload"></p>
-<p><img alt="010360截图20251222203811582" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223103906992-975747501.png" class="lazyload"></p>
-<p><img alt="012360截图20251222204251442" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223103919280-136041562.png" class="lazyload"></p>
-<p><img alt="013360截图20251222204308421" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223104000680-1481731266.png" class="lazyload"></p>
-<p><img alt="014360截图20251222204432469" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223103939973-1523425268.png" class="lazyload"></p>
-<p>支持运行到pc端以750px宽度显示页面布局。</p>
-<p><img alt="015360截图20251222205211925" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223104049841-876451429.png" class="lazyload"></p>
-<p><img alt="015360截图20251222210111883" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223104115293-1216317344.png" class="lazyload"></p>
-<p><img alt="015360截图20251222210330996" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223104139497-1047165356.png" class="lazyload"></p>
-<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223104354641-1844699074.png" class="lazyload"></p>
-<h3>vue3集成deepseek流式打字输出</h3>
-<p><strong>非流式请求输出</strong></p>
-<div class="cnblogs_code">
-<pre>const completion =<span style="color: rgba(0, 0, 0, 1)"> await openai.chat.completions.create({
-  messages: [
-    {role: </span>'user'<span style="color: rgba(0, 0, 0, 1)">, content: editorValue}
-  ],
-  model: </span>'deepseek-chat', <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> deepseek-chat对话模型 deepseek-reasoner推理模型</span>
-  stream: <span style="color: rgba(0, 0, 255, 1)">false</span>, <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 流式输出</span>
-  max_tokens: 8192, <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 限制一次请求中模型生成 completion 的最大 token 数(默认使用 4096)</span>
-  temperature: 0.4, <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 严谨采样 越低越严谨(默认1)</span>
-<span style="color: rgba(0, 0, 0, 1)">})
-</span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 处理返回数据</span>
-console.log(completion.choices[0].message.content)</pre>
-</div>
-<p><strong>流式请求输出</strong></p>
-<p>上下文多轮会话。</p>
-<div class="cnblogs_code">
-<pre>const completion =<span style="color: rgba(0, 0, 0, 1)"> await openai.chat.completions.create({
-  </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 单一会话</span>
-  <span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> messages: [
-    {role: 'user', content: editorValue}
-  ], </span><span style="color: rgba(0, 128, 0, 1)">*/</span>
-  <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 多轮会话</span>
-  messages: props.multiConversation ? historySession.value : [{role: 'user'<span style="color: rgba(0, 0, 0, 1)">, content: editorValue}],
-  model: </span>'deepseek-chat', <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> deepseek-chat对话模型 deepseek-reasoner推理模型</span>
-  stream: <span style="color: rgba(0, 0, 255, 1)">true</span>, <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 流式输出</span>
-  max_tokens: 8192, <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 限制一次请求中模型生成 completion 的最大 token 数(默认使用 4096)</span>
-  temperature: 0.4, <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 严谨采样 越低越严谨(默认1)</span>
-})</pre>
-</div>
-<div class="cnblogs_code">
-<pre><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 处理流式输出</span>
-<span style="color: rgba(0, 0, 255, 1)">for</span><span style="color: rgba(0, 0, 0, 1)"> await (const chunk of completion) {
-  </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 检查是否已终止</span>
-  <span style="color: rgba(0, 0, 255, 1)">if</span>(chatState.aborted) <span style="color: rgba(0, 0, 255, 1)">break</span><span style="color: rgba(0, 0, 0, 1)">
-
-  const content </span>= chunk.choices[0]?.delta?<span style="color: rgba(0, 0, 0, 1)">.content
-  </span><span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)">(content) {
-    streamText </span>+=<span style="color: rgba(0, 0, 0, 1)"> content
-    </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 限制更新频率：每100ms最多更新一次</span>
-    const now =<span style="color: rgba(0, 0, 0, 1)"> Date.now()
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span>(now - lastUpdate &gt; 100<span style="color: rgba(0, 0, 0, 1)">) {
-      lastUpdate </span>=<span style="color: rgba(0, 0, 0, 1)"> now
-      requestAnimationFrame(() </span>=&gt;<span style="color: rgba(0, 0, 0, 1)"> {
-        </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> ...</span>
-<span style="color: rgba(0, 0, 0, 1)">      })
-    }
-  }
-  </span><span style="color: rgba(0, 0, 255, 1)">if</span>(chunk.choices[0]?.finish_reason === 'stop'<span style="color: rgba(0, 0, 0, 1)">) {
-    </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 确保最终内容完整更新</span>
-    ...<span style="color: rgba(0, 0, 0, 1)">
-  }
-}</span></pre>
-</div>
-<p>综上就是vite7.2+vue3对接deepseek实现流式ai对话的一些项目分享，希望对大家有点帮助！</p>
-<p><strong>附上几个最新项目实例</strong></p>
-<blockquote>
-<p><span style="font-size: 12px"><a class="postTitle2 vertical-middle" href="https://www.cnblogs.com/xiaoyan2017/p/18853514" target="_blank">Uniapp-DeepSeek跨三端AI助手|uniapp+vue3+deepseek-v3流式ai聊天模板</a></span></p>
-<p><span style="font-size: 12px"><a class="postTitle2 vertical-middle" href="https://www.cnblogs.com/xiaoyan2017/p/18795796" target="_blank">vue3-webseek网页版AI问答|Vite6+DeepSeek+Arco流式ai聊天打字效果</a></span></p>
-<p><span style="font-size: 12px"><a class="postTitle2 vertical-middle" href="https://www.cnblogs.com/xiaoyan2017/p/19313982" target="_blank">最新版Flutter3.38+Dart3.10仿写抖音APP直播+短视频+聊天应用程序</a></span></p>
-<p><span style="font-size: 12px"><a class="postTitle2 vertical-middle" href="https://www.cnblogs.com/xiaoyan2017/p/19235565" target="_blank">Tauri2.9+Vue3桌面版OS系统|vite7+tauri2+arcoDesign电脑端os后台模板</a></span></p>
-<p><span style="font-size: 12px"><a class="postTitle2 vertical-middle" href="https://www.cnblogs.com/xiaoyan2017/p/19116145" target="_blank">electron38-admin桌面端后台|Electron38+Vue3+ElementPlus管理系统</a></span></p>
-<p><span style="font-size: 12px"><a class="postTitle2 vertical-middle" href="https://www.cnblogs.com/xiaoyan2017/p/19088804" target="_blank">Electron38-Wechat电脑端聊天|vite7+electron38仿微信桌面端聊天系统</a></span></p>
-<p><span style="font-size: 12px"><a class="postTitle2 vertical-middle" href="https://www.cnblogs.com/xiaoyan2017/p/19136187" target="_blank">Electron38-Vue3OS客户端OS系统|vite7+electron38+arco桌面os后台管理</a></span></p>
-<p><span style="font-size: 12px"><a class="postTitle2 vertical-middle" href="https://www.cnblogs.com/xiaoyan2017/p/19181509" target="_blank">Tauri2-Vite7Admin客户端管理后台|tauri2.9+vue3+element-plus后台系统</a></span></p>
-<p><span style="font-size: 12px"><a class="postTitle2 vertical-middle" href="https://www.cnblogs.com/xiaoyan2017/p/19157445" target="_blank">Tauri2.8+Vue3聊天系统|vite7+tauri2+element-plus客户端仿微信聊天程序</a></span></p>
-<p><span style="font-size: 12px"><a class="postTitle2 vertical-middle" href="https://www.cnblogs.com/xiaoyan2017/p/18962574" target="_blank">最新版uniapp+vue3+uv-ui跨三端短视频+直播+聊天【H5+小程序+App端】</a></span></p>
-<p><span style="font-size: 12px"><a class="postTitle2 vertical-middle" href="https://www.cnblogs.com/xiaoyan2017/p/19031695" target="_blank">最新版uni-app+vue3+uv-ui跨三端仿微信app聊天应用【h5+小程序+app端】</a></span></p>
-<p><span style="font-size: 12px"><a class="postTitle2 vertical-middle" href="https://www.cnblogs.com/xiaoyan2017/p/19018641" target="_blank">Flutter3-MacOS桌面OS系统|flutter3.32+window_manager客户端OS模板</a></span></p>
-</blockquote>
-<p><img alt="20190422-204556-c922" width="121" height="121" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1289798/202512/1289798-20251223105455421-2130771465.gif" class="lazyload"></p>
-<p>&nbsp;</p>
-</div>
-<div id="MySignature" role="contentinfo">
-    本文为博主原创文章，未经博主允许不得转载，欢迎大家一起交流 QQ（282310962） wx（xy190310）
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2025-12-23 11:06">2025-12-23 11:06</span>&nbsp;
-<a href="https://www.cnblogs.com/xiaoyan2017">xiaoyan2017</a>&nbsp;
-阅读(<span id="post_view_count">125</span>)&nbsp;
-评论(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19385909);return false;">收藏</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19385909', targetLink: 'https://www.cnblogs.com/xiaoyan2017/p/19385909', title: 'vite7+deepseek流式ai模板|vue3.5+deepseek3.2+markdown打字输出ai助手' })">举报</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ Lit 的响应式系统为什么这么轻？——从 ReactiveElement 的设计说起 ]]></title>
-    <link>https://www.cnblogs.com/zxlh1529/p/19370810</link>
-    <guid>adc38fbb8be4193bc15835723afd4b18</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/zxlh1529/p/19370810" title="发布于 2025-12-23 10:33">
-    <span role="heading" aria-level="2">Lit 的响应式系统为什么这么轻？——从 ReactiveElement 的设计说起</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>在使用 Lit 时，很多人都会有一个直观感受：</p>
-<blockquote>
-<p><strong>“它居然没有状态管理系统？”</strong><br>
-<strong>“也没有复杂的依赖收集？”</strong></p>
-</blockquote>
-<p>但实际使用下来却发现：</p>
-<ul>
-<li>状态更新是正确的</li>
-<li>DOM 更新是精准的</li>
-<li>性能非常稳定</li>
-</ul>
-<p>那么问题来了：</p>
-<blockquote>
-<p><strong>Lit 的响应式系统到底是怎么工作的？</strong><br>
-<strong>它为什么可以这么轻？</strong></p>
-</blockquote>
-<p>本文将从 <strong>ReactiveElement 的设计目标、实现方式、与 Vue/React 的根本差异</strong> 三个角度来解释这个问题。</p>
-<hr>
-<h2 id="一先说结论important">一、先说结论（Important）</h2>
-<p>在 Lit 中：</p>
-<blockquote>
-<p><strong>响应式系统的职责不是“计算依赖”，</strong><br>
-<strong>而是“调度更新”</strong></p>
-</blockquote>
-<p>这是理解 Lit 响应式系统的第一把钥匙。</p>
-<hr>
-<h2 id="二reactiveelement-在-lit-架构中的位置">二、ReactiveElement 在 Lit 架构中的位置</h2>
-<p>先回顾 Lit 的继承链：</p>
-<pre><code class="language-text">HTMLElement
-  └── ReactiveElement
-        └── LitElement
-              └── YourComponent
-</code></pre>
-<p>其中：</p>
-<ul>
-<li><strong>ReactiveElement</strong>：负责响应式属性 &amp; 更新调度</li>
-<li><strong>LitElement</strong>：负责生命周期 &amp; render 调用</li>
-<li><strong>lit-html</strong>：负责 DOM 更新</li>
-</ul>
-<blockquote>
-<p>ReactiveElement 不关心 DOM<br>
-它只关心：<strong>什么时候需要更新</strong></p>
-</blockquote>
-<hr>
-<h2 id="三lit-的响应式系统到底响应了什么">三、Lit 的响应式系统到底“响应”了什么？</h2>
-<h3 id="31-lit-的响应式单位是属性不是依赖">3.1 Lit 的响应式单位是「属性」，不是「依赖」</h3>
-<p>在 Vue 中：</p>
-<pre><code class="language-ts">effect(() =&gt; {
-  div.textContent = state.count
-})
-</code></pre>
-<ul>
-<li>响应的是 <strong>依赖关系</strong></li>
-<li>自动追踪 <code>state.count</code></li>
-</ul>
-<p>而在 Lit 中：</p>
-<pre><code class="language-ts">@property()
-count = 0
-</code></pre>
-<ul>
-<li>响应的是 <strong>属性赋值行为</strong></li>
-<li>不存在依赖收集</li>
-</ul>
-<hr>
-<h3 id="32-本质区别">3.2 本质区别</h3>
-<table>
-<thead>
-<tr>
-<th>框架</th>
-<th>响应式关注点</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Vue</td>
-<td>“谁用到了这个值”</td>
-</tr>
-<tr>
-<td>React</td>
-<td>“状态是否发生变化”</td>
-</tr>
-<tr>
-<td>Lit</td>
-<td>“属性是否被 set”</td>
-</tr>
-</tbody>
-</table>
-<p>Lit 的选择非常克制。</p>
-<hr>
-<h2 id="四reactiveelement-的核心机制">四、ReactiveElement 的核心机制</h2>
-<h3 id="41-property-做了什么">4.1 @property 做了什么</h3>
-<pre><code class="language-ts">@property({ type: Number })
-count = 0
-</code></pre>
-<p>背后本质是：</p>
-<ol>
-<li>把字段变成 getter / setter</li>
-<li>在 setter 中调用 <code>requestUpdate</code></li>
-</ol>
-<hr>
-<h3 id="42-伪代码示意">4.2 伪代码示意</h3>
-<pre><code class="language-ts">set count(value) {
-  const oldValue = this._count
-  this._count = value
-  this.requestUpdate('count', oldValue)
-}
-</code></pre>
-<p>没有 Proxy<br>
-没有依赖收集<br>
-没有 effect</p>
-<hr>
-<h2 id="五requestupdatelit-响应式系统的核心">五、requestUpdate：Lit 响应式系统的核心</h2>
-<h3 id="51-requestupdate-并不立即更新">5.1 requestUpdate 并不立即更新</h3>
-<pre><code class="language-ts">this.requestUpdate()
-</code></pre>
-<p>它做的事情是：</p>
-<ul>
-<li>标记“需要更新”</li>
-<li>把更新放入 <strong>microtask 队列</strong></li>
-<li>合并多次更新</li>
-</ul>
-<hr>
-<h3 id="52-批量更新机制">5.2 批量更新机制</h3>
-<pre><code class="language-ts">this.count = 1
-this.count = 2
-this.count = 3
-</code></pre>
-<p>最终只会：</p>
-<pre><code class="language-text">render 一次
-</code></pre>
-<p>这是 Lit 响应式系统<strong>最重要的性能保证</strong>。</p>
-<hr>
-<h3 id="53-更新调度流程">5.3 更新调度流程</h3>
-<pre><code class="language-text">property set
-  ↓
-requestUpdate
-  ↓
-Promise.resolve().then()
-  ↓
-performUpdate
-  ↓
-render()
-</code></pre>
-<hr>
-<h2 id="六为什么-lit-不需要依赖收集">六、为什么 Lit 不需要依赖收集？</h2>
-<p>答案非常关键：</p>
-<blockquote>
-<p><strong>因为 lit-html 已经知道“哪里会变”</strong></p>
-</blockquote>
-<p>在前一篇 Part 更新机制中讲过：</p>
-<ul>
-<li>DOM 更新是由 Part 精确定位的</li>
-<li>render() 每次都会重新执行</li>
-<li>但更新只发生在表达式对应位置</li>
-</ul>
-<p>因此：</p>
-<blockquote>
-<p><strong>Lit 不需要知道“你在模板中用了哪些属性”</strong></p>
-</blockquote>
-<p>它只需要保证：</p>
-<ul>
-<li>属性变化 → render 执行</li>
-<li>render 执行 → Part 精确更新</li>
-</ul>
-<hr>
-<h2 id="七shouldupdatelit-给你的唯一判断点">七、shouldUpdate：Lit 给你的“唯一判断点”</h2>
-<pre><code class="language-ts">shouldUpdate(changedProperties) {
-  return true
-}
-</code></pre>
-<ul>
-<li><code>changedProperties</code> 是一个 Map</li>
-<li>记录了哪些属性发生了变化</li>
-</ul>
-<p>你可以非常明确地控制：</p>
-<pre><code class="language-ts">shouldUpdate(changed) {
-  return changed.has('count')
-}
-</code></pre>
-<p>这比 Vue/React 的依赖优化<strong>更显式、更可控</strong>。</p>
-<hr>
-<h2 id="八lit-的生命周期为什么这么少">八、Lit 的生命周期为什么这么少？</h2>
-<p>Lit 的生命周期几乎完全围绕「更新」展开：</p>
-<pre><code class="language-ts">connectedCallback()
-shouldUpdate()
-willUpdate()
-render()
-updated()
-</code></pre>
-<p>没有：</p>
-<ul>
-<li>computed</li>
-<li>watch</li>
-<li>effect</li>
-<li>memo</li>
-</ul>
-<p>因为：</p>
-<blockquote>
-<p><strong>Lit 不试图管理你的状态<br>
-它只负责把状态变化“反映到 DOM”</strong></p>
-</blockquote>
-<hr>
-<h2 id="九和-vue--react-的响应式系统对比">九、和 Vue / React 的响应式系统对比</h2>
-<h3 id="91-架构层面对比">9.1 架构层面对比</h3>
-<table>
-<thead>
-<tr>
-<th>维度</th>
-<th>Lit</th>
-<th>Vue</th>
-<th>React</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>响应式基础</td>
-<td>getter/setter</td>
-<td>Proxy</td>
-<td>setState</td>
-</tr>
-<tr>
-<td>依赖收集</td>
-<td>❌</td>
-<td>✅</td>
-<td>❌</td>
-</tr>
-<tr>
-<td>更新调度</td>
-<td>microtask</td>
-<td>scheduler</td>
-<td>scheduler</td>
-</tr>
-<tr>
-<td>DOM 更新</td>
-<td>定点 Part</td>
-<td>Diff</td>
-<td>Diff</td>
-</tr>
-<tr>
-<td>系统复杂度</td>
-<td>极低</td>
-<td>高</td>
-<td>中</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h3 id="92-为什么-lit-可以这么简单">9.2 为什么 Lit 可以这么“简单”</h3>
-<p>因为 Lit <strong>放弃了三件事</strong>：</p>
-<ol>
-<li>自动依赖追踪</li>
-<li>状态派生（computed）</li>
-<li>跨组件状态管理</li>
-</ol>
-<p>这些都不是组件底层必须解决的问题。</p>
-<hr>
-<h2 id="十lit-响应式系统的适用边界">十、Lit 响应式系统的适用边界</h2>
-<h3 id="101-非常适合的场景">10.1 非常适合的场景</h3>
-<ul>
-<li>UI 组件</li>
-<li>Design System</li>
-<li>跨框架组件</li>
-<li>微前端子模块</li>
-</ul>
-<hr>
-<h3 id="102-不适合的场景">10.2 不适合的场景</h3>
-<ul>
-<li>大型应用状态管理</li>
-<li>复杂状态派生逻辑</li>
-<li>需要大量 computed / watch 的业务</li>
-</ul>
-<p>Lit 的哲学是：</p>
-<blockquote>
-<p><strong>把“状态复杂度”交给使用者或上层架构</strong></p>
-</blockquote>
-<hr>
-<h2 id="十一a-very-important-总结">十一、A Very Important 总结</h2>
-<blockquote>
-<p><strong>Lit 的响应式系统不是“弱”，<br>
-而是“目标非常明确”</strong></p>
-</blockquote>
-<p>它只做三件事：</p>
-<ol>
-<li>监听属性变化</li>
-<li>合并更新</li>
-<li>触发 render</li>
-</ol>
-<p>而剩下的一切，都交给：</p>
-<ul>
-<li>JavaScript 本身</li>
-<li>浏览器本身</li>
-<li>应用架构本身</li>
-</ul>
-<hr>
-<h2 id="十二最后">十二、最后</h2>
-<p>到现在应该可以已经完整理解了：</p>
-<ol>
-<li>Lit 的整体架构</li>
-<li>为什么不需要 Virtual DOM</li>
-<li>lit-html 的 Part 更新机制</li>
-<li>ReactiveElement 的响应式设计</li>
-</ol>
-<p>如果把这些拼起来，you 会发现：</p>
-<blockquote>
-<p><strong>Lit 是一个“极端相信浏览器”的体系</strong></p>
-</blockquote>
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2025-12-23 10:33">2025-12-23 10:33</span>&nbsp;
-<a href="https://www.cnblogs.com/zxlh1529">幼儿园技术家</a>&nbsp;
-阅读(<span id="post_view_count">72</span>)&nbsp;
-评论(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19370810);return false;">收藏</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19370810', targetLink: 'https://www.cnblogs.com/zxlh1529/p/19370810', title: 'Lit 的响应式系统为什么这么轻？——从 ReactiveElement 的设计说起' })">举报</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
     <title><![CDATA[ 技术管理：产品经理PM和技术开发人员RD之间常见的矛盾有哪些 ]]></title>
     <link>https://www.cnblogs.com/jiujuan/p/19388306</link>
     <guid>5d55360566c0e669469b2b49ea69fd28</guid>
@@ -3566,8 +2963,8 @@ updated()
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0.015277777777777777" data-date-updated="2025-12-23 17:57">2025-12-23 17:35</span>&nbsp;
 <a href="https://www.cnblogs.com/jiujuan">九卷</a>&nbsp;
-阅读(<span id="post_view_count">25</span>)&nbsp;
-评论(<span id="post_comment_count">0</span>)&nbsp;
+阅读(<span id="post_view_count">84</span>)&nbsp;
+评论(<span id="post_comment_count">1</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19388306);return false;">收藏</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19388306', targetLink: 'https://www.cnblogs.com/jiujuan/p/19388306', title: '技术管理：产品经理PM和技术开发人员RD之间常见的矛盾有哪些' })">举报</a>
@@ -4224,6 +3621,101 @@ func main() {
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19388140);return false;">收藏</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19388140', targetLink: 'https://www.cnblogs.com/JulianHuang/p/19388140', title: '&amp;#128640;糟糕，我实现的k8s informer好像是依托答辩' })">举报</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ 全栈开发实战：WPF+FFmpeg+GIS，打造工业级雷达探测终端 ]]></title>
+    <link>https://www.cnblogs.com/yuanchenhui/p/19387990/radar-client</link>
+    <guid>ad1d092c16677ff6b01d44d7afffb1ad</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/yuanchenhui/p/19387990/radar-client" title="发布于 2025-12-23 16:52">
+    <span role="heading" aria-level="2">全栈开发实战：WPF+FFmpeg+GIS，打造工业级雷达探测终端</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                    <div id="cnblogs_post_description" style="display: none">
+        
+        本文为独立开发的工业级雷达探测终端技术实践总结。产品基于 WPF、FFmpeg、OpenCV、GMap.NET、Vortice 等技术栈，结合 GPU 加速绘图，支持 TCP/UDP 双协议通信与多设备联动，核心功能涵盖雷达航迹可视化、智能区域预警、历史数据回放、离线地图下载等，可精准满足多场景监测需求，展现全栈开发与技术落地能力
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
+<p><span style="font-size: 16px">　　在工业软件国产化与智能化升级的浪潮中，将复杂技术转化为贴合场景的实用解决方案，是技术开发者的核心价值所在。近期独立完成了一款工业级雷达探测终端的全流程开发，从架构设计、核心编码到功能落地全程自主把控，融合 WPF 界面开发、多协议通信、GIS 可视化、GPU 加速绘图等关键技术，既满足专业场景的高精度需求，也实现了易用性与扩展性的平衡，在此分享项目的技术亮点与功能突破。</span></p>
+<p><span style="font-size: 16px"><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/245753/202512/245753-20251223164820636-1827158504.png" class="lazyload"></span></p>
+<h2 class="header-iWP5WJ auto-hide-last-sibling-br"><span style="font-size: 16px">一、架构设计：模块化 + 高兼容，筑牢稳定根基</span></h2>
+<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space"><span style="font-size: 16px">　　系统采用模块化架构设计，将核心功能拆解为参数配置、数据采集、智能处理、可视化展示、离线适配五大模块，各模块独立运行且无缝衔接，既保证了系统稳定性，也为后续功能拓展预留了灵活空间。</span></div>
+<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space"><span style="font-size: 16px">在兼容性与底层技术选型上实现多重突破：</span></div>
+<ul class="auto-hide-last-sibling-br">
+<li><span style="font-size: 16px">界面开发：采用 WPF 框架搭建交互界面，兼顾视觉美观与操作流畅性，支持自定义控件布局与样式适配，让复杂功能的操作逻辑更清晰直观；</span></li>
+<li><span style="font-size: 16px">GIS 地图适配：集成<a class="link-bJL8ai" href="https://gmap.net/" target="_blank" rel="noopener nofollow">GMap.NET</a>控件实现地图加载与交互，支持在线高德卫星地图接入与本地离线地图存储，可精准呈现地理坐标、距离测算等空间数据；</span></li>
+<li><span style="font-size: 16px">多协议通信：原生支持 TCP/UDP 双协议通信，可无缝对接雷达主机、光电设备、ADS-B 设备及视频大屏，数据传输延迟控制在毫秒级，确保指令下发与数据回传的实时同步；</span></li>
+<li><span style="font-size: 16px">视频解析能力：整合 FFmpeg 与 OpenCV 技术，实现光电设备回传视频的高效解码与实时展示，支持视频画面与雷达航迹的联动标注，助力目标精准识别。</span></li>
+</ul>
+<h2 class="header-iWP5WJ auto-hide-last-sibling-br"><span style="font-size: 16px">二、核心技术亮点：硬核技术赋能功能落地</span></h2>
+<h3 class="header-iWP5WJ auto-hide-last-sibling-br"><span style="font-size: 16px">1. 可视化引擎：GPU 加速 + 专业组件，复杂数据直观呈现</span></h3>
+<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space"><span style="font-size: 16px">　　为解决工业级监测场景中数据量大、可视化要求高的痛点，构建了高效的可视化引擎：</span></div>
+<ul class="auto-hide-last-sibling-br">
+<li><span style="font-size: 16px">GPU 后台绘图：采用 GPU 加速绘图技术，实现海量航迹数据的实时渲染，支持万级航迹并行展示无卡顿，航迹刷新频率与数据采集频率同步；</span></li>
+<li><span style="font-size: 16px">热力图精准生成：基于 Vortice 图形库开发热力图功能，通过红色梯度斑块直观呈现航迹密度分布，颜色越深代表目标活动越频繁，热力值计算支持自定义统计时长（10-60 分钟可配置）；</span></li>
+<li><span style="font-size: 16px">分层可视化设计：绿色线条记录目标历史运动路径，黄色点位标识当前实时位置，高度（h，单位：米）、速度（s，单位：米 / 秒）等关键参数实时标注，选中目标自动高亮为红色，全量数据一键溯源；</span></li>
+<li><span style="font-size: 16px">鼠标定位辅助：结合<a class="link-bJL8ai" href="https://gmap.net/" target="_blank" rel="noopener nofollow">GMap.NET</a>的地理信息处理能力，实时显示鼠标所在位置的经纬度、到雷达的直线距离与方位角度，为现场决策提供精准数据支撑。</span></li>
+</ul>
+<h3 class="header-iWP5WJ auto-hide-last-sibling-br"><span style="font-size: 16px">2. 多源数据融合：设备联动 + 智能处理，监测维度全面覆盖</span></h3>
+<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space"><span style="font-size: 16px">系统具备强大的数据采集与处理能力，实现多维度监测闭环：</span></div>
+<ul class="auto-hide-last-sibling-br">
+<li><span style="font-size: 16px">多设备无缝对接：支持雷达、ADS-B、光电设备多源数据接入，同步获取目标的位置、高度、速度、类型、斜距、方位角等核心参数，形成完整的目标信息画像；</span></li>
+<li><span style="font-size: 16px">视频与雷达数据联动：通过 FFmpeg 解码光电视频流，结合 OpenCV 的图像处理能力，实现视频画面中目标与雷达航迹的精准匹配，让监测从 “数据追踪” 升级为 “视觉确认”；</span></li>
+<li><span style="font-size: 16px">智能航迹处理：优化航迹跟踪算法，自动标记超时失联目标，航迹识别误差率控制在极低水平，同时支持航迹显示点数、消失超时时间自定义，适配不同场景监测需求；</span></li>
+<li><span style="font-size: 16px">特殊目标识别：针对鸟类等特殊目标设计专属标识，结合雷达回波幅度、信噪比等参数，实现目标类型的精准分类，适配生态监测等细分场景。</span></li>
+</ul>
+<h3 class="header-iWP5WJ auto-hide-last-sibling-br"><span style="font-size: 16px">3. 智能预警 + 灵活适配：场景化功能满足多元需求</span></h3>
+<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space"><span style="font-size: 16px">深度贴合工业场景的实际诉求，实现个性化与实用性的统一：</span></div>
+<ul class="auto-hide-last-sibling-br">
+<li><span style="font-size: 16px">自定义预警体系：支持 3 个独立预警区域配置，可通过坐标输入或地图选点划定范围，目标进入后自动触发闪烁、声音报警，同时自动选中目标，风险防控精准高效；</span></li>
+<li><span style="font-size: 16px">预警参数精细化：可灵活设置预警区域的高度上下限（0-500 米可配置）、距离阈值（300/600/900 米三档可选），支持预警等级颜色自定义（通过 RGB + 透明度值调整），视觉区分更清晰；</span></li>
+<li><span style="font-size: 16px">历史数据回溯：支持本地.bin 格式雷达数据文件读取，可自由调整回放速度、设定航迹显示数量，进度条与时间戳同步联动，精准跳转回放节点，便于后期复盘分析；</span></li>
+<li><span style="font-size: 16px">离线地图适配：通过<a class="link-bJL8ai" href="https://gmap.net/" target="_blank" rel="noopener nofollow">GMap.NET</a>的离线地图管理功能，支持自定义区域宽度 / 高度（单位：千米），按需选择地图层级（6-18 级，级别越高精度越高）下载存储，无网络环境下也能稳定使用。</span></li>
+</ul>
+<h3 class="header-iWP5WJ auto-hide-last-sibling-br"><span style="font-size: 16px">4. 精细化控制：按需定制，操作体验更高效</span></h3>
+<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space"><span style="font-size: 16px">提供全方位的显示控制选项，让界面灵活适配不同使用场景：</span></div>
+<ul class="auto-hide-last-sibling-br">
+<li><span style="font-size: 16px">组件显示开关：可自由控制目标列表、光电视频窗口、日志窗口、预警区域标识等组件的显示 / 隐藏，减少冗余信息干扰；</span></li>
+<li><span style="font-size: 16px">信息展示定制：支持航迹速度、目标类型、热力图提示等细节信息的按需开启，地图标注缩放倍数可调节（当前默认 1.4 倍），适配不同操作习惯；</span></li>
+<li><span style="font-size: 16px">多视图切换：目标列表与焦点信息双向切换，既支持全局航迹数据概览（含编号、斜距、方位、跟踪次数等 11 项参数），也可聚焦单个目标的详细参数，操作灵活高效；</span></li>
+<li><span style="font-size: 16px">配置一键保存：所有参数配置支持一键保存，重启即时生效，包含雷达转角补偿、地图暗夜模式亮度、统计时间间隔等核心参数，无需专业技术干预即可完成系统调试。</span></li>
+</ul>
+<h2 class="header-iWP5WJ auto-hide-last-sibling-br"><span style="font-size: 16px">三、技术实力沉淀：全栈开发能力的集中体现</span></h2>
+<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space"><span style="font-size: 16px">这款终端的落地，是我在多领域技术能力与工程思维的集中实践：</span></div>
+<ul class="auto-hide-last-sibling-br">
+<li><span style="font-size: 16px">跨技术栈融合：熟练运用 WPF 界面开发、<a class="link-bJL8ai" href="https://gmap.net/" target="_blank" rel="noopener nofollow">GMap.NET</a>&nbsp;GIS 控件、FFmpeg/OpenCV 视频处理、Vortice 图形库、GPU 加速绘图、多协议网络通信等核心技术，实现从硬件对接到底层算法的全栈覆盖；</span></li>
+<li><span style="font-size: 16px">问题解决能力：攻克多设备协议兼容、海量航迹并行渲染、视频与雷达数据联动、离线环境适配等行业痛点，确保系统在复杂场景下的稳定运行；</span></li>
+<li><span style="font-size: 16px">性能优化能力：通过 GPU 加速、算法优化、数据缓存等技术手段，将系统响应延迟控制在毫秒级，支持长时间连续运行无内存泄漏；</span></li>
+<li><span style="font-size: 16px">产品化思维：兼顾技术先进性与用户易用性，配套完整的操作说明文档，每个功能模块都围绕实际使用场景设计，实现 “专业不复杂、精准不繁琐” 的核心目标。</span></li>
+</ul>
+<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space"><span style="font-size: 16px">　　在工业软件开发领域，始终坚持以技术为基石、以场景为导向，通过持续的实践与迭代，不断提升复杂系统的设计与落地能力。未来将继续聚焦工业级软件的智能化、国产化方向，探索更多技术与场景的融合可能，用扎实的技术实力为不同场景提供高效、稳定的解决方案。</span></div>
+</div>
+<div id="MySignature" role="contentinfo">
+    专注C#、C++。擅长WPF、WinForm、QT等技术。
+研究ofd多年，开发了一些列产品。
+技术交流QQ群：565438497。
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2025-12-23 16:52">2025-12-23 16:52</span>&nbsp;
+<a href="https://www.cnblogs.com/yuanchenhui">源之缘-专注WPF开发</a>&nbsp;
+阅读(<span id="post_view_count">156</span>)&nbsp;
+评论(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19387990);return false;">收藏</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19387990', targetLink: 'https://www.cnblogs.com/yuanchenhui/p/19387990/radar-client', title: '全栈开发实战：WPF+FFmpeg+GIS，打造工业级雷达探测终端' })">举报</a>
 </div>
          ]]>
     </description>
