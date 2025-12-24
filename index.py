@@ -10,7 +10,10 @@ def ensure_out_dir():
 def do_fetch(item):
     print(f"1️⃣开始获取：{item['name']}")
     scraper = cloudscraper.create_scraper()
-    res = scraper.get(item['url']).text
+    info = scraper.get(item['url'])
+    print("the status code is ", info.status_code)
+
+    res = info.text
     
     if 'type' not in item or item['type'] == 'rss':
         with open(f"./out/{item['name']}.xml", 'w', encoding='utf-8') as f:
