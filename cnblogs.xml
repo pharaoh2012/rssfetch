@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
     <rss version="2.0">
     <channel>
-        <title><![CDATA[ 主页 - 博客园 ]]></title>
+        <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
         <lastBuildDate>2025-12-24T01:15:29.360Z</lastBuildDate>
         <description><![CDATA[
-        主页 - 博客园 RSS
+        ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
-    <title><![CDATA[ 用了MySQL的INSERT ON DUPLICATE KEY UPDATE，怎么还报唯一索引冲突错误 ]]></title>
+    <title><![CDATA[ ç¨äºMySQLçINSERT ON DUPLICATE KEY UPDATEï¼æä¹è¿æ¥å¯ä¸ç´¢å¼å²çªéè¯¯ ]]></title>
     <link>https://www.cnblogs.com/youzhibing/p/19388304</link>
     <guid>1ee3290ce7f520e2807586f39e1b6f15</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/youzhibing/p/19388304" title="发布于 2025-12-24 09:00">
-    <span role="heading" aria-level="2">用了MySQL的INSERT ON DUPLICATE KEY UPDATE，怎么还报唯一索引冲突错误</span>
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/youzhibing/p/19388304" title="åå¸äº 2025-12-24 09:00">
+    <span role="heading" aria-level="2">ç¨äºMySQLçINSERT ON DUPLICATE KEY UPDATEï¼æä¹è¿æ¥å¯ä¸ç´¢å¼å²çªéè¯¯</span>
     
 
 </a>
@@ -25,29 +25,29 @@
             <div class="clear"></div>
             <div class="postBody">
                 <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h2 id="开心一刻">开心一刻</h2>
-<p>一天，老婆笑容满面的冲到我面前<br>
-老婆：你娶我到底是图我啥<br>
-我：便宜<br>
-老婆笑容瞬间消失，气呼呼的道：你会不会说话？<br>
-并且强调：我爸当年那是可怜你，没跟你多要<br>
-我：不是，你爸不是这么说的<br>
-老婆：那怎么说的<br>
-我开始学着老丈人的口吻：不许退，给你便宜点</p>
-<div align="center"><img src="https://img2024.cnblogs.com/blog/747662/202512/747662-20251223173616476-1594142117.gif" alt="开心一刻"></div>
+<h2 id="å¼å¿ä¸å»">å¼å¿ä¸å»</h2>
+<p>ä¸å¤©ï¼èå©ç¬å®¹æ»¡é¢çå²å°æé¢å<br>
+èå©ï¼ä½ å¨¶æå°åºæ¯å¾æå¥<br>
+æï¼ä¾¿å®<br>
+èå©ç¬å®¹ç¬é´æ¶å¤±ï¼æ°å¼å¼çéï¼ä½ ä¼ä¸ä¼è¯´è¯ï¼<br>
+å¹¶ä¸å¼ºè°ï¼æç¸å½å¹´é£æ¯å¯æä½ ï¼æ²¡è·ä½ å¤è¦<br>
+æï¼ä¸æ¯ï¼ä½ ç¸ä¸æ¯è¿ä¹è¯´ç<br>
+èå©ï¼é£æä¹è¯´ç<br>
+æå¼å§å­¦çèä¸äººçå£å»ï¼ä¸è®¸éï¼ç»ä½ ä¾¿å®ç¹</p>
+<div align="center"><img src="https://img2024.cnblogs.com/blog/747662/202512/747662-20251223173616476-1594142117.gif" alt="å¼å¿ä¸å»"></div>
 <h2 id="insert-on-duplicate-key-update">INSERT ON DUPLICATE KEY UPDATE</h2>
-<p>关于 <code>INSERT ... ON DUPLICATE KEY UPDATE</code>，相信大家都有所了解，是 <code>MySQL</code> 针对</p>
+<p>å³äº <code>INSERT ... ON DUPLICATE KEY UPDATE</code>ï¼ç¸ä¿¡å¤§å®¶é½ææäºè§£ï¼æ¯ <code>MySQL</code> éå¯¹</p>
 <blockquote>
-<p>不存在则插入，存在则更新</p>
+<p>ä¸å­å¨åæå¥ï¼å­å¨åæ´æ°</p>
 </blockquote>
-<p>的一种方言实现；<code>存不存在</code> 该如何判定呢，基于表的 <code>唯一索引</code> 或 <code>主键</code></p>
-<p>举个例子，如果列 <code>a</code> 被声明为 <code>唯一</code> 且表中已经存在 <code>a=1</code> 的记录，则以下两条语句具有类似的效果</p>
+<p>çä¸ç§æ¹è¨å®ç°ï¼<code>å­ä¸å­å¨</code> è¯¥å¦ä½å¤å®å¢ï¼åºäºè¡¨ç <code>å¯ä¸ç´¢å¼</code> æ <code>ä¸»é®</code></p>
+<p>ä¸¾ä¸ªä¾å­ï¼å¦æå <code>a</code> è¢«å£°æä¸º <code>å¯ä¸</code> ä¸è¡¨ä¸­å·²ç»å­å¨ <code>a=1</code> çè®°å½ï¼åä»¥ä¸ä¸¤æ¡è¯­å¥å·æç±»ä¼¼çææ</p>
 <pre><code class="language-sql">INSERT INTO t1 (a,b,c) VALUES (1,2,3)
   ON DUPLICATE KEY UPDATE c=c+1;
 
 UPDATE t1 SET c=c+1 WHERE a=1;
 </code></pre>
-<p>假设我们有表</p>
+<p>åè®¾æä»¬æè¡¨</p>
 <pre><code class="language-sql">CREATE TABLE `tbl_insert_on_update` (
   `id` bigint NOT NULL,
   `name` varchar(255) NOT NULL,
@@ -58,69 +58,69 @@ UPDATE t1 SET c=c+1 WHERE a=1;
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB
 </code></pre>
-<p>一开始表中没有数据，那么</p>
+<p>ä¸å¼å§è¡¨ä¸­æ²¡ææ°æ®ï¼é£ä¹</p>
 <pre><code class="language-sql">INSERT tbl_insert_on_update(id, name, uk_column1, uk_column2, remark)
-VALUES(1, '张三', '20050101001', '男一号', '风一样的男子')
-ON DUPLICATE KEY UPDATE uk_column1='20050101002', uk_column2='男二号', remark='狂风一样的男子';
+VALUES(1, 'å¼ ä¸', '20050101001', 'ç·ä¸å·', 'é£ä¸æ ·çç·å­')
+ON DUPLICATE KEY UPDATE uk_column1='20050101002', uk_column2='ç·äºå·', remark='çé£ä¸æ ·çç·å­';
 </code></pre>
-<p>的作用，相信大家都知道，与</p>
+<p>çä½ç¨ï¼ç¸ä¿¡å¤§å®¶é½ç¥éï¼ä¸</p>
 <pre><code class="language-sql">INSERT tbl_insert_on_update(id, name, uk_column1, uk_column2, remark)
-VALUES(1, '张三', '20050101001', '男一号', '风一样的男子');
+VALUES(1, 'å¼ ä¸', '20050101001', 'ç·ä¸å·', 'é£ä¸æ ·çç·å­');
 </code></pre>
-<p>作用一样，会往表中插入一条新的记录；如果再执行一次</p>
+<p>ä½ç¨ä¸æ ·ï¼ä¼å¾è¡¨ä¸­æå¥ä¸æ¡æ°çè®°å½ï¼å¦æåæ§è¡ä¸æ¬¡</p>
 <pre><code class="language-sql">INSERT tbl_insert_on_update(id, name, uk_column1, uk_column2, remark)
-VALUES(1, '张三', '20050101001', '男一号', '风一样的男子')
-ON DUPLICATE KEY UPDATE uk_column1='20050101002', uk_column2='男二号', remark='狂风一样的男子';
+VALUES(1, 'å¼ ä¸', '20050101001', 'ç·ä¸å·', 'é£ä¸æ ·çç·å­')
+ON DUPLICATE KEY UPDATE uk_column1='20050101002', uk_column2='ç·äºå·', remark='çé£ä¸æ ·çç·å­';
 </code></pre>
-<p>呢，会是怎么样的结果？相信大家都知道</p>
-<div align="center"><img src="https://img2024.cnblogs.com/blog/747662/202512/747662-20251223173615289-1171352990.png" alt="insert_on_update_再执行一次"></div>
-<p>与</p>
-<pre><code class="language-sql">UPDATE tbl_insert_on_update SET uk_column1='20050101002', uk_column2='男二号', remark='狂风一样的男子' WHERE id = 1;
+<p>å¢ï¼ä¼æ¯æä¹æ ·çç»æï¼ç¸ä¿¡å¤§å®¶é½ç¥é</p>
+<div align="center"><img src="https://img2024.cnblogs.com/blog/747662/202512/747662-20251223173615289-1171352990.png" alt="insert_on_update_åæ§è¡ä¸æ¬¡"></div>
+<p>ä¸</p>
+<pre><code class="language-sql">UPDATE tbl_insert_on_update SET uk_column1='20050101002', uk_column2='ç·äºå·', remark='çé£ä¸æ ·çç·å­' WHERE id = 1;
 </code></pre>
-<p>的效果一样。我们接着做个简单调整，拿掉 <code>name</code></p>
+<p>çææä¸æ ·ãæä»¬æ¥çåä¸ªç®åè°æ´ï¼æ¿æ <code>name</code></p>
 <pre><code class="language-sql">INSERT tbl_insert_on_update(id, uk_column1, uk_column2, remark)
-VALUES(1, '20050101001', '男一号', '风一样的男子')
-ON DUPLICATE KEY UPDATE uk_column1='20050101003', uk_column2='男三号', remark='暴风一样的男子';
+VALUES(1, '20050101001', 'ç·ä¸å·', 'é£ä¸æ ·çç·å­')
+ON DUPLICATE KEY UPDATE uk_column1='20050101003', uk_column2='ç·ä¸å·', remark='æ´é£ä¸æ ·çç·å­';
 </code></pre>
-<p>或者拿掉 <code>id</code></p>
+<p>æèæ¿æ <code>id</code></p>
 <pre><code class="language-sql">INSERT tbl_insert_on_update(name, uk_column1, uk_column2, remark)
-VALUES('张三', '20050101001', '男一号', '风一样的男子')
-ON DUPLICATE KEY UPDATE uk_column1='20050101003', uk_column2='男三号', remark='暴风一样的男子';
+VALUES('å¼ ä¸', '20050101001', 'ç·ä¸å·', 'é£ä¸æ ·çç·å­')
+ON DUPLICATE KEY UPDATE uk_column1='20050101003', uk_column2='ç·ä¸å·', remark='æ´é£ä¸æ ·çç·å­';
 </code></pre>
-<p>会是怎么样的一个结果，你们可以大胆猜一下。这两个 SQL 的执行结果是一样的</p>
-<div align="center"><img src="https://img2024.cnblogs.com/blog/747662/202512/747662-20251223173615313-938765406.png" alt="男三浩"></div>
-<p>此时你们是不是有疑问呢</p>
+<p>ä¼æ¯æä¹æ ·çä¸ä¸ªç»æï¼ä½ ä»¬å¯ä»¥å¤§èçä¸ä¸ãè¿ä¸¤ä¸ª SQL çæ§è¡ç»ææ¯ä¸æ ·ç</p>
+<div align="center"><img src="https://img2024.cnblogs.com/blog/747662/202512/747662-20251223173615313-938765406.png" alt="ç·ä¸æµ©"></div>
+<p>æ­¤æ¶ä½ ä»¬æ¯ä¸æ¯æçé®å¢</p>
 <blockquote>
-<p>为什么拿掉 <code>name</code> 和拿掉 <code>id</code> 的 INSERT ... ON DUPLICATE KEY UPDATE 的执行结果会是一样的？</p>
+<p>ä¸ºä»ä¹æ¿æ <code>name</code> åæ¿æ <code>id</code> ç INSERT ... ON DUPLICATE KEY UPDATE çæ§è¡ç»æä¼æ¯ä¸æ ·çï¼</p>
 </blockquote>
-<p>这个问题先放一放，我们先录入女一号的数据</p>
+<p>è¿ä¸ªé®é¢åæ¾ä¸æ¾ï¼æä»¬åå½å¥å¥³ä¸å·çæ°æ®</p>
 <pre><code class="language-sql">INSERT tbl_insert_on_update(id, name, uk_column1, uk_column2, remark)
-VALUES(2, '婉儿', '20050101001X', '女一号', '花一样的女子');
+VALUES(2, 'å©å¿', '20050101001X', 'å¥³ä¸å·', 'è±ä¸æ ·çå¥³å­');
 </code></pre>
-<p>假设我们要修改女一号的信息，包括 <code>姓名</code>，是不是可以这么实现</p>
+<p>åè®¾æä»¬è¦ä¿®æ¹å¥³ä¸å·çä¿¡æ¯ï¼åæ¬ <code>å§å</code>ï¼æ¯ä¸æ¯å¯ä»¥è¿ä¹å®ç°</p>
 <pre><code class="language-sql">INSERT tbl_insert_on_update(id, name, uk_column1, uk_column2, remark)
-VALUES(2, '婉儿', '20050101001X', '女一号', '花一样的女子')
-ON DUPLICATE KEY UPDATE, name='张三', uk_column1='20050101002X', uk_column2='女二号', remark='牵牛花一样的女子';
+VALUES(2, 'å©å¿', '20050101001X', 'å¥³ä¸å·', 'è±ä¸æ ·çå¥³å­')
+ON DUPLICATE KEY UPDATE, name='å¼ ä¸', uk_column1='20050101002X', uk_column2='å¥³äºå·', remark='çµçè±ä¸æ ·çå¥³å­';
 </code></pre>
-<p>有什么问题吗，执行下就知道了嘛</p>
-<div align="center"><img src="https://img2024.cnblogs.com/blog/747662/202512/747662-20251223173615530-841103305.png" alt="唯一索引冲突" width="90%"></div>
-<p>执行报错了，提示</p>
+<p>æä»ä¹é®é¢åï¼æ§è¡ä¸å°±ç¥éäºå</p>
+<div align="center"><img src="https://img2024.cnblogs.com/blog/747662/202512/747662-20251223173615530-841103305.png" alt="å¯ä¸ç´¢å¼å²çª" width="90%"></div>
+<p>æ§è¡æ¥éäºï¼æç¤º</p>
 <blockquote>
-<p>1062 - Duplicate entry '张三' for key 'tbl_insert_on_update.name'</p>
+<p>1062 - Duplicate entry 'å¼ ä¸' for key 'tbl_insert_on_update.name'</p>
 </blockquote>
-<p>这个错误信息我们是不是很熟悉？不就是唯一索引冲突吗？那么问题又来了</p>
+<p>è¿ä¸ªéè¯¯ä¿¡æ¯æä»¬æ¯ä¸æ¯å¾çæï¼ä¸å°±æ¯å¯ä¸ç´¢å¼å²çªåï¼é£ä¹é®é¢åæ¥äº</p>
 <blockquote>
-<p>用了MySQL的INSERT ON DUPLICATE KEY UPDATE，为什么还会唯一索引冲突？</p>
+<p>ç¨äºMySQLçINSERT ON DUPLICATE KEY UPDATEï¼ä¸ºä»ä¹è¿ä¼å¯ä¸ç´¢å¼å²çªï¼</p>
 </blockquote>
-<h2 id="如何判断是否存在">如何判断是否存在</h2>
-<p>我们写 <code>INSERT ... ON DUPLICATE KEY UPDATE</code> 语句时，并未指定用哪个 <code>主键</code> 或者 <code>唯一索引</code> 来判定记录是否存在</p>
+<h2 id="å¦ä½å¤æ­æ¯å¦å­å¨">å¦ä½å¤æ­æ¯å¦å­å¨</h2>
+<p>æä»¬å <code>INSERT ... ON DUPLICATE KEY UPDATE</code> è¯­å¥æ¶ï¼å¹¶æªæå®ç¨åªä¸ª <code>ä¸»é®</code> æè <code>å¯ä¸ç´¢å¼</code> æ¥å¤å®è®°å½æ¯å¦å­å¨</p>
 <blockquote>
-<p>Oracle、SQL Server、PostgreSQL 的 <code>MERGE</code> 有类似作用</p>
+<p>OracleãSQL ServerãPostgreSQL ç <code>MERGE</code> æç±»ä¼¼ä½ç¨</p>
 <pre><code class="language-sql">MERGE INTO TBL_INSERT_ON_UPDATE t
 USING (
-    SELECT 1 AS ID, '张三' AS NAME, '20050101001' AS UK_COLUMN1, '男一号' AS UK_COLUMN2, '风一样的男子' AS REMARK FROM dual
+    SELECT 1 AS ID, 'å¼ ä¸' AS NAME, '20050101001' AS UK_COLUMN1, 'ç·ä¸å·' AS UK_COLUMN2, 'é£ä¸æ ·çç·å­' AS REMARK FROM dual
 ) s
-ON (t.NAME = s.NAME)  -- 基于 NAME 字段匹配
+ON (t.NAME = s.NAME)  -- åºäº NAME å­æ®µå¹é
 WHEN MATCHED THEN
     UPDATE SET
         t.ID = s.ID,
@@ -131,105 +131,105 @@ WHEN NOT MATCHED THEN
     INSERT (ID, NAME, UK_COLUMN1, UK_COLUMN2, REMARK)
     VALUES (s.ID, s.NAME, s.UK_COLUMN1, s.UK_COLUMN2, s.REMARK);
 </code></pre>
-<p>其中的 <code>ON</code>  明确指定匹配字段（根据哪些字段判断记录是否存在），一般是指定 <code>主键</code>字段或 <code>唯一索引</code>字段</p>
+<p>å¶ä¸­ç <code>ON</code>  æç¡®æå®å¹éå­æ®µï¼æ ¹æ®åªäºå­æ®µå¤æ­è®°å½æ¯å¦å­å¨ï¼ï¼ä¸è¬æ¯æå® <code>ä¸»é®</code>å­æ®µæ <code>å¯ä¸ç´¢å¼</code>å­æ®µ</p>
 </blockquote>
-<p>那 MySQL 是如何判定记录是否存在的呢？我们可以翻阅下官方文档：<a href="https://dev.mysql.com/doc/refman/8.0/en/insert-on-duplicate.html" target="_blank" rel="noopener nofollow">INSERT ... ON DUPLICATE KEY UPDATE Statement</a>。一开头有如下一段描述</p>
+<p>é£ MySQL æ¯å¦ä½å¤å®è®°å½æ¯å¦å­å¨çå¢ï¼æä»¬å¯ä»¥ç¿»éä¸å®æ¹ææ¡£ï¼<a href="https://dev.mysql.com/doc/refman/8.0/en/insert-on-duplicate.html" target="_blank" rel="noopener nofollow">INSERT ... ON DUPLICATE KEY UPDATE Statement</a>ãä¸å¼å¤´æå¦ä¸ä¸æ®µæè¿°</p>
 <blockquote>
 <p>If you specify an <code>ON DUPLICATE KEY UPDATE</code> clause and a row to be inserted would cause a duplicate value in a <code>UNIQUE</code> index or <code>PRIMARY KEY</code>, an <a href="https://dev.mysql.com/doc/refman/8.0/en/update.html" target="_blank" rel="noopener nofollow"><code>UPDATE</code></a> of the old row occurs</p>
-<p>当我们使用 <code>ON DUPLICATE KEY UPDATE</code>  子句时，插入的行导致 <code>唯一</code> 索引或者 <code>主键</code> 重复时，会更新旧的行</p>
+<p>å½æä»¬ä½¿ç¨ <code>ON DUPLICATE KEY UPDATE</code>  å­å¥æ¶ï¼æå¥çè¡å¯¼è´ <code>å¯ä¸</code> ç´¢å¼æè <code>ä¸»é®</code> éå¤æ¶ï¼ä¼æ´æ°æ§çè¡</p>
 </blockquote>
-<p>通过这段话，我们只知道 MySQL 是根据唯一索引或主键来判定行是否存在，并不知道</p>
+<p>éè¿è¿æ®µè¯ï¼æä»¬åªç¥é MySQL æ¯æ ¹æ®å¯ä¸ç´¢å¼æä¸»é®æ¥å¤å®è¡æ¯å¦å­å¨ï¼å¹¶ä¸ç¥é</p>
 <ol>
-<li>先根据主键判定，不冲突之后再根据唯一索引判定？</li>
-<li>有多个唯一索引时，这些唯一索引的判定优先级是怎样的？</li>
+<li>åæ ¹æ®ä¸»é®å¤å®ï¼ä¸å²çªä¹ååæ ¹æ®å¯ä¸ç´¢å¼å¤å®ï¼</li>
+<li>æå¤ä¸ªå¯ä¸ç´¢å¼æ¶ï¼è¿äºå¯ä¸ç´¢å¼çå¤å®ä¼åçº§æ¯ææ ·çï¼</li>
 </ol>
-<p>官方文档里面并未明确说明这些问题，只是在结尾进行了如下说明</p>
+<p>å®æ¹ææ¡£éé¢å¹¶æªæç¡®è¯´æè¿äºé®é¢ï¼åªæ¯å¨ç»å°¾è¿è¡äºå¦ä¸è¯´æ</p>
 <blockquote>
 <p>An <a href="https://dev.mysql.com/doc/refman/8.0/en/insert-on-duplicate.html" target="_blank" rel="noopener nofollow"><code>INSERT ... ON DUPLICATE KEY UPDATE</code></a> statement against a table having more than one unique or primary key is also marked as unsafe. (Bug #11765650, Bug #58637)</p>
-<p>当表中有多个唯一索引或者主键时，INSERT ... ON DUPLICATE KEY UPDATE 语句不安全</p>
+<p>å½è¡¨ä¸­æå¤ä¸ªå¯ä¸ç´¢å¼æèä¸»é®æ¶ï¼INSERT ... ON DUPLICATE KEY UPDATE è¯­å¥ä¸å®å¨</p>
 </blockquote>
-<p>不安全代表执行结果不固定，会出现我们预期之外的结果</p>
-<h2 id="工作原理">工作原理</h2>
-<p>如果让你们来实现 <code>不存在则插入，存在则更新</code>，你们会怎么实现？</p>
-<p>逐个查询主键以及所有唯一索引，判断该行数据是否存在，一旦存在则根据重复的主键或者唯一索引进行 <code>UPDATE</code>，都不存在则进行 <code>INSERT</code>；这不仅是你们最容易想到的实现方式，也是我最容易想到的方式。</p>
-<p>但 MySQL 并未采用这种方式，而是采用了另外一种更高效的方式，先尝试插入，存储引擎会向<strong>所有相关的唯一索引（包括主键）</strong> 中插入对应的索引条目，如果都插入成功，说明数据行不存在，那么 <code>INSERT</code> 数据行；一旦存储引擎尝试插入某个唯一索引时，发现该数据行已经存在，会立即停止插入动作，并向MySQL服务层抛出 <code>重复键</code> 错误，服务层收到重复键错误后，并不会让整个语句失败（因为使用了 ON DUPLICATE KEY UPDATE 子句），而是转换执行模式，会先回滚之前的插入，然后根据重复的那个唯一索引找到数据行对应的 <code>旧行</code> 数据，最后 <code>UPDATE</code> 数据行；总结下来分三步</p>
+<p>ä¸å®å¨ä»£è¡¨æ§è¡ç»æä¸åºå®ï¼ä¼åºç°æä»¬é¢æä¹å¤çç»æ</p>
+<h2 id="å·¥ä½åç">å·¥ä½åç</h2>
+<p>å¦æè®©ä½ ä»¬æ¥å®ç° <code>ä¸å­å¨åæå¥ï¼å­å¨åæ´æ°</code>ï¼ä½ ä»¬ä¼æä¹å®ç°ï¼</p>
+<p>éä¸ªæ¥è¯¢ä¸»é®ä»¥åææå¯ä¸ç´¢å¼ï¼å¤æ­è¯¥è¡æ°æ®æ¯å¦å­å¨ï¼ä¸æ¦å­å¨åæ ¹æ®éå¤çä¸»é®æèå¯ä¸ç´¢å¼è¿è¡ <code>UPDATE</code>ï¼é½ä¸å­å¨åè¿è¡ <code>INSERT</code>ï¼è¿ä¸ä»æ¯ä½ ä»¬æå®¹ææ³å°çå®ç°æ¹å¼ï¼ä¹æ¯ææå®¹ææ³å°çæ¹å¼ã</p>
+<p>ä½ MySQL å¹¶æªéç¨è¿ç§æ¹å¼ï¼èæ¯éç¨äºå¦å¤ä¸ç§æ´é«æçæ¹å¼ï¼åå°è¯æå¥ï¼å­å¨å¼æä¼å<strong>ææç¸å³çå¯ä¸ç´¢å¼ï¼åæ¬ä¸»é®ï¼</strong> ä¸­æå¥å¯¹åºçç´¢å¼æ¡ç®ï¼å¦æé½æå¥æåï¼è¯´ææ°æ®è¡ä¸å­å¨ï¼é£ä¹ <code>INSERT</code> æ°æ®è¡ï¼ä¸æ¦å­å¨å¼æå°è¯æå¥æä¸ªå¯ä¸ç´¢å¼æ¶ï¼åç°è¯¥æ°æ®è¡å·²ç»å­å¨ï¼ä¼ç«å³åæ­¢æå¥å¨ä½ï¼å¹¶åMySQLæå¡å±æåº <code>éå¤é®</code> éè¯¯ï¼æå¡å±æ¶å°éå¤é®éè¯¯åï¼å¹¶ä¸ä¼è®©æ´ä¸ªè¯­å¥å¤±è´¥ï¼å ä¸ºä½¿ç¨äº ON DUPLICATE KEY UPDATE å­å¥ï¼ï¼èæ¯è½¬æ¢æ§è¡æ¨¡å¼ï¼ä¼ååæ»ä¹åçæå¥ï¼ç¶åæ ¹æ®éå¤çé£ä¸ªå¯ä¸ç´¢å¼æ¾å°æ°æ®è¡å¯¹åºç <code>æ§è¡</code> æ°æ®ï¼æå <code>UPDATE</code> æ°æ®è¡ï¼æ»ç»ä¸æ¥åä¸æ­¥</p>
 <ol>
 <li>
-<p>尝试插入</p>
-<p>所有唯一索引（包括主键）都插入成功，则插入数据行，相当于完成普通的 <code>INSERT</code></p>
-<p>一旦某个唯一索引插入失败，则立即停止插入，存储引擎会向上层抛出一个 <code>重复键</code> 错误</p>
+<p>å°è¯æå¥</p>
+<p>ææå¯ä¸ç´¢å¼ï¼åæ¬ä¸»é®ï¼é½æå¥æåï¼åæå¥æ°æ®è¡ï¼ç¸å½äºå®ææ®éç <code>INSERT</code></p>
+<p>ä¸æ¦æä¸ªå¯ä¸ç´¢å¼æå¥å¤±è´¥ï¼åç«å³åæ­¢æå¥ï¼å­å¨å¼æä¼åä¸å±æåºä¸ä¸ª <code>éå¤é®</code> éè¯¯</p>
 </li>
 <li>
-<p>模式转换</p>
-<p>MySQL服务器收到重复键后，发现执行语句中有 <code>ON DUPLICATE KEY UPDATE</code> 子句，不会直接让整个语句失败，而是先回滚之前的那部分唯一索引的插入，然后根据插入失败的唯一索引找到已经存在的 <code>旧行</code></p>
+<p>æ¨¡å¼è½¬æ¢</p>
+<p>MySQLæå¡å¨æ¶å°éå¤é®åï¼åç°æ§è¡è¯­å¥ä¸­æ <code>ON DUPLICATE KEY UPDATE</code> å­å¥ï¼ä¸ä¼ç´æ¥è®©æ´ä¸ªè¯­å¥å¤±è´¥ï¼èæ¯ååæ»ä¹åçé£é¨åå¯ä¸ç´¢å¼çæå¥ï¼ç¶åæ ¹æ®æå¥å¤±è´¥çå¯ä¸ç´¢å¼æ¾å°å·²ç»å­å¨ç <code>æ§è¡</code></p>
 </li>
 <li>
-<p>执行更新</p>
-<p>根据插入失败的唯一索引，对旧行执行更新操作，相当于完成普通的 <code>UPDATE</code></p>
+<p>æ§è¡æ´æ°</p>
+<p>æ ¹æ®æå¥å¤±è´¥çå¯ä¸ç´¢å¼ï¼å¯¹æ§è¡æ§è¡æ´æ°æä½ï¼ç¸å½äºå®ææ®éç <code>UPDATE</code></p>
 </li>
 </ol>
-<p>整个 <code>尝试-失败-转换-更新</code> 过程时一个原子操作，那么完全成功，要么完全失败；相比于 <code>先查询后判断</code> 的传统实现，这种实现方式效率更高。</p>
-<h2 id="问题答疑">问题答疑</h2>
-<p>前面涉及到两个问题，现在我们来解惑下</p>
+<p>æ´ä¸ª <code>å°è¯-å¤±è´¥-è½¬æ¢-æ´æ°</code> è¿ç¨æ¶ä¸ä¸ªåå­æä½ï¼é£ä¹å®å¨æåï¼è¦ä¹å®å¨å¤±è´¥ï¼ç¸æ¯äº <code>åæ¥è¯¢åå¤æ­</code> çä¼ ç»å®ç°ï¼è¿ç§å®ç°æ¹å¼æçæ´é«ã</p>
+<h2 id="é®é¢ç­ç">é®é¢ç­ç</h2>
+<p>åé¢æ¶åå°ä¸¤ä¸ªé®é¢ï¼ç°å¨æä»¬æ¥è§£æä¸</p>
 <ol>
 <li>
-<p>为什么拿掉 <code>name</code> 和拿掉 <code>id</code> 的 INSERT ... ON DUPLICATE KEY UPDATE 的执行结果会是一样的？</p>
-<pre><code class="language-sql">-- 拿掉name
+<p>ä¸ºä»ä¹æ¿æ <code>name</code> åæ¿æ <code>id</code> ç INSERT ... ON DUPLICATE KEY UPDATE çæ§è¡ç»æä¼æ¯ä¸æ ·çï¼</p>
+<pre><code class="language-sql">-- æ¿æname
 INSERT tbl_insert_on_update(id, uk_column1, uk_column2, remark)
-VALUES(1, '20050101001', '男一号', '风一样的男子')
-ON DUPLICATE KEY UPDATE uk_column1='20050101003', uk_column2='男三号', remark='暴风一样的男子';
+VALUES(1, '20050101001', 'ç·ä¸å·', 'é£ä¸æ ·çç·å­')
+ON DUPLICATE KEY UPDATE uk_column1='20050101003', uk_column2='ç·ä¸å·', remark='æ´é£ä¸æ ·çç·å­';
 
--- 拿掉id
+-- æ¿æid
 INSERT tbl_insert_on_update(name, uk_column1, uk_column2, remark)
-VALUES('张三', '20050101001', '男一号', '风一样的男子')
-ON DUPLICATE KEY UPDATE uk_column1='20050101003', uk_column2='男三号', remark='暴风一样的男子';
+VALUES('å¼ ä¸', '20050101001', 'ç·ä¸å·', 'é£ä¸æ ·çç·å­')
+ON DUPLICATE KEY UPDATE uk_column1='20050101003', uk_column2='ç·ä¸å·', remark='æ´é£ä¸æ ·çç·å­';
 </code></pre>
-<p>这个问题是不是很简单，我们一起来分析下</p>
+<p>è¿ä¸ªé®é¢æ¯ä¸æ¯å¾ç®åï¼æä»¬ä¸èµ·æ¥åæä¸</p>
 <pre><code class="language-sql">INSERT tbl_insert_on_update(id, uk_column1, uk_column2, remark)
-VALUES(1, '20050101001', '男一号', '风一样的男子')
-ON DUPLICATE KEY UPDATE uk_column1='20050101003', uk_column2='男三号', remark='暴风一样的男子';
+VALUES(1, '20050101001', 'ç·ä¸å·', 'é£ä¸æ ·çç·å­')
+ON DUPLICATE KEY UPDATE uk_column1='20050101003', uk_column2='ç·ä¸å·', remark='æ´é£ä¸æ ·çç·å­';
 </code></pre>
-<p>INSERT 的字段中没有 <code>name</code>，但有 <code>id</code>，可想而知判断数据行是否存在，用到的是 <code>主键</code>，因为 <code>id=1</code> 的记录已经存在，所以根据 id 去更新其他字段值；那么执行结果与如下 SQL 一致</p>
-<pre><code class="language-sql">UPDATE tbl_insert_on_update SET uk_column1='20050101003', uk_column2='男三号', remark='暴风一样的男子' WHERE id = 1;
+<p>INSERT çå­æ®µä¸­æ²¡æ <code>name</code>ï¼ä½æ <code>id</code>ï¼å¯æ³èç¥å¤æ­æ°æ®è¡æ¯å¦å­å¨ï¼ç¨å°çæ¯ <code>ä¸»é®</code>ï¼å ä¸º <code>id=1</code> çè®°å½å·²ç»å­å¨ï¼æä»¥æ ¹æ® id å»æ´æ°å¶ä»å­æ®µå¼ï¼é£ä¹æ§è¡ç»æä¸å¦ä¸ SQL ä¸è´</p>
+<pre><code class="language-sql">UPDATE tbl_insert_on_update SET uk_column1='20050101003', uk_column2='ç·ä¸å·', remark='æ´é£ä¸æ ·çç·å­' WHERE id = 1;
 </code></pre>
-<p>同理</p>
+<p>åç</p>
 <pre><code class="language-sql">INSERT tbl_insert_on_update(name, uk_column1, uk_column2, remark)
-VALUES('张三', '20050101001', '男一号', '风一样的男子')
-ON DUPLICATE KEY UPDATE uk_column1='20050101003', uk_column2='男三号', remark='暴风一样的男子';
+VALUES('å¼ ä¸', '20050101001', 'ç·ä¸å·', 'é£ä¸æ ·çç·å­')
+ON DUPLICATE KEY UPDATE uk_column1='20050101003', uk_column2='ç·ä¸å·', remark='æ´é£ä¸æ ·çç·å­';
 </code></pre>
-<p>INSERT 的字段中没有 <code>id</code>，但有 <code>name</code>，可想而知判断数据行是否存在，用到的是 <code>唯一索引</code>，因为 <code>name=张三</code> 的记录已经存在，所以根据 name 去更新其他字段值；那么执行结果与如下 SQL 一致</p>
-<pre><code class="language-sql">UPDATE tbl_insert_on_update SET uk_column1='20050101003', uk_column2='男三号', remark='暴风一样的男子' WHERE name = '张三';
+<p>INSERT çå­æ®µä¸­æ²¡æ <code>id</code>ï¼ä½æ <code>name</code>ï¼å¯æ³èç¥å¤æ­æ°æ®è¡æ¯å¦å­å¨ï¼ç¨å°çæ¯ <code>å¯ä¸ç´¢å¼</code>ï¼å ä¸º <code>name=å¼ ä¸</code> çè®°å½å·²ç»å­å¨ï¼æä»¥æ ¹æ® name å»æ´æ°å¶ä»å­æ®µå¼ï¼é£ä¹æ§è¡ç»æä¸å¦ä¸ SQL ä¸è´</p>
+<pre><code class="language-sql">UPDATE tbl_insert_on_update SET uk_column1='20050101003', uk_column2='ç·ä¸å·', remark='æ´é£ä¸æ ·çç·å­' WHERE name = 'å¼ ä¸';
 </code></pre>
-<p><code>id = 1</code> 与 <code>name = '张三'</code> 指向的本来就是同一行数据，更新的列与列值都一致，那么执行结果自然就一样了</p>
+<p><code>id = 1</code> ä¸ <code>name = 'å¼ ä¸'</code> æåçæ¬æ¥å°±æ¯åä¸è¡æ°æ®ï¼æ´æ°çåä¸åå¼é½ä¸è´ï¼é£ä¹æ§è¡ç»æèªç¶å°±ä¸æ ·äº</p>
 </li>
 <li>
-<p>存在多个唯一索引（包含主键）时，判断数据行是否存在，这些唯一索引的优先级顺序是怎样的？</p>
-<p>MySQL 官方文档并未明确说明这个优先级顺序，但在 MySQL 的实现中肯定有这个优先级顺序的实现算法，可能跟版本、存储引擎有关</p>
-<p>基于 <code>8.0.31</code> 版本，简单测试出以下优先级</p>
+<p>å­å¨å¤ä¸ªå¯ä¸ç´¢å¼ï¼åå«ä¸»é®ï¼æ¶ï¼å¤æ­æ°æ®è¡æ¯å¦å­å¨ï¼è¿äºå¯ä¸ç´¢å¼çä¼åçº§é¡ºåºæ¯ææ ·çï¼</p>
+<p>MySQL å®æ¹ææ¡£å¹¶æªæç¡®è¯´æè¿ä¸ªä¼åçº§é¡ºåºï¼ä½å¨ MySQL çå®ç°ä¸­è¯å®æè¿ä¸ªä¼åçº§é¡ºåºçå®ç°ç®æ³ï¼å¯è½è·çæ¬ãå­å¨å¼ææå³</p>
+<p>åºäº <code>8.0.31</code> çæ¬ï¼ç®åæµè¯åºä»¥ä¸ä¼åçº§</p>
 <blockquote>
-<p>主键 &gt; 唯一索引</p>
-<p>唯一索引之间按创建顺序，先创建的优先级高</p>
+<p>ä¸»é® &gt; å¯ä¸ç´¢å¼</p>
+<p>å¯ä¸ç´¢å¼ä¹é´æåå»ºé¡ºåºï¼ååå»ºçä¼åçº§é«</p>
 </blockquote>
-<p>官方文档已经明确说明：当表中有多个唯一索引或者主键时，INSERT ... ON DUPLICATE KEY UPDATE 语句不安全，所以如上的测试结果并不具备确定性，不能作为使用准则</p>
+<p>å®æ¹ææ¡£å·²ç»æç¡®è¯´æï¼å½è¡¨ä¸­æå¤ä¸ªå¯ä¸ç´¢å¼æèä¸»é®æ¶ï¼INSERT ... ON DUPLICATE KEY UPDATE è¯­å¥ä¸å®å¨ï¼æä»¥å¦ä¸çæµè¯ç»æå¹¶ä¸å·å¤ç¡®å®æ§ï¼ä¸è½ä½ä¸ºä½¿ç¨åå</p>
 </li>
 <li>
-<p>用了MySQL的INSERT ON DUPLICATE KEY UPDATE，怎么还报唯一索引冲突错误</p>
-<p>MySQL是基于尝试插入的第一个冲突的唯一索引来执行更新的，更新的字段完全有可能触发其他唯一索引（包括主键）冲突</p>
-<p>这个问题根本不成立！</p>
+<p>ç¨äºMySQLçINSERT ON DUPLICATE KEY UPDATEï¼æä¹è¿æ¥å¯ä¸ç´¢å¼å²çªéè¯¯</p>
+<p>MySQLæ¯åºäºå°è¯æå¥çç¬¬ä¸ä¸ªå²çªçå¯ä¸ç´¢å¼æ¥æ§è¡æ´æ°çï¼æ´æ°çå­æ®µå®å¨æå¯è½è§¦åå¶ä»å¯ä¸ç´¢å¼ï¼åæ¬ä¸»é®ï¼å²çª</p>
+<p>è¿ä¸ªé®é¢æ ¹æ¬ä¸æç«ï¼</p>
 </li>
 </ol>
-<h2 id="总结">总结</h2>
+<h2 id="æ»ç»">æ»ç»</h2>
 <ol>
 <li>
-<p>不管是 MySQL，还是 Oracle、SQL Server、PostgreSQL，针对 <code>不存在则插入，存在则更新</code> 判断数据是否存在的逻辑都是一样的，只是 MySQL 不需要显示指定 <code>判存</code> 的唯一索引（包括主键），由 MySQL 引擎内部自动实现</p>
+<p>ä¸ç®¡æ¯ MySQLï¼è¿æ¯ OracleãSQL ServerãPostgreSQLï¼éå¯¹ <code>ä¸å­å¨åæå¥ï¼å­å¨åæ´æ°</code> å¤æ­æ°æ®æ¯å¦å­å¨çé»è¾é½æ¯ä¸æ ·çï¼åªæ¯ MySQL ä¸éè¦æ¾ç¤ºæå® <code>å¤å­</code> çå¯ä¸ç´¢å¼ï¼åæ¬ä¸»é®ï¼ï¼ç± MySQL å¼æåé¨èªå¨å®ç°</p>
 </li>
 <li>
-<p>关于判断数据行是否存在，多个唯一索引的优先级，看似能测出 MySQL 中的优先级，但并不具备确定性，不能作为使用准则</p>
-<p>类似不确定的排序问题还有：<a href="https://juejin.cn/post/7290017749715632168" target="_blank" rel="noopener nofollow">我试图扯掉这条 SQL 的底裤</a></p>
+<p>å³äºå¤æ­æ°æ®è¡æ¯å¦å­å¨ï¼å¤ä¸ªå¯ä¸ç´¢å¼çä¼åçº§ï¼çä¼¼è½æµåº MySQL ä¸­çä¼åçº§ï¼ä½å¹¶ä¸å·å¤ç¡®å®æ§ï¼ä¸è½ä½ä¸ºä½¿ç¨åå</p>
+<p>ç±»ä¼¼ä¸ç¡®å®çæåºé®é¢è¿æï¼<a href="https://juejin.cn/post/7290017749715632168" target="_blank" rel="noopener nofollow">æè¯å¾æ¯æè¿æ¡ SQL çåºè£¤</a></p>
 </li>
 <li>
-<p>INSERT ... ON DUPLICATE KEY UPDATE 使用过程中有一些需要注意的点，需要结合自己的业务来分析是否可以忽略这些点</p>
-<p><a href="https://www.cnblogs.com/youzhibing/p/15248758.html" target="_blank">记录不存在则插入，存在则更新 → MySQL 的实现方式有哪些？</a></p>
+<p>INSERT ... ON DUPLICATE KEY UPDATE ä½¿ç¨è¿ç¨ä¸­æä¸äºéè¦æ³¨æçç¹ï¼éè¦ç»åèªå·±çä¸å¡æ¥åææ¯å¦å¯ä»¥å¿½ç¥è¿äºç¹</p>
+<p><a href="https://www.cnblogs.com/youzhibing/p/15248758.html" target="_blank">è®°å½ä¸å­å¨åæå¥ï¼å­å¨åæ´æ° â MySQL çå®ç°æ¹å¼æåªäºï¼</a></p>
 </li>
 </ol>
 
@@ -239,25 +239,25 @@ ON DUPLICATE KEY UPDATE uk_column1='20050101003', uk_column2='男三号', remark
             </div>
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2025-12-24 09:00">2025-12-24 09:00</span>&nbsp;
-<a href="https://www.cnblogs.com/youzhibing">青石路</a>&nbsp;
-阅读(<span id="post_view_count">0</span>)&nbsp;
-评论(<span id="post_comment_count">0</span>)&nbsp;
+<a href="https://www.cnblogs.com/youzhibing">éç³è·¯</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19388304);return false;">收藏</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19388304', targetLink: 'https://www.cnblogs.com/youzhibing/p/19388304', title: '用了MySQL的INSERT ON DUPLICATE KEY UPDATE，怎么还报唯一索引冲突错误' })">举报</a>
+<a href="javascript:void(0)" onclick="AddToWz(19388304);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19388304', targetLink: 'https://www.cnblogs.com/youzhibing/p/19388304', title: 'ç¨äºMySQLçINSERT ON DUPLICATE KEY UPDATEï¼æä¹è¿æ¥å¯ä¸ç´¢å¼å²çªéè¯¯' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
     </item>
 <item>
-    <title><![CDATA[ 【面试题】MySQL 中使用索引一定有效吗？如何排查索引效果？ ]]></title>
+    <title><![CDATA[ ãé¢è¯é¢ãMySQL ä¸­ä½¿ç¨ç´¢å¼ä¸å®ææåï¼å¦ä½ææ¥ç´¢å¼ææï¼ ]]></title>
     <link>https://www.cnblogs.com/sun-10387834/p/19371499</link>
     <guid>2a983bcd0009cd344c2ae781b8cdde49</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/sun-10387834/p/19371499" title="发布于 2025-12-24 08:42">
-    <span role="heading" aria-level="2">【面试题】MySQL 中使用索引一定有效吗？如何排查索引效果？</span>
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/sun-10387834/p/19371499" title="åå¸äº 2025-12-24 08:42">
+    <span role="heading" aria-level="2">ãé¢è¯é¢ãMySQL ä¸­ä½¿ç¨ç´¢å¼ä¸å®ææåï¼å¦ä½ææ¥ç´¢å¼ææï¼</span>
     
 
 </a>
@@ -266,271 +266,271 @@ ON DUPLICATE KEY UPDATE uk_column1='20050101003', uk_column2='男三号', remark
             <div class="clear"></div>
             <div class="postBody">
                 <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h1 id="-mysql-索引失效的8大陷阱及排查指南">📉 MySQL 索引失效的8大陷阱及排查指南</h1>
-<h2 id="-一句话明白">🎯 一句话明白</h2>
-<p><strong>索引不是万能的！用不对反而更慢！</strong></p>
-<h2 id="-索引失效的8大常见场景">🚫 索引失效的8大常见场景</h2>
-<h3 id="1-索引列上做计算最常见"><strong>1. 索引列上做计算（最常见）</strong></h3>
-<pre><code class="language-sql">-- ❌ 错误：在索引列上计算
+<h1 id="-mysql-ç´¢å¼å¤±æç8å¤§é·é±åææ¥æå">ð MySQL ç´¢å¼å¤±æç8å¤§é·é±åææ¥æå</h1>
+<h2 id="-ä¸å¥è¯æç½">ð¯ ä¸å¥è¯æç½</h2>
+<p><strong>ç´¢å¼ä¸æ¯ä¸è½çï¼ç¨ä¸å¯¹åèæ´æ¢ï¼</strong></p>
+<h2 id="-ç´¢å¼å¤±æç8å¤§å¸¸è§åºæ¯">ð« ç´¢å¼å¤±æç8å¤§å¸¸è§åºæ¯</h2>
+<h3 id="1-ç´¢å¼åä¸åè®¡ç®æå¸¸è§"><strong>1. ç´¢å¼åä¸åè®¡ç®ï¼æå¸¸è§ï¼</strong></h3>
+<pre><code class="language-sql">-- â éè¯¯ï¼å¨ç´¢å¼åä¸è®¡ç®
 SELECT * FROM users WHERE YEAR(created_time) = 2024;
 SELECT * FROM products WHERE price * 2 &gt; 100;
 
--- ✅ 正确：把计算移到右边
+-- â æ­£ç¡®ï¼æè®¡ç®ç§»å°å³è¾¹
 SELECT * FROM users WHERE created_time &gt;= '2024-01-01' AND created_time &lt; '2025-01-01';
 SELECT * FROM products WHERE price &gt; 50;
 </code></pre>
-<p><strong>原因</strong>：数据库必须对<strong>每一行</strong>都计算才能比较，无法用索引快速定位。</p>
-<h3 id="2-索引列使用函数"><strong>2. 索引列使用函数</strong></h3>
-<pre><code class="language-sql">-- ❌ 错误：使用函数包裹索引列
+<p><strong>åå </strong>ï¼æ°æ®åºå¿é¡»å¯¹<strong>æ¯ä¸è¡</strong>é½è®¡ç®æè½æ¯è¾ï¼æ æ³ç¨ç´¢å¼å¿«éå®ä½ã</p>
+<h3 id="2-ç´¢å¼åä½¿ç¨å½æ°"><strong>2. ç´¢å¼åä½¿ç¨å½æ°</strong></h3>
+<pre><code class="language-sql">-- â éè¯¯ï¼ä½¿ç¨å½æ°åè£¹ç´¢å¼å
 SELECT * FROM users WHERE UPPER(name) = 'JOHN';
 SELECT * FROM logs WHERE DATE(create_time) = '2024-01-01';
 
--- ✅ 正确：使用范围查询
-SELECT * FROM users WHERE name = 'john';  -- 存入时统一小写
+-- â æ­£ç¡®ï¼ä½¿ç¨èå´æ¥è¯¢
+SELECT * FROM users WHERE name = 'john';  -- å­å¥æ¶ç»ä¸å°å
 SELECT * FROM logs WHERE create_time &gt;= '2024-01-01' AND create_time &lt; '2024-01-02';
 </code></pre>
-<h3 id="3-模糊查询开头用通配符"><strong>3. 模糊查询开头用通配符</strong></h3>
-<pre><code class="language-sql">-- ❌ 错误：以 % 开头
-SELECT * FROM users WHERE name LIKE '%张%';  -- 全表扫描
-SELECT * FROM users WHERE name LIKE '%明';
+<h3 id="3-æ¨¡ç³æ¥è¯¢å¼å¤´ç¨ééç¬¦"><strong>3. æ¨¡ç³æ¥è¯¢å¼å¤´ç¨ééç¬¦</strong></h3>
+<pre><code class="language-sql">-- â éè¯¯ï¼ä»¥ % å¼å¤´
+SELECT * FROM users WHERE name LIKE '%å¼ %';  -- å¨è¡¨æ«æ
+SELECT * FROM users WHERE name LIKE '%æ';
 
--- ✅ 正确：以确定字符开头
-SELECT * FROM users WHERE name LIKE '张%';   -- 可以使用索引
-SELECT * FROM users WHERE name LIKE '张_明'; -- _匹配一个字符
+-- â æ­£ç¡®ï¼ä»¥ç¡®å®å­ç¬¦å¼å¤´
+SELECT * FROM users WHERE name LIKE 'å¼ %';   -- å¯ä»¥ä½¿ç¨ç´¢å¼
+SELECT * FROM users WHERE name LIKE 'å¼ _æ'; -- _å¹éä¸ä¸ªå­ç¬¦
 </code></pre>
-<p><strong>生活类比</strong>：</p>
+<p><strong>çæ´»ç±»æ¯</strong>ï¼</p>
 <ul>
-<li><code>张%</code> → 知道姓张，直接翻到张姓区域 ✅</li>
-<li><code>%张</code> → 不知道姓什么，只能一页页翻 ❌</li>
+<li><code>å¼ %</code> â ç¥éå§å¼ ï¼ç´æ¥ç¿»å°å¼ å§åºå â</li>
+<li><code>%å¼ </code> â ä¸ç¥éå§ä»ä¹ï¼åªè½ä¸é¡µé¡µç¿» â</li>
 </ul>
-<h3 id="4-or-条件使用不当"><strong>4. OR 条件使用不当</strong></h3>
-<pre><code class="language-sql">-- ❌ 错误：OR 条件中有的列没索引
+<h3 id="4-or-æ¡ä»¶ä½¿ç¨ä¸å½"><strong>4. OR æ¡ä»¶ä½¿ç¨ä¸å½</strong></h3>
+<pre><code class="language-sql">-- â éè¯¯ï¼OR æ¡ä»¶ä¸­æçåæ²¡ç´¢å¼
 SELECT * FROM users WHERE age = 25 OR salary &gt; 10000;
--- 如果 salary 没索引，整个查询都无法用索引
+-- å¦æ salary æ²¡ç´¢å¼ï¼æ´ä¸ªæ¥è¯¢é½æ æ³ç¨ç´¢å¼
 
--- ✅ 正确：确保 OR 两边都有索引
--- 或者分开查询
+-- â æ­£ç¡®ï¼ç¡®ä¿ OR ä¸¤è¾¹é½æç´¢å¼
+-- æèåå¼æ¥è¯¢
 SELECT * FROM users WHERE age = 25
 UNION
 SELECT * FROM users WHERE salary &gt; 10000;
 </code></pre>
-<h3 id="5-类型不匹配隐式转换"><strong>5. 类型不匹配（隐式转换）</strong></h3>
-<pre><code class="language-sql">-- ❌ 错误：字符串列用数字查询
+<h3 id="5-ç±»åä¸å¹ééå¼è½¬æ¢"><strong>5. ç±»åä¸å¹éï¼éå¼è½¬æ¢ï¼</strong></h3>
+<pre><code class="language-sql">-- â éè¯¯ï¼å­ç¬¦ä¸²åç¨æ°å­æ¥è¯¢
 CREATE TABLE users (
-    id VARCHAR(20) PRIMARY KEY,  -- 字符串类型
+    id VARCHAR(20) PRIMARY KEY,  -- å­ç¬¦ä¸²ç±»å
     name VARCHAR(50)
 );
-SELECT * FROM users WHERE id = 123;  -- 字符串和数字比较
+SELECT * FROM users WHERE id = 123;  -- å­ç¬¦ä¸²åæ°å­æ¯è¾
 
--- ✅ 正确：类型一致
+-- â æ­£ç¡®ï¼ç±»åä¸è´
 SELECT * FROM users WHERE id = '123';
 </code></pre>
-<p><strong>测试隐式转换</strong>：</p>
-<pre><code class="language-sql">-- 查看执行计划
+<p><strong>æµè¯éå¼è½¬æ¢</strong>ï¼</p>
+<pre><code class="language-sql">-- æ¥çæ§è¡è®¡å
 EXPLAIN SELECT * FROM users WHERE id = 123;
--- 注意看 key 列是否为 NULL（没走索引）
+-- æ³¨æç key åæ¯å¦ä¸º NULLï¼æ²¡èµ°ç´¢å¼ï¼
 </code></pre>
-<h3 id="6-联合索引没用最左列"><strong>6. 联合索引没用最左列</strong></h3>
-<pre><code class="language-sql">-- 索引：idx_abc (a, b, c)
+<h3 id="6-èåç´¢å¼æ²¡ç¨æå·¦å"><strong>6. èåç´¢å¼æ²¡ç¨æå·¦å</strong></h3>
+<pre><code class="language-sql">-- ç´¢å¼ï¼idx_abc (a, b, c)
 
--- ✅ 有效：用了最左列
+-- â ææï¼ç¨äºæå·¦å
 SELECT * FROM table WHERE a = 1;
 SELECT * FROM table WHERE a = 1 AND b = 2;
 SELECT * FROM table WHERE a = 1 AND b = 2 AND c = 3;
 
--- ❌ 无效：没从最左开始
-SELECT * FROM table WHERE b = 2;            -- 跳过 a
-SELECT * FROM table WHERE c = 3;            -- 跳过 a,b
-SELECT * FROM table WHERE b = 2 AND c = 3;  -- 跳过 a
+-- â æ æï¼æ²¡ä»æå·¦å¼å§
+SELECT * FROM table WHERE b = 2;            -- è·³è¿ a
+SELECT * FROM table WHERE c = 3;            -- è·³è¿ a,b
+SELECT * FROM table WHERE b = 2 AND c = 3;  -- è·³è¿ a
 </code></pre>
-<p><strong>记忆技巧</strong>：就像查字典，必须知道<strong>第一个字母</strong>才能快速查找。</p>
-<h3 id="7-数据量太少不如全表扫描"><strong>7. 数据量太少，不如全表扫描</strong></h3>
-<pre><code class="language-sql">-- 假设表只有 100 行数据
+<p><strong>è®°å¿æå·§</strong>ï¼å°±åæ¥å­å¸ï¼å¿é¡»ç¥é<strong>ç¬¬ä¸ä¸ªå­æ¯</strong>æè½å¿«éæ¥æ¾ã</p>
+<h3 id="7-æ°æ®éå¤ªå°ä¸å¦å¨è¡¨æ«æ"><strong>7. æ°æ®éå¤ªå°ï¼ä¸å¦å¨è¡¨æ«æ</strong></h3>
+<pre><code class="language-sql">-- åè®¾è¡¨åªæ 100 è¡æ°æ®
 SELECT * FROM small_table WHERE id = 50;
 
--- 数据库会想：走索引要查索引树 + 回表，不如直接全表扫描更快
+-- æ°æ®åºä¼æ³ï¼èµ°ç´¢å¼è¦æ¥ç´¢å¼æ  + åè¡¨ï¼ä¸å¦ç´æ¥å¨è¡¨æ«ææ´å¿«
 </code></pre>
-<h3 id="8-索引列选择性太低"><strong>8. 索引列选择性太低</strong></h3>
-<pre><code class="language-sql">-- 比如"性别"列，只有"男/女"两种值
+<h3 id="8-ç´¢å¼åéæ©æ§å¤ªä½"><strong>8. ç´¢å¼åéæ©æ§å¤ªä½</strong></h3>
+<pre><code class="language-sql">-- æ¯å¦"æ§å«"åï¼åªæ"ç·/å¥³"ä¸¤ç§å¼
 CREATE INDEX idx_gender ON users(gender);
 
-SELECT * FROM users WHERE gender = '男';
--- 可能失效，因为要返回接近一半的数据，不如全表扫描
+SELECT * FROM users WHERE gender = 'ç·';
+-- å¯è½å¤±æï¼å ä¸ºè¦è¿åæ¥è¿ä¸åçæ°æ®ï¼ä¸å¦å¨è¡¨æ«æ
 </code></pre>
-<h2 id="-如何排查索引失效">🔍 如何排查索引失效？</h2>
-<h3 id="第1步用-explain-快速诊断"><strong>第1步：用 EXPLAIN 快速诊断</strong></h3>
-<pre><code class="language-sql">-- 在查询前加 EXPLAIN
-EXPLAIN SELECT * FROM users WHERE name LIKE '%张%';
+<h2 id="-å¦ä½ææ¥ç´¢å¼å¤±æ">ð å¦ä½ææ¥ç´¢å¼å¤±æï¼</h2>
+<h3 id="ç¬¬1æ­¥ç¨-explain-å¿«éè¯æ­"><strong>ç¬¬1æ­¥ï¼ç¨ EXPLAIN å¿«éè¯æ­</strong></h3>
+<pre><code class="language-sql">-- å¨æ¥è¯¢åå  EXPLAIN
+EXPLAIN SELECT * FROM users WHERE name LIKE '%å¼ %';
 
--- 关键看这几列：
--- 1. type: ALL → 全表扫描（最差）
--- 2. key: NULL → 没走索引
--- 3. rows: 数值很大 → 要扫描很多行
--- 4. Extra: Using filesort, Using temporary → 性能警告
+-- å³é®çè¿å åï¼
+-- 1. type: ALL â å¨è¡¨æ«æï¼æå·®ï¼
+-- 2. key: NULL â æ²¡èµ°ç´¢å¼
+-- 3. rows: æ°å¼å¾å¤§ â è¦æ«æå¾å¤è¡
+-- 4. Extra: Using filesort, Using temporary â æ§è½è­¦å
 </code></pre>
-<h3 id="第2步看懂-explain-结果"><strong>第2步：看懂 EXPLAIN 结果</strong></h3>
+<h3 id="ç¬¬2æ­¥çæ-explain-ç»æ"><strong>ç¬¬2æ­¥ï¼çæ EXPLAIN ç»æ</strong></h3>
 <pre><code class="language-sql">EXPLAIN SELECT * FROM orders WHERE user_id = 100 AND status = 'paid';
 
--- 理想结果：
+-- çæ³ç»æï¼
 +----+-------------+--------+------+---------------+---------+---------+-------------+------+
 | id | select_type | table  | type | possible_keys | key     | key_len | rows        | Extra|
 +----+-------------+--------+------+---------------+---------+---------+-------------+------+
 |  1 | SIMPLE      | orders | ref  | idx_user      | idx_user| 8       | 10          | NULL |
 +----+-------------+--------+------+---------------+---------+---------+-------------+------+
 
--- type 从好到差：
+-- type ä»å¥½å°å·®ï¼
 -- system &gt; const &gt; eq_ref &gt; ref &gt; range &gt; index &gt; ALL
--- 至少要到 range 级别才合格
+-- è³å°è¦å° range çº§å«æåæ ¼
 </code></pre>
-<h3 id="第3步使用性能分析工具"><strong>第3步：使用性能分析工具</strong></h3>
-<pre><code class="language-sql">-- 1. 开启 profiling（查看详细耗时）
+<h3 id="ç¬¬3æ­¥ä½¿ç¨æ§è½åæå·¥å·"><strong>ç¬¬3æ­¥ï¼ä½¿ç¨æ§è½åæå·¥å·</strong></h3>
+<pre><code class="language-sql">-- 1. å¼å¯ profilingï¼æ¥çè¯¦ç»èæ¶ï¼
 SET profiling = 1;
 SELECT * FROM users WHERE ...;
 SHOW PROFILES;
 SHOW PROFILE FOR QUERY 1;
 
--- 2. 查看索引使用统计
+-- 2. æ¥çç´¢å¼ä½¿ç¨ç»è®¡
 SELECT * FROM sys.schema_index_statistics 
 WHERE table_name = 'users';
 
--- 3. 找出从未使用的索引（该删除了！）
+-- 3. æ¾åºä»æªä½¿ç¨çç´¢å¼ï¼è¯¥å é¤äºï¼ï¼
 SELECT * FROM sys.schema_unused_indexes;
 </code></pre>
-<h3 id="第4步慢查询日志分析"><strong>第4步：慢查询日志分析</strong></h3>
-<pre><code class="language-sql">-- 1. 开启慢查询日志
+<h3 id="ç¬¬4æ­¥æ¢æ¥è¯¢æ¥å¿åæ"><strong>ç¬¬4æ­¥ï¼æ¢æ¥è¯¢æ¥å¿åæ</strong></h3>
+<pre><code class="language-sql">-- 1. å¼å¯æ¢æ¥è¯¢æ¥å¿
 SET GLOBAL slow_query_log = 'ON';
-SET GLOBAL long_query_time = 2;  -- 超过2秒记录
+SET GLOBAL long_query_time = 2;  -- è¶è¿2ç§è®°å½
 
--- 2. 查看慢查询日志位置
+-- 2. æ¥çæ¢æ¥è¯¢æ¥å¿ä½ç½®
 SHOW VARIABLES LIKE 'slow_query_log_file';
 
--- 3. 使用工具分析（推荐）
--- mysqldumpslow 或 pt-query-digest
+-- 3. ä½¿ç¨å·¥å·åæï¼æ¨èï¼
+-- mysqldumpslow æ pt-query-digest
 </code></pre>
-<h2 id="️-实战排查案例">🛠️ 实战排查案例</h2>
-<h3 id="案例1为什么这个查询慢"><strong>案例1：为什么这个查询慢？</strong></h3>
-<pre><code class="language-sql">-- 原始查询（很慢）
+<h2 id="ï¸-å®æææ¥æ¡ä¾">ð ï¸ å®æææ¥æ¡ä¾</h2>
+<h3 id="æ¡ä¾1ä¸ºä»ä¹è¿ä¸ªæ¥è¯¢æ¢"><strong>æ¡ä¾1ï¼ä¸ºä»ä¹è¿ä¸ªæ¥è¯¢æ¢ï¼</strong></h3>
+<pre><code class="language-sql">-- åå§æ¥è¯¢ï¼å¾æ¢ï¼
 SELECT * FROM orders 
 WHERE DATE_FORMAT(create_time, '%Y-%m') = '2024-01'
 ORDER BY amount DESC;
 
--- 步骤1：EXPLAIN分析
+-- æ­¥éª¤1ï¼EXPLAINåæ
 EXPLAIN SELECT * FROM orders WHERE DATE_FORMAT(create_time, '%Y-%m') = '2024-01';
 
--- 发现：type=ALL, key=NULL（没走索引）
--- 原因：对 create_time 使用了函数
+-- åç°ï¼type=ALL, key=NULLï¼æ²¡èµ°ç´¢å¼ï¼
+-- åå ï¼å¯¹ create_time ä½¿ç¨äºå½æ°
 
--- 优化方案：
+-- ä¼åæ¹æ¡ï¼
 SELECT * FROM orders 
 WHERE create_time &gt;= '2024-01-01' 
   AND create_time &lt; '2024-02-01'
 ORDER BY amount DESC;
 
--- 再 EXPLAIN：type=range, key=idx_create_time ✅
+-- å EXPLAINï¼type=range, key=idx_create_time â
 </code></pre>
-<h3 id="案例2联合索引问题"><strong>案例2：联合索引问题</strong></h3>
-<pre><code class="language-sql">-- 查询：经常按城市和年龄搜索用户
-SELECT * FROM users WHERE city = '北京' AND age &gt; 25;
+<h3 id="æ¡ä¾2èåç´¢å¼é®é¢"><strong>æ¡ä¾2ï¼èåç´¢å¼é®é¢</strong></h3>
+<pre><code class="language-sql">-- æ¥è¯¢ï¼ç»å¸¸æåå¸åå¹´é¾æç´¢ç¨æ·
+SELECT * FROM users WHERE city = 'åäº¬' AND age &gt; 25;
 
--- 现有索引：idx_age_city (age, city)
--- 问题：最左列是 age，但查询先过滤 city
+-- ç°æç´¢å¼ï¼idx_age_city (age, city)
+-- é®é¢ï¼æå·¦åæ¯ ageï¼ä½æ¥è¯¢åè¿æ»¤ city
 
--- 解决方案：
--- 1. 调整查询顺序（如果业务允许）
-SELECT * FROM users WHERE age &gt; 25 AND city = '北京';
+-- è§£å³æ¹æ¡ï¼
+-- 1. è°æ´æ¥è¯¢é¡ºåºï¼å¦æä¸å¡åè®¸ï¼
+SELECT * FROM users WHERE age &gt; 25 AND city = 'åäº¬';
 
--- 2. 或创建新索引
+-- 2. æåå»ºæ°ç´¢å¼
 CREATE INDEX idx_city_age ON users(city, age);
 </code></pre>
-<h2 id="-索引效果评估表">📊 索引效果评估表</h2>
+<h2 id="-ç´¢å¼ææè¯ä¼°è¡¨">ð ç´¢å¼ææè¯ä¼°è¡¨</h2>
 <table>
 <thead>
 <tr>
-<th>检查项</th>
-<th>合格标准</th>
-<th>如何检查</th>
+<th>æ£æ¥é¡¹</th>
+<th>åæ ¼æ å</th>
+<th>å¦ä½æ£æ¥</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>索引使用率</strong></td>
+<td><strong>ç´¢å¼ä½¿ç¨ç</strong></td>
 <td>&gt; 90%</td>
 <td><code>SHOW STATUS LIKE 'Handler_read%'</code></td>
 </tr>
 <tr>
-<td><strong>查询响应时间</strong></td>
+<td><strong>æ¥è¯¢ååºæ¶é´</strong></td>
 <td>&lt; 100ms</td>
-<td>慢查询日志</td>
+<td>æ¢æ¥è¯¢æ¥å¿</td>
 </tr>
 <tr>
-<td><strong>扫描行数</strong></td>
+<td><strong>æ«æè¡æ°</strong></td>
 <td>rows &lt; 1000</td>
-<td>EXPLAIN 的 rows 列</td>
+<td>EXPLAIN ç rows å</td>
 </tr>
 <tr>
-<td><strong>临时表使用</strong></td>
-<td>尽量避免</td>
-<td>EXPLAIN 的 Extra 列</td>
+<td><strong>ä¸´æ¶è¡¨ä½¿ç¨</strong></td>
+<td>å°½éé¿å</td>
+<td>EXPLAIN ç Extra å</td>
 </tr>
 <tr>
-<td><strong>文件排序</strong></td>
-<td>尽量避免</td>
-<td>EXPLAIN 的 Extra 列</td>
+<td><strong>æä»¶æåº</strong></td>
+<td>å°½éé¿å</td>
+<td>EXPLAIN ç Extra å</td>
 </tr>
 </tbody>
 </table>
-<h2 id="-最佳实践清单">🎯 最佳实践清单</h2>
-<h3 id="创建索引前问自己"><strong>创建索引前问自己：</strong></h3>
+<h2 id="-æä½³å®è·µæ¸å">ð¯ æä½³å®è·µæ¸å</h2>
+<h3 id="åå»ºç´¢å¼åé®èªå·±"><strong>åå»ºç´¢å¼åé®èªå·±ï¼</strong></h3>
 <ol>
-<li>✅ 这个查询真的需要索引吗？（数据量小不需要）</li>
-<li>✅ 索引列的选择性高吗？（唯一值多吗？）</li>
-<li>✅ 会频繁更新这个列吗？（更新频繁的列不适合建索引）</li>
-<li>✅ 已经有类似的索引了吗？（避免重复索引）</li>
+<li>â è¿ä¸ªæ¥è¯¢ççéè¦ç´¢å¼åï¼ï¼æ°æ®éå°ä¸éè¦ï¼</li>
+<li>â ç´¢å¼åçéæ©æ§é«åï¼ï¼å¯ä¸å¼å¤åï¼ï¼</li>
+<li>â ä¼é¢ç¹æ´æ°è¿ä¸ªååï¼ï¼æ´æ°é¢ç¹çåä¸éåå»ºç´¢å¼ï¼</li>
+<li>â å·²ç»æç±»ä¼¼çç´¢å¼äºåï¼ï¼é¿åéå¤ç´¢å¼ï¼</li>
 </ol>
-<h3 id="创建索引后要检查"><strong>创建索引后要检查：</strong></h3>
-<pre><code class="language-sql">-- 1. 验证索引被使用
+<h3 id="åå»ºç´¢å¼åè¦æ£æ¥"><strong>åå»ºç´¢å¼åè¦æ£æ¥ï¼</strong></h3>
+<pre><code class="language-sql">-- 1. éªè¯ç´¢å¼è¢«ä½¿ç¨
 EXPLAIN SELECT ...;
 
--- 2. 监控索引大小
+-- 2. çæ§ç´¢å¼å¤§å°
 SELECT 
     table_name,
     index_name,
-    ROUND(SUM(index_length)/1024/1024, 2) AS '索引大小(MB)'
+    ROUND(SUM(index_length)/1024/1024, 2) AS 'ç´¢å¼å¤§å°(MB)'
 FROM information_schema.TABLES 
-WHERE table_schema = '你的数据库'
+WHERE table_schema = 'ä½ çæ°æ®åº'
 GROUP BY table_name, index_name;
 
--- 3. 定期清理无用索引
--- 查看使用频率低的索引
+-- 3. å®ææ¸çæ ç¨ç´¢å¼
+-- æ¥çä½¿ç¨é¢çä½çç´¢å¼
 SELECT * FROM sys.schema_unused_indexes;
 </code></pre>
-<h2 id="-简单记忆口诀">💡 简单记忆口诀</h2>
-<p><strong>索引失效八大坑：</strong></p>
+<h2 id="-ç®åè®°å¿å£è¯">ð¡ ç®åè®°å¿å£è¯</h2>
+<p><strong>ç´¢å¼å¤±æå«å¤§åï¼</strong></p>
 <ol>
-<li>计算函数不用想</li>
-<li>模糊查询百分左</li>
-<li>类型转换隐式藏</li>
-<li>OR 条件要全防</li>
-<li>最左前缀不能忘</li>
-<li>数据量少全表爽</li>
-<li>选择性低是白忙</li>
-<li>不等号&lt;&gt;也够呛</li>
+<li>è®¡ç®å½æ°ä¸ç¨æ³</li>
+<li>æ¨¡ç³æ¥è¯¢ç¾åå·¦</li>
+<li>ç±»åè½¬æ¢éå¼è</li>
+<li>OR æ¡ä»¶è¦å¨é²</li>
+<li>æå·¦åç¼ä¸è½å¿</li>
+<li>æ°æ®éå°å¨è¡¨ç½</li>
+<li>éæ©æ§ä½æ¯ç½å¿</li>
+<li>ä¸ç­å·&lt;&gt;ä¹å¤å</li>
 </ol>
-<p><strong>排查四步曲：</strong></p>
+<p><strong>ææ¥åæ­¥æ²ï¼</strong></p>
 <ol>
-<li><strong>EXPLAIN</strong> 看计划</li>
-<li><strong>慢日志</strong> 抓真凶</li>
-<li><strong>PROFILE</strong> 查明细</li>
-<li><strong>统计表</strong> 清无用</li>
+<li><strong>EXPLAIN</strong> çè®¡å</li>
+<li><strong>æ¢æ¥å¿</strong> æçå¶</li>
+<li><strong>PROFILE</strong> æ¥æç»</li>
+<li><strong>ç»è®¡è¡¨</strong> æ¸æ ç¨</li>
 </ol>
-<p>记住：<strong>索引就像书的目录，但翻目录本身也需要时间。如果书只有10页，不如直接翻；如果目录编排不合理，还不如不用！</strong></p>
+<p>è®°ä½ï¼<strong>ç´¢å¼å°±åä¹¦çç®å½ï¼ä½ç¿»ç®å½æ¬èº«ä¹éè¦æ¶é´ãå¦æä¹¦åªæ10é¡µï¼ä¸å¦ç´æ¥ç¿»ï¼å¦æç®å½ç¼æä¸åçï¼è¿ä¸å¦ä¸ç¨ï¼</strong></p>
 
 </div>
 <div id="MySignature" role="contentinfo">
     
-<p>❤️ 如果你喜欢这篇文章，请点赞支持！ 👍 同时欢迎关注我的博客，获取更多精彩内容！</p>
+<p>â¤ï¸ å¦æä½ åæ¬¢è¿ç¯æç« ï¼è¯·ç¹èµæ¯æï¼ ð åæ¶æ¬¢è¿å³æ³¨æçåå®¢ï¼è·åæ´å¤ç²¾å½©åå®¹ï¼</p>
 
-<p>本文来自博客园，作者：<a href="https://www.cnblogs.com/sun-10387834/" target="_blank">佛祖让我来巡山</a>，转载请注明原文链接：<a href="https://www.cnblogs.com/sun-10387834/p/19371499" target="_blank">https://www.cnblogs.com/sun-10387834/p/19371499</a></p>
+<p>æ¬ææ¥èªåå®¢å­ï¼ä½èï¼<a href="https://www.cnblogs.com/sun-10387834/" target="_blank">ä½ç¥è®©ææ¥å·¡å±±</a>ï¼è½¬è½½è¯·æ³¨æåæé¾æ¥ï¼<a href="https://www.cnblogs.com/sun-10387834/p/19371499" target="_blank">https://www.cnblogs.com/sun-10387834/p/19371499</a></p>
 
 
 </div>
@@ -539,25 +539,25 @@ SELECT * FROM sys.schema_unused_indexes;
             </div>
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2025-12-24 08:43">2025-12-24 08:42</span>&nbsp;
-<a href="https://www.cnblogs.com/sun-10387834">佛祖让我来巡山</a>&nbsp;
-阅读(<span id="post_view_count">0</span>)&nbsp;
-评论(<span id="post_comment_count">0</span>)&nbsp;
+<a href="https://www.cnblogs.com/sun-10387834">ä½ç¥è®©ææ¥å·¡å±±</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19371499);return false;">收藏</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19371499', targetLink: 'https://www.cnblogs.com/sun-10387834/p/19371499', title: '【面试题】MySQL 中使用索引一定有效吗？如何排查索引效果？' })">举报</a>
+<a href="javascript:void(0)" onclick="AddToWz(19371499);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19371499', targetLink: 'https://www.cnblogs.com/sun-10387834/p/19371499', title: 'ãé¢è¯é¢ãMySQL ä¸­ä½¿ç¨ç´¢å¼ä¸å®ææåï¼å¦ä½ææ¥ç´¢å¼ææï¼' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
     </item>
 <item>
-    <title><![CDATA[ FastAPI快速上手：请求与响应的核心玩法 ]]></title>
+    <title><![CDATA[ FastAPIå¿«éä¸æï¼è¯·æ±ä¸ååºçæ ¸å¿ç©æ³ ]]></title>
     <link>https://www.cnblogs.com/ymtianyu/p/19389987</link>
     <guid>a826c3ed7b6ab68dce27ff9aeb23d7bf</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/ymtianyu/p/19389987" title="发布于 2025-12-24 08:24">
-    <span role="heading" aria-level="2">FastAPI快速上手：请求与响应的核心玩法</span>
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/ymtianyu/p/19389987" title="åå¸äº 2025-12-24 08:24">
+    <span role="heading" aria-level="2">FastAPIå¿«éä¸æï¼è¯·æ±ä¸ååºçæ ¸å¿ç©æ³</span>
     
 
 </a>
@@ -567,54 +567,54 @@ SELECT * FROM sys.schema_unused_indexes;
             <div class="postBody">
                     <div id="cnblogs_post_description" style="display: none">
         
-        本文详细介绍了如何使用FastAPI框架处理Web开发中的核心请求与响应。内容涵盖路由定义、GET与POST请求方法、查询参数与路径参数的使用、请求头与响应头的操作、表单数据的解析以及重定向的实现，并提供了可直接运行的完整代码示例，帮助读者快速掌握FastAPI的基础应用。
+        æ¬æè¯¦ç»ä»ç»äºå¦ä½ä½¿ç¨FastAPIæ¡æ¶å¤çWebå¼åä¸­çæ ¸å¿è¯·æ±ä¸ååºãåå®¹æ¶µçè·¯ç±å®ä¹ãGETä¸POSTè¯·æ±æ¹æ³ãæ¥è¯¢åæ°ä¸è·¯å¾åæ°çä½¿ç¨ãè¯·æ±å¤´ä¸ååºå¤´çæä½ãè¡¨åæ°æ®çè§£æä»¥åéå®åçå®ç°ï¼å¹¶æä¾äºå¯ç´æ¥è¿è¡çå®æ´ä»£ç ç¤ºä¾ï¼å¸®å©è¯»èå¿«éææ¡FastAPIçåºç¡åºç¨ã
     </div>
 <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
 <div style="font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif; line-height: 1.6; color: rgba(51, 51, 51, 1); font-size: 16px; padding: 20px 0">
 <div style="margin-bottom: 30px">
-<p style="font-size: 18px; color: rgba(102, 102, 102, 1)">还在为构建高性能API而烦恼？知道吗，<strong style="color: rgba(186, 55, 42, 1)">FastAPI</strong>框架的性能与<code>NodeJS</code>和<code>Go</code>相当，同时提供极佳的开发体验。</p>
+<p style="font-size: 18px; color: rgba(102, 102, 102, 1)">è¿å¨ä¸ºæå»ºé«æ§è½APIèç¦æ¼ï¼ç¥éåï¼<strong style="color: rgba(186, 55, 42, 1)">FastAPI</strong>æ¡æ¶çæ§è½ä¸<code>NodeJS</code>å<code>Go</code>ç¸å½ï¼åæ¶æä¾æä½³çå¼åä½éªã</p>
 </div>
 <div style="background-color: rgba(249, 249, 249, 1); border-left: 4px solid rgba(76, 175, 80, 1); padding: 15px 20px; margin: 25px 0; border-radius: 0 4px 4px 0">
-<p style="margin: 0; color: rgba(44, 62, 80, 1); font-weight: bold">📖 文章摘要</p>
-<p style="margin: 10px 0 0; color: rgba(85, 85, 85, 1)">本文带你快速上手FastAPI的请求与响应处理核心。你将清晰地掌握如何定义路由、处理GET/POST请求、玩转查询与路径参数、管理请求头与响应头、解析表单数据以及实现页面重定向。文末附有可直接运行的完整代码示例。</p>
+<p style="margin: 0; color: rgba(44, 62, 80, 1); font-weight: bold">ð æç« æè¦</p>
+<p style="margin: 10px 0 0; color: rgba(85, 85, 85, 1)">æ¬æå¸¦ä½ å¿«éä¸æFastAPIçè¯·æ±ä¸ååºå¤çæ ¸å¿ãä½ å°æ¸æ°å°ææ¡å¦ä½å®ä¹è·¯ç±ãå¤çGET/POSTè¯·æ±ãç©è½¬æ¥è¯¢ä¸è·¯å¾åæ°ãç®¡çè¯·æ±å¤´ä¸ååºå¤´ãè§£æè¡¨åæ°æ®ä»¥åå®ç°é¡µé¢éå®åãææ«éæå¯ç´æ¥è¿è¡çå®æ´ä»£ç ç¤ºä¾ã</p>
 <br>
-<p style="margin: 0; color: rgba(44, 62, 80, 1); font-weight: bold">🚀 你将学到：</p>
-<p style="margin: 5px 0 0; color: rgba(85, 85, 85, 1)">- 路由与请求方法的基础定义<br>- 如何接收查询参数和路径参数<br>- 处理POST请求与JSON数据<br>- 读取请求头与设置自定义响应头<br>- 解析application/x-www-form-urlencoded表单数据<br>- 实现简单的重定向响应</p>
+<p style="margin: 0; color: rgba(44, 62, 80, 1); font-weight: bold">ð ä½ å°å­¦å°ï¼</p>
+<p style="margin: 5px 0 0; color: rgba(85, 85, 85, 1)">- è·¯ç±ä¸è¯·æ±æ¹æ³çåºç¡å®ä¹<br>- å¦ä½æ¥æ¶æ¥è¯¢åæ°åè·¯å¾åæ°<br>- å¤çPOSTè¯·æ±ä¸JSONæ°æ®<br>- è¯»åè¯·æ±å¤´ä¸è®¾ç½®èªå®ä¹ååºå¤´<br>- è§£æapplication/x-www-form-urlencodedè¡¨åæ°æ®<br>- å®ç°ç®åçéå®åååº</p>
 </div>
-<h2 style="border-bottom: 2px solid rgba(76, 175, 80, 1); padding-bottom: 10px; margin-top: 40px">✨ 目录</h2>
-<p style="color: rgba(85, 85, 85, 1)">- 🛣️ 第一步：从路由与请求方法开始<br>- 🔍 GET请求：查询参数与路径参数<br>- 📤 POST请求：接收JSON与表单数据<br>- 📨 请求头与响应头：细节控制<br>- ↪️ 重定向：让请求跳转起来<br>- 💻 完整代码示例：一个迷你API服务</p>
-<h2 id="route" style="margin-top: 45px; color: rgba(44, 62, 80, 1)">🛣️ 第一步：从路由与请求方法开始</h2>
-<p>在FastAPI中，一切从<code>app</code>实例和装饰器开始。<code>@app.get()</code>、<code>@app.post()</code>等装饰器定义了URL路径和HTTP方法。</p>
+<h2 style="border-bottom: 2px solid rgba(76, 175, 80, 1); padding-bottom: 10px; margin-top: 40px">â¨ ç®å½</h2>
+<p style="color: rgba(85, 85, 85, 1)">- ð£ï¸ ç¬¬ä¸æ­¥ï¼ä»è·¯ç±ä¸è¯·æ±æ¹æ³å¼å§<br>- ð GETè¯·æ±ï¼æ¥è¯¢åæ°ä¸è·¯å¾åæ°<br>- ð¤ POSTè¯·æ±ï¼æ¥æ¶JSONä¸è¡¨åæ°æ®<br>- ð¨ è¯·æ±å¤´ä¸ååºå¤´ï¼ç»èæ§å¶<br>- âªï¸ éå®åï¼è®©è¯·æ±è·³è½¬èµ·æ¥<br>- ð» å®æ´ä»£ç ç¤ºä¾ï¼ä¸ä¸ªè¿·ä½ APIæå¡</p>
+<h2 id="route" style="margin-top: 45px; color: rgba(44, 62, 80, 1)">ð£ï¸ ç¬¬ä¸æ­¥ï¼ä»è·¯ç±ä¸è¯·æ±æ¹æ³å¼å§</h2>
+<p>å¨FastAPIä¸­ï¼ä¸åä»<code>app</code>å®ä¾åè£é¥°å¨å¼å§ã<code>@app.get()</code>ã<code>@app.post()</code>ç­è£é¥°å¨å®ä¹äºURLè·¯å¾åHTTPæ¹æ³ã</p>
 <pre class="language-python highlighter-hljs"><code>from fastapi import FastAPI
 
 app = FastAPI()
 
-# 定义一个处理根路径GET请求的路由
+# å®ä¹ä¸ä¸ªå¤çæ ¹è·¯å¾GETè¯·æ±çè·¯ç±
 @app.get("/")
 def read_root():
     return {"message": "Hello, FastAPI World!"}
 
-# 定义一个处理'/items'路径GET请求的路由
+# å®ä¹ä¸ä¸ªå¤ç'/items'è·¯å¾GETè¯·æ±çè·¯ç±
 @app.get("/items/")
 def read_items():
     return [{"item_id": 1, "name": "Foo"}]</code></pre>
-<p>看，就这么简单！<strong style="color: rgba(186, 55, 42, 1)">每个函数对应一个API端点</strong>，返回值自动转换为JSON响应。</p>
-<h2 id="get" style="margin-top: 45px; color: rgba(44, 62, 80, 1)">🔍 GET请求：查询参数与路径参数</h2>
-<p>GET请求常用于获取数据，参数通常通过URL传递。主要有两种方式：<strong style="color: rgba(186, 55, 42, 1)">查询参数</strong>和<strong style="color: rgba(186, 55, 42, 1)">路径参数</strong>。</p>
-<p><strong>查询参数</strong>：跟在URL问号<code>?</code>后面，如<code>/items/?skip=0&amp;limit=10</code>。在函数参数中声明即可自动获取。</p>
+<p>çï¼å°±è¿ä¹ç®åï¼<strong style="color: rgba(186, 55, 42, 1)">æ¯ä¸ªå½æ°å¯¹åºä¸ä¸ªAPIç«¯ç¹</strong>ï¼è¿åå¼èªå¨è½¬æ¢ä¸ºJSONååºã</p>
+<h2 id="get" style="margin-top: 45px; color: rgba(44, 62, 80, 1)">ð GETè¯·æ±ï¼æ¥è¯¢åæ°ä¸è·¯å¾åæ°</h2>
+<p>GETè¯·æ±å¸¸ç¨äºè·åæ°æ®ï¼åæ°éå¸¸éè¿URLä¼ éãä¸»è¦æä¸¤ç§æ¹å¼ï¼<strong style="color: rgba(186, 55, 42, 1)">æ¥è¯¢åæ°</strong>å<strong style="color: rgba(186, 55, 42, 1)">è·¯å¾åæ°</strong>ã</p>
+<p><strong>æ¥è¯¢åæ°</strong>ï¼è·å¨URLé®å·<code>?</code>åé¢ï¼å¦<code>/items/?skip=0&amp;limit=10</code>ãå¨å½æ°åæ°ä¸­å£°æå³å¯èªå¨è·åã</p>
 <pre class="language-python highlighter-hljs"><code>@app.get("/items/")
 def read_items(skip: int = 0, limit: int = 10):
-    # 模拟从数据库读取数据
+    # æ¨¡æä»æ°æ®åºè¯»åæ°æ®
     fake_items = [{"item_id": i} for i in range(skip, skip + limit)]
     return fake_items</code></pre>
-<p><strong>路径参数</strong>：直接嵌在URL路径中，如<code>/items/123</code>。在路由中用<code>{}</code>声明。</p>
+<p><strong>è·¯å¾åæ°</strong>ï¼ç´æ¥åµå¨URLè·¯å¾ä¸­ï¼å¦<code>/items/123</code>ãå¨è·¯ç±ä¸­ç¨<code>{}</code>å£°æã</p>
 <pre class="language-python highlighter-hljs"><code>@app.get("/items/{item_id}")
-def read_item(item_id: int): # 类型注解会自动进行验证和转换
+def read_item(item_id: int): # ç±»åæ³¨è§£ä¼èªå¨è¿è¡éªè¯åè½¬æ¢
     return {"item_id": item_id, "name": f"Item {item_id}"}</code></pre>
-<p>FastAPI的<strong style="color: rgba(186, 55, 42, 1)">类型提示</strong>功能会帮你自动验证参数类型，并提供漂亮的API文档！</p>
-<h2 id="post" style="margin-top: 45px; color: rgba(44, 62, 80, 1)">📤 POST请求：接收JSON与表单数据</h2>
-<p>POST请求用于创建或提交数据。最常见的是接收<strong style="color: rgba(186, 55, 42, 1)">JSON</strong>和<strong style="color: rgba(186, 55, 42, 1)">表单</strong>数据。</p>
-<p><strong>1. 接收JSON数据</strong>：使用Pydantic模型来定义数据结构。</p>
+<p>FastAPIç<strong style="color: rgba(186, 55, 42, 1)">ç±»åæç¤º</strong>åè½ä¼å¸®ä½ èªå¨éªè¯åæ°ç±»åï¼å¹¶æä¾æ¼äº®çAPIææ¡£ï¼</p>
+<h2 id="post" style="margin-top: 45px; color: rgba(44, 62, 80, 1)">ð¤ POSTè¯·æ±ï¼æ¥æ¶JSONä¸è¡¨åæ°æ®</h2>
+<p>POSTè¯·æ±ç¨äºåå»ºææäº¤æ°æ®ãæå¸¸è§çæ¯æ¥æ¶<strong style="color: rgba(186, 55, 42, 1)">JSON</strong>å<strong style="color: rgba(186, 55, 42, 1)">è¡¨å</strong>æ°æ®ã</p>
+<p><strong>1. æ¥æ¶JSONæ°æ®</strong>ï¼ä½¿ç¨Pydanticæ¨¡åæ¥å®ä¹æ°æ®ç»æã</p>
 <pre class="language-python highlighter-hljs"><code>from pydantic import BaseModel
 
 class Item(BaseModel):
@@ -624,84 +624,84 @@ class Item(BaseModel):
     tax: float | None = None
 
 @app.post("/items/")
-def create_item(item: Item): # 将请求体声明为Item类型
-    # 可以直接使用item的属性
+def create_item(item: Item): # å°è¯·æ±ä½å£°æä¸ºItemç±»å
+    # å¯ä»¥ç´æ¥ä½¿ç¨itemçå±æ§
     item_dict = item.dict()
     if item.tax:
         total_price = item.price + item.tax
         item_dict.update({"total_price": total_price})
     return item_dict</code></pre>
-<p><strong>2. 接收表单数据</strong>：当数据来自HTML表单时，使用<code>Form</code>。</p>
+<p><strong>2. æ¥æ¶è¡¨åæ°æ®</strong>ï¼å½æ°æ®æ¥èªHTMLè¡¨åæ¶ï¼ä½¿ç¨<code>Form</code>ã</p>
 <pre class="language-python highlighter-hljs"><code>from fastapi import Form
 
 @app.post("/login/")
 def login(username: str = Form(...), password: str = Form(...)):
-    # Form(...)表示必填字段
+    # Form(...)è¡¨ç¤ºå¿å¡«å­æ®µ
     return {"username": username, "login_status": "success"}</code></pre>
-<p>注意：使用<code>Form</code>前需要先安装<code>python-multipart</code>库。</p>
-<h2 id="header" style="margin-top: 45px; color: rgba(44, 62, 80, 1)">📨 请求头与响应头：细节控制</h2>
-<p>有时你需要读取客户端的请求头，或者为响应添加自定义头部信息。</p>
-<p><strong>读取请求头</strong>：使用<code>Header</code>函数。</p>
+<p>æ³¨æï¼ä½¿ç¨<code>Form</code>åéè¦åå®è£<code>python-multipart</code>åºã</p>
+<h2 id="header" style="margin-top: 45px; color: rgba(44, 62, 80, 1)">ð¨ è¯·æ±å¤´ä¸ååºå¤´ï¼ç»èæ§å¶</h2>
+<p>ææ¶ä½ éè¦è¯»åå®¢æ·ç«¯çè¯·æ±å¤´ï¼æèä¸ºååºæ·»å èªå®ä¹å¤´é¨ä¿¡æ¯ã</p>
+<p><strong>è¯»åè¯·æ±å¤´</strong>ï¼ä½¿ç¨<code>Header</code>å½æ°ã</p>
 <pre class="language-python highlighter-hljs"><code>from fastapi import Header
 
 @app.get("/headers/")
 def read_headers(user_agent: str | None = Header(None)):
     return {"User-Agent": user_agent}</code></pre>
-<p><strong>设置响应头</strong>：返回一个<code>Response</code>对象，或在依赖中设置。</p>
+<p><strong>è®¾ç½®ååºå¤´</strong>ï¼è¿åä¸ä¸ª<code>Response</code>å¯¹è±¡ï¼æå¨ä¾èµä¸­è®¾ç½®ã</p>
 <pre class="language-python highlighter-hljs"><code>from fastapi import Response
 
 @app.get("/custom-header/")
 def set_custom_header(response: Response):
     response.headers["X-Custom-Header"] = "MyCustomValue"
     return {"message": "Check the headers!"}</code></pre>
-<h2 id="redirect" style="margin-top: 45px; color: rgba(44, 62, 80, 1)">↪️ 重定向：让请求跳转起来</h2>
-<p>重定向在Web开发中很常见，比如登录后跳转到首页。使用<code>RedirectResponse</code>即可轻松实现。</p>
+<h2 id="redirect" style="margin-top: 45px; color: rgba(44, 62, 80, 1)">âªï¸ éå®åï¼è®©è¯·æ±è·³è½¬èµ·æ¥</h2>
+<p>éå®åå¨Webå¼åä¸­å¾å¸¸è§ï¼æ¯å¦ç»å½åè·³è½¬å°é¦é¡µãä½¿ç¨<code>RedirectResponse</code>å³å¯è½»æ¾å®ç°ã</p>
 <pre class="language-python highlighter-hljs"><code>from fastapi.responses import RedirectResponse
 
 @app.get("/old-link/")
 def old_link():
-    # 永久重定向到新的URL
+    # æ°¸ä¹éå®åå°æ°çURL
     return RedirectResponse(url="/new-link/", status_code=301)
 
 @app.get("/new-link/")
 def new_link():
     return {"message": "This is the new endpoint!"}</code></pre>
-<h2 id="full-code" style="margin-top: 45px; color: rgba(44, 62, 80, 1)">💻 完整代码示例：一个迷你API服务</h2>
-<p>将上面的知识点整合，创建一个简单的笔记API。保存为<code>main.py</code>，然后用<code>uvicorn main:app --reload</code>运行它！</p>
+<h2 id="full-code" style="margin-top: 45px; color: rgba(44, 62, 80, 1)">ð» å®æ´ä»£ç ç¤ºä¾ï¼ä¸ä¸ªè¿·ä½ APIæå¡</h2>
+<p>å°ä¸é¢çç¥è¯ç¹æ´åï¼åå»ºä¸ä¸ªç®åçç¬è®°APIãä¿å­ä¸º<code>main.py</code>ï¼ç¶åç¨<code>uvicorn main:app --reload</code>è¿è¡å®ï¼</p>
 <pre class="language-python highlighter-hljs"><code>from fastapi import FastAPI, Path, Query, Header, Form, Response
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 from typing import Optional
 
-app = FastAPI(title="迷你笔记API")
+app = FastAPI(title="è¿·ä½ ç¬è®°API")
 
-# 数据模型
+# æ°æ®æ¨¡å
 class Note(BaseModel):
     title: str
     content: str
 
-# 模拟数据库
+# æ¨¡ææ°æ®åº
 fake_notes_db = [{"id": 1, "title": "First Note", "content": "Hello!"}]
 
-# 首页重定向到文档
+# é¦é¡µéå®åå°ææ¡£
 @app.get("/")
 def home():
     return RedirectResponse(url="/docs")
 
-# 获取所有笔记 (带查询参数分页)
+# è·åææç¬è®° (å¸¦æ¥è¯¢åæ°åé¡µ)
 @app.get("/notes/")
 def get_notes(skip: int = Query(0, ge=0), limit: int = Query(10, le=100)):
     return fake_notes_db[skip : skip + limit]
 
-# 根据ID获取特定笔记 (路径参数)
+# æ ¹æ®IDè·åç¹å®ç¬è®° (è·¯å¾åæ°)
 @app.get("/notes/{note_id}")
-def get_note_by_id(note_id: int = Path(..., title="笔记ID", gt=0)):
+def get_note_by_id(note_id: int = Path(..., title="ç¬è®°ID", gt=0)):
     for note in fake_notes_db:
         if note["id"] == note_id:
             return note
     return {"error": "Note not found"}
 
-# 创建新笔记 (POST JSON)
+# åå»ºæ°ç¬è®° (POST JSON)
 @app.post("/notes/")
 def create_note(note: Note, response: Response):
     new_id = max([n["id"] for n in fake_notes_db], default=0) + 1
@@ -711,23 +711,23 @@ def create_note(note: Note, response: Response):
     response.status_code = 201
     return new_note
 
-# 一个需要User-Agent头的端点
+# ä¸ä¸ªéè¦User-Agentå¤´çç«¯ç¹
 @app.get("/check-agent/")
 def check_user_agent(user_agent: Optional[str] = Header(None)):
     return {"received_user_agent": user_agent}
 
-# 表单登录示例
+# è¡¨åç»å½ç¤ºä¾
 @app.post("/login-form/")
 def login_form(username: str = Form(...), password: str = Form(...)):
-    # 这里应该有真实的验证逻辑
+    # è¿éåºè¯¥æçå®çéªè¯é»è¾
     if username == "admin" and password == "secret":
         return {"message": "Login successful"}
     return {"message": "Invalid credentials"}</code></pre>
-<p>启动后，访问 <a style="color: rgba(76, 175, 80, 1); text-decoration: none" href="http://127.0.0.1:8000/docs" rel="noopener nofollow">http://127.0.0.1:8000/docs</a> 即可看到交互式API文档，并直接测试所有端点！</p>
+<p>å¯å¨åï¼è®¿é® <a style="color: rgba(76, 175, 80, 1); text-decoration: none" href="http://127.0.0.1:8000/docs" rel="noopener nofollow">http://127.0.0.1:8000/docs</a> å³å¯çå°äº¤äºå¼APIææ¡£ï¼å¹¶ç´æ¥æµè¯ææç«¯ç¹ï¼</p>
 <hr style="border-top: 1px solid rgba(238, 238, 238, 1); border-right: none; border-bottom: none; border-left: none; margin: 40px 0">
 <div style="text-align: center; color: rgba(119, 119, 119, 1); margin-bottom: 40px">
 <p>---</p>
-<p style="font-size: 15px">喜欢本文？不要错过✨，点赞👍收藏⭐关注我👆，一起学习更多有用的知识，完善你我的技能树！</p>
+<p style="font-size: 15px">åæ¬¢æ¬æï¼ä¸è¦éè¿â¨ï¼ç¹èµðæ¶èâ­å³æ³¨æðï¼ä¸èµ·å­¦ä¹ æ´å¤æç¨çç¥è¯ï¼å®åä½ æçæè½æ ï¼</p>
 </div>
 </div>
 </div>
@@ -736,25 +736,25 @@ def login_form(username: str = Form(...), password: str = Form(...)):
             </div>
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2025-12-24 08:24">2025-12-24 08:24</span>&nbsp;
-<a href="https://www.cnblogs.com/ymtianyu">曲幽</a>&nbsp;
-阅读(<span id="post_view_count">18</span>)&nbsp;
-评论(<span id="post_comment_count">1</span>)&nbsp;
+<a href="https://www.cnblogs.com/ymtianyu">æ²å¹½</a>&nbsp;
+éè¯»(<span id="post_view_count">18</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19389987);return false;">收藏</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19389987', targetLink: 'https://www.cnblogs.com/ymtianyu/p/19389987', title: 'FastAPI快速上手：请求与响应的核心玩法' })">举报</a>
+<a href="javascript:void(0)" onclick="AddToWz(19389987);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19389987', targetLink: 'https://www.cnblogs.com/ymtianyu/p/19389987', title: 'FastAPIå¿«éä¸æï¼è¯·æ±ä¸ååºçæ ¸å¿ç©æ³' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
     </item>
 <item>
-    <title><![CDATA[ PHP 初学者指南 基础结构与常见错误 ]]></title>
+    <title><![CDATA[ PHP åå­¦èæå åºç¡ç»æä¸å¸¸è§éè¯¯ ]]></title>
     <link>https://www.cnblogs.com/catchadmin/p/19389942</link>
     <guid>e970eca05b42c8ecc0b8fa69d2f0b4de</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/catchadmin/p/19389942" title="发布于 2025-12-24 08:10">
-    <span role="heading" aria-level="2">PHP 初学者指南 基础结构与常见错误</span>
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/catchadmin/p/19389942" title="åå¸äº 2025-12-24 08:10">
+    <span role="heading" aria-level="2">PHP åå­¦èæå åºç¡ç»æä¸å¸¸è§éè¯¯</span>
     
 
 </a>
@@ -763,17 +763,17 @@ def login_form(username: str = Form(...), password: str = Form(...)):
             <div class="clear"></div>
             <div class="postBody">
                 <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h1 id="php-初学者指南-基础结构与常见错误">PHP 初学者指南 基础结构与常见错误</h1>
-<p>PHP(Hypertext Preprocessor)是 Web 开发中使用最广泛的脚本语言之一。无论是构建动态网站还是复杂应用,PHP 通常都是核心。然而对于初学者来说,入门 PHP 可能有点令人生畏。语法特性、最佳实践和各种陷阱混杂在一起,很容易迷失方向。</p>
-<p>突然间,我觉得有必要讨论一些非常基础但对刚接触 PHP 的初学者至关重要的内容。许多新手开发者忽视了理解基本结构和 PHP 中常见错误的重要性。虽然这些看起来微不足道,但掌握这些基础知识将帮助你编写更整洁、更高效的代码,并避免可能损害项目的问题。</p>
-<p>本文将探讨 PHP 的基本结构,并重点介绍初学者最常犯的一些错误。无论你是刚起步还是有一些经验,理解这些基础知识以及如何避免错误,都将帮助你编写整洁、高效且安全的 PHP 代码。</p>
-<p>让我们以简单、清晰且易于理解的方式来分解这些内容。</p>
-<p><a href="https://catchadmin.com/post/2025-12/php-for-beginners-essential-structure-and-common-mistakes" target="_blank" rel="noopener nofollow">原文链接 PHP 初学者指南 基础结构与常见错误</a></p>
-<h2 id="php-结构基础知识">PHP 结构:基础知识</h2>
-<p>在深入常见错误之前,我们先看看每个初学者都必须理解的 PHP 基本结构。</p>
-<h3 id="php-语法">PHP 语法</h3>
-<p>PHP 代码嵌入在 HTML 中。要在网页中执行 PHP,我们用 <code>&lt;?php ... ?&gt;</code> 标签包裹 PHP 代码。</p>
-<p>示例:</p>
+<h1 id="php-åå­¦èæå-åºç¡ç»æä¸å¸¸è§éè¯¯">PHP åå­¦èæå åºç¡ç»æä¸å¸¸è§éè¯¯</h1>
+<p>PHP(Hypertext Preprocessor)æ¯ Web å¼åä¸­ä½¿ç¨æå¹¿æ³çèæ¬è¯­è¨ä¹ä¸ãæ è®ºæ¯æå»ºå¨æç½ç«è¿æ¯å¤æåºç¨,PHP éå¸¸é½æ¯æ ¸å¿ãç¶èå¯¹äºåå­¦èæ¥è¯´,å¥é¨ PHP å¯è½æç¹ä»¤äººççãè¯­æ³ç¹æ§ãæä½³å®è·µååç§é·é±æ··æå¨ä¸èµ·,å¾å®¹æè¿·å¤±æ¹åã</p>
+<p>çªç¶é´,æè§å¾æå¿è¦è®¨è®ºä¸äºéå¸¸åºç¡ä½å¯¹åæ¥è§¦ PHP çåå­¦èè³å³éè¦çåå®¹ãè®¸å¤æ°æå¼åèå¿½è§äºçè§£åºæ¬ç»æå PHP ä¸­å¸¸è§éè¯¯çéè¦æ§ãè½ç¶è¿äºçèµ·æ¥å¾®ä¸è¶³é,ä½ææ¡è¿äºåºç¡ç¥è¯å°å¸®å©ä½ ç¼åæ´æ´æ´ãæ´é«æçä»£ç ,å¹¶é¿åå¯è½æå®³é¡¹ç®çé®é¢ã</p>
+<p>æ¬æå°æ¢è®¨ PHP çåºæ¬ç»æ,å¹¶éç¹ä»ç»åå­¦èæå¸¸ç¯çä¸äºéè¯¯ãæ è®ºä½ æ¯åèµ·æ­¥è¿æ¯æä¸äºç»éª,çè§£è¿äºåºç¡ç¥è¯ä»¥åå¦ä½é¿åéè¯¯,é½å°å¸®å©ä½ ç¼åæ´æ´ãé«æä¸å®å¨ç PHP ä»£ç ã</p>
+<p>è®©æä»¬ä»¥ç®åãæ¸æ°ä¸æäºçè§£çæ¹å¼æ¥åè§£è¿äºåå®¹ã</p>
+<p><a href="https://catchadmin.com/post/2025-12/php-for-beginners-essential-structure-and-common-mistakes" target="_blank" rel="noopener nofollow">åæé¾æ¥ PHP åå­¦èæå åºç¡ç»æä¸å¸¸è§éè¯¯</a></p>
+<h2 id="php-ç»æåºç¡ç¥è¯">PHP ç»æ:åºç¡ç¥è¯</h2>
+<p>å¨æ·±å¥å¸¸è§éè¯¯ä¹å,æä»¬åççæ¯ä¸ªåå­¦èé½å¿é¡»çè§£ç PHP åºæ¬ç»æã</p>
+<h3 id="php-è¯­æ³">PHP è¯­æ³</h3>
+<p>PHP ä»£ç åµå¥å¨ HTML ä¸­ãè¦å¨ç½é¡µä¸­æ§è¡ PHP,æä»¬ç¨ <code>&lt;?php ... ?&gt;</code> æ ç­¾åè£¹ PHP ä»£ç ã</p>
+<p>ç¤ºä¾:</p>
 <pre><code class="language-php">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
@@ -789,18 +789,18 @@ def login_form(username: str = Form(...), password: str = Form(...)):
 &lt;/body&gt;
 &lt;/html&gt;
 </code></pre>
-<p>在上面的示例中,PHP 块 <code>&lt;?php echo "Hello, World!"; ?&gt;</code> 在 HTML body 中生成消息 "Hello, World!"。理解基本语法是编写 PHP 脚本的第一步。</p>
-<h3 id="变量和数据类型">变量和数据类型</h3>
-<p>在 PHP 中,变量以美元符号 <code>$</code> 为前缀,后跟变量名。PHP 是弱类型语言,这意味着声明变量时不需要指定数据类型。类型将根据赋值自动推断。</p>
-<p>示例:</p>
+<p>å¨ä¸é¢çç¤ºä¾ä¸­,PHP å <code>&lt;?php echo "Hello, World!"; ?&gt;</code> å¨ HTML body ä¸­çææ¶æ¯ "Hello, World!"ãçè§£åºæ¬è¯­æ³æ¯ç¼å PHP èæ¬çç¬¬ä¸æ­¥ã</p>
+<h3 id="åéåæ°æ®ç±»å">åéåæ°æ®ç±»å</h3>
+<p>å¨ PHP ä¸­,åéä»¥ç¾åç¬¦å· <code>$</code> ä¸ºåç¼,åè·åéåãPHP æ¯å¼±ç±»åè¯­è¨,è¿æå³çå£°æåéæ¶ä¸éè¦æå®æ°æ®ç±»åãç±»åå°æ ¹æ®èµå¼èªå¨æ¨æ­ã</p>
+<p>ç¤ºä¾:</p>
 <pre><code class="language-php">$name = "John";      // String
 $age = 30;           // Integer
 $height = 5.9;       // Float
 $isStudent = true;   // Boolean
 </code></pre>
-<h3 id="函数">函数</h3>
-<p>PHP 中的函数是可重用的代码块。使用 <code>function</code> 关键字定义它们,这有助于组织和模块化代码。</p>
-<p>示例:</p>
+<h3 id="å½æ°">å½æ°</h3>
+<p>PHP ä¸­çå½æ°æ¯å¯éç¨çä»£ç åãä½¿ç¨ <code>function</code> å³é®å­å®ä¹å®ä»¬,è¿æå©äºç»ç»åæ¨¡ååä»£ç ã</p>
+<p>ç¤ºä¾:</p>
 <pre><code class="language-php">&lt;?php
 function greet($name) {
     return "Hello, $name!";
@@ -808,62 +808,62 @@ function greet($name) {
 echo greet("Alice"); // Outputs: Hello, Alice!
 ?&gt;
 </code></pre>
-<p>理解如何定义和使用函数将在代码变得更复杂时为你节省大量时间和精力。</p>
-<h2 id="初学者在-php-中常犯的错误">初学者在 PHP 中常犯的错误</h2>
-<p>虽然 PHP 是一门强大而灵活的语言,但初学者经常会犯一些常见错误。让我们深入了解一些最常见的陷阱以及如何避免它们。</p>
-<h3 id="忘记使用正确的-php-标签">忘记使用正确的 PHP 标签</h3>
-<p>一个常见错误是忘记正确打开或关闭 PHP 标签。PHP 代码必须始终包含在 <code>&lt;?php ... ?&gt;</code> 中。如果这些标签缺失或不正确,代码将无法运行。</p>
-<p>错误示例:</p>
+<p>çè§£å¦ä½å®ä¹åä½¿ç¨å½æ°å°å¨ä»£ç åå¾æ´å¤ææ¶ä¸ºä½ èçå¤§éæ¶é´åç²¾åã</p>
+<h2 id="åå­¦èå¨-php-ä¸­å¸¸ç¯çéè¯¯">åå­¦èå¨ PHP ä¸­å¸¸ç¯çéè¯¯</h2>
+<p>è½ç¶ PHP æ¯ä¸é¨å¼ºå¤§èçµæ´»çè¯­è¨,ä½åå­¦èç»å¸¸ä¼ç¯ä¸äºå¸¸è§éè¯¯ãè®©æä»¬æ·±å¥äºè§£ä¸äºæå¸¸è§çé·é±ä»¥åå¦ä½é¿åå®ä»¬ã</p>
+<h3 id="å¿è®°ä½¿ç¨æ­£ç¡®ç-php-æ ç­¾">å¿è®°ä½¿ç¨æ­£ç¡®ç PHP æ ç­¾</h3>
+<p>ä¸ä¸ªå¸¸è§éè¯¯æ¯å¿è®°æ­£ç¡®æå¼æå³é­ PHP æ ç­¾ãPHP ä»£ç å¿é¡»å§ç»åå«å¨ <code>&lt;?php ... ?&gt;</code> ä¸­ãå¦æè¿äºæ ç­¾ç¼ºå¤±æä¸æ­£ç¡®,ä»£ç å°æ æ³è¿è¡ã</p>
+<p>éè¯¯ç¤ºä¾:</p>
 <pre><code class="language-php">&lt;html&gt;
 &lt;body&gt;
     echo "Hello, World!"; // Error: no PHP opening tag
 &lt;/body&gt;
 &lt;/html&gt;
 </code></pre>
-<p>正确示例:</p>
+<p>æ­£ç¡®ç¤ºä¾:</p>
 <pre><code class="language-php">&lt;html&gt;
 &lt;body&gt;
     &lt;?php echo "Hello, World!"; ?&gt;
 &lt;/body&gt;
 &lt;/html&gt;
 </code></pre>
-<h3 id="字符串中未转义特殊字符">字符串中未转义特殊字符</h3>
-<p>处理字符串时,需要转义特殊字符,特别是在字符串中使用引号时。否则会导致语法错误。</p>
-<p>错误示例:</p>
+<h3 id="å­ç¬¦ä¸²ä¸­æªè½¬ä¹ç¹æ®å­ç¬¦">å­ç¬¦ä¸²ä¸­æªè½¬ä¹ç¹æ®å­ç¬¦</h3>
+<p>å¤çå­ç¬¦ä¸²æ¶,éè¦è½¬ä¹ç¹æ®å­ç¬¦,ç¹å«æ¯å¨å­ç¬¦ä¸²ä¸­ä½¿ç¨å¼å·æ¶ãå¦åä¼å¯¼è´è¯­æ³éè¯¯ã</p>
+<p>éè¯¯ç¤ºä¾:</p>
 <pre><code class="language-php">$greeting = "He said, "Hello!"";
 </code></pre>
-<p>正确示例:</p>
+<p>æ­£ç¡®ç¤ºä¾:</p>
 <pre><code class="language-php">$greeting = "He said, \"Hello!\"";
 </code></pre>
-<p>或者,可以对外层字符串使用单引号:</p>
+<p>æè,å¯ä»¥å¯¹å¤å±å­ç¬¦ä¸²ä½¿ç¨åå¼å·:</p>
 <pre><code class="language-php">$greeting = 'He said, "Hello!"';
 </code></pre>
-<p>这个小错误可能导致代码出现意外行为,所以务必正确处理特殊字符。</p>
-<h3 id="使用错误的比较运算符">使用错误的比较运算符</h3>
-<p>PHP 有两种比较运算符:<code>=</code> 用于赋值,<code>==</code> 用于比较。初学者经常混淆这两者,导致意外结果。</p>
-<p>错误示例:</p>
+<p>è¿ä¸ªå°éè¯¯å¯è½å¯¼è´ä»£ç åºç°æå¤è¡ä¸º,æä»¥å¡å¿æ­£ç¡®å¤çç¹æ®å­ç¬¦ã</p>
+<h3 id="ä½¿ç¨éè¯¯çæ¯è¾è¿ç®ç¬¦">ä½¿ç¨éè¯¯çæ¯è¾è¿ç®ç¬¦</h3>
+<p>PHP æä¸¤ç§æ¯è¾è¿ç®ç¬¦:<code>=</code> ç¨äºèµå¼,<code>==</code> ç¨äºæ¯è¾ãåå­¦èç»å¸¸æ··æ·è¿ä¸¤è,å¯¼è´æå¤ç»æã</p>
+<p>éè¯¯ç¤ºä¾:</p>
 <pre><code class="language-php">$age = 30;
 if ($age = 25) {  // Mistake: uses assignment, not comparison
     echo "Age is 25";
 }
 </code></pre>
-<p>正确示例:</p>
+<p>æ­£ç¡®ç¤ºä¾:</p>
 <pre><code class="language-php">$age = 30;
 if ($age == 25) {  // Correct: comparison operator
     echo "Age is 25";
 }
 </code></pre>
-<p>在 if 语句中使用赋值运算符 <code>=</code> 会导致错误的条件判断。始终使用 <code>==</code> 进行比较以避免此类错误。</p>
-<h3 id="未使用适当的缩进和代码格式">未使用适当的缩进和代码格式</h3>
-<p>虽然 PHP 不强制严格的缩进规则,但未能正确格式化代码会使其难以阅读和调试,特别是随着项目的增长。</p>
-<p>错误示例:</p>
+<p>å¨ if è¯­å¥ä¸­ä½¿ç¨èµå¼è¿ç®ç¬¦ <code>=</code> ä¼å¯¼è´éè¯¯çæ¡ä»¶å¤æ­ãå§ç»ä½¿ç¨ <code>==</code> è¿è¡æ¯è¾ä»¥é¿åæ­¤ç±»éè¯¯ã</p>
+<h3 id="æªä½¿ç¨éå½çç¼©è¿åä»£ç æ ¼å¼">æªä½¿ç¨éå½çç¼©è¿åä»£ç æ ¼å¼</h3>
+<p>è½ç¶ PHP ä¸å¼ºå¶ä¸¥æ ¼çç¼©è¿è§å,ä½æªè½æ­£ç¡®æ ¼å¼åä»£ç ä¼ä½¿å¶é¾ä»¥éè¯»åè°è¯,ç¹å«æ¯éçé¡¹ç®çå¢é¿ã</p>
+<p>éè¯¯ç¤ºä¾:</p>
 <pre><code class="language-php">&lt;?php
     function greet($name){
       if($name=="Alice"){echo "Hello, Alice!";}else{echo "Hello, Guest!";}
     }
 ?&gt;
 </code></pre>
-<p>正确示例:</p>
+<p>æ­£ç¡®ç¤ºä¾:</p>
 <pre><code class="language-php">&lt;?php
 function greet($name) {
     if ($name == "Alice") {
@@ -874,10 +874,10 @@ function greet($name) {
 }
 ?&gt;
 </code></pre>
-<p>正确格式化的代码不仅仅关乎美观——它对可读性和可维护性至关重要。</p>
-<h3 id="不当使用全局变量">不当使用全局变量</h3>
-<p>如果不谨慎使用,全局变量可能导致不可预测的行为。通常最好在函数之间显式传递变量,而不是依赖全局作用域。</p>
-<p>错误示例:</p>
+<p>æ­£ç¡®æ ¼å¼åçä»£ç ä¸ä»ä»å³ä¹ç¾è§ââå®å¯¹å¯è¯»æ§åå¯ç»´æ¤æ§è³å³éè¦ã</p>
+<h3 id="ä¸å½ä½¿ç¨å¨å±åé">ä¸å½ä½¿ç¨å¨å±åé</h3>
+<p>å¦æä¸è°¨æä½¿ç¨,å¨å±åéå¯è½å¯¼è´ä¸å¯é¢æµçè¡ä¸ºãéå¸¸æå¥½å¨å½æ°ä¹é´æ¾å¼ä¼ éåé,èä¸æ¯ä¾èµå¨å±ä½ç¨åã</p>
+<p>éè¯¯ç¤ºä¾:</p>
 <pre><code class="language-php">$counter = 10;
 function increaseCounter() {
     $counter++;  // Refers to the global variable
@@ -885,7 +885,7 @@ function increaseCounter() {
 increaseCounter();
 echo $counter;  // Outputs 11
 </code></pre>
-<p>更好的做法:</p>
+<p>æ´å¥½çåæ³:</p>
 <pre><code class="language-php">$counter = 10;
 function increaseCounter($counter) {
     return $counter + 1;
@@ -893,24 +893,24 @@ function increaseCounter($counter) {
 $counter = increaseCounter($counter);
 echo $counter;  // Outputs 11
 </code></pre>
-<p>显式传递变量使代码更可预测,更易于调试。</p>
-<h2 id="编写整洁-php-代码的最佳实践">编写整洁 PHP 代码的最佳实践</h2>
-<p>现在我们已经介绍了一些常见错误,让我们探讨一些能帮助你编写更好 PHP 代码的最佳实践。</p>
-<h3 id="使用-isset-和-empty-检查变量">使用 isset() 和 empty() 检查变量</h3>
-<p>在访问变量之前,检查它是否已设置很重要。使用 <code>isset()</code> 和 <code>empty()</code> 有助于防止访问未定义变量时出错。</p>
+<p>æ¾å¼ä¼ éåéä½¿ä»£ç æ´å¯é¢æµ,æ´æäºè°è¯ã</p>
+<h2 id="ç¼åæ´æ´-php-ä»£ç çæä½³å®è·µ">ç¼åæ´æ´ PHP ä»£ç çæä½³å®è·µ</h2>
+<p>ç°å¨æä»¬å·²ç»ä»ç»äºä¸äºå¸¸è§éè¯¯,è®©æä»¬æ¢è®¨ä¸äºè½å¸®å©ä½ ç¼åæ´å¥½ PHP ä»£ç çæä½³å®è·µã</p>
+<h3 id="ä½¿ç¨-isset-å-empty-æ£æ¥åé">ä½¿ç¨ isset() å empty() æ£æ¥åé</h3>
+<p>å¨è®¿é®åéä¹å,æ£æ¥å®æ¯å¦å·²è®¾ç½®å¾éè¦ãä½¿ç¨ <code>isset()</code> å <code>empty()</code> æå©äºé²æ­¢è®¿é®æªå®ä¹åéæ¶åºéã</p>
 <pre><code class="language-php">if (isset($username) &amp;&amp; !empty($username)) {
     echo "Username is set and not empty.";
 }
 </code></pre>
-<p>这有助于避免意外错误,使代码更健壮。</p>
-<h3 id="始终清理用户输入">始终清理用户输入</h3>
-<p>PHP 经常用于处理用户输入,但未经检查的输入可能导致安全漏洞,如 SQL 注入或 XSS 攻击。始终清理和验证用户输入。</p>
+<p>è¿æå©äºé¿åæå¤éè¯¯,ä½¿ä»£ç æ´å¥å£®ã</p>
+<h3 id="å§ç»æ¸çç¨æ·è¾å¥">å§ç»æ¸çç¨æ·è¾å¥</h3>
+<p>PHP ç»å¸¸ç¨äºå¤çç¨æ·è¾å¥,ä½æªç»æ£æ¥çè¾å¥å¯è½å¯¼è´å®å¨æ¼æ´,å¦ SQL æ³¨å¥æ XSS æ»å»ãå§ç»æ¸çåéªè¯ç¨æ·è¾å¥ã</p>
 <pre><code class="language-php">$username = htmlspecialchars($_POST['username']);
 </code></pre>
-<p>使用 <code>htmlspecialchars()</code> 等函数或数据库查询的预处理语句对于编写安全的 PHP 应用至关重要。</p>
-<h3 id="保持函数小而专注">保持函数小而专注</h3>
-<p>理想情况下,一个函数应该执行一项任务并做好它。保持函数小而专注于单一职责,使代码更模块化且更易于测试。</p>
-<p>示例:</p>
+<p>ä½¿ç¨ <code>htmlspecialchars()</code> ç­å½æ°ææ°æ®åºæ¥è¯¢çé¢å¤çè¯­å¥å¯¹äºç¼åå®å¨ç PHP åºç¨è³å³éè¦ã</p>
+<h3 id="ä¿æå½æ°å°èä¸æ³¨">ä¿æå½æ°å°èä¸æ³¨</h3>
+<p>çæ³æåµä¸,ä¸ä¸ªå½æ°åºè¯¥æ§è¡ä¸é¡¹ä»»å¡å¹¶åå¥½å®ãä¿æå½æ°å°èä¸æ³¨äºåä¸èè´£,ä½¿ä»£ç æ´æ¨¡ååä¸æ´æäºæµè¯ã</p>
+<p>ç¤ºä¾:</p>
 <pre><code class="language-php">function fetchUserData($userId) {
     // Fetch user data from database
 }
@@ -918,10 +918,10 @@ function displayUserProfile($userData) {
     // Display user profile information
 }
 </code></pre>
-<p>通过分离关注点,每个函数都变得更易于理解和修改。</p>
-<h2 id="进阶技巧">进阶技巧</h2>
-<h3 id="使用命名空间">使用命名空间</h3>
-<p>随着项目的增长,将代码组织到命名空间中以避免命名冲突变得越来越重要。</p>
+<p>éè¿åç¦»å³æ³¨ç¹,æ¯ä¸ªå½æ°é½åå¾æ´æäºçè§£åä¿®æ¹ã</p>
+<h2 id="è¿é¶æå·§">è¿é¶æå·§</h2>
+<h3 id="ä½¿ç¨å½åç©ºé´">ä½¿ç¨å½åç©ºé´</h3>
+<p>éçé¡¹ç®çå¢é¿,å°ä»£ç ç»ç»å°å½åç©ºé´ä¸­ä»¥é¿åå½åå²çªåå¾è¶æ¥è¶éè¦ã</p>
 <pre><code class="language-php">namespace MyApp\Controllers;
 class UserController {
     public function show() {
@@ -929,15 +929,15 @@ class UserController {
     }
 }
 </code></pre>
-<p>命名空间有助于保持代码组织有序,并防止命名冲突,特别是在大型项目中。</p>
-<h3 id="使用-composer-进行依赖管理">使用 Composer 进行依赖管理</h3>
-<p>PHP 项目通常依赖外部库。Composer 是管理这些依赖的最佳工具。</p>
+<p>å½åç©ºé´æå©äºä¿æä»£ç ç»ç»æåº,å¹¶é²æ­¢å½åå²çª,ç¹å«æ¯å¨å¤§åé¡¹ç®ä¸­ã</p>
+<h3 id="ä½¿ç¨-composer-è¿è¡ä¾èµç®¡ç">ä½¿ç¨ Composer è¿è¡ä¾èµç®¡ç</h3>
+<p>PHP é¡¹ç®éå¸¸ä¾èµå¤é¨åºãComposer æ¯ç®¡çè¿äºä¾èµçæä½³å·¥å·ã</p>
 <pre><code class="language-bash">composer require vendor/package
 </code></pre>
-<p>Composer 简化了依赖管理,并确保库始终保持最新。</p>
-<h2 id="结语">结语</h2>
-<p>掌握 PHP 需要对其结构和常见陷阱有扎实的理解。通过遵循最佳实践并避免错误,你将顺利编写整洁、高效且安全的 PHP 代码。虽然 PHP 一开始可能看起来令人生畏,但有了正确的基础,你很快就能轻松构建强大的应用。</p>
-<p>无论你是刚起步还是希望提升技能,这些见解都将帮助你成为更自信、更有能力的 PHP 开发者。</p>
+<p>Composer ç®åäºä¾èµç®¡ç,å¹¶ç¡®ä¿åºå§ç»ä¿æææ°ã</p>
+<h2 id="ç»è¯­">ç»è¯­</h2>
+<p>ææ¡ PHP éè¦å¯¹å¶ç»æåå¸¸è§é·é±ææå®ççè§£ãéè¿éµå¾ªæä½³å®è·µå¹¶é¿åéè¯¯,ä½ å°é¡ºå©ç¼åæ´æ´ãé«æä¸å®å¨ç PHP ä»£ç ãè½ç¶ PHP ä¸å¼å§å¯è½çèµ·æ¥ä»¤äººçç,ä½æäºæ­£ç¡®çåºç¡,ä½ å¾å¿«å°±è½è½»æ¾æå»ºå¼ºå¤§çåºç¨ã</p>
+<p>æ è®ºä½ æ¯åèµ·æ­¥è¿æ¯å¸ææåæè½,è¿äºè§è§£é½å°å¸®å©ä½ æä¸ºæ´èªä¿¡ãæ´æè½åç PHP å¼åèã</p>
 
 </div>
 <div class="clear"></div>
@@ -946,24 +946,24 @@ class UserController {
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2025-12-24 08:10">2025-12-24 08:10</span>&nbsp;
 <a href="https://www.cnblogs.com/catchadmin">JaguarJack</a>&nbsp;
-阅读(<span id="post_view_count">0</span>)&nbsp;
-评论(<span id="post_comment_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19389942);return false;">收藏</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19389942', targetLink: 'https://www.cnblogs.com/catchadmin/p/19389942', title: 'PHP 初学者指南 基础结构与常见错误' })">举报</a>
+<a href="javascript:void(0)" onclick="AddToWz(19389942);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19389942', targetLink: 'https://www.cnblogs.com/catchadmin/p/19389942', title: 'PHP åå­¦èæå åºç¡ç»æä¸å¸¸è§éè¯¯' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
     </item>
 <item>
-    <title><![CDATA[ 一条SQL直接跑崩288核，1.5T内存数据库 ]]></title>
+    <title><![CDATA[ ä¸æ¡SQLç´æ¥è·å´©288æ ¸ï¼1.5Tåå­æ°æ®åº ]]></title>
     <link>https://www.cnblogs.com/idealx/p/19389621</link>
     <guid>b45b8ef18097c4aa041e3dc53158f282</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/idealx/p/19389621" title="发布于 2025-12-23 23:48">
-    <span role="heading" aria-level="2">一条SQL直接跑崩288核，1.5T内存数据库</span>
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/idealx/p/19389621" title="åå¸äº 2025-12-23 23:48">
+    <span role="heading" aria-level="2">ä¸æ¡SQLç´æ¥è·å´©288æ ¸ï¼1.5Tåå­æ°æ®åº</span>
     
 
 </a>
@@ -972,7 +972,7 @@ class UserController {
             <div class="clear"></div>
             <div class="postBody">
                 <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>最近遇到一个Oracle的SQL语句引发的线上故障，数据库服务被重启。主机288核，1.5T也没抗住。</p>
+<p>æè¿éå°ä¸ä¸ªOracleçSQLè¯­å¥å¼åççº¿ä¸æéï¼æ°æ®åºæå¡è¢«éå¯ãä¸»æº288æ ¸ï¼1.5Tä¹æ²¡æä½ã</p>
 <pre><code>select  count(*) from dev_db.t1 t1,dev_db.t2 t2 where t1.object_name = t2.object_name or t1.DATA_OBJECT_ID = t2.DATA_OBJECT_ID and t1.OBJECT_ID = 123 and rownum = 1;
 --------------------------------------------------------------------------------
 | Id  | Operation               | Name | Rows  | Bytes | Cost (%CPU)| Time     |
@@ -995,8 +995,8 @@ Predicate Information (identified by operation id):
               IS NOT NULL AND "T1"."DATA_OBJECT_ID" IS NOT NULL AND
               "T1"."OBJECT_ID"=123 AND ROWNUM=1)
 </code></pre>
-<p>在执行计划中看到步骤4产生了笛卡尔积连接，成本相当的高，这两个表仅有7万行数据，执行时间超过了5分钟。<br>
-数据库中关于NOT、AND、OR的逻辑运算优先级就是按这个顺序进行的，判断是开发人员失误造成的。下面是经过优化后的执行计划。</p>
+<p>å¨æ§è¡è®¡åä¸­çå°æ­¥éª¤4äº§çäºç¬å¡å°ç§¯è¿æ¥ï¼ææ¬ç¸å½çé«ï¼è¿ä¸¤ä¸ªè¡¨ä»æ7ä¸è¡æ°æ®ï¼æ§è¡æ¶é´è¶è¿äº5åéã<br>
+æ°æ®åºä¸­å³äºNOTãANDãORçé»è¾è¿ç®ä¼åçº§å°±æ¯æè¿ä¸ªé¡ºåºè¿è¡çï¼å¤æ­æ¯å¼åäººåå¤±è¯¯é æçãä¸é¢æ¯ç»è¿ä¼ååçæ§è¡è®¡åã</p>
 <pre><code>select  count(*) from dev_db.t1 t1,dev_db.t2 t2 where (t1.object_name = t2.object_name or t1.DATA_OBJECT_ID = t2.DATA_OBJECT_ID) and t1.OBJECT_ID = 123 and rownum = 1;
 -----------------------------------------------------------------------------
 | Id  | Operation            | Name | Rows  | Bytes | Cost (%CPU)| Time     |
@@ -1019,13 +1019,13 @@ Predicate Information (identified by operation id):
               "T1"."DATA_OBJECT_ID"="T2"."DATA_OBJECT_ID" AND "T1"."DATA_OBJECT_ID"
               IS NOT NULL)
 </code></pre>
-<p>在这个执行计划中，t1表作为驱动表，过滤条件是object_id=123,线上这个条件是主键，因为懒没有创建这个主键，所以是全表扫描。<br>
-t2表作为被驱动表只匹配到了一条数据。因为STOPKEY的优化，在取到一条数据后SQL停止，无需扫描全部数据，因此执行时间非常短。</p>
-<h2 id="总结">总结</h2>
-<p>本次问题原因是因为一个逻辑运算的优先级判断错误，以至于数据库资源被使用完导致数据库节点被重启。<br>
-对于自己拿不准的SQL语句，查阅官方文档是最权威的参考依据。<br>
-其次，在测试环境就算只有少量数据也可以看到执行计划是否合理。<br>
-最后，上线时SQL语句经过把关，可以最大限度减少SQL语句引发的线上故障。</p>
+<p>å¨è¿ä¸ªæ§è¡è®¡åä¸­ï¼t1è¡¨ä½ä¸ºé©±å¨è¡¨ï¼è¿æ»¤æ¡ä»¶æ¯object_id=123,çº¿ä¸è¿ä¸ªæ¡ä»¶æ¯ä¸»é®ï¼å ä¸ºææ²¡æåå»ºè¿ä¸ªä¸»é®ï¼æä»¥æ¯å¨è¡¨æ«æã<br>
+t2è¡¨ä½ä¸ºè¢«é©±å¨è¡¨åªå¹éå°äºä¸æ¡æ°æ®ãå ä¸ºSTOPKEYçä¼åï¼å¨åå°ä¸æ¡æ°æ®åSQLåæ­¢ï¼æ éæ«æå¨é¨æ°æ®ï¼å æ­¤æ§è¡æ¶é´éå¸¸ç­ã</p>
+<h2 id="æ»ç»">æ»ç»</h2>
+<p>æ¬æ¬¡é®é¢åå æ¯å ä¸ºä¸ä¸ªé»è¾è¿ç®çä¼åçº§å¤æ­éè¯¯ï¼ä»¥è³äºæ°æ®åºèµæºè¢«ä½¿ç¨å®å¯¼è´æ°æ®åºèç¹è¢«éå¯ã<br>
+å¯¹äºèªå·±æ¿ä¸åçSQLè¯­å¥ï¼æ¥éå®æ¹ææ¡£æ¯ææå¨çåèä¾æ®ã<br>
+å¶æ¬¡ï¼å¨æµè¯ç¯å¢å°±ç®åªæå°éæ°æ®ä¹å¯ä»¥çå°æ§è¡è®¡åæ¯å¦åçã<br>
+æåï¼ä¸çº¿æ¶SQLè¯­å¥ç»è¿æå³ï¼å¯ä»¥æå¤§éåº¦åå°SQLè¯­å¥å¼åççº¿ä¸æéã</p>
 
 </div>
 <div class="clear"></div>
@@ -1034,24 +1034,24 @@ t2表作为被驱动表只匹配到了一条数据。因为STOPKEY的优化，�
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2025-12-23 23:48">2025-12-23 23:48</span>&nbsp;
 <a href="https://www.cnblogs.com/idealx">ideal_x</a>&nbsp;
-阅读(<span id="post_view_count">95</span>)&nbsp;
-评论(<span id="post_comment_count">1</span>)&nbsp;
+éè¯»(<span id="post_view_count">95</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19389621);return false;">收藏</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19389621', targetLink: 'https://www.cnblogs.com/idealx/p/19389621', title: '一条SQL直接跑崩288核，1.5T内存数据库' })">举报</a>
+<a href="javascript:void(0)" onclick="AddToWz(19389621);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19389621', targetLink: 'https://www.cnblogs.com/idealx/p/19389621', title: 'ä¸æ¡SQLç´æ¥è·å´©288æ ¸ï¼1.5Tåå­æ°æ®åº' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
     </item>
 <item>
-    <title><![CDATA[ Flink源码阅读：状态管理 ]]></title>
+    <title><![CDATA[ Flinkæºç éè¯»ï¼ç¶æç®¡ç ]]></title>
     <link>https://www.cnblogs.com/Jackeyzhe/p/19389264</link>
     <guid>4f7ca851b49f4e4c2d63ce955b59e45d</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/Jackeyzhe/p/19389264" title="发布于 2025-12-23 21:44">
-    <span role="heading" aria-level="2">Flink源码阅读：状态管理</span>
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/Jackeyzhe/p/19389264" title="åå¸äº 2025-12-23 21:44">
+    <span role="heading" aria-level="2">Flinkæºç éè¯»ï¼ç¶æç®¡ç</span>
     
 
 </a>
@@ -1060,43 +1060,43 @@ t2表作为被驱动表只匹配到了一条数据。因为STOPKEY的优化，�
             <div class="clear"></div>
             <div class="postBody">
                     <div id="cnblogs_post_description" style="display: none">
-        <img src="https://img2024.cnblogs.com/blog/1828322/202512/1828322-20251223214418733-1509708883.png" alt="Flink源码阅读：状态管理" class="desc_img">
-        前面我们介绍了 Flink 状态的分类和应用。今天从源码层面再看一下 Flink 是如何管理状态的。
+        <img src="https://img2024.cnblogs.com/blog/1828322/202512/1828322-20251223214418733-1509708883.png" alt="Flinkæºç éè¯»ï¼ç¶æç®¡ç" class="desc_img">
+        åé¢æä»¬ä»ç»äº Flink ç¶æçåç±»ååºç¨ãä»å¤©ä»æºç å±é¢åçä¸ä¸ Flink æ¯å¦ä½ç®¡çç¶æçã
     </div>
 <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>前面我们介绍了 Flink 状态的分类和应用。今天从源码层面再看一下 Flink 是如何管理状态的。</p>
-<h3 id="state-概述">State 概述</h3>
-<p>关于 State 的详细介绍可以参考 <a href="https://jackeyzhe.github.io/2025/08/04/Flink%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9A%E7%8A%B6%E6%80%81%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%BA%94%E7%94%A8/" target="_blank" rel="noopener nofollow">Flink学习笔记：状态类型和应用</a> 和 <a href="https://jackeyzhe.github.io/2025/08/24/Flink%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9A%E7%8A%B6%E6%80%81%E5%90%8E%E7%AB%AF/" target="_blank" rel="noopener nofollow">Flink学习笔记：状态后端</a>这两篇文章，为了方面阅读，这里我们再简单介绍一下。</p>
-<h4 id="state-使用">State 使用</h4>
-<p>State 是 Flink 做复杂逻辑所依赖的核心组件。它的分类如下</p>
-<p><img alt="State 分类" loading="lazy" data-src="https://res.cloudinary.com/dxydgihag/image/upload/v1754928263/Blog/flink/4/%E7%8A%B6%E6%80%81%E5%88%86%E7%B1%BB.png" class="lazyload"></p>
-<p>常见的是 Keyed State 和 Operator State，Keyed State 作用于 KeyedStream 上，Operator State 可以作用于所有的 Operator 上。Keyed State 使用时，需要先创建 StateDescriptor，然后再调用 getState 获取。</p>
+<p>åé¢æä»¬ä»ç»äº Flink ç¶æçåç±»ååºç¨ãä»å¤©ä»æºç å±é¢åçä¸ä¸ Flink æ¯å¦ä½ç®¡çç¶æçã</p>
+<h3 id="state-æ¦è¿°">State æ¦è¿°</h3>
+<p>å³äº State çè¯¦ç»ä»ç»å¯ä»¥åè <a href="https://jackeyzhe.github.io/2025/08/04/Flink%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9A%E7%8A%B6%E6%80%81%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%BA%94%E7%94%A8/" target="_blank" rel="noopener nofollow">Flinkå­¦ä¹ ç¬è®°ï¼ç¶æç±»åååºç¨</a> å <a href="https://jackeyzhe.github.io/2025/08/24/Flink%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9A%E7%8A%B6%E6%80%81%E5%90%8E%E7%AB%AF/" target="_blank" rel="noopener nofollow">Flinkå­¦ä¹ ç¬è®°ï¼ç¶æåç«¯</a>è¿ä¸¤ç¯æç« ï¼ä¸ºäºæ¹é¢éè¯»ï¼è¿éæä»¬åç®åä»ç»ä¸ä¸ã</p>
+<h4 id="state-ä½¿ç¨">State ä½¿ç¨</h4>
+<p>State æ¯ Flink åå¤æé»è¾æä¾èµçæ ¸å¿ç»ä»¶ãå®çåç±»å¦ä¸</p>
+<p><img alt="State åç±»" loading="lazy" data-src="https://res.cloudinary.com/dxydgihag/image/upload/v1754928263/Blog/flink/4/%E7%8A%B6%E6%80%81%E5%88%86%E7%B1%BB.png" class="lazyload"></p>
+<p>å¸¸è§çæ¯ Keyed State å Operator Stateï¼Keyed State ä½ç¨äº KeyedStream ä¸ï¼Operator State å¯ä»¥ä½ç¨äºææç Operator ä¸ãKeyed State ä½¿ç¨æ¶ï¼éè¦ååå»º StateDescriptorï¼ç¶ååè°ç¨ getState è·åã</p>
 <pre><code class="language-java">ValueStateDescriptor&lt;Tuple2&lt;Long, Long&gt;&gt; descriptor =
         new ValueStateDescriptor&lt;&gt;(
                 "average",
                 TypeInformation.of(new TypeHint&lt;Tuple2&lt;Long, Long&gt;&gt;() {}));
 ValueState&lt;Tuple2&lt;Long, Long&gt;&gt; sum = getRuntimeContext().getState(descriptor);
 </code></pre>
-<p>Opeartor State 的获取方式与 Keyed State 类似，都需要 StateDescriptor。Operator State 在定义时需要实现 CheckpointedFunction。</p>
-<h4 id="state-存储">State 存储</h4>
-<p>State Backend 用来管理 State 存储，根据存储格式和存储类型的组合，可以分为三类：</p>
+<p>Opeartor State çè·åæ¹å¼ä¸ Keyed State ç±»ä¼¼ï¼é½éè¦ StateDescriptorãOperator State å¨å®ä¹æ¶éè¦å®ç° CheckpointedFunctionã</p>
+<h4 id="state-å­å¨">State å­å¨</h4>
+<p>State Backend ç¨æ¥ç®¡ç State å­å¨ï¼æ ¹æ®å­å¨æ ¼å¼åå­å¨ç±»åçç»åï¼å¯ä»¥åä¸ºä¸ç±»ï¼</p>
 <ol>
 <li>
-<p>MemoryStateBackend：HashMapStateBackend 和 JobManagerCheckpointStorage 的组合，即将 State 以 Java 对象的形式存储在 JobManager 内存中。</p>
+<p>MemoryStateBackendï¼HashMapStateBackend å JobManagerCheckpointStorage çç»åï¼å³å° State ä»¥ Java å¯¹è±¡çå½¢å¼å­å¨å¨ JobManager åå­ä¸­ã</p>
 </li>
 <li>
-<p>FsStateBackend：HashMapStateBackend 和 FileSystemCheckpointStorage 的组合，将 State 以 Java 对象的形式存储在远端文件系统中。</p>
+<p>FsStateBackendï¼HashMapStateBackend å FileSystemCheckpointStorage çç»åï¼å° State ä»¥ Java å¯¹è±¡çå½¢å¼å­å¨å¨è¿ç«¯æä»¶ç³»ç»ä¸­ã</p>
 </li>
 <li>
-<p>RocksDBStateBackend：EmbeddedRocksDBStateBackend 和 FileSystemCheckpointStorage 的组合，State 序列化后存储在 RocksDB。</p>
+<p>RocksDBStateBackendï¼EmbeddedRocksDBStateBackend å FileSystemCheckpointStorage çç»åï¼State åºåååå­å¨å¨ RocksDBã</p>
 </li>
 </ol>
-<h3 id="创建-state-backend">创建 State Backend</h3>
-<p>创建 State Backend 的入口在 StreamTask，StreamTask 是 Flink 部署和运行在 TaskManager 的基本单元。</p>
-<p>在 StreamTask 的 invoke 方法中，会先调用 restoreStateAndGates 方法去创建 State Backend。完整的调用链路如下图所示。</p>
+<h3 id="åå»º-state-backend">åå»º State Backend</h3>
+<p>åå»º State Backend çå¥å£å¨ StreamTaskï¼StreamTask æ¯ Flink é¨ç½²åè¿è¡å¨ TaskManager çåºæ¬ååã</p>
+<p>å¨ StreamTask ç invoke æ¹æ³ä¸­ï¼ä¼åè°ç¨ restoreStateAndGates æ¹æ³å»åå»º State Backendãå®æ´çè°ç¨é¾è·¯å¦ä¸å¾æç¤ºã</p>
 <p><img alt="stateBackend" loading="lazy" data-src="https://res.cloudinary.com/dxydgihag/image/upload/v1764852973/Blog/flink/12/statebackend.png" class="lazyload"></p>
-<p>在 streamOperatorStateContext 方法中，分别调用了 keyedStatedBackend 和 operatorStateBackend 来创建两种 State Backend。</p>
-<p>我们先来看 keyedStateBackend 的逻辑。</p>
+<p>å¨ streamOperatorStateContext æ¹æ³ä¸­ï¼åå«è°ç¨äº keyedStatedBackend å operatorStateBackend æ¥åå»ºä¸¤ç§ State Backendã</p>
+<p>æä»¬åæ¥ç keyedStateBackend çé»è¾ã</p>
 <pre><code class="language-java">protected &lt;K, R extends Disposable &amp; Closeable&gt; R keyedStatedBackend(
         TypeSerializer&lt;K&gt; keySerializer,
         String operatorIdentifierText,
@@ -1149,12 +1149,12 @@ ValueState&lt;Tuple2&lt;Long, Long&gt;&gt; sum = getRuntimeContext().getState(de
     }
 }
 </code></pre>
-<p>这里的创建过程也比较简单，先是获取 KeyGroupRange，它表示的是当前 Operator 上处理的 key 的范围。然后就是创建 StateBackend 实例，这里通过 BackendRestorerProcedure 封装统一的恢复、异常处理和资源清理逻辑。operatorStateBackend 方法的逻辑相比较来说，只是少了 KeyGroupRange 的处理，直接创建 StateBackend 实例。</p>
-<h3 id="创建和使用-state">创建和使用 State</h3>
-<h4 id="创建-keyedstate">创建 KeyedState</h4>
-<p>KeyedState 是通过调用 StreamingRuntimeContext.getState 方法获取的。我们先来看完整的调用流程。</p>
+<p>è¿éçåå»ºè¿ç¨ä¹æ¯è¾ç®åï¼åæ¯è·å KeyGroupRangeï¼å®è¡¨ç¤ºçæ¯å½å Operator ä¸å¤çç key çèå´ãç¶åå°±æ¯åå»º StateBackend å®ä¾ï¼è¿ééè¿ BackendRestorerProcedure å°è£ç»ä¸çæ¢å¤ãå¼å¸¸å¤çåèµæºæ¸çé»è¾ãoperatorStateBackend æ¹æ³çé»è¾ç¸æ¯è¾æ¥è¯´ï¼åªæ¯å°äº KeyGroupRange çå¤çï¼ç´æ¥åå»º StateBackend å®ä¾ã</p>
+<h3 id="åå»ºåä½¿ç¨-state">åå»ºåä½¿ç¨ State</h3>
+<h4 id="åå»º-keyedstate">åå»º KeyedState</h4>
+<p>KeyedState æ¯éè¿è°ç¨ StreamingRuntimeContext.getState æ¹æ³è·åçãæä»¬åæ¥çå®æ´çè°ç¨æµç¨ã</p>
 <p><img alt="getState" loading="lazy" data-src="https://res.cloudinary.com/dxydgihag/image/upload/v1765164156/Blog/flink/12/getstate.png" class="lazyload"></p>
-<p>在调用 getState 这些方法时，都会先调用 keyedStateStore 提供的方法，它是 Flink 提供的一个封装 keyedStateBackend 的接口。调用流程的最后，是调用 keyedStateBackend 中的 createOrUpdateInternalState 方法（这里我们以 HeapStateBackend 为例）。</p>
+<p>å¨è°ç¨ getState è¿äºæ¹æ³æ¶ï¼é½ä¼åè°ç¨ keyedStateStore æä¾çæ¹æ³ï¼å®æ¯ Flink æä¾çä¸ä¸ªå°è£ keyedStateBackend çæ¥å£ãè°ç¨æµç¨çæåï¼æ¯è°ç¨ keyedStateBackend ä¸­ç createOrUpdateInternalState æ¹æ³ï¼è¿éæä»¬ä»¥ HeapStateBackend ä¸ºä¾ï¼ã</p>
 <pre><code class="language-java">public &lt;N, SV, SEV, S extends State, IS extends S&gt; IS createOrUpdateInternalState(
         @Nonnull TypeSerializer&lt;N&gt; namespaceSerializer,
         @Nonnull StateDescriptor&lt;S, SV&gt; stateDesc,
@@ -1209,11 +1209,11 @@ private static final Map&lt;StateDescriptor.Type, StateCreateFactory&gt; STATE_C
                                 (StateCreateFactory) HeapReducingState::create))
                 .collect(Collectors.toMap(t -&gt; t.f0, t -&gt; t.f1));
 </code></pre>
-<p>这里首先是注册了一个 StateTable，这个是 State 中一个非常重要的成员变量，它内部是一个类似 Map 的结构，用来保存 key 和 key 的状态。</p>
-<p>STATE_CREATE_FACTORIES 这个变量保存了不同类型的 State 和它对应的创建方法，同理 STATE_UPDATE_FACTORIES 保存的是不同 State 对应的 更新方法。</p>
-<h4 id="创建-operatorstate">创建 OperatorState</h4>
-<p>看完了 KeyedState 的创建过程后，我们再来看下 OperatorState 的创建过程。</p>
-<p>OperatorState 的创建方法是通过 FunctionInitializationContext 先获取到 OperatorStateStore，它与 KeyedStateStore 类似，都是对 StateBackend 的方法进行了封装。</p>
+<p>è¿éé¦åæ¯æ³¨åäºä¸ä¸ª StateTableï¼è¿ä¸ªæ¯ State ä¸­ä¸ä¸ªéå¸¸éè¦çæååéï¼å®åé¨æ¯ä¸ä¸ªç±»ä¼¼ Map çç»æï¼ç¨æ¥ä¿å­ key å key çç¶æã</p>
+<p>STATE_CREATE_FACTORIES è¿ä¸ªåéä¿å­äºä¸åç±»åç State åå®å¯¹åºçåå»ºæ¹æ³ï¼åç STATE_UPDATE_FACTORIES ä¿å­çæ¯ä¸å State å¯¹åºç æ´æ°æ¹æ³ã</p>
+<h4 id="åå»º-operatorstate">åå»º OperatorState</h4>
+<p>çå®äº KeyedState çåå»ºè¿ç¨åï¼æä»¬åæ¥çä¸ OperatorState çåå»ºè¿ç¨ã</p>
+<p>OperatorState çåå»ºæ¹æ³æ¯éè¿ FunctionInitializationContext åè·åå° OperatorStateStoreï¼å®ä¸ KeyedStateStore ç±»ä¼¼ï¼é½æ¯å¯¹ StateBackend çæ¹æ³è¿è¡äºå°è£ã</p>
 <pre><code class="language-java">@Override
 public void initializeState(FunctionInitializationContext context) throws Exception {
     ListStateDescriptor&lt;Tuple2&lt;String, Integer&gt;&gt; descriptor =
@@ -1230,7 +1230,7 @@ public void initializeState(FunctionInitializationContext context) throws Except
     }
 }
 </code></pre>
-<p>OperatorStateStore 的 getListState 方法中，直接创建出了 PartitionableListState，同时也做了一些缓存操作。</p>
+<p>OperatorStateStore ç getListState æ¹æ³ä¸­ï¼ç´æ¥åå»ºåºäº PartitionableListStateï¼åæ¶ä¹åäºä¸äºç¼å­æä½ã</p>
 <pre><code class="language-java">private &lt;S&gt; ListState&lt;S&gt; getListState(
         ListStateDescriptor&lt;S&gt; stateDescriptor, OperatorStateHandle.Mode mode)
         throws StateMigrationException {
@@ -1256,10 +1256,10 @@ public void initializeState(FunctionInitializationContext context) throws Except
     return partitionableListState;
 }
 </code></pre>
-<p>PartitionableListState 内部有一个 ArrayList 用于保存数据。</p>
-<h4 id="使用-keyedstate">使用 KeyedState</h4>
-<p>了解完 State 的创建之后，接下来就是 State 的使用了。我们以 HeapValueState 为例来看如何获取 State。</p>
-<pre><code class="language-java">// HeapValueState 类
+<p>PartitionableListState åé¨æä¸ä¸ª ArrayList ç¨äºä¿å­æ°æ®ã</p>
+<h4 id="ä½¿ç¨-keyedstate">ä½¿ç¨ KeyedState</h4>
+<p>äºè§£å® State çåå»ºä¹åï¼æ¥ä¸æ¥å°±æ¯ State çä½¿ç¨äºãæä»¬ä»¥ HeapValueState ä¸ºä¾æ¥çå¦ä½è·å Stateã</p>
+<pre><code class="language-java">// HeapValueState ç±»
 public V value() {
     final V result = stateTable.get(currentNamespace);
 
@@ -1270,7 +1270,7 @@ public V value() {
     return result;
 }
 </code></pre>
-<p>在 HeapValueState 类的 value 方法中，直接调用 StateTable 的 get 方法，最终调用的是 CopyOnWriteStateMap 的 get 方法，这个方法与 HashMap 的 get 方法比较类似。</p>
+<p>å¨ HeapValueState ç±»ç value æ¹æ³ä¸­ï¼ç´æ¥è°ç¨ StateTable ç get æ¹æ³ï¼æç»è°ç¨çæ¯ CopyOnWriteStateMap ç get æ¹æ³ï¼è¿ä¸ªæ¹æ³ä¸ HashMap ç get æ¹æ³æ¯è¾ç±»ä¼¼ã</p>
 <pre><code class="language-java">public S get(K key, N namespace) {
 
     final int hash = computeHashForOperationAndDoIncrementalRehash(key, namespace);
@@ -1300,8 +1300,8 @@ public V value() {
     return null;
 }
 </code></pre>
-<h4 id="使用-operatorstate">使用 OperatorState</h4>
-<p>OperatorState 底层使用的是 PartitionableListState，前面也提到了，它的内部用了一个 ArrayList 来保存数据，对于 OperatorState 的各种操作也都是来操作这个 ArrayList。</p>
+<h4 id="ä½¿ç¨-operatorstate">ä½¿ç¨ OperatorState</h4>
+<p>OperatorState åºå±ä½¿ç¨çæ¯ PartitionableListStateï¼åé¢ä¹æå°äºï¼å®çåé¨ç¨äºä¸ä¸ª ArrayList æ¥ä¿å­æ°æ®ï¼å¯¹äº OperatorState çåç§æä½ä¹é½æ¯æ¥æä½è¿ä¸ª ArrayListã</p>
 <pre><code class="language-java">@Override
 public void clear() {
     internalList.clear();
@@ -1336,8 +1336,8 @@ public void addAll(List&lt;S&gt; values) {
     }
 }
 </code></pre>
-<h3 id="总结">总结</h3>
-<p>本文对 State 的相关代码进行了梳理。包括 StateBackend 的创建，KeyedState 和 OperatorState 的创建和使用。State 和 Checkpoint 两者需要结合使用，因此后面我们会再梳理 Checkpoint 的相关代码。</p>
+<h3 id="æ»ç»">æ»ç»</h3>
+<p>æ¬æå¯¹ State çç¸å³ä»£ç è¿è¡äºæ¢³çãåæ¬ StateBackend çåå»ºï¼KeyedState å OperatorState çåå»ºåä½¿ç¨ãState å Checkpoint ä¸¤èéè¦ç»åä½¿ç¨ï¼å æ­¤åé¢æä»¬ä¼åæ¢³ç Checkpoint çç¸å³ä»£ç ã</p>
 
 </div>
 <div class="clear"></div>
@@ -1346,24 +1346,24 @@ public void addAll(List&lt;S&gt; values) {
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2025-12-23 21:45">2025-12-23 21:44</span>&nbsp;
 <a href="https://www.cnblogs.com/Jackeyzhe">Jackeyzhe</a>&nbsp;
-阅读(<span id="post_view_count">41</span>)&nbsp;
-评论(<span id="post_comment_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">41</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19389264);return false;">收藏</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19389264', targetLink: 'https://www.cnblogs.com/Jackeyzhe/p/19389264', title: 'Flink源码阅读：状态管理' })">举报</a>
+<a href="javascript:void(0)" onclick="AddToWz(19389264);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19389264', targetLink: 'https://www.cnblogs.com/Jackeyzhe/p/19389264', title: 'Flinkæºç éè¯»ï¼ç¶æç®¡ç' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
     </item>
 <item>
-    <title><![CDATA[ 不用 Typora 的 html 导出功能，手搓纯 HTML5 转换器 ]]></title>
+    <title><![CDATA[ ä¸ç¨ Typora ç html å¯¼åºåè½ï¼ææçº¯ HTML5 è½¬æ¢å¨ ]]></title>
     <link>https://www.cnblogs.com/zhally/p/19389248</link>
     <guid>58655b7150a432539f646e50690a7abd</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/zhally/p/19389248" title="发布于 2025-12-23 21:38">
-    <span role="heading" aria-level="2">不用 Typora 的 html 导出功能，手搓纯 HTML5 转换器</span>
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/zhally/p/19389248" title="åå¸äº 2025-12-23 21:38">
+    <span role="heading" aria-level="2">ä¸ç¨ Typora ç html å¯¼åºåè½ï¼ææçº¯ HTML5 è½¬æ¢å¨</span>
     
 
 </a>
@@ -1372,76 +1372,76 @@ public void addAll(List&lt;S&gt; values) {
             <div class="clear"></div>
             <div class="postBody">
                 <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h1 id="不用-typora-的-html-导出功能手搓纯-html5-转换器">不用 Typora 的 html 导出功能，手搓纯 HTML5 转换器</h1>
-<p>原创 夏群林 2025.12.23</p>
-<h2 id="一缘起">一、缘起</h2>
-<p>我日常工作使用 Typora， 一款很好的 Markdown 编辑器。建网站，写博文，用 Typora 打底稿。然后导出成 html 格式文件，所见即所得，一个静态网站就成了！</p>
-<p>不过，Typora 自带的 HTML 导出功能存在核心缺陷：夹带 Typora  编辑器 UI 冗余代码、HTML 语义不合规、依赖非标准化样式体系、导出文件体积大、可维护性差。基于此，我们手搓纯HTML5转换器，核心目标：</p>
+<h1 id="ä¸ç¨-typora-ç-html-å¯¼åºåè½ææçº¯-html5-è½¬æ¢å¨">ä¸ç¨ Typora ç html å¯¼åºåè½ï¼ææçº¯ HTML5 è½¬æ¢å¨</h1>
+<p>åå å¤ç¾¤æ 2025.12.23</p>
+<h2 id="ä¸ç¼èµ·">ä¸ãç¼èµ·</h2>
+<p>ææ¥å¸¸å·¥ä½ä½¿ç¨ Typoraï¼ ä¸æ¬¾å¾å¥½ç Markdown ç¼è¾å¨ãå»ºç½ç«ï¼ååæï¼ç¨ Typora æåºç¨¿ãç¶åå¯¼åºæ html æ ¼å¼æä»¶ï¼æè§å³æå¾ï¼ä¸ä¸ªéæç½ç«å°±æäºï¼</p>
+<p>ä¸è¿ï¼Typora èªå¸¦ç HTML å¯¼åºåè½å­å¨æ ¸å¿ç¼ºé·ï¼å¤¹å¸¦ Typora  ç¼è¾å¨ UI åä½ä»£ç ãHTML è¯­ä¹ä¸åè§ãä¾èµéæ ååæ ·å¼ä½ç³»ãå¯¼åºæä»¶ä½ç§¯å¤§ãå¯ç»´æ¤æ§å·®ãåºäºæ­¤ï¼æä»¬ææçº¯HTML5è½¬æ¢å¨ï¼æ ¸å¿ç®æ ï¼</p>
 <ol>
-<li>剔除 UI 冗余，仅保留 Markdown 内容渲染逻辑；</li>
-<li>纯 ES6+ 原生实现，无第三方库依赖；</li>
-<li>符合HTML5语义标准；</li>
-<li>还原 Typora 纯 Markdown 内容的渲染风格。</li>
+<li>åé¤ UI åä½ï¼ä»ä¿ç Markdown åå®¹æ¸²æé»è¾ï¼</li>
+<li>çº¯ ES6+ åçå®ç°ï¼æ ç¬¬ä¸æ¹åºä¾èµï¼</li>
+<li>ç¬¦åHTML5è¯­ä¹æ åï¼</li>
+<li>è¿å Typora çº¯ Markdown åå®¹çæ¸²æé£æ ¼ã</li>
 </ol>
-<h2 id="二纯-es6-实现无第三方库">二、纯 ES6+ 实现，无第三方库</h2>
-<h3 id="21-核心优势">2.1 核心优势</h3>
+<h2 id="äºçº¯-es6-å®ç°æ ç¬¬ä¸æ¹åº">äºãçº¯ ES6+ å®ç°ï¼æ ç¬¬ä¸æ¹åº</h2>
+<h3 id="21-æ ¸å¿ä¼å¿">2.1 æ ¸å¿ä¼å¿</h3>
 <ul>
-<li>轻量化：产物仅包含核心业务逻辑，无冗余依赖代码，体积较 Typora 导出缩减 80% 以上；</li>
-<li>可控性：全流程掌控 Markdown 语法解析、HTML 重构、样式生成；</li>
-<li>无依赖风险：避免第三方库版本迭代、兼容性问题，转换器长期稳定可用。</li>
+<li>è½»éåï¼äº§ç©ä»åå«æ ¸å¿ä¸å¡é»è¾ï¼æ åä½ä¾èµä»£ç ï¼ä½ç§¯è¾ Typora å¯¼åºç¼©å 80% ä»¥ä¸ï¼</li>
+<li>å¯æ§æ§ï¼å¨æµç¨ææ§ Markdown è¯­æ³è§£æãHTML éæãæ ·å¼çæï¼</li>
+<li>æ ä¾èµé£é©ï¼é¿åç¬¬ä¸æ¹åºçæ¬è¿­ä»£ãå¼å®¹æ§é®é¢ï¼è½¬æ¢å¨é¿æç¨³å®å¯ç¨ã</li>
 </ul>
-<h3 id="22-es6-核心特性应用">2.2 ES6+ 核心特性应用</h3>
+<h3 id="22-es6-æ ¸å¿ç¹æ§åºç¨">2.2 ES6+ æ ¸å¿ç¹æ§åºç¨</h3>
 <table>
 <thead>
 <tr>
-<th>ES6+特性</th>
-<th>应用场景</th>
-<th>价值</th>
+<th>ES6+ç¹æ§</th>
+<th>åºç¨åºæ¯</th>
+<th>ä»·å¼</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>模块化（ES Module）</td>
-<td>拆分解析、工具、入口模块</td>
-<td>解耦代码，便于维护</td>
+<td>æ¨¡ååï¼ES Moduleï¼</td>
+<td>æåè§£æãå·¥å·ãå¥å£æ¨¡å</td>
+<td>è§£è¦ä»£ç ï¼ä¾¿äºç»´æ¤</td>
 </tr>
 <tr>
-<td>模板字符串</td>
-<td>HTML/CSS生成</td>
-<td>替代字符串拼接，提升可读性</td>
+<td>æ¨¡æ¿å­ç¬¦ä¸²</td>
+<td>HTML/CSSçæ</td>
+<td>æ¿ä»£å­ç¬¦ä¸²æ¼æ¥ï¼æåå¯è¯»æ§</td>
 </tr>
 <tr>
-<td>正则表达式增强</td>
-<td>Markdown解析、合规修复</td>
-<td>精准匹配语法，解决反向引用冲突</td>
+<td>æ­£åè¡¨è¾¾å¼å¢å¼º</td>
+<td>Markdownè§£æãåè§ä¿®å¤</td>
+<td>ç²¾åå¹éè¯­æ³ï¼è§£å³ååå¼ç¨å²çª</td>
 </tr>
 </tbody>
 </table>
-<h2 id="三整体架构设计">三、整体架构设计</h2>
-<h3 id="31-目录结构">3.1 目录结构</h3>
+<h2 id="ä¸æ´ä½æ¶æè®¾è®¡">ä¸ãæ´ä½æ¶æè®¾è®¡</h2>
+<h3 id="31-ç®å½ç»æ">3.1 ç®å½ç»æ</h3>
 <pre><code>md2html/
-├── index.html        // 交互界面（MD输入、HTML预览/导出）
-├── js/
-│   ├── app.js        // 入口（DOM操作、转换/下载逻辑）
-│   ├── utils.js      // 工具函数（格式化、提示）
-│   └── marked.es6.js // MD核心解析（合规修复核心）
-└── css/  
-    ├── style.css     // 转换器界面样式
-    ├── concise.css   // 简洁版MD渲染样式
-    └── typora.css    // Typora纯内容渲染样式
+âââ index.html        // äº¤äºçé¢ï¼MDè¾å¥ãHTMLé¢è§/å¯¼åºï¼
+âââ js/
+â   âââ app.js        // å¥å£ï¼DOMæä½ãè½¬æ¢/ä¸è½½é»è¾ï¼
+â   âââ utils.js      // å·¥å·å½æ°ï¼æ ¼å¼åãæç¤ºï¼
+â   âââ marked.es6.js // MDæ ¸å¿è§£æï¼åè§ä¿®å¤æ ¸å¿ï¼
+âââ css/  
+    âââ style.css     // è½¬æ¢å¨çé¢æ ·å¼
+    âââ concise.css   // ç®æ´çMDæ¸²ææ ·å¼
+    âââ typora.css    // Typoraçº¯åå®¹æ¸²ææ ·å¼
 </code></pre>
-<h3 id="32-核心流程">3.2 核心流程</h3>
+<h3 id="32-æ ¸å¿æµç¨">3.2 æ ¸å¿æµç¨</h3>
 <div class="mermaid">flowchart TD
-    A[MD输入] --&gt; B[marked.es6.js解析（合规修复）]
-    B --&gt; C[utils.js格式化]
-    C --&gt; D[app.js生成HTML/下载]
-    D --&gt; E[预览/导出纯HTML5文件]
-</div><h2 id="四核心技术点">四、核心技术点</h2>
-<h3 id="41-基于正则的-markdown-语法解析">4.1 基于正则的 Markdown 语法解析</h3>
-<p>放弃第三方库，通过精准的正则表达式匹配Markdown核心语法，是实现“纯原生”的基础。</p>
-<p>核心思路为：按“块级语法（标题、列表、表格）→ 行内语法（加粗、链接、代码）”的顺序解析，确保语法嵌套的正确性。</p>
-<p>示例：表格语法解析正则</p>
-<pre><code class="language-javascript">// 解析表格
+    A[MDè¾å¥] --&gt; B[marked.es6.jsè§£æï¼åè§ä¿®å¤ï¼]
+    B --&gt; C[utils.jsæ ¼å¼å]
+    C --&gt; D[app.jsçæHTML/ä¸è½½]
+    D --&gt; E[é¢è§/å¯¼åºçº¯HTML5æä»¶]
+</div><h2 id="åæ ¸å¿ææ¯ç¹">åãæ ¸å¿ææ¯ç¹</h2>
+<h3 id="41-åºäºæ­£åç-markdown-è¯­æ³è§£æ">4.1 åºäºæ­£åç Markdown è¯­æ³è§£æ</h3>
+<p>æ¾å¼ç¬¬ä¸æ¹åºï¼éè¿ç²¾åçæ­£åè¡¨è¾¾å¼å¹éMarkdownæ ¸å¿è¯­æ³ï¼æ¯å®ç°âçº¯åçâçåºç¡ã</p>
+<p>æ ¸å¿æè·¯ä¸ºï¼æâåçº§è¯­æ³ï¼æ é¢ãåè¡¨ãè¡¨æ ¼ï¼â è¡åè¯­æ³ï¼å ç²ãé¾æ¥ãä»£ç ï¼âçé¡ºåºè§£æï¼ç¡®ä¿è¯­æ³åµå¥çæ­£ç¡®æ§ã</p>
+<p>ç¤ºä¾ï¼è¡¨æ ¼è¯­æ³è§£ææ­£å</p>
+<pre><code class="language-javascript">// è§£æè¡¨æ ¼
 const parseTables = (md, options) =&gt; {
     if (!md.includes('|') || md.includes('&lt;table&gt;')) return md;
 
@@ -1483,24 +1483,24 @@ const parseTables = (md, options) =&gt; {
     });
 };
 </code></pre>
-<h3 id="42-html语义合规化重构">4.2 HTML语义合规化重构</h3>
-<p>例如，Typora 导出的<code>&lt;ul&gt;/&lt;ol&gt;</code>被<code>&lt;p&gt;</code>包裹，换行生成空<code>&lt;p&gt;</code>标签，违反HTML语义规范。</p>
-<p>核心逻辑：解析列表时仅生成<code>&lt;li&gt;</code>子元素，段落解析排除列表标签，避免误判。</p>
-<pre><code class="language-javascript">// marked.es6.js 核心修复代码
+<h3 id="42-htmlè¯­ä¹åè§åéæ">4.2 HTMLè¯­ä¹åè§åéæ</h3>
+<p>ä¾å¦ï¼Typora å¯¼åºç<code>&lt;ul&gt;/&lt;ol&gt;</code>è¢«<code>&lt;p&gt;</code>åè£¹ï¼æ¢è¡çæç©º<code>&lt;p&gt;</code>æ ç­¾ï¼è¿åHTMLè¯­ä¹è§èã</p>
+<p>æ ¸å¿é»è¾ï¼è§£æåè¡¨æ¶ä»çæ<code>&lt;li&gt;</code>å­åç´ ï¼æ®µè½è§£ææé¤åè¡¨æ ç­¾ï¼é¿åè¯¯å¤ã</p>
+<pre><code class="language-javascript">// marked.es6.js æ ¸å¿ä¿®å¤ä»£ç 
 const parseLists = (md) =&gt; {
-    // 生成纯&lt;li&gt;，移除多余换行
+    // çæçº¯&lt;li&gt;ï¼ç§»é¤å¤ä½æ¢è¡
     let listItems = md.replace(/^( {0,3})(-|\*|\+)\s+(.*?$)/gm, (_, indent, marker, text) =&gt; {
         const inlineContent = parseInlineOnly(text).replace(/\n+/g, ' ');
         return `${indent}&lt;li&gt;${inlineContent}&lt;/li&gt;`;
     });
-    // 包裹列表容器，清理换行干扰
+    // åè£¹åè¡¨å®¹å¨ï¼æ¸çæ¢è¡å¹²æ°
     return listItems.replace(/((?: {0,3}&lt;li&gt;[\s\S]*?&lt;\/li&gt;\s*)+)/gm, (_, items) =&gt; {
         const cleanItems = items.replace(/\n+/g, '').replace(/&gt;\s+&lt;/g, '&gt;&lt;');
         return /[-*+]/.test(_) ? `&lt;ul&gt;${cleanItems}&lt;/ul&gt;` : `&lt;ol&gt;${cleanItems}&lt;/ol&gt;`;
     });
 };
 
-// 段落解析排除列表标签，避免空&lt;p&gt;
+// æ®µè½è§£ææé¤åè¡¨æ ç­¾ï¼é¿åç©º&lt;p&gt;
 const parseParagraphs = (md) =&gt; {
     const paraRegex = /^(?!&lt;(ul|ol|li)&gt;)(?!&lt;\/(ul|ol|li)&gt;)([^&lt;\n]+?)(?=\n{2,}|$)/gm;
     return md.replace(paraRegex, (_, __, ___, content) =&gt; {
@@ -1509,16 +1509,16 @@ const parseParagraphs = (md) =&gt; {
     });
 };
 </code></pre>
-<h3 id="43-仅保留-typora--内容渲染核心样式">4.3 仅保留 Typora  内容渲染核心样式</h3>
-<p>Typora 导出样式包含编辑器 UI 规则，冗余且非标准化，予以剥离。基于Typora原生的Markdown渲染风格，构建模块化的CSS体系：</p>
-<pre><code class="language-css">/* typora.css 核心代码 */
+<h3 id="43-ä»ä¿ç-typora--åå®¹æ¸²ææ ¸å¿æ ·å¼">4.3 ä»ä¿ç Typora  åå®¹æ¸²ææ ¸å¿æ ·å¼</h3>
+<p>Typora å¯¼åºæ ·å¼åå«ç¼è¾å¨ UI è§åï¼åä½ä¸éæ ååï¼äºä»¥å¥ç¦»ãåºäºTyporaåççMarkdownæ¸²æé£æ ¼ï¼æå»ºæ¨¡ååçCSSä½ç³»ï¼</p>
+<pre><code class="language-css">/* typora.css æ ¸å¿ä»£ç  */
 :root {
     --typora-text-color: #333;
     --typora-heading-color: #2c3e50;
     --typora-code-bg: #f8f8f8;
     --typora-table-border: #ddd;
 }
-/* 暗黑模式适配 */
+/* æé»æ¨¡å¼éé */
 @media (prefers-color-scheme: dark) {
     :root {
         --typora-text-color: #e0e0e0;
@@ -1526,26 +1526,26 @@ const parseParagraphs = (md) =&gt; {
         --typora-table-border: #444;
     }
 }
-/* 列表合规兜底 */
+/* åè¡¨åè§ååº */
 ul&gt;li, ol&gt;li { margin: 0.4em 0; }
 ul&gt;br, ol&gt;br, ul&gt;p, ol&gt;p { display: none; }
-/* 表格对齐类 */
+/* è¡¨æ ¼å¯¹é½ç±» */
 .text-left { text-align: left !important; }
 .text-center { text-align: center !important; }
 .text-right { text-align: right !important; }
 </code></pre>
-<h3 id="44-原生-es6-模块化整合">4.4 原生 ES6+ 模块化整合</h3>
-<pre><code class="language-javascript">// app.js 核心逻辑
+<h3 id="44-åç-es6-æ¨¡ååæ´å">4.4 åç ES6+ æ¨¡ååæ´å</h3>
+<pre><code class="language-javascript">// app.js æ ¸å¿é»è¾
 import { parseMarkdown } from './marked.es6.js';
 import { formatHtml, showAlert } from './utils.js';
 
-// 转换逻辑
+// è½¬æ¢é»è¾
 dom.convertBtn.addEventListener('click', () =&gt; {
     const mdContent = dom.mdInput.value.trim();
-    if (!mdContent) return showAlert('请输入Markdown内容');
+    if (!mdContent) return showAlert('è¯·è¾å¥Markdownåå®¹');
     
-    // 核心流程：解析（合规）→ 格式化 → 预览/导出
-    const htmlFragment = parseMarkdown(mdContent); // 生成即合规
+    // æ ¸å¿æµç¨ï¼è§£æï¼åè§ï¼â æ ¼å¼å â é¢è§/å¯¼åº
+    const htmlFragment = parseMarkdown(mdContent); // çæå³åè§
     const finalHtml = formatHtml(`&lt;!DOCTYPE html&gt;
 &lt;html lang="zh-CN"&gt;
 &lt;head&gt;&lt;meta charset="UTF-8"&gt;&lt;link rel="stylesheet" href="./css/typora.css"&gt;&lt;/head&gt;
@@ -1556,20 +1556,20 @@ dom.convertBtn.addEventListener('click', () =&gt; {
     dom.downloadBtn.disabled = false;
 });
 </code></pre>
-<h2 id="五使用说明">五、使用说明</h2>
+<h2 id="äºä½¿ç¨è¯´æ">äºãä½¿ç¨è¯´æ</h2>
 <ol>
-<li>按指定目录结构存放文件，确保<code>js/</code>和<code>css/</code>子文件夹路径正确；</li>
-<li>用支持ES6模块的浏览器（Chrome/Firefox/Edge）打开<code>index.html</code>；</li>
-<li>输入Markdown内容，勾选“保留 Typora 原格式”，点击“转换为 HTML5”；</li>
-<li>预览区查看效果，点击“下载 HTML 文件”获取符合 HTML5 规范的文件。</li>
+<li>ææå®ç®å½ç»æå­æ¾æä»¶ï¼ç¡®ä¿<code>js/</code>å<code>css/</code>å­æä»¶å¤¹è·¯å¾æ­£ç¡®ï¼</li>
+<li>ç¨æ¯æES6æ¨¡åçæµè§å¨ï¼Chrome/Firefox/Edgeï¼æå¼<code>index.html</code>ï¼</li>
+<li>è¾å¥Markdownåå®¹ï¼å¾éâä¿ç Typora åæ ¼å¼âï¼ç¹å»âè½¬æ¢ä¸º HTML5âï¼</li>
+<li>é¢è§åºæ¥çææï¼ç¹å»âä¸è½½ HTML æä»¶âè·åç¬¦å HTML5 è§èçæä»¶ã</li>
 </ol>
-<h2 id="六总结">六、总结</h2>
+<h2 id="å­æ»ç»">å­ãæ»ç»</h2>
 <ol>
-<li>核心价值：精准解决 Typora 导出的编辑器UI样式冗余痛点，生成纯内容的符合 HTML5 规范的文件；</li>
-<li>技术亮点：纯 ES6+ 原生实现；</li>
-<li>优势：轻量化、可控性强、跨环境兼容，可直接部署使用。</li>
+<li>æ ¸å¿ä»·å¼ï¼ç²¾åè§£å³ Typora å¯¼åºçç¼è¾å¨UIæ ·å¼åä½çç¹ï¼çæçº¯åå®¹çç¬¦å HTML5 è§èçæä»¶ï¼</li>
+<li>ææ¯äº®ç¹ï¼çº¯ ES6+ åçå®ç°ï¼</li>
+<li>ä¼å¿ï¼è½»éåãå¯æ§æ§å¼ºãè·¨ç¯å¢å¼å®¹ï¼å¯ç´æ¥é¨ç½²ä½¿ç¨ã</li>
 </ol>
-<p>本方案源代码开源，按照 MIT 协议许可。地址： <a href="https://github.com/xiaql/md2html5" target="_blank" rel="noopener nofollow">xiaql/md2html5: A typora to pure html5 converter</a></p>
+<p>æ¬æ¹æ¡æºä»£ç å¼æºï¼æç§ MIT åè®®è®¸å¯ãå°åï¼ <a href="https://github.com/xiaql/md2html5" target="_blank" rel="noopener nofollow">xiaql/md2html5: A typora to pure html5 converter</a></p>
 
 </div>
 <div class="clear"></div>
@@ -1578,59 +1578,59 @@ dom.convertBtn.addEventListener('click', () =&gt; {
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2025-12-23 21:39">2025-12-23 21:38</span>&nbsp;
 <a href="https://www.cnblogs.com/zhally">zhally</a>&nbsp;
-阅读(<span id="post_view_count">47</span>)&nbsp;
-评论(<span id="post_comment_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">47</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19389248);return false;">收藏</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19389248', targetLink: 'https://www.cnblogs.com/zhally/p/19389248', title: '不用 Typora 的 html 导出功能，手搓纯 HTML5 转换器' })">举报</a>
+<a href="javascript:void(0)" onclick="AddToWz(19389248);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19389248', targetLink: 'https://www.cnblogs.com/zhally/p/19389248', title: 'ä¸ç¨ Typora ç html å¯¼åºåè½ï¼ææçº¯ HTML5 è½¬æ¢å¨' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
     </item>
 <item>
-    <title><![CDATA[ 流量洪峰冲不垮的秘密：揭秘系统过载保护的核心防线 ]]></title>
+    <title><![CDATA[ æµéæ´ªå³°å²ä¸å®çç§å¯ï¼æ­ç§ç³»ç»è¿è½½ä¿æ¤çæ ¸å¿é²çº¿ ]]></title>
     <link>https://www.cnblogs.com/poemyang/p/19389175</link>
     <guid>9290c5fbceb53775fbac0cc2690c58c1</guid>
     <description>
     <![CDATA[ 
         <h2 class="post-title">
-            <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/poemyang/p/19389175" title="发布于 2025-12-23 21:16">
-    <span role="heading" aria-level="2">流量洪峰冲不垮的秘密：揭秘系统过载保护的核心防线</span>
+            <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/poemyang/p/19389175" title="åå¸äº 2025-12-23 21:16">
+    <span role="heading" aria-level="2">æµéæ´ªå³°å²ä¸å®çç§å¯ï¼æ­ç§ç³»ç»è¿è½½ä¿æ¤çæ ¸å¿é²çº¿</span>
     
 
 </a>
 
         </h2>
         <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>系统流量如潮汐般涨落，瞬时的洪峰可能将最坚固的系统冲垮。如何确保核心服务在极限压力下依然稳如磐石？答案在于构建一套分层协同、动态弹性的过载保护机制。这并非单一技术的堆砌，而是一门融汇了预判、隔离、调度与自愈的系统工程艺术。<br>
-本文将深入剖析这套多层防护体系的构建之道：从最外层的流量调度（负载均衡），到精细化的请求管控（限流），再到保障核心业务的“丢车保帅”策略（降级与熔断），最终迈向智能化的自我调节（自适应限流）。这些机制环环相扣，实时联动，旨在系统资源耗尽前，建立起一道有序的防线，确保关键业务在流量风暴中依然能够持续稳定地创造价值。</p>
-<p><strong>过载原因：为什么我们的系统会堵车？</strong><br>
-系统过载（System Overload），如同城市交通在高峰期陷入瘫痪，其本质是请求压力与处理能力之间动态平衡的打破。在系统设计阶段，需全面评估其处理能力，具体涵盖每秒处理能力、请求峰值、平均处理时延等关键指标。这些指标不仅有助于预估系统的最大处理能力，还能为确定所需机器数量以及是否进行扩容提供可靠依据。然而，在实际评估中，往往仅聚焦于请求量峰值，却忽略了系统处理能力的动态变化。现实中，系统的处理能力并非恒定不变，它会因内部损耗和外部依赖而动态衰减。实际上，系统处理能力的降低同样会引发过载问题。<br>
-系统过载的原因主要可归为两类：硬件系统极限能力被突破和软件系统极限能力被超越。由于硬件能力被超越的情况相对较少，因此更应重点关注软件系统，包括操作系统和应用软件。操作系统负责统一调配与管理硬件资源，而应用系统则通过系统调用使用这些资源。当资源使用超出操作系统的承受限度时，系统的整体处理能力将急剧降低。应用系统的瓶颈通常表现为以下四种类型，且某些应用系统可能同时存在多个瓶颈因素。<br>
-‌ 1）处理器瓶颈：密集的计算任务（如复杂算法、加解密）、频繁的线程上下文切换，都会将处理器利用率推向100%，导致新请求排队等待，响应时间急剧拉长。<br>
-2）内存瓶颈：频繁的垃圾回收（GC Pause）会冻结应用，而操作系统层面的内存交换（Swapping）更是将处理速度从纳秒级拖慢至毫秒级，对性能造成毁灭性打击。<br>
-‌ 3）网络I/O：带宽耗尽、网络延迟，或是连接数（如文件句柄）被占满，导致无法建立新的请求连接。<br>
-4）磁盘I/O：大量的数据库读写、日志记录、文件操作，特别是随机I/O，会显著降低磁盘吞吐率，拖慢整个业务流程。</p>
-<p><strong>过载解决策略</strong><br>
-面对系统过载，解决思路可归为两大方向：“开源”与“节流”。“开源”旨在提升系统的承载上限，而“节流”则是在资源有限的前提下，智慧地管理和调度进入系统的请求。一个成熟的系统，往往是这两种策略的有机结合。<br>
-开源策略是指提升系统承载力。这是最直观的应对方式，核心是增加系统可用的物理或虚拟资源。<br>
-1）扩容（Scaling）： 直接增加硬件投入，分为垂直扩容（升级单机配置）和水平扩容（增加更多服务器节点）。扩容能立竿见影地提升处理能力，但成本高昂，且资源终有上限。更重要的是，它无法解决由软件设计缺陷（如锁竞争、慢查询）引发的瓶颈。<br>
-2）负载均衡（Load Balancing）： 它是水平扩容的必然搭档。通过智能的调度算法，将请求流量均匀地分发到后端各个服务节点，避免单点过载，最大化利用整个集群的处理能力。<br>
-节流策略是指优化请求处理流。当“开源”达到极限或不符合成本效益时，“节流”便成为保障系统韧性的关键。它不再追求处理所有请求，而是选择性地处理，确保核心功能不受影响。<br>
-1）流量控制（Traffic Shaping）： 这是过载保护的核心手段，通过限流、排队等方式，主动控制进入系统的请求速率，防止流量洪峰直接冲击后端服务。它像一个智能阀门，确保水流平稳可控。<br>
-2）服务降级（Graceful Degradation）： 这是一种“舍车保帅”的智慧。在系统压力巨大时，有策略地关闭或简化非核心功能（如商品推荐、用户评论），将宝贵的系统资源集中用于保障核心业务流程（如下单、支付）的稳定。<br>
-尽管扩容和负载均衡是构建高并发系统的基础，但它们更像是提高了堤坝的高度。而真正的过载保护，则是在洪水来临时，如何科学地泄洪、导流，确保大坝本身和其守护的核心区域安然无恙。这正是“节流”策略的价值所在。</p>
-<p><strong>过载保护的核心价值</strong><br>
-传统系统设计的理想是永不失败，但这在真实复杂的系统世界中不切实际。过载保护承认失败的必然性，并将设计的焦点从“如何避免失败”转移到“当失败发生时，如何可控地、有预见性地应对”。它用有序的降级取代无序的崩溃，用可预期的局部不可用换取整体系统的稳定。<br>
-在没有保护的情况下，过载意味着所有请求一同变慢，最终一同失败，系统陷入混沌。而过载保护机制，如同一位冷静的调度员，它根据预设的优先级和规则，决定了哪些请求被立即处理，哪些需要排队等待，哪些被礼貌地拒绝。这种机制将混乱的流量冲击波，转化为一个有序的、可管理的业务处理队列。<br>
-在系统面临过载时，首要任务是在有限资源条件下，通过优化和保护策略，确保系统的关键功能能够稳定运行。例如，可对系统的各个部分进行优先级排序，明确哪些功能是至关重要的，哪些功能在必要时可暂时关闭或降级。同时，设定合理的阈值和规则，以便在系统过载时，能够自动丢弃超出处理能力的请求。<br>
-一切技术策略都为业务服务。过载保护的终极目标，是在资源极限的边缘，将每一分计算力都用在“刀刃”上，确保支付、下单等核心功能畅通无阻。对用户而言，一个能明确告知“系统繁忙，请稍后再试”的系统，远比一个永远在加载中、最终超时的系统更值得信赖。</p>
-<p><strong>未完待续</strong></p>
-<p><strong>很高兴与你相遇！如果你喜欢本文内容，记得关注哦!!!</strong></p>
+<p>ç³»ç»æµéå¦æ½®æ±è¬æ¶¨è½ï¼ç¬æ¶çæ´ªå³°å¯è½å°æååºçç³»ç»å²å®ãå¦ä½ç¡®ä¿æ ¸å¿æå¡å¨æéååä¸ä¾ç¶ç¨³å¦ç£ç³ï¼ç­æ¡å¨äºæå»ºä¸å¥åå±ååãå¨æå¼¹æ§çè¿è½½ä¿æ¤æºå¶ãè¿å¹¶éåä¸ææ¯çå ç ï¼èæ¯ä¸é¨èæ±äºé¢å¤ãéç¦»ãè°åº¦ä¸èªæçç³»ç»å·¥ç¨èºæ¯ã<br>
+æ¬æå°æ·±å¥åæè¿å¥å¤å±é²æ¤ä½ç³»çæå»ºä¹éï¼ä»æå¤å±çæµéè°åº¦ï¼è´è½½åè¡¡ï¼ï¼å°ç²¾ç»åçè¯·æ±ç®¡æ§ï¼éæµï¼ï¼åå°ä¿éæ ¸å¿ä¸å¡çâä¸¢è½¦ä¿å¸âç­ç¥ï¼éçº§ä¸çæ­ï¼ï¼æç»è¿åæºè½åçèªæè°èï¼èªéåºéæµï¼ãè¿äºæºå¶ç¯ç¯ç¸æ£ï¼å®æ¶èå¨ï¼æ¨å¨ç³»ç»èµæºèå°½åï¼å»ºç«èµ·ä¸éæåºçé²çº¿ï¼ç¡®ä¿å³é®ä¸å¡å¨æµéé£æ´ä¸­ä¾ç¶è½å¤æç»­ç¨³å®å°åé ä»·å¼ã</p>
+<p><strong>è¿è½½åå ï¼ä¸ºä»ä¹æä»¬çç³»ç»ä¼å µè½¦ï¼</strong><br>
+ç³»ç»è¿è½½ï¼System Overloadï¼ï¼å¦ååå¸äº¤éå¨é«å³°æé·å¥ç«çªï¼å¶æ¬è´¨æ¯è¯·æ±ååä¸å¤çè½åä¹é´å¨æå¹³è¡¡çæç ´ãå¨ç³»ç»è®¾è®¡é¶æ®µï¼éå¨é¢è¯ä¼°å¶å¤çè½åï¼å·ä½æ¶µçæ¯ç§å¤çè½åãè¯·æ±å³°å¼ãå¹³åå¤çæ¶å»¶ç­å³é®ææ ãè¿äºææ ä¸ä»æå©äºé¢ä¼°ç³»ç»çæå¤§å¤çè½åï¼è¿è½ä¸ºç¡®å®æéæºå¨æ°éä»¥åæ¯å¦è¿è¡æ©å®¹æä¾å¯é ä¾æ®ãç¶èï¼å¨å®éè¯ä¼°ä¸­ï¼å¾å¾ä»èç¦äºè¯·æ±éå³°å¼ï¼å´å¿½ç¥äºç³»ç»å¤çè½åçå¨æååãç°å®ä¸­ï¼ç³»ç»çå¤çè½åå¹¶éæå®ä¸åï¼å®ä¼å åé¨æèåå¤é¨ä¾èµèå¨æè¡°åãå®éä¸ï¼ç³»ç»å¤çè½åçéä½åæ ·ä¼å¼åè¿è½½é®é¢ã<br>
+ç³»ç»è¿è½½çåå ä¸»è¦å¯å½ä¸ºä¸¤ç±»ï¼ç¡¬ä»¶ç³»ç»æéè½åè¢«çªç ´åè½¯ä»¶ç³»ç»æéè½åè¢«è¶è¶ãç±äºç¡¬ä»¶è½åè¢«è¶è¶çæåµç¸å¯¹è¾å°ï¼å æ­¤æ´åºéç¹å³æ³¨è½¯ä»¶ç³»ç»ï¼åæ¬æä½ç³»ç»ååºç¨è½¯ä»¶ãæä½ç³»ç»è´è´£ç»ä¸è°éä¸ç®¡çç¡¬ä»¶èµæºï¼èåºç¨ç³»ç»åéè¿ç³»ç»è°ç¨ä½¿ç¨è¿äºèµæºãå½èµæºä½¿ç¨è¶åºæä½ç³»ç»çæ¿åéåº¦æ¶ï¼ç³»ç»çæ´ä½å¤çè½åå°æ¥å§éä½ãåºç¨ç³»ç»çç¶é¢éå¸¸è¡¨ç°ä¸ºä»¥ä¸åç§ç±»åï¼ä¸æäºåºç¨ç³»ç»å¯è½åæ¶å­å¨å¤ä¸ªç¶é¢å ç´ ã<br>
+â 1ï¼å¤çå¨ç¶é¢ï¼å¯éçè®¡ç®ä»»å¡ï¼å¦å¤æç®æ³ãå è§£å¯ï¼ãé¢ç¹ççº¿ç¨ä¸ä¸æåæ¢ï¼é½ä¼å°å¤çå¨å©ç¨çæ¨å100%ï¼å¯¼è´æ°è¯·æ±æéç­å¾ï¼ååºæ¶é´æ¥å§æé¿ã<br>
+2ï¼åå­ç¶é¢ï¼é¢ç¹çåå¾åæ¶ï¼GC Pauseï¼ä¼å»ç»åºç¨ï¼èæä½ç³»ç»å±é¢çåå­äº¤æ¢ï¼Swappingï¼æ´æ¯å°å¤çéåº¦ä»çº³ç§çº§ææ¢è³æ¯«ç§çº§ï¼å¯¹æ§è½é ææ¯ç­æ§æå»ã<br>
+â 3ï¼ç½ç»I/Oï¼å¸¦å®½èå°½ãç½ç»å»¶è¿ï¼ææ¯è¿æ¥æ°ï¼å¦æä»¶å¥æï¼è¢«å æ»¡ï¼å¯¼è´æ æ³å»ºç«æ°çè¯·æ±è¿æ¥ã<br>
+4ï¼ç£çI/Oï¼å¤§éçæ°æ®åºè¯»åãæ¥å¿è®°å½ãæä»¶æä½ï¼ç¹å«æ¯éæºI/Oï¼ä¼æ¾èéä½ç£çååçï¼ææ¢æ´ä¸ªä¸å¡æµç¨ã</p>
+<p><strong>è¿è½½è§£å³ç­ç¥</strong><br>
+é¢å¯¹ç³»ç»è¿è½½ï¼è§£å³æè·¯å¯å½ä¸ºä¸¤å¤§æ¹åï¼âå¼æºâä¸âèæµâãâå¼æºâæ¨å¨æåç³»ç»çæ¿è½½ä¸éï¼èâèæµâåæ¯å¨èµæºæéçåæä¸ï¼æºæ§å°ç®¡çåè°åº¦è¿å¥ç³»ç»çè¯·æ±ãä¸ä¸ªæççç³»ç»ï¼å¾å¾æ¯è¿ä¸¤ç§ç­ç¥çææºç»åã<br>
+å¼æºç­ç¥æ¯ææåç³»ç»æ¿è½½åãè¿æ¯æç´è§çåºå¯¹æ¹å¼ï¼æ ¸å¿æ¯å¢å ç³»ç»å¯ç¨çç©çæèæèµæºã<br>
+1ï¼æ©å®¹ï¼Scalingï¼ï¼ ç´æ¥å¢å ç¡¬ä»¶æå¥ï¼åä¸ºåç´æ©å®¹ï¼åçº§åæºéç½®ï¼åæ°´å¹³æ©å®¹ï¼å¢å æ´å¤æå¡å¨èç¹ï¼ãæ©å®¹è½ç«ç«¿è§å½±å°æåå¤çè½åï¼ä½ææ¬é«æï¼ä¸èµæºç»æä¸éãæ´éè¦çæ¯ï¼å®æ æ³è§£å³ç±è½¯ä»¶è®¾è®¡ç¼ºé·ï¼å¦éç«äºãæ¢æ¥è¯¢ï¼å¼åçç¶é¢ã<br>
+2ï¼è´è½½åè¡¡ï¼Load Balancingï¼ï¼ å®æ¯æ°´å¹³æ©å®¹çå¿ç¶æ­æ¡£ãéè¿æºè½çè°åº¦ç®æ³ï¼å°è¯·æ±æµéååå°ååå°åç«¯åä¸ªæå¡èç¹ï¼é¿ååç¹è¿è½½ï¼æå¤§åå©ç¨æ´ä¸ªéç¾¤çå¤çè½åã<br>
+èæµç­ç¥æ¯æä¼åè¯·æ±å¤çæµãå½âå¼æºâè¾¾å°æéæä¸ç¬¦åææ¬æçæ¶ï¼âèæµâä¾¿æä¸ºä¿éç³»ç»é§æ§çå³é®ãå®ä¸åè¿½æ±å¤çææè¯·æ±ï¼èæ¯éæ©æ§å°å¤çï¼ç¡®ä¿æ ¸å¿åè½ä¸åå½±åã<br>
+1ï¼æµéæ§å¶ï¼Traffic Shapingï¼ï¼ è¿æ¯è¿è½½ä¿æ¤çæ ¸å¿ææ®µï¼éè¿éæµãæéç­æ¹å¼ï¼ä¸»å¨æ§å¶è¿å¥ç³»ç»çè¯·æ±éçï¼é²æ­¢æµéæ´ªå³°ç´æ¥å²å»åç«¯æå¡ãå®åä¸ä¸ªæºè½éé¨ï¼ç¡®ä¿æ°´æµå¹³ç¨³å¯æ§ã<br>
+2ï¼æå¡éçº§ï¼Graceful Degradationï¼ï¼ è¿æ¯ä¸ç§âèè½¦ä¿å¸âçæºæ§ãå¨ç³»ç»ååå·¨å¤§æ¶ï¼æç­ç¥å°å³é­æç®åéæ ¸å¿åè½ï¼å¦ååæ¨èãç¨æ·è¯è®ºï¼ï¼å°å®è´µçç³»ç»èµæºéä¸­ç¨äºä¿éæ ¸å¿ä¸å¡æµç¨ï¼å¦ä¸åãæ¯ä»ï¼çç¨³å®ã<br>
+å°½ç®¡æ©å®¹åè´è½½åè¡¡æ¯æå»ºé«å¹¶åç³»ç»çåºç¡ï¼ä½å®ä»¬æ´åæ¯æé«äºå ¤åçé«åº¦ãèçæ­£çè¿è½½ä¿æ¤ï¼åæ¯å¨æ´ªæ°´æ¥ä¸´æ¶ï¼å¦ä½ç§å­¦å°æ³æ´ªãå¯¼æµï¼ç¡®ä¿å¤§åæ¬èº«åå¶å®æ¤çæ ¸å¿åºåå®ç¶æ æãè¿æ­£æ¯âèæµâç­ç¥çä»·å¼æå¨ã</p>
+<p><strong>è¿è½½ä¿æ¤çæ ¸å¿ä»·å¼</strong><br>
+ä¼ ç»ç³»ç»è®¾è®¡ççæ³æ¯æ°¸ä¸å¤±è´¥ï¼ä½è¿å¨çå®å¤æçç³»ç»ä¸çä¸­ä¸åå®éãè¿è½½ä¿æ¤æ¿è®¤å¤±è´¥çå¿ç¶æ§ï¼å¹¶å°è®¾è®¡çç¦ç¹ä»âå¦ä½é¿åå¤±è´¥âè½¬ç§»å°âå½å¤±è´¥åçæ¶ï¼å¦ä½å¯æ§å°ãæé¢è§æ§å°åºå¯¹âãå®ç¨æåºçéçº§åä»£æ åºçå´©æºï¼ç¨å¯é¢æçå±é¨ä¸å¯ç¨æ¢åæ´ä½ç³»ç»çç¨³å®ã<br>
+å¨æ²¡æä¿æ¤çæåµä¸ï¼è¿è½½æå³çææè¯·æ±ä¸ååæ¢ï¼æç»ä¸åå¤±è´¥ï¼ç³»ç»é·å¥æ··æ²ãèè¿è½½ä¿æ¤æºå¶ï¼å¦åä¸ä½å·éçè°åº¦åï¼å®æ ¹æ®é¢è®¾çä¼åçº§åè§åï¼å³å®äºåªäºè¯·æ±è¢«ç«å³å¤çï¼åªäºéè¦æéç­å¾ï¼åªäºè¢«ç¤¼è²å°æç»ãè¿ç§æºå¶å°æ··ä¹±çæµéå²å»æ³¢ï¼è½¬åä¸ºä¸ä¸ªæåºçãå¯ç®¡ççä¸å¡å¤çéåã<br>
+å¨ç³»ç»é¢ä¸´è¿è½½æ¶ï¼é¦è¦ä»»å¡æ¯å¨æéèµæºæ¡ä»¶ä¸ï¼éè¿ä¼ååä¿æ¤ç­ç¥ï¼ç¡®ä¿ç³»ç»çå³é®åè½è½å¤ç¨³å®è¿è¡ãä¾å¦ï¼å¯å¯¹ç³»ç»çåä¸ªé¨åè¿è¡ä¼åçº§æåºï¼æç¡®åªäºåè½æ¯è³å³éè¦çï¼åªäºåè½å¨å¿è¦æ¶å¯ææ¶å³é­æéçº§ãåæ¶ï¼è®¾å®åççéå¼åè§åï¼ä»¥ä¾¿å¨ç³»ç»è¿è½½æ¶ï¼è½å¤èªå¨ä¸¢å¼è¶åºå¤çè½åçè¯·æ±ã<br>
+ä¸åææ¯ç­ç¥é½ä¸ºä¸å¡æå¡ãè¿è½½ä¿æ¤çç»æç®æ ï¼æ¯å¨èµæºæéçè¾¹ç¼ï¼å°æ¯ä¸åè®¡ç®åé½ç¨å¨âååâä¸ï¼ç¡®ä¿æ¯ä»ãä¸åç­æ ¸å¿åè½çéæ é»ãå¯¹ç¨æ·èè¨ï¼ä¸ä¸ªè½æç¡®åç¥âç³»ç»ç¹å¿ï¼è¯·ç¨ååè¯âçç³»ç»ï¼è¿æ¯ä¸ä¸ªæ°¸è¿å¨å è½½ä¸­ãæç»è¶æ¶çç³»ç»æ´å¼å¾ä¿¡èµã</p>
+<p><strong>æªå®å¾ç»­</strong></p>
+<p><strong>å¾é«å´ä¸ä½ ç¸éï¼å¦æä½ åæ¬¢æ¬æåå®¹ï¼è®°å¾å³æ³¨å¦!!!</strong></p>
 
 </div>
 <div id="MySignature" role="contentinfo">
-    <p>本文来自博客园，作者：<a href="https://www.cnblogs.com/poemyang/" target="_blank">poemyang</a>，转载请注明原文链接：<a href="https://www.cnblogs.com/poemyang/p/19389175" target="_blank">https://www.cnblogs.com/poemyang/p/19389175</a></p>
+    <p>æ¬ææ¥èªåå®¢å­ï¼ä½èï¼<a href="https://www.cnblogs.com/poemyang/" target="_blank">poemyang</a>ï¼è½¬è½½è¯·æ³¨æåæé¾æ¥ï¼<a href="https://www.cnblogs.com/poemyang/p/19389175" target="_blank">https://www.cnblogs.com/poemyang/p/19389175</a></p>
 </div>
 <div class="clear"></div>
 
@@ -1638,25 +1638,25 @@ dom.convertBtn.addEventListener('click', () =&gt; {
             posted on 
 <span id="post-date" data-last-update-days="0" data-date-updated="2025-12-23 21:16">2025-12-23 21:16</span>&nbsp;
 <a href="https://www.cnblogs.com/poemyang">poemyang</a>&nbsp;
-阅读(<span id="post_view_count">54</span>)&nbsp;
-评论(<span id="post_comment_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">54</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19389175);return false;">收藏</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19389175', targetLink: 'https://www.cnblogs.com/poemyang/p/19389175', title: '流量洪峰冲不垮的秘密：揭秘系统过载保护的核心防线' })">举报</a>
+<a href="javascript:void(0)" onclick="AddToWz(19389175);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19389175', targetLink: 'https://www.cnblogs.com/poemyang/p/19389175', title: 'æµéæ´ªå³°å²ä¸å®çç§å¯ï¼æ­ç§ç³»ç»è¿è½½ä¿æ¤çæ ¸å¿é²çº¿' })">ä¸¾æ¥</a>
 
         </p>
      ]]>
     </description>
     </item>
 <item>
-    <title><![CDATA[ Kafka入门必知概念——Topic、分区、Offset、消费组的协作机制与影响 ]]></title>
+    <title><![CDATA[ Kafkaå¥é¨å¿ç¥æ¦å¿µââTopicãååºãOffsetãæ¶è´¹ç»çåä½æºå¶ä¸å½±å ]]></title>
     <link>https://www.cnblogs.com/shiyuelp/p/19389157</link>
     <guid>25e522bbeafcc3a94dfbcb00adc2117e</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/shiyuelp/p/19389157" title="发布于 2025-12-23 21:10">
-    <span role="heading" aria-level="2">Kafka入门必知概念——Topic、分区、Offset、消费组的协作机制与影响</span>
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/shiyuelp/p/19389157" title="åå¸äº 2025-12-23 21:10">
+    <span role="heading" aria-level="2">Kafkaå¥é¨å¿ç¥æ¦å¿µââTopicãååºãOffsetãæ¶è´¹ç»çåä½æºå¶ä¸å½±å</span>
     
 
 </a>
@@ -1665,154 +1665,154 @@ dom.convertBtn.addEventListener('click', () =&gt; {
             <div class="clear"></div>
             <div class="postBody">
                 <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p><strong>写在前面，本人目前处于求职中，如有合适内推岗位，请加：lpshiyue 感谢</strong></p>
+<p><strong>åå¨åé¢ï¼æ¬äººç®åå¤äºæ±èä¸­ï¼å¦æåéåæ¨å²ä½ï¼è¯·å ï¼lpshiyue æè°¢</strong></p>
 <blockquote>
-<p>理解Kafka的核心概念如同掌握分布式系统的通用语言，这些基础组件的高效协作正是Kafka海量数据处理能力的源泉</p>
+<p>çè§£Kafkaçæ ¸å¿æ¦å¿µå¦åææ¡åå¸å¼ç³»ç»çéç¨è¯­è¨ï¼è¿äºåºç¡ç»ä»¶çé«æåä½æ­£æ¯Kafkaæµ·éæ°æ®å¤çè½åçæºæ³</p>
 </blockquote>
-<p>在消息队列选型框架中，Kafka以其高吞吐、可扩展架构成为大数据场景的首选。然而，要真正发挥Kafka的潜力，必须深入理解其核心概念之间的协作关系。本文将全面解析Topic、分区、Offset和消费组四大核心概念，揭示它们如何共同构建Kafka的高性能架构。</p>
-<h2 id="1-kafka架构概览与设计哲学">1 Kafka架构概览与设计哲学</h2>
-<h3 id="11-分层架构与数据流">1.1 分层架构与数据流</h3>
-<p>Kafka采用<strong>生产者-消费者</strong>经典架构，整体可分为逻辑三层：生产者层负责消息发送，Broker集群层处理消息存储与路由，消费者层实现消息消费。这种清晰的分层架构使得Kafka能够高效处理海量消息流。</p>
-<p>Kafka的设计哲学围绕<strong>分布式、可扩展和高吞吐</strong>展开。与传统消息系统不同，Kafka将消息持久化到磁盘，通过顺序I/O和零拷贝技术实现高性能。这种设计使Kafka既能作为消息队列，又能作为存储系统使用，支持消息回溯和重复消费。</p>
-<h3 id="12-物理存储与逻辑视图的分离">1.2 物理存储与逻辑视图的分离</h3>
-<p>Kafka创新性地实现了<strong>逻辑Topic与物理分区的分离</strong>。Topic作为逻辑概念，方便业务分类；而分区作为物理概念，实现了数据的分布式存储和并行处理。这种分离是Kafka高扩展性的关键，允许集群通过增加分区和Broker来线性扩展吞吐量。</p>
-<p><strong>分区机制</strong>将每个Topic划分为多个有序的日志序列，分布在不同Broker上。当生产者发送消息时，实际上是将消息写入特定Topic的特定分区；消费者也是从特定分区读取消息。这种设计既保证了分区内消息顺序，又通过并行处理提升了整体吞吐量。</p>
-<h2 id="2-topic与分区数据分布的核心机制">2 Topic与分区：数据分布的核心机制</h2>
-<h3 id="21-topic的逻辑抽象与物理实现">2.1 Topic的逻辑抽象与物理实现</h3>
-<p><strong>Topic是消息的逻辑容器</strong>，类似于数据库中的表。生产者将消息发送到指定Topic，消费者从Topic订阅消息。Topic本身不存储数据，而是通过其下的分区实际承载消息。</p>
-<p>每个Topic由一个或多个<strong>分区（Partition）</strong> 组成，分区是Kafka并行处理的基本单位。分区在物理上对应磁盘上的目录，命名规则为<code>&lt;topic_name&gt;-&lt;partition_id&gt;</code>。例如，名为"user_behavior"的Topic若有3个分区，则对应三个目录：user_behavior-0、user_behavior-1、user_behavior-2。</p>
-<h3 id="22-分区策略与消息路由">2.2 分区策略与消息路由</h3>
-<p>Kafka提供灵活的分区策略，决定消息如何路由到特定分区。<strong>默认分区策略</strong>基于Key的哈希值：当消息指定Key时，使用<code>hash(key) % 分区数</code>计算目标分区；未指定Key时，采用轮询策略均匀分布。</p>
-<pre><code class="language-java">// 分区策略核心逻辑示例
+<p>å¨æ¶æ¯éåéåæ¡æ¶ä¸­ï¼Kafkaä»¥å¶é«ååãå¯æ©å±æ¶ææä¸ºå¤§æ°æ®åºæ¯çé¦éãç¶èï¼è¦çæ­£åæ¥Kafkaçæ½åï¼å¿é¡»æ·±å¥çè§£å¶æ ¸å¿æ¦å¿µä¹é´çåä½å³ç³»ãæ¬æå°å¨é¢è§£æTopicãååºãOffsetåæ¶è´¹ç»åå¤§æ ¸å¿æ¦å¿µï¼æ­ç¤ºå®ä»¬å¦ä½å±åæå»ºKafkaçé«æ§è½æ¶æã</p>
+<h2 id="1-kafkaæ¶ææ¦è§ä¸è®¾è®¡å²å­¦">1 Kafkaæ¶ææ¦è§ä¸è®¾è®¡å²å­¦</h2>
+<h3 id="11-åå±æ¶æä¸æ°æ®æµ">1.1 åå±æ¶æä¸æ°æ®æµ</h3>
+<p>Kafkaéç¨<strong>çäº§è-æ¶è´¹è</strong>ç»å¸æ¶æï¼æ´ä½å¯åä¸ºé»è¾ä¸å±ï¼çäº§èå±è´è´£æ¶æ¯åéï¼Brokeréç¾¤å±å¤çæ¶æ¯å­å¨ä¸è·¯ç±ï¼æ¶è´¹èå±å®ç°æ¶æ¯æ¶è´¹ãè¿ç§æ¸æ°çåå±æ¶æä½¿å¾Kafkaè½å¤é«æå¤çæµ·éæ¶æ¯æµã</p>
+<p>Kafkaçè®¾è®¡å²å­¦å´ç»<strong>åå¸å¼ãå¯æ©å±åé«åå</strong>å±å¼ãä¸ä¼ ç»æ¶æ¯ç³»ç»ä¸åï¼Kafkaå°æ¶æ¯æä¹åå°ç£çï¼éè¿é¡ºåºI/Oåé¶æ·è´ææ¯å®ç°é«æ§è½ãè¿ç§è®¾è®¡ä½¿Kafkaæ¢è½ä½ä¸ºæ¶æ¯éåï¼åè½ä½ä¸ºå­å¨ç³»ç»ä½¿ç¨ï¼æ¯ææ¶æ¯åæº¯åéå¤æ¶è´¹ã</p>
+<h3 id="12-ç©çå­å¨ä¸é»è¾è§å¾çåç¦»">1.2 ç©çå­å¨ä¸é»è¾è§å¾çåç¦»</h3>
+<p>Kafkaåæ°æ§å°å®ç°äº<strong>é»è¾Topicä¸ç©çååºçåç¦»</strong>ãTopicä½ä¸ºé»è¾æ¦å¿µï¼æ¹ä¾¿ä¸å¡åç±»ï¼èååºä½ä¸ºç©çæ¦å¿µï¼å®ç°äºæ°æ®çåå¸å¼å­å¨åå¹¶è¡å¤çãè¿ç§åç¦»æ¯Kafkaé«æ©å±æ§çå³é®ï¼åè®¸éç¾¤éè¿å¢å ååºåBrokeræ¥çº¿æ§æ©å±ååéã</p>
+<p><strong>ååºæºå¶</strong>å°æ¯ä¸ªTopicååä¸ºå¤ä¸ªæåºçæ¥å¿åºåï¼åå¸å¨ä¸åBrokerä¸ãå½çäº§èåéæ¶æ¯æ¶ï¼å®éä¸æ¯å°æ¶æ¯åå¥ç¹å®Topicçç¹å®ååºï¼æ¶è´¹èä¹æ¯ä»ç¹å®ååºè¯»åæ¶æ¯ãè¿ç§è®¾è®¡æ¢ä¿è¯äºååºåæ¶æ¯é¡ºåºï¼åéè¿å¹¶è¡å¤çæåäºæ´ä½ååéã</p>
+<h2 id="2-topicä¸ååºæ°æ®åå¸çæ ¸å¿æºå¶">2 Topicä¸ååºï¼æ°æ®åå¸çæ ¸å¿æºå¶</h2>
+<h3 id="21-topicçé»è¾æ½è±¡ä¸ç©çå®ç°">2.1 Topicçé»è¾æ½è±¡ä¸ç©çå®ç°</h3>
+<p><strong>Topicæ¯æ¶æ¯çé»è¾å®¹å¨</strong>ï¼ç±»ä¼¼äºæ°æ®åºä¸­çè¡¨ãçäº§èå°æ¶æ¯åéå°æå®Topicï¼æ¶è´¹èä»Topicè®¢éæ¶æ¯ãTopicæ¬èº«ä¸å­å¨æ°æ®ï¼èæ¯éè¿å¶ä¸çååºå®éæ¿è½½æ¶æ¯ã</p>
+<p>æ¯ä¸ªTopicç±ä¸ä¸ªæå¤ä¸ª<strong>ååºï¼Partitionï¼</strong> ç»æï¼ååºæ¯Kafkaå¹¶è¡å¤ççåºæ¬åä½ãååºå¨ç©çä¸å¯¹åºç£çä¸çç®å½ï¼å½åè§åä¸º<code>&lt;topic_name&gt;-&lt;partition_id&gt;</code>ãä¾å¦ï¼åä¸º"user_behavior"çTopicè¥æ3ä¸ªååºï¼åå¯¹åºä¸ä¸ªç®å½ï¼user_behavior-0ãuser_behavior-1ãuser_behavior-2ã</p>
+<h3 id="22-ååºç­ç¥ä¸æ¶æ¯è·¯ç±">2.2 ååºç­ç¥ä¸æ¶æ¯è·¯ç±</h3>
+<p>Kafkaæä¾çµæ´»çååºç­ç¥ï¼å³å®æ¶æ¯å¦ä½è·¯ç±å°ç¹å®ååºã<strong>é»è®¤ååºç­ç¥</strong>åºäºKeyçåå¸å¼ï¼å½æ¶æ¯æå®Keyæ¶ï¼ä½¿ç¨<code>hash(key) % ååºæ°</code>è®¡ç®ç®æ ååºï¼æªæå®Keyæ¶ï¼éç¨è½®è¯¢ç­ç¥åååå¸ã</p>
+<pre><code class="language-java">// ååºç­ç¥æ ¸å¿é»è¾ç¤ºä¾
 List&lt;PartitionInfo&gt; partitions = cluster.partitionsForTopic(topic);
 if (key != null) {
-    // 按Key哈希分区，保证同一Key的消息进入同一分区
+    // æKeyåå¸ååºï¼ä¿è¯åä¸Keyçæ¶æ¯è¿å¥åä¸ååº
     return Math.abs(key.hashCode()) % partitions.size();
 } else {
-    // 轮询策略，均匀分布
+    // è½®è¯¢ç­ç¥ï¼åååå¸
     return nextRoundRobinIndex() % partitions.size();
 }
 </code></pre>
-<p><strong>分区策略的选择直接影响消息顺序性和负载均衡</strong>。按Key哈希分区保证相同Key的消息顺序处理，适合需要保序的场景；轮询策略则提供更好的负载均衡，适合无顺序要求的场景。</p>
-<h3 id="23-分区数量的权衡艺术">2.3 分区数量的权衡艺术</h3>
-<p>分区数量是Kafka性能调优的关键参数。<strong>分区过少</strong>会导致无法充分利用集群并行能力；<strong>分区过多</strong>则增加元数据开销和Rebalance成本。</p>
-<p>实践经验表明，分区数量应当与消费者数量相匹配，且考虑未来扩展需求。通常建议单个Broker的分区总数不超过2000-4000个，以避免文件句柄和内存开销过大。</p>
-<h2 id="3-消费者组与负载均衡机制">3 消费者组与负载均衡机制</h2>
-<h3 id="31-消费者组模型及其优势">3.1 消费者组模型及其优势</h3>
-<p><strong>消费者组（Consumer Group）</strong> 是Kafka实现负载均衡和容错的核心机制。组内多个消费者实例共同消费一个或多个Topic，每个分区在同一时间只能被组内一个消费者消费。</p>
-<p>消费者组模型同时支持<strong>发布-订阅</strong>和<strong>点对点</strong>两种消息模式：当不同应用使用不同Group ID时，实现广播效果；当同一应用多个实例使用相同Group ID时，实现负载均衡。</p>
-<h3 id="32-rebalance机制与分区分配">3.2 Rebalance机制与分区分配</h3>
-<p><strong>Rebalance是消费者组的核心协调机制</strong>，在以下情况下触发：消费者加入或离开组、Topic分区数变化、订阅Topic变化。Rebalance过程包括三个阶段：</p>
+<p><strong>ååºç­ç¥çéæ©ç´æ¥å½±åæ¶æ¯é¡ºåºæ§åè´è½½åè¡¡</strong>ãæKeyåå¸ååºä¿è¯ç¸åKeyçæ¶æ¯é¡ºåºå¤çï¼éåéè¦ä¿åºçåºæ¯ï¼è½®è¯¢ç­ç¥åæä¾æ´å¥½çè´è½½åè¡¡ï¼éåæ é¡ºåºè¦æ±çåºæ¯ã</p>
+<h3 id="23-ååºæ°éçæè¡¡èºæ¯">2.3 ååºæ°éçæè¡¡èºæ¯</h3>
+<p>ååºæ°éæ¯Kafkaæ§è½è°ä¼çå³é®åæ°ã<strong>ååºè¿å°</strong>ä¼å¯¼è´æ æ³ååå©ç¨éç¾¤å¹¶è¡è½åï¼<strong>ååºè¿å¤</strong>åå¢å åæ°æ®å¼éåRebalanceææ¬ã</p>
+<p>å®è·µç»éªè¡¨æï¼ååºæ°éåºå½ä¸æ¶è´¹èæ°éç¸å¹éï¼ä¸èèæªæ¥æ©å±éæ±ãéå¸¸å»ºè®®åä¸ªBrokerçååºæ»æ°ä¸è¶è¿2000-4000ä¸ªï¼ä»¥é¿åæä»¶å¥æååå­å¼éè¿å¤§ã</p>
+<h2 id="3-æ¶è´¹èç»ä¸è´è½½åè¡¡æºå¶">3 æ¶è´¹èç»ä¸è´è½½åè¡¡æºå¶</h2>
+<h3 id="31-æ¶è´¹èç»æ¨¡ååå¶ä¼å¿">3.1 æ¶è´¹èç»æ¨¡ååå¶ä¼å¿</h3>
+<p><strong>æ¶è´¹èç»ï¼Consumer Groupï¼</strong> æ¯Kafkaå®ç°è´è½½åè¡¡åå®¹éçæ ¸å¿æºå¶ãç»åå¤ä¸ªæ¶è´¹èå®ä¾å±åæ¶è´¹ä¸ä¸ªæå¤ä¸ªTopicï¼æ¯ä¸ªååºå¨åä¸æ¶é´åªè½è¢«ç»åä¸ä¸ªæ¶è´¹èæ¶è´¹ã</p>
+<p>æ¶è´¹èç»æ¨¡ååæ¶æ¯æ<strong>åå¸-è®¢é</strong>å<strong>ç¹å¯¹ç¹</strong>ä¸¤ç§æ¶æ¯æ¨¡å¼ï¼å½ä¸ååºç¨ä½¿ç¨ä¸åGroup IDæ¶ï¼å®ç°å¹¿æ­ææï¼å½åä¸åºç¨å¤ä¸ªå®ä¾ä½¿ç¨ç¸åGroup IDæ¶ï¼å®ç°è´è½½åè¡¡ã</p>
+<h3 id="32-rebalanceæºå¶ä¸ååºåé">3.2 Rebalanceæºå¶ä¸ååºåé</h3>
+<p><strong>Rebalanceæ¯æ¶è´¹èç»çæ ¸å¿åè°æºå¶</strong>ï¼å¨ä»¥ä¸æåµä¸è§¦åï¼æ¶è´¹èå å¥æç¦»å¼ç»ãTopicååºæ°ååãè®¢éTopicååãRebalanceè¿ç¨åæ¬ä¸ä¸ªé¶æ®µï¼</p>
 <ol>
-<li><strong>Join阶段</strong>：所有消费者向协调者注册</li>
-<li><strong>Sync阶段</strong>：组Leader计算分配方案并同步给所有成员</li>
-<li><strong>执行阶段</strong>：消费者开始从分配的分区消费</li>
+<li><strong>Joiné¶æ®µ</strong>ï¼æææ¶è´¹èååè°èæ³¨å</li>
+<li><strong>Syncé¶æ®µ</strong>ï¼ç»Leaderè®¡ç®åéæ¹æ¡å¹¶åæ­¥ç»æææå</li>
+<li><strong>æ§è¡é¶æ®µ</strong>ï¼æ¶è´¹èå¼å§ä»åéçååºæ¶è´¹</li>
 </ol>
-<p>Kafka提供多种<strong>分区分配策略</strong>，满足不同场景需求：</p>
+<p>Kafkaæä¾å¤ç§<strong>ååºåéç­ç¥</strong>ï¼æ»¡è¶³ä¸ååºæ¯éæ±ï¼</p>
 <ul>
-<li><strong>Range策略</strong>（默认）：按Topic维度顺序分配，可能导致负载不均</li>
-<li><strong>RoundRobin策略</strong>：所有分区轮询分配，负载更均衡</li>
-<li><strong>Sticky策略</strong>：尽量减少分区移动，减少Rebalance开销</li>
+<li><strong>Rangeç­ç¥</strong>ï¼é»è®¤ï¼ï¼æTopicç»´åº¦é¡ºåºåéï¼å¯è½å¯¼è´è´è½½ä¸å</li>
+<li><strong>RoundRobinç­ç¥</strong>ï¼ææååºè½®è¯¢åéï¼è´è½½æ´åè¡¡</li>
+<li><strong>Stickyç­ç¥</strong>ï¼å°½éåå°ååºç§»å¨ï¼åå°Rebalanceå¼é</li>
 </ul>
-<h3 id="33-消费者位移管理">3.3 消费者位移管理</h3>
-<p><strong>Offset是消费者在分区中的消费位置</strong>，是分区内消息的唯一标识。Kafka将位移信息存储在特殊的<code>__consumer_offsets</code> Topic中，默认50个分区，通过<code>Math.abs(groupId.hashCode()) % 50</code>计算存储位置。</p>
-<p>位移提交方式影响消息处理的<strong>精确一次性</strong>语义：</p>
+<h3 id="33-æ¶è´¹èä½ç§»ç®¡ç">3.3 æ¶è´¹èä½ç§»ç®¡ç</h3>
+<p><strong>Offsetæ¯æ¶è´¹èå¨ååºä¸­çæ¶è´¹ä½ç½®</strong>ï¼æ¯ååºåæ¶æ¯çå¯ä¸æ è¯ãKafkaå°ä½ç§»ä¿¡æ¯å­å¨å¨ç¹æ®ç<code>__consumer_offsets</code> Topicä¸­ï¼é»è®¤50ä¸ªååºï¼éè¿<code>Math.abs(groupId.hashCode()) % 50</code>è®¡ç®å­å¨ä½ç½®ã</p>
+<p>ä½ç§»æäº¤æ¹å¼å½±åæ¶æ¯å¤çç<strong>ç²¾ç¡®ä¸æ¬¡æ§</strong>è¯­ä¹ï¼</p>
 <ul>
-<li><strong>自动提交</strong>：简单但可能重复消费或丢失消息</li>
-<li><strong>手动提交</strong>：更精确控制，支持同步和异步方式</li>
+<li><strong>èªå¨æäº¤</strong>ï¼ç®åä½å¯è½éå¤æ¶è´¹æä¸¢å¤±æ¶æ¯</li>
+<li><strong>æå¨æäº¤</strong>ï¼æ´ç²¾ç¡®æ§å¶ï¼æ¯æåæ­¥åå¼æ­¥æ¹å¼</li>
 </ul>
-<h2 id="4-副本机制与高可用性">4 副本机制与高可用性</h2>
-<h3 id="41-leader-follower架构">4.1 Leader-Follower架构</h3>
-<p>Kafka通过<strong>副本机制</strong>保证数据高可用。每个分区有多个副本，分为Leader和Follower两种角色。Leader处理所有读写请求，Follower从Leader同步数据。当Leader失效时，Kafka从ISR（In-Sync Replicas）中选择新的Leader。</p>
-<p><strong>ISR机制</strong>维护与Leader保持同步的副本集合。Follower必须定期向Leader发送心跳，若超过<code>replica.lag.time.max.ms</code>（默认10秒）未同步，则被移出ISR。这种设计既保证数据一致性，又提供故障转移能力。</p>
-<h3 id="42-数据可靠性配置">4.2 数据可靠性配置</h3>
-<p>生产者可通过<strong>acks参数</strong>配置数据可靠性级别：</p>
+<h2 id="4-å¯æ¬æºå¶ä¸é«å¯ç¨æ§">4 å¯æ¬æºå¶ä¸é«å¯ç¨æ§</h2>
+<h3 id="41-leader-followeræ¶æ">4.1 Leader-Followeræ¶æ</h3>
+<p>Kafkaéè¿<strong>å¯æ¬æºå¶</strong>ä¿è¯æ°æ®é«å¯ç¨ãæ¯ä¸ªååºæå¤ä¸ªå¯æ¬ï¼åä¸ºLeaderåFollowerä¸¤ç§è§è²ãLeaderå¤çææè¯»åè¯·æ±ï¼Followerä»Leaderåæ­¥æ°æ®ãå½Leaderå¤±ææ¶ï¼Kafkaä»ISRï¼In-Sync Replicasï¼ä¸­éæ©æ°çLeaderã</p>
+<p><strong>ISRæºå¶</strong>ç»´æ¤ä¸Leaderä¿æåæ­¥çå¯æ¬éåãFollowerå¿é¡»å®æåLeaderåéå¿è·³ï¼è¥è¶è¿<code>replica.lag.time.max.ms</code>ï¼é»è®¤10ç§ï¼æªåæ­¥ï¼åè¢«ç§»åºISRãè¿ç§è®¾è®¡æ¢ä¿è¯æ°æ®ä¸è´æ§ï¼åæä¾æéè½¬ç§»è½åã</p>
+<h3 id="42-æ°æ®å¯é æ§éç½®">4.2 æ°æ®å¯é æ§éç½®</h3>
+<p>çäº§èå¯éè¿<strong>acksåæ°</strong>éç½®æ°æ®å¯é æ§çº§å«ï¼</p>
 <ul>
-<li><strong>acks=0</strong>：无确认，最高吞吐但可能丢失数据</li>
-<li><strong>acks=1</strong>：Leader确认，均衡选择</li>
-<li><strong>acks=all</strong>：所有ISR副本确认，最可靠</li>
+<li><strong>acks=0</strong>ï¼æ ç¡®è®¤ï¼æé«ååä½å¯è½ä¸¢å¤±æ°æ®</li>
+<li><strong>acks=1</strong>ï¼Leaderç¡®è®¤ï¼åè¡¡éæ©</li>
+<li><strong>acks=all</strong>ï¼ææISRå¯æ¬ç¡®è®¤ï¼æå¯é </li>
 </ul>
-<p>在要求高可靠性的场景中，建议配置<code>acks=all</code>并设置<code>min.insync.replicas</code>（默认1），确保写入多个副本后才返回成功。</p>
-<h2 id="5-核心概念的协同效应">5 核心概念的协同效应</h2>
-<h3 id="51-四者协作的高性能奥秘">5.1 四者协作的高性能奥秘</h3>
-<p>Topic、分区、Offset和消费组四个概念相互协作，形成Kafka高性能的基石：<strong>Topic提供逻辑分类，分区实现并行处理，Offset记录消费进度，消费组保障负载均衡</strong>。</p>
-<p>这种协作机制的实际效果体现在：<strong>横向扩展能力</strong>通过增加分区和消费者实现；<strong>容错性</strong>通过副本机制保障；<strong>消息顺序性</strong>在分区内得到保证；<strong>负载均衡</strong>通过消费组自动实现。</p>
-<h3 id="52-实际应用中的配置策略">5.2 实际应用中的配置策略</h3>
-<p>在实际应用中，需要根据业务特点合理配置这些概念参数：<strong>高吞吐场景</strong>可增加分区数并使用轮询策略；<strong>保序要求高</strong>的场景应采用Key哈希分区；<strong>容错要求高</strong>需配置多副本和acks=all。</p>
-<p>以下是一个典型电商平台的Kafka配置示例：</p>
-<pre><code class="language-yaml"># 订单Topic配置
-order.topic.partitions: 12        # 匹配消费者数量
-order.topic.replication: 3        # 高可用配置
+<p>å¨è¦æ±é«å¯é æ§çåºæ¯ä¸­ï¼å»ºè®®éç½®<code>acks=all</code>å¹¶è®¾ç½®<code>min.insync.replicas</code>ï¼é»è®¤1ï¼ï¼ç¡®ä¿åå¥å¤ä¸ªå¯æ¬åæè¿åæåã</p>
+<h2 id="5-æ ¸å¿æ¦å¿µçååæåº">5 æ ¸å¿æ¦å¿µçååæåº</h2>
+<h3 id="51-åèåä½çé«æ§è½å¥¥ç§">5.1 åèåä½çé«æ§è½å¥¥ç§</h3>
+<p>TopicãååºãOffsetåæ¶è´¹ç»åä¸ªæ¦å¿µç¸äºåä½ï¼å½¢æKafkaé«æ§è½çåºç³ï¼<strong>Topicæä¾é»è¾åç±»ï¼ååºå®ç°å¹¶è¡å¤çï¼Offsetè®°å½æ¶è´¹è¿åº¦ï¼æ¶è´¹ç»ä¿éè´è½½åè¡¡</strong>ã</p>
+<p>è¿ç§åä½æºå¶çå®éææä½ç°å¨ï¼<strong>æ¨ªåæ©å±è½å</strong>éè¿å¢å ååºåæ¶è´¹èå®ç°ï¼<strong>å®¹éæ§</strong>éè¿å¯æ¬æºå¶ä¿éï¼<strong>æ¶æ¯é¡ºåºæ§</strong>å¨ååºåå¾å°ä¿è¯ï¼<strong>è´è½½åè¡¡</strong>éè¿æ¶è´¹ç»èªå¨å®ç°ã</p>
+<h3 id="52-å®éåºç¨ä¸­çéç½®ç­ç¥">5.2 å®éåºç¨ä¸­çéç½®ç­ç¥</h3>
+<p>å¨å®éåºç¨ä¸­ï¼éè¦æ ¹æ®ä¸å¡ç¹ç¹åçéç½®è¿äºæ¦å¿µåæ°ï¼<strong>é«åååºæ¯</strong>å¯å¢å ååºæ°å¹¶ä½¿ç¨è½®è¯¢ç­ç¥ï¼<strong>ä¿åºè¦æ±é«</strong>çåºæ¯åºéç¨Keyåå¸ååºï¼<strong>å®¹éè¦æ±é«</strong>ééç½®å¤å¯æ¬åacks=allã</p>
+<p>ä»¥ä¸æ¯ä¸ä¸ªå¸åçµåå¹³å°çKafkaéç½®ç¤ºä¾ï¼</p>
+<pre><code class="language-yaml"># è®¢åTopicéç½®
+order.topic.partitions: 12        # å¹éæ¶è´¹èæ°é
+order.topic.replication: 3        # é«å¯ç¨éç½®
 order.consumer.group: order-processors
-order.consume.threads: 12         # 与分区数匹配
+order.consume.threads: 12         # ä¸ååºæ°å¹é
 
-# 日志Topic配置  
-log.topic.partitions: 24          # 高吞吐需求
-log.topic.replication: 2           # 可接受一定数据丢失
+# æ¥å¿Topicéç½®  
+log.topic.partitions: 24          # é«ååéæ±
+log.topic.replication: 2           # å¯æ¥åä¸å®æ°æ®ä¸¢å¤±
 log.consumer.group: log-analyzers
 </code></pre>
-<h2 id="6-实践中的常见问题与解决方案">6 实践中的常见问题与解决方案</h2>
-<h3 id="61-数据倾斜与热点分区">6.1 数据倾斜与热点分区</h3>
-<p><strong>数据倾斜</strong>是常见问题，表现为部分分区负载过高。解决方案包括：使用更均匀的Key分布、采用轮询策略、增加分区数或实现自定义分区策略。</p>
-<h3 id="62-rebalance风暴与消费者稳定性">6.2 Rebalance风暴与消费者稳定性</h3>
-<p><strong>频繁Rebalance</strong>会导致消费者频繁停顿。优化方案包括：调整<code>session.timeout.ms</code>和<code>heartbeat.interval.ms</code>参数、使用Sticky分配策略、避免消费者频繁启停。</p>
-<h3 id="63-位移管理的最佳实践">6.3 位移管理的最佳实践</h3>
-<p>位移管理不当可能导致<strong>重复消费或消息丢失</strong>。建议采用手动提交位移，在消息处理完成后同步提交，并在消费者重启时从正确位置开始消费。</p>
-<h2 id="总结">总结</h2>
-<p>Kafka的核心概念体系构成了一个完整的高性能消息处理生态系统。Topic与分区的分离实现了逻辑与物理的解耦，消费组机制提供了灵活的负载均衡方案，Offset管理确保了消息处理的可靠性，副本机制保障了系统的高可用性。</p>
-<p>理解这些概念不仅有助于正确使用Kafka，更能为分布式系统设计提供重要启示。<strong>分布式系统的本质是通过分片实现扩展，通过副本实现容错，通过协调机制实现一致性</strong>——这正是Kafka架构思想的精髓。</p>
-<p>随着业务规模的增长，对这些核心概念的深入理解将帮助开发者在性能、可靠性和复杂度之间找到最佳平衡点，构建真正稳定高效的数据处理平台。</p>
+<h2 id="6-å®è·µä¸­çå¸¸è§é®é¢ä¸è§£å³æ¹æ¡">6 å®è·µä¸­çå¸¸è§é®é¢ä¸è§£å³æ¹æ¡</h2>
+<h3 id="61-æ°æ®å¾æä¸ç­ç¹ååº">6.1 æ°æ®å¾æä¸ç­ç¹ååº</h3>
+<p><strong>æ°æ®å¾æ</strong>æ¯å¸¸è§é®é¢ï¼è¡¨ç°ä¸ºé¨åååºè´è½½è¿é«ãè§£å³æ¹æ¡åæ¬ï¼ä½¿ç¨æ´ååçKeyåå¸ãéç¨è½®è¯¢ç­ç¥ãå¢å ååºæ°æå®ç°èªå®ä¹ååºç­ç¥ã</p>
+<h3 id="62-rebalanceé£æ´ä¸æ¶è´¹èç¨³å®æ§">6.2 Rebalanceé£æ´ä¸æ¶è´¹èç¨³å®æ§</h3>
+<p><strong>é¢ç¹Rebalance</strong>ä¼å¯¼è´æ¶è´¹èé¢ç¹åé¡¿ãä¼åæ¹æ¡åæ¬ï¼è°æ´<code>session.timeout.ms</code>å<code>heartbeat.interval.ms</code>åæ°ãä½¿ç¨Stickyåéç­ç¥ãé¿åæ¶è´¹èé¢ç¹å¯åã</p>
+<h3 id="63-ä½ç§»ç®¡ççæä½³å®è·µ">6.3 ä½ç§»ç®¡ççæä½³å®è·µ</h3>
+<p>ä½ç§»ç®¡çä¸å½å¯è½å¯¼è´<strong>éå¤æ¶è´¹ææ¶æ¯ä¸¢å¤±</strong>ãå»ºè®®éç¨æå¨æäº¤ä½ç§»ï¼å¨æ¶æ¯å¤çå®æååæ­¥æäº¤ï¼å¹¶å¨æ¶è´¹èéå¯æ¶ä»æ­£ç¡®ä½ç½®å¼å§æ¶è´¹ã</p>
+<h2 id="æ»ç»">æ»ç»</h2>
+<p>Kafkaçæ ¸å¿æ¦å¿µä½ç³»ææäºä¸ä¸ªå®æ´çé«æ§è½æ¶æ¯å¤ççæç³»ç»ãTopicä¸ååºçåç¦»å®ç°äºé»è¾ä¸ç©ççè§£è¦ï¼æ¶è´¹ç»æºå¶æä¾äºçµæ´»çè´è½½åè¡¡æ¹æ¡ï¼Offsetç®¡çç¡®ä¿äºæ¶æ¯å¤ççå¯é æ§ï¼å¯æ¬æºå¶ä¿éäºç³»ç»çé«å¯ç¨æ§ã</p>
+<p>çè§£è¿äºæ¦å¿µä¸ä»æå©äºæ­£ç¡®ä½¿ç¨Kafkaï¼æ´è½ä¸ºåå¸å¼ç³»ç»è®¾è®¡æä¾éè¦å¯ç¤ºã<strong>åå¸å¼ç³»ç»çæ¬è´¨æ¯éè¿åçå®ç°æ©å±ï¼éè¿å¯æ¬å®ç°å®¹éï¼éè¿åè°æºå¶å®ç°ä¸è´æ§</strong>ââè¿æ­£æ¯Kafkaæ¶æææ³çç²¾é«ã</p>
+<p>éçä¸å¡è§æ¨¡çå¢é¿ï¼å¯¹è¿äºæ ¸å¿æ¦å¿µçæ·±å¥çè§£å°å¸®å©å¼åèå¨æ§è½ãå¯é æ§åå¤æåº¦ä¹é´æ¾å°æä½³å¹³è¡¡ç¹ï¼æå»ºçæ­£ç¨³å®é«æçæ°æ®å¤çå¹³å°ã</p>
 <hr>
-<p><strong>📚 下篇预告</strong><br>
-《可靠性与顺序性保障——幂等、事务与Exactly-once语义的适用边界》—— 我们将深入探讨：</p>
+<p><strong>ð ä¸ç¯é¢å</strong><br>
+ãå¯é æ§ä¸é¡ºåºæ§ä¿éââå¹ç­ãäºå¡ä¸Exactly-onceè¯­ä¹çéç¨è¾¹çãââ æä»¬å°æ·±å¥æ¢è®¨ï¼</p>
 <ul>
-<li>🔄 <strong>幂等生产原理</strong>：PID、序列号与Broker去重机制的协同工作</li>
-<li>⚡ <strong>事务消息机制</strong>：跨分区原子写入与持久化保证的实现路径</li>
-<li>🎯 <strong>Exactly-once语义</strong>：流处理场景下的精确一次性交付保障</li>
-<li>📊 <strong>性能与可靠性权衡</strong>：不同可靠性级别的吞吐量影响量化分析</li>
-<li>🛡️ <strong>实践配置指南</strong>：生产者ACK、ISR配置与故障恢复的最佳实践</li>
+<li>ð <strong>å¹ç­çäº§åç</strong>ï¼PIDãåºåå·ä¸Brokerå»éæºå¶çååå·¥ä½</li>
+<li>â¡ <strong>äºå¡æ¶æ¯æºå¶</strong>ï¼è·¨ååºåå­åå¥ä¸æä¹åä¿è¯çå®ç°è·¯å¾</li>
+<li>ð¯ <strong>Exactly-onceè¯­ä¹</strong>ï¼æµå¤çåºæ¯ä¸çç²¾ç¡®ä¸æ¬¡æ§äº¤ä»ä¿é</li>
+<li>ð <strong>æ§è½ä¸å¯é æ§æè¡¡</strong>ï¼ä¸åå¯é æ§çº§å«çååéå½±åéååæ</li>
+<li>ð¡ï¸ <strong>å®è·µéç½®æå</strong>ï¼çäº§èACKãISRéç½®ä¸æéæ¢å¤çæä½³å®è·µ</li>
 </ul>
-<p><strong>点击关注，掌握Kafka数据可靠性的核心技术！</strong></p>
+<p><strong>ç¹å»å³æ³¨ï¼ææ¡Kafkaæ°æ®å¯é æ§çæ ¸å¿ææ¯ï¼</strong></p>
 <blockquote>
-<p><strong>今日行动建议</strong>：</p>
+<p><strong>ä»æ¥è¡å¨å»ºè®®</strong>ï¼</p>
 <ol>
-<li>审查现有Kafka Topic的分区配置，确保与消费者数量匹配</li>
-<li>评估数据分布情况，识别可能的热点分区问题</li>
-<li>优化消费者组配置，减少不必要的Rebalance操作</li>
-<li>建立位移监控机制，确保消息消费进度可观测</li>
+<li>å®¡æ¥ç°æKafka Topicçååºéç½®ï¼ç¡®ä¿ä¸æ¶è´¹èæ°éå¹é</li>
+<li>è¯ä¼°æ°æ®åå¸æåµï¼è¯å«å¯è½çç­ç¹ååºé®é¢</li>
+<li>ä¼åæ¶è´¹èç»éç½®ï¼åå°ä¸å¿è¦çRebalanceæä½</li>
+<li>å»ºç«ä½ç§»çæ§æºå¶ï¼ç¡®ä¿æ¶æ¯æ¶è´¹è¿åº¦å¯è§æµ</li>
 </ol>
 </blockquote>
 
 </div>
 <div id="MySignature" role="contentinfo">
-    进阶之路，神挡杀神佛挡杀佛，欢迎大家一起加ＱＱ群共同讨论成长，群号：<a href="https://jq.qq.com/?_wv=1027&amp;k=4AiobC0" target="view_window">620095084</a>
+    è¿é¶ä¹è·¯ï¼ç¥æ¡æç¥ä½æ¡æä½ï¼æ¬¢è¿å¤§å®¶ä¸èµ·å ï¼±ï¼±ç¾¤å±åè®¨è®ºæé¿ï¼ç¾¤å·ï¼<a href="https://jq.qq.com/?_wv=1027&amp;k=4AiobC0" target="view_window">620095084</a>
 <br>
-欢迎搜索关注微信公众号 基础全知道 ：JavaBasis ，第一时间阅读最新文章
+æ¬¢è¿æç´¢å³æ³¨å¾®ä¿¡å¬ä¼å· åºç¡å¨ç¥é ï¼JavaBasis ï¼ç¬¬ä¸æ¶é´éè¯»ææ°æç« 
 </div>
 <div class="clear"></div>
 
             </div>
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2025-12-23 21:11">2025-12-23 21:10</span>&nbsp;
-<a href="https://www.cnblogs.com/shiyuelp">十月南城</a>&nbsp;
-阅读(<span id="post_view_count">51</span>)&nbsp;
-评论(<span id="post_comment_count">0</span>)&nbsp;
+<a href="https://www.cnblogs.com/shiyuelp">åæåå</a>&nbsp;
+éè¯»(<span id="post_view_count">51</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19389157);return false;">收藏</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19389157', targetLink: 'https://www.cnblogs.com/shiyuelp/p/19389157', title: 'Kafka入门必知概念——Topic、分区、Offset、消费组的协作机制与影响' })">举报</a>
+<a href="javascript:void(0)" onclick="AddToWz(19389157);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19389157', targetLink: 'https://www.cnblogs.com/shiyuelp/p/19389157', title: 'Kafkaå¥é¨å¿ç¥æ¦å¿µââTopicãååºãOffsetãæ¶è´¹ç»çåä½æºå¶ä¸å½±å' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
     </item>
 <item>
-    <title><![CDATA[ 吴恩达深度学习课程四：计算机视觉  第三周：检测算法 （二）目标检测算法 ]]></title>
+    <title><![CDATA[ å´æ©è¾¾æ·±åº¦å­¦ä¹ è¯¾ç¨åï¼è®¡ç®æºè§è§  ç¬¬ä¸å¨ï¼æ£æµç®æ³ ï¼äºï¼ç®æ æ£æµç®æ³ ]]></title>
     <link>https://www.cnblogs.com/Goblinscholar/p/19389081</link>
     <guid>d861b65450e2a1bf99d423d32b8fb709</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/Goblinscholar/p/19389081" title="发布于 2025-12-23 20:53">
-    <span role="heading" aria-level="2">吴恩达深度学习课程四：计算机视觉  第三周：检测算法 （二）目标检测算法</span>
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/Goblinscholar/p/19389081" title="åå¸äº 2025-12-23 20:53">
+    <span role="heading" aria-level="2">å´æ©è¾¾æ·±åº¦å­¦ä¹ è¯¾ç¨åï¼è®¡ç®æºè§è§  ç¬¬ä¸å¨ï¼æ£æµç®æ³ ï¼äºï¼ç®æ æ£æµç®æ³</span>
     
 
 </a>
@@ -1821,188 +1821,188 @@ log.consumer.group: log-analyzers
             <div class="clear"></div>
             <div class="postBody">
                 <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>此分类用于记录吴恩达深度学习课程的学习笔记。<br>
-课程相关信息链接如下：</p>
+<p>æ­¤åç±»ç¨äºè®°å½å´æ©è¾¾æ·±åº¦å­¦ä¹ è¯¾ç¨çå­¦ä¹ ç¬è®°ã<br>
+è¯¾ç¨ç¸å³ä¿¡æ¯é¾æ¥å¦ä¸ï¼</p>
 <ol>
-<li>原课程视频链接：<a href="https://www.bilibili.com/video/BV1FT4y1E74V?buvid=XU762317353676D786954061C192FE625463B&amp;from_spmid=playlist.playlist-detail.0.0&amp;is_story_h5=false&amp;mid=zqernykrmpf7XfIorMR%2FnA%3D%3D&amp;plat_id=116&amp;share_from=ugc&amp;share_medium=android&amp;share_plat=android&amp;share_session_id=ce0bc526-db69-428a-962e-c65ed8c267bc&amp;share_source=COPY&amp;share_tag=s_i&amp;spmid=united.player-video-detail.0.0&amp;timestamp=1713085655&amp;unique_k=DfBgvFW&amp;up_id=8654113&amp;vd_source=e035e9878d32f414b4354b839a4c31a4" target="_blank" rel="noopener nofollow">[双语字幕]吴恩达深度学习deeplearning.ai</a></li>
-<li>github课程资料，含课件与笔记:<a href="https://github.com/robbertliu/deeplearning.ai-andrewNG" target="_blank" rel="noopener nofollow">吴恩达深度学习教学资料</a></li>
-<li>课程配套练习（中英）与答案：<a href="https://blog.csdn.net/u013733326/article/details/79827273" target="_blank" rel="noopener nofollow">吴恩达深度学习课后习题与答案</a></li>
+<li>åè¯¾ç¨è§é¢é¾æ¥ï¼<a href="https://www.bilibili.com/video/BV1FT4y1E74V?buvid=XU762317353676D786954061C192FE625463B&amp;from_spmid=playlist.playlist-detail.0.0&amp;is_story_h5=false&amp;mid=zqernykrmpf7XfIorMR%2FnA%3D%3D&amp;plat_id=116&amp;share_from=ugc&amp;share_medium=android&amp;share_plat=android&amp;share_session_id=ce0bc526-db69-428a-962e-c65ed8c267bc&amp;share_source=COPY&amp;share_tag=s_i&amp;spmid=united.player-video-detail.0.0&amp;timestamp=1713085655&amp;unique_k=DfBgvFW&amp;up_id=8654113&amp;vd_source=e035e9878d32f414b4354b839a4c31a4" target="_blank" rel="noopener nofollow">[åè¯­å­å¹]å´æ©è¾¾æ·±åº¦å­¦ä¹ deeplearning.ai</a></li>
+<li>githubè¯¾ç¨èµæï¼å«è¯¾ä»¶ä¸ç¬è®°:<a href="https://github.com/robbertliu/deeplearning.ai-andrewNG" target="_blank" rel="noopener nofollow">å´æ©è¾¾æ·±åº¦å­¦ä¹ æå­¦èµæ</a></li>
+<li>è¯¾ç¨éå¥ç»ä¹ ï¼ä¸­è±ï¼ä¸ç­æ¡ï¼<a href="https://blog.csdn.net/u013733326/article/details/79827273" target="_blank" rel="noopener nofollow">å´æ©è¾¾æ·±åº¦å­¦ä¹ è¯¾åä¹ é¢ä¸ç­æ¡</a></li>
 </ol>
-<p>本篇为第四课的第三周内容，<a href="https://www.bilibili.com/video/BV1FT4y1E74V?spm_id_from=333.788.videopod.episodes&amp;vd_source=e035e9878d32f414b4354b839a4c31a4&amp;p=132" target="_blank" rel="noopener nofollow">3.3</a>到<a href="https://www.bilibili.com/video/BV1FT4y1E74V?spm_id_from=333.788.videopod.episodes&amp;vd_source=e035e9878d32f414b4354b839a4c31a4&amp;p=134" target="_blank" rel="noopener nofollow">3.5</a>的内容。</p>
+<p>æ¬ç¯ä¸ºç¬¬åè¯¾çç¬¬ä¸å¨åå®¹ï¼<a href="https://www.bilibili.com/video/BV1FT4y1E74V?spm_id_from=333.788.videopod.episodes&amp;vd_source=e035e9878d32f414b4354b839a4c31a4&amp;p=132" target="_blank" rel="noopener nofollow">3.3</a>å°<a href="https://www.bilibili.com/video/BV1FT4y1E74V?spm_id_from=333.788.videopod.episodes&amp;vd_source=e035e9878d32f414b4354b839a4c31a4&amp;p=134" target="_blank" rel="noopener nofollow">3.5</a>çåå®¹ã</p>
 <hr>
-<p>本周为第四课的第三周内容，这一课所有内容的中心只有一个：<strong>计算机视觉</strong>。应用在深度学习里，就是专门用来进行图学习的模型和技术，是在之前全连接基础上的“特化”，也是相关专业里的一个重要研究大类。<br>
-<strong>这一整节课都存在大量需要反复理解的内容和机器学习、数学基础。</strong> 因此我会尽可能的补足基础，用比喻和实例来演示每个部分，从而帮助理解。<br>
-第三周的内容将从<strong>图像分类</strong>进一步拓展到<strong>目标检测（Object Detection）</strong> 这一更具挑战性的计算机视觉任务。<br>
-与分类任务只需回答“图中有什么”不同，目标检测需要同时解决“ <strong>有什么</strong>”以及“<strong>在什么位置</strong>”两个问题，因此在模型结构设计、训练方式和评价标准上都更为复杂。<br>
-本篇的内容关于目标检测算法。</p>
-<h1 id="1-检测算法10对窗口分类">1. 检测算法1.0：对窗口分类</h1>
-<p>我们知道，想要实现目标检测，首先就要完成<strong>目标识别</strong>。<br>
-只有当模型能够回答“<strong>要找什么</strong>”后，我们才有可能进一步让它回答“<strong>它在哪里</strong>”。</p>
-<p>在早期，人们并没有一套专门为“检测”设计的网络结构，于是有人提出了这样一种想法：<strong>既然分类网络已经很成熟，那能不能把“找位置”这个问题，转化成一堆“分类问题”？</strong></p>
-<p>而实现这种逻辑的具体做法就是<strong>滑动窗口（Sliding Window）</strong>。<br>
-在这种方法中，我们用一个<strong>固定大小的窗口</strong>在整张图像上从左到右、从上到下不断<strong>滑动</strong>，把图像裁剪成一块一块的小区域。<br>
-然后，将每一个窗口都单独送入一个已经训练好的<strong>图像分类网络</strong>中，判断这个窗口里“有没有目标”。<br>
-如果某个窗口被分类器判断为“汽车”“行人”等目标类别，那么我们就认为：<strong>目标就出现在这个窗口所对应的位置上。</strong><br>
-就像这样：<br>
+<p>æ¬å¨ä¸ºç¬¬åè¯¾çç¬¬ä¸å¨åå®¹ï¼è¿ä¸è¯¾ææåå®¹çä¸­å¿åªæä¸ä¸ªï¼<strong>è®¡ç®æºè§è§</strong>ãåºç¨å¨æ·±åº¦å­¦ä¹ éï¼å°±æ¯ä¸é¨ç¨æ¥è¿è¡å¾å­¦ä¹ çæ¨¡ååææ¯ï¼æ¯å¨ä¹åå¨è¿æ¥åºç¡ä¸çâç¹åâï¼ä¹æ¯ç¸å³ä¸ä¸éçä¸ä¸ªéè¦ç ç©¶å¤§ç±»ã<br>
+<strong>è¿ä¸æ´èè¯¾é½å­å¨å¤§ééè¦åå¤çè§£çåå®¹åæºå¨å­¦ä¹ ãæ°å­¦åºç¡ã</strong> å æ­¤æä¼å°½å¯è½çè¡¥è¶³åºç¡ï¼ç¨æ¯å»åå®ä¾æ¥æ¼ç¤ºæ¯ä¸ªé¨åï¼ä»èå¸®å©çè§£ã<br>
+ç¬¬ä¸å¨çåå®¹å°ä»<strong>å¾ååç±»</strong>è¿ä¸æ­¥æå±å°<strong>ç®æ æ£æµï¼Object Detectionï¼</strong> è¿ä¸æ´å·æææ§çè®¡ç®æºè§è§ä»»å¡ã<br>
+ä¸åç±»ä»»å¡åªéåç­âå¾ä¸­æä»ä¹âä¸åï¼ç®æ æ£æµéè¦åæ¶è§£å³â <strong>æä»ä¹</strong>âä»¥åâ<strong>å¨ä»ä¹ä½ç½®</strong>âä¸¤ä¸ªé®é¢ï¼å æ­¤å¨æ¨¡åç»æè®¾è®¡ãè®­ç»æ¹å¼åè¯ä»·æ åä¸é½æ´ä¸ºå¤æã<br>
+æ¬ç¯çåå®¹å³äºç®æ æ£æµç®æ³ã</p>
+<h1 id="1-æ£æµç®æ³10å¯¹çªå£åç±»">1. æ£æµç®æ³1.0ï¼å¯¹çªå£åç±»</h1>
+<p>æä»¬ç¥éï¼æ³è¦å®ç°ç®æ æ£æµï¼é¦åå°±è¦å®æ<strong>ç®æ è¯å«</strong>ã<br>
+åªæå½æ¨¡åè½å¤åç­â<strong>è¦æ¾ä»ä¹</strong>âåï¼æä»¬ææå¯è½è¿ä¸æ­¥è®©å®åç­â<strong>å®å¨åªé</strong>âã</p>
+<p>å¨æ©æï¼äººä»¬å¹¶æ²¡æä¸å¥ä¸é¨ä¸ºâæ£æµâè®¾è®¡çç½ç»ç»æï¼äºæ¯æäººæåºäºè¿æ ·ä¸ç§æ³æ³ï¼<strong>æ¢ç¶åç±»ç½ç»å·²ç»å¾æçï¼é£è½ä¸è½æâæ¾ä½ç½®âè¿ä¸ªé®é¢ï¼è½¬åæä¸å âåç±»é®é¢âï¼</strong></p>
+<p>èå®ç°è¿ç§é»è¾çå·ä½åæ³å°±æ¯<strong>æ»å¨çªå£ï¼Sliding Windowï¼</strong>ã<br>
+å¨è¿ç§æ¹æ³ä¸­ï¼æä»¬ç¨ä¸ä¸ª<strong>åºå®å¤§å°ççªå£</strong>å¨æ´å¼ å¾åä¸ä»å·¦å°å³ãä»ä¸å°ä¸ä¸æ­<strong>æ»å¨</strong>ï¼æå¾åè£åªæä¸åä¸åçå°åºåã<br>
+ç¶åï¼å°æ¯ä¸ä¸ªçªå£é½åç¬éå¥ä¸ä¸ªå·²ç»è®­ç»å¥½ç<strong>å¾ååç±»ç½ç»</strong>ä¸­ï¼å¤æ­è¿ä¸ªçªå£éâææ²¡æç®æ âã<br>
+å¦ææä¸ªçªå£è¢«åç±»å¨å¤æ­ä¸ºâæ±½è½¦ââè¡äººâç­ç®æ ç±»å«ï¼é£ä¹æä»¬å°±è®¤ä¸ºï¼<strong>ç®æ å°±åºç°å¨è¿ä¸ªçªå£æå¯¹åºçä½ç½®ä¸ã</strong><br>
+å°±åè¿æ ·ï¼<br>
 <img src="https://img2024.cnblogs.com/blog/3708248/202512/3708248-20251223205038950-257158416.png" alt="image.png" loading="lazy"></p>
-<p>从整体上看，这种检测流程可以被理解为：</p>
+<p>ä»æ´ä½ä¸çï¼è¿ç§æ£æµæµç¨å¯ä»¥è¢«çè§£ä¸ºï¼</p>
 <ol>
-<li>用滑动窗口 <strong>枚举可能的位置</strong></li>
-<li>用分类网络 <strong>判断每个位置是什么</strong></li>
-<li>将被判定为目标的窗口位置，作为最终的检测结果</li>
+<li>ç¨æ»å¨çªå£ <strong>æä¸¾å¯è½çä½ç½®</strong></li>
+<li>ç¨åç±»ç½ç» <strong>å¤æ­æ¯ä¸ªä½ç½®æ¯ä»ä¹</strong></li>
+<li>å°è¢«å¤å®ä¸ºç®æ ççªå£ä½ç½®ï¼ä½ä¸ºæç»çæ£æµç»æ</li>
 </ol>
-<p>但显然，即使假设分类器完全准确，这种算法仍有它的不足之处。<br>
-对于滑动窗口，我们可以设置它的<strong>尺寸和步长</strong>来调整它在图像中的运动轨迹，这种固定的设置都十分死板，且同时很难兼顾<strong>不同大小目标的完整覆盖</strong>。<br>
+<p>ä½æ¾ç¶ï¼å³ä½¿åè®¾åç±»å¨å®å¨åç¡®ï¼è¿ç§ç®æ³ä»æå®çä¸è¶³ä¹å¤ã<br>
+å¯¹äºæ»å¨çªå£ï¼æä»¬å¯ä»¥è®¾ç½®å®ç<strong>å°ºå¯¸åæ­¥é¿</strong>æ¥è°æ´å®å¨å¾åä¸­çè¿å¨è½¨è¿¹ï¼è¿ç§åºå®çè®¾ç½®é½ååæ­»æ¿ï¼ä¸åæ¶å¾é¾å¼é¡¾<strong>ä¸åå¤§å°ç®æ çå®æ´è¦ç</strong>ã<br>
 <img src="https://img2024.cnblogs.com/blog/3708248/202512/3708248-20251223205039012-1879118197.png" alt="image.png" loading="lazy"></p>
-<p>因此，你会发现这种检测方法其实是一种“取巧”，它本质上并没有“直接学位置”，而是通过<strong>大量的局部分类结果</strong>，间接拼凑出目标的位置，在依赖单独训练的分类器准确率的前提下还需要极大的计算量。<br>
-于是下一步改进出现了。</p>
-<h1 id="2-检测算法20对整幅图像应用卷积">2. 检测算法2.0：对整幅图像应用卷积</h1>
-<p>为了更好地进行目标检测，面对 1.0 中出现的极大计算量问题，人们运用数学逻辑，发现了这样一种情况：<strong>当为了更精准的检测而应用更小步长的窗口时，相邻的窗口存在公共区域，让部分计算重复进行。</strong><br>
+<p>å æ­¤ï¼ä½ ä¼åç°è¿ç§æ£æµæ¹æ³å¶å®æ¯ä¸ç§âåå·§âï¼å®æ¬è´¨ä¸å¹¶æ²¡æâç´æ¥å­¦ä½ç½®âï¼èæ¯éè¿<strong>å¤§éçå±é¨åç±»ç»æ</strong>ï¼é´æ¥æ¼ååºç®æ çä½ç½®ï¼å¨ä¾èµåç¬è®­ç»çåç±»å¨åç¡®ççåæä¸è¿éè¦æå¤§çè®¡ç®éã<br>
+äºæ¯ä¸ä¸æ­¥æ¹è¿åºç°äºã</p>
+<h1 id="2-æ£æµç®æ³20å¯¹æ´å¹å¾ååºç¨å·ç§¯">2. æ£æµç®æ³2.0ï¼å¯¹æ´å¹å¾ååºç¨å·ç§¯</h1>
+<p>ä¸ºäºæ´å¥½å°è¿è¡ç®æ æ£æµï¼é¢å¯¹ 1.0 ä¸­åºç°çæå¤§è®¡ç®éé®é¢ï¼äººä»¬è¿ç¨æ°å­¦é»è¾ï¼åç°äºè¿æ ·ä¸ç§æåµï¼<strong>å½ä¸ºäºæ´ç²¾åçæ£æµèåºç¨æ´å°æ­¥é¿ççªå£æ¶ï¼ç¸é»ççªå£å­å¨å¬å±åºåï¼è®©é¨åè®¡ç®éå¤è¿è¡ã</strong><br>
 <img src="https://img2024.cnblogs.com/blog/3708248/202512/3708248-20251223205041096-1719506100.png" alt="image.png" loading="lazy"><br>
-而如果不希望出现公共区域，那就又要增大步长至和尺寸同大小，就又回到了漏检小目标、定位不精确的问题。<br>
-有没有一种办法，<strong>既能享有小步长带来的精确度，又能让重复计算的结果复用从而及减小计算量呢？</strong><br>
-有的兄弟，有的。</p>
-<p>在 2014 年，一篇名为 <a href="https://arxiv.org/pdf/1312.6229" target="_blank" rel="noopener nofollow">OverFeat: Integrated Recognition, Localization and Detection using Convolutional Networks</a> 的论文发表，提出了一个利用卷积神经网络同时实现<strong>分类、定位和检测</strong>的统一框架。<br>
-而相比 1.0 算法，2.0 最大的改变就是<strong>不再把每个窗口裁出来送进网络，而是直接把整张图像送进网络，让卷积层自动完成“滑动 + 特征提取”的过程，直接输出图像各部分的分类结果。</strong></p>
-<p>我们来详细展开这一部分：</p>
-<h2 id="21-修改网络结构适应输出要求">2.1 修改网络结构适应输出要求</h2>
-<p>明确了目标之后，你会发现，不同于原本使用全连接层输出一维分类结果，现在我们希望<strong>让输出为一个二维特征图，图中每一个元素就代表一个窗口的分类结果</strong>。<br>
-就像这样：<br>
+èå¦æä¸å¸æåºç°å¬å±åºåï¼é£å°±åè¦å¢å¤§æ­¥é¿è³åå°ºå¯¸åå¤§å°ï¼å°±ååå°äºæ¼æ£å°ç®æ ãå®ä½ä¸ç²¾ç¡®çé®é¢ã<br>
+ææ²¡æä¸ç§åæ³ï¼<strong>æ¢è½äº«æå°æ­¥é¿å¸¦æ¥çç²¾ç¡®åº¦ï¼åè½è®©éå¤è®¡ç®çç»æå¤ç¨ä»èååå°è®¡ç®éå¢ï¼</strong><br>
+æçåå¼ï¼æçã</p>
+<p>å¨ 2014 å¹´ï¼ä¸ç¯åä¸º <a href="https://arxiv.org/pdf/1312.6229" target="_blank" rel="noopener nofollow">OverFeat: Integrated Recognition, Localization and Detection using Convolutional Networks</a> çè®ºæåè¡¨ï¼æåºäºä¸ä¸ªå©ç¨å·ç§¯ç¥ç»ç½ç»åæ¶å®ç°<strong>åç±»ãå®ä½åæ£æµ</strong>çç»ä¸æ¡æ¶ã<br>
+èç¸æ¯ 1.0 ç®æ³ï¼2.0 æå¤§çæ¹åå°±æ¯<strong>ä¸åææ¯ä¸ªçªå£è£åºæ¥éè¿ç½ç»ï¼èæ¯ç´æ¥ææ´å¼ å¾åéè¿ç½ç»ï¼è®©å·ç§¯å±èªå¨å®æâæ»å¨ + ç¹å¾æåâçè¿ç¨ï¼ç´æ¥è¾åºå¾ååé¨åçåç±»ç»æã</strong></p>
+<p>æä»¬æ¥è¯¦ç»å±å¼è¿ä¸é¨åï¼</p>
+<h2 id="21-ä¿®æ¹ç½ç»ç»æéåºè¾åºè¦æ±">2.1 ä¿®æ¹ç½ç»ç»æéåºè¾åºè¦æ±</h2>
+<p>æç¡®äºç®æ ä¹åï¼ä½ ä¼åç°ï¼ä¸åäºåæ¬ä½¿ç¨å¨è¿æ¥å±è¾åºä¸ç»´åç±»ç»æï¼ç°å¨æä»¬å¸æ<strong>è®©è¾åºä¸ºä¸ä¸ªäºç»´ç¹å¾å¾ï¼å¾ä¸­æ¯ä¸ä¸ªåç´ å°±ä»£è¡¨ä¸ä¸ªçªå£çåç±»ç»æ</strong>ã<br>
+å°±åè¿æ ·ï¼<br>
 <img src="https://img2024.cnblogs.com/blog/3708248/202512/3708248-20251223205039801-1655184845.png" alt="image.png" loading="lazy"></p>
-<p>因此，现在我们需要修改网络结构，<strong>使用卷积层取代原本的全连接层，保证输出同样为特征图</strong>。<br>
-而要合理地实现这一部分，首先，就要了解<strong>如何用卷积层等效代替全连接层</strong>。</p>
-<p>先说结论：<strong>使用和输入特征图尺寸等大小的卷积核</strong>。<br>
-就像这样：<br>
+<p>å æ­¤ï¼ç°å¨æä»¬éè¦ä¿®æ¹ç½ç»ç»æï¼<strong>ä½¿ç¨å·ç§¯å±åä»£åæ¬çå¨è¿æ¥å±ï¼ä¿è¯è¾åºåæ ·ä¸ºç¹å¾å¾</strong>ã<br>
+èè¦åçå°å®ç°è¿ä¸é¨åï¼é¦åï¼å°±è¦äºè§£<strong>å¦ä½ç¨å·ç§¯å±ç­æä»£æ¿å¨è¿æ¥å±</strong>ã</p>
+<p>åè¯´ç»è®ºï¼<strong>ä½¿ç¨åè¾å¥ç¹å¾å¾å°ºå¯¸ç­å¤§å°çå·ç§¯æ ¸</strong>ã<br>
+å°±åè¿æ ·ï¼<br>
 <img src="https://img2024.cnblogs.com/blog/3708248/202512/3708248-20251223205039223-13958052.png" alt="image.png" loading="lazy"></p>
-<p>再展开说说原理：<br>
-在分类网络中，当特征提取部分结束后，输入全连接层的，通常是一个形状为  <span class="math inline">\(H \times W \times C\)</span>  的特征图。<br>
-全连接层做的事情，本质上是：  <strong>把这整个特征图“摊平”，然后与一组权重做一次线性组合，输出一个结果。</strong><br>
-如果用公式表示，就是：</p>
+<p>åå±å¼è¯´è¯´åçï¼<br>
+å¨åç±»ç½ç»ä¸­ï¼å½ç¹å¾æåé¨åç»æåï¼è¾å¥å¨è¿æ¥å±çï¼éå¸¸æ¯ä¸ä¸ªå½¢ç¶ä¸º  <span class="math inline">\(H \times W \times C\)</span>  çç¹å¾å¾ã<br>
+å¨è¿æ¥å±åçäºæï¼æ¬è´¨ä¸æ¯ï¼  <strong>æè¿æ´ä¸ªç¹å¾å¾âæå¹³âï¼ç¶åä¸ä¸ç»æéåä¸æ¬¡çº¿æ§ç»åï¼è¾åºä¸ä¸ªç»æã</strong><br>
+å¦æç¨å¬å¼è¡¨ç¤ºï¼å°±æ¯ï¼</p>
 <p></p><div class="math display">\[y = \sum_{i,j,k} w_{i,j,k} \cdot x_{i,j,k} + b
-\]</div><p></p><p>换一个角度看，这个过程其实非常像什么？  ——<strong>用一个和输入特征图尺寸完全一致的卷积核，在特征图上做一次卷积。</strong><br>
-因此，当卷积核的尺寸等于输入特征图的空间尺寸时：</p>
+\]</div><p></p><p>æ¢ä¸ä¸ªè§åº¦çï¼è¿ä¸ªè¿ç¨å¶å®éå¸¸åä»ä¹ï¼  ââ<strong>ç¨ä¸ä¸ªåè¾å¥ç¹å¾å¾å°ºå¯¸å®å¨ä¸è´çå·ç§¯æ ¸ï¼å¨ç¹å¾å¾ä¸åä¸æ¬¡å·ç§¯ã</strong><br>
+å æ­¤ï¼å½å·ç§¯æ ¸çå°ºå¯¸ç­äºè¾å¥ç¹å¾å¾çç©ºé´å°ºå¯¸æ¶ï¼</p>
 <ul>
-<li>卷积核只会在输入上“滑动”一次。</li>
-<li>卷积输出自然就是一个 <span class="math inline">\(1 \times 1\)</span> 的结果。</li>
-<li>这个结果与全连接层的输出在数学形式上是<strong>完全等价的</strong>。</li>
+<li>å·ç§¯æ ¸åªä¼å¨è¾å¥ä¸âæ»å¨âä¸æ¬¡ã</li>
+<li>å·ç§¯è¾åºèªç¶å°±æ¯ä¸ä¸ª <span class="math inline">\(1 \times 1\)</span> çç»æã</li>
+<li>è¿ä¸ªç»æä¸å¨è¿æ¥å±çè¾åºå¨æ°å­¦å½¢å¼ä¸æ¯<strong>å®å¨ç­ä»·ç</strong>ã</li>
 </ul>
-<p>因此可以得到一个直观的结论：<strong>全连接层可以被看作一种特殊形式的卷积层。</strong><br>
-现在，我们就了解了如何修改我们原本一直使用的全连接层作为输出层的网络结构，从而适应输出为带有空间结构的特征图的要求。<br>
-现在，就来看看，输入整幅图像进入完善后的网络得到分类输出的具体过程。</p>
-<h2 id="22-窗口在网络中的传播">2.2 窗口在网络中的传播</h2>
-<p>我们就用课程里的例子来演示一下网络如何一次输出整幅图像各个窗口的分类结果：<br>
+<p>å æ­¤å¯ä»¥å¾å°ä¸ä¸ªç´è§çç»è®ºï¼<strong>å¨è¿æ¥å±å¯ä»¥è¢«çä½ä¸ç§ç¹æ®å½¢å¼çå·ç§¯å±ã</strong><br>
+ç°å¨ï¼æä»¬å°±äºè§£äºå¦ä½ä¿®æ¹æä»¬åæ¬ä¸ç´ä½¿ç¨çå¨è¿æ¥å±ä½ä¸ºè¾åºå±çç½ç»ç»æï¼ä»èéåºè¾åºä¸ºå¸¦æç©ºé´ç»æçç¹å¾å¾çè¦æ±ã<br>
+ç°å¨ï¼å°±æ¥ççï¼è¾å¥æ´å¹å¾åè¿å¥å®ååçç½ç»å¾å°åç±»è¾åºçå·ä½è¿ç¨ã</p>
+<h2 id="22-çªå£å¨ç½ç»ä¸­çä¼ æ­">2.2 çªå£å¨ç½ç»ä¸­çä¼ æ­</h2>
+<p>æä»¬å°±ç¨è¯¾ç¨éçä¾å­æ¥æ¼ç¤ºä¸ä¸ç½ç»å¦ä½ä¸æ¬¡è¾åºæ´å¹å¾ååä¸ªçªå£çåç±»ç»æï¼<br>
 <img src="https://img2024.cnblogs.com/blog/3708248/202512/3708248-20251223205055320-655995691.png" alt="image.png" loading="lazy"></p>
-<p>你会发现，得益于卷积操作的特性，输入图像的局部特征本身就在传播中被一步步集中，<strong>第一层特征图中的每一个像素，本身就对应着输入图像中的一个小窗口</strong>。<br>
-而随着网络不断加深，卷积层不断堆叠，每一个特征点所对应的输入区域不断变大。<br>
-最终，在靠近输出层的位置，特征图中的<strong>一个位置</strong>实际上已经“覆盖”了输入图像中的一个<strong>较大窗口区域</strong>。<br>
-只不过现在窗口不再由我们手动裁剪，而是由网络结构<strong>决定</strong>。</p>
-<h2 id="23-拓展特征图输出的标签问题">2.3 拓展：特征图输出的标签问题</h2>
-<p>到这里，我想你可能会有这样一个问题：<strong>我们虽然改变了网络结构，但是我们这时使用的还是原本分类器的数据，即对一幅图像的标签只有一个0或1来表示图像里是否存在目标。现在我们修改了输出格式，是否需要也修改标签，改为给每个窗口打标签？</strong><br>
-<strong>答案是不用。</strong><br>
-为什么？<br>
-虽然在训练阶段，网络接收到的仍然只是<strong>图像级别的分类标签</strong>，但由于输出已经被展开为一个带空间结构的特征图，这个标签会被<strong>隐式地约束到整张特征图上</strong>：只要某一个位置对应的窗口能够正确响应目标类别，这一次预测就被认为是“成功的”。</p>
-<p>换句话说，卷积化之后的分类网络，并不是在学习“这整张图像是不是目标”，而是在学习：<strong>“在这张图像的哪些位置，存在一个可以被识别为目标的窗口”。</strong></p>
-<p>有些抽象，我们可以来看一个具体的例子：<br>
-假设训练集中有一张图片，内容是一辆汽车，整张图像的<strong>唯一标签</strong>就是「car」。<br>
-当这张图像被送入卷积化后的网络时，输出的不再是一个标量，而是一个 <span class="math inline">\(H' \times W'\)</span> 的分类特征图，其中<strong>每一个位置</strong>都对应输入图像中的一个窗口。<br>
-在初始训练阶段，这张特征图上的绝大多数位置，输出的分类结果其实都是错误的：</p>
+<p>ä½ ä¼åç°ï¼å¾çäºå·ç§¯æä½çç¹æ§ï¼è¾å¥å¾åçå±é¨ç¹å¾æ¬èº«å°±å¨ä¼ æ­ä¸­è¢«ä¸æ­¥æ­¥éä¸­ï¼<strong>ç¬¬ä¸å±ç¹å¾å¾ä¸­çæ¯ä¸ä¸ªåç´ ï¼æ¬èº«å°±å¯¹åºçè¾å¥å¾åä¸­çä¸ä¸ªå°çªå£</strong>ã<br>
+èéçç½ç»ä¸æ­å æ·±ï¼å·ç§¯å±ä¸æ­å å ï¼æ¯ä¸ä¸ªç¹å¾ç¹æå¯¹åºçè¾å¥åºåä¸æ­åå¤§ã<br>
+æç»ï¼å¨é è¿è¾åºå±çä½ç½®ï¼ç¹å¾å¾ä¸­ç<strong>ä¸ä¸ªä½ç½®</strong>å®éä¸å·²ç»âè¦çâäºè¾å¥å¾åä¸­çä¸ä¸ª<strong>è¾å¤§çªå£åºå</strong>ã<br>
+åªä¸è¿ç°å¨çªå£ä¸åç±æä»¬æå¨è£åªï¼èæ¯ç±ç½ç»ç»æ<strong>å³å®</strong>ã</p>
+<h2 id="23-æå±ç¹å¾å¾è¾åºçæ ç­¾é®é¢">2.3 æå±ï¼ç¹å¾å¾è¾åºçæ ç­¾é®é¢</h2>
+<p>å°è¿éï¼ææ³ä½ å¯è½ä¼æè¿æ ·ä¸ä¸ªé®é¢ï¼<strong>æä»¬è½ç¶æ¹åäºç½ç»ç»æï¼ä½æ¯æä»¬è¿æ¶ä½¿ç¨çè¿æ¯åæ¬åç±»å¨çæ°æ®ï¼å³å¯¹ä¸å¹å¾åçæ ç­¾åªæä¸ä¸ª0æ1æ¥è¡¨ç¤ºå¾åéæ¯å¦å­å¨ç®æ ãç°å¨æä»¬ä¿®æ¹äºè¾åºæ ¼å¼ï¼æ¯å¦éè¦ä¹ä¿®æ¹æ ç­¾ï¼æ¹ä¸ºç»æ¯ä¸ªçªå£ææ ç­¾ï¼</strong><br>
+<strong>ç­æ¡æ¯ä¸ç¨ã</strong><br>
+ä¸ºä»ä¹ï¼<br>
+è½ç¶å¨è®­ç»é¶æ®µï¼ç½ç»æ¥æ¶å°çä»ç¶åªæ¯<strong>å¾åçº§å«çåç±»æ ç­¾</strong>ï¼ä½ç±äºè¾åºå·²ç»è¢«å±å¼ä¸ºä¸ä¸ªå¸¦ç©ºé´ç»æçç¹å¾å¾ï¼è¿ä¸ªæ ç­¾ä¼è¢«<strong>éå¼å°çº¦æå°æ´å¼ ç¹å¾å¾ä¸</strong>ï¼åªè¦æä¸ä¸ªä½ç½®å¯¹åºççªå£è½å¤æ­£ç¡®ååºç®æ ç±»å«ï¼è¿ä¸æ¬¡é¢æµå°±è¢«è®¤ä¸ºæ¯âæåçâã</p>
+<p>æ¢å¥è¯è¯´ï¼å·ç§¯åä¹åçåç±»ç½ç»ï¼å¹¶ä¸æ¯å¨å­¦ä¹ âè¿æ´å¼ å¾åæ¯ä¸æ¯ç®æ âï¼èæ¯å¨å­¦ä¹ ï¼<strong>âå¨è¿å¼ å¾åçåªäºä½ç½®ï¼å­å¨ä¸ä¸ªå¯ä»¥è¢«è¯å«ä¸ºç®æ ççªå£âã</strong></p>
+<p>æäºæ½è±¡ï¼æä»¬å¯ä»¥æ¥çä¸ä¸ªå·ä½çä¾å­ï¼<br>
+åè®¾è®­ç»éä¸­æä¸å¼ å¾çï¼åå®¹æ¯ä¸è¾æ±½è½¦ï¼æ´å¼ å¾åç<strong>å¯ä¸æ ç­¾</strong>å°±æ¯ãcarãã<br>
+å½è¿å¼ å¾åè¢«éå¥å·ç§¯ååçç½ç»æ¶ï¼è¾åºçä¸åæ¯ä¸ä¸ªæ éï¼èæ¯ä¸ä¸ª <span class="math inline">\(H' \times W'\)</span> çåç±»ç¹å¾å¾ï¼å¶ä¸­<strong>æ¯ä¸ä¸ªä½ç½®</strong>é½å¯¹åºè¾å¥å¾åä¸­çä¸ä¸ªçªå£ã<br>
+å¨åå§è®­ç»é¶æ®µï¼è¿å¼ ç¹å¾å¾ä¸çç»å¤§å¤æ°ä½ç½®ï¼è¾åºçåç±»ç»æå¶å®é½æ¯éè¯¯çï¼</p>
 <ul>
-<li>有的位置覆盖的是背景</li>
-<li>有的位置只覆盖了汽车的一部分</li>
-<li>还有的位置甚至只包含天空或道路</li>
+<li>æçä½ç½®è¦ççæ¯èæ¯</li>
+<li>æçä½ç½®åªè¦çäºæ±½è½¦çä¸é¨å</li>
+<li>è¿æçä½ç½®çè³åªåå«å¤©ç©ºæéè·¯</li>
 </ul>
-<p>但这并不会破坏训练过程。<br>
-因为此时网络的目标并不是要求每一个位置都预测为 car，<strong>而是至少存在某一个位置，其对应的窗口能够对 car 类别产生足够强的响应。</strong></p>
-<p><strong>更准确地说，在训练阶段，并不是直接将整个 <span class="math inline">\(H' \times W'\)</span> 的输出特征图与图像级标签逐位置对齐计算损失。</strong><br>
-网络通常会先在空间维度上进行一次聚合操作（最常见的是取最大响应），将整张特征图压缩为一个标量预测，再与图像级标签计算分类损失。<br>
-这种训练方式可以被理解为一种<strong>弱监督学习</strong>：<br>
-<strong>只要输出特征图中存在某一个空间位置，对目标类别产生了足够强的响应，这张图像就被认为预测正确。</strong><br>
+<p>ä½è¿å¹¶ä¸ä¼ç ´åè®­ç»è¿ç¨ã<br>
+å ä¸ºæ­¤æ¶ç½ç»çç®æ å¹¶ä¸æ¯è¦æ±æ¯ä¸ä¸ªä½ç½®é½é¢æµä¸º carï¼<strong>èæ¯è³å°å­å¨æä¸ä¸ªä½ç½®ï¼å¶å¯¹åºççªå£è½å¤å¯¹ car ç±»å«äº§çè¶³å¤å¼ºçååºã</strong></p>
+<p><strong>æ´åç¡®å°è¯´ï¼å¨è®­ç»é¶æ®µï¼å¹¶ä¸æ¯ç´æ¥å°æ´ä¸ª <span class="math inline">\(H' \times W'\)</span> çè¾åºç¹å¾å¾ä¸å¾åçº§æ ç­¾éä½ç½®å¯¹é½è®¡ç®æå¤±ã</strong><br>
+ç½ç»éå¸¸ä¼åå¨ç©ºé´ç»´åº¦ä¸è¿è¡ä¸æ¬¡èåæä½ï¼æå¸¸è§çæ¯åæå¤§ååºï¼ï¼å°æ´å¼ ç¹å¾å¾åç¼©ä¸ºä¸ä¸ªæ éé¢æµï¼åä¸å¾åçº§æ ç­¾è®¡ç®åç±»æå¤±ã<br>
+è¿ç§è®­ç»æ¹å¼å¯ä»¥è¢«çè§£ä¸ºä¸ç§<strong>å¼±çç£å­¦ä¹ </strong>ï¼<br>
+<strong>åªè¦è¾åºç¹å¾å¾ä¸­å­å¨æä¸ä¸ªç©ºé´ä½ç½®ï¼å¯¹ç®æ ç±»å«äº§çäºè¶³å¤å¼ºçååºï¼è¿å¼ å¾åå°±è¢«è®¤ä¸ºé¢æµæ­£ç¡®ã</strong><br>
 <img src="https://img2024.cnblogs.com/blog/3708248/202512/3708248-20251223205038766-641170151.png" alt="image.png" loading="lazy"></p>
-<p>在反向传播过程中，梯度主要会通过这些高响应位置回传，从而推动网络逐渐强化那些<strong>确实覆盖了完整目标或关键判别区域的空间位置</strong>，而对背景区域的响应自然被压低。</p>
-<p>最终，在输出特征图上，你会看到：只有少数几个位置对 car 类别产生明显高响应，而这些位置恰好落在汽车所在的区域附近。<br>
-此时，虽然训练标签始终只是一个“图像级标签”，但网络已经<strong>自动学会了在空间维度上区分“哪里值得响应”</strong>。</p>
-<p>于是我们就解决了 1.0 算法导致的极大计算量问题，但是还有一个问题仍然存在，就是固定尺寸的窗口仍无法实现对目标的较精准定位。<br>
-怎么解决？来看看 3.0 算法。</p>
-<h1 id="3-检测算法30yolo-算法">3. 检测算法3.0：YOLO 算法</h1>
-<p><strong>YOLO 算法是目前真正主流的算法之一</strong>，你可以在目前几乎目标检测的所有领域看到它的身影，时至今日，它仍在不断地更新。</p>
-<p>虽然在 2.0 中，窗口已经不再由人手工滑动，而是由网络结构隐式决定，但本质并没有变：<br>
-网络输出的是： <strong>“这个窗口里有没有目标”</strong>，而不是：<strong>“目标在哪里、是什么、边界在哪。”</strong></p>
-<p>也就是说，2.0 的网络会告诉你： “这里大概有个 car”，但不会直接告诉你：“car 的中心在这，宽高是多少。”<br>
-它的定位准确度问题仍然存在且不可忽视。<br>
-于是，在 2015 年，一篇名为<a href="https://homes.cs.washington.edu/~ali/papers/YOLO.pdf" target="_blank" rel="noopener nofollow">You Only Look Once</a>的论文被发表，它的核心观点就是：<strong>能不能让网络别再纠结“窗口”，而是直接预测目标本身？</strong></p>
-<p>论文本身较为复杂，我们来看看 YOLO 相对 1.0、2.0 最关键的改变:<strong>规范目标检测任务的标签</strong>。</p>
-<p>YOLO 算法本身为目标检测任务提出了专用的标签，正是我们在<a href="https://www.cnblogs.com/Goblinscholar/p/19384242" target="_blank">上一篇中</a>介绍的“<strong>位置信息</strong>”。<br>
+<p>å¨ååä¼ æ­è¿ç¨ä¸­ï¼æ¢¯åº¦ä¸»è¦ä¼éè¿è¿äºé«ååºä½ç½®åä¼ ï¼ä»èæ¨å¨ç½ç»éæ¸å¼ºåé£äº<strong>ç¡®å®è¦çäºå®æ´ç®æ æå³é®å¤å«åºåçç©ºé´ä½ç½®</strong>ï¼èå¯¹èæ¯åºåçååºèªç¶è¢«åä½ã</p>
+<p>æç»ï¼å¨è¾åºç¹å¾å¾ä¸ï¼ä½ ä¼çå°ï¼åªæå°æ°å ä¸ªä½ç½®å¯¹ car ç±»å«äº§çææ¾é«ååºï¼èè¿äºä½ç½®æ°å¥½è½å¨æ±½è½¦æå¨çåºåéè¿ã<br>
+æ­¤æ¶ï¼è½ç¶è®­ç»æ ç­¾å§ç»åªæ¯ä¸ä¸ªâå¾åçº§æ ç­¾âï¼ä½ç½ç»å·²ç»<strong>èªå¨å­¦ä¼äºå¨ç©ºé´ç»´åº¦ä¸åºåâåªéå¼å¾ååºâ</strong>ã</p>
+<p>äºæ¯æä»¬å°±è§£å³äº 1.0 ç®æ³å¯¼è´çæå¤§è®¡ç®éé®é¢ï¼ä½æ¯è¿æä¸ä¸ªé®é¢ä»ç¶å­å¨ï¼å°±æ¯åºå®å°ºå¯¸ççªå£ä»æ æ³å®ç°å¯¹ç®æ çè¾ç²¾åå®ä½ã<br>
+æä¹è§£å³ï¼æ¥çç 3.0 ç®æ³ã</p>
+<h1 id="3-æ£æµç®æ³30yolo-ç®æ³">3. æ£æµç®æ³3.0ï¼YOLO ç®æ³</h1>
+<p><strong>YOLO ç®æ³æ¯ç®åçæ­£ä¸»æµçç®æ³ä¹ä¸</strong>ï¼ä½ å¯ä»¥å¨ç®åå ä¹ç®æ æ£æµçææé¢åçå°å®çèº«å½±ï¼æ¶è³ä»æ¥ï¼å®ä»å¨ä¸æ­å°æ´æ°ã</p>
+<p>è½ç¶å¨ 2.0 ä¸­ï¼çªå£å·²ç»ä¸åç±äººæå·¥æ»å¨ï¼èæ¯ç±ç½ç»ç»æéå¼å³å®ï¼ä½æ¬è´¨å¹¶æ²¡æåï¼<br>
+ç½ç»è¾åºçæ¯ï¼ <strong>âè¿ä¸ªçªå£éææ²¡æç®æ â</strong>ï¼èä¸æ¯ï¼<strong>âç®æ å¨åªéãæ¯ä»ä¹ãè¾¹çå¨åªãâ</strong></p>
+<p>ä¹å°±æ¯è¯´ï¼2.0 çç½ç»ä¼åè¯ä½ ï¼ âè¿éå¤§æ¦æä¸ª carâï¼ä½ä¸ä¼ç´æ¥åè¯ä½ ï¼âcar çä¸­å¿å¨è¿ï¼å®½é«æ¯å¤å°ãâ<br>
+å®çå®ä½åç¡®åº¦é®é¢ä»ç¶å­å¨ä¸ä¸å¯å¿½è§ã<br>
+äºæ¯ï¼å¨ 2015 å¹´ï¼ä¸ç¯åä¸º<a href="https://homes.cs.washington.edu/~ali/papers/YOLO.pdf" target="_blank" rel="noopener nofollow">You Only Look Once</a>çè®ºæè¢«åè¡¨ï¼å®çæ ¸å¿è§ç¹å°±æ¯ï¼<strong>è½ä¸è½è®©ç½ç»å«åçº ç»âçªå£âï¼èæ¯ç´æ¥é¢æµç®æ æ¬èº«ï¼</strong></p>
+<p>è®ºææ¬èº«è¾ä¸ºå¤æï¼æä»¬æ¥çç YOLO ç¸å¯¹ 1.0ã2.0 æå³é®çæ¹å:<strong>è§èç®æ æ£æµä»»å¡çæ ç­¾</strong>ã</p>
+<p>YOLO ç®æ³æ¬èº«ä¸ºç®æ æ£æµä»»å¡æåºäºä¸ç¨çæ ç­¾ï¼æ­£æ¯æä»¬å¨<a href="https://www.cnblogs.com/Goblinscholar/p/19384242" target="_blank">ä¸ä¸ç¯ä¸­</a>ä»ç»çâ<strong>ä½ç½®ä¿¡æ¯</strong>âã<br>
 <img src="https://img2024.cnblogs.com/blog/3708248/202512/3708248-20251223205057400-299808113.png" alt="image.png" loading="lazy"></p>
 <ol>
-<li><span class="math inline">\(p_c\)</span>：表示<strong>当前图像中是否存在需要检测的目标</strong>，这是一个二值变量，通常取值为 <span class="math inline">\(0\)</span> 或 <span class="math inline">\(1\)</span>。<br>
-当 <span class="math inline">\(p_c = 1\)</span> 时，表示图像中确实存在目标，此时后续的位置信息和类别信息才是“有效”的；<br>
-当 <span class="math inline">\(p_c = 0\)</span> 时，表示图像中不存在目标，<strong>其余参数通常被忽略或置为 0。</strong></li>
-<li><span class="math inline">\(b_x,b_y,b_h,b_w\)</span> :表示检测目标的<strong>位置信息</strong>。</li>
-<li><span class="math inline">\(c_n\)</span>：表示目标所属的<strong>类别信息</strong>。<br>
-在二分类问题中，它可以是一个标量；<br>
-在多分类问题中，通常采用 <strong>独热编码</strong> 的形式，用一个向量来表示目标属于哪一类。</li>
+<li><span class="math inline">\(p_c\)</span>ï¼è¡¨ç¤º<strong>å½åå¾åä¸­æ¯å¦å­å¨éè¦æ£æµçç®æ </strong>ï¼è¿æ¯ä¸ä¸ªäºå¼åéï¼éå¸¸åå¼ä¸º <span class="math inline">\(0\)</span> æ <span class="math inline">\(1\)</span>ã<br>
+å½ <span class="math inline">\(p_c = 1\)</span> æ¶ï¼è¡¨ç¤ºå¾åä¸­ç¡®å®å­å¨ç®æ ï¼æ­¤æ¶åç»­çä½ç½®ä¿¡æ¯åç±»å«ä¿¡æ¯ææ¯âææâçï¼<br>
+å½ <span class="math inline">\(p_c = 0\)</span> æ¶ï¼è¡¨ç¤ºå¾åä¸­ä¸å­å¨ç®æ ï¼<strong>å¶ä½åæ°éå¸¸è¢«å¿½ç¥æç½®ä¸º 0ã</strong></li>
+<li><span class="math inline">\(b_x,b_y,b_h,b_w\)</span> :è¡¨ç¤ºæ£æµç®æ ç<strong>ä½ç½®ä¿¡æ¯</strong>ã</li>
+<li><span class="math inline">\(c_n\)</span>ï¼è¡¨ç¤ºç®æ æå±ç<strong>ç±»å«ä¿¡æ¯</strong>ã<br>
+å¨äºåç±»é®é¢ä¸­ï¼å®å¯ä»¥æ¯ä¸ä¸ªæ éï¼<br>
+å¨å¤åç±»é®é¢ä¸­ï¼éå¸¸éç¨ <strong>ç¬ç­ç¼ç </strong> çå½¢å¼ï¼ç¨ä¸ä¸ªåéæ¥è¡¨ç¤ºç®æ å±äºåªä¸ç±»ã</li>
 </ol>
-<p>规范好标签本身后，我们来看看算法如何使用标签：<br>
+<p>è§èå¥½æ ç­¾æ¬èº«åï¼æä»¬æ¥ççç®æ³å¦ä½ä½¿ç¨æ ç­¾ï¼<br>
 <img src="https://img2024.cnblogs.com/blog/3708248/202512/3708248-20251223205038504-641386161.png" alt="image.png" loading="lazy"></p>
 <p><img src="https://img2024.cnblogs.com/blog/3708248/202512/3708248-20251223205147720-180508610.png" alt="image.png" loading="lazy"><br>
-因此，一个样本在 <span class="math inline">\(S \times S\)</span> 网格划分下，其标签张量维度为：</p>
+å æ­¤ï¼ä¸ä¸ªæ ·æ¬å¨ <span class="math inline">\(S \times S\)</span> ç½æ ¼ååä¸ï¼å¶æ ç­¾å¼ éç»´åº¦ä¸ºï¼</p>
 <p></p><div class="math display">\[S \times S \times (5 + c_n) 
-\]</div><p></p><p>看到这里，你可能会疑惑，<strong>划分网格的作用是什么？我们最开始说 YOLO 避开了窗口又是指什么？</strong><br>
-别急，关键点就在于我们刚刚规范的新标签：<span class="math inline">\(b_x,b_y,b_h,b_w\)</span> 。<br>
+\]</div><p></p><p>çå°è¿éï¼ä½ å¯è½ä¼çæï¼<strong>ååç½æ ¼çä½ç¨æ¯ä»ä¹ï¼æä»¬æå¼å§è¯´ YOLO é¿å¼äºçªå£åæ¯æä»ä¹ï¼</strong><br>
+å«æ¥ï¼å³é®ç¹å°±å¨äºæä»¬ååè§èçæ°æ ç­¾ï¼<span class="math inline">\(b_x,b_y,b_h,b_w\)</span> ã<br>
 <img src="https://img2024.cnblogs.com/blog/3708248/202512/3708248-20251223205053651-1469789459.png" alt="image.png" loading="lazy"><br>
-你会发现，通过几个位置信息参数，<strong>我们虽然划分了网格，但是网格却不会像窗口的步长一样限制目标的边界框，每个网格单元相当于一个预测单元来预测中心点在本单元格里的目标的类别和边界框。</strong><br>
-现在，我们就可以继续应用 2.0 中的网络,调整输出特征图为新的标签维度,即可以此计算损失并反向传播了。<br>
-你会发现，YOLO 的核心优势是：</p>
+ä½ ä¼åç°ï¼éè¿å ä¸ªä½ç½®ä¿¡æ¯åæ°ï¼<strong>æä»¬è½ç¶ååäºç½æ ¼ï¼ä½æ¯ç½æ ¼å´ä¸ä¼åçªå£çæ­¥é¿ä¸æ ·éå¶ç®æ çè¾¹çæ¡ï¼æ¯ä¸ªç½æ ¼ååç¸å½äºä¸ä¸ªé¢æµååæ¥é¢æµä¸­å¿ç¹å¨æ¬ååæ ¼éçç®æ çç±»å«åè¾¹çæ¡ã</strong><br>
+ç°å¨ï¼æä»¬å°±å¯ä»¥ç»§ç»­åºç¨ 2.0 ä¸­çç½ç»,è°æ´è¾åºç¹å¾å¾ä¸ºæ°çæ ç­¾ç»´åº¦,å³å¯ä»¥æ­¤è®¡ç®æå¤±å¹¶ååä¼ æ­äºã<br>
+ä½ ä¼åç°ï¼YOLO çæ ¸å¿ä¼å¿æ¯ï¼</p>
 <ul>
-<li>不再枚举窗口，不再重复计算。</li>
-<li>每个网格单元独立负责预测目标，同时输出边界框和类别。</li>
-<li>训练时即可端到端优化，预测阶段一次前向传播完成整图检测。</li>
+<li>ä¸åæä¸¾çªå£ï¼ä¸åéå¤è®¡ç®ã</li>
+<li>æ¯ä¸ªç½æ ¼ååç¬ç«è´è´£é¢æµç®æ ï¼åæ¶è¾åºè¾¹çæ¡åç±»å«ã</li>
+<li>è®­ç»æ¶å³å¯ç«¯å°ç«¯ä¼åï¼é¢æµé¶æ®µä¸æ¬¡ååä¼ æ­å®ææ´å¾æ£æµã</li>
 </ul>
-<p>可以说，YOLO 的提出让“检测”真正从“分类的延伸”脱离出来，成为计算机视觉领域的核心任务之一，它的内容还有很多，我们遇到再慢慢展开。</p>
-<h1 id="4总结">4.总结</h1>
+<p>å¯ä»¥è¯´ï¼YOLO çæåºè®©âæ£æµâçæ­£ä»âåç±»çå»¶ä¼¸âè±ç¦»åºæ¥ï¼æä¸ºè®¡ç®æºè§è§é¢åçæ ¸å¿ä»»å¡ä¹ä¸ï¼å®çåå®¹è¿æå¾å¤ï¼æä»¬éå°åæ¢æ¢å±å¼ã</p>
+<h1 id="4æ»ç»">4.æ»ç»</h1>
 <table>
 <thead>
 <tr>
-<th>概念</th>
-<th>原理</th>
-<th>比喻</th>
+<th>æ¦å¿µ</th>
+<th>åç</th>
+<th>æ¯å»</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>1.0 滑动窗口检测</strong></td>
-<td>使用固定大小窗口在图像上滑动，将每个窗口送入分类网络判断是否包含目标；通过局部分类结果间接拼凑目标位置</td>
-<td>就像用放大镜逐块检查整张图，找到目标再标记位置</td>
+<td><strong>1.0 æ»å¨çªå£æ£æµ</strong></td>
+<td>ä½¿ç¨åºå®å¤§å°çªå£å¨å¾åä¸æ»å¨ï¼å°æ¯ä¸ªçªå£éå¥åç±»ç½ç»å¤æ­æ¯å¦åå«ç®æ ï¼éè¿å±é¨åç±»ç»æé´æ¥æ¼åç®æ ä½ç½®</td>
+<td>å°±åç¨æ¾å¤§ééåæ£æ¥æ´å¼ å¾ï¼æ¾å°ç®æ åæ è®°ä½ç½®</td>
 </tr>
 <tr>
-<td><strong>问题</strong></td>
-<td>计算量巨大，每个窗口都要单独处理；定位精度依赖分类结果拼凑</td>
-<td>翻阅整本书寻找关键词，每页都要仔细看一遍</td>
+<td><strong>é®é¢</strong></td>
+<td>è®¡ç®éå·¨å¤§ï¼æ¯ä¸ªçªå£é½è¦åç¬å¤çï¼å®ä½ç²¾åº¦ä¾èµåç±»ç»ææ¼å</td>
+<td>ç¿»éæ´æ¬ä¹¦å¯»æ¾å³é®è¯ï¼æ¯é¡µé½è¦ä»ç»çä¸é</td>
 </tr>
 <tr>
-<td><strong>2.0 卷积化检测</strong></td>
-<td>将整幅图像送入卷积网络，卷积层自动完成滑动和特征提取，输出二维特征图表示各位置分类结果；全连接层可被等效卷积替代</td>
-<td>不用逐页检查，而是扫描整本书，自动标记出现关键词的区域</td>
+<td><strong>2.0 å·ç§¯åæ£æµ</strong></td>
+<td>å°æ´å¹å¾åéå¥å·ç§¯ç½ç»ï¼å·ç§¯å±èªå¨å®ææ»å¨åç¹å¾æåï¼è¾åºäºç»´ç¹å¾å¾è¡¨ç¤ºåä½ç½®åç±»ç»æï¼å¨è¿æ¥å±å¯è¢«ç­æå·ç§¯æ¿ä»£</td>
+<td>ä¸ç¨éé¡µæ£æ¥ï¼èæ¯æ«ææ´æ¬ä¹¦ï¼èªå¨æ è®°åºç°å³é®è¯çåºå</td>
 </tr>
 <tr>
-<td><strong>窗口在特征图中传播</strong></td>
-<td>随着卷积层堆叠，每个特征图位置对应输入图像的一个大窗口区域；训练阶段采用弱监督，只需部分高响应位置预测正确即可</td>
-<td>小窗口信息逐渐汇聚，像放大镜自动跟踪关键区域</td>
+<td><strong>çªå£å¨ç¹å¾å¾ä¸­ä¼ æ­</strong></td>
+<td>éçå·ç§¯å±å å ï¼æ¯ä¸ªç¹å¾å¾ä½ç½®å¯¹åºè¾å¥å¾åçä¸ä¸ªå¤§çªå£åºåï¼è®­ç»é¶æ®µéç¨å¼±çç£ï¼åªéé¨åé«ååºä½ç½®é¢æµæ­£ç¡®å³å¯</td>
+<td>å°çªå£ä¿¡æ¯éæ¸æ±èï¼åæ¾å¤§éèªå¨è·è¸ªå³é®åºå</td>
 </tr>
 <tr>
-<td><strong>标签设计</strong></td>
-<td>输出特征图使用图像级标签，卷积网络自动学会空间位置响应，无需对每个窗口手工标注</td>
-<td>给整本书一个主题标签，网络自动找到相关章节</td>
+<td><strong>æ ç­¾è®¾è®¡</strong></td>
+<td>è¾åºç¹å¾å¾ä½¿ç¨å¾åçº§æ ç­¾ï¼å·ç§¯ç½ç»èªå¨å­¦ä¼ç©ºé´ä½ç½®ååºï¼æ éå¯¹æ¯ä¸ªçªå£æå·¥æ æ³¨</td>
+<td>ç»æ´æ¬ä¹¦ä¸ä¸ªä¸»é¢æ ç­¾ï¼ç½ç»èªå¨æ¾å°ç¸å³ç« è</td>
 </tr>
 <tr>
 <td><strong>3.0 YOLO</strong></td>
-<td>网络直接预测每个网格单元内目标的类别和边界框；端到端训练，不再依赖滑动窗口或重复计算</td>
-<td>每个网格像一个小探员，直接告诉你目标在这里，并画出轮廓</td>
+<td>ç½ç»ç´æ¥é¢æµæ¯ä¸ªç½æ ¼åååç®æ çç±»å«åè¾¹çæ¡ï¼ç«¯å°ç«¯è®­ç»ï¼ä¸åä¾èµæ»å¨çªå£æéå¤è®¡ç®</td>
+<td>æ¯ä¸ªç½æ ¼åä¸ä¸ªå°æ¢åï¼ç´æ¥åè¯ä½ ç®æ å¨è¿éï¼å¹¶ç»åºè½®å»</td>
 </tr>
 <tr>
-<td><strong>YOLO 标签规范</strong></td>
-<td>每个网格包含 <span class="math inline">\(p_c\)</span>（是否有目标）、<span class="math inline">\(b_x,b_y,b_h,b_w\)</span>（边界框位置）、<span class="math inline">\(c_n\)</span>（类别）；输出维度 <span class="math inline">\(S \times S \times (5 + c_n)\)</span></td>
-<td>每个小探员携带完整信息卡片，报告目标位置和类型</td>
+<td><strong>YOLO æ ç­¾è§è</strong></td>
+<td>æ¯ä¸ªç½æ ¼åå« <span class="math inline">\(p_c\)</span>ï¼æ¯å¦æç®æ ï¼ã<span class="math inline">\(b_x,b_y,b_h,b_w\)</span>ï¼è¾¹çæ¡ä½ç½®ï¼ã<span class="math inline">\(c_n\)</span>ï¼ç±»å«ï¼ï¼è¾åºç»´åº¦ <span class="math inline">\(S \times S \times (5 + c_n)\)</span></td>
+<td>æ¯ä¸ªå°æ¢åæºå¸¦å®æ´ä¿¡æ¯å¡çï¼æ¥åç®æ ä½ç½®åç±»å</td>
 </tr>
 </tbody>
 </table>
@@ -2013,12 +2013,12 @@ log.consumer.group: log-analyzers
             </div>
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2025-12-23 20:54">2025-12-23 20:53</span>&nbsp;
-<a href="https://www.cnblogs.com/Goblinscholar">哥布林学者</a>&nbsp;
-阅读(<span id="post_view_count">40</span>)&nbsp;
-评论(<span id="post_comment_count">0</span>)&nbsp;
+<a href="https://www.cnblogs.com/Goblinscholar">å¥å¸æå­¦è</a>&nbsp;
+éè¯»(<span id="post_view_count">40</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19389081);return false;">收藏</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19389081', targetLink: 'https://www.cnblogs.com/Goblinscholar/p/19389081', title: '吴恩达深度学习课程四：计算机视觉  第三周：检测算法 （二）目标检测算法' })">举报</a>
+<a href="javascript:void(0)" onclick="AddToWz(19389081);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19389081', targetLink: 'https://www.cnblogs.com/Goblinscholar/p/19389081', title: 'å´æ©è¾¾æ·±åº¦å­¦ä¹ è¯¾ç¨åï¼è®¡ç®æºè§è§  ç¬¬ä¸å¨ï¼æ£æµç®æ³ ï¼äºï¼ç®æ æ£æµç®æ³' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
