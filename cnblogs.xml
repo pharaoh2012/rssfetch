@@ -3,12 +3,175 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2025-12-25T12:32:51.093Z</lastBuildDate>
+        <lastBuildDate>2025-12-25T16:20:48.129Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
+    <title><![CDATA[ Flinkæºç éè¯»ï¼Checkpointæºå¶ï¼ä¸ï¼ ]]></title>
+    <link>https://www.cnblogs.com/Jackeyzhe/p/19401432</link>
+    <guid>69312d0c4623a44c8225469de458604d</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/Jackeyzhe/p/19401432" title="åå¸äº 2025-12-25 22:33">
+    <span role="heading" aria-level="2">Flinkæºç éè¯»ï¼Checkpointæºå¶ï¼ä¸ï¼</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                    <div id="cnblogs_post_description" style="display: none">
+        <img src="https://img2024.cnblogs.com/blog/1828322/202512/1828322-20251225223307613-283439473.png" alt="Flinkæºç éè¯»ï¼Checkpointæºå¶ï¼ä¸ï¼" class="desc_img">
+        åææä»¬æ¢³çäº Flink ç¶æç®¡çç¸å³çæºç ï¼æä»¬ç¥éï¼ç¶ææ¯è¦ä¸ Checkpoint éåä½¿ç¨çãå æ­¤ï¼æ¬ææä»¬å°±ä¸èµ·æ¥çä¸ä¸ Checkpoint ç¸å³çæºç ã
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>åææä»¬æ¢³çäº Flink ç¶æç®¡çç¸å³çæºç ï¼æä»¬ç¥éï¼ç¶ææ¯è¦ä¸ Checkpoint éåä½¿ç¨çãå æ­¤ï¼æ¬ææä»¬å°±ä¸èµ·æ¥çä¸ä¸ Checkpoint ç¸å³çæºç ã</p>
+<h3 id="åå¨åé¢">åå¨åé¢</h3>
+<p>å¨<a href="https://jackeyzhe.github.io/2025/08/17/Flink%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9A%E5%A6%82%E4%BD%95%E5%81%9A%E5%AE%B9%E9%94%99/" target="_blank" rel="noopener nofollow">Flinkå­¦ä¹ ç¬è®°ï¼å¦ä½åå®¹é</a>ä¸æä¸­ï¼æä»¬ä»ç»äº Flink ç Checkpoint æºå¶ãCheckpoint åä¸º EXACTLY_ONCE å AT_LEAST_ONCE ä¸¤ç§æ¨¡å¼ã</p>
+<p>æä»¬ä¸èµ·åé¡¾ä¸ä¸ä¸æ¬¡å®æ´ç Checkpoint å·ä½æµç¨ï¼Checkpoint æ¯ç± CheckpointCoordinator è§¦åï¼Source èç¹æ¶å°è§¦åè¯·æ±åï¼ä¼å° State è¿è¡æä¹åï¼åæ¶åä¸æ¸¸åé Barrier æ¶æ¯ï¼ä¸æ¸¸èç¹æ¶å° Barrier æ¶æ¯åï¼ä¹åæ ·å¯¹ State è¿è¡æä¹åååé Barrier æ¶æ¯ãå½ææèç¹é½å®ææä¹åè¿ç¨å CheckpointCoordinator ä¼å°ä¸äºåæ°æ®è¿è¡æä¹åã</p>
+<p>å¸¦çè¿äºèæ¯ç¥è¯ï¼æä»¬åæ¥æ¢³çä¸ä¸ Checkpoint ç¸å³çä»£ç ã</p>
+<h3 id="jobmanager-ç«¯è§¦åæµç¨">JobManager ç«¯è§¦åæµç¨</h3>
+<p>JobManager å¨è°ç¨ <code>DefaultExecutionGraphBuilder.buildGraph</code> çæ ExecutionGraph ä¹åï¼ä¼è°ç¨ <code>executionGraph.enableCheckpointing</code> æ¹æ³æ¥è®¾ç½® Checkpoint ç¸å³çéç½®ï¼è¿ä¸ªæ¹æ³ä¸­åå»ºäº CheckpointCoordinator å¹¶æ³¨åäº CheckpointCoordinatorDeActivator è¿ä¸ªçå¬ï¼å®è´è´£å¯å¨ååæ­¢ Checkpoint çè°åº¦ã</p>
+<p>å½ä½ä¸åæ RUNNING ç¶ææ¶ï¼CheckpointCoordinator ä¼é¨ç½²ä¸ä¸ªå®æ¶ä»»å¡ ScheduledTriggerï¼è¿ä¸ªå®æ¶ä»»å¡å°±æ¯ç¨æ¥å¨ææ§çè§¦å Checkpointã</p>
+<p>è§¦å Checkpoint çæ ¸å¿é»è¾å¨ <code>CheckpointCoordinator.startTriggeringCheckpoint</code> è¿ä¸ªæ¹æ³ä¸­ãè¿ä¸ªæ¹æ³ä¸­ä½¿ç¨äºå¤ä¸ª CompletableFuture æ¥å®ææ´ä¸ªæµç¨çç¼æãå·ä½æµç¨è§ä¸å¾ï¼å¾ä¸­ä¸åé¢è²ä»£è¡¨çä½¿ç¨ä¸åçº¿ç¨æ± æ§è¡ï¼ã</p>
+<p><img alt="checkpoint" loading="lazy" data-src="https://res.cloudinary.com/dxydgihag/image/upload/v1765450882/Blog/flink/13/checkpoint.png" class="lazyload"></p>
+<ul>
+<li>
+<p>checkpointPlanFutureï¼è¿æ¯çæ Checkpoint æ§è¡è®¡åç Futureï¼Checkpoint Plan ä¸­ç»´æ¤äºä¸ä¸ªå³é®çéåï¼tasksToTriggerãtasksToWaitFor å tasksToCommitToãtasksToTrigger æ¯ææç Source èç¹ï¼è¡¨ç¤ºè§¦å Checkpoint çèç¹ï¼å¦å¤ä¸¤ä¸ªéåé½åå«äºå¨é¨èç¹ï¼åå«è¡¨ç¤ºç­å¾è¿è¡ Checkpoint çèç¹åç­å¾æäº¤çèç¹ã</p>
+</li>
+<li>
+<p>pendingCheckpointCompletableFutureï¼çæå® Checkpoint Plan ä¹åï¼ä¼åå»º pendingCheckpointCompletableFutureï¼è¿ä¸ª Future ä¸­æä¸¤ä¸ªæ§è¡ä»»å¡ï¼åå«æ¯çæèªå¢ç CheckpointID å åå»º PendingCheckpointãPendingCheckpoint ä¸­ç»´æ¤äºç­å¾å®æç task åè¡¨ï¼å½ææ task é½ç¡®è®¤å®æä¹åï¼PendingCheckpoint ä¼åæ CompletedCheckpointã</p>
+</li>
+<li>
+<p>coordinatorCheckpointsCompleteï¼è¿ä¸ª Future ä¹æä¸¤ä¸ªä»»å¡ï¼ç¬¬ä¸ä¸ªæ¯åå§åå­å¨è·¯å¾ï¼ç¬¬äºä¸ªæ¯è§¦åææ OperatorCoordinator Checkpointï¼å¹¶ç¡®è®¤å®ä»¬çç¶æã</p>
+</li>
+<li>
+<p>masterStatesCompleteï¼è§¦åå¿«ç§ææç Master Hookï¼è¿ä¸æ­¥ä¸»è¦æ¯ CheckpointCoordinator ç¨æ¥æ¶é JobManager çº§å«ç¶æã</p>
+</li>
+<li>
+<p>masterTriggerCompletionPromiseï¼å¨ masterStatesComplete å coordinatorCheckpointsComplete é½æ§è¡å®æåï¼ä¼å¼å§æ§è¡ masterTriggerCompletionPromiseãmasterTriggerCompletionPromise çä»»å¡æ¯è°ç¨ triggerCheckpointRequest æ¥äº§ç Barrier æ¶æ¯ãå·ä½çè§¦åæµç¨è§ä¸å¾ã</p>
+</li>
+</ul>
+<p><img alt="triggerTask" loading="lazy" data-src="https://res.cloudinary.com/dxydgihag/image/upload/v1765506339/Blog/flink/13/triggerTaskCheckpoint.png" class="lazyload"></p>
+<p>è³æ­¤ï¼JobManager ç«¯çè§¦åæµç¨å°±å®æäºï¼æ¥ä¸æ¥å°±å°äº TaskManager ç«¯äºã</p>
+<h3 id="taskmanager-ç«¯æ§è¡æµç¨">TaskManager ç«¯æ§è¡æµç¨</h3>
+<p>è¿å¥ TaskExecutor åï¼å·ä½è°ç¨è¿ç¨å¦ä¸å¾ã</p>
+<p><img alt="TaskManagerCheckpoint" loading="lazy" data-src="https://res.cloudinary.com/dxydgihag/image/upload/v1765508196/Blog/flink/13/tmCheckpoint.png" class="lazyload"></p>
+<p>TaskManager çæ ¸å¿é»è¾å¨ <code>SubtaskCheckpointCoordinatorImpl.checkpointState</code> æ¹æ³ä¸­ãè¿ä¸ªæ¹æ³ä¸­çæ³¨éä¹å¾è¯¦ç»ï¼æ´ä½ä¸åä¸º6ä¸ªæ­¥éª¤ï¼</p>
+<ol start="0">
+<li>
+<p>å¤æ­æ¯å¦æ¯éè¦ç»æ­¢ç Checkpointï¼å¦ææ¯ï¼ååä¸æ¸¸åéåæ¶ Checkpoint çå¹¿æ­æ¶æ¯ã</p>
+</li>
+<li>
+<p>åä¸äºåç½®çåå¤å·¥ä½ï¼è¿ä¸æ­¥éå¸¸æåµä¸æ¯ä¸ä¸ªç©ºå®ç°ã</p>
+</li>
+<li>
+<p>åä¸æ¸¸åé Barrier æ¶æ¯ã</p>
+</li>
+<li>
+<p>æ³¨å Alignment timerï¼å½ aligned è¶æ¶æ¶ï¼è½¬æ¢ä¸º unalignedã</p>
+</li>
+<li>
+<p>éç¥ StateWriterï¼å½å Subtask å¯¹è¾åºééçåå¥å·²ç»å®æï¼å¹¶æäº¤ç¶æå¥æã</p>
+</li>
+<li>
+<p>å¼æ­¥æ§è¡ç¶æåå¥å¹¶å®æä¸æ¥ã</p>
+</li>
+</ol>
+<p>ä¸é¢æä»¬æ¥å³æ³¨å ä¸ªéç¹çæ­¥éª¤ã</p>
+<h4 id="barrier-æ¶æ¯">Barrier æ¶æ¯</h4>
+<p>å¨æ­¥éª¤2ä¸­ï¼é¦åæ¯åå»º Barrierï¼Barrier æ¶æ¯åæ¬ä¸ä¸ªé¨å</p>
+<pre><code class="language-java">// checkpointId
+private final long id;
+// æ¶é´æ³
+private final long timestamp;
+// checkpoint ç¸å³åæ°ï¼åæ¬å¯¹é½ç±»åãcheckpoint ç±»åãç®åå°å
+private final CheckpointOptions checkpointOptions;
+</code></pre>
+<p>çæ Barrier ä¹åï¼ä¼è°ç¨ <code>operatorChain.broadcastEvent</code> è¿è¡å¹¿æ­æ¶æ¯ãè¿éå¹¿æ­æ¶æ¯å°±æ¯åä¸æ¸¸ææçèç¹çææ ResultSubpartition åéã</p>
+<h4 id="ç¶æåå¥">ç¶æåå¥</h4>
+<p><code>SubtaskCheckpointCoordinatorImpl.takeSnapshotSync</code> æ¹æ³ç¨æ¥æå»º OperatorSnapshotFutures ä¸­çåä¸ª Futureï¼æ¯ä¸ª Future çä»»å¡æ¯ä¸ºä¸åç±»åç State æä¾åå¥é»è¾ã</p>
+<pre><code class="language-java">@Nonnull private RunnableFuture&lt;SnapshotResult&lt;KeyedStateHandle&gt;&gt; keyedStateManagedFuture;
+
+@Nonnull private RunnableFuture&lt;SnapshotResult&lt;KeyedStateHandle&gt;&gt; keyedStateRawFuture;
+
+@Nonnull private RunnableFuture&lt;SnapshotResult&lt;OperatorStateHandle&gt;&gt; operatorStateManagedFuture;
+
+@Nonnull private RunnableFuture&lt;SnapshotResult&lt;OperatorStateHandle&gt;&gt; operatorStateRawFuture;
+</code></pre>
+<p>å¨åºå±é»è¾ä¸­ï¼ä¼ä¸ºæ¯ä¸ª Operator è®¾ç½®å¯¹åºç State ç Futureãå·ä½è°ç¨æµç¨å¦ä¸</p>
+<p><img alt="snapshotState" loading="lazy" data-src="https://res.cloudinary.com/dxydgihag/image/upload/v1765524276/Blog/flink/13/snapshotState.png" class="lazyload"></p>
+<p>è®¾ç½®å¥½è¿äº Future ä¹åï¼ä¼å¨ <code>finishAndReportAsync</code> æ¹æ³ä¸­åå»º AsyncCheckpointRunnable çº¿ç¨è°ç¨ get æ¥è·åæ§è¡ç»æï¼æ¿å°æ§è¡ç»æåä¼å° Checkpoint ä¿¡æ¯ä¸æ¥ç» CheckpointCoordinatorã</p>
+<p><img alt="TaskManagerReport" loading="lazy" data-src="https://res.cloudinary.com/dxydgihag/image/upload/v1765526479/Blog/flink/13/tmReport.png" class="lazyload"></p>
+<h3 id="jobmanager-ç«¯ç¡®è®¤æµç¨">JobManager ç«¯ç¡®è®¤æµç¨</h3>
+<p>TaskManager éè¿è°ç¨ <code>checkpointCoordinatorGateway.acknowledgeCheckpoint</code> ä¸æ¥ Checkpoint ä¿¡æ¯åï¼æµç¨å°±ååå° JobManager äºã</p>
+<p>JobManager çç¡®è®¤æµç¨ä¸»è¦åäºä¸¤ä»¶äºï¼</p>
+<ol>
+<li>
+<p>å° pendingCheckpoint è½¬æ¢æ completedCheckpointï¼å¨è¿ä¸ªè½¬æ¢è¿ç¨ä¸­ï¼è¿åäºæ¸çè¿æ Checkpoint åæä¹ååæ°æ®ç­æä½ã</p>
+</li>
+<li>
+<p>åææ commit ç Task åé Checkpoint å®æçéç¥ãæ¶å°è¿ä¸ªéç¥åï¼å¤§é¨å Task æ²¡æä»ä¹ç¹æ®é»è¾ï¼ä¹æä¸é¨å Source æè Sink ä¼åæäº¤äºå¡ç­æä½ã</p>
+</li>
+</ol>
+<p>è³æ­¤ï¼JobManager å Source ç«¯ç®å­çä¸æ¬¡ Checkpoint å°±å®æäºãæ¥ä¸æ¥æä»¬åçä¸ä¸é Source èç¹æ¯å¦ä½å Checkpoint çã</p>
+<h3 id="é-source-èç¹å¤çæµç¨">é Source èç¹å¤çæµç¨</h3>
+<p>é Source èç¹å¤ç Barrier çå¥å£åå¤çä¸å¡æ°æ®çå¥å£ç¸åï¼é½æ¯ <code>StreamTask.processInput</code> æ¹æ³ãæä»¬è¿æ¯åæ¥çå·ä½çè°ç¨æµç¨ã</p>
+<p><img alt="processBarrier" loading="lazy" data-src="https://res.cloudinary.com/dxydgihag/image/upload/v1765530817/Blog/flink/13/processBarrier.png" class="lazyload"></p>
+<p>è·çè°ç¨é¾è·¯ï¼æä»¬ä¸è·¯æ¾å°äº processBarrier æ¹æ³ï¼è¿éåºåäºä¸¤ä¸ª barrierHandlerãSingleCheckpointBarrierHandler è´è´£å¤ç EXACTLY_ONCE è¯­ä¹ï¼CheckpointBarrierTracker è´è´£å¤ç AT_LEAST_ONCE è¯­ä¹ã</p>
+<h4 id="exactly_once">EXACTLY_ONCE</h4>
+<p>EXACTLY_ONCE å¨å¤ç Barrier çé»è¾å¦ä¸ï¼</p>
+<ol>
+<li>
+<p>å¦æåªæä¸ä¸ª channelï¼å°±ç«å³è§¦å Checkpointã</p>
+</li>
+<li>
+<p>å¦ææå¤ä¸ª channelï¼åä¸ºä¸ç§æåµ</p>
+</li>
+</ol>
+<p>a) å¦ææ¶å°çæ¯ç¬¬ä¸ä¸ª channelï¼æ è®°å¼å§è¿è¡ barrier å¯¹é½ï¼å¹¶é»å¡ channelã</p>
+<p>b) å¦æä¸æ¯ç¬¬ä¸ä¸ª channelï¼ä¹ä¸æ¯æåä¸ä¸ª channelï¼åªå¯¹ channel è¿è¡é»å¡ã</p>
+<p>c) å¦ææ¶å°æåä¸ä¸ª channelï¼å°±ä¼è§¦å Checkpointï¼å¹¶åæ¶ææ channel é»å¡ç¶æã</p>
+<p>è¿éè§¦åçé»è¾ä¸ Source èç¹ç¸åï¼éè¿è°ç¨é¾è·¯å¯ä»¥ä¸ç´æ¾å° performCheckpointã</p>
+<h4 id="at_least_once">AT_LEAST_ONCE</h4>
+<p>AT_LEAST_ONCE å¤ç Barrier çé»è¾å¦ä¸ï¼</p>
+<ol>
+<li>
+<p>å¦æåªæä¸ä¸ª channelï¼å°±ç«å³è§¦å Checkpointã</p>
+</li>
+<li>
+<p>å¦ææå¤ä¸ª channelï¼åæ ·åä¸ºä¸ç§æåµ</p>
+</li>
+</ol>
+<p>a) å¦ææ¶å°çæ¯ç¬¬ä¸ä¸ª channelï¼åæ´æ°å½å checkpointIDï¼æ è®°å¼å§ barrier å¯¹é½ã</p>
+<p>b) å¦ææ¶å°çä¸æ¯ç¬¬ä¸ä¸ª channelï¼ä¹ä¸æ¯æåä¸ä¸ª channelï¼å°±åªåè®¡æ°ã</p>
+<p>c) å¦ææ¶å°çæ¯æåä¸ä¸ª channelï¼å°±ä¼å¼å§è§¦å Checkpointã</p>
+<p>è¿éè§¦åé»è¾ä¹æ¯è°ç¨ performCheckpointï¼ä¸ Source èç¹é»è¾ç¸åã</p>
+<h3 id="æ»ç»">æ»ç»</h3>
+<p>æ¬ææä»¬æ¢³çäº Checkpoint çæºç é»è¾ãæå¼å§ç± JobManager ä¸­ç CheckpointCoordinator è¿è¡è°åº¦ï¼å¹¶å TaskManager åéè§¦åè¯·æ±ãSource èç¹æ¶å°è¯·æ±åä¼åä¸æ¸¸åé Barrier æ¶æ¯ç¶ååå¥ç¶ææ°æ®åä¸æ¥ Checkpoint ä¿¡æ¯ãCheckpointCoordinator æ¶éå®ç¡®è®¤æ¶æ¯åï¼ä¼æä¹ååæ°æ®å¹¶éç¥ææ Task å®æ commitãæåè¿åå«ä»ç»äº EXACTLY_ONCE å AT_LEAST_ONCE æ¨¡å¼ä¸é Source èç¹çå¤çé»è¾ã</p>
+<p>è¿éåä¸ä¸ª Hookï¼ç¶ææ°æ®åå¥é»è¾çç»èæä»¬æ²¡ææ·±å¥äºè§£ï¼ä¼å¨ä¸ç¯è¿è¡æ·±å¥åæã</p>
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2025-12-25 22:33">2025-12-25 22:33</span>&nbsp;
+<a href="https://www.cnblogs.com/Jackeyzhe">Jackeyzhe</a>&nbsp;
+éè¯»(<span id="post_view_count">6</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19401432);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19401432', targetLink: 'https://www.cnblogs.com/Jackeyzhe/p/19401432', title: 'Flinkæºç éè¯»ï¼Checkpointæºå¶ï¼ä¸ï¼' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
     <title><![CDATA[ å®¢æç³»ç»åç«¯ä¸»é¢éè²å¨æåæ¢çä¸ç§å®ç°æè·¯ï¼å«ä»£ç ï¼ ]]></title>
     <link>https://www.cnblogs.com/sheng_chao/p/19401028</link>
     <guid>1995942a8f0480a0a3f6e610447cbc22</guid>
@@ -541,7 +704,7 @@ if (savedTheme) {
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2025-12-25 20:29">2025-12-25 20:29</span>&nbsp;
 <a href="https://www.cnblogs.com/sheng_chao">åè®¯å¨å¨çº¿å®¢æç³»ç»</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">25</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19401028);return false;">æ¶è</a>&nbsp;
@@ -624,7 +787,7 @@ if (savedTheme) {
             posted on 
 <span id="post-date" data-last-update-days="0" data-date-updated="2025-12-25 20:25">2025-12-25 20:24</span>&nbsp;
 <a href="https://www.cnblogs.com/poemyang">poemyang</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">10</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19401017);return false;">æ¶è</a>&nbsp;
@@ -792,101 +955,13 @@ if (savedTheme) {
 		<div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2025-12-25 20:24">2025-12-25 20:24</span>&nbsp;
 <a href="https://www.cnblogs.com/xi-yongqi">æä¼æ¿é£å»</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">17</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19401014);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19401014', targetLink: 'https://www.cnblogs.com/xi-yongqi/p/19401014', title: 'redisä¸ºä»ä¹è¿ä¹å¿«ï¼I/Oå¤è·¯å¤ç¨ææ¯æ¯ä»ä¹ï¼' })">ä¸¾æ¥</a>
 </div>
 	 ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ Lua:åç¨luarocksç®¡çå¬å±åº ]]></title>
-    <link>https://www.cnblogs.com/developer-tianyiyun/p/19400726</link>
-    <guid>cb821eb19a280a6f3c4d4be5b40a0a7e</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/developer-tianyiyun/p/19400726" title="åå¸äº 2025-12-25 18:58">
-    <span role="heading" aria-level="2">Lua:åç¨luarocksç®¡çå¬å±åº</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
-<p>æ¬æåäº«èªå¤©ç¿¼äºå¼åèç¤¾åºã<a href="https://www.ctyun.cn/developer/article/611294567211077" rel="noopener nofollow">Luaåç¨luarocksç®¡çå¬å±åº</a>ã.ä½èï¼ç****æ·</p>
-<h2>ä»ä¹æ¯Luarocks</h2>
-<p>Luarocksæ¯ä¸ä¸ªLuaåç®¡çå¨ï¼åºäº Lua è¯­è¨å¼åï¼æä¾ä¸ä¸ªå½ä»¤è¡çæ¹å¼æ¥ç®¡ç Lua åä¾èµãå®è£ç¬¬ä¸æ¹ Lua åç­ï¼ç¤¾åºæ¯è¾æµè¡çåç®¡çå¨ä¹ä¸</p>
-<p>Pythonå·æPIPï¼Rubyå·æGemsï¼Javaå·æMavenï¼Nodeå·ænpmï¼Luaå·æLuarocksã</p>
-<h2>åè¦ï¼åçLuaçrequire</h2>
-<p>ä»¥openrestyä¸­çLuajit<code>/usr/local/openresty/luajit/bin/luajit</code>ä¸ºä¾ï¼</p>
-<h3>æµè¯ä»£ç ï¼</h3>
-<pre class="language-lua"><code class="language-lua hljs" data-highlighted="yes"><span class="hljs-keyword">local cjson = <span class="hljs-built_in">require <span class="hljs-string">"cjson"
-<span class="hljs-keyword">local s = cjson.encode({<span class="hljs-string">"test", <span class="hljs-string">"lua", <span class="hljs-string">"package"})
-<span class="hljs-built_in">print(s)
-</span></span></span></span></span></span></span></span></code></pre>
-<h3>æ§è¡ç»æï¼</h3>
-<pre><code class="hljs language-swift" data-highlighted="yes"><span class="hljs-regexp">/usr/local<span class="hljs-regexp">/openresty/luajit<span class="hljs-regexp">/bin/luajit: test.lua:<span class="hljs-number">3: module 'cjson' not found:
-        no field <span class="hljs-keyword">package.preload['cjson']
-        no file '<span class="hljs-operator">./cjson.lua'
-        no file '<span class="hljs-regexp">/usr/local<span class="hljs-regexp">/openresty/luajit<span class="hljs-regexp">/share/luajit<span class="hljs-operator">-<span class="hljs-number">2.1.<span class="hljs-number">0<span class="hljs-operator">-beta3<span class="hljs-operator">/cjson.lua'
-        no file '<span class="hljs-regexp">/usr/local<span class="hljs-regexp">/share/lua<span class="hljs-regexp">/5.1/cjson.lua'
-        no file '<span class="hljs-regexp">/usr/local<span class="hljs-regexp">/share/lua<span class="hljs-regexp">/5.1/cjson<span class="hljs-operator">/<span class="hljs-keyword">init.lua'
-        no file '<span class="hljs-regexp">/usr/local<span class="hljs-regexp">/openresty/luajit<span class="hljs-regexp">/share/lua<span class="hljs-regexp">/5.1/cjson.lua'
-        no file '<span class="hljs-regexp">/usr/local<span class="hljs-regexp">/openresty/luajit<span class="hljs-regexp">/share/lua<span class="hljs-regexp">/5.1/cjson<span class="hljs-operator">/<span class="hljs-keyword">init.lua'
-        no file '<span class="hljs-operator">./cjson.so'
-        no file '<span class="hljs-regexp">/usr/local<span class="hljs-regexp">/lib/lua<span class="hljs-regexp">/5.1/cjson.so'
-        no file '<span class="hljs-regexp">/usr/local<span class="hljs-regexp">/openresty/luajit<span class="hljs-regexp">/lib/lua<span class="hljs-regexp">/5.1/cjson.so'
-        no file '<span class="hljs-regexp">/usr/local<span class="hljs-regexp">/lib/lua<span class="hljs-regexp">/5.1/loadall.so'
-stack traceback:
-        [<span class="hljs-type">C]: <span class="hljs-keyword">in function 'require'
-        test.lua:<span class="hljs-number">3: <span class="hljs-keyword">in main chunk
-        [<span class="hljs-type">C]: at <span class="hljs-number">0x004055d0
-</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre>
-<p>ä»æµè¯ç»æå¯ä»¥çå°ï¼requireæå ä¸ªæç´¢ç®å½ï¼çè®ºä¸ä»»æç®å½é½å¯ä»¥</p>
-<h2>Luarocksåç®¡ç</h2>
-<p>æä»¬è½¯ä»¶å¼åè¿ç¨ä¸­ä¼å¼å¥å¤§éåºãå¦æç®åæææåºé½æ¾å¥ä»£ç ä»ï¼é£ä¼é æå¤§éçæ··ä¹±ãå æ­¤ï¼æ´éåçåæ³æ¯ï¼ä½¿ç¨luarocksåç®¡çå·¥å·ï¼å°åºå®è£å°åºç®å½ã</p>
-<h3>ç¤ºä¾ï¼luarocks å®è£ cjson</h3>
-<p>ä»¥openrestyä¸­çLuajit<code>/usr/local/openresty/luajit/bin/luajit</code>ä¸ºä¾ï¼</p>
-<p><code>/usr/local/openresty/luajit/bin/luarocks install lua-cjson</code></p>
-<pre><code class="hljs language-apache" data-highlighted="yes"><span class="hljs-attribute">Installing /luarocks.org/lua-cjson-<span class="hljs-number">2.1.0.10-<span class="hljs-number">1.src.rock
-
-<span class="hljs-attribute">lua-cjson <span class="hljs-number">2.1.0.10-<span class="hljs-number">1 depends <span class="hljs-literal">on lua &gt;= <span class="hljs-number">5.<span class="hljs-number">1 (<span class="hljs-number">5.<span class="hljs-number">1-<span class="hljs-number">1 provided by VM)
-<span class="hljs-attribute">gcc -O2 -fPIC -I/usr/local/openresty/luajit/include/luajit-<span class="hljs-number">2.<span class="hljs-number">1 -c lua_cjson.c -o lua_cjson.o
-<span class="hljs-attribute">gcc -O2 -fPIC -I/usr/local/openresty/luajit/include/luajit-<span class="hljs-number">2.<span class="hljs-number">1 -c strbuf.c -o strbuf.o
-<span class="hljs-attribute">gcc -O2 -fPIC -I/usr/local/openresty/luajit/include/luajit-<span class="hljs-number">2.<span class="hljs-number">1 -c fpconv.c -o fpconv.o
-<span class="hljs-attribute">gcc -shared -o cjson.so lua_cjson.o strbuf.o fpconv.o
-<span class="hljs-attribute">No existing manifest. Attempting to rebuild...
-<span class="hljs-attribute">lua-cjson <span class="hljs-number">2.1.0.10-<span class="hljs-number">1 is now installed in /usr/local/openresty/luajit (license: MIT)
-</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre>
-<pre class="language-sh"><code class="language-sh hljs language-bash" data-highlighted="yes"><span class="hljs-comment"># find /usr/local/openresty/luajit -name cjson.so 
-/usr/local/openresty/luajit/lib/lua/5.1/cjson.so
-</span></code></pre>
-<h3>luarocks å®è£nettle</h3>
-<pre class="language-sh"><code class="language-sh hljs language-bash" data-highlighted="yes"><span class="hljs-comment"># find /usr/local/openresty/luajit -name *nettle*
-/usr/local/openresty/luajit/lib/luarocks/rocks-5.1/lua-resty-nettle
-/usr/local/openresty/luajit/lib/luarocks/rocks-5.1/lua-resty-nettle/2.1-1/lua-resty-nettle-2.1-1.rockspec
-/usr/local/openresty/luajit/share/lua/5.1/resty/nettle
-/usr/local/openresty/luajit/share/lua/5.1/resty/nettle/types/nettle-types.lua
-/usr/local/openresty/luajit/share/lua/5.1/resty/nettle.lua</span></code></pre>
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2025-12-25 18:58">2025-12-25 18:58</span>&nbsp;
-<a href="https://www.cnblogs.com/developer-tianyiyun">å¤©ç¿¼äºå¼åèç¤¾åº</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19400726);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19400726', targetLink: 'https://www.cnblogs.com/developer-tianyiyun/p/19400726', title: 'Lua:åç¨luarocksç®¡çå¬å±åº' })">ä¸¾æ¥</a>
-</div>
-         ]]>
     </description>
     </item>
 <item>
@@ -1876,590 +1951,14 @@ cols=""</p>
     </description>
     </item>
 <item>
-    <title><![CDATA[ å¨Python+FastAPIé¡¹ç®ä¸­ä½¿ç¨SqlAlchemyæä½æ°æ®çå ç§å¸¸è§æ¹å¼ ]]></title>
-    <link>https://www.cnblogs.com/wuhuacong/p/19396612</link>
-    <guid>8cbf510e9fa356f37d23a747d8c6ec5a</guid>
-    <description>
-    <![CDATA[ 
-        <h2>
-            <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/wuhuacong/p/19396612" title="åå¸äº 2025-12-25 11:59">
-    <span role="heading" aria-level="2">å¨Python+FastAPIé¡¹ç®ä¸­ä½¿ç¨SqlAlchemyæä½æ°æ®çå ç§å¸¸è§æ¹å¼</span>
-    
-
-</a>
-
-        </h2>
-        <div class="postbody">
-                <div id="cnblogs_post_description" style="display: none">
-        
-        å¨Python+FastAPIçåç«¯é¡¹ç®ä¸­ï¼æä»¬å¾å¾å¾å¤æ¶åéè¦å¯¹æ°æ®è¿è¡ç¸å³çå¤çï¼æ¬ç¯éç¬ä»ç»å¨Python+FastAPIé¡¹ç®ä¸­ä½¿ç¨SqlAlchemyæä½æ°æ®çå ç§å¸¸è§æ¹å¼ã
-ä½¿ç¨ FastAPI, SQLAlchemy, Pydanticæå»ºåç«¯é¡¹ç®çæ¶åï¼å¶ä¸­æ°æ®åºè®¿é®éç¨SQLAlchemy çå¼æ­¥æ¹å¼å¤çãä¸è¬æä»¬å¨æä½æ°æ®åºæä½çæ¶åï¼éç¨åºç±»ç»§æ¿çæ¹å¼åå°éå¤ä»£ç ï¼æé«ä»£ç å¤ç¨æ§ãä¸è¿æä»¬å¨åæSQLAlchemyçæ¶åï¼æä»¬å¯ä»¥ç®åçæ¹å¼æ¥åæå ç§å¸¸è§çæ°æ®åºæä½æ¹å¼ï¼æ¥ä»ç»SQLAlchemyçå·ä½ä½¿ç¨ã
-    </div>
-<div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
-<p>å¨Python+FastAPIçåç«¯é¡¹ç®ä¸­ï¼æä»¬å¾å¾å¾å¤æ¶åéè¦å¯¹æ°æ®è¿è¡ç¸å³çå¤çï¼æ¬ç¯éç¬ä»ç»å¨Python+FastAPIé¡¹ç®ä¸­ä½¿ç¨SqlAlchemyæä½æ°æ®çå ç§å¸¸è§æ¹å¼ã</p>
-<p>ä½¿ç¨ FastAPI, SQLAlchemy, Pydanticæå»ºåç«¯é¡¹ç®çæ¶åï¼å¶ä¸­æ°æ®åºè®¿é®éç¨SQLAlchemy çå¼æ­¥æ¹å¼å¤çãä¸è¬æä»¬å¨æä½æ°æ®åºæä½çæ¶åï¼éç¨åºç±»ç»§æ¿çæ¹å¼åå°éå¤ä»£ç ï¼æé«ä»£ç å¤ç¨æ§ãä¸è¿æä»¬å¨åæSQLAlchemyçæ¶åï¼æä»¬å¯ä»¥ç®åçæ¹å¼æ¥åæå ç§å¸¸è§çæ°æ®åºæä½æ¹å¼ï¼æ¥ä»ç»SQLAlchemyçå·ä½ä½¿ç¨ã</p>
-<h3>1ãSQLAlchemyä»ç»</h3>
-<div><strong>SQLAlchemy</strong>&nbsp;æ¯ä¸ä¸ªåè½å¼ºå¤§ä¸çµæ´»ç Python SQL å·¥å·ååå¯¹è±¡å³ç³»æ å°ï¼ORMï¼åºãå®è¢«å¹¿æ³ç¨äºå¨ Python é¡¹ç®ä¸­å¤çå³ç³»åæ°æ®åºçåºæ¯ï¼æ¢æä¾äºé«çº§ç ORM åè½ï¼åä¿çäºå¯¹åºå± SQL è¯­å¥çå¼ºå¤§æ§å¶åã<code>SQLAlchemy</code>&nbsp;åè®¸å¼åèéè¿ Python ä»£ç ä¸æ°æ®åºè¿è¡äº¤äºï¼èæ éç´æ¥ç¼å SQL è¯­å¥ï¼åæ¶ä¹æ¯æç´æ¥ä½¿ç¨åç SQL è¿è¡å¤ææ¥è¯¢ãä¸é¢æ¯<strong>SQLAlchemy</strong>åæä»¬å¸¸è§æ°æ®åºå¯¹è±¡çå¯¹åºå³ç³»è¯´æã</div>
-<div>Engine &nbsp;ããè¿æ¥å¯¹è±¡&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;é©±å¨å¼æ</div>
-<div>Session ããè¿æ¥æ± &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;äºå¡ &nbsp;ç±æ­¤å¼å§æ¥è¯¢</div>
-<div>Model &nbsp; ããè¡¨&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ç±»å®ä¹</div>
-<div>Column &nbsp;ã&nbsp; å &nbsp;</div>
-<div>Query &nbsp; ããè¥å¹²è¡ &nbsp; &nbsp; &nbsp; &nbsp; å¯ä»¥é¾å¼æ·»å å¤ä¸ªæ¡ä»¶</div>
-<div>&nbsp;</div>
-<div>å¨ä½¿ç¨SQLAlchemyæ¶ï¼éå¸¸ä¼å°å¶ä¸æ°æ®åºå¯¹è±¡å¯¹åºèµ·æ¥ã</div>
-<div><strong>SQLAlchemy</strong>: ä½¿ç¨&nbsp;<code>Table</code>&nbsp;å¯¹è±¡æ&nbsp;<code>Declarative Base</code>&nbsp;ä¸­çç±»æ¥è¡¨ç¤ºã</div>
-<div><strong>å¯¹åºå³ç³»</strong>: æ°æ®åºä¸­çæ¯ä¸ä¸ªè¡¨å¯¹åºäºSQLAlchemyä¸­çä¸ä¸ªç±»ï¼è¯¥ç±»ç»§æ¿èª&nbsp;<code>declarative_base()</code>ã</div>
-<div>
-<div class="cnblogs_code">
-<pre><span style="color: rgba(0, 0, 255, 1)">from</span> sqlalchemy <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> Column, Integer, String, create_engine
-</span><span style="color: rgba(0, 0, 255, 1)">from</span> sqlalchemy.ext.declarative <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> declarative_base
-
-Base </span>=<span style="color: rgba(0, 0, 0, 1)"> declarative_base()
-
-</span><span style="color: rgba(0, 0, 255, 1)">class</span><span style="color: rgba(0, 0, 0, 1)"> User(Base):
-    </span><span style="color: rgba(128, 0, 128, 1)">__tablename__</span> = <span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">users</span><span style="color: rgba(128, 0, 0, 1)">'</span>  <span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> æ°æ®åºè¡¨å</span>
-    id = Column(Integer, primary_key=<span style="color: rgba(0, 0, 0, 1)">True)
-    name </span>=<span style="color: rgba(0, 0, 0, 1)"> Column(String)
-    email </span>= Column(String)</pre>
-</div>
-<p><strong>æ°æ®åºå (Database Column)ï¼</strong>ä½¿ç¨&nbsp;<code>Column</code>&nbsp;å¯¹è±¡æ¥è¡¨ç¤ºãæ¯ä¸ªæ°æ®åºè¡¨ä¸­çåå¨SQLAlchemyä¸­è¡¨ç¤ºä¸º&nbsp;<code>Column</code>&nbsp;å¯¹è±¡ï¼å¹¶ä½ä¸ºç±»çå±æ§å®ä¹ã</p>
-<div>
-<div class="cnblogs_code">
-<pre>id = Column(Integer, primary_key=<span style="color: rgba(0, 0, 0, 1)">True)
-name </span>= Column(String(50))</pre>
-</div>
-<p><strong>æ°æ®åºè¡ (Database Row)ï¼</strong>æ¯ä¸ªæ°æ®åºè¡¨çä¸ä¸ªå®ä¾ï¼å¯¹è±¡ï¼ä»£è¡¨æ°æ®åºè¡¨ä¸­çä¸è¡ãå¨SQLAlchemyä¸­ï¼éè¿å®ä¾åæ¨¡åç±»æ¥è¡¨ç¤ºæ°æ®åºè¡¨ä¸­çä¸è¡ã</p>
-<div>
-<div class="cnblogs_code">
-<pre>new_user = User(id=1, name=<span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">John Doe</span><span style="color: rgba(128, 0, 0, 1)">'</span>, email=<span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">john@example.com</span><span style="color: rgba(128, 0, 0, 1)">'</span>)</pre>
-</div>
-<p><strong>ä¸»é® (Primary Key)</strong>ï¼ä½¿ç¨&nbsp;<code>primary_key=True</code>&nbsp;åæ°å®ä¹ä¸»é®ã</p>
-</div>
-</div>
-<div>
-<div class="cnblogs_code">
-<pre>id = Column(Integer, primary_key=True)</pre>
-</div>
-<p><strong>å¤é® (Foreign Key): </strong>ä½¿ç¨&nbsp;<code>ForeignKey</code>&nbsp;å¯¹è±¡æ¥è¡¨ç¤ºã</p>
-<div>
-<div class="cnblogs_code">
-<pre><span style="color: rgba(0, 0, 255, 1)">from</span> sqlalchemy <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> ForeignKey
-</span><span style="color: rgba(0, 0, 255, 1)">from</span> sqlalchemy.orm <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> relationship
-
-</span><span style="color: rgba(0, 0, 255, 1)">class</span><span style="color: rgba(0, 0, 0, 1)"> Address(Base):
-    </span><span style="color: rgba(128, 0, 128, 1)">__tablename__</span> = <span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">addresses</span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(0, 0, 0, 1)">
-    id </span>= Column(Integer, primary_key=<span style="color: rgba(0, 0, 0, 1)">True)
-    user_id </span>= Column(Integer, ForeignKey(<span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">users.id</span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(0, 0, 0, 1)">))
-    user </span>= relationship(<span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">User</span><span style="color: rgba(128, 0, 0, 1)">'</span>)</pre>
-</div>
-<p><strong>å³ç³» (Relationships): </strong>ä½¿ç¨&nbsp;<code>relationship</code>&nbsp;å¯¹è±¡æ¥è¡¨ç¤ºãæ°æ®åºä¸­è¡¨ä¸è¡¨ä¹é´çå³ç³»å¨SQLAlchemyä¸­éè¿&nbsp;<code>relationship</code>&nbsp;æ¥å®ä¹ã</p>
-<div>
-<div class="cnblogs_code">
-<pre>addresses = relationship(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">Address</span><span style="color: rgba(128, 0, 0, 1)">"</span>, back_populates=<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">user</span><span style="color: rgba(128, 0, 0, 1)">"</span>)</pre>
-</div>
-<p>&nbsp;</p>
-</div>
-</div>
-</div>
-</div>
-<h3>2ãå¸¸è§çåè¡¨å¤ç</h3>
-<p>ä¸é¢æä»¬éè¿å¼æ­¥å¤ççæ¹å¼ï¼ä»ç»å¦ä½å¨åè¡¨ä¸­æä½ç¸å³çæ°æ®åºæ°æ®ã</p>
-<div class="cnblogs_code">
-<pre>async <span style="color: rgba(0, 0, 255, 1)">def</span> get(self, db: AsyncSession, id: Any) -&gt;<span style="color: rgba(0, 0, 0, 1)"> Any:
-    </span><span style="color: rgba(128, 0, 0, 1)">"""</span><span style="color: rgba(128, 0, 0, 1)">æ ¹æ®ä¸»é®è·åä¸ä¸ªå¯¹è±¡</span><span style="color: rgba(128, 0, 0, 1)">"""</span>
-
-    <span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)"> isinstance(id, str):
-        query </span>= select(self.model).filter(func.lower(self.model.id) ==<span style="color: rgba(0, 0, 0, 1)"> id.lower())
-    </span><span style="color: rgba(0, 0, 255, 1)">else</span><span style="color: rgba(0, 0, 0, 1)">:
-        query </span>= select(self.model).filter(self.model.id ==<span style="color: rgba(0, 0, 0, 1)"> id)
-
-    result </span>=<span style="color: rgba(0, 0, 0, 1)"> await db.execute(query)
-    item </span>=<span style="color: rgba(0, 0, 0, 1)"> result.scalars().first()
-
-    </span><span style="color: rgba(0, 0, 255, 1)">return</span> item</pre>
-</div>
-<p>å¦ææä»¬éè¦å¼ºå¶å¯¹å¤é®çç±»åè¿è¡å¹éï¼å¦å¯¹äºPostgresqlçä¸¥æ ¼è¦æ±ï¼æ°æ®æ¯è¾çç±»åå¿é¡»ä¸è´ï¼ï¼é£ä¹æä»¬éè¦å¨åºç±»æèCRUDç±»åå§åçæ¶åï¼è·å¾å¯¹åºçä¸»é®ç±»åã</p>
-<div class="cnblogs_code">
-<pre><span style="color: rgba(0, 0, 255, 1)">class</span><span style="color: rgba(0, 0, 0, 1)"> BaseCrud(Generic[ModelType, PrimaryKeyType, PageDtoType, DtoType]):
-    </span><span style="color: rgba(128, 0, 0, 1)">"""</span><span style="color: rgba(128, 0, 0, 1)">
-    åºç¡CRUDæä½ç±»ï¼ä¼ å¥åæ°è¯´æï¼
-    * `ModelType`: SQLAlchemy æ¨¡åç±»
-    * `PrimaryKeyType`: éå®ä¸»é®çç±»å
-    * `PageDtoType`: åé¡µæ¥è¯¢è¾å¥ç±»
-    * `DtoType`: æ°æ®ä¼ è¾å¯¹è±¡ç±»ï¼å¦æ°å¢ãæ´æ°çåä¸ªå¯¹è±¡DTO
-    </span><span style="color: rgba(128, 0, 0, 1)">"""</span>
-
-    <span style="color: rgba(0, 0, 255, 1)">def</span> <span style="color: rgba(128, 0, 128, 1)">__init__</span><span style="color: rgba(0, 0, 0, 1)">(self, model: Type[ModelType]):
-        </span><span style="color: rgba(128, 0, 0, 1)">"""</span><span style="color: rgba(128, 0, 0, 1)">
-        æ°æ®åºè®¿é®æä½çåºç±»å¯¹è±¡(CRUD).
-        * `model`: A SQLAlchemy model class
-        </span><span style="color: rgba(128, 0, 0, 1)">"""</span><span style="color: rgba(0, 0, 0, 1)">
-        
-        self.model </span>= model  <span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> æ¨¡åç±»å</span>
-
-        <span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> è¿è¡æè·åä¸»é®å­æ®µç±»å</span>
-        <strong><span style="color: rgba(255, 0, 0, 1)">pk_column</span> =</strong><span style="color: rgba(0, 0, 0, 1)"><strong> inspect(model).primary_key[0]</strong>
-       <span style="color: rgba(255, 0, 0, 1)"><strong> self._pk_type </strong></span></span><span style="color: rgba(255, 0, 0, 1)"><strong>= pk_column.type.python_type</strong></span>  <span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> int / str</span></pre>
-</div>
-<p>å æ­¤å¯¹äºåè¡¨çGetæ¹æ³ï¼æä»¬ä¿®æ¹ä¸ï¼è®©ä»å¹éä¸»é®çç±»åè¿è¡æ¯è¾ï¼è¿æ ·è¿å¯¹äºä¸¥æ ¼ç±»åå¤æ­çPostgresqlä¹æ­£å¸¸å¹éäºã</p>
-<div class="cnblogs_code">
-<pre>    async <span style="color: rgba(0, 0, 255, 1)">def</span> get(self, db: AsyncSession, id: PrimaryKeyType) -&gt;<span style="color: rgba(0, 0, 0, 1)"> Optional[ModelType]:
-        </span><span style="color: rgba(128, 0, 0, 1)">"""</span><span style="color: rgba(128, 0, 0, 1)">æ ¹æ®ä¸»é®è·åä¸ä¸ªå¯¹è±¡</span><span style="color: rgba(128, 0, 0, 1)">"""</span>
-        
-        <span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)">å¯¹idçä¸»é®è¿è¡ç±»åè½¬æ¢ï¼self._pk_typeå¨æé å½æ°çåå§åä¸­è·å</span>
-        <span style="color: rgba(0, 0, 255, 1)">try</span><span style="color: rgba(0, 0, 0, 1)">:
-            id </span>=<span style="color: rgba(0, 0, 0, 1)"> self._pk_type(id)
-        </span><span style="color: rgba(0, 0, 255, 1)">except</span><span style="color: rgba(0, 0, 0, 1)"> Exception:
-            </span><span style="color: rgba(0, 0, 255, 1)">raise</span> ValueError(f<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">Invalid primary key type: {id}</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">)
-        
-        </span><span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)"> isinstance(id, str):
-            query </span>= select(self.model).filter(func.lower(self.model.id) ==<span style="color: rgba(0, 0, 0, 1)"> id.lower())
-        </span><span style="color: rgba(0, 0, 255, 1)">else</span><span style="color: rgba(0, 0, 0, 1)">:
-            query </span>= select(self.model).filter(self.model.id ==<span style="color: rgba(0, 0, 0, 1)"> id)
-
-        result </span>=<span style="color: rgba(0, 0, 0, 1)"> await db.execute(query)
-        item </span>=<span style="color: rgba(0, 0, 0, 1)"> result.scalars().first()
-
-        </span><span style="color: rgba(0, 0, 255, 1)">return</span> item</pre>
-</div>
-<p>å¯¹äºå é¤çæ°æ®ï¼æä»¬ä¹å¯ä»¥ç±»ä¼¼çå¤çå¯¹æ¯è¿è¡äºã</p>
-<div class="cnblogs_code">
-<pre><span style="color: rgba(0, 0, 255, 1)">from</span> sqlalchemy.orm <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> Session, Query
-</span><span style="color: rgba(0, 0, 255, 1)">from</span> sqlalchemy.ext.asyncio <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> AsyncSession
-</span><span style="color: rgba(0, 0, 255, 1)">from</span> sqlalchemy <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> delete as sa_delete, update as sa_update
-
-async </span><span style="color: rgba(0, 0, 255, 1)">def</span> delete_byid(self, db: AsyncSession, id: PrimaryKeyType) -&gt;<span style="color: rgba(0, 0, 0, 1)"> bool:
-    </span><span style="color: rgba(128, 0, 0, 1)">"""</span><span style="color: rgba(128, 0, 0, 1)">æ ¹æ®ä¸»é®å é¤ä¸ä¸ªå¯¹è±¡
-    
-    :param id: ä¸»é®å¼
-    </span><span style="color: rgba(128, 0, 0, 1)">"""</span>
-    
-    <span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)">å¯¹idçä¸»é®è¿è¡ç±»åè½¬æ¢ï¼self._pk_typeå¨æé å½æ°çåå§åä¸­è·å</span>
-    <span style="color: rgba(0, 0, 255, 1)">try</span><span style="color: rgba(0, 0, 0, 1)">:
-        id </span>=<span style="color: rgba(0, 0, 0, 1)"> self._pk_type(id)
-    </span><span style="color: rgba(0, 0, 255, 1)">except</span><span style="color: rgba(0, 0, 0, 1)"> Exception:
-        </span><span style="color: rgba(0, 0, 255, 1)">raise</span> ValueError(f<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">Invalid primary key type: {id}</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">)
-    
-    del_query: sa_delete
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)"> isinstance(id, str):
-        del_query </span>=<span style="color: rgba(0, 0, 0, 1)"> sa_delete(self.model).where(
-            func.lower(self.model.id) </span>==<span style="color: rgba(0, 0, 0, 1)"> id.lower()
-        )
-    </span><span style="color: rgba(0, 0, 255, 1)">else</span><span style="color: rgba(0, 0, 0, 1)">:
-        del_query </span>= sa_delete(self.model).where(self.model.id ==<span style="color: rgba(0, 0, 0, 1)"> id)
-
-    result </span>=<span style="color: rgba(0, 0, 0, 1)"> await db.execute(del_query)
-
-    await db.commit()
-    </span><span style="color: rgba(0, 0, 255, 1)">return</span> result.rowcount &gt; 0</pre>
-</div>
-<p>å¯¹äºæä¾å¤æ¡ä»¶çæ¥è¯¢æèè¿æ»¤ï¼æä»¬å¯ä»¥ä½¿ç¨<strong>where</strong>å½æ°æè<strong>filter</strong>å½æ°ï¼å¨ SQLAlchemy ä¸­ï¼<code>select(...).where(...)</code>&nbsp;å&nbsp;<code>select(...).filter(...)</code>&nbsp;é½ç¨äºæé æ¥è¯¢æ¡ä»¶ï¼å¦ä¸æç¤ºç­æã</p>
-<div class="cnblogs_code">
-<pre>query = select(self.model).where(self.model.id ==<span style="color: rgba(0, 0, 0, 1)"> id)
-
-query </span>= select(self.model).filter(self.model.id == id)</pre>
-</div>
-<p>æä»¬å¯ä»¥éè¿sqlAlchemyçand_åor_å½æ°æ¥è¿è¡ç»åå¤ä¸ªæ¡ä»¶ã</p>
-<div class="cnblogs_code">
-<pre><span style="color: rgba(0, 0, 255, 1)">from</span> sqlalchemy <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> ( Table,Column,and_,or_,asc,desc,select,func,distinct,text, Integer)
-
-....
-    match expression:
-        case </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">and</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">:
-            query </span>=<span style="color: rgba(0, 0, 0, 1)"> await db.execute(
-                select(self.model)
-               <span style="color: rgba(255, 0, 0, 1)"><strong> .filter(and_(</strong></span></span><span style="color: rgba(255, 0, 0, 1)"><strong>*</strong></span><span style="color: rgba(0, 0, 0, 1)"><span style="color: rgba(255, 0, 0, 1)"><strong>where_list))</strong></span>
-                .order_by(</span>*<span style="color: rgba(0, 0, 0, 1)">order_by_list)
-            )
-        case </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">or</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">:
-            query </span>=<span style="color: rgba(0, 0, 0, 1)"> await db.execute(
-                select(self.model).<strong><span style="color: rgba(255, 0, 0, 1)">filter(or_(</span></strong></span><strong><span style="color: rgba(255, 0, 0, 1)">*where_list))</span></strong>.order_by(*<span style="color: rgba(0, 0, 0, 1)">order_by_list)
-            )</span></pre>
-</div>
-<p>PythonçSqlAlchemyæä¾&nbsp;InstrumentedAttribute å¯¹è±¡æ¥æä½å¤ä¸ªæ¡ä»¶ï¼å¦æä»¬å¯¹äºä¸äºå¤æ¡ä»¶çå¤çï¼å¯ä»¥å©ç¨å®æ¥ä¼ éå¤ä¸ªåæ°ã</p>
-<div class="cnblogs_code">
-<pre>    async <span style="color: rgba(0, 0, 255, 1)">def</span><span style="color: rgba(0, 0, 0, 1)"> get_all_by_attributes(
-        self, db: AsyncSession, </span>*attributes: InstrumentedAttribute, sorting: str = <span style="color: rgba(128, 0, 0, 1)">""</span><span style="color: rgba(0, 0, 0, 1)">
-    ) </span>-&gt; List[ModelType] |<span style="color: rgba(0, 0, 0, 1)"> None:
-        </span><span style="color: rgba(128, 0, 0, 1)">"""</span><span style="color: rgba(128, 0, 0, 1)">æ ¹æ®ååç§°åå¼è·åç¸å³çå¯¹è±¡åè¡¨
-
-        :param sorting: æ ¼å¼ï¼name asc æ name asc,age desc
-        :param attributes: SQLAlchemy InstrumentedAttribute objectsï¼å¯ä»¥è¾å¥å¤ä¸ªæ¡ä»¶
-        ä¾å­ï¼User.id != 1 æè User.username == "JohnDoe"
-        </span><span style="color: rgba(128, 0, 0, 1)">"""</span><span style="color: rgba(0, 0, 0, 1)">
-
-        order_by_list </span>=<span style="color: rgba(0, 0, 0, 1)"> parse_sort_string(sorting, self.model)
-        query </span>= select(self.model).filter(and_(*attributes)).order_by(*<span style="color: rgba(0, 0, 0, 1)">order_by_list)
-        
-        result </span>=<span style="color: rgba(0, 0, 0, 1)"> await db.execute(query)
-        </span><span style="color: rgba(0, 0, 255, 1)">return</span> result.scalars().all()</pre>
-</div>
-<p>ä¾å¦ï¼å¯¹äº æ¨¡å&nbsp;Material å¯¹è±¡ï¼æä»¬å¯¹å®è¿è¡å¤ä¸ªæ¡ä»¶çæ¥è¯¢å¤çï¼å¦ä¸æç¤ºï¼çº¢è²é¨åä¸º *attributes: InstrumentedAttribute åæ°ã</p>
-<div class="cnblogs_code">
-<pre>items =<span style="color: rgba(0, 0, 0, 1)"> await super().get_all_by_attributes(
-    db,
-<span style="color: rgba(255, 0, 0, 1)"><strong>    Material.id </strong></span></span><span style="color: rgba(255, 0, 0, 1)"><strong>== vercol.id,
-    Material.vercol == vercol.vercol,
-    Material.ischecked == 0,
-    Material.status ==</strong></span><span style="color: rgba(0, 0, 0, 1)"><span style="color: rgba(255, 0, 0, 1)"><strong> 0,</strong></span>
-)</span></pre>
-</div>
-<p>åæ ·æä»¬å¯ä»¥å©ç¨å®æ¥è·åæ°éï¼æèå¤æ­å¤æ¡ä»¶çè®°å½æ¯å¦å­å¨ã</p>
-<p><img src="https://img2024.cnblogs.com/blog/8867/202512/8867-20251225103430193-1873231330.png" alt="image" width="944" height="532" loading="lazy"></p>
-<p>&nbsp;å¨æ°æ®æå¥æèæ´æ°çæä½ä¸­ï¼æä»¬å¯ä»¥æ¥åå¯¹è±¡ç±»åæèå­å¸ç±»åçåæ°å¯¹è±¡ï¼å æ­¤æ¹æ³å¦ä¸æç¤ºã</p>
-<div class="cnblogs_code">
-<pre>   async <span style="color: rgba(0, 0, 255, 1)">def</span> update(self, db: AsyncSession, obj_in: DtoType | dict[str, Any]) -&gt;<span style="color: rgba(0, 0, 0, 1)"> bool:
-        </span><span style="color: rgba(128, 0, 0, 1)">"""</span><span style="color: rgba(128, 0, 0, 1)">æ´æ°å¯¹è±¡
-        
-        :param obj_in: å¯¹è±¡è¾å¥æ°æ®,å¯ä»¥æ¯ DTO å¯¹è±¡æå­å¸
-        </span><span style="color: rgba(128, 0, 0, 1)">"""</span>
-        <span style="color: rgba(0, 0, 255, 1)">try</span><span style="color: rgba(0, 0, 0, 1)">:
-            </span><span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)"> isinstance(obj_in, dict):
-                obj_id </span>= obj_in.get(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">id</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">)
-                </span><span style="color: rgba(0, 0, 255, 1)">if</span> obj_id <span style="color: rgba(0, 0, 255, 1)">is</span><span style="color: rgba(0, 0, 0, 1)"> None:
-                    </span><span style="color: rgba(0, 0, 255, 1)">raise</span> ValueError(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">id is required for update</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">)
-                update_data </span>=<span style="color: rgba(0, 0, 0, 1)"> obj_in
-            </span><span style="color: rgba(0, 0, 255, 1)">else</span><span style="color: rgba(0, 0, 0, 1)">:
-                obj_id </span>=<span style="color: rgba(0, 0, 0, 1)"> obj_in.id
-                </span><span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> update_data = vars(obj_in)  </span>
-                update_data = obj_in.model_dump(exclude_unset=<span style="color: rgba(0, 0, 0, 1)">True)
-
-            query </span>= select(self.model).filter(self.model.id ==<span style="color: rgba(0, 0, 0, 1)"> obj_id)
-            result </span>=<span style="color: rgba(0, 0, 0, 1)"> await db.execute(query)
-            db_obj </span>=<span style="color: rgba(0, 0, 0, 1)"> result.scalars().first()
-
-            </span><span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)"> db_obj:
-                </span><span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> æ´æ°å¯¹è±¡å­æ®µ</span>
-                <span style="color: rgba(0, 0, 255, 1)">for</span> field, value <span style="color: rgba(0, 0, 255, 1)">in</span><span style="color: rgba(0, 0, 0, 1)"> update_data.items():
-                    </span><span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> è·³è¿ä»¥ "_" å¼å¤´çç§æå±æ§</span>
-                    <span style="color: rgba(0, 0, 255, 1)">if</span> field.startswith(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">_</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">):
-                        </span><span style="color: rgba(0, 0, 255, 1)">continue</span><span style="color: rgba(0, 0, 0, 1)">
-                    setattr(db_obj, field, value)
-
-                </span><span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> å¤çæ´æ°åçåè°å¤ç</span>
-<span style="color: rgba(255, 0, 0, 1)"><strong>                self.on_before_update(update_data, db_obj)
-                </strong></span><span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> æäº¤äºå¡</span>
-<span style="color: rgba(0, 0, 0, 1)">                await db.commit()
-                </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)"> True
-            </span><span style="color: rgba(0, 0, 255, 1)">else</span><span style="color: rgba(0, 0, 0, 1)">:
-                </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)"> False
-        </span><span style="color: rgba(0, 0, 255, 1)">except</span><span style="color: rgba(0, 0, 0, 1)"> SQLAlchemyError as e:
-            self.logger.error(f</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">update æä½åºç°éè¯¯: {e}</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">)
-            await db.rollback()  </span><span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> ç¡®ä¿å¨åºéæ¶åæ»äºå¡</span>
-            <span style="color: rgba(0, 0, 255, 1)">return</span> False</pre>
-</div>
-<p>æä»¬å¨æå¥æèæ´æ°æ°æ®çæ¶åï¼ä¸è¬ä¼é»è®¤æ´æ°ä¸äºå­æ®µï¼å¦åå»ºäººï¼åå»ºæ¥æãç¼è¾äººï¼ç¼è¾æ¥æç­ä¿¡æ¯ï¼æä»¬å¯ä»¥æå®åç¬ä½ä¸ºä¸ä¸ªå¯ä»¥ç»å­ç±»éåçå½æ°ï¼åºç±»åä¸äºé»è®¤çå¤çã</p>
-<div class="cnblogs_code">
-<pre>    <span style="color: rgba(0, 0, 255, 1)">def</span> on_before_update(self, update_data: dict[str, Any], db_obj: ModelType) -&gt;<span style="color: rgba(0, 0, 0, 1)"> None:
-        </span><span style="color: rgba(128, 0, 0, 1)">"""</span><span style="color: rgba(128, 0, 0, 1)">æ´æ°å¯¹è±¡åçåè°å½æ°ï¼å­ç±»å¯ä»¥éåæ­¤æ¹æ³
-
-        å¯éè¿ setattr(db_obj, field, value) è®¾ç½®å­æ®µå¼
-        </span><span style="color: rgba(128, 0, 0, 1)">"""</span><span style="color: rgba(0, 0, 0, 1)">
-        
-        setattr(db_obj, </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">edittime</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">, datetime.now())
-        user :CurrentUserIns  </span>=<span style="color: rgba(0, 0, 0, 1)"> get_current_user()
-        </span><span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)"> user:
-            setattr(db_obj, </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">editor</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">, user.fullname)
-            setattr(db_obj, </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">editor_id</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">, user.id)
-
-            setattr(db_obj, </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">company_id</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">, user.company_id)
-            setattr(db_obj, </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">companyname</span><span style="color: rgba(128, 0, 0, 1)">"</span>, user.companyname)</pre>
-</div>
-<p>ææ¶åï¼å¦ææä»¬éè¦è·åæä¸ªå­æ®µééå¤çåè¡¨ï¼ç¨æ¥åä¸ºå¨æä¸æåè¡¨çæ°æ®ï¼é£ä¹æä»¬å¯ä»¥éè¿ä¸é¢å½æ°å°è£ä¸ã</p>
-<div class="cnblogs_code">
-<pre>    async <span style="color: rgba(0, 0, 255, 1)">def</span> get_field_list(self, db: AsyncSession, field_name: str) -&gt;<span style="color: rgba(0, 0, 0, 1)"> Iterable[str]:
-        </span><span style="color: rgba(128, 0, 0, 1)">"""</span><span style="color: rgba(128, 0, 0, 1)">è·åæå®å­æ®µå¼çå¯ä¸åè¡¨
-
-        :param field_name: å­æ®µåç§°
-        </span><span style="color: rgba(128, 0, 0, 1)">"""</span><span style="color: rgba(0, 0, 0, 1)">
-
-        field </span>=<span style="color: rgba(0, 0, 0, 1)"> getattr(self.model, field_name)
-        query </span>=<span style="color: rgba(0, 0, 0, 1)"> select(distinct(field))
-        result </span>=<span style="color: rgba(0, 0, 0, 1)"> await db.execute(query)
-        </span><span style="color: rgba(0, 0, 255, 1)">return</span> result.scalars().all()</pre>
-</div>
-<p>&nbsp;</p>
-<h3>3ãå¤è¡¨èåçå¤çæä½&nbsp;</h3>
-<p>å¤è¡¨æä½ï¼ä¹æ¯æä»¬ç»å¸¸ç¢°å°çå¤çæ¹å¼ï¼å¦å¯¹äºå­å¸ç±»ååå­å¸é¡¹ç®ï¼ä»ä»¬æ¯ä¸¤ä¸ªè¡¨ï¼éè¦èåèµ·æ¥è·åæ°æ®ï¼é£ä¹å°±éè¦å¤è¡¨çèåæä½ã</p>
-<p><img src="https://img2024.cnblogs.com/blog/8867/202512/8867-20251225110211988-1085898697.png" alt="image" width="238" height="326" loading="lazy"></p>
-<p>&nbsp;å¦ä¸æ¯å­å¸CRUDç±»ä¸­ï¼èåå­å¸ç±»åè·åæ°æ®çè®°å½å¤çã</p>
-<div class="cnblogs_code">
-<pre>    async <span style="color: rgba(0, 0, 255, 1)">def</span> get_dict_by_typename(self, db: AsyncSession, dicttype_name: str) -&gt;<span style="color: rgba(0, 0, 0, 1)"> dict:
-        </span><span style="color: rgba(128, 0, 0, 1)">"""</span><span style="color: rgba(128, 0, 0, 1)">æ ¹æ®å­å¸ç±»ååç§°è·åææè¯¥ç±»åçå­å¸åè¡¨éå</span><span style="color: rgba(128, 0, 0, 1)">"""</span><span style="color: rgba(0, 0, 0, 1)">
-        result </span>=<span style="color: rgba(0, 0, 0, 1)"> await db.execute(
-            select(self.model)
-            <span style="color: rgba(255, 0, 0, 1)"><strong>.join(DictType, DictType.id </strong></span></span><span style="color: rgba(255, 0, 0, 1)"><strong>== self.model.dicttype_id)</strong></span>  <span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> å³èå­å¸ç±»åè¡¨</span>
-            <strong><span style="color: rgba(255, 0, 0, 1)">.filter(DictType.name == dicttype_name)</span> </strong> <span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> è¿æ»¤å­å¸ç±»ååç§°</span>
-            .order_by(DictData.seq)  <span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> æåº</span>
-<span style="color: rgba(0, 0, 0, 1)">        )
-        items </span>=<span style="color: rgba(0, 0, 0, 1)"> result.scalars().all()
-
-        dict </span>=<span style="color: rgba(0, 0, 0, 1)"> {}
-        </span><span style="color: rgba(0, 0, 255, 1)">for</span> info <span style="color: rgba(0, 0, 255, 1)">in</span><span style="color: rgba(0, 0, 0, 1)"> items:
-            </span><span style="color: rgba(0, 0, 255, 1)">if</span> info.name <span style="color: rgba(0, 0, 255, 1)">not</span> <span style="color: rgba(0, 0, 255, 1)">in</span><span style="color: rgba(0, 0, 0, 1)"> dict:
-                dict[info.name] </span>=<span style="color: rgba(0, 0, 0, 1)"> info.value
-
-        </span><span style="color: rgba(0, 0, 255, 1)">return</span> dict</pre>
-</div>
-<p>å¦ææä»¬éè¦å¯¹æä¸ªè¡¨çéå½è·åæ åè¡¨ï¼å¯ä»¥å¦ä¸å¤ç</p>
-<div class="cnblogs_code">
-<pre>    async <span style="color: rgba(0, 0, 255, 1)">def</span> get_tree(self, db: AsyncSession, pid: str) -&gt;<span style="color: rgba(0, 0, 0, 1)"> list[DictType]:
-        </span><span style="color: rgba(128, 0, 0, 1)">"""</span><span style="color: rgba(128, 0, 0, 1)">è·åå­å¸ç±»åä¸çº§åè¡¨åå¶ä¸é¢çåå®¹</span><span style="color: rgba(128, 0, 0, 1)">"""</span>
-
-        <span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> ä½¿ç¨ä¸åè¿ç®ç¬¦å° pid è®¾ä¸º "-1"ï¼å¦æ pid æ¯ null æç©ºç½ï¼æä¿æåå¼</span>
-        pid = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">-1</span><span style="color: rgba(128, 0, 0, 1)">"</span> <span style="color: rgba(0, 0, 255, 1)">if</span> <span style="color: rgba(0, 0, 255, 1)">not</span> pid <span style="color: rgba(0, 0, 255, 1)">or</span> pid.strip() == <span style="color: rgba(128, 0, 0, 1)">""</span> <span style="color: rgba(0, 0, 255, 1)">else</span><span style="color: rgba(0, 0, 0, 1)"> pid
-        result </span>=<span style="color: rgba(0, 0, 0, 1)"> await db.execute(
-            select(self.model)
-            .filter(self.model.pid </span>==<span style="color: rgba(0, 0, 0, 1)"> pid)
-            .options(selectinload(DictType.children))
-        )
-        nodes </span>=<span style="color: rgba(0, 0, 0, 1)"> result.scalars().all()
-        </span><span style="color: rgba(0, 0, 255, 1)">return</span> nodes</pre>
-</div>
-<p>æä»¬æ¥åè®¾ç¨æ·åæç« çç¤ºä¾è¡¨ç»æï¼ORM æ¨¡åï¼å¦ä¸æç¤ºã</p>
-<div class="cnblogs_code">
-<pre><span style="color: rgba(0, 0, 255, 1)">class</span><span style="color: rgba(0, 0, 0, 1)"> User(Base):
-    </span><span style="color: rgba(128, 0, 128, 1)">__tablename__</span> = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">users</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
-    id </span>= Column(Integer, primary_key=True, index=<span style="color: rgba(0, 0, 0, 1)">True)
-    name </span>=<span style="color: rgba(0, 0, 0, 1)"> Column(String)
-    email </span>=<span style="color: rgba(0, 0, 0, 1)"> Column(String)
-<span style="color: rgba(255, 0, 0, 1)">    articles </span></span><span style="color: rgba(255, 0, 0, 1)">= <strong>relationship</strong>("Article", back_populates="author")
-
-
-</span><span style="color: rgba(0, 0, 255, 1)">class</span><span style="color: rgba(0, 0, 0, 1)"> Article(Base):
-    </span><span style="color: rgba(128, 0, 128, 1)">__tablename__</span> = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">articles</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
-    id </span>= Column(Integer, primary_key=True, index=<span style="color: rgba(0, 0, 0, 1)">True)
-    title </span>=<span style="color: rgba(0, 0, 0, 1)"> Column(String)
-    content </span>=<span style="color: rgba(0, 0, 0, 1)"> Column(Text)
-<span style="color: rgba(255, 0, 0, 1)">    user_id </span></span><span style="color: rgba(255, 0, 0, 1)">= Column(Integer, <strong>ForeignKey</strong>("users.id"))
-    author = <strong>relationship</strong>("User", back_populates="articles")</span></pre>
-</div>
-<p>æä»¬å¯ä»¥éè¿ä¸é¢å½æ°å¤çè·å¾ç¸å³çè®°å½éåã</p>
-<div class="cnblogs_code">
-<pre>async <span style="color: rgba(0, 0, 255, 1)">def</span><span style="color: rgba(0, 0, 0, 1)"> get_user_articles(db: AsyncSession):
-    stmt </span>=<span style="color: rgba(0, 0, 0, 1)"> (
-        select(User, Article)
-        .<span style="color: rgba(255, 0, 0, 1)"><strong>join</strong></span>(Article, Article.user_id </span>==<span style="color: rgba(0, 0, 0, 1)"> User.id)
-    )
-    result </span>=<span style="color: rgba(0, 0, 0, 1)"> await db.execute(stmt)
-    </span><span style="color: rgba(0, 0, 255, 1)">return</span> result.all()   <span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> [<strong><span style="color: rgba(255, 0, 0, 1)">(User(), Article()), .</span></strong>..]</span></pre>
-</div>
-<p>å¦æéè¦å¯ä»¥ä½¿ç¨outer_joinå½æ°å¤ç</p>
-<div class="cnblogs_code">
-<pre>async <span style="color: rgba(0, 0, 255, 1)">def</span><span style="color: rgba(0, 0, 0, 1)"> get_users_with_articles(db: AsyncSession):
-    stmt </span>=<span style="color: rgba(0, 0, 0, 1)"> (
-        select(User, Article)
-        .<span style="color: rgba(255, 0, 0, 1)"><strong>outerjoin</strong></span>(Article, Article.user_id </span>==<span style="color: rgba(0, 0, 0, 1)"> User.id)
-    )
-    result </span>=<span style="color: rgba(0, 0, 0, 1)"> await db.execute(stmt)
-    </span><span style="color: rgba(0, 0, 255, 1)">return</span> result.all()  <span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> ç¨æ·å³ä¾¿æ²¡ææç« ä¹ä¼åºç°</span></pre>
-</div>
-<p>&nbsp;</p>
-<p>å¦ææä»¬éè¦è·åææç« çææç¨æ·ï¼å¦ä¸æç¤ºã</p>
-<div class="cnblogs_code">
-<pre>async <span style="color: rgba(0, 0, 255, 1)">def</span><span style="color: rgba(0, 0, 0, 1)"> get_users_with_articles(db: AsyncSession):
-    stmt </span>= select(User).options(<span style="color: rgba(255, 0, 0, 1)"><strong>selectinload</strong></span>(User.articles))  <span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> èªå¨ load å³è</span>
-    result =<span style="color: rgba(0, 0, 0, 1)"> await db.execute(stmt)
-    </span><span style="color: rgba(0, 0, 255, 1)">return</span> result.scalars().all()</pre>
-</div>
-<p><code data-start="1468" data-end="1482">selectinload</code> ä¼æ§è¡ä¸¤æ¬¡ SQLï¼ä½æçé«ï¼ä¸ä¼äº§çç¬å¡å°ç§¯ï¼éå¸¸éåéåæ¥è¯¢ã</p>
-<p>å¤è¡¨é¾å¼ Joinçå¤çï¼å¯ä»¥è·å¾ä¸¤ä¸ªè¡¨çä¸åä¿¡æ¯è¿è¡ç»åã</p>
-<div class="cnblogs_code">
-<pre>async <span style="color: rgba(0, 0, 255, 1)">def</span><span style="color: rgba(0, 0, 0, 1)"> get_articles_with_author(db: AsyncSession):
-    stmt </span>=<span style="color: rgba(0, 0, 0, 1)"> (
-        select(Article.title, User.name.label(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">author</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">))
-        .join(User, Article.user_id </span>==<span style="color: rgba(0, 0, 0, 1)"> User.id)
-    )
-    rows </span>=<span style="color: rgba(0, 0, 0, 1)"> await db.execute(stmt)
-    </span><span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(255, 0, 0, 1)"><strong>rows.mappings().all()</strong></span>  <span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> ä»¥ dict å½¢å¼è¿å [{'title':..., 'author':...}]</span></pre>
-</div>
-<p>å¸¦ç­éæ¡ä»¶ä¸åé¡µçå¤çå®ç°ï¼å¦ä¸æç¤º</p>
-<div class="cnblogs_code">
-<pre>async <span style="color: rgba(0, 0, 255, 1)">def</span> search_articles(db: AsyncSession, keyword: str, page: int = 1, size: int = 10<span style="color: rgba(0, 0, 0, 1)">):
-    stmt </span>=<span style="color: rgba(0, 0, 0, 1)"> (
-        select(Article, User.name.label(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">author</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">))
-        .join(User)
-        .filter(Article.title.contains(keyword))
-        .offset((page </span>- 1) *<span style="color: rgba(0, 0, 0, 1)"> size)
-        .limit(size)
-    )
-    result </span>=<span style="color: rgba(0, 0, 0, 1)"> await db.execute(stmt)
-    </span><span style="color: rgba(0, 0, 255, 1)">return</span> result.mappings().all()</pre>
-</div>
-<p>&nbsp;</p>
-<p>å¯¹äºæéç®¡çç³»ç»æ¥è¯´ï¼ä¸è¬æç¨æ·ãè§è²ï¼ä»¥åç¨æ·è§è²çä¸­é´è¡¨ï¼ä¸è¬æ¥è¯´ä»ä»¬çå³ç³»å¦ä¸</p>
-<p><img src="https://img2024.cnblogs.com/blog/8867/202512/8867-20251225122040874-818263456.png" alt="image" width="729" height="363" loading="lazy"></p>
-<p>&nbsp;å¨çé¢ä¸­ä¸è¬ä¼æä¾éæ©ç¨æ·çæä½å³èï¼å¦è§è²ä¸­ç»´æ¤ç¨æ·åè¡¨ã</p>
-<p><img src="https://img2024.cnblogs.com/blog/8867/202512/8867-20251225121122302-651245416.png" alt="image" width="481" height="426" loading="lazy"></p>
-<p>&nbsp;æä»¬æ¥ççè¿ä¸ªå¨SQLAlchemyæä½³å®è·µæ¯å¦ä½çæä½ã</p>
-<div class="cnblogs_code">
-<pre><span style="color: rgba(0, 0, 255, 1)">from</span> sqlalchemy <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> Table, Column, Integer, ForeignKey
-</span><span style="color: rgba(0, 0, 255, 1)">from</span> sqlalchemy.orm <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> relationship, Mapped, mapped_column
-</span><span style="color: rgba(0, 0, 255, 1)">from</span> database <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> Base
-
-</span><span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> --- ä¸­é´è¡¨åæ³ ---</span>
-role_user =<span style="color: rgba(0, 0, 0, 1)"> Table(
-    </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">role_user</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">,
-    Base.metadata,
-    Column(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">user_id</span><span style="color: rgba(128, 0, 0, 1)">"</span>, ForeignKey(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">users.id</span><span style="color: rgba(128, 0, 0, 1)">"</span>), primary_key=<span style="color: rgba(0, 0, 0, 1)">True),
-    Column(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">role_id</span><span style="color: rgba(128, 0, 0, 1)">"</span>, ForeignKey(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">roles.id</span><span style="color: rgba(128, 0, 0, 1)">"</span>), primary_key=<span style="color: rgba(0, 0, 0, 1)">True)
-)
-
-</span><span style="color: rgba(0, 0, 255, 1)">class</span><span style="color: rgba(0, 0, 0, 1)"> User(Base):
-    </span><span style="color: rgba(128, 0, 128, 1)">__tablename__</span> = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">users</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
-    id: Mapped[int] </span>= mapped_column(primary_key=<span style="color: rgba(0, 0, 0, 1)">True)
-    username: Mapped[str] </span>=<span style="color: rgba(0, 0, 0, 1)"> mapped_column()
-
-    roles: Mapped[list[</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">Role</span><span style="color: rgba(128, 0, 0, 1)">"</span>]] =<span style="color: rgba(0, 0, 0, 1)"> relationship(
-        secondary</span>=<span style="color: rgba(0, 0, 0, 1)">role_user,
-        back_populates</span>=<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">users</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">,
-        lazy</span>=<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">selectin</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
-    )
-
-</span><span style="color: rgba(0, 0, 255, 1)">class</span><span style="color: rgba(0, 0, 0, 1)"> Role(Base):
-    </span><span style="color: rgba(128, 0, 128, 1)">__tablename__</span> = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">roles</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
-    id: Mapped[int] </span>= mapped_column(primary_key=<span style="color: rgba(0, 0, 0, 1)">True)
-    name: Mapped[str] </span>=<span style="color: rgba(0, 0, 0, 1)"> mapped_column()
-
-    users: Mapped[list[User]] </span>=<span style="color: rgba(0, 0, 0, 1)"> relationship(
-        secondary</span>=<span style="color: rgba(0, 0, 0, 1)">role_user,
-        back_populates</span>=<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">roles</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">,
-        lazy</span>=<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">selectin</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
-    )</span></pre>
-</div>
-<p>å¨ SQLAlchemy å£°æå¤å¯¹å¤å³ç³»æ¶ï¼<code data-start="22" data-end="33">secondary</code> åæ°æ¢å¯ä»¥å¡« <strong data-start="41" data-end="53">å­ç¬¦ä¸²å½¢å¼çè¡¨å</strong>ï¼ä¹å¯ä»¥å¡« <strong data-start="59" data-end="84">å·²ç»å®ä¹å¥½çä¸­é´è¡¨å¯¹è±¡ï¼Table å¯¹è±¡ï¼ã</strong></p>
-<p><strong data-start="59" data-end="84">â  econdary="role_user" ââ ä½¿ç¨å­ç¬¦ä¸²è¡¨å</strong></p>
-<div class="cnblogs_code">
-<pre>roles = relationship(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">Role</span><span style="color: rgba(128, 0, 0, 1)">"</span>, secondary=<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">role_user</span><span style="color: rgba(128, 0, 0, 1)">"</span>, back_populates=<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">users</span><span style="color: rgba(128, 0, 0, 1)">"</span>)</pre>
-</div>
-<p><strong>â¡ secondary=role_user ââ ä¼ å¥ä¸­é´è¡¨å¯¹è±¡ï¼æ¨èæ¹å¼ï¼</strong></p>
-<div class="cnblogs_code">
-<pre>role_user =<span style="color: rgba(0, 0, 0, 1)"> Table(
-    </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">role_user</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">,
-    Base.metadata,
-    Column(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">user_id</span><span style="color: rgba(128, 0, 0, 1)">"</span>, ForeignKey(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">users.id</span><span style="color: rgba(128, 0, 0, 1)">"</span>), primary_key=<span style="color: rgba(0, 0, 0, 1)">True),
-    Column(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">role_id</span><span style="color: rgba(128, 0, 0, 1)">"</span>, ForeignKey(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">roles.id</span><span style="color: rgba(128, 0, 0, 1)">"</span>), primary_key=<span style="color: rgba(0, 0, 0, 1)">True)
-)
-
-roles </span>= relationship(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">Role</span><span style="color: rgba(128, 0, 0, 1)">"</span>, secondary=role_user, back_populates=<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">users</span><span style="color: rgba(128, 0, 0, 1)">"</span>)</pre>
-</div>
-<p>å¯¹äºå¦æè·åå¯¹åºè§è²çç¨æ·è®°å½ï¼æä»¬å¯ä»¥éè¿ä¸é¢æ¹å¼è·åï¼éè¿è¿æ¥ä¸­é´è¡¨çæ¹å¼ï¼</p>
-<div class="cnblogs_code">
-<pre>async <span style="color: rgba(0, 0, 255, 1)">def</span> get_users_by_role(db: AsyncSession, role_id: int) -&gt;<span style="color: rgba(0, 0, 0, 1)"> list[User]:
-    stmt </span>=<span style="color: rgba(0, 0, 0, 1)"> (
-        select(User)
-        .join(role_user, role_user.c.user_id </span>==<span style="color: rgba(0, 0, 0, 1)"> User.id)
-        .where(role_user.c.role_id </span>==<span style="color: rgba(0, 0, 0, 1)"> role_id)
-    )
-    result </span>=<span style="color: rgba(0, 0, 0, 1)"> await db.execute(stmt)
-    </span><span style="color: rgba(0, 0, 255, 1)">return</span> result.scalars().all()</pre>
-</div>
-<p>ä¹å¯ä»¥ä¸é¢çæ¹å¼è¿è¡å¤çï¼ä½¿ç¨ relationship any()ï¼ï¼æææ¯ä¸æ ·çã</p>
-<div class="cnblogs_code">
-<pre>select(User).filter(User.roles.any(id=role_id))</pre>
-</div>
-<p>å¦æéè¦åå¥ç¨æ·ãè§è²çå³èå³ç³»ï¼æä»¬å¯ä»¥ä½¿ç¨ä¸é¢æ¹æ³æ¥éè¿ä¸­é´è¡¨è¿è¡å¤æ­å¹¶åå¥è®°å½ã</p>
-<div class="cnblogs_code">
-<pre><span style="color: rgba(0, 0, 255, 1)">from</span> sqlalchemy <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> select, insert
-
-async </span><span style="color: rgba(0, 0, 255, 1)">def</span><span style="color: rgba(0, 0, 0, 1)"> add_users_to_role(db: AsyncSession, role_id: int, user_ids: list[int]):
-    </span><span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> 1ï¸â£ æ¥è¯¢å·²æå³è user_id</span>
-    stmt = select(role_user.c.user_id).where(role_user.c.role_id ==<span style="color: rgba(0, 0, 0, 1)"> role_id)
-    res </span>=<span style="color: rgba(0, 0, 0, 1)"> await db.execute(stmt)
-    existing_user_ids </span>= {row[0] <span style="color: rgba(0, 0, 255, 1)">for</span> row <span style="color: rgba(0, 0, 255, 1)">in</span><span style="color: rgba(0, 0, 0, 1)"> res.fetchall()}
-
-    </span><span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> 2ï¸â£ è¿æ»¤åºæ°ç user_id</span>
-    new_user_ids = [uid <span style="color: rgba(0, 0, 255, 1)">for</span> uid <span style="color: rgba(0, 0, 255, 1)">in</span> user_ids <span style="color: rgba(0, 0, 255, 1)">if</span> uid <span style="color: rgba(0, 0, 255, 1)">not</span> <span style="color: rgba(0, 0, 255, 1)">in</span><span style="color: rgba(0, 0, 0, 1)"> existing_user_ids]
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span> <span style="color: rgba(0, 0, 255, 1)">not</span><span style="color: rgba(0, 0, 0, 1)"> new_user_ids:
-        </span><span style="color: rgba(0, 0, 255, 1)">return</span> 0  <span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> æ²¡ææ°å¢</span>
-
-    <span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> 3ï¸â£ æ¹éæå¥</span>
-    values = [{<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">user_id</span><span style="color: rgba(128, 0, 0, 1)">"</span>: uid, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">role_id</span><span style="color: rgba(128, 0, 0, 1)">"</span>: role_id} <span style="color: rgba(0, 0, 255, 1)">for</span> uid <span style="color: rgba(0, 0, 255, 1)">in</span><span style="color: rgba(0, 0, 0, 1)"> new_user_ids]
-    stmt </span>=<span style="color: rgba(0, 0, 0, 1)"> insert(role_user).values(values)
-    await db.execute(stmt)
-    await db.commit()
-
-    </span><span style="color: rgba(0, 0, 255, 1)">return</span> len(new_user_ids)</pre>
-</div>
-<p>å¦æåªæ¯åä¸ªè®°å½çæå¥ï¼å¯ä»¥å©ç¨ä¸é¢çæ¹å¼å¤çã</p>
-<div class="cnblogs_code">
-<pre><span style="color: rgba(0, 0, 255, 1)">from</span> sqlalchemy <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> select, insert
-
-async </span><span style="color: rgba(0, 0, 255, 1)">def</span> add_user_to_role(db: AsyncSession, role_id: int, user_id: int) -&gt;<span style="color: rgba(0, 0, 0, 1)"> bool:
-    </span><span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> 1ï¸â£ æ£æ¥æ¯å¦å·²å­å¨å³è</span>
-    stmt =<span style="color: rgba(0, 0, 0, 1)"> select(role_user).where(
-        role_user.c.role_id </span>==<span style="color: rgba(0, 0, 0, 1)"> role_id,
-        role_user.c.user_id </span>==<span style="color: rgba(0, 0, 0, 1)"> user_id
-    )
-    res </span>=<span style="color: rgba(0, 0, 0, 1)"> await db.execute(stmt)
-    exists </span>=<span style="color: rgba(0, 0, 0, 1)"> res.first()
-
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)"> exists:
-        </span><span style="color: rgba(0, 0, 255, 1)">return</span> False  <span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> å·²å­å¨ï¼ä¸åæå¥</span>
-
-    <span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> 2ï¸â£ æå¥è®°å½</span>
-    stmt = insert(role_user).values(user_id=user_id, role_id=<span style="color: rgba(0, 0, 0, 1)">role_id)
-    await db.execute(stmt)
-    await db.commit()
-
-    </span><span style="color: rgba(0, 0, 255, 1)">return</span> True</pre>
-</div>
-<p>å é¤ç¨æ·è§è²çå³èå³ç³»ï¼éè¿ä¸é¢å½æ°è¿è¡å¤çå³å¯</p>
-<div class="cnblogs_code">
-<pre><span style="color: rgba(0, 0, 255, 1)">from</span> sqlalchemy <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> and_, or_, select
-</span><span style="color: rgba(0, 0, 255, 1)">from</span> sqlalchemy <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> delete as sa_delete, update as sa_update
-
-    async </span><span style="color: rgba(0, 0, 255, 1)">def</span> remove_user(self, db: AsyncSession, role_id: int, user_id: int) -&gt;<span style="color: rgba(0, 0, 0, 1)"> bool:
-        </span><span style="color: rgba(128, 0, 0, 1)">"""</span><span style="color: rgba(128, 0, 0, 1)">ç§»é¤è§è²-ç¨æ·å³è</span><span style="color: rgba(128, 0, 0, 1)">"""</span><span style="color: rgba(0, 0, 0, 1)">
-        stmt </span>=<span style="color: rgba(0, 0, 0, 1)"> sa_delete(user_role).where(
-            and_(
-                user_role.c.role_id </span>==<span style="color: rgba(0, 0, 0, 1)"> role_id,
-                user_role.c.user_id </span>==<span style="color: rgba(0, 0, 0, 1)"> user_id,
-            )
-        )
-        result </span>=<span style="color: rgba(0, 0, 0, 1)"> await db.execute(stmt)
-        await db.commit()
-
-        </span><span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> rowcount è¿åå é¤è¡æ°</span>
-        <span style="color: rgba(0, 0, 255, 1)">return</span> result.rowcount &gt; 0</pre>
-</div>
-<p>&nbsp;</p>
-<p>ä»¥ä¸å°±æ¯å¯¹äºå¨Python+FastAPIçåç«¯é¡¹ç®ä¸­ä½¿ç¨SqlAlchemyæä½æ°æ®çå ç§å¸¸è§æ¹å¼ï¼åæ¬åè¡¨å¤çï¼å¤è¡¨å³èãä¸­é´è¡¨çæ°æ®ç»´æ¤åå®ä¹ç­åå®¹ï¼æ¯æä»¬å¨æä½å¸¸è§æ°æ®çæ¶åï¼ç»å¸¸ç¢°å°çå ç§æ¹å¼ã</p>
-<p>å¸æä¸æå¯¹ä½ ææå¯ååå¸®å©ï¼æè°¢éè¯»ã</p>
-</div>
-<div id="MySignature" role="contentinfo">
-    <div style="border-right-color: #cccccc; border-right-width: 1px; border-right-style: solid; padding-right: 5px; border-top-color: #cccccc; border-top-width: 1px; border-top-style: solid; padding-left: 4px; font-size: 13px; padding-bottom: 4px; border-left-color: #cccccc; border-left-width: 1px; border-left-style: solid; width: 98%; padding-top: 4px; border-bottom-color: #cccccc; border-bottom-width: 1px; border-bottom-style: solid; background-color: #eeeeee;">
-    <img src="http://www.cnblogs.com/Images/OutliningIndicators/None.gif" align="top" alt="">
-    <span style="color: #000000"><span class="Apple-tab-span" style="white-space: pre"></span>
-     ä¸æ³¨äºä»£ç çæå·¥å·ã.Net/Python æ¡æ¶æ¶æåè½¯ä»¶å¼åï¼ä»¥ååç§Vue.jsçåç«¯ææ¯åºç¨ãèæWinformå¼åæ¡æ¶/æ··åå¼å¼åæ¡æ¶ãå¾®ä¿¡å¼åæ¡æ¶ãBootstrapå¼åæ¡æ¶ãABPå¼åæ¡æ¶ãSqlSugarå¼åæ¡æ¶ãPythonå¼åæ¡æ¶ç­æ¡æ¶äº§åã
-     <br>&nbsp;&nbsp;è½¬è½½è¯·æ³¨æåºå¤ï¼æ°åäººï¼ä¼åèª&nbsp;&nbsp;<a href="http://www.iqidi.com/" target="_blank">http://www.iqidi.com</a>&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
-</div>
-<div class="clear"></div>
-
-        </div>
-        <p class="postfoot">
-            posted on 
-<span id="post-date" data-last-update-days="0.027083333333333334" data-date-updated="2025-12-25 12:38">2025-12-25 11:59</span>&nbsp;
-<a href="https://www.cnblogs.com/wuhuacong">ä¼åèª</a>&nbsp;
-éè¯»(<span id="post_view_count">27</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19396612);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19396612', targetLink: 'https://www.cnblogs.com/wuhuacong/p/19396612', title: 'å¨Python+FastAPIé¡¹ç®ä¸­ä½¿ç¨SqlAlchemyæä½æ°æ®çå ç§å¸¸è§æ¹å¼' })">ä¸¾æ¥</a>
-
-        </p>
-     ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ å¥³åæéªå½åä¸è½ç¨Claude Codeï¼äºæ¯æç»å¥¹åäºä¸ä¸ª ]]></title>
-    <link>https://www.cnblogs.com/yupi/p/19397182</link>
-    <guid>b9be425a5b66ec6b613691adeeb47b09</guid>
+    <title><![CDATA[ LiteFlow æ¡æ¶åæç³»åï¼ä¸ï¼ï¼å·¥ä½åçä¸å¿«éå¥é¨ ]]></title>
+    <link>https://www.cnblogs.com/wasp520/p/19398574</link>
+    <guid>a851358d1903711ee37d7b72432f9859</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/yupi/p/19397182" title="åå¸äº 2025-12-25 11:28">
-    <span role="heading" aria-level="2">å¥³åæéªå½åä¸è½ç¨Claude Codeï¼äºæ¯æç»å¥¹åäºä¸ä¸ª</span>
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/wasp520/p/19398574" title="åå¸äº 2025-12-25 12:50">
+    <span role="heading" aria-level="2">LiteFlow æ¡æ¶åæç³»åï¼ä¸ï¼ï¼å·¥ä½åçä¸å¿«éå¥é¨</span>
     
 
 </a>
@@ -2467,295 +1966,367 @@ async </span><span style="color: rgba(0, 0, 255, 1)">def</span> add_user_to_role
             </h1>
             <div class="clear"></div>
             <div class="postBody">
-                    <div id="cnblogs_post_description" style="display: none">
-        <img src="https://img2024.cnblogs.com/blog/2225420/202512/2225420-20251225112813033-1712384844.png" alt="å¥³åæéªå½åä¸è½ç¨Claude Codeï¼äºæ¯æç»å¥¹åäºä¸ä¸ª" class="desc_img">
-        æè¿å¥³åå¼å§å­¦ä¹  AI ç¼ç¨äºï¼è¢«æå¸¦çï¼ï¼å¥¹å¬è¯´ Claude Code è¿ä¸ª AI ç¼ç¨å·¥å·å¾çæ°ï¼ç»æè¯äºä¸åç°å¾è¦å½å¤ç Claude è´¦å·æè½ç»éã
-    </div>
-<div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
-<p class="md-end-block md-heading"><span class="md-plain">å¤§å®¶å¥½ï¼ææ¯ç¨åºåé±¼ç®ãæè¿å¥³åå¼å§å­¦ä¹  AI ç¼ç¨äºï¼è¢«æå¸¦çï¼ï¼å¥¹å¬è¯´ Claude Code è¿ä¸ª AI ç¼ç¨å·¥å·å¾çæ°ï¼ç»æè¯äºä¸åç°å¾è¦å½å¤ç Claude è´¦å·æè½ç»éã</span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766562559951-d1371bb9-99d3-467a-aeec-421cd12eb3bb.png"><img data-src="https://pic.yupi.icu/1/1766562559951-d1371bb9-99d3-467a-aeec-421cd12eb3bb.png" class="lazyload"></span></p>
-<p class="md-end-block md-p"><span class="md-plain">ç¶åå¥¹å°±éªéªå§å§å°è·æåæ§½ã</span></p>
-<p class="md-end-block md-p"><span class="md-plain">å±ç°ç·ååçæ¶åå°äºï¼äºæ¯æå¼ç©ç¬å°è¯´ï¼å«é¾è¿äºï¼è¦ä¸æç»ä½ åä¸ä¸ª Claude Code ç®äºï¼</span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766562773776-4a34c38c-c95b-4eb9-8b02-81ca86133188.png"><img data-src="https://pic.yupi.icu/1/1766562773776-4a34c38c-c95b-4eb9-8b02-81ca86133188.png" class="lazyload"></span></p>
-<p class="md-end-block md-p"><span class="md-plain">ç»æï¼å¥¹å½çäºï¼</span></p>
-<p class="md-end-block md-p"><span class="md-plain">æ â</span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766562833168-97c7d4fc-bfe5-4a09-9215-dcfbdb546cb4.png"><img data-src="https://pic.yupi.icu/1/1766562833168-97c7d4fc-bfe5-4a09-9215-dcfbdb546cb4.png" class="lazyload"></span></p>
-<p class="md-end-block md-p"><span class="md-plain">æ²¡åæ³ï¼åªè½è¯ä¸è¯äºï¼æ¯ç«è°å¸æå£è¯èè¿ä¸¤å¤©è®©èªå®¶äººé¾è¿å¢ï¼</span></p>
-<p class="md-end-block md-p"><span class="md-plain">æ­£å¥½è¿ä¸¤å¤©å½äº§ AI å¤§æ¨¡å GLM-4.7 åå¸äºï¼æçç½ä¸å¾å¤åä¸»é½å¨å¹ä»ä¹ âå½åæå¼ºçç¼ç¨æ¨¡åâãâæå¼ºçå¼æºæ¨¡åâãâClaude çæä½³å¹³æ¿âï¼çè³è¯´æ¯è¶è¿äº GPT-5.2 å Claude Sonnet 4.5ã</span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766563074181-1ee8e12d-2868-4b23-b993-c0e61800565e.png"><img data-src="https://pic.yupi.icu/1/1766563074181-1ee8e12d-2868-4b23-b993-c0e61800565e.png" class="lazyload"></span></p>
-<p class="md-end-block md-p"><span class="md-plain">ä½ è¯´å½äº§æå¼ºä¹å°±ç®äºï¼è¶è¿ Claude è¿æè½ä¿¡ä¹ï¼</span></p>
-<p class="md-end-block md-p"><span class="md-plain">é£æ­£å¥½ï¼æå°±å°è¯ç¨ GLM-4.7 æ¥åä¸ªèªå·±ç AI ç¼ç¨å·¥å·å§ï¼å¯¹æ  Claude Code é£ç§çï¼çç GLM-4.7 å°åºå æ¤å ä¸¤ã</span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766551074508-575a037d-174a-43d2-bbfe-e223082fc665.png"><img data-src="https://pic.yupi.icu/1/1766551074508-575a037d-174a-43d2-bbfe-e223082fc665.png" class="lazyload"></span></p>
-<p class="md-end-block md-p"><span class="md-plain">æ¥ä¸æ¥ï¼å°±è®©æä»¬ä¸èµ· <span class="md-pair-s "><strong>ç¨ GLM-4.7 + Claude Code</strong><span class="md-plain"> å¼åä¸ä¸ª <span class="md-pair-s "><strong>åºäº GLM-4.7 çä»¿ Claude Code</strong><span class="md-plain"> ç AI ç¼ç¨å·¥å·ã</span></span></span></span></span></p>
-<p class="md-end-block md-p"><span class="md-plain">é¡¹ç®å¼å§åï¼åèµ·ä¸ä¸ªåå½å½çåå­ï¼å°±å« <span class="md-pair-s"><code>Yupi Code</code><span class="md-plain"> å§ï¼</span></span></span></p>
-<p class="md-end-block md-p"><span class="md-plain">æ¥ä¸æ¥ï¼æä»¬å°éµå¾ªè¿å¥ãé±¼ç® AI Vibe Coding å¼åä»¿ Claude Code ç Yupi Codeãæµç¨ï¼ä¸åä¸è¡ä»£ç ï¼ä¸æ­¥ä¸æ­¥æ âClaude Codeâ ååºæ¥ï¼</span></p>
-<ul class="ul-list" data-mark="-">
-<li class="md-list-item">
-<p class="md-end-block md-p"><span class="md-plain">ç¯å¢åå¤ =&gt; å®è£å·¥å·åéç½®ç¯å¢ï¼è½å¤ Vibe Coding</span></p>
-</li>
-<li class="md-list-item">
-<p class="md-end-block md-p"><span class="md-plain">ææ¯è°ç  =&gt; ç¡®è®¤æ»¡è¶³çæéæ±</span></p>
-</li>
-<li class="md-list-item">
-<p class="md-end-block md-p"><span class="md-plain">è®¾è®¡å¼å =&gt; åæ¬æ¹æ¡è®¾è®¡ãçæä»£ç ãä¿®å¤ Bugï¼å¾å° MVP æå°å¯è¡äº§å</span></p>
-</li>
-<li class="md-list-item">
-<p class="md-end-block md-p"><span class="md-plain">çæ¬æ§å¶ =&gt; é²æ­¢åç»­æ¹å¨åºé®é¢</span></p>
-</li>
-<li class="md-list-item">
-<p class="md-end-block md-p"><span class="md-plain">ä¼åè½å =&gt; æ¯ææ´å¤å¯¹æ  Claude Code çåè½ï¼æ¯å¦èç½æç´¢ãæµå¼è¾åºãæ·±åº¦æèç­</span></p>
-</li>
-</ul>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766549738919-9e627293-954a-4f39-8625-d1dcb1835cbc.jpeg"><img data-src="https://pic.yupi.icu/1/1766549738919-9e627293-954a-4f39-8625-d1dcb1835cbc.jpeg" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<h2 class="md-end-block md-heading"><span class="md-plain">ç¯å¢åå¤</span></h2>
-<p class="md-end-block md-p"><span class="md-plain">æºè°±ç GLM-4.7 å¼å®¹å¤æ¬¾ç¼ç å·¥å·ï¼é¤ Claude Code å¤ï¼è¿æ¯æ CursorãCline ç­ä¸»æµç¼ç å·¥å·ï¼çµæ´»ééå¤ç§å¼ååºæ¯ã</span></p>
-<p class="md-end-block md-p"><span class="md-plain">ç» Claude Code æ¥å¥ GLM ä¹å¾ç®åï¼1 åéæå®ã</span></p>
-<p class="md-end-block md-p"><span class="md-plain">é¦åæå¼ç»ç«¯ï¼è¾å¥ä¸è¡å½ä»¤å®è£ Claude Codeï¼</span></p>
-<pre class="md-fences md-end-block ty-contain-cm modeLoaded"><span><span class="cm-builtin">npm&nbsp;install&nbsp;<span class="cm-attribute">-g&nbsp;@anthropic-ai/claude-code</span></span></span></pre>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">ç¶åæ§è¡ <span class="md-pair-s"><code>claude</code><span class="md-plain"> å½ä»¤æå¼ç¨åºï¼é»è®¤æ¯éè¦ç»å½ Claude è´¦å·çï¼å¦åæ æ³ä½¿ç¨ï¼</span></span></span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1764145940075-ace6fd24-a09c-41c0-b400-1cffc394fc8a.png"><img data-src="https://pic.yupi.icu/1/1764145940075-ace6fd24-a09c-41c0-b400-1cffc394fc8a.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">ä¸è¿æ²¡å³ç³»ï¼è®©æä»¬æå®èåç AI å¤§æ¨¡åæ¢æå½åç GLM-4.7ãé¦åè¿å¥ <span class="md-pair-s"><code>{ç¨æ·ç®å½}/.claude</code><span class="md-plain"> ç®å½ï¼åå»ºä¸ä¸ª <span class="md-pair-s"><code>settings.json</code><span class="md-plain"> éç½®æä»¶ï¼ </span></span></span></span></span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1764146110361-06e13de5-7de4-4fc5-9533-3651447d5e19.png"><img data-src="https://pic.yupi.icu/1/1764146110361-06e13de5-7de4-4fc5-9533-3651447d5e19.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">ç¶åä¿®æ¹éç½®æä»¶ä¸­çåå®¹å¦ä¸ï¼è®°å¾æ¿æ¢æä½ èªå·±ç API Keyï¼</span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1764146125955-3029843c-26b8-4628-b2b7-a9d8abb2aef1.png"><img data-src="https://pic.yupi.icu/1/1764146125955-3029843c-26b8-4628-b2b7-a9d8abb2aef1.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">API Key ç´æ¥å°æºè°±å¼åå¹³å°è·åå³å¯ï¼</span></p>
-<p class="md-end-block md-p"><span class="md-plain">æè·¯ï¼<span class="md-link md-pair-s"><a href="https://bigmodel.cn/" rel="noopener nofollow">https://bigmodel.cn/</a></span></span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766552195823-7f90ead2-3e07-4eb4-92e2-7ef12c591e61.png"><img data-src="https://pic.yupi.icu/1/1766552195823-7f90ead2-3e07-4eb4-92e2-7ef12c591e61.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">æ¥ä¸æ¥å°±å¯ä»¥æå¿«å°ä½¿ç¨äº~</span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766549578200-7189d326-db17-4edd-9e27-2d9da3af06cf.png"><img data-src="https://pic.yupi.icu/1/1766549578200-7189d326-db17-4edd-9e27-2d9da3af06cf.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">é¤äºè¿ç§æ¹å¼å¤ï¼å®æ¹ææ¡£è¿æä¾äºæ´ç®åçæ¹å¼ï¼ç´æ¥ä½¿ç¨èªå¨åå©æï¼æç§æå¼å°±è½å®æç¯å¢éç½®ï¼</span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766552079851-2cd903df-febb-4860-98fc-51c1143b4105.png"><img data-src="https://pic.yupi.icu/1/1766552079851-2cd903df-febb-4860-98fc-51c1143b4105.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<h2 class="md-end-block md-heading"><span class="md-plain">ææ¯è°ç </span></h2>
-<p class="md-end-block md-p"><span class="md-plain">å¦æè¦å®å¨å©ç¨ AI å¼åé¡¹ç®ï¼æå ä¸ªé¾ç¹ï¼</span></p>
-<ol class="ol-list" start="">
-<li class="md-list-item">
-<p class="md-end-block md-p"><span class="md-plain">é¡¹ç®éè¦åå«å®æ´ååç«¯ï¼éè¦å¤§æ¨¡åæè¾å¼ºç <span class="md-pair-s "><strong>ç¼ç è½å</strong></span></span></p>
-</li>
-<li class="md-list-item">
-<p class="md-end-block md-p"><span class="md-plain">éè¦è®©åç«¯é¡¹ç®å¯¹æ¥ AI å¤§æ¨¡åï¼æ¯ä¸ªå¤§æ¨¡åçæ¥å¥åå¼åæ¹å¼ä¸åï¼éè¦è®© AI <span class="md-pair-s "><strong>è¯»åææ¡£</strong><span class="md-plain"> çè§£ææ°çå¼åæ¹å¼</span></span></span></p>
-</li>
-<li class="md-list-item">
-<p class="md-end-block md-p"><span class="md-plain">å¦ææ³è¦ä¼åçé¢ææï¼è¿éè¦ <span class="md-pair-s "><strong>å¾ççè§£è½å</strong><span class="md-plain">ï¼ç» AI ä¸å¼ å¾çå°±è½è®©å®è¿å</span></span></span></p>
-</li>
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h1 id="liteflow-æ¡æ¶åæç³»åä¸å·¥ä½åçä¸å¿«éå¥é¨">LiteFlow æ¡æ¶åæç³»åï¼ä¸ï¼ï¼å·¥ä½åçä¸å¿«éå¥é¨</h1>
+<h2 id="æè¦">æè¦</h2>
+<p>æ¬ç¯ä½ä¸º LiteFlow æ¡æ¶åæç³»åçç¬¬ä¸ç¯ï¼ä¸»è¦å¸¦å¤§å®¶å®è§äºè§£ LiteFlow æ¯ä»ä¹ï¼å®çæ ¸å¿è®¾è®¡çå¿µæ¯ä»ä¹ï¼ä»¥åå®æ¯å¦ä½éè¿ä¸å¥ç®åç DSLï¼é¢åç¹å®è¯­è¨ï¼è§åæ¥é©±å¨å¤æçä¸å¡é»è¾çãæä»¬å°éè¿ä¸ä¸ªç®åçç¤ºä¾ï¼ç»å PlantUML æ¶åºå¾ï¼å±ç¤º LiteFlow çè¿è¡æºå¶ã</p>
+<h2 id="1-liteflow-æ¯ä»ä¹">1. LiteFlow æ¯ä»ä¹ï¼</h2>
+<p>ç®åæ¥è¯´ï¼LiteFlow å°±æ¯ä¸ä¸ª<strong>ç¼æå¼çè§åå¼æ</strong>ã</p>
+<p>æ³è±¡ä¸ä¸ï¼ä½ çä»£ç éæ¯ä¸æ¯åæ»¡äºåç§ <code>if-else</code>ï¼æèä¸å èè¿ç Service è°ç¨ï¼ä¸å¡æµç¨å¤æçæ¶åï¼æ¹ä¸ä¸ªé»è¾å¯è½è¦å¨å¥½å ä¸ªæä»¶ï¼çµä¸åèå¨å¨èº«ã</p>
+<p>LiteFlow çåºç°å°±æ¯ä¸ºäºè§£å³è¿ä¸ªé®é¢ãå®æä½ çä¸å¡é»è¾æåæä¸ä¸ªä¸ªç¬ç«çâç»ä»¶âï¼Componentï¼ï¼ç¶åéè¿ä¸ä¸ªè§åæä»¶ï¼EL è¡¨è¾¾å¼ï¼æè¿äºç»ä»¶åæ­ç§¯æ¨ä¸æ ·ä¸²èµ·æ¥ã</p>
+<p><strong>æ ¸å¿ææ³å°±ä¸¤ç¹ï¼</strong></p>
+<ol>
+<li><strong>ç»ä»¶å</strong>ï¼æä¸å¡é»è¾åç¢ã</li>
+<li><strong>ç¼æå</strong>ï¼ç¨è§åæ¥å³å®æ§è¡é¡ºåºã</li>
 </ol>
-<p class="md-end-block md-p"><span class="md-plain">å¨æ­£å¼å¼ååï¼æä»¬è¦ç¡®è®¤ GLM-4.7 å Claude Code çéåè½å¤æ»¡è¶³è¿äºè½åè¦æ±ã</span></p>
-<p class="md-end-block md-p"><span class="md-plain">æ ¹æ®æºè°±å®æ¹ä»ç»ï¼Claude Code ä¸­åç½®äºæºè°±ä¸å±ç MCP å·¥å·ï¼ä¸éè¦å¼åèèªå·±å®è£ãåæ¬ <span class="md-pair-s "><strong>æç´¢åç½é¡µè¯»å</strong><span class="md-plain"> è½åãè½å¤ç´æ¥è§£ææªå¾/è®¾è®¡ç¨¿/æ¥éå¾ç <span class="md-pair-s "><strong>è§è§çè§£è½å</strong><span class="md-plain">ã</span></span></span></span></span></p>
-<p class="md-end-block md-p"><span class="md-plain">è®©æä»¬ä¾æ¬¡æµè¯ä¸ä¸ï¼é¦åæ¯ç½é¡µæç´¢è½åï¼ç´§è·æ¶äºï¼</span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766541771159-00bcb3ee-422b-4895-9ab6-15e5ad44937e.png"><img data-src="https://pic.yupi.icu/1/1766541771159-00bcb3ee-422b-4895-9ab6-15e5ad44937e.png" class="lazyload"></span></p>
-<p class="md-end-block md-p"><span class="md-plain">æµè¯ç½é¡µè¯»åè½åï¼è®©å®æ¥è¯»åæä»¬ç¼ç¨å¯¼èªç½ç«çä¿¡æ¯ï¼</span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766485091937-8555eddf-7301-4161-92d9-4f19251cf9d1.png"><img data-src="https://pic.yupi.icu/1/1766485091937-8555eddf-7301-4161-92d9-4f19251cf9d1.png" class="lazyload"></span></p>
-<p class="md-end-block md-p"><span class="md-plain">æµè¯å¾ççè§£è½åï¼æç» AI ä¼ äºä¸å¼  âä»å¤¯å°ææè¡æ¦çèæ¯å¾âï¼</span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766552716828-cc3c5015-a220-44c4-9c99-9ea6e6cc9a2e.png"><img data-src="https://pic.yupi.icu/1/1766552716828-cc3c5015-a220-44c4-9c99-9ea6e6cc9a2e.png" class="lazyload"></span></p>
-<p class="md-end-block md-p"><span class="md-plain">AI ççè§£è¿æ¯å¾åç¡®çï¼å·ä½æå­ä¹è¯»ååºæ¥äºã</span></p>
-<p class="md-end-block md-p"><span class="md-plain">OKï¼å ä¸ªè½åé½æ»¡è¶³è¦æ±ï¼ä¸é¢è®©æä»¬è¿å¥æ¹æ¡è®¾è®¡åå¼åé¶æ®µã</span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<h2 class="md-end-block md-heading"><span class="md-plain">è®¾è®¡å¼å</span></h2>
-<p class="md-end-block md-p"><span class="md-plain">ååå»ºä¸ä¸ªå¹²åçé¡¹ç®ç®å½ <span class="md-pair-s"><code>yupi-code</code><span class="md-plain">ï¼æå¼ç»ç«¯å¹¶è¿å¥è¯¥ç®å½ï¼</span></span></span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766545100781-86907b5b-56df-42de-a36f-21b2738102cd.png"><img data-src="https://pic.yupi.icu/1/1766545100781-86907b5b-56df-42de-a36f-21b2738102cd.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">ç¶åè¾å¥æç¤ºè¯ï¼</span></p>
-<pre class="md-fences md-end-block ty-contain-cm modeLoaded"><span>å¸®æå¼åä¸ä¸ªç±»ä¼¼ Claude Code çç»ç«¯ AI ç¼ç¨å·¥å·ï¼è½å¤ä½¿ç¨ GLM-4.7 æ¨¡åå¸®ç¨æ·åç­é®é¢åçæä»£ç </span></pre>
-<p class="md-end-block md-p"><span class="md-plain">ä¸è¬æ¥è¯´ï¼æ´ä¸ªé¡¹ç®çç¬¬ä¸å¥æç¤ºè¯æ¯æéè¦çï¼å¦ææè¦å¼åä¸ä¸ªå¤æçåä¸é¡¹ç®ï¼è¯å®ä¼å¥½å¥½æç£¨ä¸ä¸è¿å¥æç¤ºè¯ï¼å°è¯´åä¸ªå ç¾å­ï¼ä¹åçè¿æ <span class="md-meta-i-c  md-link"><a href="https://mp.weixin.qq.com/s/cd7K9WQiOkP7AJglZ1b1Ng" rel="noopener nofollow"><span class="md-plain">AI ç¨åºåææ¯ç»åµåºé¡¹ç®</span></a><span class="md-plain"> çåå­¦åºè¯¥ç¥éï¼ã</span></span></span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766553004293-19edef3f-ab54-4275-83fa-d5d78ed1a8ce.png"><img data-src="https://pic.yupi.icu/1/1766553004293-19edef3f-ab54-4275-83fa-d5d78ed1a8ce.png" class="lazyload"></span></p>
-<p class="md-end-block md-p"><span class="md-plain">ä½æµè¯ AI æ¨¡åæ¶ï¼æåæ¬¢åå¶éèè¡ä¹ï¼ç«å¨å¤§å¤æ°ç¨æ·çè§åº¦ï¼ææè¾å¥ä¸å¥ç®åçæç¤ºè¯ï¼çç AI è½ä¸è½å¼å¯¼ææ¥çææ»¡è¶³éæ±çé¡¹ç®ã</span></p>
-<p class="md-end-block md-p"><span class="md-plain">æç¶ï¼AI å¤æ­è¿æ¯ä¸ä¸ªå¤æçé¡¹ç®ï¼æ³è¦è¿å¥ <span class="md-pair-s "><strong>è®¡åæ¨¡å¼</strong><span class="md-plain"> ââ åæç¡®éæ±ãè®¾è®¡æ¹æ¡åå¼åã</span></span></span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766545143400-e5909edc-d015-4ed8-8a98-c1428a5807e4.png"><img data-src="https://pic.yupi.icu/1/1766545143400-e5909edc-d015-4ed8-8a98-c1428a5807e4.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">ç¶åæä»¬éè¦éè¿éæ©æ¥æç¡®éæ±ï¼å¹¶è®© AI çææ¹æ¡ã</span></p>
-<p class="md-end-block md-p"><span class="md-plain">Claude Code çäº¤äºåçè¿æ¯ä¸éçï¼åéæ©ç¼ç¨è¯­è¨ï¼å»ºè®®èèå®å®é AI æ¨èçç¬¬ä¸ä¸ªï¼</span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766545700277-0a92c7af-af6a-4bf3-b045-b35a8810fe82.png"><img data-src="https://pic.yupi.icu/1/1766545700277-0a92c7af-af6a-4bf3-b045-b35a8810fe82.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">æ¥ä¸æ¥æ¯éæ©é¡¹ç®è¦å·æçåè½ãå¦ææ¯ä»¥åï¼æå¯è½ä¼åè®© AI åªå¼ååºç¡å¯¹è¯åè½ï¼è·éæµç¨ååæ·»å å¶ä»åè½ã</span></p>
-<p class="md-end-block md-p"><span class="md-plain">ä½ç°å¨æå¯¹ AI æäºæ´å¤çä¿¡å¿ï¼<span class="md-pair-s "><strong>å±å°±æææåè½å¨é½éä¸ï¼å¹²å°±å®äºï¼</strong></span></span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766545748726-b5bcf0c2-1650-409d-9cfb-56874d80e7aa.png"><img data-src="https://pic.yupi.icu/1/1766545748726-b5bcf0c2-1650-409d-9cfb-56874d80e7aa.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">å¶ä»è®¾ç½®å°±ä¸å¤è¯´äºï¼</span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766545906676-50ffc0ba-404a-42e0-af0e-c4797a5d5d77.png"><img data-src="https://pic.yupi.icu/1/1766545906676-50ffc0ba-404a-42e0-af0e-c4797a5d5d77.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">éæ©å®æåï¼AI ç»åºäºè¯¦ç»çå®ç°è®¡åï¼ä¸å®è¦ä»ç»éè¯»ï¼</span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766546189349-27a4a8d7-92c0-4cf4-931e-e98e304736c9.png"><img data-src="https://pic.yupi.icu/1/1766546189349-27a4a8d7-92c0-4cf4-931e-e98e304736c9.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">ä½ å¯ä»¥ç´æ¥æ§è¡ï¼æèç» AI è¿ä¸æ­¥çæå¯¼ãæ¯å¦æè®© AI çæçåºç¨å»è°ç¨æºè°± Coding Plan å¥é¤ç BASE URLï¼è½èçº¦ä¸äºææ¬ï¼å¹¶ä¸ç» AI æä¾äºä¸ä¸ªå®æ¹ç API ææ¡£ï¼ä¾¿äº AI çæåç¡®çä»£ç ã</span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766546246817-adc95f50-246d-4c9c-b0cd-35f6433c9b40.png"><img data-src="https://pic.yupi.icu/1/1766546246817-adc95f50-246d-4c9c-b0cd-35f6433c9b40.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">ç¡®è®¤åå¼å§æ§è¡ï¼AI ä¼åè°ç¨åç½®çå·¥å·æ¥æç´¢åè§£æææ¡£ï¼</span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766546433884-517bb8d9-8eb0-4a44-bd9c-0b0591af4184.png"><img data-src="https://pic.yupi.icu/1/1766546433884-517bb8d9-8eb0-4a44-bd9c-0b0591af4184.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">ç¶å AI ååºäºä¸ä¸ª Todo Listï¼å¹¶ä¸ä¸æ­¥æ­¥çæä»£ç åææ¡£ï¼</span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766546471145-170595b6-05b5-440e-a208-671c362eb002.png"><img data-src="https://pic.yupi.icu/1/1766546471145-170595b6-05b5-440e-a208-671c362eb002.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">è¿æé´å¦æä½ åç°æä¸¥éçé®é¢ï¼æ¯å¦åç° AI çæçä»£ç å·²ç»å®å¨åç¦»é¢æäºï¼é£ä¹å°±å°½æ©æåæèäººå·¥è¾å¥æç¤ºè¯æ¥å¼å¯¼ AIãå¦æåç° AI åªæ¯æä¸å°åä»£ç çæçä¸å¯¹ï¼æçå»ºè®®æ¯åå¿çï¼åæ­£æå AI å¤§æ¦çä¼èªå·±åç°é®é¢å¹¶ä¿®å¤ã</span></p>
-<p class="md-end-block md-p"><span class="md-plain">è¿äºå¤§æ¦åå åéåï¼AI çæå®æï¼è¿åè¯äºæä½¿ç¨æ¹æ³ï¼</span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766546800949-d8f28864-141e-477e-af98-a25bf02d99e7.png"><img data-src="https://pic.yupi.icu/1/1766546800949-d8f28864-141e-477e-af98-a25bf02d99e7.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">å¯æææ ¹æ¬æå¾çï¼æç´æ¥æ API Key äº¤ç» AI å¸®æè¿è¡ä¸å°±å¥½äºï¼</span></p>
-<p class="md-end-block md-p"><span class="md-plain">Vibe Coding å¼åæ¨¡å¼ä¸ï¼æå¤èªå·±åä¸ä»¶äºï¼é½æ¯å¯¹ AI çä¸å°éã</span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766553290398-ad4d9c90-f804-4f46-b040-c65f821897d0.png"><img data-src="https://pic.yupi.icu/1/1766553290398-ad4d9c90-f804-4f46-b040-c65f821897d0.png" class="lazyload"></span></p>
-<p class="md-end-block md-p"><span class="md-plain">è¾å¥æç¤ºè¯ï¼</span></p>
-<pre class="md-fences md-end-block ty-contain-cm modeLoaded"><span>æç API key æ¯ xxxxxxxï¼è¯·ä½ å¸®æè¿è¡</span></pre>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">ç¶åï¼ç¿»è½¦äºããã</span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766546943625-ae073ada-da33-429a-bbf8-a642f50204dd.png"><img data-src="https://pic.yupi.icu/1/1766546943625-ae073ada-da33-429a-bbf8-a642f50204dd.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">ä¸æï¼ç´æ¥è®© AI èªå·±æ£æ¥å¹¶ä¿®å¤éè¯¯ãèä¸ä¸ºäºä½¿ç¨æ¹ä¾¿ï¼åºè¯¥æä¾ä¸ä¸ªå¿«éå¯å¨èæ¬ï¼è½å¤è®©æåè¿è¡ Claude Code ä¸æ ·ï¼ä¸è¡å½ä»¤å¯å¨ AI ç¼ç¨å·¥å·ã</span></p>
-<p class="md-end-block md-p"><span class="md-plain">æç¤ºè¯ï¼</span></p>
-<pre class="md-fences md-end-block ty-contain-cm modeLoaded"><span>å¸®ææ£æ¥å¹¶ä¿®å¤é¡¹ç®ä¸­çéè¯¯ï¼å¹¶åå»ºä¸ä¸ªå¯ä»¥å Claude ä¸æ ·è®©ç¨æ·å¨å½ä»¤è¡è¾å¥ "yupicode" å°±è½å¯å¨ç¨åºçå¿«æ·èæ¬</span></pre>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">å åéåï¼AI ä¿®å¤å®æï¼å¹¶ä¸æä¾äºä¸ä¸ª <span class="md-pair-s"><code>yupicode</code><span class="md-plain"> èæ¬ï¼</span></span></span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766547157316-1e78081d-7d98-43c2-8fc6-37f40dcd1d81.png"><img data-src="https://pic.yupi.icu/1/1766547157316-1e78081d-7d98-43c2-8fc6-37f40dcd1d81.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">ææå¼ä¸ä¸ªæ°çç»ç«¯ï¼ç¶åè¿è¡ <span class="md-pair-s"><code>yupicode</code><span class="md-plain"> èæ¬ï¼å°è¯å AI å¯¹è¯ï¼</span></span></span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766488187720-0dedd977-3663-4146-8fc6-bd5e8d65a7ea.png"><img data-src="https://pic.yupi.icu/1/1766488187720-0dedd977-3663-4146-8fc6-bd5e8d65a7ea.png" class="lazyload"></span></p>
-<p class="md-end-block md-p"><span class="md-plain">ä½ å«è¯´ï¼ææè¿ä¸éåï¼</span></p>
-<p class="md-end-block md-p"><span class="md-plain">è¿å Claude Code ä¸æ ·æä¾äºä¸äºå½ä»¤ï¼æ¯å¦æ¸ç©ºå¯¹è¯åå²ãæ¥çå¸®å©ä¹ç±»çï¼</span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766488215355-476254ae-1fdd-44fe-94a7-939621a5b3f3.png"><img data-src="https://pic.yupi.icu/1/1766488215355-476254ae-1fdd-44fe-94a7-939621a5b3f3.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">çå°è¿éï¼ææè§é¡¹ç®å·²ç»åºæ¬å¯ç¨äºãå»ºè®®ç»é¡¹ç®ä¸ä¸ª Git æ¥çæ¬æ§å¶ï¼é²æ­¢åé¢çæ¹å¨åºé®é¢ã</span></p>
-<p class="md-end-block md-p"><span class="md-plain">ä»ä¹ï¼ä½ ä¸ç¥é Git æ¯ä»ä¹ï¼</span></p>
-<p class="md-end-block md-p"><span class="md-plain">æ²¡å³ç³»ï¼ç´æ¥äº¤ç» AI å§ï¼</span></p>
-<pre class="md-fences md-end-block ty-contain-cm modeLoaded"><span>ç°å¨é¡¹ç®å·²ç»åºæ¬å¯ç¨äºï¼å¸®ææäº¤ä¸ä¸ª git çæ¬ï¼é²æ­¢åç»­æ¹å¨åºé®é¢</span></pre>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766547719776-e4ca2495-158d-441e-b995-d2e3b475187b.png"><img data-src="https://pic.yupi.icu/1/1766547719776-e4ca2495-158d-441e-b995-d2e3b475187b.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">æµè¯ä¸æ¥ï¼ç®åç Yupi Code è¿æä¸äºä¸è¶³ä¹å¤ï¼æ¯å¦ä¸æ¯ææç´¢ï¼</span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766488309079-9e05324c-b780-4476-b7a1-09e0b0a12ed4.png"><img data-src="https://pic.yupi.icu/1/1766488309079-9e05324c-b780-4476-b7a1-09e0b0a12ed4.png" class="lazyload"></span></p>
-<p class="md-end-block md-p"><span class="md-plain">æ¥ä¸æ¥å°±è®©æä»¬ä¼åé¡¹ç®ï¼å¢å æ´å¤ Claude Code æ¯æçè½åã</span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<h2 class="md-end-block md-heading"><span class="md-plain">ä¼åè½å</span></h2>
-<p class="md-end-block md-p"><span class="md-plain">1ï¼åæ¥æ·»å ç½ç»æç´¢è½åï¼ç´æ¥ææºè°±çå®æ¹ææ¡£ç»å®ä¸¢è¿å»ãæç¤ºè¯å¦ä¸ï¼</span></p>
-<pre class="md-fences md-end-block ty-contain-cm modeLoaded"><span>ç°å¨å¥½åä¸æ¯æç½ç»æç´¢ï¼è¯·åè<br><span>https://docs.bigmodel.cn/api-reference/%E5%B7%A5%E5%85%B7-api/%E7%BD%91%E7%BB%9C%E6%90%9C%E7%B4%A2<br><span>ææ¡£ï¼å¢å ç½ç»æç´¢å·¥å·è°ç¨è½å</span></span></span></pre>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766547400820-047db1e2-dee7-4bb3-875c-3c3d03d7bf60.png"><img data-src="https://pic.yupi.icu/1/1766547400820-047db1e2-dee7-4bb3-875c-3c3d03d7bf60.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">å¾å¿« AI å°±æ·»å äºæ°åè½ï¼éæ°æå¼ yupicode æ¥éªè¯ä¸ï¼æ­£å¸¸çæäºï¼</span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766542072968-2a635280-4f04-41c7-9e72-b149b503b18e.png"><img data-src="https://pic.yupi.icu/1/1766542072968-2a635280-4f04-41c7-9e72-b149b503b18e.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">2ï¼ä¸é¢åä¼åä¸ AI åå¤çææï¼ç®åæ¯å¡ä¸ä¼å¿ç¶åç´æ¥è¾åºå®æ´åç­ï¼éè¦è°æ´ä¸ºæµå¼è¾åºçæå­æºææã</span></p>
-<p class="md-end-block md-p"><span class="md-plain">æç¤ºè¯ï¼</span></p>
-<pre class="md-fences md-end-block ty-contain-cm modeLoaded"><span>æå¸æå¨ç­å¾ AI åå¤æ¶ï¼æä¸ä¸ªè½¬åçå°å¾æ ï¼å¹¶ä¸ AI çåå¤å¯ä»¥å®æ¶æµå¼è¾åº</span></pre>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">AI å¾å¿«å°±æå®äºï¼</span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766547560315-96b3044c-21d4-4017-b3b2-8e6c599fdfac.png"><img data-src="https://pic.yupi.icu/1/1766547560315-96b3044c-21d4-4017-b3b2-8e6c599fdfac.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">3ï¼GLM-4.7 è¿ä¸æ­¥å¼ºåäºäº¤éå¼æèè½åï¼å¼å¥ <span class="md-pair-s "><strong>ä¿çå¼æè</strong><span class="md-plain"> å <span class="md-pair-s "><strong>è½®çº§æè</strong><span class="md-plain">ï¼è®©å¤æä»»å¡æ§è¡æ´ç¨³ãæ´å¯æ§ãæä»¬ä¹åºè¯¥è®© Yupi Code è¾åºæ¨¡åçæèä¿¡æ¯ãå·¥å·è°ç¨ä¿¡æ¯ç­ç­ï¼å¸®å©ç¨æ·äºè§£æåµã</span></span></span></span></span></p>
-<p class="md-end-block md-p"><span class="md-plain">è¾å¥æç¤ºè¯ï¼</span></p>
-<pre class="md-fences md-end-block ty-contain-cm modeLoaded"><span>å¸®æè¾åºæ¨¡åæèçä¿¡æ¯ãä»¥åå·¥å·è°ç¨ä¿¡æ¯ï¼ä½ å¯ä»¥éè¿å®æ¹ææ¡£æ¥äºè§£å¦ä½å¼å</span></pre>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766547838246-0de4e1a6-46e7-4fa0-9f69-2cc6c137d941.png"><img data-src="https://pic.yupi.icu/1/1766547838246-0de4e1a6-46e7-4fa0-9f69-2cc6c137d941.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">æµè¯ä¸ä¸ä¼ååçææï¼æ¯å¦ âä»ç»ä¸ä¸é±¼ç®ç AI å¯¼èªç½ç«âï¼è½å¾æ¸æ°å°çå°æèè¿ç¨ï¼</span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766491085646-e55d65e2-f1f4-4de5-9b2e-a580f6671fab.png"><img data-src="https://pic.yupi.icu/1/1766491085646-e55d65e2-f1f4-4de5-9b2e-a580f6671fab.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<h2 class="md-end-block md-heading"><span class="md-plain">å¤§ååæ</span></h2>
-<p class="md-end-block md-p"><span class="md-plain">å°è¿éï¼ä»¿ç§ Claude Code å¼åç Yupi Code å°±å·²ç»å®æäºï¼è®©æä»¬ç¨å®æ¥å¼åä¸ªå°ç½ç«è¯è¯ã</span></p>
-<p class="md-end-block md-p"><span class="md-plain">æ¯å¦æ¥ä¸ªå¨ç»å­¦ç®æ³ç Demoï¼æç¤ºè¯ï¼</span></p>
-<pre class="md-fences md-end-block ty-contain-cm modeLoaded"><span>å¸®æå¼åä¸ä¸ªå­¦ä¹ åæ³¡æåºç®æ³çå¨ç»ç½ç«ï¼ä½¿ç¨ Q çå¨æ¼«çé£æ ¼ååä¼å¡åæè§çéè²</span></pre>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766491627903-c7a8401b-a029-4f60-86c2-583459f60098.png"><img data-src="https://pic.yupi.icu/1/1766491627903-c7a8401b-a029-4f60-86c2-583459f60098.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">ææå¦å¾ï¼ç»é£è¿æ¯ä¸éçï¼ä½è¦æ¯ä¹åå¤§æ¨¡åè½èªå¨çæå¾çæç»å¹¶æ·»å å°ç½ç«ä¸­ï¼å°±æ´å¥½äºã</span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766492330648-78beb8fe-20f5-4577-9a5a-9c6844b15ba1.png"><img data-src="https://pic.yupi.icu/1/1766492330648-78beb8fe-20f5-4577-9a5a-9c6844b15ba1.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">åæ¥å¼åä¸ªä»¿çççµå­é»æ¿ï¼æç¤ºè¯ï¼</span></p>
-<pre class="md-fences md-end-block ty-contain-cm modeLoaded"><span>å¸®æå¼åä¸ä¸ªä»¿çççµå­é»æ¿ï¼ç¨æ·å¯ä»¥å¨ä¸é¢ç»ç»å¹¶å¯¼åºä¸ºå¾ç</span></pre>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766543009945-1be675f7-2cb1-43ce-9794-36cfa3cf9f87.png"><img data-src="https://pic.yupi.icu/1/1766543009945-1be675f7-2cb1-43ce-9794-36cfa3cf9f87.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">å£è¯èäºï¼é±¼ç®ç»å¤§å®¶ç»é¢å£è¯æ ï¼è¿éèµ ä¸ä¸ªå°ç¤¼ç©ï¼è¿æä¹è½ä¸ç®æ¯ç¨åºåçæµªæ¼«å¢~</span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766548114861-81c8b4d2-b7fc-4134-8722-264edf56f229.png"><img data-src="https://pic.yupi.icu/1/1766548114861-81c8b4d2-b7fc-4134-8722-264edf56f229.png" class="lazyload"></span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<div class="md-hr md-end-block"><hr></div>
-<p class="md-end-block md-p">&nbsp;</p>
-<p class="md-end-block md-p"><span class="md-plain">OKï¼è¿å°±æ¯æ <span class="md-pair-s "><strong>å©ç¨å½äº§ç AI å¤§æ¨¡å GLM-4.7 + Claude Code</strong><span class="md-plain"> å¼ååºä¸ä¸ª <span class="md-pair-s "><strong>åºäº GLM-4.7 ç Yupi Code</strong><span class="md-plain"> çå¨è¿ç¨äºã</span></span></span></span></span></p>
-<p class="md-end-block md-p"><span class="md-plain">æèªå·±ä½éªä¸æ¥ï¼GLM-4.7 ç¸æ¯äºä¹åçå½åå¤§æ¨¡åï¼å¨å¤çå¤æä»»å¡çç¨³å®æ§ä¸æè¿æ­¥ï¼å³ä½¿éå°é®é¢ä¹ä¼èªå¨ä¿®å¤ï¼è®©æç»çæçä»£ç å¯è¿è¡ã</span></p>
-<p class="md-end-block md-p"><span class="md-plain">èä¸ GLM-4.7 è°ç¨å·¥å·çè½åä¹å¼ºåäºï¼å Claude Code ç­ AI ç¼ç¨å·¥å·æéåï¼ç´æ¥åç½®äºèç½æç´¢ãç½é¡µè¯»åãè§£éå¾çç­ AI ç¼ç¨å¸¸ç¨çè½åï¼ä¸éè¦èªå·±åå»æ¾ MCP æ¥å¢å¼ºäºã</span></p>
-<p class="md-end-block md-p"><span class="md-plain">ä¸å¾ä¸è¯´ï¼ä½ä¸ºä¸ç´å³æ³¨æºè°± AI çå¿ å®å¼åèï¼ççå¾è½æåå°ä»ä»¬è¿å ä¸ªææ¥å¨ AI ç¼ç¨æ¹åçåªåï¼æç¸ä¿¡å¤§å®¶ä¹æ¯æç®å±ç¹ã</span></p>
-<p class="md-end-block md-p"><span class="md-plain">ä¸è¿æ¯ç«ç°å¨ç Yupi Code æ¯ AI ä¸ææ¢­çï¼è¿æå¾å¤è½ä¼åå®åçå°æ¹ãå¦æåé¢ææ¶é´ï¼å¤§å®¶ä¹æå´è¶£çè¯ï¼è¯´ä¸å®æä¼å¥½å¥½æç£¨æç£¨è¿ä¸ªå·¥å·æå®å¼æºåºæ¥ãæçç»æç®æ æ¯ï¼è®©åºäº <span class="md-pair-s "><strong>AI å¤§æ¨¡å GLM-4.7 + Claude Code</strong><span class="md-plain"> å¼åçåºäº <span class="md-pair-s "><strong>GLM-4.7 ç Yupi Code</strong><span class="md-plain"> ç¼ç¨å·¥å·ï¼è½å¤å¼ååºä¸ä¸ªåºäº <span class="md-pair-s "><strong>GLM-4.7 ç</strong><span class="md-plain"> ç¼ç¨å·¥å·ï¼æ¯å¦ Yupi Son Codeãæè®¤ä¸ºå¥½ç AI å·¥å·å°±æ¯è¦è½åå°æ éå¥å¨ï¼ç¯çèªä¸¾ï¼</span></span></span></span></span></span></span></p>
-<p class="md-end-block md-p"><span class="md-image md-img-loaded" data-src="https://pic.yupi.icu/1/1766549948743-c5e1340a-5b3d-4419-b5df-c2fd4a5c2c7f.jpeg"><img data-src="https://pic.yupi.icu/1/1766549948743-c5e1340a-5b3d-4419-b5df-c2fd4a5c2c7f.jpeg" class="lazyload"></span></p>
-<p class="md-end-block md-p"><span class="md-plain">å¬ææå£°~</span></p>
-<p class="md-end-block md-p">&nbsp;</p>
-<h2 class="md-end-block md-heading"><span class="md-plain">æ´å¤ç¼ç¨å­¦ä¹ èµæº</span></h2>
-<ul class="ul-list" data-mark="-">
-<li class="md-list-item">
-<p class="md-end-block md-p"><span class="md-meta-i-c  md-link"><a href="https://www.code-nav.cn/course" rel="noopener nofollow"><span class="md-plain">Javaåç«¯ç¨åºåå¿åé¡¹ç®å®ææç¨+æ¯è®¾ç½ç«</span></a></span></p>
-</li>
-<li class="md-list-item">
-<p class="md-end-block md-p"><span class="md-meta-i-c  md-link"><a href="https://www.code-nav.cn/" rel="noopener nofollow"><span class="md-plain">ç¨åºååè´¹ç¼ç¨å­¦ä¹ äº¤æµç¤¾åºï¼èªå­¦å¿å¤ï¼</span></a></span></p>
-</li>
-<li class="md-list-item">
-<p class="md-end-block md-p"><span class="md-meta-i-c  md-link"><a href="https://www.code-nav.cn/course/cv" rel="noopener nofollow"><span class="md-plain">ç¨åºåä¿å§çº§æ±èåç®åæåï¼æ¾å·¥ä½å¿å¤ï¼</span></a></span></p>
-</li>
-<li class="md-list-item">
-<p class="md-end-block md-p"><span class="md-meta-i-c  md-link"><a href="https://www.mianshiya.com/" rel="noopener nofollow"><span class="md-plain">ç¨åºååè´¹é¢è¯å·é¢ç½ç«å·¥å·ï¼æ¾å·¥ä½å¿å¤ï¼</span></a></span></p>
-</li>
-<li class="md-list-item">
-<p class="md-end-block md-p"><span class="md-meta-i-c  md-link"><a href="https://www.code-nav.cn/post/1640584449888772098" rel="noopener nofollow"><span class="md-plain">ææ°Javaé¶åºç¡å¥é¨å­¦ä¹ è·¯çº¿ + Javaæç¨</span></a></span></p>
-</li>
-<li class="md-list-item">
-<p class="md-end-block md-p"><span class="md-meta-i-c  md-link"><a href="https://www.code-nav.cn/post/1640586673306091521" rel="noopener nofollow"><span class="md-plain">ææ°Pythoné¶åºç¡å¥é¨å­¦ä¹ è·¯çº¿ + Pythonæç¨</span></a></span></p>
-</li>
-<li class="md-list-item">
-<p class="md-end-block md-p"><span class="md-meta-i-c  md-link"><a href="https://www.code-nav.cn/post/1640586014108303362" rel="noopener nofollow"><span class="md-plain">ææ°åç«¯é¶åºç¡å¥é¨å­¦ä¹ è·¯çº¿ + åç«¯æç¨</span></a></span></p>
-</li>
-<li class="md-list-item">
-<p class="md-end-block md-p"><span class="md-meta-i-c  md-link"><a href="https://www.code-nav.cn/post/1640586867363954689" rel="noopener nofollow"><span class="md-plain">ææ°æ°æ®ç»æåç®æ³é¶åºç¡å¥é¨å­¦ä¹ è·¯çº¿ + ç®æ³æç¨</span></a></span></p>
-</li>
-<li class="md-list-item">
-<p class="md-end-block md-p"><span class="md-meta-i-c  md-link"><a href="https://www.code-nav.cn/post/1644279832026075138" rel="noopener nofollow"><span class="md-plain">ææ°C++é¶åºç¡å¥é¨å­¦ä¹ è·¯çº¿ãC++æç¨</span></a></span></p>
-</li>
-<li class="md-list-item">
-<p class="md-end-block md-p"><span class="md-meta-i-c  md-link"><a href="https://www.code-nav.cn/post/1641797333479903234" rel="noopener nofollow"><span class="md-plain">ææ°æ°æ®åºé¶åºç¡å¥é¨å­¦ä¹ è·¯çº¿ + æ°æ®åºæç¨</span></a></span></p>
-</li>
-<li class="md-list-item">
-<p class="md-end-block md-p"><span class="md-meta-i-c  md-link"><a href="https://www.code-nav.cn/post/1640589994284695553" rel="noopener nofollow"><span class="md-plain">ææ°Redisé¶åºç¡å¥é¨å­¦ä¹ è·¯çº¿ + Redisæç¨</span></a></span></p>
-</li>
-<li class="md-list-item">
-<p class="md-end-block md-p"><span class="md-meta-i-c  md-link"><a href="https://www.code-nav.cn/post/1641035880439271426" rel="noopener nofollow"><span class="md-plain">ææ°è®¡ç®æºåºç¡å¥é¨å­¦ä¹ è·¯çº¿ + è®¡ç®æºåºç¡æç¨</span></a></span></p>
-</li>
-<li class="md-list-item">
-<p class="md-end-block md-p"><span class="md-meta-i-c  md-link"><a href="https://www.code-nav.cn/post/1641366118197153793" rel="noopener nofollow"><span class="md-plain">ææ°å°ç¨åºå¥é¨å­¦ä¹ è·¯çº¿ + å°ç¨åºå¼åæç¨</span></a></span></p>
-</li>
-<li class="md-list-item">
-<p class="md-end-block md-p"><span class="md-meta-i-c  md-link"><a href="http://sqlmother.yupi.icu/" rel="noopener nofollow"><span class="md-plain">ææ°SQLé¶åºç¡å¥é¨å­¦ä¹ è·¯çº¿ + SQLæç¨</span></a></span></p>
-</li>
-<li class="md-list-item">
-<p class="md-end-block md-p"><span class="md-meta-i-c  md-link"><a href="https://www.code-nav.cn/post/1640586295529324545" rel="noopener nofollow"><span class="md-plain">ææ°Linuxé¶åºç¡å¥é¨å­¦ä¹ è·¯çº¿ + Linuxæç¨</span></a></span></p>
-</li>
-<li class="md-list-item">
-<p class="md-end-block md-p"><span class="md-meta-i-c  md-link"><a href="https://www.code-nav.cn/post/1640588753362108417" rel="noopener nofollow"><span class="md-plain">ææ°Git/GitHubé¶åºç¡å¥é¨å­¦ä¹ è·¯çº¿ + Gitæç¨</span></a></span></p>
-</li>
-<li class="md-list-item">
-<p class="md-end-block md-p"><span class="md-meta-i-c  md-link"><a href="https://www.code-nav.cn/post/1640587909942099969" rel="noopener nofollow"><span class="md-plain">ææ°æä½ç³»ç»é¶åºç¡å¥é¨å­¦ä¹ è·¯çº¿ + æä½ç³»ç»æç¨</span></a></span></p>
-</li>
-<li class="md-list-item">
-<p class="md-end-block md-p"><span class="md-meta-i-c  md-link"><a href="https://www.code-nav.cn/post/1640588119619551233" rel="noopener nofollow"><span class="md-plain">ææ°è®¡ç®æºç½ç»é¶åºç¡å¥é¨å­¦ä¹ è·¯çº¿ + è®¡ç®æºç½ç»æç¨</span></a></span></p>
-</li>
-<li class="md-list-item">
-<p class="md-end-block md-p"><span class="md-meta-i-c  md-link"><a href="https://www.code-nav.cn/post/1640588392073150465" rel="noopener nofollow"><span class="md-plain">ææ°è®¾è®¡æ¨¡å¼é¶åºç¡å¥é¨å­¦ä¹ è·¯çº¿ + è®¾è®¡æ¨¡å¼æç¨</span></a></span></p>
-</li>
-<li class="md-list-item md-focus-container">
-<p class="md-end-block md-p md-focus"><span class="md-meta-i-c md-link md-expand"><a href="https://www.code-nav.cn/post/1640648711119892481" rel="noopener nofollow"><span class="md-plain">ææ°è½¯ä»¶å·¥ç¨é¶åºç¡å¥é¨å­¦ä¹ è·¯çº¿ + è½¯ä»¶å·¥ç¨æç¨</span></a></span></p>
-</li>
+<h2 id="2-æ ¸å¿æ¦å¿µ">2. æ ¸å¿æ¦å¿µ</h2>
+<p>å¨æ·±å¥æºç ä¹åï¼å±ä»¬å¾åå¯¹é½ä¸ä¸ LiteFlow çå ä¸ªæ ¸å¿æ¦å¿µï¼è¿å°±åå­¦å¤è¯­åèåè¯ä¸æ ·ã</p>
+<ul>
+<li><strong>Node (èç¹)</strong>ï¼æµç¨ä¸­æå°çæ§è¡ååãä½ å¯ä»¥æå®çè§£ä¸ºä¸ä¸ª Java ç±»ï¼éé¢åäºå·ä½çä¸å¡ä»£ç ã</li>
+<li><strong>Component (ç»ä»¶)</strong>ï¼Node çå·ä½å®ç°ãå¨ä»£ç éï¼éå¸¸ç»§æ¿ <code>NodeComponent</code> ç±»ã</li>
+<li><strong>Chain (æµç¨é¾)</strong>ï¼ä¸ä¸² Node çç»åãæ¯å¦âåæ§è¡ Aï¼åæ§è¡ Bï¼å¦æ A æåäºåæ§è¡ Câï¼è¿å°±æ¯ä¸æ¡ Chainã</li>
+<li><strong>EL (è¡¨è¾¾å¼è¯­è¨)</strong>ï¼ç¨æ¥å®ä¹ Chain çè¯­æ³ãLiteFlow ç¬åäºä¸å¥éå¸¸ä¸æ»çè¯­æ³ï¼æ¯å¦ <code>THEN(a, b, c)</code> è¡¨ç¤ºä¸²è¡æ§è¡ï¼<code>WHEN(a, b, c)</code> è¡¨ç¤ºå¹¶è¡æ§è¡ã</li>
+<li><strong>Slot (æ§½/ä¸ä¸æ)</strong>ï¼æµç¨æ§è¡çæ°æ®å®¹å¨ãä½ å¯ä»¥æå®çä½æ¯ä¸ä¸ªæµå¨ç Mapï¼ææç»ä»¶é½å¯ä»¥ä»éé¢å­åæ°æ®ï¼å®ç°æ°æ®å±äº«ã</li>
 </ul>
+<h2 id="3-å·¥ä½åç">3. å·¥ä½åç</h2>
+<p>LiteFlow æ¯æä¹è·èµ·æ¥çå¢ï¼å±ä»¬ç¨ä¸å¼ å¾æ¥è¯´æã</p>
+<p>å½ä½ å¨ Spring Boot å¯å¨çæ¶åï¼LiteFlow ä¼åè¿ä¹å ä»¶äºï¼</p>
+<ol>
+<li><strong>å è½½éç½®</strong>ï¼è¯»å <code>liteflow.rule-source</code> éç½®çè§åæä»¶ã</li>
+<li><strong>è§£æè§å</strong>ï¼æ XML/JSON/YAML éçè§åè§£ææåå­éç <code>Chain</code> å <code>Node</code> å¯¹è±¡ã</li>
+<li><strong>æ³¨åç»ä»¶</strong>ï¼æä½ ç Java Component æ³¨åå° LiteFlow çå®¹å¨éã</li>
+</ol>
+<p>å½ä½ è°ç¨ <code>flowExecutor.execute2Resp("chain1", param)</code> æ¶ï¼<br>
+<img alt="image.png" loading="lazy" data-src="https://img2024.cnblogs.com/blog/15798/202512/15798-20251225125033107-209290414.png" class="lazyload"></p>
+<h3 id="å³é®æ­¥éª¤è§£æ">å³é®æ­¥éª¤è§£æï¼</h3>
+<ol>
+<li><strong>æ¾é¾</strong>ï¼<code>FlowBus</code> æ¯ LiteFlow çâäº¤éæ¢çº½âï¼å®ç®¡ççææç Chainãæ§è¡å¨é¦åé®å®è¦å°åä¸º <code>chain1</code> çé¾ã</li>
+<li><strong>æ§è¡é¾</strong>ï¼Chain æ¿å°åï¼æ ¹æ®å®ä¹å¥½ç EL è§åï¼æ¯å¦ <code>THEN(A, B)</code>ï¼ï¼ä¾æ¬¡è°åº¦ç»ä»¶ã</li>
+<li><strong>ç»ä»¶æ§è¡</strong>ï¼ç»ä»¶ A å B ä¾æ¬¡è¿è¡ãæ³¨æï¼å®ä»¬ä¹é´ä¸ç´æ¥ä¼ éåæ°ï¼èæ¯éè¿ <code>Slot</code> è¿ä¸ªå¬å±åºåæ¥äº¤æ¢æ°æ®ãè¿å¤§å¤§éä½äºè¦ååº¦ï¼</li>
+</ol>
+<h2 id="4-å¿«éä¸æç¤ºä¾">4. å¿«éä¸æç¤ºä¾</h2>
+<p>åè¯´ä¸ç»åæå¼ï¼å±ä»¬çä¸ªæç®åç Spring Boot éæä¾å­ã</p>
+<h3 id="ç¬¬ä¸æ­¥å®ä¹ç»ä»¶">ç¬¬ä¸æ­¥ï¼å®ä¹ç»ä»¶</h3>
+<pre><code class="language-java">@LiteflowComponent("a")
+public class ACmp extends NodeComponent {
+    @Override
+    public void process() {
+        System.out.println("ACmp executed!");
+        // å¾ä¸ä¸ææ¾ç¹ä¸è¥¿
+        this.getContextBean(DefaultContext.class).setData("data", "hello");
+    }
+}
+
+@LiteflowComponent("b")
+public class BCmp extends NodeComponent {
+    @Override
+    public void process() {
+        System.out.println("BCmp executed!");
+        // ä»ä¸ä¸ææ¿ä¸è¥¿
+        String data = this.getContextBean(DefaultContext.class).getData("data");
+        System.out.println("Data from A: " + data);
+    }
+}
+</code></pre>
+<h3 id="ç¬¬äºæ­¥å®ä¹è§å-flowelxml">ç¬¬äºæ­¥ï¼å®ä¹è§å (flow.el.xml)</h3>
+<pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;flow&gt;
+    &lt;chain name="chain1"&gt;
+        THEN(a, b);
+    &lt;/chain&gt;
+&lt;/flow&gt;
+</code></pre>
+<h3 id="ç¬¬ä¸æ­¥å¯å¨æ§è¡">ç¬¬ä¸æ­¥ï¼å¯å¨æ§è¡</h3>
+<pre><code class="language-java">@Component
+public class TestRunner implements CommandLineRunner {
+    
+    @Resource
+    private FlowExecutor flowExecutor;
+
+    @Override
+    public void run(String... args) throws Exception {
+        LiteflowResponse response = flowExecutor.execute2Resp("chain1", "arg");
+        if (response.isSuccess()){
+            System.out.println("æ§è¡æå");
+        }
+    }
+}
+</code></pre>
+<h2 id="5-æ»ç»">5. æ»ç»</h2>
+<p>è¿ä¸ç¯æä»¬ä¸»è¦éè¿ç½è¯çæ¹å¼ä»ç»äº LiteFlow çâä¸çè§âã</p>
+<ul>
+<li><strong>å®çæ ¸å¿ä»·å¼</strong>ï¼è§£è¦ãæâåä»ä¹âï¼Componentï¼åâæä¹åâï¼Ruleï¼åå¼äºã</li>
+<li><strong>å®çè¿è¡æ¹å¼</strong>ï¼FlowExecutor æ¥æ¶æä»¤ -&gt; FlowBus æ¥æ¾æµç¨ -&gt; Chain è°åº¦ç»ä»¶ -&gt; Slot ä¼ éæ°æ®ã</li>
+</ul>
+<p>LiteFlow å°±åä¸ä¸ªç²¾å¯ççäº§çº¿ææ¥ç³»ç»ï¼ä½ åªéè¦è´è´£é é¶ä»¶ï¼ç»ä»¶ï¼åç»å¾çº¸ï¼è§åï¼ï¼å©ä¸çè°åº¦å·¥ä½ï¼å®å¨åäºã</p>
+
 </div>
 <div class="clear"></div>
 
             </div>
             <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2025-12-25 11:29">2025-12-25 11:28</span>&nbsp;
-<a href="https://www.cnblogs.com/yupi">ç¨åºåé±¼ç®</a>&nbsp;
-éè¯»(<span id="post_view_count">199</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">2</span>)&nbsp;
+<span id="post-date" data-last-update-days="0" data-date-updated="2025-12-25 12:51">2025-12-25 12:50</span>&nbsp;
+<a href="https://www.cnblogs.com/wasp520">wasp</a>&nbsp;
+éè¯»(<span id="post_view_count">129</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19397182);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19397182', targetLink: 'https://www.cnblogs.com/yupi/p/19397182', title: 'å¥³åæéªå½åä¸è½ç¨Claude Codeï¼äºæ¯æç»å¥¹åäºä¸ä¸ª' })">ä¸¾æ¥</a>
+<a href="javascript:void(0)" onclick="AddToWz(19398574);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19398574', targetLink: 'https://www.cnblogs.com/wasp520/p/19398574', title: 'LiteFlow æ¡æ¶åæç³»åï¼ä¸ï¼ï¼å·¥ä½åçä¸å¿«éå¥é¨' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ é¾è¡¨çåºæ¬æä½ï¼ç¨é¾è¡¨å®ç°çº¿æ§è¡¨ ]]></title>
+    <link>https://www.cnblogs.com/student-z/p/19376618</link>
+    <guid>9dc300fab3eb7b50cb74dfa2f96dfb12</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/student-z/p/19376618" title="åå¸äº 2025-12-25 21:45">
+    <span role="heading" aria-level="2">é¾è¡¨çåºæ¬æä½ï¼ç¨é¾è¡¨å®ç°çº¿æ§è¡¨</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>é¾è¡¨</p>
+<p>å¢å æ¹æ¥<br>
+æéæåç­äºå°åèµå¼<br>
+å®ä¹ä¸ä¸ªé¾è¡¨ç»æä½</p>
+<pre><code class="language-c">typedef struct _NODE_ {
+	int number;
+	struct _NODE* next; 
+}Node,*Lintlist;
+</code></pre>
+<p>è¿éçnodeæ¯å¯¹èç¹å½åæ¶çæ°æ®ç±»å<br>
+Linklistæ¯å¯¹è¯¥é¾è¡¨å½åæ¶çæ°æ®ç±»å<br>
+åå§å<br>
+1.å»ºç«ä¸ä¸ªé¾è¡¨<br>
+2.ç³è¯·ä¸ä¸ªå¤´èç¹</p>
+<pre><code class="language-c">Linklist init(Linklist l) {
+	Node* head = (Node*)malloc(sizeof(Node));
+	if (head == NULL) {
+		printf("åå­åéå¤±è´¥");
+		return NULL;
+	}
+	head-&gt;next = NULL;
+	return head;
+}
+</code></pre>
+<p>å¨ä¸»å½æ°ä¸­è°ç¨æ¯</p>
+<pre><code class="language-c">Linklist l=NULL;
+l = init(l);
+</code></pre>
+<p>ä¹å¯ä»¥<br>
+<code>Linklist l=init(l);</code></p>
+<p>å½ç¶å¨è¿éä¹å¯ä»¥è¿æ ·æ¥<br>
+å¨è¿éå½æ°çåæ°ææ²¡æé½å¯ä»¥ï¼å ä¸ºå¶æ¬è´¨è¦çæ¯ç³è¯·çè¿ä¸ªèç¹çå°åä¹å°±æ¯headçå¼<br>
+å¨ä¸»å½æ°ä¸­ä»ä¼æè¿ä¸ªè¿åå¼èµå¼ç»lï¼<br>
+åæ¬è¿éçå½æ°ç±»åä¹å¯ä»¥æ¢æNode*å¦ä¸</p>
+<pre><code class="language-c">Node* init() {
+	Node* head = (Node*)malloc(sizeof(Node));
+	if (head == NULL) {
+		printf("åå­åéå¤±è´¥");
+		return NULL;
+	}
+	head-&gt;next = NULL;
+	return head;
+}
+</code></pre>
+<p>å¨ä¸»å½æ°ä¸­è°ç¨å°±æ¯<br>
+<code>Linklist l=init();</code></p>
+<p>å¢å æä½<br>
+åä¸ºä¸ç§ï¼åå«ä¸ºå¤´ææ³ï¼å°¾ææ³ï¼ä»¥åå¨æå®ä½ç½®å¢å ï¼<br>
+è¿éåä¸ºä¸ç§æä½çä¸ä¸ªåå å°±æ¯å¢å å¯è¯»æ§<br>
+è¿æä¸ä¸ªåå æ¯è¿æ ·è½å¸®å©æä»¬åä»£ç <br>
+ä¸éè¦å¤æ­åç§ä¸´çæåµ<br>
+ä»£ç ä¸ä¼å¤æï¼ç¸å¯¹ç®åã</p>
+<p>å¤´ææ³</p>
+<pre><code class="language-c">Linklist head_add(Linklist l, int m) {
+	Node* s = (Node*)malloc(sizeof(Node));
+	if (s == NULL) {
+		printf("åå­åéå¤±è´¥");
+		return l;
+	}
+	s-&gt;next = l-&gt;next;
+	s-&gt;number = m;
+	l-&gt;next = s;
+	return l;
+}
+</code></pre>
+<p>å¨è¿éæä¸¤ä¸ªç¹éè¦æ³¨æ<br>
+ç¬¬ä¸ç¹ï¼å¤´æéçæéåæ°å¼å¨æ¹åçæ¶åä¸è½è®©é¾è¡¨æ­è£ï¼æ¯å¦</p>
+<pre><code class="language-c">l-&gt;next = s;
+s-&gt;next = l-&gt;next;
+</code></pre>
+<p>å¨è¿éæä»¬åè®©å¤´æéçæéåæåäºs<br>
+ä½è¿éå°±ä¼å¯¼è´ä¸ä¸ªé®é¢ï¼æä»¬åæ¬å¨è¿ä¸ªæéåéé¢å­å¨çå°åä¸¢äº<br>
+æä»¬åæ§è¡<br>
+<code>s-&gt;next = l-&gt;next;</code><br>
+å°±ä¼ è®©sçnextæåèªå·±<br>
+å°±ä¼å¯¼è´åç»­é¾è¡¨çæ­è£<br>
+æä»¥æä»¬å¨æ¹åé¾è¡¨çæéåæ¶ï¼æéè¦çå°±æ¯ä¸è½è®©é¾è¡¨æ­è£ï¼å³ä¸è½è®©æ°æ®ä¸¢å¤±</p>
+<p>ç¬¬äºç¹<br>
+å¨è¿åå¼ä¸ï¼æä»¬å¶å®å¯ä»¥è®©è¿åå¼ä¸ºvoid<br>
+å ä¸ºå¨è¿ä¸ªå½æ°éé¢å¶å®æä»¬æ²¡æå¨lçå¼<br>
+léé¢æ¯ä¸ä¸ªæéï¼èè¿ä¸ªæéæåäºä¸ä¸ªæä»¬å£°æçç»æä½ç±»åçæ°æ®<br>
+æä»¬æ¯æ ¹æ®è¿ä¸ªæéè®¿é®è¿ä¸ªç»æä½ç±»åçæ°æ®ï¼ç¶åæ´æ¹è¿ä¸ªç»æä½åçä¸äºæ°æ®<br>
+æä»¬å¹¶æ²¡æå¯¹lè¿ä¸ªåééé¢å­å¨çæ°æ®è¿è¡æ¹å<br>
+æä»¥æä»¬å¯ä»¥ç¨void<br>
+èå¨ä¸é¢æä»¬ç¨Link listè¿ä¸ªä½ä¸ºè¿åå¼çåå æ¯<br>
+å¨æä»¬å¯¹lççè§£ä¸­ï¼læçæ¯è¿ä¸ªé¾è¡¨<br>
+å¯¹äºè¿ä¸ªé¾è¡¨å®éä¸æ¯åçäºååç<br>
+æä»¥æä»¬å¨è¿éç¨äºè¿åå¼<br>
+æ¥ä¸æ¥çå°¾ææ³åæå®ä½ç½®æå¥é½æè¿ä¸ªé®é¢ã</p>
+<p>å°¾ææ³<br>
+1.æ¾å°æªèç¹<br>
+2.æå»ºä¸ä¸ªèç¹æå¨ä¸ºèç¹åé¢</p>
+<pre><code class="language-c">Linklist rear_add(Linklist l, int m) {
+	Node* p = l;
+	while (p-&gt;next) {
+		p = p-&gt;next;
+	}
+	
+	
+	Node* s = (Node*)malloc(sizeof(Node));
+	if (s == NULL) {
+		printf("åå­åéå¤±è´¥");
+		
+		return l;
+	}
+	s-&gt;number = m;
+	s-&gt;next = NULL;
+	p-&gt;next = s;
+	return l;
+}
+</code></pre>
+<p>æå®ä½ç½®æå¥<br>
+1.æ¾å°æå®ä½ç½®ï¼è¿éå¯ä»¥æ¥ä¸ä¸ªfindå½æ°ï¼<br>
+æ¥ä¸æ¥çæä½æ¯åºäºfindå½æ°è¿è¡ç<br>
+findå½æ°å¨åé¢ç´§æ¨ç<br>
+2.éè¿findå½æ°çè¿åå¼ç¡®è®¤åç»­æä½<br>
+3ï¼å¦ææ¯NULLåæ²¡ææ¾çè¯¥æ°æ®ï¼æ æ³æ§è¡æå¥æä½<br>
+4.æ¾å°ä¹åï¼å°±æå»ºæ°çèç¹æå¥</p>
+<pre><code class="language-c">Linklist rear_add(Linklist l, int m) {
+	Node* p = l;
+	while (p-&gt;next) {
+		p = p-&gt;next;
+	}
+	
+	
+	Node* s = (Node*)malloc(sizeof(Node));
+	if (s == NULL) {
+		printf("åå­åéå¤±è´¥");
+		return l;
+	}
+	s-&gt;number = m;
+	s-&gt;next = NULL;
+	p-&gt;next = s;
+	return l;
+}
+</code></pre>
+<p>æ¥ï¼<br>
+æ¾å°æå®æ°æ®çèç¹ï¼ç¶åæ ¹æ®æ¥æ¾ç»æç¡®å®è¿åå¼</p>
+<pre><code class="language-c">Node* find(Linklist l, int k) {
+	
+	Node* q = l-&gt;next;
+	while (q &amp;&amp; q-&gt;number != k) {
+	
+		q = q-&gt;next;
+	}
+	return q;
+}
+</code></pre>
+<p>å ï¼<br>
+å é¤æå®æ°æ®ï¼å¨è¿éä¸è½éè¿æ¥æ¾å½æ°ï¼æ¯å ä¸ºå¨å é¤æä½éæä»¬è¦æ¶ååé¢çä¸ä¸ªèç¹çæéå<br>
+å¨ååé¾è¡¨ä¸­å°±å¯ä»¥éè¿findå½æ°è¿è¡æ¥æ¾äºï¼å ä¸ºå¨ååé¾è¡¨ä¸­ï¼èç¹ååå«çåèç¹çå°å</p>
+<pre><code class="language-c">Linklist delet(Linklist l, int k) {
+	//kä¸ºå åçå¼
+	Node* p = l;
+	Node* q = l-&gt;next;
+	while (q &amp;&amp; q-&gt;number != k) {
+		p = q;
+		q = q-&gt;next;
+	}
+	if (q==NULL) {
+		printf("æªæ¾å°è¯¥æ°æ®ï¼ä¸è½æ§è¡å é¤æä½\n");
+		return l;
+	}
+	p-&gt;next = q-&gt;next;
+	
+	free(q);
+	q = NULL;
+	return l;
+}
+
+</code></pre>
+<p>æ¹ï¼<br>
+æç®åçæä½ï¼å¯ä»¥éæ©éè¿findå½æ°ä¹å¯ä»¥ç´æ¥æ¥æ¾ï¼å ä¸ºè¿ä¸ªå½æ°ä¸æ¶åæéçæ¹å</p>
+<pre><code class="language-c">Linklist change(Linklist l, int k,int m) {
+	Node* p = find(l, k);
+	if (p == NULL) {
+		printf("æªæ¾å°è¯¥æ°æ®ï¼ä¸è½å®è¡æ°æ®æ´æ¹æä½\n");
+		return l;
+	}
+	p-&gt;number = m;
+	return l;
+}
+
+</code></pre>
+<p>è¾åºå½æ°<br>
+è¾åºé¾è¡¨å¼</p>
+<pre><code class="language-c">void printff(Linklist l) {
+	Node* p = l-&gt;next;
+	while (p) {
+		printf("%d ", p-&gt;number);
+		p = p-&gt;next;
+	}
+	printf("\n");
+}
+</code></pre>
+<p>ä¸é¢æ¶ä¸»å½æ°çè°ç¨</p>
+<pre><code class="language-c">int main() 
+{
+	Linklist l=NULL;
+	l = init(l);
+	l = head_add(l, 3);
+	l = head_add(l, 9);
+	l = head_add(l, 5);
+	printff(l);
+	l = rear_add(l, 8);
+	l = rear_add(l, 4);
+	l = rear_add(l, 6);
+	printff(l);
+	l = inadd(l,3, 15);
+	l = inadd(l, 10, 16);
+	l = inadd(l, 9, 12);
+	printff(l);
+	l = delet(l, 4);
+	l = delet(l, 8);
+	l = delet(l, 16);
+	printff(l);
+	l = change(l, 4, 43);
+	printff(l);
+	return 0;
+}
+</code></pre>
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2025-12-25 21:45">2025-12-25 21:45</span>&nbsp;
+<a href="https://www.cnblogs.com/student-z">ç±å·æçæ</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19376618);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19376618', targetLink: 'https://www.cnblogs.com/student-z/p/19376618', title: 'é¾è¡¨çåºæ¬æä½ï¼ç¨é¾è¡¨å®ç°çº¿æ§è¡¨' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
