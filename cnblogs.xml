@@ -3,2109 +3,505 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2025-12-29T20:19:31.476Z</lastBuildDate>
+        <lastBuildDate>2025-12-30T01:16:24.063Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
-    <title><![CDATA[ CodeSpirit CRUDå¼åå®æ´æå ]]></title>
-    <link>https://www.cnblogs.com/codelove/p/19388153</link>
-    <guid>b5118c135adb4a811d164f2ca9605b66</guid>
+    <title><![CDATA[ ææ¡Fetchä¸Flaskäº¤äºï¼è®©åç«¯è¡¨åæäº¤æ´ä¼éçå¨æä¹é ]]></title>
+    <link>https://www.cnblogs.com/ymtianyu/p/19418995</link>
+    <guid>52285023aae08ab93f52b581fbeb15d0</guid>
     <description>
     <![CDATA[ 
-		<h1 class="postTitle">
-			<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/codelove/p/19388153" title="åå¸äº 2025-12-30 00:15">
-    <span role="heading" aria-level="2">CodeSpirit CRUDå¼åå®æ´æå</span>
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/ymtianyu/p/19418995" title="åå¸äº 2025-12-30 08:18">
+    <span role="heading" aria-level="2">ææ¡Fetchä¸Flaskäº¤äºï¼è®©åç«¯è¡¨åæäº¤æ´ä¼éçå¨æä¹é</span>
     
 
 </a>
 
-		</h1>
-		<div class="clear"></div>
-		<div class="postBody">
-			<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h2 id="æ¦è¿°">æ¦è¿°</h2>
-<p>æ¬ææ¡£éè¿<strong>èå·¥ç®¡ç</strong>ï¼Employeeï¼çå®éä»£ç ç¤ºä¾ï¼å±ç¤ºå¦ä½ä½¿ç¨CodeSpiritæ¡æ¶å¿«éå¼åCRUDåè½ãè¯¥ç¤ºä¾æ¥èªèº«ä»½è®¤è¯ç³»ç»ï¼IdentityApiï¼ï¼æ¯ä¸ä¸ªæ åçå³èåCRUDæ¨¡åï¼åå«å®æ´çéªè¯é»è¾ãä¸å¡å¤çåå³èå³ç³»ç®¡çã</p>
-<p><strong>æåæ´æ°</strong>: 2025å¹´12æ22æ¥<br>
-<strong>æ¡æ¶çæ¬</strong>: v2.0.0<br>
-<strong>ç¤ºä¾æ¥æº</strong>: <code>CodeSpirit.IdentityApi</code> - èå·¥ç®¡çæ¨¡å</p>
-<p><img src="https://img2024.cnblogs.com/blog/70544/202512/70544-20251223170219569-281479304.png" alt="image" loading="lazy"></p>
-<h2 id="å¼åæµç¨æ¦è§">å¼åæµç¨æ¦è§</h2>
-<div class="mermaid">graph LR
-    A["1. åå»ºå®ä½æ¨¡å"] --&gt; B["2. åå»ºDTOç±»"]
-    B --&gt; C["3. éç½®AutoMapper"]
-    C --&gt; D["4. åå»ºæå¡å±"]
-    D --&gt; E["5. åå»ºæ§å¶å¨"]
-    E --&gt; F["6. éç½®æ°æ®åº"]
-    F --&gt; G["7. åå»ºè¿ç§»"]
-    G --&gt; H["å®æ"]
-</div><h2 id="ç¤ºä¾æ¨¡åè¯´æ">ç¤ºä¾æ¨¡åè¯´æ</h2>
-<p><strong>èå·¥ç®¡ç</strong>ï¼Employeeï¼æ¯ä¸ä¸ªå¸åçå³èåCRUDæ¨¡åï¼å·æä»¥ä¸ç¹ç¹ï¼</p>
-<ul>
-<li>â å³èå³ç³»ç®¡çï¼é¨é¨ãç¨æ·è´¦å·ï¼</li>
-<li>â å®æ´çCRUDæä½</li>
-<li>â ä¸å¡éªè¯ï¼å·¥å·å¯ä¸æ§ãé¨é¨å­å¨æ§ãèº«ä»½è¯æ ¼å¼ç­ï¼</li>
-<li>â å¤æ¡ä»¶æ¥è¯¢ï¼å³é®å­ãé¨é¨ãç¶æãæ¥æèå´ç­ï¼</li>
-<li>â è¡¨ååç»å±ç¤ºï¼åºæ¬ä¿¡æ¯ãèç³»æ¹å¼ãå·¥ä½ä¿¡æ¯ç­ï¼</li>
-<li>â å¤ç§æ·æ¯æ</li>
-<li>â å®¡è®¡å­æ®µèªå¨è®°å½</li>
-<li>â è½¯å é¤æ¯æ</li>
-</ul>
-<h2 id="1-åå»ºå®ä½æ¨¡å">1. åå»ºå®ä½æ¨¡å</h2>
-<p>å¨<code>Data/Models</code>ç®å½ä¸åå»ºå®ä½ç±»ï¼</p>
-<pre><code class="language-csharp">// Data/Models/Employee.cs
-using CodeSpirit.Shared.Entities.Interfaces;
-using CodeSpirit.MultiTenant.Abstractions;
-using System.ComponentModel.DataAnnotations;
-
-namespace CodeSpirit.IdentityApi.Data.Models;
-
-/// &lt;summary&gt;
-/// èå·¥ä¿¡æ¯
-/// &lt;/summary&gt;
-public class Employee : IFullAuditable, IMultiTenant, IIsActive
-{
-    /// &lt;summary&gt;
-    /// èå·¥ID
-    /// &lt;/summary&gt;
-    public long Id { get; set; }
-
-    /// &lt;summary&gt;
-    /// ç§æ·IDï¼å¤ç§æ·æ¯æï¼
-    /// &lt;/summary&gt;
-    [Required]
-    [MaxLength(50)]
-    public string TenantId { get; set; } = string.Empty;
-
-    /// &lt;summary&gt;
-    /// å·¥å·ï¼ç§æ·åå¯ä¸ï¼
-    /// &lt;/summary&gt;
-    [Required]
-    [MaxLength(50)]
-    public string EmployeeNo { get; set; } = string.Empty;
-
-    /// &lt;summary&gt;
-    /// å§å
-    /// &lt;/summary&gt;
-    [Required]
-    [MaxLength(100)]
-    public string Name { get; set; } = string.Empty;
-
-    /// &lt;summary&gt;
-    /// æ§å«
-    /// &lt;/summary&gt;
-    public Gender Gender { get; set; }
-
-    /// &lt;summary&gt;
-    /// èº«ä»½è¯å·ç 
-    /// &lt;/summary&gt;
-    [MaxLength(18)]
-    public string? IdNo { get; set; }
-
-    /// &lt;summary&gt;
-    /// åºçæ¥æ
-    /// &lt;/summary&gt;
-    public DateTime? BirthDate { get; set; }
-
-    /// &lt;summary&gt;
-    /// ææºå·ç 
-    /// &lt;/summary&gt;
-    [MaxLength(15)]
-    public string? PhoneNumber { get; set; }
-
-    /// &lt;summary&gt;
-    /// çµå­é®ç®±
-    /// &lt;/summary&gt;
-    [MaxLength(100)]
-    [EmailAddress]
-    public string? Email { get; set; }
-
-    /// &lt;summary&gt;
-    /// é¨é¨ID
-    /// &lt;/summary&gt;
-    public long? DepartmentId { get; set; }
-
-    /// &lt;summary&gt;
-    /// æå±é¨é¨ï¼å¯¼èªå±æ§ï¼
-    /// &lt;/summary&gt;
-    public Department? Department { get; set; }
-
-    /// &lt;summary&gt;
-    /// èä½
-    /// &lt;/summary&gt;
-    [MaxLength(100)]
-    public string? Position { get; set; }
-
-    /// &lt;summary&gt;
-    /// èçº§
-    /// &lt;/summary&gt;
-    [MaxLength(50)]
-    public string? JobLevel { get; set; }
-
-    /// &lt;summary&gt;
-    /// å¥èæ¥æ
-    /// &lt;/summary&gt;
-    public DateTime? HireDate { get; set; }
-
-    /// &lt;summary&gt;
-    /// ç¦»èæ¥æ
-    /// &lt;/summary&gt;
-    public DateTime? TerminationDate { get; set; }
-
-    /// &lt;summary&gt;
-    /// å¨èç¶æ
-    /// &lt;/summary&gt;
-    public EmploymentStatus EmploymentStatus { get; set; }
-
-    /// &lt;summary&gt;
-    /// å³èçç¨æ·ID
-    /// &lt;/summary&gt;
-    public long? UserId { get; set; }
-
-    /// &lt;summary&gt;
-    /// å³èçç¨æ·è´¦å·ï¼å¯¼èªå±æ§ï¼
-    /// &lt;/summary&gt;
-    public ApplicationUser? User { get; set; }
-
-    /// &lt;summary&gt;
-    /// ç´§æ¥èç³»äºº
-    /// &lt;/summary&gt;
-    [MaxLength(100)]
-    public string? EmergencyContact { get; set; }
-
-    /// &lt;summary&gt;
-    /// ç´§æ¥èç³»çµè¯
-    /// &lt;/summary&gt;
-    [MaxLength(15)]
-    public string? EmergencyPhone { get; set; }
-
-    /// &lt;summary&gt;
-    /// å°å
-    /// &lt;/summary&gt;
-    [MaxLength(500)]
-    public string? Address { get; set; }
-
-    /// &lt;summary&gt;
-    /// å¤æ³¨
-    /// &lt;/summary&gt;
-    [MaxLength(1000)]
-    public string? Remarks { get; set; }
-
-    /// &lt;summary&gt;
-    /// æ¯å¦æ¿æ´»
-    /// &lt;/summary&gt;
-    public bool IsActive { get; set; } = true;
-
-    /// &lt;summary&gt;
-    /// å¤´åå°å
-    /// &lt;/summary&gt;
-    [MaxLength(255)]
-    [DataType(DataType.ImageUrl)]
-    public string? AvatarUrl { get; set; }
-
-    // å®¡è®¡å­æ®µï¼å®ç°IFullAuditableæ¥å£ï¼
-    public long CreatedBy { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public long? UpdatedBy { get; set; }
-    public DateTime? UpdatedAt { get; set; }
-    public long? DeletedBy { get; set; }
-    public DateTime? DeletedAt { get; set; }
-    public bool IsDeleted { get; set; }
-}
-</code></pre>
-<p><strong>è¯´æ</strong>ï¼</p>
-<ul>
-<li>å®ç°<code>IFullAuditable</code>æ¥å£ï¼èªå¨åå«å®æ´çå®¡è®¡å­æ®µï¼åå»ºãæ´æ°ãå é¤ï¼</li>
-<li>å®ç°<code>IMultiTenant</code>æ¥å£ï¼æ¯æå¤ç§æ·æ°æ®éç¦»</li>
-<li>å®ç°<code>IIsActive</code>æ¥å£ï¼æ¯ææ¿æ´»ç¶æç®¡ç</li>
-<li>ä½¿ç¨<code>long</code>ä½ä¸ºä¸»é®ç±»å</li>
-<li>åå«å³èå³ç³»çå¯¼èªå±æ§ï¼é¨é¨ãç¨æ·è´¦å·ï¼</li>
-<li>æ¯æè½¯å é¤ï¼<code>IsDeleted</code>å­æ®µï¼</li>
-</ul>
-<h2 id="2-åå»ºdtoç±»">2. åå»ºDTOç±»</h2>
-<p>å¨<code>Dtos/Employee</code>ç®å½ä¸åå»ºDTOç±»ï¼</p>
-<h3 id="21-employeedtoå±ç¤ºdto">2.1 EmployeeDtoï¼å±ç¤ºDTOï¼</h3>
-<pre><code class="language-csharp">// Dtos/Employee/EmployeeDto.cs
-using CodeSpirit.Amis.Attributes.Columns;
-using CodeSpirit.Core.Attributes;
-using CodeSpirit.IdentityApi.Data.Models;
-using System.ComponentModel;
-
-namespace CodeSpirit.IdentityApi.Dtos.Employee;
-
-/// &lt;summary&gt;
-/// èå·¥æ°æ®ä¼ è¾å¯¹è±¡
-/// &lt;/summary&gt;
-public class EmployeeDto
-{
-    /// &lt;summary&gt;
-    /// èå·¥ID
-    /// &lt;/summary&gt;
-    public long Id { get; set; }
-
-    /// &lt;summary&gt;
-    /// å·¥å·
-    /// &lt;/summary&gt;
-    [DisplayName("å·¥å·")]
-    public string EmployeeNo { get; set; } = string.Empty;
-
-    /// &lt;summary&gt;
-    /// å§å
-    /// &lt;/summary&gt;
-    [DisplayName("å§å")]
-    [TplColumn(template: "${name}")]
-    public string Name { get; set; } = string.Empty;
-
-    /// &lt;summary&gt;
-    /// å¤´åå°å
-    /// &lt;/summary&gt;
-    [DisplayName("å¤´å")]
-    [AvatarColumn(Text = "${name}", Src = "${avatarUrl}")]
-    [Badge(Animation = true, VisibleOn = "isActive", Level = "info")]
-    public string? AvatarUrl { get; set; }
-
-    /// &lt;summary&gt;
-    /// æ§å«
-    /// &lt;/summary&gt;
-    [DisplayName("æ§å«")]
-    public Gender Gender { get; set; }
-
-    /// &lt;summary&gt;
-    /// ææºå·ç 
-    /// &lt;/summary&gt;
-    [DisplayName("ææºå·ç ")]
-    public string? PhoneNumber { get; set; }
-
-    /// &lt;summary&gt;
-    /// çµå­é®ç®±
-    /// &lt;/summary&gt;
-    [DisplayName("çµå­é®ç®±")]
-    public string? Email { get; set; }
-
-    /// &lt;summary&gt;
-    /// é¨é¨ID
-    /// &lt;/summary&gt;
-    [AmisColumn(Hidden = true)]
-    public long? DepartmentId { get; set; }
-
-    /// &lt;summary&gt;
-    /// é¨é¨åç§°
-    /// &lt;/summary&gt;
-    [DisplayName("é¨é¨")]
-    public string? DepartmentName { get; set; }
-
-    /// &lt;summary&gt;
-    /// èä½
-    /// &lt;/summary&gt;
-    [DisplayName("èä½")]
-    public string? Position { get; set; }
-
-    /// &lt;summary&gt;
-    /// èçº§
-    /// &lt;/summary&gt;
-    [DisplayName("èçº§")]
-    public string? JobLevel { get; set; }
-
-    /// &lt;summary&gt;
-    /// å¥èæ¥æ
-    /// &lt;/summary&gt;
-    [DisplayName("å¥èæ¥æ")]
-    [DateColumn(Format = "YYYY-MM-DD")]
-    public DateTime? HireDate { get; set; }
-
-    /// &lt;summary&gt;
-    /// å¨èç¶æ
-    /// &lt;/summary&gt;
-    [DisplayName("å¨èç¶æ")]
-    public EmploymentStatus EmploymentStatus { get; set; }
-
-    /// &lt;summary&gt;
-    /// æ¯å¦æ¿æ´»
-    /// &lt;/summary&gt;
-    [DisplayName("æ¯å¦æ¿æ´»")]
-    public bool IsActive { get; set; }
-
-    /// &lt;summary&gt;
-    /// åå»ºæ¶é´
-    /// &lt;/summary&gt;
-    [DisplayName("åå»ºæ¶é´")]
-    [DateColumn(FromNow = true)]
-    public DateTime CreatedAt { get; set; }
-
-    /// &lt;summary&gt;
-    /// æ´æ°æ¶é´
-    /// &lt;/summary&gt;
-    [DisplayName("æ´æ°æ¶é´")]
-    [DateColumn(FromNow = true)]
-    public DateTime? UpdatedAt { get; set; }
-}
-</code></pre>
-<p><strong>è¯´æ</strong>ï¼</p>
-<p><strong>åç¹æ§ï¼Columnsï¼</strong>ï¼ç¨äºæ§å¶åç«¯è¡¨æ ¼åçæ¾ç¤ºåæ ¼å¼</p>
-<ul>
-<li>
-<p><code>AmisColumn</code>ï¼åºç¡åç¹æ§ï¼æ§å¶åçæ¾ç¤ºãæåºãéèç­</p>
-<ul>
-<li><code>Hidden</code>ï¼æ¯å¦éèå</li>
-<li><code>Sortable</code>ï¼æ¯å¦æ¯ææåº</li>
-<li><code>Copyable</code>ï¼æ¯å¦å¯å¤å¶</li>
-<li><code>Fixed</code>ï¼æ¯å¦åºå®åï¼left/right/noneï¼</li>
-<li><code>StatusMapping</code>ï¼ç¶ææ å°ï¼æ¯æé¢å®ä¹æ å°å¦BooleanãHttpStatusCodeç­ï¼</li>
-</ul>
-</li>
-<li>
-<p><code>TplColumn</code>ï¼èªå®ä¹åæ¾ç¤ºæ¨¡æ¿ï¼ä½¿ç¨æ¨¡æ¿è¯­æ³èªå®ä¹ååå®¹</p>
-<ul>
-<li><code>template</code>ï¼æ¨¡æ¿å­ç¬¦ä¸²ï¼æ¯æåéæå¼ï¼å¦<code>${name}</code>ï¼</li>
-</ul>
-</li>
-<li>
-<p><code>AvatarColumn</code>ï¼å¤´ååï¼æ¾ç¤ºå¤´åå¾ç</p>
-<ul>
-<li><code>Text</code>ï¼å¤´åä¸æ¹æ¾ç¤ºçææ¬</li>
-<li><code>Src</code>ï¼å¤´åå¾çå°å</li>
-</ul>
-</li>
-<li>
-<p><code>DateColumn</code>ï¼æ¥æåï¼æ ¼å¼åæ¥ææ¾ç¤º</p>
-<ul>
-<li><code>Format</code>ï¼æ¥ææ ¼å¼ï¼å¦<code>YYYY-MM-DD</code>ã<code>YYYY-MM-DD HH:mm</code>ï¼</li>
-<li><code>FromNow</code>ï¼æ¯å¦æ¾ç¤ºç¸å¯¹æ¶é´ï¼å¦"2å°æ¶å"ï¼</li>
-</ul>
-</li>
-<li>
-<p><code>IgnoreColumn</code>ï¼å¿½ç¥åï¼è¯¥å­æ®µä¸å¨è¡¨æ ¼ä¸­æ¾ç¤º</p>
-</li>
-<li>
-<p><code>TagsColumn</code>ï¼æ ç­¾åï¼ä»¥æ ç­¾å½¢å¼æ¾ç¤ºæ°ç»æ°æ®</p>
-</li>
-<li>
-<p><code>LinkColumn</code>ï¼é¾æ¥åï¼æ¾ç¤ºå¯ç¹å»çé¾æ¥</p>
-</li>
-<li>
-<p><code>AmisStatusColumn</code>ï¼ç¶æåï¼æ¾ç¤ºç¶ææ ç­¾åå¾æ </p>
-</li>
-<li>
-<p><code>LongTextColumn</code>ï¼é¿ææ¬åï¼æ¯æå±å¼/æ¶èµ·</p>
-</li>
-<li>
-<p><code>ListColumn</code>ï¼åè¡¨åï¼æ¾ç¤ºåè¡¨æ°æ®</p>
-</li>
-<li>
-<p><code>IconColumn</code>ï¼å¾æ åï¼æ¾ç¤ºå¾æ </p>
-</li>
-</ul>
-<h3 id="22-createemployeedtoåå»ºdto">2.2 CreateEmployeeDtoï¼åå»ºDTOï¼</h3>
-<p><img src="https://img2024.cnblogs.com/blog/70544/202512/70544-20251223170338569-581617099.png" alt="image" loading="lazy"></p>
-<pre><code class="language-csharp">// Dtos/Employee/CreateEmployeeDto.cs
-using CodeSpirit.Amis.Attributes.FormFields;
-using CodeSpirit.IdentityApi.Data.Models;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-
-namespace CodeSpirit.IdentityApi.Dtos.Employee;
-
-/// &lt;summary&gt;
-/// åå»ºèå·¥æ°æ®ä¼ è¾å¯¹è±¡
-/// &lt;/summary&gt;
-[FormGroup("basic", "åºæ¬ä¿¡æ¯", "EmployeeNo,Name,Gender,IdNo,BirthDate", Order = 1)]
-[FormGroup("contact", "èç³»æ¹å¼", "PhoneNumber,Email,Address", Order = 2)]
-[FormGroup("work", "å·¥ä½ä¿¡æ¯", "DepartmentId,Position,JobLevel,HireDate,EmploymentStatus", Order = 3)]
-[FormGroup("relation", "å³èä¿¡æ¯", "UserId", Order = 4)]
-[FormGroup("emergency", "ç´§æ¥èç³»äºº", "EmergencyContact,EmergencyPhone", Order = 5)]
-[FormGroup("other", "å¶ä»ä¿¡æ¯", "AvatarUrl,Remarks,IsActive", Order = 6)]
-public class CreateEmployeeDto
-{
-    /// &lt;summary&gt;
-    /// å·¥å·
-    /// &lt;/summary&gt;
-    [Required(ErrorMessage = "å·¥å·ä¸è½ä¸ºç©º")]
-    [MaxLength(50, ErrorMessage = "å·¥å·é¿åº¦ä¸è½è¶è¿50ä¸ªå­ç¬¦")]
-    [DisplayName("å·¥å·")]
-    [AmisInputTextField(ColumnRatio = 6)]
-    public string EmployeeNo { get; set; } = string.Empty;
-
-    /// &lt;summary&gt;
-    /// å§å
-    /// &lt;/summary&gt;
-    [Required(ErrorMessage = "å§åä¸è½ä¸ºç©º")]
-    [MaxLength(100, ErrorMessage = "å§åé¿åº¦ä¸è½è¶è¿100ä¸ªå­ç¬¦")]
-    [DisplayName("å§å")]
-    [AmisInputTextField(ColumnRatio = 6)]
-    public string Name { get; set; } = string.Empty;
-
-    /// &lt;summary&gt;
-    /// æ§å«
-    /// &lt;/summary&gt;
-    [DisplayName("æ§å«")]
-    [AmisFormField(ColumnRatio = 6)]
-    public Gender Gender { get; set; }
-
-    /// &lt;summary&gt;
-    /// èº«ä»½è¯å·ç 
-    /// &lt;/summary&gt;
-    [MaxLength(18, ErrorMessage = "èº«ä»½è¯å·ç é¿åº¦ä¸è½è¶è¿18ä¸ªå­ç¬¦")]
-    [DisplayName("èº«ä»½è¯å·")]
-    [AmisInputTextField(ColumnRatio = 6)]
-    public string? IdNo { get; set; }
-
-    /// &lt;summary&gt;
-    /// åºçæ¥æ
-    /// &lt;/summary&gt;
-    [DisplayName("åºçæ¥æ")]
-    [AmisDateFieldAttribute(ColumnRatio = 6)]
-    public DateTime? BirthDate { get; set; }
-
-    /// &lt;summary&gt;
-    /// ææºå·ç 
-    /// &lt;/summary&gt;
-    [MaxLength(15, ErrorMessage = "ææºå·ç é¿åº¦ä¸è½è¶è¿15ä¸ªå­ç¬¦")]
-    [Phone(ErrorMessage = "ææºå·ç æ ¼å¼ä¸æ­£ç¡®")]
-    [DisplayName("ææºå·ç ")]
-    [AmisInputTextField(ColumnRatio = 6)]
-    public string? PhoneNumber { get; set; }
-
-    /// &lt;summary&gt;
-    /// çµå­é®ç®±
-    /// &lt;/summary&gt;
-    [MaxLength(100, ErrorMessage = "çµå­é®ç®±é¿åº¦ä¸è½è¶è¿100ä¸ªå­ç¬¦")]
-    [EmailAddress(ErrorMessage = "çµå­é®ç®±æ ¼å¼ä¸æ­£ç¡®")]
-    [DisplayName("çµå­é®ç®±")]
-    [AmisInputTextField(ColumnRatio = 6)]
-    public string? Email { get; set; }
-
-    /// &lt;summary&gt;
-    /// é¨é¨ID
-    /// &lt;/summary&gt;
-    [DisplayName("é¨é¨")]
-    [AmisInputTreeField(
-        DataSource = "${ROOT_API}/api/identity/Departments/tree",
-        LabelField = "name",
-        ValueField = "id",
-        Multiple = false,
-        Searchable = true,
-        ColumnRatio = 12
-    )]
-    public long? DepartmentId { get; set; }
-
-    /// &lt;summary&gt;
-    /// èä½
-    /// &lt;/summary&gt;
-    [MaxLength(100, ErrorMessage = "èä½é¿åº¦ä¸è½è¶è¿100ä¸ªå­ç¬¦")]
-    [DisplayName("èä½")]
-    [AmisInputTextField(ColumnRatio = 6)]
-    public string? Position { get; set; }
-
-    /// &lt;summary&gt;
-    /// èçº§
-    /// &lt;/summary&gt;
-    [MaxLength(50, ErrorMessage = "èçº§é¿åº¦ä¸è½è¶è¿50ä¸ªå­ç¬¦")]
-    [DisplayName("èçº§")]
-    [AmisInputTextField(ColumnRatio = 6)]
-    public string? JobLevel { get; set; }
-
-    /// &lt;summary&gt;
-    /// å¥èæ¥æ
-    /// &lt;/summary&gt;
-    [DisplayName("å¥èæ¥æ")]
-    [AmisDateFieldAttribute(ColumnRatio = 6)]
-    public DateTime? HireDate { get; set; }
-
-    /// &lt;summary&gt;
-    /// å¨èç¶æ
-    /// &lt;/summary&gt;
-    [DisplayName("å¨èç¶æ")]
-    [AmisFormField(ColumnRatio = 6)]
-    public EmploymentStatus EmploymentStatus { get; set; } = EmploymentStatus.Active;
-
-    /// &lt;summary&gt;
-    /// å³èçç¨æ·ID
-    /// &lt;/summary&gt;
-    [DisplayName("å³èç¨æ·")]
-    [AmisSelectField(
-        Source = "${ROOT_API}/api/identity/Users",
-        ValueField = "id",
-        LabelField = "name",
-        Multiple = false,
-        Searchable = true,
-        ColumnRatio = 12
-    )]
-    public long? UserId { get; set; }
-
-    /// &lt;summary&gt;
-    /// ç´§æ¥èç³»äºº
-    /// &lt;/summary&gt;
-    [MaxLength(100, ErrorMessage = "ç´§æ¥èç³»äººé¿åº¦ä¸è½è¶è¿100ä¸ªå­ç¬¦")]
-    [DisplayName("ç´§æ¥èç³»äºº")]
-    [AmisInputTextField(ColumnRatio = 6)]
-    public string? EmergencyContact { get; set; }
-
-    /// &lt;summary&gt;
-    /// ç´§æ¥èç³»çµè¯
-    /// &lt;/summary&gt;
-    [MaxLength(15, ErrorMessage = "ç´§æ¥èç³»çµè¯é¿åº¦ä¸è½è¶è¿15ä¸ªå­ç¬¦")]
-    [Phone(ErrorMessage = "ç´§æ¥èç³»çµè¯æ ¼å¼ä¸æ­£ç¡®")]
-    [DisplayName("ç´§æ¥èç³»çµè¯")]
-    [AmisInputTextField(ColumnRatio = 6)]
-    public string? EmergencyPhone { get; set; }
-
-    /// &lt;summary&gt;
-    /// å°å
-    /// &lt;/summary&gt;
-    [MaxLength(500, ErrorMessage = "å°åé¿åº¦ä¸è½è¶è¿500ä¸ªå­ç¬¦")]
-    [DisplayName("å°å")]
-    [AmisTextareaField(ColumnRatio = 12)]
-    public string? Address { get; set; }
-
-    /// &lt;summary&gt;
-    /// å¤´åå°å
-    /// &lt;/summary&gt;
-    [MaxLength(255, ErrorMessage = "å¤´åå°åé¿åº¦ä¸è½è¶è¿255ä¸ªå­ç¬¦")]
-    [DisplayName("å¤´å")]
-    [AmisInputImageField(
-        Receiver = "/file/api/file/images/upload?BucketName=avatar",
-        Accept = "image/png,image/jpeg,image/jpg",
-        MaxSize = 2097152,
-        Multiple = false,
-        ColumnRatio = 12
-    )]
-    public string? AvatarUrl { get; set; }
-
-    /// &lt;summary&gt;
-    /// å¤æ³¨
-    /// &lt;/summary&gt;
-    [MaxLength(1000, ErrorMessage = "å¤æ³¨é¿åº¦ä¸è½è¶è¿1000ä¸ªå­ç¬¦")]
-    [DisplayName("å¤æ³¨")]
-    [AmisTextareaField(ColumnRatio = 12)]
-    public string? Remarks { get; set; }
-
-    /// &lt;summary&gt;
-    /// æ¯å¦æ¿æ´»
-    /// &lt;/summary&gt;
-    [DisplayName("æ¯å¦æ¿æ´»")]
-    [AmisFormField(ColumnRatio = 6)]
-    public bool IsActive { get; set; } = true;
-}
-</code></pre>
-<p><strong>è¯´æ</strong>ï¼</p>
-<p><strong>è¡¨åç¹æ§ï¼FormFieldsï¼</strong>ï¼ç¨äºæ§å¶åç«¯è¡¨åå­æ®µçæ¾ç¤ºåäº¤äº</p>
-<ul>
-<li>
-<p><code>FormGroup</code>ï¼è¡¨ååç»ç¹æ§ï¼å°ç¸å³å­æ®µç»ç»æç»</p>
-<ul>
-<li><code>Name</code>ï¼ç»åç§°</li>
-<li><code>Title</code>ï¼ç»æ é¢</li>
-<li><code>Fields</code>ï¼åå«çå­æ®µåç§°ï¼éå·åéï¼</li>
-<li><code>Order</code>ï¼æ¾ç¤ºé¡ºåºï¼æ°å¼è¶å°è¶é åï¼</li>
-<li><code>Mode</code>ï¼æ¾ç¤ºæ¨¡å¼ï¼Normal/Inline/Horizontalï¼</li>
-</ul>
-</li>
-<li>
-<p><code>AmisInputTextField</code>ï¼ææ¬è¾å¥æ¡</p>
-<ul>
-<li><code>ColumnRatio</code>ï¼å­æ®µå®½åº¦æ¯ä¾ï¼12ä¸ºå¨å®½ï¼6ä¸ºåå®½ï¼</li>
-<li><code>EnableAddOn</code>ï¼æ¯å¦å¯ç¨å³ä¾§éå ç»ä»¶</li>
-<li><code>AddOnLabel</code>ï¼éå ç»ä»¶æ ç­¾</li>
-<li><code>AddOnApi</code>ï¼éå ç»ä»¶APIå°å</li>
-</ul>
-</li>
-<li>
-<p><code>AmisInputTreeField</code>ï¼æ å½¢éæ©ç»ä»¶</p>
-<ul>
-<li><code>DataSource</code>ï¼æ°æ®æºURL</li>
-<li><code>ValueField</code>ï¼å¼å­æ®µå</li>
-<li><code>LabelField</code>ï¼æ ç­¾å­æ®µå</li>
-<li><code>Multiple</code>ï¼æ¯å¦å¤é</li>
-<li><code>Searchable</code>ï¼æ¯å¦å¯æç´¢</li>
-<li><code>ShowOutline</code>ï¼æ¯å¦æ¾ç¤ºè½®å»</li>
-<li><code>SubmitOnChange</code>ï¼éæ©åæ¯å¦èªå¨æäº¤</li>
-</ul>
-</li>
-<li>
-<p><code>AmisSelectField</code>ï¼ä¸æéæ©ç»ä»¶</p>
-<ul>
-<li><code>Source</code>ï¼æ°æ®æºURL</li>
-<li><code>ValueField</code>ï¼å¼å­æ®µå</li>
-<li><code>LabelField</code>ï¼æ ç­¾å­æ®µå</li>
-<li><code>Multiple</code>ï¼æ¯å¦å¤é</li>
-<li><code>Searchable</code>ï¼æ¯å¦å¯æç´¢</li>
-<li><code>Clearable</code>ï¼æ¯å¦å¯æ¸é¤</li>
-</ul>
-</li>
-<li>
-<p><code>AmisInputImageField</code>ï¼å¾çä¸ä¼ ç»ä»¶</p>
-<ul>
-<li><code>Receiver</code>ï¼ä¸ä¼ æ¥å£å°å</li>
-<li><code>Accept</code>ï¼æ¥åçæä»¶ç±»å</li>
-<li><code>MaxSize</code>ï¼æå¤§æä»¶å¤§å°ï¼å­èï¼</li>
-<li><code>Multiple</code>ï¼æ¯å¦æ¯æå¤æä»¶</li>
-</ul>
-</li>
-<li>
-<p><code>AmisDateFieldAttribute</code>ï¼æ¥æéæ©ç»ä»¶</p>
-<ul>
-<li><code>Format</code>ï¼æ¥ææ ¼å¼</li>
-<li><code>Placeholder</code>ï¼å ä½ç¬¦</li>
-<li><code>MinDate</code>ï¼æå°æ¥æ</li>
-<li><code>MaxDate</code>ï¼æå¤§æ¥æ</li>
-</ul>
-</li>
-<li>
-<p><code>AmisTextareaField</code>ï¼å¤è¡ææ¬è¾å¥æ¡</p>
-<ul>
-<li><code>MaxLength</code>ï¼æå¤§é¿åº¦</li>
-<li><code>ShowCounter</code>ï¼æ¯å¦æ¾ç¤ºå­ç¬¦è®¡æ°</li>
-<li><code>Rows</code>ï¼è¡æ°</li>
-</ul>
-</li>
-</ul>
-<p><strong>éç¨å±æ§</strong>ï¼</p>
-<ul>
-<li><code>ColumnRatio</code>ï¼å­æ®µå®½åº¦æ¯ä¾ï¼12ä¸ºå¨å®½ï¼6ä¸ºåå®½ï¼4ä¸º1/3å®½ï¼</li>
-<li><code>Required</code>ï¼æ¯å¦å¿å¡«</li>
-<li><code>Placeholder</code>ï¼å ä½ç¬¦ææ¬</li>
-<li><code>Disabled</code>ï¼æ¯å¦ç¦ç¨</li>
-<li><code>VisibleOn</code>ï¼æ¾ç¤ºæ¡ä»¶è¡¨è¾¾å¼</li>
-<li><code>DisabledOn</code>ï¼ç¦ç¨æ¡ä»¶è¡¨è¾¾å¼</li>
-</ul>
-<h3 id="23-updateemployeedtoæ´æ°dto">2.3 UpdateEmployeeDtoï¼æ´æ°DTOï¼</h3>
-<pre><code class="language-csharp">// Dtos/Employee/UpdateEmployeeDto.cs
-using CodeSpirit.Amis.Attributes.FormFields;
-using CodeSpirit.IdentityApi.Data.Models;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-
-namespace CodeSpirit.IdentityApi.Dtos.Employee;
-
-/// &lt;summary&gt;
-/// æ´æ°èå·¥æ°æ®ä¼ è¾å¯¹è±¡
-/// &lt;/summary&gt;
-[FormGroup("basic", "åºæ¬ä¿¡æ¯", "EmployeeNo,Name,Gender,IdNo,BirthDate", Order = 1)]
-[FormGroup("contact", "èç³»æ¹å¼", "PhoneNumber,Email,Address", Order = 2)]
-[FormGroup("work", "å·¥ä½ä¿¡æ¯", "DepartmentId,Position,JobLevel,HireDate,TerminationDate,EmploymentStatus", Order = 3)]
-[FormGroup("relation", "å³èä¿¡æ¯", "UserId", Order = 4)]
-[FormGroup("emergency", "ç´§æ¥èç³»äºº", "EmergencyContact,EmergencyPhone", Order = 5)]
-[FormGroup("other", "å¶ä»ä¿¡æ¯", "AvatarUrl,Remarks,IsActive", Order = 6)]
-public class UpdateEmployeeDto
-{
-    /// &lt;summary&gt;
-    /// å·¥å·
-    /// &lt;/summary&gt;
-    [Required(ErrorMessage = "å·¥å·ä¸è½ä¸ºç©º")]
-    [MaxLength(50, ErrorMessage = "å·¥å·é¿åº¦ä¸è½è¶è¿50ä¸ªå­ç¬¦")]
-    [DisplayName("å·¥å·")]
-    [AmisInputTextField(ColumnRatio = 6)]
-    public string EmployeeNo { get; set; } = string.Empty;
-
-    /// &lt;summary&gt;
-    /// å§å
-    /// &lt;/summary&gt;
-    [Required(ErrorMessage = "å§åä¸è½ä¸ºç©º")]
-    [MaxLength(100, ErrorMessage = "å§åé¿åº¦ä¸è½è¶è¿100ä¸ªå­ç¬¦")]
-    [DisplayName("å§å")]
-    [AmisInputTextField(ColumnRatio = 6)]
-    public string Name { get; set; } = string.Empty;
-
-    /// &lt;summary&gt;
-    /// æ§å«
-    /// &lt;/summary&gt;
-    [DisplayName("æ§å«")]
-    [AmisFormField(ColumnRatio = 6)]
-    public Gender Gender { get; set; }
-
-    /// &lt;summary&gt;
-    /// èº«ä»½è¯å·ç 
-    /// &lt;/summary&gt;
-    [MaxLength(18, ErrorMessage = "èº«ä»½è¯å·ç é¿åº¦ä¸è½è¶è¿18ä¸ªå­ç¬¦")]
-    [DisplayName("èº«ä»½è¯å·")]
-    [AmisInputTextField(ColumnRatio = 6)]
-    public string? IdNo { get; set; }
-
-    /// &lt;summary&gt;
-    /// åºçæ¥æ
-    /// &lt;/summary&gt;
-    [DisplayName("åºçæ¥æ")]
-    [AmisDateFieldAttribute(ColumnRatio = 6)]
-    public DateTime? BirthDate { get; set; }
-
-    /// &lt;summary&gt;
-    /// ææºå·ç 
-    /// &lt;/summary&gt;
-    [MaxLength(15, ErrorMessage = "ææºå·ç é¿åº¦ä¸è½è¶è¿15ä¸ªå­ç¬¦")]
-    [Phone(ErrorMessage = "ææºå·ç æ ¼å¼ä¸æ­£ç¡®")]
-    [DisplayName("ææºå·ç ")]
-    [AmisInputTextField(ColumnRatio = 6)]
-    public string? PhoneNumber { get; set; }
-
-    /// &lt;summary&gt;
-    /// çµå­é®ç®±
-    /// &lt;/summary&gt;
-    [MaxLength(100, ErrorMessage = "çµå­é®ç®±é¿åº¦ä¸è½è¶è¿100ä¸ªå­ç¬¦")]
-    [EmailAddress(ErrorMessage = "çµå­é®ç®±æ ¼å¼ä¸æ­£ç¡®")]
-    [DisplayName("çµå­é®ç®±")]
-    [AmisInputTextField(ColumnRatio = 6)]
-    public string? Email { get; set; }
-
-    /// &lt;summary&gt;
-    /// é¨é¨ID
-    /// &lt;/summary&gt;
-    [DisplayName("é¨é¨")]
-    [AmisInputTreeField(
-        DataSource = "${ROOT_API}/api/identity/Departments/tree",
-        LabelField = "name",
-        ValueField = "id",
-        Multiple = false,
-        Searchable = true,
-        ColumnRatio = 12
-    )]
-    public long? DepartmentId { get; set; }
-
-    /// &lt;summary&gt;
-    /// èä½
-    /// &lt;/summary&gt;
-    [MaxLength(100, ErrorMessage = "èä½é¿åº¦ä¸è½è¶è¿100ä¸ªå­ç¬¦")]
-    [DisplayName("èä½")]
-    [AmisInputTextField(ColumnRatio = 6)]
-    public string? Position { get; set; }
-
-    /// &lt;summary&gt;
-    /// èçº§
-    /// &lt;/summary&gt;
-    [MaxLength(50, ErrorMessage = "èçº§é¿åº¦ä¸è½è¶è¿50ä¸ªå­ç¬¦")]
-    [DisplayName("èçº§")]
-    [AmisInputTextField(ColumnRatio = 6)]
-    public string? JobLevel { get; set; }
-
-    /// &lt;summary&gt;
-    /// å¥èæ¥æ
-    /// &lt;/summary&gt;
-    [DisplayName("å¥èæ¥æ")]
-    [AmisDateFieldAttribute(ColumnRatio = 6)]
-    public DateTime? HireDate { get; set; }
-
-    /// &lt;summary&gt;
-    /// ç¦»èæ¥æ
-    /// &lt;/summary&gt;
-    [DisplayName("ç¦»èæ¥æ")]
-    [AmisDateFieldAttribute(ColumnRatio = 6)]
-    public DateTime? TerminationDate { get; set; }
-
-    /// &lt;summary&gt;
-    /// å¨èç¶æ
-    /// &lt;/summary&gt;
-    [DisplayName("å¨èç¶æ")]
-    [AmisFormField(ColumnRatio = 12)]
-    public EmploymentStatus EmploymentStatus { get; set; }
-
-    /// &lt;summary&gt;
-    /// å³èçç¨æ·ID
-    /// &lt;/summary&gt;
-    [DisplayName("å³èç¨æ·")]
-    [AmisSelectField(
-        Source = "${ROOT_API}/api/identity/Users",
-        ValueField = "id",
-        LabelField = "name",
-        Multiple = false,
-        Searchable = true,
-        ColumnRatio = 12
-    )]
-    public long? UserId { get; set; }
-
-    /// &lt;summary&gt;
-    /// ç´§æ¥èç³»äºº
-    /// &lt;/summary&gt;
-    [MaxLength(100, ErrorMessage = "ç´§æ¥èç³»äººé¿åº¦ä¸è½è¶è¿100ä¸ªå­ç¬¦")]
-    [DisplayName("ç´§æ¥èç³»äºº")]
-    [AmisInputTextField(ColumnRatio = 6)]
-    public string? EmergencyContact { get; set; }
-
-    /// &lt;summary&gt;
-    /// ç´§æ¥èç³»çµè¯
-    /// &lt;/summary&gt;
-    [MaxLength(15, ErrorMessage = "ç´§æ¥èç³»çµè¯é¿åº¦ä¸è½è¶è¿15ä¸ªå­ç¬¦")]
-    [Phone(ErrorMessage = "ç´§æ¥èç³»çµè¯æ ¼å¼ä¸æ­£ç¡®")]
-    [DisplayName("ç´§æ¥èç³»çµè¯")]
-    [AmisInputTextField(ColumnRatio = 6)]
-    public string? EmergencyPhone { get; set; }
-
-    /// &lt;summary&gt;
-    /// å°å
-    /// &lt;/summary&gt;
-    [MaxLength(500, ErrorMessage = "å°åé¿åº¦ä¸è½è¶è¿500ä¸ªå­ç¬¦")]
-    [DisplayName("å°å")]
-    [AmisTextareaField(ColumnRatio = 12)]
-    public string? Address { get; set; }
-
-    /// &lt;summary&gt;
-    /// å¤´åå°å
-    /// &lt;/summary&gt;
-    [MaxLength(255, ErrorMessage = "å¤´åå°åé¿åº¦ä¸è½è¶è¿255ä¸ªå­ç¬¦")]
-    [DisplayName("å¤´å")]
-    [AmisInputImageField(
-        Receiver = "/file/api/file/images/upload?BucketName=avatar",
-        Accept = "image/png,image/jpeg,image/jpg",
-        MaxSize = 2097152,
-        Multiple = false,
-        ColumnRatio = 12
-    )]
-    public string? AvatarUrl { get; set; }
-
-    /// &lt;summary&gt;
-    /// å¤æ³¨
-    /// &lt;/summary&gt;
-    [MaxLength(1000, ErrorMessage = "å¤æ³¨é¿åº¦ä¸è½è¶è¿1000ä¸ªå­ç¬¦")]
-    [DisplayName("å¤æ³¨")]
-    [AmisTextareaField(ColumnRatio = 12)]
-    public string? Remarks { get; set; }
-
-    /// &lt;summary&gt;
-    /// æ¯å¦æ¿æ´»
-    /// &lt;/summary&gt;
-    [DisplayName("æ¯å¦æ¿æ´»")]
-    [AmisFormField(ColumnRatio = 6)]
-    public bool IsActive { get; set; }
-}
-</code></pre>
-<h3 id="24-employeequerydtoæ¥è¯¢dto">2.4 EmployeeQueryDtoï¼æ¥è¯¢DTOï¼</h3>
-<pre><code class="language-csharp">// Dtos/Employee/EmployeeQueryDto.cs
-using CodeSpirit.Amis.Attributes.FormFields;
-using CodeSpirit.Core.Dtos;
-using CodeSpirit.IdentityApi.Data.Models;
-using System.ComponentModel;
-
-namespace CodeSpirit.IdentityApi.Dtos.Employee;
-
-/// &lt;summary&gt;
-/// èå·¥æ¥è¯¢æ°æ®ä¼ è¾å¯¹è±¡
-/// &lt;/summary&gt;
-public class EmployeeQueryDto : QueryDtoBase
-{
-    /// &lt;summary&gt;
-    /// å³é®å­æç´¢ï¼å§åãå·¥å·ãèº«ä»½è¯ãææºãé®ç®±ï¼
-    /// &lt;/summary&gt;
-    [DisplayName("å³é®å­")]
-    public string? Keywords { get; set; }
-
-    /// &lt;summary&gt;
-    /// æ¯å¦æ¿æ´»
-    /// &lt;/summary&gt;
-    [DisplayName("æ¯å¦æ¿æ´»")]
-    public bool? IsActive { get; set; }
-
-    /// &lt;summary&gt;
-    /// æ§å«ç­é
-    /// &lt;/summary&gt;
-    [DisplayName("æ§å«")]
-    public Gender? Gender { get; set; }
-
-    /// &lt;summary&gt;
-    /// é¨é¨IDç­é
-    /// &lt;/summary&gt;
-    [DisplayName("é¨é¨")]
-    [AmisInputTreeField(
-        DataSource = "${ROOT_API}/api/identity/Departments/tree",
-        Multiple = false,
-        JoinValues = true,
-        ExtractValue = false,
-        ShowOutline = true,
-        LabelField = "name",
-        ValueField = "id",
-        Required = false,
-        Clearable = true,
-        SubmitOnChange = true,
-        HeightAuto = true,
-        SelectFirst = false,
-        InputOnly = true,
-        ShowIcon = true
-    )]
-    [PageAside()]
-    public long? DepartmentId { get; set; }
-
-    /// &lt;summary&gt;
-    /// å¨èç¶æç­é
-    /// &lt;/summary&gt;
-    [DisplayName("å¨èç¶æ")]
-    public EmploymentStatus? EmploymentStatus { get; set; }
-
-    /// &lt;summary&gt;
-    /// å¥èæ¥æèå´
-    /// &lt;/summary&gt;
-    [DisplayName("å¥èæ¥æ")]
-    public DateTime[]? HireDate { get; set; }
-
-    /// &lt;summary&gt;
-    /// èä½
-    /// &lt;/summary&gt;
-    [DisplayName("èä½")]
-    public string? Position { get; set; }
-
-    /// &lt;summary&gt;
-    /// èçº§
-    /// &lt;/summary&gt;
-    [DisplayName("èçº§")]
-    public string? JobLevel { get; set; }
-}
-</code></pre>
-<p><strong>è¯´æ</strong>ï¼</p>
-<p><strong>æ¥è¯¢DTOç¹æ§</strong>ï¼</p>
-<ul>
-<li>
-<p><code>QueryDtoBase</code>ï¼åºç¡æ¥è¯¢DTOï¼æä¾äº<code>Page</code>ã<code>PerPage</code>ã<code>OrderBy</code>ã<code>OrderDir</code>ã<code>Keywords</code>ç­åé¡µåæåºå±æ§</p>
-</li>
-<li>
-<p><code>AmisInputTreeField</code>ï¼æ å½¢éæ©ç»ä»¶ï¼ç¨äºæ¥è¯¢è¡¨åï¼</p>
-<ul>
-<li><code>DataSource</code>ï¼æ°æ®æºURL</li>
-<li><code>SubmitOnChange</code>ï¼éæ©åèªå¨æäº¤æ¥è¯¢</li>
-<li><code>Searchable</code>ï¼æ¯å¦å¯æç´¢</li>
-<li><code>Clearable</code>ï¼æ¯å¦å¯æ¸é¤</li>
-<li><code>ShowOutline</code>ï¼æ¯å¦æ¾ç¤ºè½®å»</li>
-<li><code>HeightAuto</code>ï¼é«åº¦èªéåº</li>
-</ul>
-</li>
-<li>
-<p><strong><code>PageAside()</code>ç¹æ§</strong>ï¼æ è®°è¯¥å­æ®µå¨é¡µé¢ä¾§è¾¹æ æ¾ç¤º</p>
-<ul>
-<li>æ è®°äºæ­¤ç¹æ§çå­æ®µä¼èªå¨ä»ä¸»æ¥è¯¢è¡¨åä¸­æé¤ï¼é¿åéå¤æ¾ç¤º</li>
-<li>ç¹å«éç¨äºæ å½¢éæ©ãåç±»ç­éç­éè¦ç¬ç«å±ç¤ºçå­æ®µ</li>
-<li>ä¾§è¾¹æ å­æ®µçååä¼èªå¨è§¦åä¸»åå®¹åºåçæ¥è¯¢å·æ°ï¼éè¿<code>SubmitOnChange</code>éç½®ï¼</li>
-<li>å¯ä»¥éç½®ä¾§è¾¹æ çä½ç½®ï¼å·¦ä¾§/å³ä¾§ï¼ãå®½åº¦ãæ¯å¦åºå®ç­å±æ§</li>
-</ul>
-</li>
-</ul>
-<p><strong>æ¥è¯¢å­æ®µç¹æ§</strong>ï¼</p>
-<ul>
-<li>æ¥è¯¢DTOä¸­çå­æ®µå¯ä»¥ä½¿ç¨è¡¨åç¹æ§ï¼å¦<code>AmisInputTreeField</code>ã<code>AmisSelectField</code>ç­ï¼æ¥éç½®æ¥è¯¢è¡¨åçæ¾ç¤º</li>
-<li>æ¯æå¤æ¡ä»¶ç»åæ¥è¯¢ï¼æåæ¥è¯¢çµæ´»æ§</li>
-<li>æä¸¾ç±»åå­æ®µä¼èªå¨çæä¸æéæ©ç»ä»¶</li>
-<li>æ¥æç±»åå­æ®µå¯ä»¥ä½¿ç¨<code>AmisDateFieldAttribute</code>éç½®æ¥æèå´éæ©</li>
-</ul>
-<h2 id="3-éç½®automapperæ å°">3. éç½®AutoMapperæ å°</h2>
-<p>å¨<code>MappingProfiles</code>ç®å½ä¸åå»ºæ å°éç½®ï¼</p>
-<pre><code class="language-csharp">// MappingProfiles/EmployeeProfile.cs
-using AutoMapper;
-using CodeSpirit.IdentityApi.Data.Models;
-using CodeSpirit.IdentityApi.Dtos.Employee;
-using CodeSpirit.Shared.Extensions;
-
-namespace CodeSpirit.IdentityApi.MappingProfiles;
-
-/// &lt;summary&gt;
-/// èå·¥æ å°éç½®
-/// &lt;/summary&gt;
-public class EmployeeProfile : Profile
-{
-    /// &lt;summary&gt;
-    /// æé å½æ°
-    /// &lt;/summary&gt;
-    public EmployeeProfile()
-    {
-        // ä½¿ç¨æ©å±æ¹æ³éç½®åºæ¬CRUDæ å°ï¼èªå¨å¤çIncludeå¯¼èªå±æ§ï¼
-        this.ConfigureBaseCRUDIMappings&lt;
-            Employee, 
-            EmployeeDto, 
-            long, 
-            CreateEmployeeDto, 
-            UpdateEmployeeDto,
-            CreateEmployeeDto&gt;();
-            
-        // èªå®ä¹æ å°ï¼æ å°é¨é¨åç§°åç¨æ·å
-        CreateMap&lt;Employee, EmployeeDto&gt;()
-            .ForMember(dest =&gt; dest.DepartmentName, opt =&gt; opt.MapFrom(src =&gt; src.Department != null ? src.Department.Name : null))
-            .ForMember(dest =&gt; dest.UserName, opt =&gt; opt.MapFrom(src =&gt; src.User != null ? src.User.UserName : null));
-    }
-}
-</code></pre>
-<p><strong>è¯´æ</strong>ï¼</p>
-<ul>
-<li><code>ConfigureBaseCRUDIMappings</code>æ©å±æ¹æ³èªå¨éç½®åºæ¬çCRUDæ å°</li>
-<li>ä½¿ç¨<code>ForMember</code>èªå®ä¹å­æ®µæ å°é»è¾ï¼å°å¯¼èªå±æ§æ å°å°DTO</li>
-<li>æ¯æå¤ä¸ªDTOç±»åçæ å°éç½®</li>
-</ul>
-<h2 id="4-åå»ºæå¡æ¥å£åå®ç°">4. åå»ºæå¡æ¥å£åå®ç°</h2>
-<h3 id="41-æå¡æ¥å£">4.1 æå¡æ¥å£</h3>
-<pre><code class="language-csharp">// Services/IEmployeeService.cs
-using CodeSpirit.Core;
-using CodeSpirit.IdentityApi.Data.Models;
-using CodeSpirit.IdentityApi.Dtos.Employee;
-using CodeSpirit.Shared.Services;
-
-namespace CodeSpirit.IdentityApi.Services;
-
-/// &lt;summary&gt;
-/// èå·¥æå¡æ¥å£
-/// &lt;/summary&gt;
-public interface IEmployeeService : IBaseCRUDIService&lt;Employee, EmployeeDto, long, CreateEmployeeDto, UpdateEmployeeDto, EmployeeBatchImportItemDto&gt;, IScopedDependency
-{
-    /// &lt;summary&gt;
-    /// è·åèå·¥åè¡¨ï¼åé¡µï¼
-    /// &lt;/summary&gt;
-    /// &lt;param name="queryDto"&gt;æ¥è¯¢æ¡ä»¶&lt;/param&gt;
-    /// &lt;returns&gt;èå·¥åé¡µåè¡¨&lt;/returns&gt;
-    Task&lt;PageList&lt;EmployeeDto&gt;&gt; GetEmployeesAsync(EmployeeQueryDto queryDto);
-
-    /// &lt;summary&gt;
-    /// æ ¹æ®é¨é¨è·åèå·¥åè¡¨
-    /// &lt;/summary&gt;
-    /// &lt;param name="departmentId"&gt;é¨é¨ID&lt;/param&gt;
-    /// &lt;param name="includeSubDepartments"&gt;æ¯å¦åå«å­é¨é¨&lt;/param&gt;
-    /// &lt;returns&gt;èå·¥åè¡¨&lt;/returns&gt;
-    Task&lt;List&lt;EmployeeDto&gt;&gt; GetEmployeesByDepartmentAsync(long departmentId, bool includeSubDepartments = false);
-
-    /// &lt;summary&gt;
-    /// è®¾ç½®èå·¥æ¿æ´»ç¶æ
-    /// &lt;/summary&gt;
-    /// &lt;param name="id"&gt;èå·¥ID&lt;/param&gt;
-    /// &lt;param name="isActive"&gt;æ¯å¦æ¿æ´»&lt;/param&gt;
-    Task SetActiveStatusAsync(long id, bool isActive);
-
-    /// &lt;summary&gt;
-    /// è½¬ç§»èå·¥å°æ°é¨é¨
-    /// &lt;/summary&gt;
-    /// &lt;param name="employeeId"&gt;èå·¥ID&lt;/param&gt;
-    /// &lt;param name="newDepartmentId"&gt;æ°é¨é¨ID&lt;/param&gt;
-    Task TransferEmployeeAsync(long employeeId, long? newDepartmentId);
-
-    /// &lt;summary&gt;
-    /// åçèå·¥ç¦»è
-    /// &lt;/summary&gt;
-    /// &lt;param name="employeeId"&gt;èå·¥ID&lt;/param&gt;
-    /// &lt;param name="terminationDate"&gt;ç¦»èæ¥æ&lt;/param&gt;
-    Task TerminateEmployeeAsync(long employeeId, DateTime terminationDate);
-
-    /// &lt;summary&gt;
-    /// éªè¯å·¥å·æ¯å¦å¯ä¸
-    /// &lt;/summary&gt;
-    /// &lt;param name="employeeNo"&gt;å·¥å·&lt;/param&gt;
-    /// &lt;param name="excludeId"&gt;æé¤çèå·¥IDï¼ç¨äºæ´æ°æ¶éªè¯ï¼&lt;/param&gt;
-    /// &lt;returns&gt;æ¯å¦å¯ä¸&lt;/returns&gt;
-    Task&lt;bool&gt; IsEmployeeNoUniqueAsync(string employeeNo, long? excludeId = null);
-}
-</code></pre>
-<h3 id="42-æå¡å®ç°">4.2 æå¡å®ç°</h3>
-<pre><code class="language-csharp">// Services/EmployeeService.cs
-using AutoMapper;
-using CodeSpirit.Core;
-using CodeSpirit.Core.IdGenerator;
-using CodeSpirit.IdentityApi.Data;
-using CodeSpirit.IdentityApi.Data.Models;
-using CodeSpirit.IdentityApi.Dtos.Employee;
-using CodeSpirit.IdentityApi.Utilities;
-using CodeSpirit.Shared.Repositories;
-using CodeSpirit.Shared.Services;
-using CodeSpirit.Shared.Dtos.Common;
-using LinqKit;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-
-namespace CodeSpirit.IdentityApi.Services;
-
-/// &lt;summary&gt;
-/// èå·¥æå¡å®ç°
-/// &lt;/summary&gt;
-public class EmployeeService : BaseCRUDIService&lt;Employee, EmployeeDto, long, CreateEmployeeDto, UpdateEmployeeDto, EmployeeBatchImportItemDto&gt;, IEmployeeService
-{
-    private readonly IRepository&lt;Employee&gt; _employeeRepository;
-    private readonly IRepository&lt;Department&gt; _departmentRepository;
-    private readonly IRepository&lt;ApplicationUser&gt; _userRepository;
-    private readonly ILogger&lt;EmployeeService&gt; _logger;
-    private readonly IIdGenerator _idGenerator;
-    private readonly ICurrentUser _currentUser;
-    private readonly ApplicationDbContext _dbContext;
-    private readonly IDepartmentService _departmentService;
-    private readonly UserManager&lt;ApplicationUser&gt; _userManager;
-
-    /// &lt;summary&gt;
-    /// æé å½æ°
-    /// &lt;/summary&gt;
-    public EmployeeService(
-        IRepository&lt;Employee&gt; employeeRepository,
-        IRepository&lt;Department&gt; departmentRepository,
-        IRepository&lt;ApplicationUser&gt; userRepository,
-        IMapper mapper,
-        ILogger&lt;EmployeeService&gt; logger,
-        IIdGenerator idGenerator,
-        ICurrentUser currentUser,
-        ApplicationDbContext dbContext,
-        IDepartmentService departmentService,
-        UserManager&lt;ApplicationUser&gt; userManager,
-        EnhancedBatchImportHelper&lt;EmployeeBatchImportItemDto&gt; importHelper)
-        : base(employeeRepository, mapper, importHelper)
-    {
-        _employeeRepository = employeeRepository;
-        _departmentRepository = departmentRepository;
-        _userRepository = userRepository;
-        _logger = logger;
-        _idGenerator = idGenerator;
-        _currentUser = currentUser;
-        _dbContext = dbContext;
-        _departmentService = departmentService;
-        _userManager = userManager;
-    }
-
-    /// &lt;summary&gt;
-    /// è·åèå·¥åè¡¨ï¼åé¡µï¼
-    /// &lt;/summary&gt;
-    public async Task&lt;PageList&lt;EmployeeDto&gt;&gt; GetEmployeesAsync(EmployeeQueryDto queryDto)
-    {
-        var predicate = PredicateBuilder.New&lt;Employee&gt;(true);
-
-        // åºç¨æç´¢å³é®è¯è¿æ»¤
-        if (!string.IsNullOrWhiteSpace(queryDto.Keywords))
-        {
-            string searchLower = queryDto.Keywords.ToLower();
-            predicate = predicate.Or(e =&gt; e.Name.ToLower().Contains(searchLower));
-            predicate = predicate.Or(e =&gt; e.EmployeeNo.ToLower().Contains(searchLower));
-            predicate = predicate.Or(e =&gt; e.IdNo.Contains(queryDto.Keywords));
-            predicate = predicate.Or(e =&gt; e.PhoneNumber.Contains(queryDto.Keywords));
-            predicate = predicate.Or(e =&gt; e.Email.ToLower().Contains(searchLower));
-        }
-
-        // åºç¨å¶ä»è¿æ»¤æ¡ä»¶
-        if (queryDto.IsActive.HasValue)
-        {
-            predicate = predicate.And(e =&gt; e.IsActive == queryDto.IsActive.Value);
-        }
-
-        if (queryDto.Gender.HasValue)
-        {
-            predicate = predicate.And(e =&gt; e.Gender == queryDto.Gender.Value);
-        }
-
-        if (queryDto.DepartmentId.HasValue)
-        {
-            predicate = predicate.And(e =&gt; e.DepartmentId == queryDto.DepartmentId.Value);
-        }
-
-        if (queryDto.EmploymentStatus.HasValue)
-        {
-            predicate = predicate.And(e =&gt; e.EmploymentStatus == queryDto.EmploymentStatus.Value);
-        }
-
-        if (!string.IsNullOrWhiteSpace(queryDto.Position))
-        {
-            predicate = predicate.And(e =&gt; e.Position == queryDto.Position);
-        }
-
-        if (!string.IsNullOrWhiteSpace(queryDto.JobLevel))
-        {
-            predicate = predicate.And(e =&gt; e.JobLevel == queryDto.JobLevel);
-        }
-
-        if (queryDto.HireDate != null &amp;&amp; queryDto.HireDate.Length == 2)
-        {
-            predicate = predicate.And(e =&gt; e.HireDate &gt;= queryDto.HireDate[0]);
-            predicate = predicate.And(e =&gt; e.HireDate &lt;= queryDto.HireDate[1]);
-        }
-
-        // åå»ºæ¥è¯¢
-        var query = _employeeRepository.CreateQuery()
-            .Include(e =&gt; e.Department)
-            .Include(e =&gt; e.User)
-            .Where(predicate);
-
-        // æ§è¡åé¡µæ¥è¯¢
-        var totalCount = await query.CountAsync();
-        var employees = await query
-            .OrderByDescending(e =&gt; e.CreatedAt)
-            .Skip((queryDto.Page - 1) * queryDto.PerPage)
-            .Take(queryDto.PerPage)
-            .ToListAsync();
-
-        // æ å°å°DTO
-        var employeeDtos = Mapper.Map&lt;List&lt;EmployeeDto&gt;&gt;(employees);
-
-        // è®¾ç½®å³èæ°æ®
-        foreach (var dto in employeeDtos)
-        {
-            var employee = employees.First(e =&gt; e.Id == dto.Id);
-            dto.DepartmentName = employee.Department?.Name;
-            dto.UserName = employee.User?.UserName;
-        }
-
-        return new PageList&lt;EmployeeDto&gt;(employeeDtos, totalCount);
-    }
-
-    /// &lt;summary&gt;
-    /// æ ¹æ®é¨é¨è·åèå·¥åè¡¨
-    /// &lt;/summary&gt;
-    public async Task&lt;List&lt;EmployeeDto&gt;&gt; GetEmployeesByDepartmentAsync(long departmentId, bool includeSubDepartments = false)
-    {
-        var departmentIds = new List&lt;long&gt; { departmentId };
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                    <div id="cnblogs_post_description" style="display: none">
         
-        if (includeSubDepartments)
-        {
-            var subDepartments = await _departmentService.GetSubDepartmentsAsync(departmentId);
-            departmentIds.AddRange(subDepartments.Select(d =&gt; d.Id));
+        æ¬æè¯¦ç»è§£æäºåç«¯Fetch APIçå·¥ä½åçä¸å¸¸è§ç¨æ³ï¼å¹¶éç¹éè¿°äºå¶å¦ä½ä¸Python Flaskåç«¯æ¡æ¶ååå·¥ä½ãéè¿ç»å½éå®åãæ°æ®å¨æå¢å æ¹æ¥ç­å·ä½åºæ¯ï¼æ¼ç¤ºäºå¦ä½å®ç°æ å·æ°äº¤äºä½éªãæç« æä¾äºååç«¯éå¥çä»£ç ç¤ºä¾ï¼è®²è§£äºå¦ä½å¤çJSONãææ¬ç­ä¸åæ ¼å¼çååºï¼ä»¥åå¦ä½æ ¹æ®ååºç¶ææ´æ°ç¨æ·çé¢ï¼ä¸ºæå»ºç°ä»£Webåºç¨æä¾äºå®ç¨æåã
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
+<div style="font-family: -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Microsoft YaHei&quot;, sans-serif; line-height: 1.7; color: rgba(61, 61, 61, 1); font-size: 16px; padding: 0 15px">
+<h1 style="font-size: 22px; line-height: 1.4; margin-top: 0; margin-bottom: 15px; font-weight: bold; color: rgba(26, 26, 26, 1)">è¿å¨ä¸ºè¡¨åæäº¤åé¡µé¢å·æ°ç¦æ¼ï¼ä¸ææå®Fetchä¸Flaskçæ ç¼äº¤äº</h1>
+<p style="font-size: 15px; color: rgba(127, 140, 141, 1); margin-bottom: 20px; border-left: 3px solid rgba(74, 144, 226, 1); padding-left: 12px; font-style: italic">æ¬æå¸¦ä½ æ·±å¥çè§£ç°ä»£åç«¯ Fetch API çå·¥ä½åçï¼å¹¶ææææä½ å¦ä½ä¸ Flask åç«¯ä¼éç»åï¼å®ç°æ å·æ°ç»å½ãæ°æ®å¨æå¢å æ¹æ¥ç­äº¤äºã<br>äº®ç¹åæ¬ï¼Fetch æ ¸å¿åçåæãç»å½éå®åçå¼æ­¥å¤çãå©ç¨ååºç¶æç å¨ææ´æ°UIãä»¥åå¦ä½å¤çJSON/ææ¬ç­ä¸åæ ¼å¼çè¿åæ°æ®ã<br><br><span style="font-weight: bold">ä½ å°å­¦å°ï¼</span><br>- Fetch API çâæ¿è¯ºâæºå¶ä¸åºç¡ç¨æ³<br>- å¦ä½ç¨ Flask æå»º RESTful é£æ ¼ç API ç«¯ç¹<br>- ç»å½è¡¨åæäº¤ï¼åå«ä¼ ç»è¡¨åå·æ°ï¼å®ç°å¹³æ»è·³è½¬<br>- æ°æ®æä½ï¼åç«¯ä¸ä¸ªè¯·æ±ï¼åç«¯å¤çï¼åç«¯UIå³æ¶ååº<br>- æ ¹æ®åç«¯è¿åçä¸åæ°æ®ç±»åï¼JSON/Textï¼è¿è¡ç²¾åå¤ç</p>
+<h2 style="font-size: 18px; font-weight: bold; color: rgba(44, 62, 80, 1); border-bottom: 1px solid rgba(238, 238, 238, 1); padding-bottom: 8px; margin-top: 30px; margin-bottom: 15px">â¨ ç®å½</h2>
+<p>1. åè¯Fetchï¼ç°ä»£Webçéä¿¡ä¿¡ä½¿<br>2. ð ï¸ å®æåå¤ï¼Flaskåç«¯çç®åéç½®<br>3. ð åºæ¯ä¸ï¼ç»å½è¡¨åæäº¤ä¸é¡µé¢éå®å<br>4. â¨ åºæ¯äºï¼å¨ææ°å¢ä¸ä¿®æ¹æ°æ®<br>5. ð¦ åºæ¯ä¸ï¼å¤çä¸åç±»åçååºæ°æ®<br>6. ð» å®æ´ä»£ç åèä¸æ»ç»</p>
+<h2 style="font-size: 20px; font-weight: bold; color: rgba(44, 62, 80, 1); margin-top: 35px; margin-bottom: 15px">1. åè¯Fetchï¼ç°ä»£Webçéä¿¡ä¿¡ä½¿</h2>
+<p><code>fetch()</code> æ¯æµè§å¨æä¾çãåºäº <strong style="color: rgba(186, 55, 42, 1)">Promise</strong> çç°ä»£ç½ç»è¯·æ±APIãå®åä»£äºå¤èç XMLHttpRequestï¼è®©å¼æ­¥æ°æ®è¯·æ±åå¾æ¸æ°ãç®æ´ãä½ å¯ä»¥æå®æ³è±¡æä¸ä¸ªä¸ä¸çâä¿¡ä½¿âã</p>
+<p>å®çåºæ¬å·¥ä½æµç¨æ¯ï¼ä½ ç»ä¿¡ä½¿ï¼fetchï¼ä¸ä¸ªå°åï¼URLï¼åæç¤ºï¼éç½®å¯¹è±¡ï¼ï¼å®ç«å»è¿åä¸ä¸ªâæ¿è¯ºæ¶æ®âï¼Promiseï¼ãè¿ä¸ªæ¿è¯ºæç»ä¼åç°ä¸ºâååºåè£¹âï¼Responseå¯¹è±¡ï¼ï¼ä½ éè¦æå¼è¿ä¸ªåè£¹ï¼è°ç¨å¦.json(), .text()ç­æ¹æ³ï¼æè½æ¿å°éé¢ççå®æ°æ®ã</p>
+<pre class="language-javascript highlighter-hljs"><code>// ä¸ä¸ªæç®åçGETè¯·æ±ç¤ºä¾
+fetch('/api/data')
+  .then(response =&gt; response.json()) // æå¼åè£¹ï¼è§£æJSONæ°æ®
+  .then(data =&gt; console.log(data))   // å¤ççå®æ°æ®
+  .catch(error =&gt; console.error('åºéå¦ï¼', error)); // å¤çéè¯¯</code></pre>
+<h2 style="font-size: 20px; font-weight: bold; color: rgba(44, 62, 80, 1); margin-top: 35px; margin-bottom: 15px">2. ð ï¸ å®æåå¤ï¼Flaskåç«¯çç®åéç½®</h2>
+<p>ä¸ºäºè®©åç«¯Fetchè½é¡ºå©ä¸åç«¯âå¯¹è¯âï¼æä»¬éè¦ä¸ä¸ªè½å¤çJSONãå¹¶è½è¿è¡è·¨åèµæºå±äº«ï¼CORSï¼çFlaskåºç¨ãé¦åï¼å®è£å¿è¦åºï¼</p>
+<pre class="language-python highlighter-hljs"><code>pip install flask flask-cors</code></pre>
+<p>æ¥çï¼æ­å»ºä¸ä¸ªåºç¡çåç«¯æå¡ï¼</p>
+<pre class="language-python highlighter-hljs"><code>from flask import Flask, request, jsonify
+from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app)  # åè®¸åç«¯è·¨åè¯·æ±ï¼å¼åæ¶éå¸¸æ¹ä¾¿
+
+# æä»¬å°å¨åç»­åºæ¯ä¸­éæ­¥å¡«åè¿ä¸ªappçè·¯ç±
+if __name__ == '__main__':
+    app.run(debug=True)</code></pre>
+<h2 style="font-size: 20px; font-weight: bold; color: rgba(44, 62, 80, 1); margin-top: 35px; margin-bottom: 15px">3. ð åºæ¯ä¸ï¼ç»å½è¡¨åæäº¤ä¸é¡µé¢éå®å</h2>
+<p>ä¼ ç»è¡¨åæäº¤ä¼å·æ°é¡µé¢ï¼ä½éªå²è£ãä½¿ç¨Fetchï¼æä»¬å¯ä»¥å®ç°æ å·æ°ç»å½ï¼å¹¶æ ¹æ®åç«¯æä»¤è¿è¡åç«¯è·¯ç±è·³è½¬ã</p>
+<p><strong style="color: rgba(186, 55, 42, 1)">åç«¯ (JavaScript)</strong>ï¼æ¦æªè¡¨åæäº¤äºä»¶ï¼ä½¿ç¨Fetchåéæ°æ®ã</p>
+<pre class="language-javascript highlighter-hljs"><code>document.getElementById('loginForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // é»æ­¢è¡¨åé»è®¤æäº¤è¡ä¸º
+
+    const formData = new FormData(this);
+    // æèå°æ°æ®è½¬æ¢ä¸ºJSON: JSON.stringify(Object.fromEntries(formData))
+
+    fetch('/api/login', {
+        method: 'POST',
+        body: formData, // åéFormDataå¯¹è±¡
+        // headers: { 'Content-Type': 'application/json' }, // å¦æåéJSONéè®¾ç½®æ­¤header
+    })
+    .then(response =&gt; response.json()) // è§£æåç«¯è¿åçJSON
+    .then(result =&gt; {
+        if (result.success) {
+            // ç»å½æåï¼ä½¿ç¨åç«¯è·¯ç±è·³è½¬ï¼èéåç«¯éå®å
+            window.location.href = result.redirect_url || '/dashboard';
+        } else {
+            // ç»å½å¤±è´¥ï¼å¨ææ´æ°é¡µé¢ä¸çéè¯¯æç¤ºåç´ 
+            document.getElementById('error-msg').textContent = result.message;
         }
+    })
+    .catch(error =&gt; console.error('Error:', error));
+});</code></pre>
+<p><strong style="color: rgba(186, 55, 42, 1)">åç«¯ (Flask)</strong>ï¼éªè¯æ°æ®ï¼è¿ååå«ç¶æåæä»¤çJSONï¼èä¸æ¯ç´æ¥è¿åéå®åçHTMLã</p>
+<pre class="language-python highlighter-hljs"><code>@app.route('/api/login', methods=['POST'])
+def login():
+    username = request.form.get('username')
+    password = request.form.get('password')
 
-        var employees = await _employeeRepository.CreateQuery()
-            .Include(e =&gt; e.Department)
-            .Include(e =&gt; e.User)
-            .Where(e =&gt; departmentIds.Contains(e.DepartmentId ?? 0))
-            .ToListAsync();
+    # è¿éåºæ¯ä½ çéªè¯é»è¾ï¼ä¾å¦æ¥è¯¢æ°æ®åº
+    if username == 'admin' and password == 'secret':
+        # è¿åæåç¶æååç«¯è·³è½¬å°å
+        return jsonify({'success': True, 'redirect_url': '/dashboard'})
+    else:
+        # è¿åå¤±è´¥ç¶æåéè¯¯ä¿¡æ¯
+        return jsonify({'success': False, 'message': 'ç¨æ·åæå¯ç éè¯¯'}), 401</code></pre>
+<h2 style="font-size: 20px; font-weight: bold; color: rgba(44, 62, 80, 1); margin-top: 35px; margin-bottom: 15px">4. â¨ åºæ¯äºï¼å¨ææ°å¢ä¸ä¿®æ¹æ°æ®</h2>
+<p>å¨ç®¡çç³»ç»ä¸­ï¼æ°å¢æä¿®æ¹ä¸æ¡æ°æ®åï¼æä»¬å¸æåè¡¨è½ç«å³æ´æ°ï¼èæ éå·æ°æ´ä¸ªé¡µé¢ã</p>
+<p><strong style="color: rgba(186, 55, 42, 1)">æ ¸å¿æè·¯</strong>ï¼Fetchè¯·æ±æååï¼å¨<code>.then()</code>ä¸­æ ¹æ®åç«¯è¿åçææ°æ°æ®ï¼ç´æ¥æä½DOMæ´æ°UIã</p>
+<pre class="language-javascript highlighter-hljs"><code>// åè®¾æä¸ä¸ªä¿å­æé®ï¼ç¨äºæäº¤æ°å¢æä¿®æ¹çæ°æ®
+saveButton.addEventListener('click', () =&gt; {
+    const itemData = { title: 'æ°é¡¹ç®', status: 'active' };
 
-        return Mapper.Map&lt;List&lt;EmployeeDto&gt;&gt;(employees);
+    fetch('/api/items', {
+        method: 'POST', // æ°å¢ç¨POSTï¼ä¿®æ¹å¯è½æ¯PUTæPATCH
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(itemData)
+    })
+    .then(response =&gt; response.json())
+    .then(newItem =&gt; {
+        // å³é®æ­¥éª¤ï¼è¯·æ±æååï¼å¨ææ´æ°åç«¯åè¡¨
+        const itemList = document.getElementById('itemList');
+        const newItemElement = document.createElement('li');
+        newItemElement.id = `item-${newItem.id}`;
+        newItemElement.innerHTML = `${newItem.title} ${newItem.status}`;
+        itemList.appendChild(newItemElement);
+
+        // æèï¼å¦ææ¯ä¿®æ¹æä½ï¼å¯ä»¥æ¾å°å¯¹åºçDOMåç´ æ´æ°å¶åå®¹
+        // const oldItemElement = document.getElementById(`item-${newItem.id}`);
+        // oldItemElement.innerHTML = ...;
+
+        alert('æä½æåï¼'); // ææ´ä¼éçæç¤º
+    });
+});</code></pre>
+<p>å¯¹åºçFlaskåç«¯éè¦è¿ååå»ºææ´æ°åçå®æ´æ°æ®å¯¹è±¡ï¼ä»¥ä¾¿åç«¯ä½¿ç¨ã</p>
+<h2 style="font-size: 20px; font-weight: bold; color: rgba(44, 62, 80, 1); margin-top: 35px; margin-bottom: 15px">5. ð¦ åºæ¯ä¸ï¼å¤çä¸åç±»åçååºæ°æ®</h2>
+<p>åç«¯å¯è½è¿åJSONï¼ä¹å¯è½è¿åçº¯ææ¬æHTMLçæ®µãFetchçResponseå¯¹è±¡æä¾äºä¸åçæ¹æ³æ¥å¤çã</p>
+<p><strong style="color: rgba(186, 55, 42, 1)">å¤çJSON (æå¸¸ç¨)</strong>ï¼å¦ä¸ææç¤ºï¼ä½¿ç¨<code>response.json()</code>ã</p>
+<p><strong style="color: rgba(186, 55, 42, 1)">å¤çææ¬</strong>ï¼ä¾å¦åç«¯è¿åä¸ä¸ªç®åçæåæ¶æ¯æCSVæ°æ®ã</p>
+<pre class="language-javascript highlighter-hljs"><code>fetch('/api/export')
+  .then(response =&gt; response.text())
+  .then(textData =&gt; {
+    console.log(textData);
+    // å¤çææ¬æ°æ®...
+  });</code></pre>
+<p><strong style="color: rgba(186, 55, 42, 1)">æ£æ¥ååºç¶æ</strong>ï¼å¨è§£ææ°æ®åï¼åæ£æ¥è¯·æ±æ¯å¦çæ­£æåæ¯ä¸ªå¥½ä¹ æ¯ã</p>
+<pre class="language-javascript highlighter-hljs"><code>fetch('/api/some-data')
+  .then(response =&gt; {
+    if (!response.ok) { // æ£æ¥HTTPç¶æç æ¯å¦å¨200-299ä¹é´
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+    return response.json(); // ç¶ææ­£å¸¸æè§£æJSON
+  })
+  .then(data =&gt; /* å¤çæ°æ® */)
+  .catch(error =&gt; /* å¤çç½ç»éè¯¯æç¶æç éè¯¯ */);</code></pre>
+<h2 style="font-size: 20px; font-weight: bold; color: rgba(44, 62, 80, 1); margin-top: 35px; margin-bottom: 15px">6. ð» å®æ´ä»£ç åèä¸æ»ç»</h2>
+<p>ä¸é¢æ¯ä¸ä¸ªæ´åäºç»å½åæ°å¢é¡¹ç®çè¶ç®æå®æ´ç¤ºä¾ï¼</p>
+<pre class="language-python highlighter-hljs"><code># app.py (Flaskåç«¯)
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 
-    /// &lt;summary&gt;
-    /// è®¾ç½®èå·¥æ¿æ´»ç¶æ
-    /// &lt;/summary&gt;
-    public async Task SetActiveStatusAsync(long id, bool isActive)
-    {
-        var employee = await _employeeRepository.GetByIdAsync(id);
-        if (employee == null)
-        {
-            throw new AppServiceException(404, "èå·¥ä¸å­å¨");
-        }
+app = Flask(__name__)
+CORS(app)
+items = [] # ç¨ä¸ä¸ªç®æåè¡¨æ¨¡ææ°æ®åº
 
-        employee.IsActive = isActive;
-        await _employeeRepository.UpdateAsync(employee);
-    }
+@app.route('/api/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    if data.get('user') == 'demo':
+        return jsonify({'success': True, 'token': 'fake-jwt-token'})
+    return jsonify({'success': False}), 401
 
-    /// &lt;summary&gt;
-    /// è½¬ç§»èå·¥å°æ°é¨é¨
-    /// &lt;/summary&gt;
-    public async Task TransferEmployeeAsync(long employeeId, long? newDepartmentId)
-    {
-        var employee = await _employeeRepository.GetByIdAsync(employeeId);
-        if (employee == null)
-        {
-            throw new AppServiceException(404, "èå·¥ä¸å­å¨");
-        }
+@app.route('/api/items', methods=['GET', 'POST'])
+def handle_items():
+    if request.method == 'GET':
+        return jsonify(items)
+    else: # POST
+        new_item = request.get_json()
+        new_item['id'] = len(items) + 1
+        items.append(new_item)
+        return jsonify(new_item), 201
 
-        if (newDepartmentId.HasValue)
-        {
-            var departmentExists = await _departmentRepository.ExistsAsync(d =&gt; d.Id == newDepartmentId.Value);
-            if (!departmentExists)
-            {
-                throw new AppServiceException(400, "é¨é¨ä¸å­å¨");
-            }
-        }
+if __name__ == '__main__':
+    app.run(debug=True)</code></pre>
+<pre class="language-html highlighter-hljs"><code>&lt;!-- index.html (é¨ååç«¯) --&gt;
+&lt;script&gt;
+// ç»å½
+fetch('/api/login', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({user: 'demo', pass: 'demo'})
+}).then(r =&gt; r.json()).then(console.log);
 
-        employee.DepartmentId = newDepartmentId;
-        await _employeeRepository.UpdateAsync(employee);
-    }
-
-    /// &lt;summary&gt;
-    /// åçèå·¥ç¦»è
-    /// &lt;/summary&gt;
-    public async Task TerminateEmployeeAsync(long employeeId, DateTime terminationDate)
-    {
-        var employee = await _employeeRepository.GetByIdAsync(employeeId);
-        if (employee == null)
-        {
-            throw new AppServiceException(404, "èå·¥ä¸å­å¨");
-        }
-
-        employee.EmploymentStatus = EmploymentStatus.Resigned;
-        employee.TerminationDate = terminationDate;
-        employee.IsActive = false;
-        
-        await _employeeRepository.UpdateAsync(employee);
-    }
-
-    /// &lt;summary&gt;
-    /// éªè¯å·¥å·æ¯å¦å¯ä¸
-    /// &lt;/summary&gt;
-    public async Task&lt;bool&gt; IsEmployeeNoUniqueAsync(string employeeNo, long? excludeId = null)
-    {
-        var query = _employeeRepository.CreateQuery()
-            .Where(e =&gt; e.EmployeeNo == employeeNo &amp;&amp; e.TenantId == _currentUser.TenantId);
-
-        if (excludeId.HasValue)
-        {
-            query = query.Where(e =&gt; e.Id != excludeId.Value);
-        }
-
-        return !await query.AnyAsync();
-    }
-
-    /// &lt;summary&gt;
-    /// éªè¯åå»ºDTO
-    /// &lt;/summary&gt;
-    protected override async Task ValidateCreateDto(CreateEmployeeDto createDto)
-    {
-        await base.ValidateCreateDto(createDto);
-
-        // éªè¯å·¥å·å¯ä¸æ§
-        bool isUnique = await IsEmployeeNoUniqueAsync(createDto.EmployeeNo);
-        if (!isUnique)
-        {
-            throw new AppServiceException(400, $"å·¥å· {createDto.EmployeeNo} å·²å­å¨ï¼è¯·ä½¿ç¨å¶ä»å·¥å·");
-        }
-
-        // éªè¯é¨é¨æ¯å¦å­å¨
-        if (createDto.DepartmentId.HasValue)
-        {
-            var departmentExists = await _departmentRepository.ExistsAsync(d =&gt; d.Id == createDto.DepartmentId.Value);
-            if (!departmentExists)
-            {
-                throw new AppServiceException(400, "é¨é¨ä¸å­å¨");
-            }
-        }
-
-        // éªè¯ç¨æ·æ¯å¦å­å¨ï¼å¦ææå®äºç¨æ·IDï¼
-        if (createDto.UserId.HasValue)
-        {
-            var userExists = await _userRepository.ExistsAsync(u =&gt; u.Id == createDto.UserId.Value);
-            if (!userExists)
-            {
-                throw new AppServiceException(400, "ç¨æ·ä¸å­å¨");
-            }
-        }
-    }
-
-    /// &lt;summary&gt;
-    /// éªè¯æ´æ°DTO
-    /// &lt;/summary&gt;
-    protected override async Task ValidateUpdateDto(long id, UpdateEmployeeDto updateDto)
-    {
-        await base.ValidateUpdateDto(id, updateDto);
-
-        // éªè¯å·¥å·å¯ä¸æ§ï¼æé¤å½åè®°å½ï¼
-        bool isUnique = await IsEmployeeNoUniqueAsync(updateDto.EmployeeNo, id);
-        if (!isUnique)
-        {
-            throw new AppServiceException(400, $"å·¥å· {updateDto.EmployeeNo} å·²å­å¨ï¼è¯·ä½¿ç¨å¶ä»å·¥å·");
-        }
-
-        // éªè¯é¨é¨æ¯å¦å­å¨
-        if (updateDto.DepartmentId.HasValue)
-        {
-            var departmentExists = await _departmentRepository.ExistsAsync(d =&gt; d.Id == updateDto.DepartmentId.Value);
-            if (!departmentExists)
-            {
-                throw new AppServiceException(400, "é¨é¨ä¸å­å¨");
-            }
-        }
-
-        // éªè¯ç¨æ·æ¯å¦å­å¨ï¼å¦ææå®äºç¨æ·IDï¼
-        if (updateDto.UserId.HasValue)
-        {
-            var userExists = await _userRepository.ExistsAsync(u =&gt; u.Id == updateDto.UserId.Value);
-            if (!userExists)
-            {
-                throw new AppServiceException(400, "ç¨æ·ä¸å­å¨");
-            }
-        }
-    }
-
-    /// &lt;summary&gt;
-    /// åå»ºå®ä½åçå¤ç
-    /// &lt;/summary&gt;
-    protected override async Task&lt;Employee&gt; OnCreating(CreateEmployeeDto createDto)
-    {
-        var employee = await base.OnCreating(createDto);
-        
-        // è®¾ç½®ç§æ·ID
-        employee.TenantId = _currentUser.TenantId;
-        
-        // çæIDï¼å¦æéè¦ï¼
-        if (employee.Id == 0)
-        {
-            employee.Id = await _idGenerator.GenerateIdAsync();
-        }
-
-        return employee;
-    }
-}
-</code></pre>
-<p><strong>è¯´æ</strong>ï¼</p>
-<ul>
-<li>ç»§æ¿èª<code>BaseCRUDIService</code>ï¼èªå¨è·å¾æ åçCRUDæ¹æ³åæ¹éå¯¼å¥åè½</li>
-<li>å®ç°<code>IScopedDependency</code>æ¥å£ï¼æå¡ä¼èªå¨æ³¨å</li>
-<li>éå<code>ValidateCreateDto</code>å<code>ValidateUpdateDto</code>æ¹æ³å®ç°ä¸å¡éªè¯ï¼å·¥å·å¯ä¸æ§ãé¨é¨å­å¨æ§ç­ï¼</li>
-<li>éå<code>OnCreating</code>æ¹æ³è®¾ç½®ç§æ·IDåçæID</li>
-<li>ä½¿ç¨<code>LinqKit</code>ç<code>PredicateBuilder</code>æå»ºå¨ææ¥è¯¢æ¡ä»¶</li>
-<li>æä¾é¢å¤çä¸å¡æ¹æ³ï¼è®¾ç½®æ¿æ´»ç¶æãè½¬ç§»é¨é¨ãåçç¦»èç­ï¼</li>
-</ul>
-<h2 id="5-åå»ºæ§å¶å¨">5. åå»ºæ§å¶å¨</h2>
-<p>å¨<code>Controllers</code>ç®å½ä¸åå»ºæ§å¶å¨ï¼</p>
-<pre><code class="language-csharp">// Controllers/EmployeesController.cs
-using CodeSpirit.Core;
-using CodeSpirit.Core.Attributes;
-using CodeSpirit.Core.Dtos;
-using CodeSpirit.Core.Enums;
-using CodeSpirit.IdentityApi.Dtos.Employee;
-using CodeSpirit.IdentityApi.Services;
-using CodeSpirit.Shared.Dtos.Common;
-using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel;
-
-namespace CodeSpirit.IdentityApi.Controllers;
-
-/// &lt;summary&gt;
-/// èå·¥ç®¡çæ§å¶å¨
-/// &lt;/summary&gt;
-[DisplayName("èå·¥ç®¡ç")]
-[Navigation(Icon = "fa-solid fa-user-tie", PlatformType = PlatformType.Tenant)]
-public class EmployeesController : ApiControllerBase
-{
-    private readonly IEmployeeService _employeeService;
-
-    /// &lt;summary&gt;
-    /// æé å½æ°
-    /// &lt;/summary&gt;
-    public EmployeesController(IEmployeeService employeeService)
-    {
-        _employeeService = employeeService;
-    }
-
-    /// &lt;summary&gt;
-    /// è·åèå·¥åè¡¨
-    /// &lt;/summary&gt;
-    /// &lt;param name="queryDto"&gt;æ¥è¯¢æ¡ä»¶&lt;/param&gt;
-    /// &lt;returns&gt;èå·¥åè¡¨ç»æ&lt;/returns&gt;
-    [HttpGet]
-    [DisplayName("è·åèå·¥åè¡¨")]
-    public async Task&lt;ActionResult&lt;ApiResponse&lt;PageList&lt;EmployeeDto&gt;&gt;&gt;&gt; GetEmployees([FromQuery] EmployeeQueryDto queryDto)
-    {
-        var employees = await _employeeService.GetEmployeesAsync(queryDto);
-        return SuccessResponse(employees);
-    }
-
-    /// &lt;summary&gt;
-    /// æ ¹æ®é¨é¨è·åèå·¥åè¡¨
-    /// &lt;/summary&gt;
-    /// &lt;param name="departmentId"&gt;é¨é¨ID&lt;/param&gt;
-    /// &lt;param name="includeSubDepartments"&gt;æ¯å¦åå«å­é¨é¨&lt;/param&gt;
-    /// &lt;returns&gt;èå·¥åè¡¨&lt;/returns&gt;
-    [HttpGet("department/{departmentId}")]
-    [DisplayName("æ ¹æ®é¨é¨è·åèå·¥")]
-    public async Task&lt;ActionResult&lt;ApiResponse&lt;List&lt;EmployeeDto&gt;&gt;&gt;&gt; GetEmployeesByDepartment(
-        long departmentId, 
-        [FromQuery] bool includeSubDepartments = false)
-    {
-        var employees = await _employeeService.GetEmployeesByDepartmentAsync(departmentId, includeSubDepartments);
-        return SuccessResponse(employees);
-    }
-
-    /// &lt;summary&gt;
-    /// è·åèå·¥è¯¦æ
-    /// &lt;/summary&gt;
-    /// &lt;param name="id"&gt;èå·¥ID&lt;/param&gt;
-    /// &lt;returns&gt;èå·¥è¯¦ç»ä¿¡æ¯&lt;/returns&gt;
-    [HttpGet("{id:long}")]
-    [DisplayName("è·åèå·¥è¯¦æ")]
-    public async Task&lt;ActionResult&lt;ApiResponse&lt;EmployeeDto&gt;&gt;&gt; GetEmployee(long id)
-    {
-        var employee = await _employeeService.GetAsync(id);
-        return SuccessResponse(employee);
-    }
-
-    /// &lt;summary&gt;
-    /// åå»ºèå·¥
-    /// &lt;/summary&gt;
-    /// &lt;param name="createDto"&gt;åå»ºèå·¥è¯·æ±æ°æ®&lt;/param&gt;
-    /// &lt;returns&gt;åå»ºçèå·¥ä¿¡æ¯&lt;/returns&gt;
-    [HttpPost]
-    [DisplayName("åå»ºèå·¥")]
-    public async Task&lt;ActionResult&lt;ApiResponse&lt;EmployeeDto&gt;&gt;&gt; CreateEmployee(CreateEmployeeDto createDto)
-    {
-        ArgumentNullException.ThrowIfNull(createDto);
-        var employeeDto = await _employeeService.CreateAsync(createDto);
-        return SuccessResponse(employeeDto);
-    }
-
-    /// &lt;summary&gt;
-    /// æ´æ°èå·¥
-    /// &lt;/summary&gt;
-    /// &lt;param name="id"&gt;èå·¥ID&lt;/param&gt;
-    /// &lt;param name="updateDto"&gt;æ´æ°èå·¥è¯·æ±æ°æ®&lt;/param&gt;
-    /// &lt;returns&gt;æ´æ°æä½ç»æ&lt;/returns&gt;
-    [HttpPut("{id:long}")]
-    [DisplayName("æ´æ°èå·¥")]
-    public async Task&lt;ActionResult&lt;ApiResponse&gt;&gt; UpdateEmployee(long id, UpdateEmployeeDto updateDto)
-    {
-        await _employeeService.UpdateAsync(id, updateDto);
-        return SuccessResponse();
-    }
-
-    /// &lt;summary&gt;
-    /// å é¤èå·¥
-    /// &lt;/summary&gt;
-    /// &lt;param name="id"&gt;èå·¥ID&lt;/param&gt;
-    /// &lt;returns&gt;å é¤æä½ç»æ&lt;/returns&gt;
-    [HttpDelete("{id:long}")]
-    [Operation("å é¤", "ajax", null, "ç¡®å®è¦å é¤æ­¤èå·¥åï¼")]
-    [DisplayName("å é¤èå·¥")]
-    public async Task&lt;ActionResult&lt;ApiResponse&gt;&gt; DeleteEmployee(long id)
-    {
-        await _employeeService.DeleteAsync(id);
-        return SuccessResponse();
-    }
-
-    /// &lt;summary&gt;
-    /// æ¹éå é¤èå·¥
-    /// &lt;/summary&gt;
-    /// &lt;param name="request"&gt;æ¹éå é¤è¯·æ±&lt;/param&gt;
-    /// &lt;returns&gt;æ¹éå é¤æä½ç»æ&lt;/returns&gt;
-    [HttpPost("batch-delete")]
-    [Operation("æ¹éå é¤", "ajax", null, "ç¡®å®è¦æ¹éå é¤éä¸­çèå·¥åï¼", isBulkOperation: true)]
-    [DisplayName("æ¹éå é¤èå·¥")]
-    public async Task&lt;ActionResult&lt;ApiResponse&gt;&gt; BatchDeleteEmployees([FromBody] BatchOperationDto&lt;long&gt; request)
-    {
-        ArgumentNullException.ThrowIfNull(request);
-        (int successCount, List&lt;long&gt; failedIds) = await _employeeService.BatchDeleteAsync(request.Ids);
-        
-        return failedIds.Any()
-            ? SuccessResponse($"æåå é¤ {successCount} ä¸ªèå·¥ï¼ä½ä»¥ä¸èå·¥å é¤å¤±è´¥: {string.Join(", ", failedIds)}")
-            : SuccessResponse($"æåå é¤ {successCount} ä¸ªèå·¥ï¼");
-    }
-
-    /// &lt;summary&gt;
-    /// è®¾ç½®èå·¥æ¿æ´»ç¶æ
-    /// &lt;/summary&gt;
-    /// &lt;param name="id"&gt;èå·¥ID&lt;/param&gt;
-    /// &lt;param name="isActive"&gt;æ¯å¦æ¿æ´»&lt;/param&gt;
-    /// &lt;returns&gt;æä½ç»æ&lt;/returns&gt;
-    [HttpPut("{id:long}/active")]
-    [DisplayName("è®¾ç½®æ¿æ´»ç¶æ")]
-    public async Task&lt;ActionResult&lt;ApiResponse&gt;&gt; SetActiveStatus(long id, [FromBody] bool isActive)
-    {
-        await _employeeService.SetActiveStatusAsync(id, isActive);
-        return SuccessResponse();
-    }
-
-    /// &lt;summary&gt;
-    /// è½¬ç§»èå·¥å°æ°é¨é¨
-    /// &lt;/summary&gt;
-    /// &lt;param name="id"&gt;èå·¥ID&lt;/param&gt;
-    /// &lt;param name="request"&gt;è½¬ç§»è¯·æ±&lt;/param&gt;
-    /// &lt;returns&gt;æä½ç»æ&lt;/returns&gt;
-    [HttpPut("{id:long}/transfer")]
-    [DisplayName("è½¬ç§»é¨é¨")]
-    public async Task&lt;ActionResult&lt;ApiResponse&gt;&gt; TransferEmployee(long id, [FromBody] TransferEmployeeRequest request)
-    {
-        await _employeeService.TransferEmployeeAsync(id, request.DepartmentId);
-        return SuccessResponse();
-    }
-
-    /// &lt;summary&gt;
-    /// åçèå·¥ç¦»è
-    /// &lt;/summary&gt;
-    /// &lt;param name="id"&gt;èå·¥ID&lt;/param&gt;
-    /// &lt;param name="request"&gt;ç¦»èè¯·æ±&lt;/param&gt;
-    /// &lt;returns&gt;æä½ç»æ&lt;/returns&gt;
-    [HttpPut("{id:long}/terminate")]
-    [DisplayName("åçç¦»è")]
-    public async Task&lt;ActionResult&lt;ApiResponse&gt;&gt; TerminateEmployee(long id, [FromBody] TerminateEmployeeRequest request)
-    {
-        await _employeeService.TerminateEmployeeAsync(id, request.TerminationDate);
-        return SuccessResponse();
-    }
-}
-
-/// &lt;summary&gt;
-/// è½¬ç§»èå·¥è¯·æ±
-/// &lt;/summary&gt;
-public class TransferEmployeeRequest
-{
-    public long? DepartmentId { get; set; }
-}
-
-/// &lt;summary&gt;
-/// ç¦»èè¯·æ±
-/// &lt;/summary&gt;
-public class TerminateEmployeeRequest
-{
-    public DateTime TerminationDate { get; set; }
-}
-</code></pre>
-<p><strong>è¯´æ</strong>ï¼</p>
-<ul>
-<li>ç»§æ¿èª<code>ApiControllerBase</code>ï¼èªå¨è·å¾ç»ä¸çååºæ ¼å¼åå¼å¸¸å¤ç</li>
-<li><code>DisplayName</code>ç¹æ§ç¨äºåç«¯çé¢æ¾ç¤º</li>
-<li><code>Navigation</code>ç¹æ§ç¨äºæ·»å å°å¯¼èªèå</li>
-<li><code>Operation</code>ç¹æ§ç¨äºéç½®æä½æé®ï¼å é¤ç¡®è®¤å¯¹è¯æ¡ï¼</li>
-<li>ä½¿ç¨<code>SuccessResponse</code>æ¹æ³è¿åç»ä¸çæåååº</li>
-<li>æä¾é¢å¤çä¸å¡æä½æ¥å£ï¼è®¾ç½®æ¿æ´»ç¶æãè½¬ç§»é¨é¨ãåçç¦»èç­ï¼</li>
-</ul>
-<h2 id="6-éç½®æ°æ®åºä¸ä¸æ">6. éç½®æ°æ®åºä¸ä¸æ</h2>
-<p>å¨<code>Data</code>ç®å½ä¸çDbContextä¸­æ·»å å®ä½ï¼</p>
-<pre><code class="language-csharp">// Data/ApplicationDbContext.cs
-using CodeSpirit.IdentityApi.Data.Models;
-using CodeSpirit.Shared.Data;
-using Microsoft.EntityFrameworkCore;
-
-namespace CodeSpirit.IdentityApi.Data;
-
-/// &lt;summary&gt;
-/// èº«ä»½è®¤è¯ç³»ç»æ°æ®åºä¸ä¸æ - æ¯æå¤ç§æ·åå¤æ°æ®åº
-/// &lt;/summary&gt;
-public class ApplicationDbContext : MultiDatabaseDbContextBase
-{
-    /// &lt;summary&gt;
-    /// èå·¥
-    /// &lt;/summary&gt;
-    public DbSet&lt;Employee&gt; Employees =&gt; Set&lt;Employee&gt;();
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
-
-        // éç½®Employeeå®ä½
-        modelBuilder.Entity&lt;Employee&gt;(entity =&gt;
-        {
-            entity.ToTable(nameof(Employee));
-            entity.Property(e =&gt; e.Id).ValueGeneratedNever();
-
-            // ç§æ·æç¥çå·¥å·å¤åå¯ä¸ç´¢å¼ï¼åä¸ç§æ·åå·¥å·å¯ä¸
-            entity.HasIndex(e =&gt; new { e.TenantId, e.EmployeeNo })
-                .IsUnique()
-                .HasDatabaseName("IX_Employee_TenantId_EmployeeNo");
-
-            // ç´¢å¼ DepartmentIdï¼æé«æ¥è¯¢é¨é¨åå·¥çæ§è½
-            entity.HasIndex(e =&gt; e.DepartmentId)
-                .HasDatabaseName("IX_Employee_DepartmentId");
-
-            // ç´¢å¼ UserIdï¼æé«æ¥è¯¢ç¨æ·å³èçæ§è½
-            entity.HasIndex(e =&gt; e.UserId)
-                .HasDatabaseName("IX_Employee_UserId");
-
-            // ç´¢å¼ IsActiveï¼æé«æç¶æè¿æ»¤çæ§è½
-            entity.HasIndex(e =&gt; e.IsActive)
-                .HasDatabaseName("IX_Employee_IsActive");
-
-            // ç´¢å¼ EmploymentStatusï¼æé«æå¨èç¶æè¿æ»¤çæ§è½
-            entity.HasIndex(e =&gt; e.EmploymentStatus)
-                .HasDatabaseName("IX_Employee_EmploymentStatus");
-
-            // éç½®ä¸é¨é¨çå³ç³»
-            entity.HasOne(e =&gt; e.Department)
-                .WithMany()
-                .HasForeignKey(e =&gt; e.DepartmentId)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            // éç½®ä¸ç¨æ·çå³ç³»
-            entity.HasOne(e =&gt; e.User)
-                .WithMany()
-                .HasForeignKey(e =&gt; e.UserId)
-                .OnDelete(DeleteBehavior.SetNull);
-        });
-    }
-}
-</code></pre>
-<p><strong>è¯´æ</strong>ï¼</p>
-<ul>
-<li>ç»§æ¿èª<code>MultiDatabaseDbContextBase</code>ï¼æ¯æMySQLåSQL Server</li>
-<li>éç½®è¡¨åãä¸»é®ãå­æ®µé¿åº¦ç­</li>
-<li>éç½®å¤åå¯ä¸ç´¢å¼ï¼ç§æ·ID + å·¥å·ï¼ï¼ç¡®ä¿åä¸ç§æ·åå·¥å·å¯ä¸</li>
-<li>éç½®å³èå³ç³»ççº§èå é¤ç­ç¥ï¼SetNullè¡¨ç¤ºå é¤é¨é¨æç¨æ·æ¶ï¼èå·¥è®°å½ä¿çä½å³èå­æ®µè®¾ä¸ºnullï¼</li>
-<li>æ·»å å¿è¦çç´¢å¼æåæ¥è¯¢æ§è½</li>
-</ul>
-<h2 id="7-æå¡æ³¨å">7. æå¡æ³¨å</h2>
-<p>CodeSpiritæ¡æ¶éè¿æ è®°æ¥å£èªå¨æ³¨åæå¡ï¼æ éæå¨æ³¨åï¼</p>
-<pre><code class="language-csharp">// IEmployeeServiceæ¥å£ç»§æ¿äºIScopedDependencyæ¥å£
-public interface IEmployeeService : IBaseCRUDIService&lt;...&gt;, IScopedDependency
-{
-    // ...
-}
-</code></pre>
-<p><strong>è¯´æ</strong>ï¼</p>
-<ul>
-<li>æå¡æ¥å£ç»§æ¿<code>IScopedDependency</code>æ¥å£ï¼æå¡ä¼èªå¨æ³¨åä¸ºScopedçå½å¨æ</li>
-<li>æ¡æ¶ä¼èªå¨æ«æå¹¶æ³¨åæææ è®°æ¥å£çæå¡</li>
-<li>æ éå¨<code>Program.cs</code>ä¸­æå¨æ³¨å</li>
-</ul>
-<h2 id="8-åå»ºæ°æ®åºè¿ç§»">8. åå»ºæ°æ®åºè¿ç§»</h2>
-<p>CodeSpiritæ¡æ¶æ¯æå¤æ°æ®åºæ¶æï¼è¿ç§»æä»¶ææ°æ®åºç±»ååç¦»å­å¨ãåå»ºè¿ç§»æ¶å¿é¡»æå®è¿ç§»ç®å½åæ°ã</p>
-<pre><code class="language-bash"># è¿å¥IdentityApié¡¹ç®ç®å½
-cd Src/ApiServices/CodeSpirit.IdentityApi
-
-# åå»ºè¿ç§»ï¼æ ¹æ®æ°æ®åºç±»åéæ©ï¼
-# MySQL - è¿ç§»æä»¶å°ä¿å­å° Migrations/MySql/ ç®å½
-dotnet ef migrations add AddEmployees --context MySqlApplicationDbContext --output-dir Migrations/MySql
-
-# SQL Server - è¿ç§»æä»¶å°ä¿å­å° Migrations/SqlServer/ ç®å½
-dotnet ef migrations add AddEmployees --context SqlServerApplicationDbContext --output-dir Migrations/SqlServer
-
-# åºç¨è¿ç§»
-dotnet ef database update --context MySqlApplicationDbContext
-# æ
-dotnet ef database update --context SqlServerApplicationDbContext
-</code></pre>
-<p><strong>è¿ç§»ç®å½ç»æ</strong>ï¼</p>
-<pre><code>Src/ApiServices/CodeSpirit.IdentityApi/
-âââ Migrations/
-â   âââ MySql/                          # MySQLè¿ç§»æä»¶
-â   â   âââ 20251222_AddEmployees.cs
-â   â   âââ 20251222_AddEmployees.Designer.cs
-â   â   âââ MySqlApplicationDbContextModelSnapshot.cs
-â   âââ SqlServer/                      # SQL Serverè¿ç§»æä»¶
-â       âââ 20251222_AddEmployees.cs
-â       âââ 20251222_AddEmployees.Designer.cs
-â       âââ SqlServerApplicationDbContextModelSnapshot.cs
-</code></pre>
-<p><strong>è¯´æ</strong>ï¼</p>
-<ul>
-<li><code>--output-dir</code>åæ°ç¨äºæå®è¿ç§»æä»¶çè¾åºç®å½</li>
-<li>MySQLè¿ç§»æä»¶å¿é¡»ä¿å­å°<code>Migrations/MySql/</code>ç®å½</li>
-<li>SQL Serverè¿ç§»æä»¶å¿é¡»ä¿å­å°<code>Migrations/SqlServer/</code>ç®å½</li>
-<li>æ¯ä¸ªæ°æ®åºç±»åé½æç¬ç«ç<code>ModelSnapshot.cs</code>æä»¶</li>
-<li>è¿æ ·å¯ä»¥ç¡®ä¿ä¸åæ°æ®åºç±»åçè¿ç§»æä»¶äºä¸å¹²æ°</li>
-</ul>
-<h2 id="åè½ç¹æ§">åè½ç¹æ§</h2>
-<p>éè¿ä»¥ä¸æ­¥éª¤ï¼æ¨å·²ç»å®æäºä¸ä¸ªå®æ´çCRUDåè½å¼åãCodeSpiritæ¡æ¶ä¼èªå¨æä¾ä»¥ä¸åè½ï¼</p>
-<h3 id="èªå¨çæçåè½">èªå¨çæçåè½</h3>
-<ul>
-<li>â <strong>AMISåç«¯çé¢</strong>ï¼åºäºæ§å¶å¨åDTOçç¹æ§èªå¨çæ
-<ul>
-<li>è¡¨æ ¼å±ç¤ºï¼æ¯æå¤´åãæ¥ææ ¼å¼åãç¶ææ¾ç¤ºç­ï¼</li>
-<li>è¡¨åç¼è¾ï¼æ¯æè¡¨ååç»ãæ å½¢éæ©ãå¾çä¸ä¼ ç­ï¼</li>
-<li>å¤æ¡ä»¶æç´¢ç­éï¼å³é®å­ãé¨é¨ãç¶æãæ¥æèå´ç­ï¼</li>
-<li>æ¹éæä½ï¼æ¹éå é¤ç­ï¼</li>
-</ul>
-</li>
-<li>â <strong>ç»ä¸çAPIååºæ ¼å¼</strong>ï¼ä½¿ç¨<code>ApiResponse&lt;T&gt;</code>ç»ä¸ååº</li>
-<li>â <strong>åé¡µæ¥è¯¢</strong>ï¼æ¯æåé¡µãæåºãå¤æ¡ä»¶ç­é</li>
-<li>â <strong>æ¹éæä½</strong>ï¼æ¯ææ¹éå é¤ãæ¹éå¯¼å¥ç­æä½</li>
-<li>â <strong>å¼å¸¸å¤ç</strong>ï¼ç»ä¸çå¼å¸¸å¤çåéè¯¯ååº</li>
-<li>â <strong>æéæ§å¶</strong>ï¼æ¯æåºäºç¹æ§çæéæ§å¶</li>
-<li>â <strong>å®¡è®¡æ¥å¿</strong>ï¼èªå¨è®°å½åå»ºãæ´æ°ãå é¤æä½</li>
-<li>â <strong>å¤ç§æ·æ¯æ</strong>ï¼èªå¨è¿è¡æ°æ®éç¦»</li>
-<li>â <strong>è½¯å é¤æ¯æ</strong>ï¼å é¤æä½ä½¿ç¨è½¯å é¤ï¼æ°æ®å¯æ¢å¤</li>
-</ul>
-<h3 id="æ åcrudæä½">æ åCRUDæä½</h3>
-<table>
-<thead>
-<tr>
-<th>æä½</th>
-<th>HTTPæ¹æ³</th>
-<th>è·¯å¾</th>
-<th>è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>æ¥è¯¢åè¡¨</td>
-<td>GET</td>
-<td><code>/api/identity/Employees</code></td>
-<td>æ¯æå¤æ¡ä»¶æ¥è¯¢åå³é®å­æç´¢</td>
-</tr>
-<tr>
-<td>æ¥è¯¢è¯¦æ</td>
-<td>GET</td>
-<td><code>/api/identity/Employees/{id}</code></td>
-<td>æ ¹æ®IDè·ååä¸ªèå·¥</td>
-</tr>
-<tr>
-<td>åå»º</td>
-<td>POST</td>
-<td><code>/api/identity/Employees</code></td>
-<td>åå»ºæ°èå·¥</td>
-</tr>
-<tr>
-<td>æ´æ°</td>
-<td>PUT</td>
-<td><code>/api/identity/Employees/{id}</code></td>
-<td>æ´æ°èå·¥ä¿¡æ¯</td>
-</tr>
-<tr>
-<td>å é¤</td>
-<td>DELETE</td>
-<td><code>/api/identity/Employees/{id}</code></td>
-<td>å é¤åä¸ªèå·¥ï¼è½¯å é¤ï¼</td>
-</tr>
-<tr>
-<td>æ¹éå é¤</td>
-<td>POST</td>
-<td><code>/api/identity/Employees/batch-delete</code></td>
-<td>æ¹éå é¤èå·¥</td>
-</tr>
-<tr>
-<td>æ ¹æ®é¨é¨æ¥è¯¢</td>
-<td>GET</td>
-<td><code>/api/identity/Employees/department/{departmentId}</code></td>
-<td>æ ¹æ®é¨é¨è·åèå·¥åè¡¨</td>
-</tr>
-<tr>
-<td>è®¾ç½®æ¿æ´»ç¶æ</td>
-<td>PUT</td>
-<td><code>/api/identity/Employees/{id}/active</code></td>
-<td>è®¾ç½®èå·¥æ¿æ´»ç¶æ</td>
-</tr>
-<tr>
-<td>è½¬ç§»é¨é¨</td>
-<td>PUT</td>
-<td><code>/api/identity/Employees/{id}/transfer</code></td>
-<td>è½¬ç§»èå·¥å°æ°é¨é¨</td>
-</tr>
-<tr>
-<td>åçç¦»è</td>
-<td>PUT</td>
-<td><code>/api/identity/Employees/{id}/terminate</code></td>
-<td>åçèå·¥ç¦»è</td>
-</tr>
-</tbody>
-</table>
-<h2 id="ä¸å¡éªè¯ç¤ºä¾">ä¸å¡éªè¯ç¤ºä¾</h2>
-<h3 id="åå»ºæ¶éªè¯">åå»ºæ¶éªè¯</h3>
-<pre><code class="language-csharp">protected override async Task ValidateCreateDto(CreateEmployeeDto createDto)
-{
-    await base.ValidateCreateDto(createDto);
-
-    // éªè¯å·¥å·å¯ä¸æ§
-    bool isUnique = await IsEmployeeNoUniqueAsync(createDto.EmployeeNo);
-    if (!isUnique)
-    {
-        throw new AppServiceException(400, $"å·¥å· {createDto.EmployeeNo} å·²å­å¨ï¼è¯·ä½¿ç¨å¶ä»å·¥å·");
-    }
-
-    // éªè¯é¨é¨æ¯å¦å­å¨
-    if (createDto.DepartmentId.HasValue)
-    {
-        var departmentExists = await _departmentRepository.ExistsAsync(d =&gt; d.Id == createDto.DepartmentId.Value);
-        if (!departmentExists)
-        {
-            throw new AppServiceException(400, "é¨é¨ä¸å­å¨");
-        }
-    }
-
-    // éªè¯ç¨æ·æ¯å¦å­å¨ï¼å¦ææå®äºç¨æ·IDï¼
-    if (createDto.UserId.HasValue)
-    {
-        var userExists = await _userRepository.ExistsAsync(u =&gt; u.Id == createDto.UserId.Value);
-        if (!userExists)
-        {
-            throw new AppServiceException(400, "ç¨æ·ä¸å­å¨");
-        }
-    }
-}
-</code></pre>
-<h3 id="æ´æ°æ¶éªè¯">æ´æ°æ¶éªè¯</h3>
-<pre><code class="language-csharp">protected override async Task ValidateUpdateDto(long id, UpdateEmployeeDto updateDto)
-{
-    await base.ValidateUpdateDto(id, updateDto);
-
-    // éªè¯å·¥å·å¯ä¸æ§ï¼æé¤å½åè®°å½ï¼
-    bool isUnique = await IsEmployeeNoUniqueAsync(updateDto.EmployeeNo, id);
-    if (!isUnique)
-    {
-        throw new AppServiceException(400, $"å·¥å· {updateDto.EmployeeNo} å·²å­å¨ï¼è¯·ä½¿ç¨å¶ä»å·¥å·");
-    }
-
-    // éªè¯é¨é¨æ¯å¦å­å¨
-    if (updateDto.DepartmentId.HasValue)
-    {
-        var departmentExists = await _departmentRepository.ExistsAsync(d =&gt; d.Id == updateDto.DepartmentId.Value);
-        if (!departmentExists)
-        {
-            throw new AppServiceException(400, "é¨é¨ä¸å­å¨");
-        }
-    }
-}
-</code></pre>
-<h3 id="åå»ºåå¤ç">åå»ºåå¤ç</h3>
-<pre><code class="language-csharp">protected override async Task&lt;Employee&gt; OnCreating(CreateEmployeeDto createDto)
-{
-    var employee = await base.OnCreating(createDto);
-    
-    // è®¾ç½®ç§æ·ID
-    employee.TenantId = _currentUser.TenantId;
-    
-    // çæIDï¼å¦æéè¦ï¼
-    if (employee.Id == 0)
-    {
-        employee.Id = await _idGenerator.GenerateIdAsync();
-    }
-
-    return employee;
-}
-</code></pre>
-<h2 id="æ©å±åè½ç¤ºä¾">æ©å±åè½ç¤ºä¾</h2>
-<h3 id="æ·»å æéæ§å¶">æ·»å æéæ§å¶</h3>
-<pre><code class="language-csharp">[HttpPost]
-[DisplayName("åå»ºèå·¥")]
-[Permission("identity_employees_create")]  // æ·»å æéæ§å¶
-public async Task&lt;ActionResult&lt;ApiResponse&lt;EmployeeDto&gt;&gt;&gt; CreateEmployee(CreateEmployeeDto createDto)
-{
-    // ...
-}
-</code></pre>
-<h3 id="æ·»å å¯¼èªèå">æ·»å å¯¼èªèå</h3>
-<pre><code class="language-csharp">[DisplayName("èå·¥ç®¡ç")]
-[Navigation(Icon = "fa-solid fa-user-tie", PlatformType = PlatformType.Tenant)]  // æ·»å å°å¯¼èªèå
-public class EmployeesController : ApiControllerBase
-{
-    // ...
-}
-</code></pre>
-<h3 id="èªå®ä¹æ¥è¯¢æ¹æ³">èªå®ä¹æ¥è¯¢æ¹æ³</h3>
-<pre><code class="language-csharp">/// &lt;summary&gt;
-/// è·åå¨èèå·¥åè¡¨
-/// &lt;/summary&gt;
-public async Task&lt;List&lt;EmployeeDto&gt;&gt; GetActiveEmployeesAsync()
-{
-    var employees = await Repository.CreateQuery()
-        .Where(e =&gt; e.IsActive &amp;&amp; e.EmploymentStatus == EmploymentStatus.Active)
-        .Include(e =&gt; e.Department)
-        .Include(e =&gt; e.User)
-        .ToListAsync();
-
-    return Mapper.Map&lt;List&lt;EmployeeDto&gt;&gt;(employees);
-}
-</code></pre>
-<h3 id="ä½¿ç¨pageasideç¹æ§å®ç°ä¾§è¾¹æ ç­é">ä½¿ç¨PageAsideç¹æ§å®ç°ä¾§è¾¹æ ç­é</h3>
-<p><code>PageAside()</code>ç¹æ§ç¨äºå°æ¥è¯¢å­æ®µæ¾ç½®å¨é¡µé¢ä¾§è¾¹æ ï¼ç¹å«éç¨äºæ å½¢éæ©ãåç±»ç­éç­åºæ¯ãä½¿ç¨æ­¤ç¹æ§åï¼è¯¥å­æ®µä¼ä»ä¸»æ¥è¯¢è¡¨åä¸­ç§»é¤ï¼ä»å¨ä¾§è¾¹æ æ¾ç¤ºã</p>
-<p><strong>ç¹æ§è¯´æ</strong>ï¼</p>
-<pre><code class="language-csharp">/// &lt;summary&gt;
-/// é¨é¨IDç­é
-/// &lt;/summary&gt;
-[DisplayName("é¨é¨")]
-[AmisInputTreeField(
-    DataSource = "${ROOT_API}/api/identity/Departments/tree",
-    Multiple = false,
-    JoinValues = true,
-    ExtractValue = false,
-    ShowOutline = true,
-    LabelField = "name",
-    ValueField = "id",
-    Required = false,
-    Clearable = true,
-    SubmitOnChange = true,  // éæ©åèªå¨æäº¤æ¥è¯¢
-    HeightAuto = true,
-    SelectFirst = false,
-    InputOnly = true,
-    ShowIcon = true
-)]
-[PageAside()]  // æ è®°ä¸ºä¾§è¾¹æ å­æ®µ
-public long? DepartmentId { get; set; }
-</code></pre>
-<p><img src="https://img2024.cnblogs.com/blog/70544/202512/70544-20251223170759720-1961586904.png" alt="image" loading="lazy"><br>
-<strong>PageAsideç¹æ§çä¸»è¦å±æ§</strong>ï¼</p>
-<ul>
-<li><code>Target</code>ï¼è¡¨åæäº¤ç®æ ï¼å¦æä¸ºç©ºåèªå¨è®¾ç½®ä¸ºCRUDç»ä»¶åç§°</li>
-<li><code>SubmitOnInit</code>ï¼æ¯å¦å¨åå§åæ¶æäº¤ï¼é»è®¤ä¸º<code>false</code></li>
-<li><code>WrapWithPanel</code>ï¼æ¯å¦ä¸ä½¿ç¨é¢æ¿åè£ï¼é»è®¤ä¸º<code>false</code></li>
-<li><code>AsideResizor</code>ï¼ä¾§è¾¹æ å®½åº¦æ¯å¦å¯è°æ´ï¼é»è®¤ä¸º<code>true</code></li>
-<li><code>AsideMinWidth</code>ï¼ä¾§è¾¹æ æå°å®½åº¦ï¼åç´ ï¼ï¼é»è®¤ä¸º<code>0</code></li>
-<li><code>AsideMaxWidth</code>ï¼ä¾§è¾¹æ æå¤§å®½åº¦ï¼åç´ ï¼ï¼é»è®¤ä¸º<code>0</code></li>
-<li><code>AsideSticky</code>ï¼ä¾§è¾¹æ æ¯å¦åºå®ï¼é»è®¤ä¸º<code>true</code></li>
-<li><code>AsidePosition</code>ï¼ä¾§è¾¹æ ä½ç½®ï¼<code>Left</code>/<code>Right</code>ï¼ï¼é»è®¤ä¸º<code>Left</code></li>
-</ul>
-<p><strong>ä½¿ç¨åºæ¯</strong>ï¼</p>
-<ol>
-<li><strong>æ å½¢åç±»ç­é</strong>ï¼å¦é¨é¨æ ãåç±»æ ç­ï¼æ¾å¨ä¾§è¾¹æ ä½ä¸ºå¯¼èªç­éå¨</li>
-<li><strong>ç¬ç«ç­éå¨</strong>ï¼éè¦ç¬ç«å±ç¤ºçç­éæ¡ä»¶ï¼é¿åä¸»è¡¨åè¿äºæ¥æ¤</li>
-<li><strong>èå¨æ¥è¯¢</strong>ï¼ä¾§è¾¹æ å­æ®µååæ¶èªå¨è§¦åä¸»åå®¹åºåå·æ°</li>
-</ol>
-<p><strong>æ³¨æäºé¡¹</strong>ï¼</p>
-<ul>
-<li>æ è®°äº<code>PageAside()</code>ç¹æ§çå­æ®µä¼èªå¨ä»ä¸»æ¥è¯¢è¡¨åä¸­æé¤</li>
-<li>å»ºè®®éå<code>SubmitOnChange = true</code>ä½¿ç¨ï¼å®ç°éæ©åèªå¨æ¥è¯¢</li>
-<li>ä¾§è¾¹æ å­æ®µçæ¥è¯¢æ¡ä»¶ä¼èªå¨åå¹¶å°ä¸»æ¥è¯¢ä¸­</li>
-</ul>
-<h2 id="æä½³å®è·µ">æä½³å®è·µ</h2>
-<ol>
-<li>
-<p><strong>å®ä½è®¾è®¡</strong>ï¼</p>
-<ul>
-<li>å®ç°<code>IFullAuditable</code>æ¥å£è·å¾å®æ´çå®¡è®¡å­æ®µï¼åå»ºãæ´æ°ãå é¤ï¼</li>
-<li>å®ç°<code>IMultiTenant</code>æ¥å£æ¯æå¤ç§æ·æ°æ®éç¦»</li>
-<li>å®ç°<code>IIsActive</code>æ¥å£æ¯ææ¿æ´»ç¶æç®¡ç</li>
-<li>åçè®¾è®¡å¯¼èªå±æ§ï¼ä½¿ç¨<code>Include</code>é¿åN+1æ¥è¯¢é®é¢</li>
-<li>ä¸ºå¯ä¸æ§å­æ®µåå»ºå¤åå¯ä¸ç´¢å¼ï¼ç§æ·ID + ä¸å¡å­æ®µï¼</li>
-</ul>
-</li>
-<li>
-<p><strong>DTOåç¦»</strong>ï¼</p>
-<ul>
-<li>ä¸ºåå»ºãæ´æ°ãæ¥è¯¢åå«åå»ºDTO</li>
-<li>ä½¿ç¨<code>DisplayName</code>ç¹æ§æä¾åå¥½çå­æ®µåç§°</li>
-<li>ä½¿ç¨<code>AmisColumn</code>ç¹æ§æ§å¶åç«¯è¡¨æ ¼åæ¾ç¤º</li>
-<li>ä½¿ç¨<code>FormGroup</code>ç¹æ§å°è¡¨åå­æ®µåç»ï¼æåç¨æ·ä½éª</li>
-<li>ä½¿ç¨<code>AmisInputTreeField</code>ç­ç¹æ§èªå¨çæåéçè¡¨åç»ä»¶</li>
-</ul>
-</li>
-<li>
-<p><strong>æå¡å±</strong>ï¼</p>
-<ul>
-<li>ç»§æ¿<code>BaseCRUDIService</code>è·å¾CRUDåæ¹éå¯¼å¥åè½</li>
-<li>æå¡æ¥å£ç»§æ¿<code>IScopedDependency</code>æ¥å£èªå¨æ³¨å</li>
-<li>éå<code>ValidateCreateDto</code>å<code>ValidateUpdateDto</code>å®ç°ä¸å¡éªè¯</li>
-<li>éå<code>OnCreating</code>æ¹æ³è®¾ç½®ç§æ·IDåçæID</li>
-<li>ä½¿ç¨<code>LinqKit</code>ç<code>PredicateBuilder</code>æå»ºå¨ææ¥è¯¢æ¡ä»¶</li>
-</ul>
-</li>
-<li>
-<p><strong>æ§å¶å¨</strong>ï¼</p>
-<ul>
-<li>ä¿æç®æ´ï¼ä¸»è¦è°ç¨æå¡å±æ¹æ³</li>
-<li>ä½¿ç¨<code>DisplayName</code>å<code>Navigation</code>ç¹æ§</li>
-<li>ä½¿ç¨<code>Operation</code>ç¹æ§éç½®æä½æé®ï¼å é¤ç¡®è®¤å¯¹è¯æ¡ï¼</li>
-<li>æä¾é¢å¤çä¸å¡æä½æ¥å£ï¼å¦è®¾ç½®æ¿æ´»ç¶æãè½¬ç§»é¨é¨ç­ï¼</li>
-</ul>
-</li>
-<li>
-<p><strong>éªè¯</strong>ï¼</p>
-<ul>
-<li>ä½¿ç¨DataAnnotationsè¿è¡åºç¡æ°æ®éªè¯</li>
-<li>éåæå¡å±çéªè¯æ¹æ³å®ç°ä¸å¡éªè¯ï¼å¯ä¸æ§ãå³èå­å¨æ§ç­ï¼</li>
-<li>ä½¿ç¨<code>AppServiceException</code>æåºä¸å¡å¼å¸¸</li>
-<li>å¨æ°æ®åºå±é¢åå»ºå¯ä¸ç´¢å¼ç¡®ä¿æ°æ®å®æ´æ§</li>
-</ul>
-</li>
-<li>
-<p><strong>æ°æ®åºè®¾è®¡</strong>ï¼</p>
-<ul>
-<li>ä¸ºå¸¸ç¨æ¥è¯¢å­æ®µåå»ºç´¢å¼æåæ§è½</li>
-<li>åçéç½®å³èå³ç³»ççº§èå é¤ç­ç¥</li>
-<li>ä½¿ç¨å¤åå¯ä¸ç´¢å¼ç¡®ä¿ç§æ·åä¸å¡å­æ®µå¯ä¸æ§</li>
-</ul>
-</li>
-<li>
-<p><strong>ææ¡£æ³¨é</strong>ï¼</p>
-<ul>
-<li>ä¸ºææå¬å±æåæ·»å XMLææ¡£æ³¨é</li>
-<li>ä½¿ç¨<code>&lt;summary&gt;</code>ã<code>&lt;param&gt;</code>ã<code>&lt;returns&gt;</code>æ ç­¾</li>
-</ul>
-</li>
-</ol>
-<h2 id="ç¸å³ææ¡£">ç¸å³ææ¡£</h2>
-<ul>
-<li><a href="./CodeSpirit.Core%E6%A0%B8%E5%BF%83%E6%A1%86%E6%9E%B6.md" target="_blank" rel="noopener nofollow">CodeSpirit.Coreæ ¸å¿æ¡æ¶</a></li>
-<li><a href="./%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97.md" target="_blank" rel="noopener nofollow">å¼åç¯å¢æ­å»ºæå</a></li>
-<li><a href="./%E9%A1%B9%E7%9B%AE%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1.md" target="_blank" rel="noopener nofollow">é¡¹ç®æ´ä½æ¶æè®¾è®¡</a></li>
-<li><a href="./CodeSpirit%E7%BB%9F%E4%B8%80%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E6%8C%87%E5%8D%97.md" target="_blank" rel="noopener nofollow">ç»ä¸å¼å¸¸å¤çæå</a></li>
-</ul>
-<h2 id="æ»ç»">æ»ç»</h2>
-<p>éè¿CodeSpiritæ¡æ¶ç<code>BaseCRUDIService</code>åæ åå¼åæ¨¡å¼ï¼æ¨å¯ä»¥å¿«éå¼ååºåè½å®æ´çCRUDæ¥å£ãèå·¥ç®¡çæ¨¡åå±ç¤ºäºï¼</p>
-<ul>
-<li>â æ åCRUDæä½çå®ç°</li>
-<li>â å³èå³ç³»ç®¡çï¼é¨é¨ãç¨æ·è´¦å·ï¼</li>
-<li>â ä¸å¡éªè¯é»è¾çç¼åï¼å·¥å·å¯ä¸æ§ãé¨é¨å­å¨æ§ç­ï¼</li>
-<li>â å¤æ¡ä»¶æ¥è¯¢çå®ç°ï¼å³é®å­ãé¨é¨ãç¶æãæ¥æèå´ç­ï¼</li>
-<li>â è¡¨ååç»å±ç¤ºçä½¿ç¨</li>
-<li>â é¢å¤ä¸å¡æä½çå®ç°ï¼è®¾ç½®æ¿æ´»ç¶æãè½¬ç§»é¨é¨ãåçç¦»èç­ï¼</li>
-<li>â AMISç¹æ§çä½¿ç¨ï¼è¡¨æ ¼åãè¡¨åå­æ®µãå¾çä¸ä¼ ç­ï¼</li>
-</ul>
-<p>æ¡æ¶ä¼èªå¨å¤çå¤§é¨åæ ·æ¿ä»£ç ï¼è®©æ¨ä¸æ³¨äºä¸å¡é»è¾çå®ç°ã</p>
-<p><strong>æ´å¤äº¤æµè¯·å³æ³¨âCodeSpirit-ç çµâå¬ä¼å·è¿ç¾¤ï¼ï¼ï¼</strong></p>
-<p>ç¥æ¨å¼åæå¿«ï¼ð</p>
-
+// æ°å¢é¡¹ç®å¹¶æ´æ°åè¡¨
+fetch('/api/items', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({name: 'New Task'})
+})
+.then(r =&gt; r.json())
+.then(newItem =&gt; {
+    const list = document.getElementById('list');
+    list.innerHTML += `&lt;li&gt;${newItem.id}: ${newItem.name}&lt;/li&gt;`;
+});
+&lt;/script&gt;</code></pre>
+<p><strong style="color: rgba(186, 55, 42, 1)">æ»ç»ä¸ä¸</strong>ï¼Fetch + Flask çç»åï¼éè¿âè¯·æ±-ååº-JSONâçæ¨¡å¼ï¼å°ååç«¯è§£è¦ï¼è®©Webäº¤äºåå¾<strong style="color: rgba(186, 55, 42, 1)">æ´å å¨æåé«æ</strong>ã<br>å³é®å¨äºï¼åç«¯è´è´£äº¤äºåUIæ´æ°ï¼åç«¯è´è´£æ°æ®åé»è¾ï¼ä¸¤èéè¿æ¸æ°çAPIå¥çº¦è¿è¡éä¿¡ã</p>
+<div style="text-align: center; margin: 40px 0"><hr style="border-top: 1px solid rgba(221, 221, 221, 1); border-right: none; border-bottom: none; border-left: none"></div>
+<p style="font-size: 15px; color: rgba(85, 85, 85, 1); text-align: center">åæ¬¢æ¬æï¼ä¸è¦éè¿â¨ï¼ç¹èµðæ¶èâ­å³æ³¨æðï¼ä¸èµ·å­¦ä¹ æ´å¤æç¨çç¥è¯ï¼å®åä½ æçæè½æ ï¼ä¹è¯·è·¯è¿çå¤§ä½¬ç»äºå»ºè®®åææðð¶ï¼</p>
 </div>
-<div id="MySignature" role="contentinfo">
-    ä½èï¼<a href="http://www.cnblogs.com/codelove/" target="_blank">éªé</a><br>åºå¤ï¼<a href="http://www.cnblogs.com/codelove/" target="_blank">http://www.cnblogs.com/codelove/</a>
-<br>å¦æåæ¬¢ä½èçæç« ï¼è¯·å³æ³¨ãCodeSpirit-ç çµãå¬ä¼å·ä»¥ä¾¿ç¬¬ä¸æ¶é´è·å¾ææ°åå®¹ãæ¬æçæå½ä½èææï¼æ¬¢è¿è½¬è½½ï¼ä½æªç»ä½èåæå¿é¡»ä¿çæ­¤æ®µå£°æï¼ä¸å¨æç« é¡µé¢ææ¾ä½ç½®ç»åºåæè¿æ¥ï¼å¦åä¿çè¿½ç©¶æ³å¾è´£ä»»çæå©ã<br><b>éå¬é¸è¯­è±é¦ï¼æ¼«èµäºå·äºèã</b>
-<br>
-<img src="https://images.cnblogs.com/cnblogs_com/codelove/315887/o_251224070213_%E5%85%AC%E4%BC%97%E5%8F%B7.jpg" width="100" height="100">
 </div>
 <div class="clear"></div>
 
-		</div>
-		<div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.0006944444444444445" data-date-updated="2025-12-30 00:16">2025-12-30 00:15</span>&nbsp;
-<a href="https://www.cnblogs.com/codelove">éªé</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2025-12-30 08:19">2025-12-30 08:18</span>&nbsp;
+<a href="https://www.cnblogs.com/ymtianyu">æ²å¹½</a>&nbsp;
+éè¯»(<span id="post_view_count">24</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19388153);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19388153', targetLink: 'https://www.cnblogs.com/codelove/p/19388153', title: 'CodeSpirit CRUDå¼åå®æ´æå' })">ä¸¾æ¥</a>
+<a href="javascript:void(0)" onclick="AddToWz(19418995);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19418995', targetLink: 'https://www.cnblogs.com/ymtianyu/p/19418995', title: 'ææ¡Fetchä¸Flaskäº¤äºï¼è®©åç«¯è¡¨åæäº¤æ´ä¼éçå¨æä¹é' })">ä¸¾æ¥</a>
 </div>
-	 ]]>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ Spring Boot Pf4jæ¨¡ååè½åè®¾è®¡æè ]]></title>
+    <link>https://www.cnblogs.com/CreateMyself/p/19413005</link>
+    <guid>e6f2a804798293671b69951ae41bcaa4</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/CreateMyself/p/19413005" title="åå¸äº 2025-12-30 08:00">
+    <span role="heading" aria-level="2">Spring Boot Pf4jæ¨¡ååè½åè®¾è®¡æè</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
+<h2>åè¨</h2>
+<p><span style="font-size: 15px">ä¸ä¸ç¯æç« æä»¬æµå°è¾æ­¢æ¨¡ååæ´ä½æ¦è§ï¼æè°æ¨¡åååºç¡è®¾æ½åæ¯åºäºPf4jäºæ¬¡å°è£ï¼æä»¬å·ä½å°åºè¦å®ç°åªäºï¼æ¬ç¯æä»¬ä»Pf4jå¼å§è®²è§£ï¼æä»¬æ·±æç»èã</span></p>
+<h2><span style="font-size: 15px">æ¨¡åååºç¡è®¾æ½</span></h2>
+<p><span style="font-size: 15px">Pf4jå®æ¹æåºæ¬ä»ç»ä»¥åå¯¹æ´ä¸ªæ¡æ¶çæ¶æç­ç­ï¼æä»¬ä¸åæµªè´¹å£èãå¦ä¸æ¯éè¿AIæ»ç»Pf4jçè½åæå¯¼åºçæ¶åºå¾ï¼åºæ¬ä¸ç®æ¯é£ä¹åäºï¼ç»ä¸äºè§£Pf4jè½åçç«¥éçä¸ªåºæ¬å°è±¡</span></p>
+<p><img src="https://img2024.cnblogs.com/blog/589642/202512/589642-20251228230453654-1092258168.png" alt="PF4Jæ ¸å¿è½åæ¶åºå¾" loading="lazy"></p>
+<p><span style="font-size: 15px">åºäºä¸è¿°Pf4jçåºæ¬è½åæ¦æ¬ï¼å¯å¨ãåæ­¢ãç­å è½½/å¸è½½ãéæ¯ãæ©å±ç¹ï¼ï¼æä»¬åæå¼å°è£æ¶åWebåºç¨çåºç¡è½åï¼æä»¬åæ¥æèä¸ä¸ªé®é¢ï¼æ¨¡ååæ¡æ¶è¿åºå·å¤åªäºè½åï¼ä»¥æ­¤åå¯¹ç§æ·±å¥P4fjå®ç°ç»èç¡®è®¤æ¯å¦è½æ©å±å¢å¼ºæèå¯¹åºå±å¤æå®ç°è¿è¡ç®åç­ç­ï¼å¦ä¸æä»¬ä¸ä¸æ½ä¸å¥è§ä¸åç¹ä¸ºç®ä»¥åç´æ¥ç»åºè¥ä¸æ¯æå¦ä½æ©å±å®ç°ï¼æ³¨ï¼pf4jæ¢æ¯æjaråä¹æ¯æå°jaræåæzipï¼æä»¬ä»ä»¥åå§jaråä¸ºä¾è®²è§£ï¼zipçjaråæ éå¤äºä¸æ­¥å°jaråè§£åç­ç­ï¼é»è¾å¤§åå°å¼ï¼</span></p>
+<h3>æä»¶ç®å½èªå®ä¹</h3>
+<p><img src="https://img2024.cnblogs.com/blog/589642/202512/589642-20251229204902655-1327827454.png" alt="image" loading="lazy"></p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">final</span> String PLUGINS_DIR_PROPERTY_NAME = "pf4j.pluginsDir"<span style="color: rgba(0, 0, 0, 1)">;
+</span><span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">final</span> String MODE_PROPERTY_NAME = "pf4j.mode"<span style="color: rgba(0, 0, 0, 1)">;
+
+</span><span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">final</span> String DEFAULT_PLUGINS_DIR = "plugins"<span style="color: rgba(0, 0, 0, 1)">;
+</span><span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">final</span> String DEVELOPMENT_PLUGINS_DIR = "../plugins"<span style="color: rgba(0, 0, 0, 1)">;
+
+ </span><span style="color: rgba(0, 0, 255, 1)">protected</span> <span style="color: rgba(0, 0, 255, 1)">void</span><span style="color: rgba(0, 0, 0, 1)"> initialize() {
+
+        </span><span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)"> (pluginsRoots.isEmpty()) {
+            pluginsRoots.addAll(createPluginsRoot());
+        }
+}
+
+</span><span style="color: rgba(0, 0, 255, 1)">protected</span> <span style="color: rgba(0, 0, 255, 1)">final</span> List&lt;Path&gt; pluginsRoots = <span style="color: rgba(0, 0, 255, 1)">new</span> ArrayList&lt;&gt;<span style="color: rgba(0, 0, 0, 1)">();
+
+</span><span style="color: rgba(0, 0, 255, 1)">protected</span> List&lt;Path&gt;<span style="color: rgba(0, 0, 0, 1)"> createPluginsRoot() {
+        String pluginsDir </span>=<span style="color: rgba(0, 0, 0, 1)"> System.getProperty(PLUGINS_DIR_PROPERTY_NAME);
+        </span><span style="color: rgba(0, 0, 255, 1)">if</span> (pluginsDir != <span style="color: rgba(0, 0, 255, 1)">null</span> &amp;&amp; !<span style="color: rgba(0, 0, 0, 1)">pluginsDir.isEmpty()) {
+            </span><span style="color: rgba(0, 0, 255, 1)">return</span> Arrays.stream(pluginsDir.split(","<span style="color: rgba(0, 0, 0, 1)">))
+                .map(String::trim)
+                .map(Paths::get)
+                .collect(Collectors.toList());
+        }
+
+        pluginsDir </span>= isDevelopment() ?<span style="color: rgba(0, 0, 0, 1)"> DEVELOPMENT_PLUGINS_DIR : DEFAULT_PLUGINS_DIR;
+
+        </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)"> Collections.singletonList(Paths.get(pluginsDir));
+    }</span></pre>
+</div>
+<p><span style="font-size: 15px">å½æä»¬å®ç°èªå®ä¹ç»§æ¿PluginManageræ¶ï¼è¥æä»¬å·²æå®æä»¶ç®å½è·¯å¾åæç§æå¨æå®çæä»¶ç®å½è§£æå¹¶å è½½æä»¶ï¼å¦åä»JVMç³»ç»å±æ§è·åpf4j.pluginsDirï¼è¥å·²æå®åæç§æå®è·¯å¾è§£æå¹¶å è½½æä»¶ï¼å¦åé»è®¤çæä»¶ç®å½åä¸ºpluginsæè../pluginsï¼pf4jåºåæµè¯åçäº§æ¨¡å¼ï¼ä¹æ¯ä»JVMç³»ç»å±æ§è·åMODE_PROPERTY_NAMEï¼ã</span></p>
+<h3>æä»¶ä¸æä»¶ä¹é´çç®å½èªå®ä¹</h3>
+<p><img src="https://img2024.cnblogs.com/blog/589642/202512/589642-20251229210110653-256153991.png" alt="image" loading="lazy"></p>
+<p><span style="font-size: 15px">æä»¬è®¾è®¡çå·ä½æä»¶æ2ä¸ªå±çº§ï¼å°æä»¶jaråå»é¤çæ¬å·çåç§°ä½ä¸ºæä»¶ç®å½ï¼å¶ç®å½ä¸æ¾æä»¶jaråï¼åæ¶è¿æä¸ªlibç®å½ï¼è¯¥libç®å½ç¨äºå­æ¾æä»¶çä¾èµï¼æ­¤ä¾èµæ¢å¯æ¥æºäºæä»¶å¼å¥ç¬ç«ä¾èµçmvnä»åºåï¼ä¹å¯æ¥æºäºä¸å¤é¨å¯¹æ¥æ¶çç§æåï¼ä¸å­å¨äºmvnä»åºï¼ã å¾æ¾ç¶ï¼pf4jä¸æ¯æï¼ä¸å¥è¯æ¦æ¬ï¼pf4jæ²¡ææä»¶ç®å½å±çº§ä¹åï¼æææä»¶jaråç»ä¸æ¾å°æä»¶ç®å½ä¸ä»¥åä¾èµä¹ç»ä¸æ¾å°æä»¶ç®å½ä¸çlibç®å½ä¸ï¼å¨æ­¤ä¸ååè¿ä¸æ­¥çæºç è®²è§£ï¼ï¼æä»¬éåå¶æ¹æ³å®ç°</span></p>
+<p><img src="https://img2024.cnblogs.com/blog/589642/202512/589642-20251229232706985-1871234307.png" alt="image" loading="lazy"></p>
+<p><span style="font-size: 15px">å¦ä¸BasePluginRepositoryä¸ºpf4jæä¾çåºæ¬å®ç°ï¼åæ¶pf4jè¿ä¸æ­¥æä¾JarPluginRepositoryç»§æ¿BasePluginRepositoryï¼ä»ä»åªæ¯ä½ä¸ºæé å½æ°ä¼ éæä»¶ç®å½è·¯å¾ï¼æä»¥æä»¬å¯ä»¥èªå®ä¹ç»§JarPluginRepositoryï¼éåä¸è¿°streamFilesæ¹æ³å³å¯ï¼è¯¥æ¹æ³æ2ä¸ªåæ°ï¼ç¬¬ä¸ä¸ªåæ¯æä»¶ç®å½è·¯å¾ï¼ç¬¬äºä¸ªåæ¯æä»¶ç±»åè¿æ»¤ï¼jarï¼</span></p>
+<p><img src="https://img2024.cnblogs.com/blog/589642/202512/589642-20251229233338450-1680010069.png" alt="image" loading="lazy"></p>
+<p><span style="font-size: 15px">ä¸è¿°æä»¬å·²éåæç»å¾å°çå°æ¯å·ä½æä»¶jaråè·¯å¾ï¼è¿éæä»¬å¯èèåä¸¤æ¹é¢å¤çï¼ä¸æ¯å¼ºæ ¡éªæä»¶ç®å½çåç§°åjaråå¿½ç¥çæ¬å·çåç§°æ¯å¦å®å¨ä¸è´ï¼äºæ¯çæ¬å²çªå¤çå³å­å¨ä¸åçæ¬çjaråæ¶ï¼ä¾å¦å¯ä»¥æ ¹æ®çæ¬çº¦å®ä¿æçalphaãrcãreleaseçæ¬ç­è§ååææ°çjaråï¼å¶ä»åå­å®éæåµèªç±åæ¥ã</span></p>
+<h3>æä»¶ç¬ç«ä¾èµåè§£æ</h3>
+<p><span style="font-size: 15px">ä¸è¿°ä»ä»åªæ¯åå°äºå·ä½æä»¶jaråè·¯å¾ï¼æ¥ä¸æ¥éè¿ç±»å è½½å¨å è½½jaråä»¥åå è½½ä¾èµï¼é¦åéè¦è®¨è®ºç±»å è½½å¨çäºæï¼ä¸ªäººè®¤ä¸ºpf4jçç±»å è½½å¨èèçå¾å¨å°ï¼è®¾è®¡çæ¯è¾çµæ´»ï¼ä½æä»¬å®éå¯ä»¥ç¨å¾®ç®åä¸ï¼<span style="color: rgba(255, 102, 0, 1)">æ ¸å¿æè·¯æ»ç»èµ·æ¥ä¸»è¦ä¹å°±4ç¹ï¼éµå¾ªâåäº²å§æ´¾â åºç¡è§åï¼åæ£æ¥ç±»æ¯å¦å·²å è½½ï¼é¿åéå¤å è½½âéµå¾ªåäº²å§æ´¾æ ¸å¿ææ³ï¼ä¼åä»ä¸»åºç¨ï¼ç¶ç±»å è½½å¨ï¼å è½½âæä»¶ä¸å±ç±»ä¼åä»æä»¶å è½½ï¼å¯éï¼âç±»ä»æä»¶å è½½âèªå®ä¹é¢å¤ç±»è·¯å¾ååºï¼å¯éï¼âæç»å è½½å¤±è´¥æå¼å¸¸</span>ãå½ç¶å®éæåµä¸æä»¬å¯è½ä¹æå¶ä»èèï¼å¯ççpf4jç±»å è½½å¨æºç èªè¡ååèï¼å¦ä¸èªå®ä¹ç»§æ¿</span></p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">class</span> GJPluginClassLoader <span style="color: rgba(0, 0, 255, 1)">extends</span><span style="color: rgba(0, 0, 0, 1)"> PluginClassLoader {
+
+    </span><span style="color: rgba(0, 0, 255, 1)">private</span> <span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">final</span> Logger log = LoggerFactory.getLogger(GJPluginClassLoader.<span style="color: rgba(0, 0, 255, 1)">class</span><span style="color: rgba(0, 0, 0, 1)">);
+
+    </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> æä»¶ä¸å±èµæº</span>
+    <span style="color: rgba(0, 0, 255, 1)">private</span> <span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">final</span> Set&lt;String&gt; PLUGIN_FIRST_RESOURCES =<span style="color: rgba(0, 0, 0, 1)"> Set.of(
+            </span>"META-INF/extensions.idx"<span style="color: rgba(0, 0, 0, 1)">
+    );
+
+  @Override
+    </span><span style="color: rgba(0, 0, 255, 1)">protected</span> Class&lt;?&gt; loadClass(String name, <span style="color: rgba(0, 0, 255, 1)">boolean</span> resolve) <span style="color: rgba(0, 0, 255, 1)">throws</span><span style="color: rgba(0, 0, 0, 1)"> ClassNotFoundException {
+        </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 1. æ£æ¥æ¯å¦å·²å è½½</span>
+        Class&lt;?&gt; loadedClass =<span style="color: rgba(0, 0, 0, 1)"> findLoadedClass(name);
+        </span><span style="color: rgba(0, 0, 255, 1)">if</span> (loadedClass != <span style="color: rgba(0, 0, 255, 1)">null</span><span style="color: rgba(0, 0, 0, 1)">) {
+            </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)"> loadedClass;
+        }
+
+        </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 2. ä¼åä»ä¸»åºç¨ï¼ç¶ç±»å è½½å¨ï¼å è½½</span>
+        <span style="color: rgba(0, 0, 255, 1)">try</span><span style="color: rgba(0, 0, 0, 1)"> {
+            </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)"> parentClassLoader.loadClass(name);
+        } </span><span style="color: rgba(0, 0, 255, 1)">catch</span><span style="color: rgba(0, 0, 0, 1)"> (ClassNotFoundException e) {
+            log.debug(</span>"Class {} not found in parent classloader, trying plugin"<span style="color: rgba(0, 0, 0, 1)">, name);
+        }
+
+        </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 3. æ£æ¥æ¯å¦æ¯æä»¶ä¸ç¨èµæºï¼ä¼åä»æä»¶å è½½ï¼</span>
+        <span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)"> (isPluginOnlyResource(name)) {
+            </span><span style="color: rgba(0, 0, 255, 1)">try</span><span style="color: rgba(0, 0, 0, 1)"> {
+                Class</span>&lt;?&gt; pluginClass = <span style="color: rgba(0, 0, 255, 1)">super</span><span style="color: rgba(0, 0, 0, 1)">.loadClass(name, resolve);
+                </span><span style="color: rgba(0, 0, 255, 1)">if</span> (pluginClass != <span style="color: rgba(0, 0, 255, 1)">null</span><span style="color: rgba(0, 0, 0, 1)">) {
+                    </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)"> pluginClass;
+                }
+            } </span><span style="color: rgba(0, 0, 255, 1)">catch</span><span style="color: rgba(0, 0, 0, 1)"> (ClassNotFoundException ignored) {
+            }
+        }
+
+        </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 4. å°è¯ä»æä»¶ä¸­å è½½</span>
+        <span style="color: rgba(0, 0, 255, 1)">try</span><span style="color: rgba(0, 0, 0, 1)"> {
+            Class</span>&lt;?&gt; pluginClass = <span style="color: rgba(0, 0, 255, 1)">super</span><span style="color: rgba(0, 0, 0, 1)">.loadClass(name, resolve);
+            </span><span style="color: rgba(0, 0, 255, 1)">if</span> (pluginClass != <span style="color: rgba(0, 0, 255, 1)">null</span><span style="color: rgba(0, 0, 0, 1)">) {
+                </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)"> pluginClass;
+            }
+        } </span><span style="color: rgba(0, 0, 255, 1)">catch</span><span style="color: rgba(0, 0, 0, 1)"> (ClassNotFoundException e) {
+            log.warn(</span>"Class {} not found in plugin, trying additional paths"<span style="color: rgba(0, 0, 0, 1)">, name);
+        }
+
+        </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 5. æåä»é¢å¤ç±»è·¯å¾ä¸­æ¥æ¾</span>
+        Class&lt;?&gt; additionalClass =<span style="color: rgba(0, 0, 0, 1)"> findClassInAdditionalPaths(name);
+        </span><span style="color: rgba(0, 0, 255, 1)">if</span> (additionalClass != <span style="color: rgba(0, 0, 255, 1)">null</span><span style="color: rgba(0, 0, 0, 1)">) {
+            </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)"> additionalClass;
+        }
+
+        </span><span style="color: rgba(0, 0, 255, 1)">throw</span> <span style="color: rgba(0, 0, 255, 1)">new</span> ClassNotFoundException("Class " + name + " not found in parent, plugin or additional paths"<span style="color: rgba(0, 0, 0, 1)">);
+    }</span></pre>
+</div>
+<p><span style="font-size: 15px">æ¢ç¶æä»¬å·²èªå®ä¹ç±»å è½½å¨ï¼é£ä¹ä½æ¶å®ä¾åç±»å è½½å¨å¢ï¼å°±å¨æä»¬ç»§æ¿åºå±</span>DefaultPluginManager<span style="font-size: 15px">èªå®ä¹çPluginManageréé¢éåcreatePluginLoaderæ¹æ³</span></p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 0, 1)">    @Override
+    </span><span style="color: rgba(0, 0, 255, 1)">protected</span><span style="color: rgba(0, 0, 0, 1)"> PluginLoader createPluginLoader() {
+        </span><span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(0, 0, 255, 1)">new</span> GJJarPluginLoader(<span style="color: rgba(0, 0, 255, 1)">this</span><span style="color: rgba(0, 0, 0, 1)">);
+    }</span></pre>
+</div>
+<p><span style="font-size: 15px">ä¸è¿°æä»¬æä¾ç»§æ¿èªåºå±çPluginClassLoaderèªå®ä¹ç±»å è½½å¨ï¼æä»¬å¼å§å è½½jarååå¶ä¾èµï¼æ­¤æ¶åå¾éè¦èªå®ä¹jaråå è½½ç±»ç»§æ¿èªåºå±çJarPluginLoaderï¼å¨é¨ä»£ç ä¸è´´å¦ä¸ï¼</span></p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">class</span> GJJarPluginLoader <span style="color: rgba(0, 0, 255, 1)">extends</span><span style="color: rgba(0, 0, 0, 1)"> JarPluginLoader {
+
+    </span><span style="color: rgba(0, 0, 255, 1)">private</span> <span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">final</span> Logger log = LoggerFactory.getLogger(GJJarPluginLoader.<span style="color: rgba(0, 0, 255, 1)">class</span><span style="color: rgba(0, 0, 0, 1)">);
+
+    </span><span style="color: rgba(0, 0, 255, 1)">private</span> <span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">final</span> String LIB_DIR = "lib"<span style="color: rgba(0, 0, 0, 1)">;
+
+    </span><span style="color: rgba(0, 0, 255, 1)">public</span><span style="color: rgba(0, 0, 0, 1)"> GJJarPluginLoader(PluginManager pluginManager) {
+        </span><span style="color: rgba(0, 0, 255, 1)">super</span><span style="color: rgba(0, 0, 0, 1)">(pluginManager);
+    }
+
+    @Override
+    </span><span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">boolean</span><span style="color: rgba(0, 0, 0, 1)"> isApplicable(Path pluginPath) {
+        </span><span style="color: rgba(0, 0, 255, 1)">return</span> Files.exists(pluginPath) &amp;&amp;<span style="color: rgba(0, 0, 0, 1)"> FileUtils.isJarFile(pluginPath);
+    }
+
+    @Override
+    </span><span style="color: rgba(0, 0, 255, 1)">public</span><span style="color: rgba(0, 0, 0, 1)"> ClassLoader loadPlugin(Path pluginPath, PluginDescriptor pluginDescriptor) {
+        GJPluginClassLoader pluginClassLoader </span>= <span style="color: rgba(0, 0, 255, 1)">new</span> GJPluginClassLoader(<span style="color: rgba(0, 0, 255, 1)">this</span>.pluginManager, pluginDescriptor, <span style="color: rgba(0, 0, 255, 1)">this</span><span style="color: rgba(0, 0, 0, 1)">.getClass().getClassLoader());
+        pluginClassLoader.addFile(pluginPath.toFile());
+        loadDependencyJars(pluginPath, pluginClassLoader);
+        </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)"> pluginClassLoader;
+    }
+
+    </span><span style="color: rgba(0, 0, 255, 1)">void</span><span style="color: rgba(0, 0, 0, 1)"> loadDependencyJars(Path pluginPath, GJPluginClassLoader pluginClassLoader) {
+        </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> æä»¶ JAR æå¨ç®å½</span>
+        Path pluginDir =<span style="color: rgba(0, 0, 0, 1)"> pluginPath.getParent();
+        </span><span style="color: rgba(0, 0, 255, 1)">if</span> (pluginDir == <span style="color: rgba(0, 0, 255, 1)">null</span><span style="color: rgba(0, 0, 0, 1)">) {
+            log.warn(</span>"Plugin path has no parent directory: {}"<span style="color: rgba(0, 0, 0, 1)">, pluginPath);
+            </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)">;
+        }
+        Path libDir </span>=<span style="color: rgba(0, 0, 0, 1)"> pluginDir.resolve(LIB_DIR);
+        </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 1. LIB_DIRä¸å­å¨ï¼è¯´ææ ä¾èµï¼å¿½ç¥å è½½ç¬ç«ä¾èµ</span>
+        <span style="color: rgba(0, 0, 255, 1)">if</span> (!<span style="color: rgba(0, 0, 0, 1)">Files.exists(libDir)) {
+            </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)">;
+        }
+        </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 2. ä» MANIFEST.MF è¯»å Class-Path å£°æçä¾èµ</span>
+        List&lt;Path&gt; declaredPaths =<span style="color: rgba(0, 0, 0, 1)"> getDeclaredClassPathJars(pluginPath);
+        </span><span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)"> (declaredPaths.isEmpty()) {
+            log.debug(</span>"No Class-Path found in MANIFEST.MF"<span style="color: rgba(0, 0, 0, 1)">);
+            </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)">;
+        }
+        </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 3. æå Class-Path ä¸­æææå lib/ ä¸ç JAR æä»¶åï¼æ ååä¸ºæä»¶åï¼</span>
+        Set&lt;String&gt; declaredJarNames =<span style="color: rgba(0, 0, 0, 1)"> getDeclaredJarNames(declaredPaths);
+        </span><span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)"> (declaredJarNames.isEmpty()) {
+            </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)">;
+        }
+        Set</span>&lt;String&gt; loadedJarNames = <span style="color: rgba(0, 0, 255, 1)">new</span> HashSet&lt;&gt;<span style="color: rgba(0, 0, 0, 1)">();
+        </span><span style="color: rgba(0, 0, 255, 1)">try</span> (Stream&lt;Path&gt; stream =<span style="color: rgba(0, 0, 0, 1)"> Files.list(libDir)) {
+            List</span>&lt;Path&gt; libJars =<span style="color: rgba(0, 0, 0, 1)"> stream
+                    .filter(Files::isRegularFile)
+                    .filter(path </span>-&gt; path.getFileName().toString().endsWith(".jar"<span style="color: rgba(0, 0, 0, 1)">))
+                    .toList();
+
+            </span><span style="color: rgba(0, 0, 255, 1)">for</span><span style="color: rgba(0, 0, 0, 1)"> (Path jarPath : libJars) {
+                String jarName </span>=<span style="color: rgba(0, 0, 0, 1)"> jarPath.getFileName().toString();
+
+                </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> åªå è½½ Class-Path ä¸­å£°æç JAR</span>
+                <span style="color: rgba(0, 0, 255, 1)">if</span> (!<span style="color: rgba(0, 0, 0, 1)">declaredJarNames.contains(jarName)) {
+                    log.warn(</span>"Ignored undeclared JAR in lib/: {}"<span style="color: rgba(0, 0, 0, 1)">, jarName);
+                    </span><span style="color: rgba(0, 0, 255, 1)">continue</span><span style="color: rgba(0, 0, 0, 1)">;
+                }
+
+                </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> é¿åéå¤å è½½</span>
+                <span style="color: rgba(0, 0, 255, 1)">if</span> (!<span style="color: rgba(0, 0, 0, 1)">loadedJarNames.add(jarName)) {
+                    log.warn(</span>"Duplicate JAR in lib/: {}"<span style="color: rgba(0, 0, 0, 1)">, jarName);
+                    </span><span style="color: rgba(0, 0, 255, 1)">continue</span><span style="color: rgba(0, 0, 0, 1)">;
+                }
+
+                </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> ä½¿ç¨ PF4J æ åæ¹æ³æ·»å </span>
+<span style="color: rgba(0, 0, 0, 1)">                pluginClassLoader.addFile(jarPath.toFile());
+                log.debug(</span>"Loaded dependency JAR: {}"<span style="color: rgba(0, 0, 0, 1)">, jarName);
+            }
+        } </span><span style="color: rgba(0, 0, 255, 1)">catch</span><span style="color: rgba(0, 0, 0, 1)"> (IOException e) {
+            log.error(</span>"Failed to scan lib directory: {}"<span style="color: rgba(0, 0, 0, 1)">, libDir, e);
+        }
+    }
+
+    </span><span style="color: rgba(0, 0, 255, 1)">private</span> Set&lt;String&gt; getDeclaredJarNames(List&lt;Path&gt;<span style="color: rgba(0, 0, 0, 1)"> declaredPaths) {
+        Set</span>&lt;String&gt; declaredJarNames =<span style="color: rgba(0, 0, 0, 1)"> declaredPaths.stream()
+                .filter(path </span>-&gt;<span style="color: rgba(0, 0, 0, 1)"> {
+                    </span><span style="color: rgba(0, 0, 255, 1)">try</span><span style="color: rgba(0, 0, 0, 1)"> {
+                        </span><span style="color: rgba(0, 0, 255, 1)">return</span> path.startsWith(LIB_DIR) ||<span style="color: rgba(0, 0, 0, 1)">
+                                path.getFileName().toString().equals(path.toString());
+                    } </span><span style="color: rgba(0, 0, 255, 1)">catch</span><span style="color: rgba(0, 0, 0, 1)"> (Exception e) {
+                        </span><span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(0, 0, 255, 1)">false</span><span style="color: rgba(0, 0, 0, 1)">;
+                    }
+                })
+                .map(path </span>-&gt;<span style="color: rgba(0, 0, 0, 1)"> {
+                    </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> å¤çç¸å¯¹è·¯å¾ï¼å¦ "lib/xxx.jar"ï¼</span>
+                    <span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)"> path.getFileName().toString();
+                })
+                .collect(Collectors.toSet());
+
+        </span><span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)"> (declaredJarNames.isEmpty()) {
+            log.debug(</span>"No lib JARs declared in Class-Path"<span style="color: rgba(0, 0, 0, 1)">);
+        }
+        </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)"> declaredJarNames;
+    }
+
+    </span><span style="color: rgba(0, 0, 255, 1)">private</span> List&lt;Path&gt;<span style="color: rgba(0, 0, 0, 1)"> getDeclaredClassPathJars(Path pluginJarPath) {
+        </span><span style="color: rgba(0, 0, 255, 1)">try</span> (JarFile jarFile = <span style="color: rgba(0, 0, 255, 1)">new</span><span style="color: rgba(0, 0, 0, 1)"> JarFile(pluginJarPath.toFile())) {
+            Manifest manifest </span>=<span style="color: rgba(0, 0, 0, 1)"> jarFile.getManifest();
+            </span><span style="color: rgba(0, 0, 255, 1)">if</span> (manifest == <span style="color: rgba(0, 0, 255, 1)">null</span><span style="color: rgba(0, 0, 0, 1)">) {
+                </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)"> Collections.emptyList();
+            }
+
+            Attributes mainAttrs </span>=<span style="color: rgba(0, 0, 0, 1)"> manifest.getMainAttributes();
+            String classPath </span>=<span style="color: rgba(0, 0, 0, 1)"> mainAttrs.getValue(Attributes.Name.CLASS_PATH);
+
+            </span><span style="color: rgba(0, 0, 255, 1)">if</span> (classPath == <span style="color: rgba(0, 0, 255, 1)">null</span> ||<span style="color: rgba(0, 0, 0, 1)"> classPath.trim().isEmpty()) {
+                </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)"> Collections.emptyList();
+            }
+            </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> æç©ºæ ¼åå²ï¼æ¯æå¤ä¸ªç©ºæ ¼ï¼</span>
+            <span style="color: rgba(0, 0, 255, 1)">return</span> Arrays.stream(classPath.trim().split("\\s+"<span style="color: rgba(0, 0, 0, 1)">))
+                    .filter(s </span>-&gt; !<span style="color: rgba(0, 0, 0, 1)">s.isEmpty())
+                    .map(Paths::get)
+                    .collect(Collectors.toList());
+        } </span><span style="color: rgba(0, 0, 255, 1)">catch</span><span style="color: rgba(0, 0, 0, 1)"> (Exception e) {
+            </span><span style="color: rgba(0, 0, 255, 1)">throw</span> <span style="color: rgba(0, 0, 255, 1)">new</span> RuntimeException("Failed to read Class-Path from plugin manifest: " +<span style="color: rgba(0, 0, 0, 1)"> pluginJarPath, e);
+        }
+    }
+}</span></pre>
+</div>
+<p><span style="font-size: 15px">ä¸è¿°æ»ç»èµ·æ¥ä¸å¥è¯ï¼<span style="color: rgba(255, 102, 0, 1)">æä»¶ååæå¥ç±»å è½½å¨ï¼åå°æä»¶libç®å½ç¬ç«ä¾èµæå¥ç±»å è½½å¨ï¼ä½å°¤å¶éè¦æ³¨æ2ç¹æ¶åå®å¨æ¹é¢çèèï¼ä¸æ¯é²æ­¢è·¯å¾ç©¿è¶ï¼äºæ¯å¨å©ç¨mvnèªå¨åæå»ºæ¶å°libä¸ææä¾èµåå¥å°JARæ¸åæä»¶MANIFEST.MFï¼å¹¶ä¸æ¯ééä¾¿ä¾¿æ¾ä¸ªJARåå°libç®å½ä¸æä»¬å°±ä»»æå»å è½½ï¼å½ç¶æ´éè¦çåç½®æ¡ä»¶æ¯å½æä»¶æ¾å°å¹³å°æä»¶ç®å½ä¸æ¶è¯å®è¦åSHA256ç­ç­ä¸è´æ§æ ¡éªï¼</span></span></p>
+<p><img src="https://img2024.cnblogs.com/blog/589642/202512/589642-20251230002407615-539248996.png" alt="image" loading="lazy"></p>
+<h3>æä»¶ä¸æä»¶ç¸äºä¾èµè§£æ</h3>
+<p><span style="font-size: 15px">pf4jä»¥éæææåºè§£ææä»¶ä¾èµï¼æä»¶ä¾èµç±çº¦å®çplugin.propertiesä¸­çplugin.dependencieså±æ§å®ä¹æä»¶ä¾èµï¼è¥ä¾èµæä»¶gj.plugin.demo2ågj.plugin.demo3ï¼å¯éæ¯å¦å¸¦ä¸çæ¬å·ï¼ï¼é£ä¹ï¼<span style="color: rgba(255, 102, 0, 1)">plugin.dependencies=gj.plugin.demo2@1.0.0-SNAPSHOT,gj.plugin.demo2@1.0.0-SNAPSHOTãæ³¨æå¤ä¸ªä¾èµç¨è±æåè§ç¬¦å·éå¼ï¼åæ¶è¥åºç°å¾ªç¯ä¾èµåä¼æåºå¼å¸¸ï¼ä¸ç¨æå¿æ­»å¾ªç¯é®é¢</span></span></p>
+<p><img src="https://img2024.cnblogs.com/blog/589642/202512/589642-20251230003923658-1583916127.png" alt="image" loading="lazy"></p>
+<h3>æä»¶å è½½å¼å¸¸èªå®ä¹ç­ç¥</h3>
+<p><span style="font-size: 15px; color: rgba(255, 102, 0, 1)">å¤ä¸ªæä»¶å è½½ï¼è¥æä¸ªæä»¶åºç°å è½½å¼å¸¸æä»¬å¯è½å¹¶ä¸å¸æå½±åå¶ä»æä»¶çæ­£å¸¸å è½½ï¼pf4jæä¾äºæä»¶å è½½å¼å¸¸ç­ç¥ï¼é»è®¤æ¯ä¼æåºå¼å¸¸ã</span></p>
+<p><img src="https://img2024.cnblogs.com/blog/589642/202512/589642-20251230005419485-1178931856.png" alt="image" loading="lazy"></p>
+<p><span style="font-size: 15px">è¥éè°æ´æä»¶å è½½å¼å¸¸ç­ç¥ï¼æä»¬å¨ç»§æ¿åºå±DefaultPluginManagerèªå®ä¹çPluginManageréé¢éåinitializeæ¹æ³ï¼å¨è°ç¨ç¶ç±»åå§åæ¹æ³åéåå¶ç­ç¥å³å¯</span></p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 0, 1)">   @Override
+    </span><span style="color: rgba(0, 0, 255, 1)">protected</span> <span style="color: rgba(0, 0, 255, 1)">void</span><span style="color: rgba(0, 0, 0, 1)"> initialize() {
+        </span><span style="color: rgba(0, 0, 255, 1)">super</span><span style="color: rgba(0, 0, 0, 1)">.initialize();
+        </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> è¦çé»è®¤è®¾ç½®è§£æä¾èµå¼å¸¸ä¸å½±åå¶ä»æä»¶æ­£å¸¸å è½½</span>
+        <span style="color: rgba(0, 0, 255, 1)">this</span>.resolveRecoveryStrategy =<span style="color: rgba(0, 0, 0, 1)"> ResolveRecoveryStrategy.IGNORE_PLUGIN_AND_CONTINUE;
+        </span><span style="color: rgba(0, 0, 255, 1)">this</span>.configurationRepository =<span style="color: rgba(0, 0, 0, 1)"> createConfigurationRepository();
+    }</span></pre>
+</div>
+<h2>æ»ç»</h2>
+<p><span style="font-size: 15px">è¿æ²¡å®ï¼çä¸ªå½©èï¼<span style="color: rgba(255, 102, 0, 1)">pf4jé»è®¤çPluginManagerå¯¹æä»¶çç¸å³æä½éçº¿ç¨å®å¨ï¼æä»¥è¯·æ³¨æåä¸ªæä»¶æä½çåå­æ§</span><span style="color: rgba(255, 102, 0, 1)">ã</span>å¦ä¸å¯¹pf4jäºæ¬¡å°è£æ¨¡ååå¤§è´è®¾è®¡æè·¯ï¼ä»ä¾åä½åèï¼æ¬ææå°æ­¤ä¸ºæ­¢ï¼æè°¢éè¯»ã&nbsp;</span></p>
+</div>
+<div id="MySignature" role="contentinfo">
+    ä½ æçå°çå¹¶éäºç©æ¬èº«ï¼èæ¯ç»è¿è¯ éåæèµäºçæä¹
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2025-12-30 08:00">2025-12-30 08:00</span>&nbsp;
+<a href="https://www.cnblogs.com/CreateMyself">Jeffcky</a>&nbsp;
+éè¯»(<span id="post_view_count">32</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19413005);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19413005', targetLink: 'https://www.cnblogs.com/CreateMyself/p/19413005', title: 'Spring Boot Pf4jæ¨¡ååè½åè®¾è®¡æè' })">ä¸¾æ¥</a>
+</div>
+         ]]>
     </description>
     </item>
 <item>
@@ -2320,7 +716,7 @@ DeepFace åé´äº Siamese ç½ç»çæè·¯ï¼å¨æ
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0.001388888888888889" data-date-updated="2025-12-29 23:54">2025-12-29 23:52</span>&nbsp;
 <a href="https://www.cnblogs.com/Goblinscholar">å¥å¸æå­¦è</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">32</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19418306);return false;">æ¶è</a>&nbsp;
@@ -2684,7 +1080,7 @@ if __name__ == '__main__':
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0.001388888888888889" data-date-updated="2025-12-29 23:21">2025-12-29 23:19</span>&nbsp;
 <a href="https://www.cnblogs.com/io-T-T">io_T_T</a>&nbsp;
-éè¯»(<span id="post_view_count">3</span>)&nbsp;
+éè¯»(<span id="post_view_count">42</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19418274);return false;">æ¶è</a>&nbsp;
@@ -2881,7 +1277,7 @@ func main() {
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0.008333333333333333" data-date-updated="2025-12-29 20:46">2025-12-29 20:34</span>&nbsp;
 <a href="https://www.cnblogs.com/apocelipes">apocelipes</a>&nbsp;
-éè¯»(<span id="post_view_count">17</span>)&nbsp;
+éè¯»(<span id="post_view_count">64</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19417908);return false;">æ¶è</a>&nbsp;
@@ -2907,14 +1303,14 @@ func main() {
             <div class="clear"></div>
             <div class="postBody">
                 <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h1 id="aiflink-agents-2">ãå¤§æ°æ® &amp; AIãFlink Agents æºç è§£è¯» --- (2) ---  æ ¸å¿æ¶æ</h1>
-<p>[toc]</p>
-<h2 id="x00">0x00 æè¦</h2>
+<h1 id="å¤§æ°æ®--aiflink-agents-æºç è§£è¯»-----2------æ ¸å¿æ¶æ">ãå¤§æ°æ® &amp; AIãFlink Agents æºç è§£è¯» --- (2) ---  æ ¸å¿æ¶æ</h1>
+<p></p><div class="toc"><div class="toc-container-header">ç®å½</div><ul><li><a href="#å¤§æ°æ®--aiflink-agents-æºç è§£è¯»-----2------æ ¸å¿æ¶æ" rel="noopener nofollow">ãå¤§æ°æ® &amp; AIãFlink Agents æºç è§£è¯» --- (2) ---  æ ¸å¿æ¶æ</a><ul><li><a href="#0x00-æè¦" rel="noopener nofollow">0x00 æè¦</a></li><li><a href="#0x01-flink-agentsä¸»è¦ç»ä»¶" rel="noopener nofollow">0x01 Flink Agentsä¸»è¦ç»ä»¶</a><ul><li><a href="#11-ä¸»è¦ç»ä»¶" rel="noopener nofollow">1.1 ä¸»è¦ç»ä»¶</a></li><li><a href="#12-åé¨æååéæ å°å³ç³»" rel="noopener nofollow">1.2 åé¨æååéæ å°å³ç³»</a><ul><li><a href="#121-agent-å°-agentplan" rel="noopener nofollow">1.2.1 Agent å° AgentPlan</a></li><li><a href="#122-agentplan-å°-actionexecutionoperator" rel="noopener nofollow">1.2.2 AgentPlan å° ActionExecutionOperator</a><ul><li><a href="#è¯¦ç»æ å°åæ" rel="noopener nofollow">è¯¦ç»æ å°åæ</a><ul><li><a href="#å¨ä½æ§è¡æ å°" rel="noopener nofollow">å¨ä½æ§è¡æ å°</a></li><li><a href="#èµæºç®¡çæ å°" rel="noopener nofollow">èµæºç®¡çæ å°</a></li><li><a href="#éç½®æ å°" rel="noopener nofollow">éç½®æ å°</a></li><li><a href="#ç¶æç®¡çæ å°" rel="noopener nofollow">ç¶æç®¡çæ å°</a></li></ul></li></ul></li></ul></li><li><a href="#13-æ§è¡æµç¨" rel="noopener nofollow">1.3 æ§è¡æµç¨</a></li></ul></li><li><a href="#0x02-ä¸åçflinkæ¯å¯¹" rel="noopener nofollow">0x02 ä¸åçFlinkæ¯å¯¹</a><ul><li><a href="#21-æ ¸å¿" rel="noopener nofollow">2.1 æ ¸å¿</a></li><li><a href="#22-å·ä½æ¯å¯¹" rel="noopener nofollow">2.2 å·ä½æ¯å¯¹</a><ul><li><a href="#221-agent" rel="noopener nofollow">2.2.1 Agent</a></li><li><a href="#222-agentplan" rel="noopener nofollow">2.2.2 AgentPlan</a></li><li><a href="#223-actionexecutionoperator" rel="noopener nofollow">2.2.3 ActionExecutionOperator</a></li><li><a href="#223-actiontask" rel="noopener nofollow">2.2.3 ActionTask</a></li></ul></li></ul></li><li><a href="#0x03-å®ä¾æè§£" rel="noopener nofollow">0x03 å®ä¾æè§£</a><ul><li><a href="#31-ç¬¬ä¸å±çº§agent--é¤åèååè§åæåblueprint" rel="noopener nofollow">3.1 ç¬¬ä¸å±çº§ï¼Agent â é¤åèååè§åæåï¼Blueprintï¼</a></li><li><a href="#32-ç¬¬äºå±çº§agentplan--é¤åçè¯¦ç»æä½æµç¨å¾compiled-planè®¡åç¼è¯å±" rel="noopener nofollow">3.2 ç¬¬äºå±çº§ï¼AgentPlan â é¤åçè¯¦ç»æä½æµç¨å¾ï¼Compiled Plan,è®¡åç¼è¯å±ï¼</a><ul><li><a href="#ç»æåè§£æ" rel="noopener nofollow">ç»æåè§£æ</a></li><li><a href="#å¹³å°ééæ§" rel="noopener nofollow">å¹³å°ééæ§</a></li></ul></li><li><a href="#33-ç¬¬ä¸å±çº§actionexecutionoperator--é¤åçæ§è¡ç®¡çå±runtime-executoræ§è¡å¼æå±" rel="noopener nofollow">3.3 ç¬¬ä¸å±çº§ï¼ActionExecutionOperator â é¤åçæ§è¡ç®¡çå±ï¼Runtime Executorï¼æ§è¡å¼æå±ï¼</a></li><li><a href="#34-ç¬¬åå±çº§actiontask--å·ä½çæå¡æ­¥éª¤execution-unit" rel="noopener nofollow">3.4 ç¬¬åå±çº§ï¼ActionTask â å·ä½çæå¡æ­¥éª¤ï¼Execution Unitï¼</a></li><li><a href="#35-å·¥ä½æµç¨ä¸¾ä¾" rel="noopener nofollow">3.5 å·¥ä½æµç¨ä¸¾ä¾</a></li></ul></li><li><a href="#0x04-å¹¶åæ§åå¹¶è¡æ§" rel="noopener nofollow">0x04 å¹¶åæ§åå¹¶è¡æ§</a><ul><li><a href="#41-flinkåçå¹¶åæ¨¡å" rel="noopener nofollow">4.1 Flinkåçå¹¶åæ¨¡å</a></li><li><a href="#42-æ¯ä¸ªkeyçç¶æç®¡ç" rel="noopener nofollow">4.2 æ¯ä¸ªKeyçç¶æç®¡ç</a></li><li><a href="#43-é®ç®±çº¿ç¨æ¨¡å" rel="noopener nofollow">4.3 é®ç®±çº¿ç¨æ¨¡å</a></li><li><a href="#44-å¼æ­¥ä»»å¡å¤ç" rel="noopener nofollow">4.4 å¼æ­¥ä»»å¡å¤ç</a></li><li><a href="#45-åå­ä¸è´æ§" rel="noopener nofollow">4.5 åå­ä¸è´æ§</a></li><li><a href="#46-æ°´å°åäºä»¶æ¶é´å¤ç" rel="noopener nofollow">4.6 æ°´å°åäºä»¶æ¶é´å¤ç</a></li><li><a href="#47-æ£æ¥ç¹åæ¢å¤" rel="noopener nofollow">4.7 æ£æ¥ç¹åæ¢å¤</a></li><li><a href="#48-æ»ç»" rel="noopener nofollow">4.8 æ»ç»</a></li></ul></li><li><a href="#0xff-åè" rel="noopener nofollow">0xFF åè</a></li></ul></li></ul></div><p></p>
+<h2 id="0x00-æè¦">0x00 æè¦</h2>
 <p>Flink Agents æ¡æ¶çæ ¸å¿æ¯ <strong>âäºä»¶é©±å¨ + ç¶æéç¦» + å¤è¯­è¨åä½â</strong>ï¼éè¿ Agent/AgentPlan å®ç°ä¸å¡é»è¾çå£°æå¼å®ä¹ï¼åå© Flink åççåå¸å¼ãé«å¹¶åè½åå®ç°å¯é æ§è¡ï¼åæ¶æ¯æ Python çæçå·¥å· / æ¨¡åéæï¼å¼é¡¾äºå¼åçµæ´»æ§ä¸è¿è¡æ¶æçï¼éç¨äºå¤æ AI ä»£çä»»å¡çåå¸å¼é¨ç½²ä¸æ§è¡ã</p>
 <p>å·ä½èè¨ï¼Flink Agents çç»ä»¶æ¯å¯¹åç Flink ç»ä»¶å¨ âAgent ä¸å¡åºæ¯â ä¸çè¯­ä¹åå°è£ï¼èéå¨æ°åæãå æ­¤ï¼æ¬æå°åä»ç»Flink Agentsçåºæ¬ç»ä»¶ï¼ç¶åå°å¶ç»ä»¶ä¸Flink åçç»ä»¶åå¯¹æ¯ï¼æåç»åºä¸ä¸ªè¯¦ç»çä¾å­ï¼è¿æ ·è¯»èå¯ä»¥æ´å¥½ççè§£å¶è®¾è®¡ç²¾è¦ã</p>
-<h2 id="x01-flink-agents">0x01 Flink Agentsä¸»è¦ç»ä»¶</h2>
+<h2 id="0x01-flink-agentsä¸»è¦ç»ä»¶">0x01 Flink Agentsä¸»è¦ç»ä»¶</h2>
 <p>å¯ä»¥æ Flink Agents çæ´ä¸ªæ§è¡æµç¨æ¯ä½ âåä¸éèâï¼æä»¬åæ­¤è¿è¡åæã</p>
-<h3 id="section">1.1 ä¸»è¦ç»ä»¶</h3>
+<h3 id="11-ä¸»è¦ç»ä»¶">1.1 ä¸»è¦ç»ä»¶</h3>
 <p>Flink Agents æ¯åºäºåç Flink åå¸å¼æµå¤çè½åå°è£çä¸å±æ¡æ¶ãå¶ä¸­åä¸ªä¸»è¦ç»ä»¶ä»£è¡¨äº Flink Agents æ¡æ¶ä¸­çåä¸ªå±æ¬¡ï¼</p>
 <ul>
 <li><strong>Agentï¼é¡¶å±è®¾è®¡ï¼å®ä¹äºâåä»ä¹âï¼</strong>ï¼ç¨æ·å®ä¹çæºè½å®ä½ï¼ç±»ä¼¼ âé¤åèå + è§åæåâï¼åå«ä¸å¡é»è¾ãå¨ä½ï¼Actionï¼åèµæºï¼å·¥å·ãæ¨¡åç­ï¼å®ä¹ï¼æç¡® âåä»ä¹âã</li>
@@ -2932,9 +1328,9 @@ func main() {
 [ActionTask] åå·¥å·ä½ä»»å¡
 </code></pre>
 <p>è¿æ ·çè®¾è®¡ä½¿å¾ç³»ç»æ¢çµæ´»åé«æï¼è½å¤å¤çå¤æçAIä»£çä»»å¡ï¼åæ¶ä¿è¯äºè¯å¥½çæ©å±æ§åç»´æ¤æ§ã</p>
-<h3 id="section-1">1.2 åé¨æååéæ å°å³ç³»</h3>
+<h3 id="12-åé¨æååéæ å°å³ç³»">1.2 åé¨æååéæ å°å³ç³»</h3>
 <p>AgentãAgentPlan å ActionExecutionOperator ä¹é´çå³ç³»ä»¥åå®ä»¬åé¨æååéçæ å°å³ç³»å¦ä¸ã</p>
-<h4 id="agent-agentplan">1.2.1 Agent å° AgentPlan</h4>
+<h4 id="121-agent-å°-agentplan">1.2.1 Agent å° AgentPlan</h4>
 <p>Agent å° AgentPlan çæ å°å¦ä¸ï¼</p>
 <table>
 <thead>
@@ -2962,7 +1358,7 @@ func main() {
 </tr>
 </tbody>
 </table>
-<h4 id="agentplan-actionexecutionoperator">1.2.2 AgentPlan å° ActionExecutionOperator</h4>
+<h4 id="122-agentplan-å°-actionexecutionoperator">1.2.2 AgentPlan å° ActionExecutionOperator</h4>
 <p>AgentPlan å° ActionExecutionOperator çæ å°å¦ä¸ï¼</p>
 <table>
 <thead>
@@ -2990,8 +1386,8 @@ func main() {
 </tr>
 </tbody>
 </table>
-<h5 id="section-2">è¯¦ç»æ å°åæ</h5>
-<h6 id="section-3">å¨ä½æ§è¡æ å°</h6>
+<h5 id="è¯¦ç»æ å°åæ">è¯¦ç»æ å°åæ</h5>
+<h6 id="å¨ä½æ§è¡æ å°">å¨ä½æ§è¡æ å°</h6>
 <p>å¨ <code>ActionExecutionOperator</code> ä¸­ï¼</p>
 <pre><code class="language-java">// æ ¹æ®äºä»¶ç±»åè·åè§¦åçå¨ä½
 private List&lt;Action&gt; getActionsTriggeredBy(Event event) {
@@ -3013,14 +1409,14 @@ private ActionTask createActionTask(Object key, Action action, Event event) {
     // ..
 }
 </code></pre>
-<h6 id="section-4">èµæºç®¡çæ å°</h6>
+<h6 id="èµæºç®¡çæ å°">èµæºç®¡çæ å°</h6>
 <p><code>AgentPlan</code> ä¸­çèµæºæä¾èå¨ <code>ActionExecutionOperator</code> ä¸­éè¿ <code>RunnerContextImpl</code> è®¿é®ï¼</p>
 <pre><code class="language-java">// å¨ RunnerContextImpl ä¸­
 public Resource getResource(String name, ResourceType type) {
     return agentPlan.getResource(name, type);
 }
 </code></pre>
-<h6 id="section-5">éç½®æ å°</h6>
+<h6 id="éç½®æ å°">éç½®æ å°</h6>
 <p>AgentPlan ä¸­çéç½®ä¿¡æ¯è¢«ç¨äºåå§åActionExecutionOperatorçåç§è¿è¡æ¶ç»ä»¶ï¼</p>
 <pre><code class="language-java">// å¨ ActionExecutionOperator.open() ä¸­
 metricGroup = new FlinkAgentsMetricGroupImpl(getMetricGroup());
@@ -3031,7 +1427,7 @@ if (actionStateStore == null &amp;&amp; KAFKA.getType().equalsIgnoreCase(agentPl
     actionStateStore = new KafkaActionStateStore(agentPlan.getConfig());
 }
 </code></pre>
-<h6 id="section-6">ç¶æç®¡çæ å°</h6>
+<h6 id="ç¶æç®¡çæ å°">ç¶æç®¡çæ å°</h6>
 <p>ActionExecutionOperator ä¸­çåç§ç¶æä¸ AgentPlan çæ§è¡éæ±ç¸å¯¹åºï¼</p>
 <pre><code class="language-java">// ç­æåå­ç¶æç¨äºå¨ä½é´çæ°æ®å±äº«
 private transient MapState&lt;String, MemoryObjectImpl.MemoryItem&gt; shortTermMemState;
@@ -3042,25 +1438,31 @@ private transient ListState&lt;ActionTask&gt; actionTasksState;
 // å¾å¤çäºä»¶ç¶æç¨äºæµæ§
 private transient ListState&lt;Event&gt; pendingInputEventsState;
 </code></pre>
-<h3 id="section-7">1.3 æ§è¡æµç¨</h3>
+<h3 id="13-æ§è¡æµç¨">1.3 æ§è¡æµç¨</h3>
 <p>å·ä½æµç¨å¦ä¸ï¼</p>
 <pre><code class="language-python">Action Code â Agent â AgentPlan â ActionExecutionOperator â ActionTask â Flink Runtime
 </code></pre>
 <p>ä»¥ ReActAgent ä¸ºä¾ï¼å¶æµç¨å¦ä¸ï¼</p>
 <ul>
-<li><p>ç¨æ·å®ä¹ ReActAgentï¼åå« <code>start_action</code> å <code>stop_action</code></p>
+<li>
+<p>ç¨æ·å®ä¹ ReActAgentï¼åå« <code>start_action</code> å <code>stop_action</code></p>
 </li>
-<li><p>éè¿ <code>AgentPlan.from_agent()</code> ç¼è¯æè®¡åï¼</p>
+<li>
+<p>éè¿ <code>AgentPlan.from_agent()</code> ç¼è¯æè®¡åï¼</p>
 <ul>
-<li><p><code>actions</code>ï¼åå« <code>start_action</code> å <code>stop_action</code></p>
+<li>
+<p><code>actions</code>ï¼åå« <code>start_action</code> å <code>stop_action</code></p>
 </li>
-<li><p><code>actions_by_event</code>ï¼æ å° <code>InputEvent</code> â <code>start_action</code>ï¼<code>ChatResponseEvent</code> â <code>stop_action</code></p>
+<li>
+<p><code>actions_by_event</code>ï¼æ å° <code>InputEvent</code> â <code>start_action</code>ï¼<code>ChatResponseEvent</code> â <code>stop_action</code></p>
 </li>
 </ul>
 </li>
-<li><p>å¨è¿è¡ç¯å¢ä¸­ï¼AgentPlan è¢«ä¼ éç» ActionExecutionOperatorFactoryãActionExecutionOperatorFactory åå»º ActionExecutionOperator å®ä¾ã</p>
+<li>
+<p>å¨è¿è¡ç¯å¢ä¸­ï¼AgentPlan è¢«ä¼ éç» ActionExecutionOperatorFactoryãActionExecutionOperatorFactory åå»º ActionExecutionOperator å®ä¾ã</p>
 </li>
-<li><p>ActionExecutionOperator å¨è¿è¡æ¶æ ¹æ® AgentPlan æ§è¡å·ä½æä½ãå¨ ActionExecutionOperator ä¸­ï¼</p>
+<li>
+<p>ActionExecutionOperator å¨è¿è¡æ¶æ ¹æ® AgentPlan æ§è¡å·ä½æä½ãå¨ ActionExecutionOperator ä¸­ï¼</p>
 <ul>
 <li>æ¥æ¶å° InputEvent åï¼æ¥æ¾å¹¶æ§è¡ start_action</li>
 <li>start_action åé ChatRequestEvent</li>
@@ -3073,9 +1475,9 @@ private transient ListState&lt;Event&gt; pendingInputEventsState;
 </li>
 </ul>
 <p>è¿ç§è®¾è®¡å®ç°äºå³æ³¨ç¹åç¦»ï¼ç¨æ·åªéå³æ³¨ä¸å¡é»è¾å®ä¹ï¼æ¡æ¶è´è´£å°å¶ç¼è¯ä¸ºé«æçè¿è¡æ¶æ§è¡è®¡åã</p>
-<h2 id="x02-flink">0x02 ä¸åçFlinkæ¯å¯¹</h2>
+<h2 id="0x02-ä¸åçflinkæ¯å¯¹">0x02 ä¸åçFlinkæ¯å¯¹</h2>
 <p>Flink Agents æ¯åç Flink ç âé¢åå°è£âï¼ææç»ä»¶é½è½æ å°å°åç Flink æ ¸å¿ç»ä»¶ï¼æªè±ç¦» Flink æµå¤ççæ ¸å¿æ¶æãæä»¬æ¥ä¸æ¥çç Flink Agents éç AgentãAgentPlanãActionExecutionOperatorãActionTask è¿äºæ ¸å¿ç»ä»¶ï¼åå«å¯¹åºåç Flink ä¸­çåªäºæ ¸å¿ç»ä»¶ï¼ä»¥åå®ä»¬çç¸ä¼¼æ§é»è¾ã</p>
-<h3 id="section-8">2.1 æ ¸å¿</h3>
+<h3 id="21-æ ¸å¿">2.1 æ ¸å¿</h3>
 <p>æä»¬åç¨ä¸å¼ è¡¨æ¥æ¦æ¬æ¯å¯¹å³ç³»ã</p>
 <table>
 <thead>
@@ -3117,24 +1519,26 @@ private transient ListState&lt;Event&gt; pendingInputEventsState;
 <li>ActionTask = å¨å¸ç âåä¸ªç¿»çå¨ä½ââ å¯¹åº Flink ç®å­åçåå­å¤çä»»å¡ï¼</li>
 <li>Flink ExecutionGraph = å¨å¸å®éç«å¨åªä¸ªç¶å°ãç¨åªå¥å¨å· â ç©çæ§è¡å±ï¼å AgentPlan æ å³ã</li>
 </ul>
-<h3 id="section-9">2.2 å·ä½æ¯å¯¹</h3>
-<h4 id="agent">2.2.1 Agent</h4>
+<h3 id="22-å·ä½æ¯å¯¹">2.2 å·ä½æ¯å¯¹</h3>
+<h4 id="221-agent">2.2.1 Agent</h4>
 <ul>
 <li><strong>ç¸ä¼¼ç»ä»¶</strong>ï¼Flink Job çä¸å¡é»è¾å®ä¹ï¼å¦ DataStream ç®å­é¾ï¼ãStreamGraphï¼æµå¼ä½ä¸çé»è¾ææï¼</li>
 <li><strong>ç¸ä¼¼æ§æ ¸å¿</strong>ï¼Agent æ¯ç¨æ·å®ä¹ç âæºè½å®ä½âï¼åå«ä¸å¡é»è¾ãå¨ä½ãèµæºï¼ï¼æ¬è´¨æ¯ä¸å¡å±é¢ç âä½ä¸é»è¾å£°æâï¼è¿ååç Flink ä¸­ç¨æ·ç¼åç DataStream ä»£ç ï¼å®ä¹ âæ°æ®æä¹å¤çâï¼ãStreamGraphï¼æè¿°é»è¾ææï¼çè§è²å®å¨ä¸è´ ââ é½æ¯ âåè¯ç³»ç»è¦åä»ä¹â çé¡¶å±é»è¾å®ä¹ï¼ä¸æ¶åå·ä½æ§è¡ã</li>
 <li><strong>å·®å¼</strong>ï¼Agent æ´èç¦ âAgent è¡ä¸º / å·¥å·è°ç¨â çè¯­ä¹ï¼èåç StreamGraph æ¯éç¨çæ°æ®æµææã</li>
 </ul>
-<h4 id="agentplan">2.2.2 AgentPlan</h4>
+<h4 id="222-agentplan">2.2.2 AgentPlan</h4>
 <ul>
 <li><strong>ç¸ä¼¼ç»ä»¶</strong>ï¼Flink ç JobGraphï¼StreamGraph ç¼è¯åçå¯æ§è¡ææï¼</li>
 <li><strong>ç¸ä¼¼æ§æ ¸å¿</strong>ï¼AgentPlan æ¯ Agent ç¼è¯åç âå¯æ§è¡è®¡åâï¼æç¡®å¨ä½è§¦åè§åãèµæºæ å°ï¼ï¼æ¬è´¨æ¯å°é«å±ä¸å¡é»è¾è½¬æ¢ä¸ºç³»ç»å¯è¯å«çæ§è¡è®¡åï¼è¿ååç Flink ä¸­ StreamGraph ç¼è¯ä¸º JobGraph çè¿ç¨ä¸è´ ââJobGraph æç¨æ·çé»è¾ææè½¬æ¢ä¸ºåå«å¹¶è¡åº¦ãç®å­é¾ãä¸­é´ç»æä¼ éçå¯æ§è¡ææï¼AgentPlan åæ Agent ç âè¡ä¸ºè§åâ è½¬æ¢ä¸ºç³»ç»å¯è°åº¦ç âå¨ä½æ§è¡è§åâã</li>
 <li><strong>å³é®å±æ§</strong>ï¼é½æ¯ âç¼è¯å±â äº§ç©ï¼è¿æ¥é«å±å®ä¹ä¸åºå±æ§è¡ã</li>
 </ul>
-<h4 id="actionexecutionoperator">2.2.3 ActionExecutionOperator</h4>
+<h4 id="223-actionexecutionoperator">2.2.3 ActionExecutionOperator</h4>
 <ul>
-<li><p><strong>ç¸ä¼¼ç»ä»¶</strong>ï¼Flink æ ¸å¿ç StreamOperatorï¼å¦ ProcessOperatorãFlatMapOperatorï¼ãKeyedProcessOperator</p>
+<li>
+<p><strong>ç¸ä¼¼ç»ä»¶</strong>ï¼Flink æ ¸å¿ç StreamOperatorï¼å¦ ProcessOperatorãFlatMapOperatorï¼ãKeyedProcessOperator</p>
 </li>
-<li><p><strong>ç¸ä¼¼æ§æ ¸å¿</strong>ï¼ActionExecutionOperator æ¯ Flink éç¾¤ä¸­æ§è¡ Agent é»è¾çæ ¸å¿ç®å­ï¼æ¬è´¨æ¯è¿è¡æ¶çæ ¸å¿æ§è¡ååï¼è¿ååç Flink ç StreamOperator å®å¨å¯¹åº ââStreamOperator æ¯å¤çæ°æ®æµçæ ¸å¿è½½ä½ï¼å¦ ProcessOperator å¤ç KeyedStreamãå®ç°ç¶æç®¡çï¼ï¼ActionExecutionOperator å°±æ¯éå¯¹ âAgent å¨ä½æ§è¡â åºæ¯å®å¶ç StreamOperatorï¼</p>
+<li>
+<p><strong>ç¸ä¼¼æ§æ ¸å¿</strong>ï¼ActionExecutionOperator æ¯ Flink éç¾¤ä¸­æ§è¡ Agent é»è¾çæ ¸å¿ç®å­ï¼æ¬è´¨æ¯è¿è¡æ¶çæ ¸å¿æ§è¡ååï¼è¿ååç Flink ç StreamOperator å®å¨å¯¹åº ââStreamOperator æ¯å¤çæ°æ®æµçæ ¸å¿è½½ä½ï¼å¦ ProcessOperator å¤ç KeyedStreamãå®ç°ç¶æç®¡çï¼ï¼ActionExecutionOperator å°±æ¯éå¯¹ âAgent å¨ä½æ§è¡â åºæ¯å®å¶ç StreamOperatorï¼</p>
 <ul>
 <li>é½è¿è¡å¨ TaskManager ä¸­ï¼å¤çæµæ°æ®ï¼Eventï¼ï¼</li>
 <li>é½æ¯æé®æ§ç¶æï¼Keyed Stateï¼ï¼æ key éç¦»æ§è¡ä¸ä¸æï¼</li>
@@ -3142,51 +1546,60 @@ private transient ListState&lt;Event&gt; pendingInputEventsState;
 <li>é½è´è´£ç¶æç®¡çãäºä»¶å¤çãç»æè¾åºã</li>
 </ul>
 </li>
-<li><p><strong>å¸åå¯¹åº</strong>ï¼ActionExecutionOperator ææ¥è¿åçç <code>KeyedProcessOperator</code>ï¼é®æ§å¤çãç¶æç®¡çãå¼æ­¥ä»»å¡è°åº¦ï¼ã</p>
+<li>
+<p><strong>å¸åå¯¹åº</strong>ï¼ActionExecutionOperator ææ¥è¿åçç <code>KeyedProcessOperator</code>ï¼é®æ§å¤çãç¶æç®¡çãå¼æ­¥ä»»å¡è°åº¦ï¼ã</p>
 </li>
 </ul>
-<h4 id="actiontask">2.2.3 ActionTask</h4>
+<h4 id="223-actiontask">2.2.3 ActionTask</h4>
 <ul>
-<li><p><strong>ç¸ä¼¼ç»ä»¶</strong>ï¼Flink çãç®å­åçå¤çä»»å¡ãï¼å¦ ProcessFunction ä¸­çåä¸ªåç´ å¤çé»è¾ï¼ãAsync I/O ä¸­ç <code>AsyncFunction</code> ä»»å¡</p>
+<li>
+<p><strong>ç¸ä¼¼ç»ä»¶</strong>ï¼Flink çãç®å­åçå¤çä»»å¡ãï¼å¦ ProcessFunction ä¸­çåä¸ªåç´ å¤çé»è¾ï¼ãAsync I/O ä¸­ç <code>AsyncFunction</code> ä»»å¡</p>
 </li>
-<li><p><strong>ç¸ä¼¼æ§æ ¸å¿</strong>ï¼ActionTask æ¯ âæå°æ§è¡ååâï¼å¦åä¸ª Python/Java å¨ä½æ§è¡ï¼ï¼æ¬è´¨æ¯ç®å­åçåå­å¤çä»»å¡ï¼è¿ååç Flink ä¸­ï¼</p>
+<li>
+<p><strong>ç¸ä¼¼æ§æ ¸å¿</strong>ï¼ActionTask æ¯ âæå°æ§è¡ååâï¼å¦åä¸ª Python/Java å¨ä½æ§è¡ï¼ï¼æ¬è´¨æ¯ç®å­åçåå­å¤çä»»å¡ï¼è¿ååç Flink ä¸­ï¼</p>
 <ul>
 <li>ProcessOperator å¤çåä¸ª StreamElementï¼å¦ä¸æ¡æ°æ®ï¼çé»è¾ååï¼</li>
 <li>Async I/O ä¸­ AsyncFunction å°è£çå¼æ­¥ä»»å¡ï¼å¦å¼æ­¥æ¥è¯¢æ°æ®åºï¼ï¼</li>
 </ul>
 <p>è§è²å®å¨ä¸è´ ââ é½æ¯ âç®å­åçæå°å¯æ§è¡ä»»å¡âï¼æ§è¡å®æåè¿åç»æï¼æ¯æå¼æ­¥ / åé¶æ®µæ§è¡ã</p>
 </li>
-<li><p><strong>å³é®å±æ§</strong>ï¼</p>
+<li>
+<p><strong>å³é®å±æ§</strong>ï¼</p>
 <ul>
 <li>é½æ¯ âåå­æ§è¡ååâï¼ä¸å¯åæåï¼</li>
 <li>æ¯æå¼æ­¥æ§è¡ï¼å¦ PythonActionTask å¯¹åº Async I/Oï¼ï¼</li>
 <li>æ§è¡ç»æå¯è§¦ååç»­ä»»å¡ï¼å¦ ActionTaskResult çææ°ä»»å¡ï¼å¯¹åº Async I/O åè°è§¦ååç»­å¤çï¼ã</li>
 </ul>
 </li>
-<li><p><strong>ç»åå¯¹åº</strong>ï¼</p>
+<li>
+<p><strong>ç»åå¯¹åº</strong>ï¼</p>
 <ul>
 <li>JavaActionTask â åçåæ­¥å¤çä»»å¡ï¼å¦ ProcessFunction ä¸­çåæ­¥é»è¾ï¼ï¼</li>
 <li>PythonActionTask â åç Async I/O ä»»å¡ï¼å¼æ­¥è°ç¨å¤é¨æå¡ / èæ¬ï¼ã</li>
 </ul>
 </li>
 </ul>
-<h2 id="x03">0x03 å®ä¾æè§£</h2>
+<h2 id="0x03-å®ä¾æè§£">0x03 å®ä¾æè§£</h2>
 <p>æä»¬æ¥è¿ä¸æ­¥è§£é Flink Agents è¿å ä¸ªæ ¸å¿æ¦å¿µçå³ç³»åéåãä¸ºäºæ´å¥½çè¯´æï¼æä»¬å¯ä»¥ææ´ä¸ªFlink Agentsç³»ç»ä»âåä¸éèâæå±å°âä¸ä¸ªæºè½é¤åèªå¨åæå¡ç³»ç»âãåæ¶ï¼ç»åå®ä¾ä¹æ·±å¥ä¸ææ¯ç»èã</p>
-<h3 id="agent-blueprint">3.1 ç¬¬ä¸å±çº§ï¼Agent â é¤åèååè§åæåï¼Blueprintï¼</h3>
+<h3 id="31-ç¬¬ä¸å±çº§agent--é¤åèååè§åæåblueprint">3.1 ç¬¬ä¸å±çº§ï¼Agent â é¤åèååè§åæåï¼Blueprintï¼</h3>
 <p>Flink Agents ä¸­ç Agent æ¯ç¨æ·å®ä¹çæºè½å®ä½ï¼è´è´£åè°åç§èµæºåè¡ä¸ºæ¥å®æç¹å®çä»»å¡ãæä»¬æ Agent æ³è±¡æé¤åçèååè¿è¥æåï¼</p>
 <ul>
-<li><p>å®ä¹äºé¤åè½æä¾åªäºèååæå¡ï¼å¨ä½ï¼</p>
+<li>
+<p>å®ä¹äºé¤åè½æä¾åªäºèååæå¡ï¼å¨ä½ï¼</p>
 </li>
-<li><p>è§å®äºéè¦ç¨å°åªäºè®¾å¤åé£æï¼èµæºï¼ï¼å¦åä¸ºæ°åå·¥éå¤å·¥å·ç®±ï¼å¯¹åºç¨åºåå®éç¨å°çï¼å¯ä»¥æ¯ï¼</p>
+<li>
+<p>è§å®äºéè¦ç¨å°åªäºè®¾å¤åé£æï¼èµæºï¼ï¼å¦åä¸ºæ°åå·¥éå¤å·¥å·ç®±ï¼å¯¹åºç¨åºåå®éç¨å°çï¼å¯ä»¥æ¯ï¼</p>
 <ul>
 <li>åç§ API æ¥å£ï¼ç¸å½äºå·¥å·ï¼</li>
 <li>æ°æ®åºè®¿é®æéï¼ç¸å½äºåèèµæï¼</li>
 <li>å³ç­é»è¾ä»£ç ï¼ç¸å½äºå¹è®­ææï¼</li>
 </ul>
 </li>
-<li><p>éå°ä»ä¹æåµåºè¯¥åä»ä¹ï¼å¯¹åºäºä»¶çå¬ï¼</p>
+<li>
+<p>éå°ä»ä¹æåµåºè¯¥åä»ä¹ï¼å¯¹åºäºä»¶çå¬ï¼</p>
 </li>
-<li><p>æè¿°äºé¡¾å®¢ç¹é¤å°ä¸èçå®æ´æµç¨</p>
+<li>
+<p>æè¿°äºé¡¾å®¢ç¹é¤å°ä¸èçå®æ´æµç¨</p>
 <ul>
 <li>æä¸ä¸ª start_actionï¼æ¥å¾åï¼è´è´£æ¥æ¶é¡¾å®¢é®é¢</li>
 <li>æä¸ä¸ª stop_actionï¼æ¶é¶åï¼è´è´£æç»ç»è´¦è¾åºç»æ</li>
@@ -3194,7 +1607,7 @@ private transient ListState&lt;Event&gt; pendingInputEventsState;
 </li>
 </ul>
 <p>è¿äºé½è¢«å°è£å¨ Agent å¯¹è±¡ä¸­ã</p>
-<h3 id="agentplan-compiled-plan">3.2 ç¬¬äºå±çº§ï¼AgentPlan â é¤åçè¯¦ç»æä½æµç¨å¾ï¼Compiled Plan,è®¡åç¼è¯å±ï¼</h3>
+<h3 id="32-ç¬¬äºå±çº§agentplan--é¤åçè¯¦ç»æä½æµç¨å¾compiled-planè®¡åç¼è¯å±">3.2 ç¬¬äºå±çº§ï¼AgentPlan â é¤åçè¯¦ç»æä½æµç¨å¾ï¼Compiled Plan,è®¡åç¼è¯å±ï¼</h3>
 <p>Flink Agentæ¡æ¶ä¼æç¨æ·ç Agent è½¬æ¢ä¸ºä¸ä¸ªæ´éç¨ãæ´éåç³»ç»å¤ççå½¢å¼ ââ AgentPlanãå¨æ¬ä¾ä¸­ï¼AgentPlan ç¸å½äºå°é¤åè¿è¥æåç¼è¯æçè¯¦ç»å·¥ä½æµç¨å¾ï¼æ½è±¡åçå·¥ä½èå¾ï¼ï¼</p>
 <ul>
 <li>æèåä¸çæ¯éèåè§£æå·ä½çæ­¥éª¤</li>
@@ -3202,7 +1615,7 @@ private transient ListState&lt;Event&gt; pendingInputEventsState;
 <li>åå¤å¥½ææéè¦çå·¥å·åæææ¸åï¼Resourceï¼</li>
 </ul>
 <p>å°±åé¤åç»çä¼å¶å®è¯¦ç»çæä½æåï¼åè¯æå¡åä»ä¹æ¶åè¯¥åä»ä¹äºã</p>
-<h4 id="section-10">ç»æåè§£æ</h4>
+<h4 id="ç»æåè§£æ">ç»æåè§£æ</h4>
 <p>AgentPlan åå«å ä¸ªå³é®é¨åï¼</p>
 <p><strong>Actions æ å°è¡¨</strong></p>
 <ul>
@@ -3219,9 +1632,9 @@ private transient ListState&lt;Event&gt; pendingInputEventsState;
 <li>å­å¨è¿è¡æéçåé¡¹è®¾ç½®éé¡¹</li>
 <li>åæ¯è®¾å¤æä½è§ç¨åææ¯è§è</li>
 </ul>
-<h4 id="section-11">å¹³å°ééæ§</h4>
+<h4 id="å¹³å°ééæ§">å¹³å°ééæ§</h4>
 <p>éè¿è¿ç§æ½è±¡åï¼æ è®ºåºå±æ¯ Java è¿æ¯ Python å®ç°ï¼é½å¯ä»¥ç»ä¸ç¨åä¸ä»½ AgentPlan æ¥è¿è¡è°åº¦ç®¡çã</p>
-<h3 id="actionexecutionoperator-runtime-executor">3.3 ç¬¬ä¸å±çº§ï¼ActionExecutionOperator â é¤åçæ§è¡ç®¡çå±ï¼Runtime Executorï¼æ§è¡å¼æå±ï¼</h3>
+<h3 id="33-ç¬¬ä¸å±çº§actionexecutionoperator--é¤åçæ§è¡ç®¡çå±runtime-executoræ§è¡å¼æå±">3.3 ç¬¬ä¸å±çº§ï¼ActionExecutionOperator â é¤åçæ§è¡ç®¡çå±ï¼Runtime Executorï¼æ§è¡å¼æå±ï¼</h3>
 <p>å¨å¤§è§æ¨¡çäº§ç¯å¢ä¸­ï¼ä¸è½åªé ä¸ä¸ªç®¡å®¶å¹²æ´»ï¼èæ¯éè¦ä¸æ¡èªå¨åæµæ°´çº¿ãActionExecutionOperator å°±åæ¯ä¸æ¡æºè½åçå·¥åè£éçº¿ï¼å®æç§æä½æåï¼AgentPlanï¼ç»ç»å¤ä¸ªå·¥ä½ç«æ¥ååå®æä»»å¡ãæèè¯´ï¼ActionExecutionOperator æ¯é¤åçç°åºæ§è¡ç®¡çå±ï¼æ¯æ´ä¸ªç³»ç»çâå¤§è + ä¸­æ¢æ§å¶å®¤âï¼</p>
 <ul>
 <li>è´è´£æ¥å¾è¿åºçé¡¾å®¢ï¼æ¥æ¶æ°æ®ï¼</li>
@@ -3230,7 +1643,7 @@ private transient ListState&lt;Event&gt; pendingInputEventsState;
 <li>ç¡®ä¿æå¡æµç¨é¡ºçï¼å¤çå¹¶ååå®¹éï¼</li>
 <li>é¤åç»çæ¿çè¯¦ç»æµç¨å¾ï¼ææ¥åä¸ªåå·¥ååå·¥ä½ã</li>
 </ul>
-<h3 id="actiontask-execution-unit">3.4 ç¬¬åå±çº§ï¼ActionTask â å·ä½çæå¡æ­¥éª¤ï¼Execution Unitï¼</h3>
+<h3 id="34-ç¬¬åå±çº§actiontask--å·ä½çæå¡æ­¥éª¤execution-unit">3.4 ç¬¬åå±çº§ï¼ActionTask â å·ä½çæå¡æ­¥éª¤ï¼Execution Unitï¼</h3>
 <p>ActionTask å°±åæ¯åå·¥æ§è¡çå·ä½æå¡æ­¥éª¤ï¼æ¯çäº§çº¿ä¸çæå°å·¥ä½ï¼ä¸æ¬¡åªå¹²ä¸ä»¶å·ä½æ´»ï¼è°ç¨ Python å½æ°ãæ¥æ°æ®åºãå HTTPãå Kafka â¦ï¼ï¼</p>
 <ul>
 <li>æ¯ä¸ªæå¡åæ¥å°çä»»å¡å°±æ¯ä¸ä¸ª ActionTask</li>
@@ -3238,7 +1651,7 @@ private transient ListState&lt;Event&gt; pendingInputEventsState;
 <li>å¯è½æ¯éè¦å¤æ­¥å®æï¼éè¦åè®¿çææ¯åï¼ï¼å³å¦ææ´»å¤ªå¤ï¼å¼æ­¥ãé¿èæ¶ï¼ï¼æå¡åä¼æèªå·±ãååãææ°ä»»å¡ï¼ç­ä¸æ¬¡è½®è¯¢åæ¥çå¹²ï¼å®ç°éé»å¡çåä½å¼è°åº¦ã</li>
 <li>å®æåæ¥åç»æï¼å¹¶å¯è½è§¦åä¸ä¸æ­¥å·¥ä½ï¼å³å¹²å®å°±è½ç«å³æç»æï¼Eventï¼æåä¼ éå¸¦ï¼ç»§ç»­ä¸ä¸è½®</li>
 </ul>
-<h3 id="section-12">3.5 å·¥ä½æµç¨ä¸¾ä¾</h3>
+<h3 id="35-å·¥ä½æµç¨ä¸¾ä¾">3.5 å·¥ä½æµç¨ä¸¾ä¾</h3>
 <p>åè®¾é¡¾å®¢æ¥å°é¤åç¹äºä¸ä»½å¤æçå¥é¤ï¼</p>
 <ul>
 <li>é¡¾å®¢è¿åºï¼InputEventï¼
@@ -3267,7 +1680,7 @@ private transient ListState&lt;Event&gt; pendingInputEventsState;
 </li>
 </ul>
 <p>ãç¨æ·åªç®¡æç®¡å®¶è®­å¥½ï¼æ¡æ¶è´è´£æç®¡å®¶åææåï¼åææååæå¹¶è¡çäº§çº¿ï¼æåè®©æ æ°workeræ key éç¦»ãäºä»¶é©±å¨ãå¯æ£æ¥ç¹çæ¹å¼è·å¨ Flink ä¸ããã</p>
-<h2 id="x04">0x04 å¹¶åæ§åå¹¶è¡æ§</h2>
+<h2 id="0x04-å¹¶åæ§åå¹¶è¡æ§">0x04 å¹¶åæ§åå¹¶è¡æ§</h2>
 <p>Flink Agents ç³»ç»å¨è®¾è®¡æ¶å·²ç»ååèèäºå¹¶åæ§åå¹¶è¡æ§ï¼æ¯å¦ï¼</p>
 <ul>
 <li><strong>äºä»¶é©±å¨æ¨¡å</strong>ï¼åºäºäºä»¶æµè½¬è§¦åå¨ä½ï¼åå§ä¸º InputEventï¼ç»å¤è½®äºä»¶ï¼å¦ ChatRequestEventãChatResponseEventï¼è§¦åï¼æç»è¾åº OutputEventã</li>
@@ -3276,7 +1689,7 @@ private transient ListState&lt;Event&gt; pendingInputEventsState;
 <li><strong>æ¬å°ä¸è¿ç¨æ§è¡</strong>ï¼æ¬å°ç¨ LocalRunner æ¨¡ææ§è¡ï¼è¿ç¨åºäº Flink éç¾¤ç ActionExecutionOperator åå¸å¼æ§è¡ï¼ä¿æ API ä¸è´æ§ã</li>
 </ul>
 <p>ä»¥ä¸æ¯å·ä½å®ç°æ¹å¼ï¼</p>
-<h3 id="flink">4.1 Flinkåçå¹¶åæ¨¡å</h3>
+<h3 id="41-flinkåçå¹¶åæ¨¡å">4.1 Flinkåçå¹¶åæ¨¡å</h3>
 <p>ç³»ç»ååå©ç¨äºApache Flinkçåçå¹¶åæºå¶ï¼</p>
 <ul>
 <li>é®æ§æµï¼Keyed Streamsï¼ï¼ä½¿ç¨FlinkçKeyedStreamækeyå¯¹æ°æ®è¿è¡ååºï¼ç¡®ä¿ç¸åkeyçäºä»¶ç±åä¸ä¸ªå¹¶è¡å®ä¾å¤ç</li>
@@ -3309,7 +1722,7 @@ public DataStream&lt;Object&gt; toDataStream() {
     return outputDataStream;
 }
 </code></pre>
-<h3 id="key">4.2 æ¯ä¸ªKeyçç¶æç®¡ç</h3>
+<h3 id="42-æ¯ä¸ªkeyçç¶æç®¡ç">4.2 æ¯ä¸ªKeyçç¶æç®¡ç</h3>
 <p>æ¯ä¸ªkeyé½ç»´æ¤ç¬ç«çç¶æéç¦»ï¼</p>
 <pre><code class="language-java">// å¨ActionExecutionOperator.javaä¸­ - ç»´æ¤æ¯ä¸ªkeyçç¶æ
 private transient ListState&lt;ActionTask&gt; actionTasksKState;
@@ -3317,7 +1730,7 @@ private transient ListState&lt;Event&gt; pendingInputEventsKState;
 private transient ValueState&lt;Long&gt; sequenceNumberKState;
 </code></pre>
 <p>è¿äºé½æ¯é®æ§ç¶æï¼keyed stateï¼ï¼æå³çæ¯ä¸ªkeyé½æèªå·±çç¬ç«ç¶æå®ä¾ï¼é²æ­¢ä¸åkeyä¹é´çç«äºæ¡ä»¶ã</p>
-<h3 id="section-13">4.3 é®ç®±çº¿ç¨æ¨¡å</h3>
+<h3 id="43-é®ç®±çº¿ç¨æ¨¡å">4.3 é®ç®±çº¿ç¨æ¨¡å</h3>
 <p>ç³»ç»ä½¿ç¨Flinkçé®ç®±çº¿ç¨æ¨¡åå®ç°åä½å¼å¤ä»»å¡å¤çï¼</p>
 <pre><code class="language-java">// å¨ActionExecutionOperator.javaä¸­
 private final transient MailboxExecutor mailboxExecutor;
@@ -3326,7 +1739,7 @@ private final transient MailboxExecutor mailboxExecutor;
 mailboxExecutor.submit(() -&gt; tryProcessActionTaskForKey(key), "process action task");
 </code></pre>
 <p>è¿åè®¸é¿æ¶é´è¿è¡çæä½è®©åºæ§å¶æï¼é²æ­¢é»å¡æ´ä¸ªæä½ç¬¦ã</p>
-<h3 id="section-14">4.4 å¼æ­¥ä»»å¡å¤ç</h3>
+<h3 id="44-å¼æ­¥ä»»å¡å¤ç">4.4 å¼æ­¥ä»»å¡å¤ç</h3>
 <p>æ¯æå¼æ­¥æ§è¡å¹¶å·å¤éå½çç¶æç®¡çï¼</p>
 <pre><code class="language-java">// å¨ ActionTask.java ä¸­ - æ¯æåºäºå»¶ç»­çæ§è¡
 public class ActionTaskResult {
@@ -3340,7 +1753,7 @@ public class ActionTaskResult {
     }
 }
 </code></pre>
-<h3 id="section-15">4.5 åå­ä¸è´æ§</h3>
+<h3 id="45-åå­ä¸è´æ§">4.5 åå­ä¸è´æ§</h3>
 <p>å·æç¼å­ç¶æè®¿é®ççº¿ç¨å®å¨åå­ç®¡çï¼</p>
 <pre><code class="language-java">// å¨ ActionExecutionOperator.java ä¸­
 private void createAndSetRunnerContext(ActionTask actionTask) {
@@ -3351,7 +1764,7 @@ private void createAndSetRunnerContext(ActionTask actionTask) {
     // ... åå»ºéå½ç context
 }
 </code></pre>
-<h3 id="section-16">4.6 æ°´å°åäºä»¶æ¶é´å¤ç</h3>
+<h3 id="46-æ°´å°åäºä»¶æ¶é´å¤ç">4.6 æ°´å°åäºä»¶æ¶é´å¤ç</h3>
 <p>å·å¤å¹¶åæè¯çæ°´å°å¤çï¼</p>
 <pre><code class="language-java">    private transient SegmentedQueue keySegmentQueue;
     
@@ -3363,7 +1776,7 @@ private void createAndSetRunnerContext(ActionTask actionTask) {
         processEligibleWatermarks();
     }
 </code></pre>
-<h3 id="section-17">4.7 æ£æ¥ç¹åæ¢å¤</h3>
+<h3 id="47-æ£æ¥ç¹åæ¢å¤">4.7 æ£æ¥ç¹åæ¢å¤</h3>
 <p>ç¨äºå®¹éççº¿ç¨å®å¨ç¶æå¿«ç§</p>
 <pre><code class="language-java">    @Override
     public void snapshotState(StateSnapshotContext context) throws Exception {
@@ -3386,7 +1799,7 @@ private void createAndSetRunnerContext(ActionTask actionTask) {
         super.snapshotState(context);
     }
 </code></pre>
-<h3 id="section-18">4.8 æ»ç»</h3>
+<h3 id="48-æ»ç»">4.8 æ»ç»</h3>
 <p>è®¾è®¡éç¨äºå¤ç§å¹¶åæºå¶ï¼</p>
 <ul>
 <li>Flinkå¹¶è¡å¤çï¼å©ç¨Flinkåççå¹¶è¡æ§åé®æ§æµ</li>
@@ -3397,7 +1810,7 @@ private void createAndSetRunnerContext(ActionTask actionTask) {
 <li>å®¹éæºå¶ï¼æ£æ¥ç¹æºå¶ç¡®ä¿æéæåµä¸çæ°æ®ä¸è´æ§</li>
 </ul>
 <p>è¿ç§æ¹æ³ä½¿ç³»ç»è½å¤å¨ä¿æä¸è´æ§åæ¯ææ°´å¹³æ©å±çåæ¶å¤çé«ååéï¼å¯å¨ Flink éç¾¤çå¤ä¸ªèç¹é´æ©å±ã</p>
-<h2 id="xff">0xFF åè</h2>
+<h2 id="0xff-åè">0xFF åè</h2>
 
 </div>
 <div class="clear"></div>
@@ -3406,7 +1819,7 @@ private void createAndSetRunnerContext(ActionTask actionTask) {
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2025-12-29 20:25">2025-12-29 20:24</span>&nbsp;
 <a href="https://www.cnblogs.com/rossiXYZ">ç½è¥¿çæè</a>&nbsp;
-éè¯»(<span id="post_view_count">8</span>)&nbsp;
+éè¯»(<span id="post_view_count">21</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19369781);return false;">æ¶è</a>&nbsp;
@@ -3524,7 +1937,7 @@ private void createAndSetRunnerContext(ActionTask actionTask) {
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2025-12-29 19:29">2025-12-29 19:29</span>&nbsp;
 <a href="https://www.cnblogs.com/yanshajiuzhou">çæ²ä¹æ´²</a>&nbsp;
-éè¯»(<span id="post_view_count">27</span>)&nbsp;
+éè¯»(<span id="post_view_count">51</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19417793);return false;">æ¶è</a>&nbsp;
@@ -4018,7 +2431,7 @@ Console.WriteLine(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span s
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2025-12-29 18:30">2025-12-29 18:30</span>&nbsp;
 <a href="https://www.cnblogs.com/edisontalk">EdisonZhou</a>&nbsp;
-éè¯»(<span id="post_view_count">32</span>)&nbsp;
+éè¯»(<span id="post_view_count">49</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19394484);return false;">æ¶è</a>&nbsp;
@@ -4757,476 +3170,74 @@ docker build -f Src/CodeSpirit.IdentityApi/Dockerfile -t codespirit-identity:lat
     </description>
     </item>
 <item>
-    <title><![CDATA[ å½æè¯å¾ææ¸æ¥ FFmpeg çç¡¬ä»¶å éæ¶ï¼æåäºä¸ä¸ªè½èªå¨æ£æµææ GPU ç¼ç å¨çå°å·¥å· ]]></title>
-    <link>https://www.cnblogs.com/hyb1/p/19415077</link>
-    <guid>3b62bc54efd0ad9d06e4d73683d62d9f</guid>
+    <title><![CDATA[ æ°çMOSï¼My Oracle Supportï¼ä¸»è¦åå ]]></title>
+    <link>https://www.cnblogs.com/jyzhao/p/19415968/xin-banmosmy-oracle-support-zhu-yao-bian-hua</link>
+    <guid>d1cc4f63ff929d5583c419ed845a7d85</guid>
     <description>
     <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/hyb1/p/19415077" title="åå¸äº 2025-12-29 12:04">
-    <span role="heading" aria-level="2">å½æè¯å¾ææ¸æ¥ FFmpeg çç¡¬ä»¶å éæ¶ï¼æåäºä¸ä¸ªè½èªå¨æ£æµææ GPU ç¼ç å¨çå°å·¥å·</span>
+    <a name="top"></a>
+    <h2><a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/jyzhao/p/19415968/xin-banmosmy-oracle-support-zhu-yao-bian-hua" title="åå¸äº 2025-12-29 15:01">
+    <span role="heading" aria-level="2">æ°çMOSï¼My Oracle Supportï¼ä¸»è¦åå</span>
     
 
 </a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                    <div id="cnblogs_post_description" style="display: none">
-        
-        ffmpeg ç¡¬ä»¶å é GPUç¼ç  è§é¢ç¼è§£ç  NVEnc NVDec Intel QSV AMD AMF VAAPI Vulkan è§é¢ç¼ç  VideoToolbox Media Foundation DXVA2 D3D11VA D3D12VA
-    </div>
-<div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
-<p style="white-space: normal"><span style="white-space: pre-wrap">å¨è¿å»çå å¹´éï¼æ¬äººééç»­ç»­æ¥è§¦äºä¸å°è§é¢å¤çç¸å³çé¡¹ç®ãæ¯å½æ¶åå°FFmpegçç¡¬ä»¶å éé¨åï¼æ¬äººé½ä¼é·å¥ä¸ç§âä¿¡æ¯è¿è½½âçç¶æï¼ææ¡£å¾å¤ãæ¥å£å¾å¤ãé©±å¨å·®å¼å·¨å¤§ï¼çè³åä¸å°æºå¨å¨ä¸åç³»ç»ä¸çè¡¨ç°é½ä¸ä¸æ ·ã</span></p>
-<p style="white-space: normal"><span style="white-space: pre-wrap">å¦ææ¨ä¹æ¾ç»å°è¯è¿è®©FFmpegè°ç¨GPUç¼ç /è§£ç å¨ï¼å¤§æ¦çä¼éå°ç±»ä¼¼çæåµï¼</span></p>
-<ul style="white-space: normal">
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">æææ¾å¡æ¯æ H.265ï¼å´å§ç»æ æ³æ­£å¸¸ç¼ç </span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">NVEncãQSVãAMFãVAAPIâ¦â¦å°åºåªä¸ªè½ç¨ï¼</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">ä¸ºä»ä¹ 1080p å¯ä»¥ï¼4K å´å¤±è´¥</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">Windows å Linux çç¡¬ä»¶å éæ¥å£å®å¨ä¸æ¯ä¸å¥é»è¾</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">FFmpeg çâæ¯æåè¡¨âå¹¶ä¸è½ä»£è¡¨ä½ çè®¾å¤ççæ¯æ</span></p>
-</li>
-</ul>
-<p style="white-space: normal"><span style="white-space: pre-wrap">è¿äºé®é¢çä¼¼ç®åï¼ä½çæ­£ææ¥èµ·æ¥éå¸¸èæ¶é´åååã äºæ¯æ¬äººå¹²èåäºä¸ä¸ªå·¥å·ï¼è®©å®èªå¨å¸®ææææç¡¬ä»¶ç¼ç å¨åè§£ç å¨é½æµä¸éã</span></p>
-<p style="white-space: normal"><span style="white-space: pre-wrap">è¿ä¸ªå·¥å·å°±æ¯ï¼ <span style="font-size: 16px"><strong style="white-space: normal">HwCodecDetect</strong> </span></span></p>
-<p style="white-space: normal"><span style="white-space: pre-wrap; font-size: 15px">GitHub å°åï¼ <a href="https://github.com/whyb/HwCodecDetect" target="_blank" rel="noopener nofollow"><span style="white-space: normal" data-url="https://github.com/whyb/HwCodecDetect">https://github.com/whyb/HwCodecDetect</span></a></span></p>
-<h1 style="white-space: normal">FFmpeg çç¡¬ä»¶å éçæï¼å¤æï¼ä½çå®</h1>
-<p style="white-space: normal"><span style="white-space: pre-wrap">å¦æåªç¨ CPU ç¼ç ï¼FFmpeg çä½éªéå¸¸ç»ä¸ï¼ä½ä¸æ¦æ¶å GPUï¼æåµå°±å®å¨ä¸åäºã</span></p>
-<h2 style="white-space: normal">å¤ååãå¤æ¥å£ãå¤åå²åè¢±</h2>
-<p style="white-space: normal"><span style="white-space: pre-wrap">ä¸åååæä¸åçç¡¬ä»¶å éæ¥å£ï¼</span></p>
-<ul style="white-space: normal">
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap"><strong style="white-space: pre-wrap">NVIDIA</strong>ï¼NVEnc / NVDec</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap"><strong style="white-space: pre-wrap">Intel</strong>ï¼QSV</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap"><strong style="white-space: pre-wrap">AMD</strong>ï¼AMF</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap"><strong style="white-space: pre-wrap">Apple</strong>ï¼VideoToolbox</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap"><strong style="white-space: pre-wrap">Linux</strong>ï¼VAAPI / Vulkan</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap"><strong style="white-space: pre-wrap">Windows</strong>ï¼Media Foundation / DXVA2 / D3D11VA / D3D12VA</span></p>
-</li>
-</ul>
-<p style="white-space: normal"><span style="white-space: pre-wrap">è¿äºæ¥å£ä¹é´æ²¡æç»ä¸æ åï¼çè³åä¸ååå¨ä¸åç³»ç»ä¸çè¡¨ç°ä¹ä¸ä¸è´ã</span></p>
-<h2 style="white-space: normal">âæ¯æâä¸ç­äºâå¯ç¨â</h2>
-<p style="white-space: normal"><span style="white-space: pre-wrap">FFmpeg ææ¡£éåçâæ¯æææç¼ç å¨âï¼ä½å®éæåµå¯è½æ¯ï¼</span></p>
-<ul style="white-space: normal">
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">é©±å¨çæ¬ä¸å¤</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">æ¾å¡æ¶æä¸æ¯ææä¸ªåè¾¨ç</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">ç³»ç»ç¼ºå°ä¾èµ</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">FFmpeg ç¼è¯åæ°ä¸å®æ´</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">æäºæ¥å£åªæ¯æè§£ç ï¼ä¸æ¯æç¼ç </span></p>
-</li>
-</ul>
-<p style="white-space: normal"><span style="white-space: pre-wrap">ä½ ä¸æµè¯ï¼æ ¹æ¬ä¸ç¥éä½ çæºå¨å°åºè½ä¸è½ç¨ã</span></p>
-<h1 style="white-space: normal">HwCodecDetectï¼æææç¡¬ä»¶ç¼ç å¨é½è·ä¸éï¼ç»æä¸ç®äºç¶</h1>
-<p style="white-space: normal"><span style="white-space: pre-wrap">è¿ä¸ªå·¥å·çæ ¸å¿ç®æ éå¸¸ç´æ¥ï¼</span></p>
-<blockquote style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap"><strong style="white-space: pre-wrap">èªå¨æ£æµå½åç³»ç»ä¸ææå¯ç¨çç¡¬ä»¶ç¼ç å¨/è§£ç å¨ï¼å¹¶æµè¯å®ä»¬è½å¤ççæå¤§åè¾¨çã</strong></span></p>
-</blockquote>
-<p style="white-space: normal"><span style="white-space: pre-wrap">å®çå·¥ä½æ¹å¼æ¯ï¼</span></p>
-<ol style="white-space: normal" start="1">
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">èªå¨çæä¸ååè¾¨ççæµè¯è§é¢ï¼ä» 240p å° 8Kï¼</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">ä½¿ç¨ FFmpeg è°ç¨åç§ç¡¬ä»¶ç¼ç å¨</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">è®°å½æåä¸å¤±è´¥</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">è¾åºä¸ä»½æ¸æ°çæ£æµæ¥å</span></p>
-</li>
-</ol>
-<p style="white-space: normal"><span style="white-space: pre-wrap">æ¯æçç¼ç å¨åæ¬ï¼</span></p>
-<ul style="white-space: normal">
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">NVEnc / NVDec</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">QSV</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">AMF</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">VAAPI</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">Vulkan</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">Media Foundation</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">DXVA2 / D3D11VA / D3D12VA</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">Apple VideoToolbox</span></p>
-</li>
-</ul>
-<p style="white-space: normal"><span style="white-space: pre-wrap">åºæ¬è¦çäºç®åææä¸»æµ GPU å éæ¥å£ã</span></p>
-<h1 style="white-space: normal">ä¸ºä»ä¹æéè¦è¿æ ·ä¸ä¸ªå·¥å·ï¼</h1>
-<p style="white-space: normal"><span style="white-space: pre-wrap">æ¬äººåè¿ä¸ªå·¥å·çåå å¶å®å¾ç®åï¼</span></p>
-<h3 style="white-space: normal">1. æ¬äººä¸æ³åçæ¾å¡å°åºè½ä¸è½ç¨</h3>
-<p style="white-space: normal"><span style="white-space: pre-wrap">ä¸åæ¾å¡ãä¸åé©±å¨ãä¸åç³»ç»ï¼ç»åèµ·æ¥å°±æ¯ä¸å æªç¥æ°ã</span></p>
-<h3 style="white-space: normal">2. æ¬äººä¸æ³åæ¥ææ¡£</h3>
-<p style="white-space: normal"><span style="white-space: pre-wrap">ææ¡£åå¾åè¯¦ç»ï¼ä¹ä¸å¦ç´æ¥è·ä¸éæ¥å¾åç¡®ã</span></p>
-<h3 style="white-space: normal">3. æ¬äººä¸æ³åè¢«é©±å¨å</h3>
-<p style="white-space: normal"><span style="white-space: pre-wrap">é©±å¨æ´æ°åç¼ç è½åååæ¯å¸¸è§æåµï¼èªå¨æ£æµè½é¿åè¸©åã</span></p>
-<h3 style="white-space: normal">4. æ¬äººå¸æå®è½æä¸ºâè§é¢å¤çå·¥ç¨å¸çä½æ£å·¥å·â</h3>
-<p style="white-space: normal"><span style="white-space: pre-wrap">è·ä¸æ¬¡ï¼ä½ å°±ç¥éä½ çæºå¨å°åºè½å¹²ä»ä¹ã</span></p>
-<h1 style="white-space: normal">å¦ä½ä½¿ç¨ï¼éå¸¸ç®åï¼</h1>
-<h2 style="white-space: normal">æ¹å¼ä¸ï¼pip å®è£ï¼æ¨èï¼</h2>
-<div class="cnblogs_code">
-<pre>pip <span style="color: rgba(0, 0, 255, 1)">install</span><span style="color: rgba(0, 0, 0, 1)"> hwcodecdetect
-hwcodecdetect</span></pre>
-</div>
-<h2 style="white-space: normal">æ¹å¼äºï¼ä¸è½½å¯æ§è¡æä»¶ï¼æ é Pythonï¼</h2>
-<p style="white-space: normal"><span style="white-space: pre-wrap">Releases é¡µé¢ï¼ <a href="https://github.com/whyb/HwCodecDetect/releases" target="_blank" rel="noopener nofollow"><span style="white-space: pre-wrap" data-url="https://github.com/whyb/HwCodecDetect/releases">https://github.com/whyb/HwCodecDetect/releases</span></a></span></p>
-<p style="white-space: normal"><span style="white-space: pre-wrap">ä¸è½½å¯¹åºç³»ç»çå¯æ§è¡æä»¶å³å¯è¿è¡ã</span></p>
-<h2 style="white-space: normal">æ¹å¼ä¸ï¼ä»æºç å®è£</h2>
-<div style="white-space: normal">
-<div class="rounded-b-xl bg-background-static-850 px-4 pb-1.5 dark:bg-background-static-900">
-<div style="white-space: pre">
-<div class="cnblogs_code">
-<pre>git clone https:<span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)">github.com/whyb/HwCodecDetect.git</span>
-<span style="color: rgba(0, 0, 0, 1)">cd HwCodecDetect
-pip </span><span style="color: rgba(0, 0, 255, 1)">install</span><span style="color: rgba(0, 0, 0, 1)"> .
-hwcodecdetect</span></pre>
-</div>
-</div>
-</div>
-</div>
-<h1 style="white-space: normal">æ£æµç»æé¿ä»ä¹æ ·ï¼</h1>
-<p style="white-space: normal"><span style="white-space: pre-wrap">å·¥å·ä¼è¾åºä¸ä»½ç±»ä¼¼âç¡¬ä»¶è½åä½æ£æ¥åâçç»æï¼åå«ï¼</span></p>
-<ul style="white-space: normal">
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">åªäºç¼ç å¨å¯ç¨</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">åªäºè§£ç å¨å¯ç¨</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">æ¯ä¸ªç¼ç å¨æ¯æçåè¾¨ç</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">åªäºæ¥å£å¤±è´¥äº</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">åªäºæ ¼å¼è¢«æ¾å¡ç¡¬ä»¶æ¯æ</span></p>
-</li>
-</ul>
-<p style="white-space: normal"><span style="white-space: pre-wrap">å¯¹äºéè¦åè§é¢è½¬ç ãåªä½æå¡å¨ãAI è§é¢å¤çãäºæ¸²æçå¼åèæ¥è¯´ï¼è¿ä»½æ¥åéå¸¸æä»·å¼ã</span></p>
-<p style="white-space: normal"><span style="white-space: pre-wrap">æææ¼ç¤ºï¼</span></p>
-<p style="white-space: normal"><span style="white-space: pre-wrap"><img src="https://img2024.cnblogs.com/blog/511612/202512/511612-20251229115741599-1997577731.gif" alt="hwcodecdetect" loading="lazy"></span></p>
-<p style="white-space: normal">&nbsp;</p>
-<h1 style="white-space: normal">è¿ä¸ªé¡¹ç®éååªäºäººï¼</h1>
-<p style="white-space: normal"><span style="white-space: pre-wrap">å¦ææ¨æ­£å¨åï¼</span></p>
-<ul style="white-space: normal">
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">è§é¢è½¬ç æå¡</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">FFmpeg èªå¨åèæ¬</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">åªä½æå¡å¨ï¼Jellyfin / Emby / Plexï¼</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">GPU å éæ¨çåå¤ç</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">è§é¢ç¼ç æ§è½æµè¯</span></p>
-</li>
-<li style="white-space: normal">
-<p style="white-space: normal"><span style="white-space: pre-wrap">å¤å¹³å°è§é¢å·¥å·å¼å</span></p>
-</li>
-</ul>
-<p style="white-space: normal"><span style="white-space: pre-wrap">é£ä¹è¿ä¸ªå·¥å·è½å¸®ä½ èçå¤§éæ¶é´ã</span></p>
-<h1 style="white-space: normal">æå</h1>
-<p style="white-space: normal"><span style="white-space: pre-wrap">å¦æä½ è§å¾è¿ä¸ªå·¥å·å¯¹ä½ æå¸®å©ï¼æ¬¢è¿æ¥ <strong>GitHub</strong> ç¹ä¸ª Star åååï¼ä¹æ¬¢è¿åäº«ç»æ¨çåäºææåã</span></p>
-<p style="white-space: normal"><span style="font-size: 18px"><a href="https://github.com/whyb/HwCodecDetect" target="_blank" rel="noopener nofollow"><span style="white-space: pre-wrap"><span style="white-space: pre-wrap" data-url="https://github.com/whyb/HwCodecDetect">https://github.com/whyb/HwCodecDetect</span></span></a></span></p>
-<p style="white-space: normal"><span style="white-space: pre-wrap">å¦ææ¨å¨ä½¿ç¨è¿ç¨ä¸­éå°ä»»ä½é®é¢ï¼ä¹æ¬¢è¿å¨ issue éäº¤æµï¼æä¼æç»­ç»´æ¤åæ¹è¿ã</span></p>
-<p style="white-space: normal">&nbsp;</p>
-<p style="white-space: normal">&nbsp;</p>
-<p style="white-space: normal">&nbsp;</p>
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.003472222222222222" data-date-updated="2025-12-29 12:09">2025-12-29 12:04</span>&nbsp;
-<a href="https://www.cnblogs.com/hyb1">éåºDebug</a>&nbsp;
-éè¯»(<span id="post_view_count">227</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19415077);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19415077', targetLink: 'https://www.cnblogs.com/hyb1/p/19415077', title: 'å½æè¯å¾ææ¸æ¥ FFmpeg çç¡¬ä»¶å éæ¶ï¼æåäºä¸ä¸ªè½èªå¨æ£æµææ GPU ç¼ç å¨çå°å·¥å·' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ ä½ è¿å¨ç¨Claude Code?ææ©å·²å¼å§ä½¿ç¨ Codex + Claude Code MCP è¿è¡ AI Coding ]]></title>
-    <link>https://www.cnblogs.com/token-ai/p/19418542</link>
-    <guid>c2345ffa6025c87730d17a6f0eca8d20</guid>
-    <description>
-    <![CDATA[ 
-        <div class="postTitle">
-            <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/token-ai/p/19418542" title="åå¸äº 2025-12-30 02:15">
-    <span role="heading" aria-level="2">ä½ è¿å¨ç¨Claude Code?ææ©å·²å¼å§ä½¿ç¨ Codex + Claude Code MCP è¿è¡ AI Coding</span>
-    
-
-</a>
-
-        </div>
-        <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<blockquote>
-<p>åå¨å£è¯èä¹åçå¹´æ«ï¼æâAI ä¼åä»£ç âåçº§ä¸ºâAI è½å¨ç»ç«¯éææ´»å¹²å®âã</p>
-</blockquote>
-<p>è¿ç¯æç« æ¯ä¸æ¬¡åå·¥ç¨è½å°çåäº«ï¼ç¨ <strong>Codex CLI</strong> ä½ä¸ºä¸»æ§ï¼æ¨¡åç¨ <code>gpt-5.2</code>ï¼æ¨çå¼å° <code>xhigh</code>ï¼ï¼åæ <strong>Claude Code</strong> éè¿ <code>claude mcp serve</code> ä»¥ <strong>MCP Server</strong> çæ¹å¼æ¥å¥ï¼è®© Codex çå·¥å·é¾æ´å®æ´ãæ´é¡ºæï¼åæ¶ç¨ä¸ä¸ªå¼å®¹ OpenAI API çç¬¬ä¸æ¹æå¡ï¼<code>https://api.routin.ai/v1</code>ï¼ä½ä¸ºæ¨¡åæä¾åå¥å£ï¼è¾¾å°âä½éªä¸åãææ¬æ´åå¥½âçç®çã</p>
-<p>æä¸­ä¼ç»åºä¸ä»½âæ ¸å¿éç½®âï¼ä½ æä¾çé£ä»½ï¼ï¼å¹¶è§£éæ¯ä¸ªå­æ®µä¸ºä»ä¹éè¦ãæä¹éªè¯ãå¸¸è§åæä¹é¿ã</p>
-<hr>
-<h2 id="1-è¿å¥ç»åè§£å³ä»ä¹é®é¢">1. è¿å¥ç»åè§£å³ä»ä¹é®é¢ï¼</h2>
-<p>å¾å¤äººç¨ AI Coding çå¡ç¹ä¸å¨âæ¨¡åä¸ä¼åâï¼èå¨ï¼</p>
-<ul>
-<li>å·¥å·é¾å²è£ï¼æ¨¡ååäºï¼ä½ä¸ä¼/ä¸æ¹ä¾¿èªå·±æ¥èµæãè·å½ä»¤ãè¯»åæä»¶ãä¸²èµ·å¤æ­¥å·¥ä½æµã</li>
-<li>æ¨çä¸å¤æ·±ï¼å¤æéæ/æééè¦æ´å¼ºçè§åä¸éªè¯è½åã</li>
-<li>ææ¬ä¸å¯æ§ï¼é«å¼ºåº¦æ¨çæ¨¡åä¸å¼ï¼è´¦åé£æ¶¨ã</li>
-</ul>
-<p>è¿å¥æ¹æ¡çæè·¯æ¯ï¼</p>
-<ol>
-<li><strong>Codex CLI åä¸»æ§ä»£ç</strong>ï¼è´è´£çè§£ä»»å¡ãæè§£æ­¥éª¤ãå¨æ¬å°æ§è¡/ä¿®æ¹ã</li>
-<li><strong>Claude Code ä»¥ MCP Server æ¹å¼æè½½</strong>ï¼éè¿ <code>claude mcp serve</code> æ Claude Code çè½åâå·¥å·åâæä¾ç» Codexï¼Codex ä¾§åªéè¦éç½®ä¸ä¸ª MCP æå¡å¨å³å¯ï¼ã</li>
-<li><strong>èªå®ä¹æ¨¡åæä¾å</strong>ï¼æ <code>model_provider</code> æå <code>meteor-ai</code>ï¼å¹¶æ <code>base_url</code> éå° <code>https://api.routin.ai/v1</code>ï¼è®© Codex ä»æ OpenAI é£æ ¼è°ç¨ï¼ä½èµ°æ´éåèªå·±çè®¡è´¹/ç½ç»å¥å£ã</li>
-</ol>
-<hr>
-<h2 id="2-mcp-æ¯ä»ä¹ä¸ºä»ä¹è¦æ¥-claude-code-mcp">2. MCP æ¯ä»ä¹ï¼ä¸ºä»ä¹è¦æ¥ Claude Code MCPï¼</h2>
-<p><strong>MCPï¼Model Context Protocolï¼</strong> å¯ä»¥çè§£ä¸ºâAI çéç¨æ©å±å£âï¼Codex ä½ä¸º MCP Clientï¼éè¿ MCP Server è·åå¤é¨å·¥å·ãèµæºãæå¡çè½åã</p>
-<p>Codex å®æ¹éç½®ææ¡£æç¡®æ¯æéè¿ <code>mcp_servers</code> éç½®ä¸¤ç±» MCPï¼</p>
-<ul>
-<li><strong>STDIO</strong>ï¼ç± Codex å¯å¨æ¬å°è¿ç¨ï¼éè¿æ åè¾å¥è¾åºéä¿¡ï¼æ¬æºå·¥å·æå¸¸ç¨ï¼ã</li>
-<li><strong>Streamable HTTP</strong>ï¼éè¿ HTTP URL è¿æ¥è¿ç¨ MCP Serverï¼éåäºæå¡/åç½æå¡ï¼ã</li>
-</ul>
-<p>è <strong>Claude Code</strong> èªå¸¦ <code>claude mcp serve</code>ï¼å¯ä»¥ç´æ¥å¯å¨ä¸ä¸ª MCP Serverãå æ­¤ï¼æ Claude Code å½ä½ä¸ä¸ªâå·¥å·ä¾åºåâï¼æ¥å° Codex ä¸ï¼æ¯ä¸ç§éå¸¸èªç¶çç»åæ¹å¼ï¼ä½ å¯ä»¥ç¨ Codex ç»ä¸é©±å¨å·¥ä½æµï¼åæ¶å¤ç¨ Claude Code å·²ç»æç£¨å¥½ç MCP æå¡è½åã</p>
-<hr>
-<h2 id="3-ç¯å¢åå¤ä¸æ¬¡è£å¥½åé¢å¨èªå¨">3. ç¯å¢åå¤ï¼ä¸æ¬¡è£å¥½ï¼åé¢å¨èªå¨ï¼</h2>
-<h3 id="31-å®è£-codex-cli">3.1 å®è£ Codex CLI</h3>
-<p>å¸¸è§æ¹å¼ï¼</p>
-<pre><code class="language-bash">npm install -g @openai/codex
-</code></pre>
-<p>æå¨ macOS ç¨ Homebrewï¼</p>
-<pre><code class="language-bash">brew install --cask codex
-</code></pre>
-<p>å®è£åéªè¯ï¼</p>
-<pre><code class="language-bash">codex --version
-</code></pre>
-<h3 id="32-å®è£-claude-codeç¡®ä¿æ-claude-å½ä»¤">3.2 å®è£ Claude Codeï¼ç¡®ä¿æ <code>claude</code> å½ä»¤ï¼</h3>
-<p>Claude Code å®æ¹ä»åºæä¾äºå¤ç§å®è£æ¹å¼ï¼Windows ä¹æ¯æï¼ã</p>
-<p>å®è£åéªè¯ï¼</p>
-<pre><code class="language-bash">claude --version
-</code></pre>
-<p>ä»¥åç¡®è®¤ <code>claude mcp serve</code> å­å¨ï¼</p>
-<pre><code class="language-bash">claude mcp --help
-claude mcp serve --help
-</code></pre>
-<h3 id="33-éç½®ç¯å¢åéopenai_api_key">3.3 éç½®ç¯å¢åéï¼<code>OPENAI_API_KEY</code></h3>
-<p>ä½ å¸æ Codex èµ° <code>meteor-ai</code>ï¼<code>https://api.routin.ai/v1</code>ï¼æ¶è¯»å <code>OPENAI_API_KEY</code>ï¼æä»¥éè¦å¨ç³»ç»ç¯å¢åééè®¾ç½®ï¼</p>
-<ul>
-<li>åéåï¼<code>OPENAI_API_KEY</code></li>
-<li>åéå¼ï¼ä½ å¨å¯¹åºå¹³å°è·åå°çå®é Keyï¼è¯·å½ä½å¯é¥ç®¡çï¼ä¸è¦åè¿ä»åº/æªå¾/æ¥å¿ï¼</li>
-</ul>
-<p>Windowsï¼PowerShellï¼ä¸´æ¶è®¾ç½®ï¼ä»å½åç»ç«¯çæï¼ï¼</p>
-<pre><code class="language-powershell">$env:OPENAI_API_KEY = "ä½ çKey"
-</code></pre>
-<p>Windowsï¼æä¹åå°ç¨æ·ç¯å¢åéï¼ééå¼ç»ç«¯ï¼ï¼</p>
-<pre><code class="language-powershell">setx OPENAI_API_KEY "ä½ çKey"
-</code></pre>
-<p>macOS/Linuxï¼å½å shell çæï¼ï¼</p>
-<pre><code class="language-bash">export OPENAI_API_KEY="ä½ çKey"
-</code></pre>
-<hr>
-<h2 id="4-æ ¸å¿éç½®åæ ·ä¿ç--éé¡¹è§£é">4. æ ¸å¿éç½®ï¼åæ ·ä¿ç + éé¡¹è§£éï¼</h2>
-<p>Codex çéç½®æä»¶é»è®¤ä¸ºï¼</p>
-<ul>
-<li>macOS/Linuxï¼<code>~/.codex/config.toml</code></li>
-<li>Windowsï¼<code>%USERPROFILE%\.codex\config.toml</code></li>
-</ul>
-<p>æä¸é¢è¿ä»½åå®¹åè¿å»å³å¯ï¼ä½ ç»çâææ ¸å¿éç½®âï¼åæ ·ä¿çï¼ï¼</p>
-<pre><code class="language-toml">model = "gpt-5.2"
-model_provider = "meteor-ai"
-disable_response_storage = true
-approval_policy = "never"                  # å¯éå¼: "untrusted" | "on-failure" | "on-request" | "never"
-sandbox_mode = "danger-full-access"
-
-rmcp_client = true
-model_reasoning_effort = "xhigh"
-
-# Reasoning summary: auto | concise | detailed | none (default: auto)
-model_reasoning_summary = "detailed"
-
-# Text verbosity for GPT-5 family (Responses API): low | medium | high (default: medium)
-model_verbosity = "high"
-
-# Force-enable reasoning summaries for current model (default: false)
-model_supports_reasoning_summaries = true
-
-[mcp_servers.claude]
-command = "claude"
-# Optional
-args = ["mcp", "serve"]
-
-[model_providers.meteor-ai]
-name = "meteor-ai"
-base_url = "https://api.routin.ai/v1"
-env_key = "OPENAI_API_KEY"
-wire_api = "responses"
-</code></pre>
-<p>ä¸é¢è§£éæ¯ä¸ªå³é®ç¹ï¼åªè®²âä¸ºä»ä¹éè¦âï¼ï¼</p>
-<h3 id="41-model--gpt-52ä¸»æ¨¡åéæ©">4.1 <code>model = "gpt-5.2"</code>ï¼ä¸»æ¨¡åéæ©</h3>
-<p>Codex çæ ¸å¿ä»·å¼æ¯âå¨æ¬å°è·å¤æ­¥ä»»å¡âãå¤æä»»å¡ï¼éæãå®ä½ bugãè·¨å¤æä»¶ä¸è´æ§ä¿®æ¹ï¼æ´ä¾èµæ¨¡åæ¨çä¸è§åè½åï¼å æ­¤é <code>gpt-5.2</code> è¿ç§æ´å¼ºçéç¨æ¨¡åæ¯åççã</p>
-<h3 id="42-model_provider--meteor-ai--model_providersmeteor-ai">4.2 <code>model_provider = "meteor-ai"</code> + <code>[model_providers.meteor-ai]</code></h3>
-<p>è¿è¡¨ç¤ºä½ ä¸èµ°é»è®¤ç OpenAI Providerï¼èæ¯æ³¨åä¸ä¸ªæ°ç Providerï¼</p>
-<ul>
-<li><code>base_url = "https://api.routin.ai/v1"</code>ï¼æ OpenAI é£æ ¼ç <code>/v1/...</code> è¯·æ±è½¬å°è¯¥å°å</li>
-<li><code>env_key = "OPENAI_API_KEY"</code>ï¼ä»ç³»ç»ç¯å¢åéå Key</li>
-<li><code>wire_api = "responses"</code>ï¼å¼ºå¶èµ° Responses API å½¢æï¼å¯¹ <code>reasoning_effort / verbosity</code> è¿ç±»åæ°æ´å³é®ï¼</li>
-</ul>
-<p>ä½ ä¹å¯ä»¥æ <code>env_key</code> æ¹ææ´è¯­ä¹åçåå­ï¼æ¯å¦ <code>ROUTIN_API_KEY</code>ï¼ï¼ä½æ¬ææä½ çè®¾å®ä½¿ç¨ <code>OPENAI_API_KEY</code>ï¼è¿æ ·å¯¹ Codex çé»è®¤çæä¹æ´å¼å®¹ã</p>
-<h3 id="43-model_reasoning_effort--xhighææ³æ¸æ¥åå¨æææ»¡">4.3 <code>model_reasoning_effort = "xhigh"</code>ï¼æâæ³æ¸æ¥åå¨æâææ»¡</h3>
-<p><code>xhigh</code> éå¸¸æå³çï¼</p>
-<ul>
-<li>æ´å¼ºçè§åä¸å¤æ­¥æ¨çè½å</li>
-<li>æ´é«çå»¶è¿ä¸ææ¬</li>
-</ul>
-<p>å»ºè®®ä½ æå®å½ä½âå¤æä»»å¡æ¡£âï¼ç®åä»»å¡ï¼æ¹ææ¡/å°å½æ°/è¯»ææ¡£ï¼å¯ä»¥åå°ä½ä¸ç¹ä»¥çé±çæ¶ã</p>
-<h3 id="44-model_reasoning_summary--detailed--model_supports_reasoning_summaries--true">4.4 <code>model_reasoning_summary = "detailed"</code> + <code>model_supports_reasoning_summaries = true</code></h3>
-<p>è¿ä¼è®© Codex æ´å¾åè¾åº<strong>æ¨çæè¦</strong>ï¼ä¸æ¯å®æ´æç»´é¾ï¼èæ¯å¯è¯»çæ»ç»ï¼ï¼éååææ¯åäº«/å¢éåä½ï¼ä½ è½çè§å®ä¸ºä»ä¹è¿ä¹æ¹ãèèäºåªäºè¾¹çã</p>
-<h3 id="45-model_verbosity--highè¾åºæ´è¯¦ç»">4.5 <code>model_verbosity = "high"</code>ï¼è¾åºæ´è¯¦ç»</h3>
-<p>éåæç¨/åäº«åºæ¯ï¼å°¤å¶æ¯ä½ å¸æå®ææä½æ­¥éª¤ãéªè¯æ¹å¼è®²æ¸æ¥çæ¶åã</p>
-<h3 id="46-approval_policy--never--sandbox_mode--danger-full-accesså¨èªå¨ä½é£é©æé«">4.6 <code>approval_policy = "never"</code> + <code>sandbox_mode = "danger-full-access"</code>ï¼å¨èªå¨ï¼ä½é£é©æé«</h3>
-<p>è¿å¥ç»åçå«ä¹æ¯ï¼</p>
-<ul>
-<li>Codex ä¸ä¼åä½ è¯·æ±æ¹åï¼ææå½ä»¤/æ¹å¨é»è®¤é½è½æ§è¡ï¼</li>
-<li>æä»¶ç³»ç»ä¸ç½ç»åºæ¬ä¸è®¾é</li>
-</ul>
-<p>å®éå¸¸éåï¼</p>
-<ul>
-<li>å®¹å¨/èææº/éç¦»ç¯å¢éçèªå¨åååå¼å</li>
-<li>ä½ æç¡®ç¥éèªå·±å¨åä»ä¹ï¼å¹¶ä¸è½æ¥åâAI å¯è½è¯¯å /è¯¯æ¹âçé£é©</li>
-</ul>
-<p>ä½ä¸å»ºè®®å¨éè¦çäº§æºãæ ¸å¿ä»åºãå¸¦å¯é¥/è´¦åæéçç¯å¢ä¸­ç´æ¥é¿æä½¿ç¨ãæ´æ¨èçåæ³æ¯ï¼ç¨ Profile ååºâå®å¨æ¡£âåâå¨èªå¨æ¡£âï¼è§åæâå¯éå¢å¼ºâï¼ã</p>
-<h3 id="47-rmcp_client--trueå³äº-rmcp-å®¢æ·ç«¯çå¼å®¹æ§æç¤º">4.7 <code>rmcp_client = true</code>ï¼å³äº RMCP å®¢æ·ç«¯çå¼å®¹æ§æç¤º</h3>
-<p>Codex å®æ¹ææ¡£éæå° Streamable HTTP è¿æ¥ä¼ä½¿ç¨ Rust MCP clientï¼rmcpï¼ãä¸åçæ¬å¯¹å¼å³å­æ®µå¯è½å­å¨å·®å¼ï¼</p>
-<ul>
-<li>å¦æä½ åç° <code>rmcp_client</code> æ¥âæªç¥å­æ®µâï¼ä¼åä»¥ <code>docs/config.md</code> ä¸ºåï¼å é¤è¯¥é¡¹éå¸¸ä¸å½±å STDIO MCPã</li>
-<li>å¦æä½ å¨ç¨è¾èçæ¬å¹¶ä¸éè¦æ¾å¼å¯ç¨ Streamable HTTPï¼å¯è½ä¼è§å°ç±»ä¼¼ <code>experimental_use_rmcp_client</code> çå¼å³ï¼ä»¥ä½ ä½¿ç¨çæ¬çææ¡£/åè¡è¯´æä¸ºåï¼ã</li>
-</ul>
-<p>æ¬ææä½ æä¾çéç½®ä¿ç <code>rmcp_client = true</code>ï¼ä¾¿äºå¤ç°ä½ çâæ ¸å¿éç½®âã</p>
-<h3 id="48-disable_response_storage--trueå³äºå³é­å­å¨çä¸¤å±å«ä¹">4.8 <code>disable_response_storage = true</code>ï¼å³äºâå³é­å­å¨âçä¸¤å±å«ä¹</h3>
-<p><code>disable_response_storage</code> ä¸æ¯ Codex å®æ¹ <code>docs/config.md</code> éçæ åå­æ®µï¼è³å°å¨æ¬æåä½æ¶ï¼ãå¦æä½ ç Codex çæ¬æ¯æå®ï¼å®éå¸¸è¡¨è¾¾çæ¯âä¸è¦æå¯¹è¯/ååºæä¹åâãè¿éå»ºè®®ä½ åºåä¸¤å±ï¼</p>
-<ol>
-<li><strong>æ¬å°åå²</strong>ï¼Codex é»è®¤ä¼ææ¶æ¯åå¥ <code>$CODEX_HOME/history.jsonl</code>ãå¦æä½ å¸æå½»åºä¸è½çï¼å¯ä»¥ç¨å®æ¹ç <code>[history]</code> éç½®å³é­æä¹åï¼</li>
-</ol>
-<pre><code class="language-toml">[history]
-persistence = "none"
-</code></pre>
-<ol start="2">
-<li><strong>è¿ç«¯çå­</strong>ï¼ä¸å API æä¾åå¯¹æ¥å¿ä¸çå­ç­ç¥ä¸åãå³ä¾¿æ¬å°ä¸åçï¼ä¹ä¸ä»£è¡¨æå¡ç«¯ä¸è®°å½ãåå¢éæ¨å¹¿æ¶ï¼å»ºè®®æç¡®åç¥è¯»èï¼ä»¥æä¾åçéç§/åè§æ¡æ¬¾ä¸ºåã</li>
-</ol>
-<p>å¦æä½ ç Codex å¯å¨æ¶æ¥ âunknown field disable_response_storageâï¼ç´æ¥å é¤è¿ä¸è¡ï¼å¹¶æ¹ç¨ä¸é¢ç <code>[history] persistence = "none"</code> è¾¾å°âæ¬å°ä¸å­âçææã</p>
-<hr>
-<h2 id="5-æ-claude-code-ä½ä¸º-codex-ç-mcp-server">5. æ Claude Code ä½ä¸º Codex ç MCP Server</h2>
-<p>ä½ çéç½®æ ¸å¿å°±å¨è¿éï¼</p>
-<pre><code class="language-toml">[mcp_servers.claude]
-command = "claude"
-args = ["mcp", "serve"]
-</code></pre>
-<p>è¿è¡¨ç¤ºï¼Codex éè¦è¯¥ MCP Server æ¶ï¼ä¼å¯å¨ä¸ä¸ªæ¬å°è¿ç¨æ§è¡ï¼</p>
-<pre><code class="language-bash">claude mcp serve
-</code></pre>
-<p>å¦æä½ æ³åç¬æéï¼ä¾å¦çç server ææ²¡æå¯å¨ãææ²¡ææ¥éï¼ï¼å¯ä»¥æå¨è·ï¼</p>
-<pre><code class="language-bash">claude mcp serve --debug
-</code></pre>
-<p>ç¶åå¨å¦ä¸ä¸ªç»ç«¯å¯å¨ Codexï¼è§å¯ Codex ç MCP åè¡¨ï¼</p>
-<pre><code class="language-bash">codex mcp list
-</code></pre>
-<hr>
-<h2 id="6-æ¨è-httpsapiroutinaiv1meteor-aiä¸-key-éç½®è¯´æ">6. æ¨è <code>https://api.routin.ai/v1</code>ï¼meteor-aiï¼ä¸ Key éç½®è¯´æ</h2>
-<p>ä½ æä¾çéç½®ä¸­ï¼<code>meteor-ai</code> ç <code>base_url</code> æåï¼</p>
-<ul>
-<li><code>https://api.routin.ai/v1</code> æ¨èRoutinAI ä»·æ ¼æ´ä¼æ Codexä½è³0.2ï¿¥=1 ç¾åçè¶ä½æ±çã</li>
-</ul>
-<p>æå³é®çè½å°å¨ä½æä¸¤æ­¥ï¼</p>
-<ol>
-<li>æ <code>base_url</code> éå° <code>https://api.routin.ai/v1</code></li>
-<li>å¨ç³»ç»éè®¾ç½® <code>OPENAI_API_KEY=ä½ çå®éKey</code></li>
-</ol>
-<p>æ­£å¸¸æåµä¸ä¼è¿åç±»ä¼¼âéè¦ API Keyâçæ¥éï¼è¯´æå°åå¯è¾¾ãè·¯ç±æ­£å¸¸ï¼è®¾ç½® <code>OPENAI_API_KEY</code> ååç± Codex è°ç¨å³å¯ã</p>
-<hr>
-<h2 id="7-å®æå·¥ä½æµå»ºè®®æ-ai-coding-åæå¯å¤å¶çæµç¨">7. å®æå·¥ä½æµå»ºè®®ï¼æ AI Coding åæå¯å¤å¶çæµç¨ï¼</h2>
-<p>ç»ä¸ä¸ªææ´æ¨èçâç¨³å®å·¥ä½å§¿å¿âï¼</p>
-<ol>
-<li>è®© Codex ååâè®¡å + æ¢ç´¢âï¼è¯»é¡¹ç®ãå®ä½å¥å£ãåä¿®æ¹ç¹ï¼</li>
-<li>åè®©å®æ§è¡ä¿®æ¹ï¼å¹¶è¦æ±ï¼
-<ul>
-<li>æ¹å¨è¦å°æ­¥æäº¤ï¼ä¸æ¬¡åªåä¸ä»¶äºï¼</li>
-<li>æ¯ä¸æ­¥é½è½è¿è¡éªè¯ï¼lint/test/buildï¼</li>
-</ul>
-</li>
-<li>éè¦å¤é¨è½åæ¶ï¼åéè¿ MCP æ¥æ´å¤æå¡å¨ï¼GitHubãPlaywrightãææ¡£æ£ç´¢ç­ï¼</li>
-</ol>
-<p>ç¤ºä¾æç¤ºè¯ï¼ä½ å¯ä»¥ç´æ¥å¤å¶æ¹é¡¹ç®åï¼ï¼</p>
-<pre><code class="language-text">è¯·å¨ä¸æ¹åå¯¹å¤è¡ä¸ºçåæä¸éæ XXX æ¨¡åï¼
-1) åè§£éç°ç¶ä¸é£é©ç¹
-2) ç»åº 3~5 ä¸ªå°æ­¥éª¤è®¡å
-3) æ¯ä¸æ­¥é½è¦å¯éªè¯ï¼è¯´æè¿è¡åªäºå½ä»¤ï¼
-4) åªå¨æç¡®è®¤ååæ§è¡å±é©æä½
-</code></pre>
-<p>å¨ <code>approval_policy = "never"</code> çéç½®ä¸ï¼ç¬¬ 4 æ¡æ´å¤æ¯âèªå¾è¦æ±âï¼ä½å®è½æ¾èåå°è¯¯æä½æ¦çã</p>
-<p>AI Coding ææ¯äº¤æµç¾¤ï¼<br>
-wk28u9123456789</p>
-
-</div>
-<div class="clear"></div>
-
-        <div class="postDesc">posted on 
-<span id="post-date" data-last-update-days="0" data-date-updated="2025-12-30 02:16">2025-12-30 02:15</span>&nbsp;
-<a href="https://www.cnblogs.com/token-ai">239573049</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+</h2>
+    <small>
+<span id="post-date" data-last-update-days="0" data-date-updated="2025-12-29 15:01">2025-12-29 15:01</span>&nbsp;
+<a href="https://www.cnblogs.com/jyzhao">AlfredZhao</a>&nbsp;
+éè¯»(<span id="post_view_count">63</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19418542);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19418542', targetLink: 'https://www.cnblogs.com/token-ai/p/19418542', title: 'ä½ è¿å¨ç¨Claude Code?ææ©å·²å¼å§ä½¿ç¨ Codex + Claude Code MCP è¿è¡ AI Coding' })">ä¸¾æ¥</a>
+<a href="javascript:void(0)" onclick="AddToWz(19415968);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19415968', targetLink: 'https://www.cnblogs.com/jyzhao/p/19415968/xin-banmosmy-oracle-support-zhu-yao-bian-hua', title: 'æ°çMOSï¼My Oracle Supportï¼ä¸»è¦åå' })">ä¸¾æ¥</a>
+</small>
+    <div class="entry">
+        <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>æ¬æ My Oracle Support åäºå¨é¢çåçº§ãOracle ç¡¬ä»¶ãè½¯ä»¶åæç®¡äºæå¡çæ¯æä¹å¨é¨è¿ç§»è³å¨æ°çæ¯æå¹³å°ãææ SR çåå»ºãæ´æ°ä¸ç®¡çæä½ä¹é½å°å¨è¿ä¸æ°å¹³å°ä¸å®æï¼åæ¥çç³»ç»å°ä¸åä½¿ç¨ã</p>
+<p>å³äºæ°çMOSï¼å¾å¤æ©å·²çæå¤å¹´èçæ¬MOSçä»ä¸èæäºæå¿ï¼å®éä¸ï¼æ°çå¹¶æ²¡æå¢å ä»»ä½ä½¿ç¨é¾åº¦ï¼åèæ¯æå¤§å°éä½äºMOSä½¿ç¨é¨æ§ã</p>
+<p>ä½è¿æ¯æä¸äºä¼åé¡¹å¯è½ä¼è®©èç¨æ·å¨åå¼å§æ¥è§¦æ°ççæ¶åæäºéçï¼è¿éååºæ¥è®©å¤§å®¶æåæ³¨æä¸ï¼åå°å¿ä¸­ææ°ï¼</p>
+<h2 id="01--mosç¥è¯åºä¸­çæç« å·å½åé£æ ¼æ¹å">01 | MOSç¥è¯åºä¸­çæç« å·å½åé£æ ¼æ¹å</h2>
+<p>æ°çæ¯<code>KB+ä¸ç»æ°å­</code>ï¼æ§çæ¯<code>æ°å­.æ°å­</code>æ ¼å¼ã</p>
+<p>ä½æ¯ç¬èäº²æµå¯¹äºæäºæ¯è¾å¸¸ç¨çææ¡£æ¯å¯ä»¥éè¿æ§çæç´¢å°çï¼ä½è¿æ¯å»ºè®®çææ°ççå½åé£æ ¼ã</p>
+<p>æ¯å¦çæExadataçå°ä¼ä¼´é½è³çè½è¯¦çä¸ç¯ææ¡£å·ï¼<code>888828.1</code></p>
+<p>å¨æ°çæç´¢ä¹è½æ£ç´¢å°ï¼æ°çç»å®çç¼å·å°±æ¯ <code>KB153930</code></p>
+<p><img src="https://img2024.cnblogs.com/blog/635610/202512/635610-20251229150101685-1968954989.jpg" alt="" loading="lazy"></p>
+<p>æå¼åï¼ä¹å¯ä»¥çå°éé¢ä¼è¯´æå°±æ¯å¯¹åºä¹åç 888828.1ï¼</p>
+<p><img src="https://img2024.cnblogs.com/blog/635610/202512/635610-20251229150101698-2096446677.jpg" alt="" loading="lazy"></p>
+<h2 id="02--mosä¸è½½è¡¥ä¸å¥å£æ´å ä¾¿å©">02 | MOSä¸è½½è¡¥ä¸å¥å£æ´å ä¾¿å©</h2>
+<p>ä¹åç³»ç»ä¸è½½è¡¥ä¸ä»è´¨æ¶ï¼å¾å¤æ°æçè³é½æ¾ä¸å°åéçå¥å£ãç°å¨æ°çåå¾éå¸¸ç®åï¼å¨ä¸»é¡µé¢è¿éçæç´¢æ¡ç´æ¥éæ©è¡¥ä¸è¿ä¸ªåç±»ã</p>
+<p><img src="https://img2024.cnblogs.com/blog/635610/202512/635610-20251229150101696-686065035.jpg" alt="" loading="lazy"></p>
+<p>å°±ä¼å¼¹åºçªå£ï¼å¯ä»¥æéè¾å¥æéè¡¥ä¸ä¿¡æ¯ï¼Applyå³å¯çå°å¯¹åºçå¥å£ï¼</p>
+<p><img src="https://img2024.cnblogs.com/blog/635610/202512/635610-20251229150101584-539479973.jpg" alt="" loading="lazy"></p>
+<h2 id="03--sråç¼æ°å­æ¹åä¸º4-å¼å¤´">03 | SRåç¼æ°å­æ¹åä¸º4-å¼å¤´</h2>
+<p>ä¹åçSRå·ç é½æ¯<code>3-</code>å¼å¤´å ä¸æ®µæ°å­ï¼ç°å¨æ¯<code>4-</code>å¼å¤´å ä¸æ®µæ°å­ï¼å ä¸ºç¬èçè´¦å·æ²¡æåå»ºä»»ä½SRï¼æä»¥çä¸å°è¿ä¸ªååãæè½çSRæéçå°ä¼ä¼´å¯ä»¥å¸®å¿ç¡®è®¤ä¸ï¼æ¬¢è¿çè¨ã</p>
+<h2 id="04--ä¿®æ¹è´¦æ·ä¿¡æ¯æ¶éæ³¨æå®å¨pin">04 | ä¿®æ¹è´¦æ·ä¿¡æ¯æ¶éæ³¨æå®å¨PIN</h2>
+<p>å¨ è´¦æ· -&gt; é¦éé¡¹ä¸é¢ï¼å¡«åè´¦å·ä¿¡æ¯æ¶ï¼æä¸ä¸ª <code>å®å¨PIN</code> æ®è¯´å¨SRçµè¯æ²éè¿ç¨ä¸­ï¼åå°ä¼è¦æ±ä½ æä¾è¿ä¸ªç æå¯ä»¥ãè¿æ¯ä¸ä¸ªå å¼ºå®å¨æ§çèèãç¬èæ²¡æè¿ä¸ªéæ±ï¼æè¿ä¸ªéæ±çå°ä¼ä¼´ä¹å¯ä»¥å¸®å¿ç¡®è®¤ä¸äºå®æ¯å¦å¦æ­¤ã</p>
+<p>å¦å¤ï¼ååå·¥ç¨å¸ä¸ºæ­¤ä¸é¨å½å¶è¿ä¸æ®µè¯¦ç»çä¸­æä»ç»è§é¢ï¼æå´è¶£çåå­¦å¯ä»¥ç´æ¥ç»å½æ°çMOSï¼æç´¢ <code>KB822414</code> çå°è¿ç¯ä¸­æçæç« åè§é¢ã</p>
+<p>å ä¸ºè¿æ¯ä¸ç¯ä¸­æçææ¡£ï¼å¦æé»è®¤æ¥ä¸å°ï¼æ³¨ææç´¢è¯­è¨åæ¢æä¸­æå³å¯ã</p>
+<p><img src="https://img2024.cnblogs.com/blog/635610/202512/635610-20251229150101687-372899130.jpg" alt="" loading="lazy"></p>
+
 </div>
-     ]]>
+<div id="MySignature" role="contentinfo">
+    <a href="https://www.cnblogs.com/jyzhao/" target="_blank">AlfredZhao</a>Â©çæææãä»Oracleèµ·èªï¼é¢ç¥ç²¾å½©çITææ¯ãã<br>
+è½¬è½½è¯·æ³¨æåæé¾æ¥ï¼<a href="https://www.cnblogs.com/jyzhao/p/19415968/xin-banmosmy-oracle-support-zhu-yao-bian-hua" target="_blank">https://www.cnblogs.com/jyzhao/p/19415968/xin-banmosmy-oracle-support-zhu-yao-bian-hua</a>
+<hr>
+<div style="text-align:center; margin-top:30px;">
+  <p style="font-size:14px;color:#555;">
+    ð æè°¢éè¯»ï¼æ¬¢è¿å³æ³¨æçå¬ä¼å· <b>ãèµµéå®ã</b>
+  </p>
+  <img src="https://images.cnblogs.com/cnblogs_com/jyzhao/824234/o_250208075013_qrcode-zjy.jpg" width="160" style="border:1px solid #ddd;border-radius:8px;">
+</div>
+</div>
+<div class="clear"></div>
+
+        <div class="clear"></div>
+        
+</div>
+    <ul class="postmetadata">
+        <vc:categories-tags blog-app="jyzhao" blog-id="186567" post-id="19415968"></vc:categories-tags>
+    </ul>
+ ]]>
     </description>
     </item>
         </channel>
