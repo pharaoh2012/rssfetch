@@ -3,12 +3,136 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-01-02T08:23:30.852Z</lastBuildDate>
+        <lastBuildDate>2026-01-02T12:37:26.300Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
+    <title><![CDATA[ Contrastive Learning å¯¹æ¯å­¦ä¹  | InfoNCE loss ä¸äºä¿¡æ¯çæ°å­¦å³è ]]></title>
+    <link>https://www.cnblogs.com/moonout/p/19432533</link>
+    <guid>9c46c88d0237616c4e11b5619d6c3cab</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/moonout/p/19432533" title="åå¸äº 2026-01-02 20:07">
+    <span role="heading" aria-level="2">Contrastive Learning å¯¹æ¯å­¦ä¹  | InfoNCE loss ä¸äºä¿¡æ¯çæ°å­¦å³è</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                    <div id="cnblogs_post_description" style="display: none">
+        
+        InfoNCE loss å¯ä»¥è¡¨ç¤ºäºä¿¡æ¯çä¸çï¼I(X;Y) â¥ log N - L_InfoNCE ã
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<br>
+<p>åèåå®¢ï¼<a href="https://blog.csdn.net/iiiiii11/article/details/154584585" target="_blank" rel="noopener nofollow">CSDN | ãçè®ºæ¨å¯¼ãäºä¿¡æ¯ä¸ InfoNCE æå¤±ï¼ä»å¬å¼æ¨å¯¼çè§£å¯¹æ¯å­¦ä¹ çæ¬è´¨</a> ï¼æè§æ¯è®²çææ¸æ¥çä¸ä¸ªåå®¢ã</p>
+<hr>
+<p></p><div class="toc"><div class="toc-container-header">ç®å½</div><ul><li><a href="#1-infonce-loss-åäºä¿¡æ¯çæ°å­¦å½¢å¼" rel="noopener nofollow">1 InfoNCE loss åäºä¿¡æ¯çæ°å­¦å½¢å¼</a><ul><li><a href="#11-äºä¿¡æ¯çæ°å­¦å½¢å¼" rel="noopener nofollow">1.1 äºä¿¡æ¯çæ°å­¦å½¢å¼</a></li><li><a href="#12-infonce-loss-çæ°å­¦å½¢å¼" rel="noopener nofollow">1.2 InfoNCE loss çæ°å­¦å½¢å¼</a></li><li><a href="#13-ä¸ºä»ä¹æä»¬å¸ææå¤§å--çäºä¿¡æ¯" rel="noopener nofollow">1.3 ä¸ºä»ä¹æä»¬å¸ææå¤§å <span class="math inline">\((X,Y)\)</span> çäºä¿¡æ¯</a></li></ul></li><li><a href="#2-infonce-loss-ä¸äºä¿¡æ¯çæ°å­¦å³è" rel="noopener nofollow">2 InfoNCE loss ä¸äºä¿¡æ¯çæ°å­¦å³è</a></li><li><a href="#3-è¯æè¿ç¨" rel="noopener nofollow">3 è¯æè¿ç¨</a><ul><li><a href="#31-ç¬¬ä¸æ­¥è¯æä½¿-infonce-loss-åå¼æå°ç-æ»¡è¶³-" rel="noopener nofollow">3.1 ç¬¬ä¸æ­¥ï¼è¯æä½¿ InfoNCE loss åå¼æå°ç <span class="math inline">\(f(x,y)\)</span>ï¼æ»¡è¶³ <span class="math inline">\(f(x, y) = \log [p(y|x) / p(y)]\)</span></a></li><li><a href="#32-ç¬¬äºæ­¥å°ä»¥ä¸--ä»£å¥æ¨å¯¼äºä¿¡æ¯ä¸ç" rel="noopener nofollow">3.2 ç¬¬äºæ­¥ï¼å°ä»¥ä¸ <span class="math inline">\(f(x,y)\)</span> ä»£å¥ï¼æ¨å¯¼äºä¿¡æ¯ä¸ç</a></li></ul></li></ul></div><p></p>
+<hr>
+<h2 id="1-infonce-loss-åäºä¿¡æ¯çæ°å­¦å½¢å¼">1 InfoNCE loss åäºä¿¡æ¯çæ°å­¦å½¢å¼</h2>
+<h3 id="11-äºä¿¡æ¯çæ°å­¦å½¢å¼">1.1 äºä¿¡æ¯çæ°å­¦å½¢å¼</h3>
+<p>äºä¿¡æ¯ <span class="math inline">\(I(X,Y)\)</span> æ¯ä¿¡æ¯è®ºä¸­çæ ¸å¿æ¦å¿µï¼ç¨äºè¡¡éä¸¤ä¸ªéæºåé <span class="math inline">\(X,Y\)</span> ä¹é´çä¾èµç¨åº¦ã</p>
+<p>ä»ç´è§ä¸çè§£ï¼äºä¿¡æ¯åç­äºè¿æ ·ä¸ä¸ªé®é¢ï¼ç¥éä¸ä¸ªåé Y åï¼æä»¬å¯¹å¦ä¸ä¸ªåé X çä¸ç¡®å®æ§åå°äºå¤å°ï¼å¦æ X çä¸ç¡®å®æ§åå°è¾å¤ï¼åä»£è¡¨ XY ä¹é´çäºä¿¡æ¯è¾å¤§ï¼ä¸ºæ­£ï¼ï¼å¦æ X çä¸ç¡®å®æ§æ²¡æåå°ï¼å XY æ¯ç¸äºç¬ç«çï¼å³ <span class="math inline">\(P(X)P(Y) = P(X,Y)\)</span>ï¼XY ä¹é´çäºä¿¡æ¯ä¸º 0ã</p>
+<p>æ°å­¦ä¸ï¼äºä¿¡æ¯æä¸ç§ç­ä»·çå®ä¹æ¹å¼ï¼</p>
+<p>â  åºäºèååå¸ <span class="math inline">\(p(x,y)\)</span> åè¾¹ç¼åå¸ <span class="math inline">\(p(x)p(y)\)</span> ç KL æ£åº¦çå½¢å¼</p>
+<p></p><div class="math display">\[I(X;Y) = D_{KL}\big(p(x,y) ~\|~ p(x)p(y)\big) = \mathbb{E}_{p(x,y)}\left[\log\frac{p(x,y)}{p(x)p(y)}\right]
+\]</div><p></p><p>è¿ä¸ªå½¢å¼ç´æ¥ä½ç°äºäºä¿¡æ¯çæ¬è´¨ï¼å®è¡¡éçæ¯èååå¸ <span class="math inline">\(p(x,y)\)</span> ä¸åè®¾ X å Y ç¬ç«æ¶çåå¸ <span class="math inline">\(p(x)p(y)\)</span> ä¹é´çå·®å¼ãå¦æ X å Y ç¬ç«ï¼è¿ä¸ªå·®å¼ä¸º 0ï¼å¦åä¸ºæ­£æ°ï¼å·®å¼è¶å¤§è¯´æä¸¤ä¸ªåéå³èè¶å¼ºã</p>
+<p>â¡ åºäºçµçå½¢å¼</p>
+<p></p><div class="math display">\[I(X;Y) = H(X) - H(X|Y) = H(Y) - H(Y|X)
+\]</div><p></p><p>è¿é <span class="math inline">\(H(X)=\int p(x)\log p(x)\)</span> æ¯ X ççµï¼ä¸ç¡®å®æ§ï¼ï¼<span class="math inline">\(H(X|Y)\)</span> æ¯å·²ç¥ Y æ¶ X çæ¡ä»¶çµï¼äºä¿¡æ¯åæ¯ä¸ç¡®å®æ§çåå°éã</p>
+<p>â¢ åºäºæ¡ä»¶æ¦ççå½¢å¼</p>
+<p></p><div class="math display">\[I(X;Y) = \mathbb{E}_{p(x,y)}\left[\log\frac{p(y|x)}{p(y)}\right]
+\]</div><p></p><p>è¿ä¸ªå½¢å¼å¨å¯¹æ¯å­¦ä¹ ä¸­ç¹å«æç¨ï¼å ä¸ºå®ç´æ¥è¡¨è¾¾äºâå¨ç»å® x çæåµä¸ï¼y çæ¦çç¸å¯¹äºå¶åéªæ¦ççååâã</p>
+<h3 id="12-infonce-loss-çæ°å­¦å½¢å¼">1.2 InfoNCE loss çæ°å­¦å½¢å¼</h3>
+<p>InfoNCE loss æ¯ç°ä»£å¯¹æ¯å­¦ä¹ ï¼Contrastive Learningï¼çæ ¸å¿ãå®çè®¾è®¡çµææ¥èªä¸ä¸ªç®åçç´è§ï¼ä»ä¸å æ ·æ¬ä¸­ï¼æ¾åºä¸ç»å®æ ·æ¬ x å¹éçæ­£æ ·æ¬ yã</p>
+<p>å·ä½çï¼åè®¾æä»¬æä¸ä¸ªæ­£æ ·æ¬å¯¹ <span class="math inline">\((x, y)\)</span>ï¼æ¯å¦åä¸å¼ å¾ççä¸¤ç§ä¸åæ°æ®å¢å¼ºç»æï¼åæ¶ä»æ°æ®éä¸­éæºéæ · <span class="math inline">\(N-1\)</span> ä¸ªè´æ ·æ¬ <span class="math inline">\(y_2, y_3, ..., y_N\)</span>ãæä»¬å®ä¹ä¸ä¸ªè¯åå½æ° <span class="math inline">\(f(x, y)\)</span>ï¼éå¸¸æ¯ç¥ç»ç½ç»ï¼æ¥è¡¡é x å y çç¸ä¼¼åº¦ãInfoNCE loss çå½¢å¼ä¸ºï¼</p>
+<p></p><div class="math display">\[L = -\mathbb{E}\left[\log\frac{e^{f(x,y)}}{\sum_{j=1}^{N} e^{f(x,y_j)}}\right]
+\]</div><p></p><p>å¶ä¸­ï¼åå­ <span class="math inline">\(e^{f(x,y)}\)</span> æ¯æ­£æ ·æ¬çå¾åï¼èåæ¯ <span class="math inline">\(\sum_{j=1}^{N} e^{f(x,y_j)}\)</span> æ¯æææ ·æ¬ï¼1 ä¸ªæ­£æ ·æ¬ + N-1 ä¸ªè´æ ·æ¬ï¼å¾åçæ»åãæ´ä¸ªåå¼è¡¨ç¤ºï¼ç»å® x å N ä¸ªåé yï¼æä»¬æ­£ç¡®éåºæ­£æ ·æ¬ y çæ¦çã</p>
+<p>ä¹å¯å°å¶è§ä¸ºäº¤åçµæå¤±ï¼cross-entropy lossï¼çä¸ä¸ªåç§ãäº¤åçµæå¤±çå½¢å¼å¦ä¸ï¼</p>
+<p></p><div class="math display">\[L_\text{CE} = \sum p(a)\log \hat p(a)
+\]</div><p></p><p>å¶ä¸­ï¼<span class="math inline">\(p(a)\)</span> ä¸ºçæ¯æ¦çï¼è <span class="math inline">\(\hat p(a)\)</span> æ¯æä»¬ä¼°è®¡çæ¦çãå¨ InfoNCE loss ç setting ä¸­ï¼çæ¦ç <span class="math inline">\(p(x,y) = 1\)</span>ï¼è <span class="math inline">\(p(x,y_j) = 0\)</span>ã</p>
+<h3 id="13-ä¸ºä»ä¹æä»¬å¸ææå¤§å--çäºä¿¡æ¯">1.3 ä¸ºä»ä¹æä»¬å¸ææå¤§å <span class="math inline">\((X,Y)\)</span> çäºä¿¡æ¯</h3>
+<p>å¨å¯¹æ¯å­¦ä¹ ä¸­ï¼æä»¬å¸ææå¤§åæ­£æ ·æ¬å¯¹çäºä¿¡æ¯ï¼åæ¶æå°åæ­£è´æ ·æ¬ä¹é´çäºä¿¡æ¯ãè¿è¿«ä½¿ç¼ç å¨æååºä¸¤ä¸ªä¸åè§å¾ï¼viewï¼çå±äº«ä¿¡æ¯ï¼æ¯å¦åä¸å¼ å¾ççä¸åæ°æ®å¢å¼ºçæ¬ãè¯­è¨ / è§è§ç­ä¸åçæ¨¡æï¼ï¼è¿äºä¿¡æ¯éå¸¸å¯¹åºäºæ°æ®çåå¨è¯­ä¹ï¼ä¾å¦ç©ä½çç±»å«ãåºæ¯ç­ï¼èå¿½ç¥æ å³çåªå£°æå¢å¼ºå¼å¥çååã</p>
+<p>å¨ <a href="https://www.cnblogs.com/moonout/tag/Skill%20Discovery/" target="_blank">skill discovery</a>ï¼å¼ºåå­¦ä¹ çä¸ä¸ªå­é¢åï¼ä¸­ï¼æä»¬å¸ææå¤§å skill z å state s ä¹é´çäºä¿¡æ¯ãä»ä¿¡æ¯çè®ºçè§åº¦ï¼æå¤§å <span class="math inline">\(I(S;Z)\)</span> æå³çï¼æä»¬å¸æä»ç¶æ <span class="math inline">\(s\)</span> ä¸­å°½å¯è½å¤å°è·åå³äºæè½ <span class="math inline">\(z\)</span> çä¿¡æ¯ãè¿ç¡®ä¿äºæè½æ¯âæåºååº¦çâï¼çå°æºè½ä½çè¡ä¸ºï¼æä»¬å°±è½æ¨æ­åºå®ä½¿ç¨äºåªä¸ªæè½ã</p>
+<h2 id="2-infonce-loss-ä¸äºä¿¡æ¯çæ°å­¦å³è">2 InfoNCE loss ä¸äºä¿¡æ¯çæ°å­¦å³è</h2>
+<p>æ ¸å¿ç»è®ºï¼æå°å InfoNCE lossï¼ç­ä»·äºæå¤§åäºä¿¡æ¯çä¸ä¸ªä¸çã</p>
+<p>ï¼äºä¿¡æ¯ä¸ççå«ä¹æ¯ï¼äºä¿¡æ¯çåå¼å°ä¼å¤§äºè¿ä¸ªå¼ãä»è¿ä¸ªè§åº¦æ¥è¯´ï¼ä¸ççå¼è¶å¤§ï¼äºä¿¡æ¯çå¼å°±éä¹åå¤§ï¼æä»¥ï¼æä»¬æå°å InfoNCE lossï¼ç¸å½äºå¨æ¨å¨äºä¿¡æ¯æå¤§åãï¼</p>
+<p>å·ä½æ¥è¯´ï¼å¯¹äºä»»æè¯åå½æ° <span class="math inline">\(f\)</span>ï¼æä»¥ä¸ä¸ç­å¼æç«ï¼</p>
+<p></p><div class="math display">\[I(X;Y) \geq \log N - L
+\]</div><p></p><p>å¶ä¸­ï¼<span class="math inline">\(L\)</span> æ¯æä»¬æ¨¡åç InfoNCE lossï¼è¿ä¸ªå·®å¼å°±æ¯äºä¿¡æ¯çä¸çã</p>
+<h2 id="3-è¯æè¿ç¨">3 è¯æè¿ç¨</h2>
+<p>è¯æè¿ç¨å¯ä»¥åä¸ºä¸¤æ­¥ï¼</p>
+<h3 id="31-ç¬¬ä¸æ­¥è¯æä½¿-infonce-loss-åå¼æå°ç-æ»¡è¶³-">3.1 ç¬¬ä¸æ­¥ï¼è¯æä½¿ InfoNCE loss åå¼æå°ç <span class="math inline">\(f(x,y)\)</span>ï¼æ»¡è¶³ <span class="math inline">\(f(x, y) = \log [p(y|x) / p(y)]\)</span></h3>
+<p>æä»¬è¦è¯æï¼ä½¿ InfoNCE loss æå°ç <span class="math inline">\(f(x,y)\)</span> æ»¡è¶³ï¼</p>
+<p></p><div class="math display">\[f(x,y) = \log\frac{p(y|x)}{p(y)}
+\]</div><p></p><p>æä»¬èè InfoNCE loss çææå½¢å¼ï¼</p>
+<p></p><div class="math display">\[L = -\mathbb{E}_{p(x,y)} \left[\log\frac{e^{f(x,y)}}{\sum_{j=1}^{N} e^{f(x,y_j)}}\right]
+\]</div><p></p><p>æä»¬å¯ä»¥å°è¿ä¸ªæå¤±çä½ä¸ä¸ªåç±»é®é¢ï¼ç»å® x å N ä¸ªæ ·æ¬ <span class="math inline">\({y_1, y_2, \cdots, y_N}\)</span>ï¼å¶ä¸­åªæ <span class="math inline">\(y_1=y\)</span> æ¯æ­£æ ·æ¬ï¼å¶ä½æ¯è´æ ·æ¬ãæ¨¡åçä»»å¡æ¯éåºæ­£æ ·æ¬ã</p>
+<p>å¯¹äºåºå®ç xï¼æä¼çåç±»å¨åºè¯¥ç»åºçå®çåéªæ¦çï¼å³ç»å® x åï¼y ä¸ºè¿ä¸ª x çæ­£æ ·æ¬çæ¦çãé£ä¹ï¼çå®çåéªæ¦çæ¯å¤å°å¢ï¼</p>
+<p>æ ¹æ®è´å¶æ¯å®çï¼å¨ç»å® x å y æ ·æ¬éåçæåµä¸ï¼ç¬¬ k ä¸ªæ ·æ¬æ¯æ­£æ ·æ¬çæ¦çä¸ºï¼è¿ä¸ªæ²¡å®å¨çæï¼ï¼</p>
+<p></p><div class="math display">\[p(\text{ç¬¬ k ä¸ªæ¯æ­£æ ·æ¬} | x, {y_{1\cdots N}}) = \frac{p(y_k|x) \prod_{i\neq k} p(y_i) }{ \sum_{j=1}^{N} p(y_j|x) \prod_{i\neq j} p(y_i)}
+\]</div><p></p><p>åç®åå¾å°ï¼</p>
+<p></p><div class="math display">\[= \frac{p(y_k|x)/p(y_k)}{\sum_{j=1}^{N} p(y_j|x)/p(y_j)}
+\]</div><p></p><p>å³é®è§å¯ï¼å¦ææä»¬å <span class="math inline">\(f(x,y) = \log\frac{p(y|x)}{p(y)} + c(x)\)</span>ï¼å¶ä¸­ <span class="math inline">\(c(x)\)</span> æ¯åªä¾èµäº x çä»»æå½æ°ï¼é£ä¹ï¼</p>
+<p></p><div class="math display">\[\frac{e^{f(x,y_k)}}{\sum_{j=1}^{N} e^{f(x,y_j)}} = \frac{p(y_k|x)/p(y_k)}{\sum_{j=1}^{N} p(y_j|x)/p(y_j)}
+\]</div><p></p><p>è¿æ­£æ¯çå®çåéªåå¸ãå æ­¤ï¼è¿ä¸ª <span class="math inline">\(f(x,y)\)</span> åå¼ä½¿å¾æ¨¡åçè¾åºåå¸ä¸çå®åå¸å®å¨ä¸è´ï¼ä»èæå°å InfoNCE lossã</p>
+<p>ä¸ºç®ä¾¿èµ·è§ï¼æä»¬éå¸¸å <span class="math inline">\(c(x)=0\)</span>ï¼å¾å°æä¼ <span class="math inline">\(f(x,y)\)</span>ï¼</p>
+<p></p><div class="math display">\[f^*(x,y) = \log\frac{p(y|x)}{p(y)}
+\]</div><p></p><h3 id="32-ç¬¬äºæ­¥å°ä»¥ä¸--ä»£å¥æ¨å¯¼äºä¿¡æ¯ä¸ç">3.2 ç¬¬äºæ­¥ï¼å°ä»¥ä¸ <span class="math inline">\(f(x,y)\)</span> ä»£å¥ï¼æ¨å¯¼äºä¿¡æ¯ä¸ç</h3>
+<p>ç°å¨æä»¬å°æä¼ <span class="math inline">\(f^*(x,y)\)</span> ä»£å¥ InfoNCE lossï¼</p>
+<p></p><div class="math display">\[L_{\text{min}} = -\mathbb{E}\left[\log\frac{e^{f^*(x,y)}}{\sum_{j=1}^{N} e^{f^*(x,y_j)}}\right]
+= -\mathbb{E}\left[\log\frac{\frac{p(y|x)}{p(y)}}{\sum_{j=1}^{N} \frac{p(y_j|x)}{p(y_j)}}\right]
+\]</div><p></p><p>èèäºä¿¡æ¯ <span class="math inline">\(I(X;Y)\)</span> çä»¥ä¸å½¢å¼ï¼</p>
+<p></p><div class="math display">\[I(X;Y) = \mathbb{E}\left[\log\frac{p(y|x)}{p(y)}\right]
+\]</div><p></p><p>ç°å¨ï¼æä»¬æ³å»ºç« <span class="math inline">\(I(X;Y)\)</span> å <span class="math inline">\(L_{\text{min}}\)</span> çå³ç³»ãéè¿å·§å¦çä»£æ°åæ¢ï¼æäºä¿¡æ¯æå¼ï¼</p>
+<p></p><div class="math display">\[I(X;Y) = \mathbb{E}\left[\log\frac{p(y|x)}{p(y)}\right]
+= \mathbb{E}\left[\log\frac{\frac{p(y|x)}{p(y)}}{\frac{1}{N}\sum_{j=1}^{N} \frac{p(y_j|x)}{p(y_j)}}\right] + \mathbb{E}\left[\log\left(\frac{1}{N}\sum_{j=1}^{N} \frac{p(y_j|x)}{p(y_j)}\right)\right]
+\]</div><p></p><p>ç¬¬ä¸é¡¹å°±æ¯ <span class="math inline">\(-L_{\text{min}}\)</span> åï¼ä¸å®å¨æ¯ãå®éä¸ï¼<span class="math inline">\(-L_{\text{min}}\)</span> = ç¬¬ä¸é¡¹ - log Nï¼</p>
+<p></p><div class="math display">\[-L_{\text{min}} = \mathbb{E}\left[\log\frac{\frac{p(y|x)}{p(y)}}{\sum_{j=1}^{N} \frac{p(y_j|x)}{p(y_j)}}\right]
+= \mathbb{E}\left[\log\frac{\frac{p(y|x)}{p(y)}}{\frac{1}{N}\sum_{j=1}^{N} \frac{p(y_j|x)}{p(y_j)}}\right] - \log N
+\]</div><p></p><p>æä»¥ï¼</p>
+<p></p><div class="math display">\[I(X;Y) = (-L_{\text{min}} + \log N) + \mathbb{E}\left[\log\left(\frac{1}{N}\sum_{j=1}^{N} \frac{p(y_j|x)}{p(y_j)}\right)\right]
+\]</div><p></p><p>ç°å¨çæåä¸é¡¹ï¼<span class="math inline">\(\mathbb{E}\left[\log\left(\frac{1}{N}\sum_{j=1}^{N} \frac{p(y_j|x)}{p(y_j)}\right)\right]\)</span></p>
+<p>ç±äºå¯¹æ°å½æ°æ¯å¹å½æ°ï¼æ ¹æ®ç´çä¸ç­å¼ï¼Jensen's Inequalityï¼ï¼</p>
+<p></p><div class="math display">\[\mathbb{E}[\log(Z)] \leq \log(\mathbb{E}[Z])
+\]</div><p></p><p>å æ­¤ï¼</p>
+<p></p><div class="math display">\[\mathbb{E}\left[\log\left(\frac{1}{N}\sum_{j=1}^{N} \frac{p(y_j|x)}{p(y_j)}\right)\right] \leq \log\left(\mathbb{E}\left[\frac{1}{N}\sum_{j=1}^{N} \frac{p(y_j|x)}{p(y_j)}\right]\right)
+\]</div><p></p><p>æä»¬è®¡ç®è¿ä¸ª log éé¢çææï¼</p>
+<p></p><div class="math display">\[\mathbb{E}\left[\frac{p(y_j|x)}{p(y_j)}\right] = \int p(y_j) \cdot \frac{p(y_j|x)}{p(y_j)} dy_j = \int p(y_j|x) dy_j = 1
+\]</div><p></p><p>ææ = 1ãæä»¥ï¼</p>
+<p></p><div class="math display">\[\log\left(\mathbb{E}\left[\frac{1}{N}\sum_{j=1}^{N} \frac{p(y_j|x)}{p(y_j)}\right]\right) = \log(1) = 0
+\]</div><p></p><p>ä»£å¥ä¸å¼ = 0ï¼ä½¿ç¨ç´çä¸ç­å¼ï¼å æ­¤ï¼</p>
+<p></p><div class="math display">\[\mathbb{E}\left[\log\left(\frac{1}{N}\sum_{j=1}^{N} \frac{p(y_j|x)}{p(y_j)}\right)\right] \leq 0
+\]</div><p></p><p>å°ä¸å¼ â¤ 0 ä»£ååå¼ï¼</p>
+<p></p><div class="math display">\[I(X;Y) \geq \log N - L_{\text{min}}
+\]</div><p></p><p>ç±äº <span class="math inline">\(f^*\)</span> æ¯æä¼çï¼æä»¥å¯¹äºä»»æè¯åå½æ° <span class="math inline">\(f\)</span>ï¼æ <span class="math inline">\(L(f) \geq L_{\text{min}}\)</span>ï¼å¾å°ï¼</p>
+<p></p><div class="math display">\[I(X;Y) \geq \log N - L_{\text{min}} \geq \log N - L(f)
+\]</div><p></p><p>è¯æ¯ï¼å¯¹äºä»»æè¯åå½æ° <span class="math inline">\(f\)</span>ï¼<span class="math inline">\(\log N - L(f)\)</span> æ¯äºä¿¡æ¯ <span class="math inline">\(I(X;Y)\)</span> çä¸ä¸ªä¸çã</p>
+<br>
+<br>
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-01-02 20:07">2026-01-02 20:07</span>&nbsp;
+<a href="https://www.cnblogs.com/moonout">MoonOut</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19432533);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19432533', targetLink: 'https://www.cnblogs.com/moonout/p/19432533', title: 'Contrastive Learning å¯¹æ¯å­¦ä¹  | InfoNCE loss ä¸äºä¿¡æ¯çæ°å­¦å³è' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
     <title><![CDATA[ LangChain4j å·¥å·è°ç¨å®æ ]]></title>
     <link>https://www.cnblogs.com/BNTang/p/19432093</link>
     <guid>adc2d99c809d26b6d56f942a001af793</guid>
@@ -466,307 +590,11 @@ void chatWithTools() {
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-01-02 15:32">2026-01-02 15:32</span>&nbsp;
 <a href="https://www.cnblogs.com/BNTang">BNTang</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">25</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19432093);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19432093', targetLink: 'https://www.cnblogs.com/BNTang/p/19432093', title: 'LangChain4j å·¥å·è°ç¨å®æ' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ æ ¼å¼å¡åçï¼æ°æ®å¯è§åå¦ä½å¼å¯¼è§ä¼çæ³¨æå ]]></title>
-    <link>https://www.cnblogs.com/wang_yb/p/19431960</link>
-    <guid>eaea552305c7e25989bcda53f1f7d2b1</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/wang_yb/p/19431960" title="åå¸äº 2026-01-02 15:05">
-    <span role="heading" aria-level="2">æ ¼å¼å¡åçï¼æ°æ®å¯è§åå¦ä½å¼å¯¼è§ä¼çæ³¨æå</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>å¨æ°æ®åæä¸­ï¼æä»¬å¸¸è¯´ï¼âä¸å¼ å¥½çå¾è¡¨èè¿åè¨ä¸è¯­ãâ</p>
-<p>ä½å¾å¤æ¶åï¼æä»¬ååºæ¥çå¾è¡¨å´æ¯âåè¨ä¸è¯­å µå¨å¿å£é¾å¼âãè¯»èçäºåå¤©ï¼æä¸ä½éç¹ã</p>
-<p>è¿æ¯ä¸ºä»ä¹ï¼</p>
-<p>å ä¸ºäººç±»çè§è§æç¥éµå¾ªä¸å¥è¢«ç§°ä¸º <strong>æ ¼å¼å¡ï¼Gestaltï¼</strong> çå¿çå­¦åçã</p>
-<p>ç®åæ¥è¯´ï¼å½æä»¬çå°ä¸ç»ç©ä½æ¶ï¼å¤§èä¼èªå¨å°å®ä»¬è§ä¸ºä¸ä¸ªæ´ä½æä¸ç§æ¨¡å¼ï¼èä¸æ¯å­¤ç«çç¢çã</p>
-<p>ä¸é¢æä»¬ç¨ <code>Python</code> ç <code>Matplotlib</code> åºï¼æ¥æ¼ç¤º <strong>æ ¼å¼å¡ï¼Gestaltï¼</strong> å¿çå­¦ä¸­ç 6 ä¸ªæ ¸å¿åçï¼ççå¦ä½å©ç¨è¿äºåçâæ§å¶âè¯»èçæ³¨æåã</p>
-<h1 id="1-é»è¿åçè·ç¦»äº§çå³ç³»">1. é»è¿åçï¼è·ç¦»äº§çâå³ç³»â</h1>
-<p><strong>é»è¿åç</strong>å°±æ¯è·ç¦»è¶è¿ï¼å³ç³»è¶äº²ï¼æä»¬çå¤§èä¼èªå¨æé å¾è¿çç©ä½å½ä¸ºä¸ç±»ã</p>
-<p>å°±åå¨ä¸ä¸ªæ´¾å¯¹ä¸ï¼ç«å¨ä¸èµ·èå¤©çå ä¸ªäººï¼ä½ ä¼ä¸æè¯è§å¾ä»ä»¬æ¯ä¸ä¼çã</p>
-<pre><code class="language-python"># é»è¿åç
-# åå»ºæµè¯æ°æ®
-np.random.seed(42)
-data_a = np.random.normal(5, 1.5, 30)
-data_b = np.random.normal(10, 1.5, 30)
-data_c = np.random.normal(15, 1.5, 30)
-
-# ä¸ä½¿ç¨é»è¿åç
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
-
-# å·¦ä¾§ï¼æªåºç¨é»è¿åçï¼ææç¹åååå¸ï¼
-all_data = np.concatenate([data_a, data_b, data_c])
-x_positions = np.arange(90)
-ax1.scatter(x_positions, all_data, alpha=0.7)
-ax1.grid(True, alpha=0.3)
-
-# å³ä¾§ï¼åºç¨é»è¿åçï¼æç»èéï¼
-for i, (data, x_offset) in enumerate(zip([data_a, data_b, data_c], [0, 30, 60])):
-    x_positions = np.arange(len(data)) + x_offset
-    ax2.scatter(x_positions, data, alpha=0.7, label=f'ç»{i+1}')
-
-plt.tight_layout()
-plt.show()
-</code></pre>
-
-<p><img src="https://img2024.cnblogs.com/blog/83005/202601/83005-20260102150252034-156796734.png" alt="" loading="lazy"></p>
-<p><strong>è®¾è®¡è¦ç¹</strong>ï¼å°ç¸å³çæ°æ®ç¹æåç´ æ¾å¨é è¿çä½ç½®ï¼å¯ä»¥è®©è§ä¼èªç¶å°çè§£å®ä»¬å±äºåä¸ç±»å«æå·ææç§å³èã</p>
-<h1 id="2-ç¸ä¼¼åçç¸ä¼¼çæ§æ ¼å¸å¼">2. ç¸ä¼¼åçï¼ç¸ä¼¼çâæ§æ ¼âå¸å¼</h1>
-<p><strong>ç¸ä¼¼åç</strong>å°±æ¯é¿å¾åçï¼å°±æ¯ä¸å®¶äººï¼å½ç©ä½å¨é¢è²ãå½¢ç¶æå¤§å°ä¸ç¸ä¼¼æ¶ï¼å¤§èä¼å°å®ä»¬åä¸ºä¸ç»ã</p>
-<p>æ¯å¦å¨è¶³çåºä¸ï¼ç©¿çç¸åé¢è²çè¡£çäººï¼ä½ ä¸éè¦çæ¸ä»ä»¬çè¸ï¼å°±ç¥éä»ä»¬æ¯éåã</p>
-<pre><code class="language-python"># ç¸ä¼¼åç
-# åå»ºæµè¯æ°æ®
-categories = ["A", "B", "C", "D", "E"]
-values1 = [12, 16, 14, 18, 15]
-values2 = [8, 11, 9, 12, 10]
-x_pos = np.arange(len(categories))
-
-# ç¸ä¼¼åçç¤ºä¾
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
-
-# å·¦ä¾§ï¼æªåºç¨ç¸ä¼¼åçï¼éæºé¢è²åæ ·å¼ï¼
-bars1 = ax1.bar(x_pos - 0.2, values1, 0.4, color=colors1, edgecolor="black")
-bars2 = ax1.bar(
-    x_pos + 0.2, values2, 0.4, color=colors2, edgecolor="black", hatch=hatches[0]
-)
-
-# ä¸ºæ¯ç»æ¡å½¢æ·»å ä¸åå¾æ¡
-for i, bar in enumerate(bars2):
-    bar.set_hatch(hatches[i % len(hatches)])
-
-# å³ä¾§ï¼åºç¨ç¸ä¼¼åçï¼ä¸è´çé¢è²åæ ·å¼ï¼
-ax2.bar(x_pos - 0.2, values1, 0.4, color="skyblue", edgecolor="black", label="æ°æ®é1")
-ax2.bar(
-    x_pos + 0.2, values2, 0.4, color="lightcoral", edgecolor="black", label="æ°æ®é2"
-)
-
-plt.tight_layout()
-plt.show()
-</code></pre>
-
-<p><img src="https://img2024.cnblogs.com/blog/83005/202601/83005-20260102150251991-767107594.png" alt="" loading="lazy"></p>
-<p><strong>è®¾è®¡è¦ç¹</strong>ï¼ä½¿ç¨ä¸è´çé¢è²ãå½¢ç¶ææ ·å¼æ¥è¡¨ç¤ºç¸åç±»åçæ°æ®ï¼å¯ä»¥å¤§å¤§éä½è§ä¼çè®¤ç¥è´æã</p>
-<h1 id="3-åå´åçè¾¹çåé å½å±æ">3. åå´åçï¼è¾¹çåé "å½å±æ"</h1>
-<p>åå´åçå°±æ¯æå´å¢çå°æ¹å°±æ¯å®¶ãå¦æå¨æäºç©ä½å¨å´å ä¸è¾¹çæèæ¯è²ï¼å®ä»¬å°±è¢«è§ä¸ºä¸ä¸ªç¬ç«çç¾¤ä½ã</p>
-<p>è¿ä¸ªåççè³æ¯ <strong>âé»è¿â</strong> å <strong>âç¸ä¼¼â</strong> æ´å¼ºå¤§ã</p>
-<p>æ¯å¦ï¼èå°ä¸æ£è½çç¾ç¾¤ï¼ä¸æ¦ä½ ç¨æ æ åä½å¶ä¸­å åªï¼å¤§å®¶å°±ä¼è®¤ä¸ºè¿å åªæ¯è¢«ç¹å«éä¸­çã</p>
-<pre><code class="language-python"># åå´åç
-# åå»ºæµè¯æ°æ®
-np.random.seed(42)
-x1 = np.random.normal(2, 0.8, 50)
-y1 = np.random.normal(3, 0.8, 50)
-
-x2 = np.random.normal(5, 0.8, 50)
-y2 = np.random.normal(5, 0.8, 50)
-
-# åå´åçç¤ºä¾
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
-
-# å·¦ä¾§ï¼æªåºç¨åå´åç
-ax1.scatter(x1, y1, alpha=0.7, color="blue")
-ax1.scatter(x2, y2, alpha=0.7, color="red")
-
-# å³ä¾§ï¼åºç¨åå´åç
-from matplotlib.patches import Ellipse
-
-ax2.scatter(x1, y1, alpha=0.7, color="blue", label="ç»A")
-ax2.scatter(x2, y2, alpha=0.7, color="red", label="ç»B")
-
-# æ·»å åå´åºå
-ellipse1 = Ellipse((2, 3), width=4, height=3, edgecolor="blue")
-ellipse2 = Ellipse((5, 5), width=4, height=3, edgecolor="red")
-
-ax2.add_patch(ellipse1)
-ax2.add_patch(ellipse2)
-
-plt.tight_layout()
-plt.show()
-</code></pre>
-
-<p><img src="https://img2024.cnblogs.com/blog/83005/202601/83005-20260102150252070-854536119.png" alt="" loading="lazy"></p>
-<p><strong>è®¾è®¡è¦ç¹</strong>ï¼ä½¿ç¨è¾¹çãèæ¯è²æå®¹å¨å°ç¸å³çæ°æ®åç´ åå´èµ·æ¥ï¼å¯ä»¥æç¡®å°åè¯è§ä¼è¿äºåç´ å±äºåä¸ç»ã</p>
-<h1 id="4-é­ååçå¤§èçèªå¨è¡¥å¨">4. é­ååçï¼å¤§èç"èªå¨è¡¥å¨"</h1>
-<p><strong>é­ååç</strong>å°±æ¯å¤§èæ¯å¤©ççâè¡¥å¾é«æâãå³ä½¿å¾å½¢ä¸å®æ´ï¼åªè¦æè¶³å¤çæç¤ºï¼å¤§èä¹ä¼èªå¨èè¡¥åºç¼ºå¤±çé¨åã</p>
-<p>æ¯å¦çå°ä¸ä¸ªèçº¿ç»åï¼ä½ ä¸ä¼è§å¾é£æ¯æ­æ­ç»­ç»­ççº¿æ®µï¼ä½ ä¼ç´æ¥è¯´ï¼âè¿æ¯ä¸ä¸ªåâã</p>
-<pre><code class="language-python"># é­ååçç¤ºä¾
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
-
-# åå»ºä¸äºä¸å®æ´çæ°æ®ç¹
-np.random.seed(42)
-angles = np.linspace(0, 2*np.pi, 7)[:-1]  # ææå°ä¸ä¸ªç¹å½¢æä¸é­å
-radii = np.random.uniform(3, 5, 6)
-x = radii * np.cos(angles)
-y = radii * np.sin(angles)
-
-# å·¦ä¾§ï¼ä¸å®æ´çå½¢ç¶ï¼æªå©ç¨é­ååçï¼
-ax1.plot(x, y, 'o-', linewidth=2, markersize=8)
-
-# å³ä¾§ï¼é­åçå½¢ç¶ï¼åºç¨é­ååçï¼
-# æ·»å ç¼ºå¤±çç¹ä½¿å½¢ç¶é­å
-angles_closed = np.linspace(0, 2*np.pi, 7)
-radii_closed = np.append(radii, radii[0])  # åå°èµ·ç¹
-x_closed = radii_closed * np.cos(angles_closed)
-y_closed = radii_closed * np.sin(angles_closed)
-
-ax2.plot(x_closed, y_closed, 'o-', linewidth=2, markersize=8)
-ax2.fill(x_closed, y_closed, alpha=0.3)  # å¡«åå¢å¼ºé­åæ
-
-plt.tight_layout()
-plt.show()
-</code></pre>
-
-<p><img src="https://img2024.cnblogs.com/blog/83005/202601/83005-20260102150252005-1834837851.png" alt="" loading="lazy"></p>
-<p><strong>è®¾è®¡è¦ç¹</strong>ï¼æä»¬ä¸éè¦å±ç¤ºæ¯ä¸ä¸ªç»èï¼å¯ä»¥å©ç¨è§ä¼çèªå¨è¡¥å¨è½åæ¥ç®åå¾è¡¨ã</p>
-<p>ä½è¦<strong>æ³¨æ</strong>ï¼è¿äºä¸å®æ´çå¾å½¢å¯è½å¯¼è´è¯¯è§£ã</p>
-<h1 id="5-è¿ç»­åçæµççè§è§è·¯å¾">5. è¿ç»­åçï¼æµçç"è§è§è·¯å¾"</h1>
-<p><strong>è¿ç»­åç</strong>å°±æ¯é¡ºè¤æ¸çãæä»¬çè§çº¿å¾åäºè·éå¹³æ»ãè¿ç»­çè·¯å¾ï¼èä¸æ¯å§çæçº¿æä¸è§åçæåã</p>
-<p>æ¯å¦æéæ¶ï¼å¦æéä¼å¼¯å¼¯æ²æ²ä½æ¯ä¸ªäººé½ççåä¸ä¸ªäººçåèåºï¼ä½ ç¥éè¿è¿æ¯ä¸æ¡éã</p>
-<pre><code class="language-python"># è¿ç»­åçç¤ºä¾
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
-
-# åå»ºæ°æ®
-np.random.seed(42)
-time = np.arange(0, 10, 0.1)
-signal1 = np.sin(time) + np.random.normal(0, 0.1, len(time))
-signal2 = np.cos(time) + np.random.normal(0, 0.1, len(time))
-
-# å·¦ä¾§ï¼ä¸è¿ç»­çå±ç¤º
-ax1.plot(time[:50], signal1[:50], 'b-', linewidth=2, label='ä¿¡å·A (ç¬¬ä¸é¨å)')
-ax1.plot(time[70:], signal1[70:], 'b--', linewidth=2, label='ä¿¡å·A (ç¬¬äºé¨å)')
-ax1.plot(time[:40], signal2[:40], 'r-', linewidth=2, label='ä¿¡å·B (ç¬¬ä¸é¨å)')
-ax1.plot(time[60:], signal2[60:], 'r--', linewidth=2, label='ä¿¡å·B (ç¬¬äºé¨å)')
-
-# å³ä¾§ï¼è¿ç»­çå±ç¤º
-ax2.plot(time, signal1, 'b-', linewidth=2, label='ä¿¡å·A')
-ax2.plot(time, signal2, 'r-', linewidth=2, label='ä¿¡å·B')
-
-plt.tight_layout()
-plt.show()
-</code></pre>
-
-<p><img src="https://img2024.cnblogs.com/blog/83005/202601/83005-20260102150252039-1585935589.png" alt="" loading="lazy"></p>
-<p><strong>è®¾è®¡è¦ç¹</strong>ï¼ä¿æçº¿æ¡ãå½¢ç¶æåç´ çè¿ç»­æ§å¯ä»¥å¸®å©è§ä¼è¿½è¸ªæ°æ®çååè¶å¿ãå¨æçº¿å¾ãé¢ç§¯å¾ä¸­å°¤å¶éè¦ã</p>
-<h1 id="6-è¿æ¥åççå¾è§çå³ç³»çº¿">6. è¿æ¥åçï¼çå¾è§ç"å³ç³»çº¿"</h1>
-<p><strong>è¿æ¥åç</strong>å°±æ¯èæ­ä¸è¿ãè¢«çº¿è¿æ¥çç©ä½ï¼è¢«è§ä¸ºå¼ºå³èãè¿ä¸ªè§è§ä¿¡å·æ¯é¢è²åè·ç¦»é½è¦å¼ºã</p>
-<p>æ¯å¦ï¼ä¸¤ä¸ªäººç«å¾åè¿ï¼å¦ææéçµçä¸æ ¹ç»³å­ï¼ä½ ä¹ä¼è§å¾ä»ä»¬ä¿©å¨äºå¨ã</p>
-<pre><code class="language-python"># è¿æ¥åçç¤ºä¾ - æ£ç¹å¾çæ¬
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
-
-# åå»ºæ£ç¹æ°æ®ï¼4ä¸ªç¸å³ç¹éï¼æ¯ä¸ªç¹éæ5ä¸ªç¹
-np.random.seed(42)
-n_points = 5
-n_groups = 4
-
-# ä¸ºæ¯ç»çæç¸å³ç¹
-groups = []
-for i in range(n_groups):
-    center_x = np.random.uniform(2, 8)
-    center_y = np.random.uniform(2, 8)
-
-    # çæå´ç»ä¸­å¿çç¸å³ç¹
-    x_points = center_x + np.random.normal(0, 0.8, n_points)
-    y_points = center_y + np.random.normal(0, 0.8, n_points)
-
-    # æ·»å ä¸äºè¶å¿
-    trend = np.random.uniform(-1, 1)
-    y_points = y_points + trend * (x_points - center_x)
-
-    groups.append((x_points, y_points))
-
-# å·¦ä¾§ï¼æªåºç¨è¿æ¥åçï¼ç¬ç«çæ£ç¹ï¼
-colors = ["blue", "red", "green", "orange"]
-markers = ["o", "s", "^", "D"]
-
-for i, (x_points, y_points) in enumerate(groups):
-    ax1.scatter(
-        x_points,
-        y_points,
-        color=colors[i],
-        marker=markers[i],
-        alpha=0.7,
-        s=80,
-        label=f"æ°æ®é{i+1}",
-    )
-
-
-# å³ä¾§ï¼åºç¨è¿æ¥åçï¼è¿æ¥ç¸å³æ£ç¹ï¼
-for i, (x_points, y_points) in enumerate(groups):
-    # é¦åç»å¶è¿æ¥çº¿
-    # æç§xå¼æåºï¼ä½¿è¿æ¥çº¿æ´æåº
-    sorted_indices = np.argsort(x_points)
-    sorted_x = x_points[sorted_indices]
-    sorted_y = y_points[sorted_indices]
-
-    ax2.plot(
-        sorted_x,
-        sorted_y,
-        color=colors[i],
-        linewidth=2,
-        alpha=0.5,
-        linestyle="--",
-        label=f"æ°æ®é{i+1}è¶å¿çº¿",
-    )
-
-    # ç¶åç»å¶æ£ç¹ï¼å¨çº¿ä¸æ¹ï¼é¿åè¢«çº¿é®æ¡ï¼
-    ax2.scatter(
-        x_points,
-        y_points,
-        color=colors[i],
-        marker=markers[i],
-        alpha=0.7,
-        s=80,
-        edgecolor="black",
-        linewidth=1,
-    )
-
-plt.tight_layout()
-plt.show()
-</code></pre>
-
-<p><img src="https://img2024.cnblogs.com/blog/83005/202601/83005-20260102150251985-1606569356.png" alt="" loading="lazy"></p>
-<p><strong>è®¾è®¡è¦ç¹</strong>ï¼å¨æ£ç¹å¾ä¸­ï¼è¿æ¥ç¸å³æ°æ®ç¹ççº¿å¯ä»¥å¸®å©è§ä¼è¯å«åºæ°æ®çæ¨¡å¼ãè¶å¿æåç»å³ç³»ã</p>
-<p>è¿å°±åå¨å°å¾ä¸è¿æ¥åä¸ªåå¸æ¥æ¾ç¤ºæè¡è·¯çº¿ä¸æ ·ï¼ä½¿ç¸å³çç¹ä¹é´å»ºç«äºæç¡®çè§è§èç³»ã</p>
-<h1 id="7-æ»ç»">7. æ»ç»</h1>
-<p>åæ°æ®å¯è§åï¼ä¸ä»ä»æ¯åä»£ç ç»å¾ï¼æ´æ¯ä¸åº <strong>âæ³¨æåäºå¤ºæâ</strong>ã<br>
-éè¿è¿ 6 ä¸ªæ ¼å¼å¡åçï¼æä»¬ä¸æ¯å¨æ¹åæ°æ®æ¬èº«ï¼èæ¯å¨ä¼åæ°æ®çåç°æ¹å¼ï¼è®©è¯»èçèåæ¶èéå°æä½ã</p>
-<p>æ¯æ¬¡æä»¬ç»å¾æ¶ï¼ä¸å¦¨é®èªå·±ä¸å¥ï¼</p>
-<ul>
-<li>âè¿äºæ°æ®åºè¯¥æ¯ä¸ç»åï¼å®ä»¬é å¾å¤è¿åï¼âï¼é»è¿ï¼</li>
-<li>âéç¹æ°æ®çªåºäºåï¼âï¼åå´/ç¸ä¼¼ï¼</li>
-<li>âè§çº¿æµå¨é¡ºçåï¼âï¼è¿ç»­ï¼</li>
-</ul>
-<p>æå¥½çå¯è§åä¸æ¯å±ç¤ºæææ°æ®ï¼èæ¯å¼å¯¼è§ä¼çå°æéè¦çä¿¡æ¯ãæ ¼å¼å¡åçå°±æ¯æä»¬å®ç°è¿ä¸ç®æ çå¼ºå¤§å·¥å·ã</p>
-<p>å¸æè¿ç¯æç« è½å¸®å©ä½ å¨åå»ºæ°æ®å¯è§åæ¶ï¼æ´å ææå°å¼å¯¼è§ä¼çæ³¨æåã</p>
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-01-02 15:06">2026-01-02 15:05</span>&nbsp;
-<a href="https://www.cnblogs.com/wang_yb">wang_yb</a>&nbsp;
-éè¯»(<span id="post_view_count">14</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19431960);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19431960', targetLink: 'https://www.cnblogs.com/wang_yb/p/19431960', title: 'æ ¼å¼å¡åçï¼æ°æ®å¯è§åå¦ä½å¼å¯¼è§ä¼çæ³¨æå' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -1329,8 +1157,8 @@ SaaS + ç§æåæå³çï¼</p>
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-01-02 15:03">2026-01-02 15:02</span>&nbsp;
 <a href="https://www.cnblogs.com/sheng_chao">åè®¯å¨å¨çº¿å®¢æç³»ç»</a>&nbsp;
-éè¯»(<span id="post_view_count">20</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">65</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">2</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19431954);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19431954', targetLink: 'https://www.cnblogs.com/sheng_chao/p/19431954', title: 'ç¬ç«å¼åèç 2025ï¼æä¸ºä»ä¹è¿å¨åä¸ä¸ªâçèµ·æ¥å¾æ®éâçå®¢æç³»ç»' })">ä¸¾æ¥</a>
@@ -1472,7 +1300,7 @@ SaaS + ç§æåæå³çï¼</p>
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-01-01 17:28">2026-01-01 17:27</span>&nbsp;
 <a href="https://www.cnblogs.com/lucky_hu">æ¥ æ¨å¤§å</a>&nbsp;
-éè¯»(<span id="post_view_count">75</span>)&nbsp;
+éè¯»(<span id="post_view_count">142</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19430418);return false;">æ¶è</a>&nbsp;
@@ -1683,7 +1511,7 @@ else: random.seed()  # å®éçæï¼éæºç§å­ï�
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-01-01 15:59">2026-01-01 15:59</span>&nbsp;
 <a href="https://www.cnblogs.com/ChenAI-TGF">TTGF</a>&nbsp;
-éè¯»(<span id="post_view_count">78</span>)&nbsp;
+éè¯»(<span id="post_view_count">109</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19430267);return false;">æ¶è</a>&nbsp;
@@ -1782,7 +1610,7 @@ else: random.seed()  # å®éçæï¼éæºç§å­ï�
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-01-01 15:19">2026-01-01 15:18</span>&nbsp;
 <a href="https://www.cnblogs.com/msdeveloper">TypingLearn</a>&nbsp;
-éè¯»(<span id="post_view_count">81</span>)&nbsp;
+éè¯»(<span id="post_view_count">119</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19430150);return false;">æ¶è</a>&nbsp;
@@ -1792,14 +1620,14 @@ else: random.seed()  # å®éçæï¼éæºç§å­ï�
     </description>
     </item>
 <item>
-    <title><![CDATA[ 2025å¹´åº¦æ»ç» ]]></title>
-    <link>https://www.cnblogs.com/SilverGo/p/19428614</link>
-    <guid>8a32a198af015bc4a29db54023bcd46f</guid>
+    <title><![CDATA[ Ansible å­¦ä¹ æ»ç» ]]></title>
+    <link>https://www.cnblogs.com/kqdssheng/p/19432562</link>
+    <guid>d0d09287695e887d527c60947d3e6fe1</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/SilverGo/p/19428614" title="åå¸äº 2025-12-31 22:47">
-    <span role="heading" aria-level="2">2025å¹´åº¦æ»ç»</span>
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/kqdssheng/p/19432562" title="åå¸äº 2026-01-02 17:46">
+    <span role="heading" aria-level="2">Ansible å­¦ä¹ æ»ç»</span>
     
 
 </a>
@@ -1808,155 +1636,632 @@ else: random.seed()  # å®éçæï¼éæºç§å­ï�
             <div class="clear"></div>
             <div class="postBody">
                 <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h1 id="table-of-contents">Table of Contents</h1>
+<blockquote>
+<p>ä¸äºæ´æçå­¦é®ï¼äººæç»è¾¾å³æç« ã</p>
+</blockquote>
+<h2 id="å¯¼èª">å¯¼èª</h2>
+<ul>
+<li><a href="#id1" rel="noopener nofollow">1 å·¥å·ä»ç»</a>
+<ul>
+<li><a href="#id1.1" rel="noopener nofollow">1.1 Ansible ç®ä»</a></li>
+<li><a href="#id1.2" rel="noopener nofollow">1.2 Ansible æ¦å¿µ</a></li>
+<li><a href="#id1.3" rel="noopener nofollow">1.3 å·¥ä½åç</a></li>
+<li><a href="#id1.4" rel="noopener nofollow">1.4 ä½ç¨èå´</a></li>
+</ul>
+</li>
+<li><a href="#id2" rel="noopener nofollow">2 éå¥å½ä»¤</a>
+<ul>
+<li><a href="#id2.1" rel="noopener nofollow">2.1 ansible</a></li>
+<li><a href="#id2.2" rel="noopener nofollow">2.2 ansible-playbook</a></li>
+<li><a href="#id2.3" rel="noopener nofollow">2.3 ansible-doc</a></li>
+<li><a href="#id2.4" rel="noopener nofollow">2.4 ansible-vault</a></li>
+<li><a href="#id2.5" rel="noopener nofollow">2.5 ansible-galaxy</a></li>
+<li><a href="#id2.6" rel="noopener nofollow">2.6 ansible-console</a></li>
+</ul>
+</li>
+<li><a href="#id3" rel="noopener nofollow">3 Inventory - ä¸»æºæ¸å</a></li>
+<li><a href="#id4" rel="noopener nofollow">4 Playbook - ä»»å¡æ¸å</a>
+<ul>
+<li><a href="#id4.1" rel="noopener nofollow">4.1 Keywords - å³é®è¯</a></li>
+<li><a href="#id4.2" rel="noopener nofollow">4.2 Vars - åé</a>
+<ul>
+<li><a href="#id4.2.1" rel="noopener nofollow">4.2.1 åéä¼åçº§</a></li>
+<li><a href="#id4.2.2" rel="noopener nofollow">4.2.2 æä»¶åé</a></li>
+<li><a href="#id4.2.3" rel="noopener nofollow">4.2.3 ç¹æ®åé</a></li>
+<li><a href="#id4.2.4" rel="noopener nofollow">4.2.4 è°ç¨åé</a></li>
+</ul>
+</li>
+<li><a href="#id4.3" rel="noopener nofollow">4.3 Tasks - ä»»å¡</a>
+<ul>
+<li><a href="#id4.3.1" rel="noopener nofollow">4.3.1 Tasks</a></li>
+<li><a href="#id4.3.2" rel="noopener nofollow">4.3.2 Roles</a></li>
+<li><a href="#id4.3.3" rel="noopener nofollow">4.3.3 Handlers</a></li>
+</ul>
+</li>
+<li><a href="#id4.4" rel="noopener nofollow">4.4 å¶å®æå·§</a>
+<ul>
+<li><a href="#id4.4.1" rel="noopener nofollow">4.4.1 When - å¤æ­</a></li>
+<li><a href="#id4.4.2" rel="noopener nofollow">4.4.2 Loop - å¾ªç¯</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#id5" rel="noopener nofollow">5 å¸¸ç¨æ¨¡å</a></li>
+<li><a href="#id6" rel="noopener nofollow">6 å¸¸ç¨æä»¶</a></li>
+<li><a href="#id7" rel="noopener nofollow">7 æä¸æå«</a></li>
+</ul>
+<hr>
+<h2 id="1å·¥å·ä»ç»"><strong><div id="id1">1ãå·¥å·ä»ç»</div></strong></h2>
+<h3 id="11ansible-ç®ä»"><strong><div id="id1.1">1.1ãAnsible ç®ä»</div></strong></h3>
+<p><strong>Ansible</strong> æ¯ä¸æ¬¾å¼æºçèªå¨åè¿ç»´å·¥å·ï¼ä¸»è¦ç¨äºæå¡å¨æ¹éç®¡çãåºç¨é¨ç½²åä»»å¡èªå¨åãå®ä¸»è¦çç¹ç¹æï¼ï¼1ï¼<strong>æ å®¢æ·ç«¯çæ¶æ</strong>ï¼åå»äºå®è£å®¢æ·ç«¯çå°æ°ãï¼2ï¼<strong>åºäº YAML çè¯­æ³éç½®</strong>ï¼ä½¿å¾ Playbook éç½®å¾å®¹æéè¯»ãï¼3ï¼éç¨äº <strong>æ¨¡ååçè®¾è®¡</strong>ï¼ä½¿å¾å¶çµæ´»åº¦è¾é«ãï¼4ï¼<strong>å¹ç­æ§</strong>ã</p>
+<blockquote>
+<p>æ³¨ï¼<strong>ä»ä¹æ¯å¹ç­æ§ï¼</strong> å½ç³»ç»å¤äºæ¨çä»»å¡ææè¿°çç¶ææ¶ï¼å³ä½¿å¤æ¬¡è¿è¡åä¸ä»»å¡ï¼Ansible ä¹ä¸ä¼æ´æ¹ä»»ä½åå®¹ããä¾å¦ï¼éè¿ lineinfile æ¨¡åå»ä¸º test æä»¶ä¸­ä»¥ a å¼å¤´çè¡çåé¢æ·»å ä¸è¡å­ä¸² test123ï¼å½å¤æ¬¡æ§è¡åä¸ä»»å¡ <code>ansible localhost -m lineinfile -a "path=test  state=present line=test123 insertbefore='^a'"</code> æ¶ï¼ä¼åç° test æä»¶å¹¶æ²¡æéçä»»å¡çéå¤æ§è¡èéå¤æ·»å å¤è¡ test123 å­ä¸²ï¼è¿ä¾¿æ¯å¹ç­æ§ãã</p>
+</blockquote>
+<h3 id="12ansible-æ¦å¿µ"><strong><div id="id1.2">1.2ãAnsible æ¦å¿µ</div></strong></h3>
+<ul>
+<li>ç®¡çèç¹ï¼è¿è¡ Ansible CLI å·¥å·ï¼ansibleãansible-playbookãansible-vault ç­ï¼çæºå¨ã</li>
+<li>è¢«ç®¡èç¹ï¼ç¨ Ansible ç®¡ççç®æ è®¾å¤ï¼æå¡å¨ãç½ç»è®¾å¤æä»»ä½è®¡ç®æºï¼ã</li>
+<li>====</li>
+<li>æ¸å-inventoryï¼è¢«ç®¡èç¹ç <strong>ä¸»æºåè¡¨</strong>ï¼ä¹è¢«å«åâä¸»æºæä»¶âã</li>
+<li><strong>å§æ¬-playbook</strong>ï¼ç¨ YAML ç¼åçï¼ç¨æ¥æè¿°èªå¨åä»»å¡ï¼<strong>æå®åªäºä¸»æºè¿è¡åªäºå½ä»¤ä»»å¡</strong>ï¼çæä»¶ã
+<ul>
+<li><strong>å§é-play</strong>ï¼ä¸ä¸ªå§æ¬å¯ä»¥åå«å¤ä¸ªå§éï¼èä¸ä¸ªå§éå¯ä»¥çè§£ä¸ºï¼<strong>éå¯¹ä¸ç»ä¸»æºçä¸æ¬¡å®æ´æ§è¡ä»»å¡çè®¡å</strong>ããæ³¨ï¼ä¸ä¸ª Play æ¯ç± <strong>å³é®è¯ãåéãä»»å¡</strong> ç»æï¼å¶ä¸­ä»»å¡ååä¸ºä»¥ä¸ä¸ç§ãã
+<ul>
+<li><strong>ä»»å¡-task</strong>ï¼ç¨äºå®ä¹æ§è¡çå½ä»¤æä½ï¼ç¸å½äºæ§è¡ <strong>åæ¡å½ä»¤</strong>ã</li>
+<li><strong>è§è²-role</strong>ï¼å¤ä¸ªä»»å¡éä¸­æ´åå¨äºä¸èµ·ï¼ç¸å½äºæ§è¡ <strong>ä¸ä¸ª Bash èæ¬</strong>ããæ³¨ï¼<a href="https://docs.ansible.org.cn/ansible/latest/collections/index_role.html" target="_blank" rel="noopener nofollow">Ansible åç½®è§è²</a>ã<a href="https://galaxy.ansible.com/ui/standalone/roles/" target="_blank" rel="noopener nofollow">ç¬¬ä¸æ¹è§è²</a>ã</li>
+<li><strong>å¤çå¨-handler</strong>ï¼å¯è§¦åå¼çä»»å¡ï¼ç¸å½äº Bash èæ¬ä¸­å®ä¹ç <strong>Bash å½æ°</strong>ã</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>====</li>
+<li>æ¨¡åï¼ä¸ä¸ªæ¨¡åç¸å½äºä¸æ¡ <strong>Linux å½ä»¤</strong>ããæ³¨ï¼<a href="https://docs.ansible.org.cn/ansible/latest/collections/index_module.html" target="_blank" rel="noopener nofollow">Ansible åç½®æ¨¡å</a>ã</li>
+<li>æä»¶ï¼ç¨äº <strong>æ©å± Ansible çåè½</strong>ãé»è®¤æåµä¸ï¼Ansible è¿ç¨ç®æ åªæ¯æ ssh çè¿æ¥åè®®ï¼ä½éè¿è¿æ¥æä»¶ï¼å®è¿å¯ä»¥æ¯æ winrmãnetconf åè®®ããæ³¨ï¼<a href="https://docs.ansible.org.cn/ansible/latest/collections/all_plugins.html" target="_blank" rel="noopener nofollow">Ansible åç½®æä»¶</a>ã</li>
+<li>éåï¼<strong>Ansible åå®¹çååæ ¼å¼</strong>ï¼å¯ä»¥åå«å§æ¬ãè§è²ãæ¨¡ååæä»¶ãé»è®¤æåµä¸ï¼æä»¬æä½¿ç¨çæ¨¡åãæä»¶ é½æ¯æ¥èª <a href="https://docs.ansible.org.cn/ansible/latest/collections/ansible/builtin/index.html#ansible-builtin" target="_blank" rel="noopener nofollow">Ansible.Builtin</a> éåãå¦æä½ æ³ç®¡æ§ windows è®¾å¤ï¼é£æä»¬ä¸å®è¦ä½¿ç¨ <a href="https://docs.ansible.org.cn/ansible/latest/collections/ansible/windows/index.html#ansible-windows" target="_blank" rel="noopener nofollow">Ansible.Windows</a> éåä¸­çæ¨¡åããæ³¨ï¼<a href="https://docs.ansible.org.cn/ansible/latest/collections/index.html" target="_blank" rel="noopener nofollow">Ansible åç½®éå</a>ã<a href="https://galaxy.ansible.com/ui/collections/" target="_blank" rel="noopener nofollow">ç¬¬ä¸æ¹éå</a>ã</li>
+</ul>
+<p><strong>Playbook ç¨æ³æ±æ»ç¤ºä¾</strong>ï¼</p>
+<pre><code class="language-yaml">#æ¬éç½®ä¸­çææåå®¹å³ä»£è¡¨ä¸ä¸ªå§æ¬
+
+#å§éä¸
+- hosts: linux
+  tasks:
+##ä»»å¡1
+	- name: install nginx
+      yum:		#yum æ¨¡å
+        name: nginx
+        state: present
+##ä»»å¡2
+	- name: update nginx config
+      template:	#template æ¨¡å
+        src: nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+        notify: restart nginx	#è°ç¨å¤çå¨
+
+  handlers:						#å®ä¹å¤çå¨
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
+
+#å§éäº     
+- hosts: windows
+  collections:		#å£°æéåï¼ä¸å£°æè°ç¨éåæ¨¡åéå¸¦éååç§°ï¼å¦ ansible.windows.win_fileã
+    - ansible.windows
+  tasks:
+    - name: Remove a file, if present
+  	  win_file:		#è°ç¨ windows éåä¸­çæ¨¡å
+    	path: C:\Temp\foo.conf
+    	state: absent
+
+#å§éä¸
+- hosts: web
+  roles:	#è§è²
+    - nginx
+</code></pre>
+<h3 id="13å·¥ä½åç"><strong><div id="id1.3">1.3ãå·¥ä½åç</div></strong></h3>
+<p>Ansible ç®¡çèç¹ï¼1ï¼é¦åä¸è¢«ç®¡èç¹ Agent å»ºç«è¿ç¨è¿æ¥ï¼å¹¶æ£æ¥å½åç³»ç»çæ¨¡åèæ¬æ§è¡ç¯å¢ãï¼2ï¼æ¥çç®¡çç«¯å°ä»»å¡æ¨¡åå¯¹åºçæ¨¡åèæ¬ä¼ è¾è³ Agent ç«¯å¹¶æ§è¡ï¼æ¨¡åèæ¬æ§è¡æ¶ä¼åè¿è¡â<strong>ç¶ææ£æµå¤æ­</strong>âï¼ç¶åå°ç»æä»¥ json æ ¼å¼è¿åãï¼3ï¼æåå é¤ Agent å¤çä¸´æ¶æ¨¡åèæ¬æä»¶å¹¶å³é­è¿æ¥ã</p>
+<blockquote>
+<p>æ³¨ï¼ï¼1ï¼<strong>ç¶ææ£æµå¤æ­æµç¨</strong>ï¼â  è·åå½åç¶æãâ¡ ä¸ Playbook ææç¶æå¯¹æ¯ãâ¢ å³å®æ¯å¦æ§è¡ä¿®æ¹ããæ³¨ï¼ä»¥ä¸è¿°ä¿®æ¹ test æä»¶ä¸ºä¾ãå½ç¬¬äºæ¬¡æ§è¡ä»»å¡æ¶ï¼åç°æä»¶ä¸­å·²å¨ a è¡çåé¢æ·»å äº test123ï¼è¿æ­£ç¬¦å Playbook çææï¼äºæ¯æ¬æ¬¡ä»»å¡å¹¶ä¸ä¼ååºä»»ä½ä¿®æ¹ããï¼2ï¼Ansible ä¸­ç <strong>æ¨¡åå¶å®æ¯ç¨ Python/Powershell èæ¬å®ç°çï¼å®å·æå Linux å½ä»¤ç¸ç±»ä¼¼çåè½ã</strong> å æ­¤ï¼è¿ä¹å°±è¯´æäºä¸ºä»ä¹ Ansible è¦æ±è¢«ç®¡èç¹éè¦å·å¤ Python æ Powershell çæ§è¡ç¯å¢ã</p>
+</blockquote>
+<h3 id="14ä½ç¨èå´"><strong><div id="id1.4">1.4ãä½ç¨èå´</div></strong></h3>
+<p>Ansible æ¥æä¸°å¯çæä»¶ååè½æ¨¡åãèåå©å¶ <strong>è¿æ¥æä»¶</strong>ï¼çè®ºä¸å¯å¯¹å¤§å¤æ°è®¾å¤ï¼LinxuãWindowsãç½ç»è®¾å¤ï¼è¿è¡è¿ç¨ç®¡çãä½å®éä¸ï¼å®åªæ¯å¯¹ Linux è®¾å¤æ¯æåº¦è¾å¥½ï¼æ³¨ï¼å¤§å¤æ°åè½æ¨¡åé½åªå¯¹ Linux ææï¼ï¼å¯¹ Windows åç½ç»è®¾å¤çç®¡çææä¸è¬ã</p>
+<blockquote>
+<p>æ³¨ï¼Ansible å¯¹ä¸åè®¾å¤è½å¦è¢«ç®¡ççè¦æ±å¦ä¸ï¼</p>
+<ul>
+<li>å¯¹ Linux è®¾å¤çè¦æ±ï¼ï¼1ï¼å¼å¯ SSH æå¡ãï¼2ï¼å®è£ Python 2.7 ææ´é«çæ¬ã</li>
+<li>å¯¹ Windows è®¾å¤çè¦æ±ï¼ï¼1ï¼å¼å¯ WinRM æå¡ãï¼2ï¼å®è£ PowerShell 3.0 ææ´é«çæ¬ï¼ä»¥åè³å° .NET 4.0ãï¼3ï¼PowerShell èæ¬æ§è¡ç­ç¥è®¾ç½®ä¸º Restrictedã</li>
+<li>å¯¹ç½ç»è®¾å¤ï¼äº¤æ¢æº/è·¯ç±å¨ï¼çè¦æ±ï¼å¼å¯ NETCONF  æå¡ããæ³¨ï¼ç±äºæ¯æ°åè®®ï¼å æ­¤èæ§ç½ç»è®¾å¤å¯è½å¹¶ä¸æ¯æè¯¥åè½ãã</li>
+</ul>
+</blockquote>
+<h2 id="2éå¥å·¥å·"><strong><div id="id2">2ãéå¥å·¥å·</div></strong></h2>
+<h3 id="21ansible"><strong><div id="id2.1">2.1ãansible</div></strong></h3>
+<p>ansible æ¯ç¨äºä¸´æ¶ <strong>æ§è¡åä¸å½ä»¤ä»»å¡</strong> çå·¥å·ï¼ä¸ç¨å playbook å³å¯æ§è¡ä»»å¡ã</p>
+<pre><code class="language-bash">#å¯¹ææä¸»æºæ§è¡ id å½ä»¤ï¼å¹¶æ¥çè¾åºç»æã
+ansible all -i hosts -m command -a "id" -v
+</code></pre>
+<h3 id="22ansible-playbook"><strong><div id="id2.2">2.2ãansible-playbook</div></strong></h3>
+<p>ansible-playbook æ¯ç¨äº <strong>æ§è¡å¤æå½ä»¤ä»»å¡</strong> çå·¥å·ï¼å¿é¡»ä¾èµ playbook æä»¶æè½è¿è¡ã</p>
+<pre><code class="language-bash">#æ§è¡ task.yml ä»»å¡éã
+ansible-playbook -i hosts task.yml
+
+cat task.yml
+###ææ¬åå®¹###
+- hosts: linux
+  tasks:
+	- name: install nginx
+      yum:
+        name: nginx
+        state: present
+######
+</code></pre>
+<h3 id="23ansible-doc"><strong><div id="id2.3">2.3ãansible-doc</div></strong></h3>
+<p>ansible-doc æ¯ç¨äº <strong>æ¥çæ¨¡å/æä»¶ä½¿ç¨è¯´æ</strong> çå·¥å·ï¼ç¸å½äºæ¯ Ansible çâman æåâã</p>
+<pre><code class="language-bash">#æ¥ç ping æ¨¡åçåæ°ä»ç»ã
+ansible-doc -s ping
+
+#æ¥ç ping æ¨¡åçåæ°ä»ç»ã
+ansible-doc -t module -s ping
+</code></pre>
+<h3 id="24ansible-vault"><strong><div id="id2.4">2.4ãansible-vault</div></strong></h3>
+<p>ansible-vault æ¯ç¨äº <strong>å å¯ playbook éç½®</strong> çå·¥å·ï¼é²æ­¢å§æ¬ä¸­çå¯ç ä¿¡æ¯æ³é²ã</p>
+<pre><code class="language-bash">#å å¯ playbook ä»»å¡æä»¶
+ansible-vault encrypt task.yml
+
+#æ§è¡è¢«å å¯ç playbook ä»»å¡æä»¶
+ansible-playbook task.yml --ask-vault-pass
+</code></pre>
+<h3 id="25ansible-galaxy"><strong><div id="id2.5">2.5ãansible-galaxy</div></strong></h3>
+<p>ansible-galaxy æ¯ç¨äº <strong>ä¸è½½ç®¡çè§è²/éå</strong> çå·¥å·ï¼ç¸å½äºæ¯ Ansible çâä»»å¡/æ¨¡ååºç¨ååºâææ¯ç±»ä¼¼ pip çâåç®¡çå¨âã</p>
+<p>è§è²/éåçå®ç½å°åï¼<a href="https://galaxy.ansible.com/ui/standalone/roles/%E3%80%81https://galaxy.ansible.com/ui/collections/%E3%80%82" target="_blank" rel="noopener nofollow">https://galaxy.ansible.com/ui/standalone/roles/ãhttps://galaxy.ansible.com/ui/collections/ã</a></p>
+<pre><code class="language-bash">#ä¸è½½ç¨äºèªå¨åé¨ç½² nginx ä»»å¡çè§è²
+ansible-galaxy role install geerlingguy.nginx
+
+#è§è²çä½¿ç¨ç±»ä¼¼ task ä¸æ ·ï¼å·ä½æä½è§æ¬æ Playbook å°èã
+</code></pre>
+<h3 id="26ansible-console"><strong><div id="id2.6">2.6ãansible-console</div></strong></h3>
+<p>ansible-console æ¯ç¨äº <strong>ä¸ Ansible è¿è¡å½ä»¤äº¤äº</strong> çå·¥å·ï¼ç¸å½äºæ¯é¢å Ansible ç Shellã</p>
+<pre><code class="language-bash">ansible-console
+&gt; hosts web
+&gt; ping
+&gt; shell uptime
+</code></pre>
+<h2 id="3inventory---ä¸»æºæ¸å"><strong><div id="id3">3ãInventory - ä¸»æºæ¸å</div></strong></h2>
+<p>å¨ä¸»æºæ¸åä¸­æ¯æå®ä¹ï¼<strong>ä¸»æºãä¸»æºç»ãä¸»æºåéãä¸»æºç»åé</strong>ï¼ä½ä¸è¬ä¸å»ºè®®å¨ä¸»æºæ¸åä¸­å®ä¹åéï¼åéé½æ¯å®ä¹å¨åç¬ç <strong>ä¸»æº/ç»æä»¶</strong> ä¸­ãä¸»æºæ¸åæ¯æå¤ç§æ ¼å¼å»ä¹¦åï¼ä½æå¸¸ç¨çæ ¼å¼æ¯ ini æ ¼å¼ãä»¥ä¸æ¯ä¸ä¸ªä¸»æºæ¸åçç¤ºä¾ï¼</p>
+<pre><code class="language-ini"># hosts.ini
+[windows]	# windows ç»å®ä¹äº5ä¸ªä¸»æº
+www.test-[01:05].com
+
+[linux]		# linux ç»å®ä¹äº2ä¸ªä¸»æºï¼å¶ä¸­ä¸ä¸ªä¸»æºèªå¸¦ç»å½åéã
+192.168.1.1 ansible_user=kali ansible_password=kali
+www.test-06.com ansible_host=192.168.1.2
+
+[windows:vars]	# windows ç»åé
+ansible_connection=winrm
+ansible_user=administrator
+ansible_password=password123
+
+[hosts:children]	# åºäºç»åå»ºç hosts ç»
+windows
+linux
+</code></pre>
+<blockquote>
+<p>æ³¨ï¼Ansible é»è®¤é¢å®ä¹äºä¸¤ä¸ªä¸»æºç»ï¼<strong>all</strong> åç»ï¼ææä¸»æºï¼ã<strong>ungrouped</strong> åç»ï¼ä¸å¨åç»åçä¸»æºï¼ãéè¦æ³¨æçæ¯ï¼è¿ä¸¤ä¸ªç»é½ä¸åæ¬ <strong>localhost</strong>ï¼ç®¡çèç¹æ¬æºï¼ è¿ä¸ªç¹æ®çèç¹ããæ³¨ï¼å½ä»¤ <code>ansible windows --list-hosts</code> å¯ååº windows ç»ä¸­çææä¸»æºãã</p>
+</blockquote>
+<h2 id="4playbook---ä»»å¡æ¸å"><strong><div id="id4">4ãPlaybook - ä»»å¡æ¸å</div></strong></h2>
+<p>Playbook æ¯ Ansible ä¸­æéè¦çä¸ä¸ªæ¦å¿µï¼å®å®ä¹äºæ¹éçä¸»æºä»»å¡åºè¯¥å¦ä½å»æ§è¡ãèä¸ä¸ª Playbook åæ¯ç±ä¸ä¸ªæå¤ä¸ª Play ææçï¼å æ­¤ï¼<strong>åªè¦äºè§£äº Play çææä¹å°±äºè§£äº Playbook</strong>ã</p>
+<p>ä¸ä¸ª Play ä¸»è¦æ¯ç±ä»¥ä¸ä¸é¨åææ:</p>
+<ul>
+<li><strong>Keywords</strong>ï¼æå®ä¸»æºç»ãè¿ç¨è¿æ¥çæ¹å¼ãæ¯å¦ææç­å¨å±åæ°ãå¶ä¸­ä¸»æºç»å¿é¡»è¢«æå®ããæ³¨ï¼<a href="https://docs.ansible.org.cn/ansible/latest/reference_appendices/playbooks_keywords.html#id2" target="_blank" rel="noopener nofollow">å¯ç¨åæ°åè</a>ã</li>
+<li><strong>Vars</strong>ï¼å®ä¹ playbook å¨è¿è¡æ¶éè¦ä½¿ç¨çåéããéå¿é¡»ã</li>
+<li><strong>Tasks</strong>ï¼æå®è¦æ§è¡çä»»å¡ã</li>
+</ul>
+<h3 id="41keywords---å³é®è¯"><strong><div id="id4.1">4.1ãKeywords - å³é®è¯</div></strong></h3>
+<p>Play ä¸­çå³é®è¯æç¹åæ¯ C è¯­è¨ä¸­çå¨å±åéï¼å¨ä¸ä¸ª Play ä¸­ï¼hosts å tasks/roles æ¯å¿ä¸å¯å°çï¼å¶ä½åæ°åå¯æå¯æ ãPlay å¸¸ç¨å³é®è¯å¦ä¸ï¼</p>
+<ul>
+<li>hostsï¼æå®è¦æ§è¡ä»»å¡çä¸»æºç»ã</li>
+<li>connectionï¼ä½¿ç¨æå®çåè®®ï¼è¿æ¥éè¦æ§è¡è¯¥ä»»å¡çä¸»æºãé»è®¤æ¯ sshã</li>
+<li>portï¼æå®è¿æ¥åè®®å¯¹åºçç«¯å£ãé»è®¤æ¯æå®åè®®å¯¹åºçé»è®¤ç«¯å£ã</li>
+<li>====</li>
+<li>becomeï¼å¼å¯ææåè½ï¼ä½¿ç¨ææä¹åçèº«ä»½æ§è¡ä»»å¡ã</li>
+<li>become_methodï¼æææ¯æ sudoãsu è¿ä¸¤ç§æ¹æ³ï¼é»è®¤æ¯ä½¿ç¨ sudo è¿è¡ææã</li>
+<li>become_userï¼æå®ææä¹åè·å¾çç¨æ·èº«ä»½ï¼é»è®¤æ¯ root ç¨æ·ã</li>
+<li>collectionsï¼å¨å±å£°æéååç§°ï¼è¿æ ·å¨è°ç¨æ­¤éåçæ¨¡åæ¶ä¸éè¦æºå¸¦éåçåç¼åç§°ã</li>
+<li>====</li>
+<li>varsãvars_filesï¼å®ä¹åéããæ³¨ï¼è¿äºå³é®è¯æçä¾¿æ¯ä¸é¢çå°èãã</li>
+<li>tasksãrolesãhandlersï¼å®ä¹ä»»å¡ããæ³¨ï¼è¿äºå³é®è¯æçä¾¿æ¯ä¸é¢çå°èãã</li>
+</ul>
+<blockquote>
+<p>æ³¨æï¼å¹¶ä¸åªæ¯å¨ Play ä¸­å­å¨å³é®è¯çè¯´æ³ï¼TaskãRole ä¸­ä¹ä¾ç¶å­å¨ãè½ç¶ä¸èä¹é´çå³é®è¯åæå·®å¼ï¼å³é®è¯ when å¨ Play ä¸­æ²¡æï¼ä½å¨ TaskãRole ä¸­æ¯æçãï¼ï¼ä½ç¸ä¼¼çå°æ¹æå¾å¤ï¼åå¦å³é®è¯ becomeãvars ç­ã</p>
+</blockquote>
+<h3 id="42vars---åé"><strong><div id="id4.2">4.2ãVars - åé</div></strong></h3>
+<h4 id="421åéä¼åçº§"><strong><div id="id4.2.1">4.2.1ãåéä¼åçº§</div></strong></h4>
+<p>Ansible ä¸­æ¯æèªå®ä¹åéçå°æ¹æå¾å¤ï¼ä»¥ä¸æå°æç§ä¼åçº§çé¡ºåºä¾æ¬¡ååºï¼</p>
 <ol>
-<li><a href="#org936be25" rel="noopener nofollow">2025å¹´åº¦æ»ç»</a></li>
-<li><a href="#org07aceb4" rel="noopener nofollow">å³äºCtorch</a></li>
-<li><a href="#orgc1859ea" rel="noopener nofollow">å³äºCSP-J</a></li>
-<li><a href="#org1d85aae" rel="noopener nofollow">å³äºlambdaæ¼ç®ãUTMï¼éç¨å¾çµæºï¼ãCoq</a></li>
-<li><a href="#org9a42a9e" rel="noopener nofollow">å³äºæ±ç¼</a></li>
-<li><a href="#orgabafce1" rel="noopener nofollow">ä¸äºææ³</a></li>
-<li><a href="#org89cb23b" rel="noopener nofollow">èµæ</a></li>
-<li><a href="#org3319ea0" rel="noopener nofollow">ç»è¯­</a></li>
+<li>å½ä»¤è¡åéï¼éè¿å½ä»¤è¡åæ°å¸¦å¥ï¼ä¼åçº§æé«ãå¦ï¼<code>ansible-playbook -i hosts -v main.yml --extra-vars "v1=a v2=b"</code>ã</li>
+<li>playbook åéï¼éè¿å³é®è¯ vars å¸¦å¥ã</li>
+<li>Inventory ä¸»æºåéï¼éè¿ä¸»æº ip å¸¦å¥ãå¦ï¼<code>1.1.1.1 v1=a v2=b</code></li>
+<li>host_vars ä¸»æºåéï¼ä¸å¯æè¿°ã</li>
+<li>group_vars ä¸»æºç»åéï¼ä¸å¯æè¿°ã</li>
+<li>Inventory ä¸»æºç»åéï¼ä¸å¯æè¿°ã</li>
 </ol>
-<p>Powered by GhostFace's Emacs.</p>
-<p><a id="org936be25"></a></p>
-<h1 id="2025å¹´åº¦æ»ç»">2025å¹´åº¦æ»ç»</h1>
-<p><a id="org07aceb4"></a></p>
-<h2 id="å³äºctorch">å³äºCtorch</h2>
-<p><strong>Ctorch è¯ççç¬¬166å¤©ã</strong><br>
-æ²¡æ³å°ï¼cté½è¿ä¹å¤§äºï¼<strong>ä»ä¸ä¸ªåäººé¡¹ç®å°ç°å¨4äººçå°å¢éï¼ä»ä¸ä¸ªæ¨¡ç³çæ³æ³å°å¦ä»è¿ä¸è¡çä»£ç ï¼æ»è®¡5ä¸ªæ13å¤©ã</strong></p>
-<p>ä¸å¾ä¸è¯´ï¼è¿æ®µæ¶é´ï¼å­¦å°äºå¾å¤ã</p>
-<p><strong>ä»æ¥æ²¡æç¨è¿gitçäººï¼commitäºè¿160æ¬¡ï¼<br>
-ä»æ¥æ²¡ææ¥è§¦è¿æ±ç¼çäººï¼ä¸ºäºæéä¼åãææç¼è¯å¨è¡ä¸ºï¼å­¦äº2ä¸ªæçæ±ç¼ï¼<br>
-æ¾ç»è¿ç±»é½æ²¡åè¿çäººï¼åäº5ä¸ªå åè¡çç±»ï¼<br>
-æ¾ç»è¿æ´ç´ ç©éµä¹é½ä¸ä¼åçèé¸¡ï¼ææäºä¸ä¸ªStrassen+ååçå¹¶è¡ç©éµä¹</strong>ï¼<br>
-è¯¸å¦æ­¤ç±»ï¼ä¸ååä¸¾ã</p>
-<p><a id="orgc1859ea"></a></p>
-<h2 id="å³äºcsp-j">å³äºCSP-J</h2>
-<p>æ¬èè»å·²ç»å¾é¿æ¶é´æ²¡ææ´æ°è¿æ¥å¿äºï¼å¯è½çåå æ¯æ¯è¾å¿ã</p>
-<p><strong>æè¿å ä¸ªæï¼æ¬äººä¸ç´å¨å¿CSP-Jçåå¤ãCtorchçå¼åãCoqçå­¦ä¹ ä¸lambdaæ¼ç®ä¸ã<br>
-åå¨æååèµ·äºãææ3ä¸ªæè¾¾çä¸ãçææï¼å½ç¶ï¼æææåäºï¼</strong>ï¼</p>
-<p>è¿ä¸æ®µæ¶é´ï¼å·çé¢æ¯æä¹åä¸å¹´å·çé½å¤ï¼</p>
-<p>20å¤å¤©ï¼æå­¦ä¹ äºï¼<strong>dpãå¾è®ºãå¹¶æ¥éãå æå¹¶æ¥éãæ¨¡æéç«ç­ç®æ³ï¼ä¹åä¸å¹´ä¹åªå­¦äºæåºï¼</strong></p>
-<p><strong>æä¹è¯´å¢ï¼ä¹åä¸ç´æ²¡ææ¸æ¥çæç´¢ç®æ³ï¼ç°å¨çæ¥ä¹ä¸è¿å¦æ­¤ã</strong></p>
-<p><a id="org1d85aae"></a></p>
-<h2 id="å³äºlambdaæ¼ç®utméç¨å¾çµæºcoq">å³äºlambdaæ¼ç®ãUTMï¼éç¨å¾çµæºï¼ãCoq</h2>
-<p>éåï¼åæ¯å ä¸ºç¥éäºC++æä¸ªå«lambdaè¡¨è¾¾å¼çä¸è¥¿ï¼éåå¨æ´è°·ä¸æç´¢ï¼<strong>æå¤çå°äºä¸ç¯è®²lambdaæ¼ç®çæç« </strong>ï¼</p>
-<p>æ±çå¨å­¦æ ¡ä¸è¯¾æ èçå¿æï¼å­¦ä¹ äºlambdaæ¼ç®ï¼ç»æä¸åä¸å¯æ¶æ¾ã</p>
-<p>å­¦å®ä¹åï¼æå¾ç¥<strong>lambdaæ¼ç®å¾çµå®å¤ï¼äºæ¯ä¹ï¼ææ³èµ·äºä¸ä¸ªå¥½ç©çä¸è¥¿ï¼ç¨æ ç±»ålambdaæ¼ç®ææUTMï¼éç¨å¾çµæºï¼ï¼è¿å½ç¶çè®ºå¯è¡</strong>ã</p>
-<p>åæ­£æå¹³æ¶è½å¤æèçæ¶é´å¾å¤ï¼å¨é®è¿AIåï¼å¾ç¥è¿æ¯ä¸æ¬¡éå¸¸å°é¾ä½æ¯æ¶è·æå¤§çææï¼æä¾¿å¼å§äºæçæå»ºã</p>
-<p><strong>ä¸æ¯ç¬ï¼ä¸ä¸ªæ¬ï¼ä¸ä¸ªèå­ï¼ä¸çè®ºæï¼ä¸æç´¢ï¼åªæèã<br>
-æ¯å¤©ä¸æ¾å­¦çè·¯ä¸ï¼èµ°çéè¦35minå·¦å³ï¼è¿æ®µæ¶é´ï¼æå°±ä¼ä¸åå°æèå³äºUTMçé®é¢ã<br>
-è¿ä¸ªè¿ç¨å¾ç½ï¼å ä¸ºæå¨æå»ºä¸ä¸ªå®æ´çä¸çï¼çè®ºä¸ï¼è¿å°ãä»ä»ä¾é ä»£å¥å®æè®¡ç®ãçâè®¡ç®æºâå¯ä»¥å®æä»»ä½å·¥ä½ï¼åªè¦ä½ æ³ï¼çè³å¯ä»¥è·ä¸ä¸ªä»¿ççWindows.</strong></p>
-<p>åäºå¿«å åå¼ çº¸ï¼æææç½ï¼AIè¯´çé£å¥ï¼<strong>ãlambdaæ¼ç®å¯ä»¥ç»ä¹ æç»´ã</strong>ï¼çªç¶æä¸å¤©ï¼æçå¾è°ç¨ãéå½çæè§å®å¨åäºï¼æçå½æ°çæè§ä¹åäºã</p>
-<p><strong>æä»¬é½è§å¾ï¼æ¯åæäºæ°å­ï¼ææäºå½æ°;</strong><br>
-ä½æ¯ï¼Churchæ°å­åè¯æä»¬ï¼<strong>æ°å­ä¹æ¯å½æ°</strong>ã</p>
-<p>ï¼è¿ä¸ªåä¸ºLUTMçUTMä»å¨è®¾è®¡ï¼ä¸è¿ï¼ç±äºCtorchå¯¹æçä¼åçº§æ´é«ï¼ç®åææ¶åå·¥ï¼ç­2æ16æ¥åå¸Ctorch RC 1ä¹ååç»§ç»­ï¼</p>
-<p><strong>å­¦ä¹ å®lambdaæ¼ç®åï¼ææ¥è§¦å°äºCoqã<br>
-Coqè¯æãå æ³å·¦é¶å¾ãçæè·¯è®©ææè§æ æ¯éæï¼è¿å®å¨é¢ è¦äºæå¯¹æ°å­¦å½çº³æ³çè®¤ç¥</strong>ã</p>
-<p><strong>èä¸ï¼Coqä¸­å¯¹èªç¶æ°çå®ä¹ålambdaæ¼ç®çåè¡¨åºå¥çä¸è´ã<br>
-æä¹è¯´å¢ï¼å¯è½è¿å°±æ¯ãä¸åä¸ç¦»å¶å®ãå§.</strong><br>
-ä½æ¯ä»ç¶æ¯ä¸ºäºCtorchçå¼åï¼ææåäºCoqçå­¦ä¹ ã</p>
-<p><a id="org9a42a9e"></a></p>
-<h2 id="å³äºæ±ç¼">å³äºæ±ç¼</h2>
-<p>å¨è¿ä¹åï¼æå­¦ä¹ äºArm64æ±ç¼ã<br>
-ä»ä»æ¯ååºä¸ä¸ªHello Worldï¼æå°±è±äº2å¤©ï¼å½ç¶ï¼æå¨å­¦æ ¡æ¯å¤©åªæ10minè½ç¨çµèï¼20minå¯ä»¥åAIå¯¹è¯ï¼.<br>
-ä½ä»æ­¤ä¸æ¬¡ï¼æå°±æç½äºï¼C++ä¸­éå½ãè°ç¨æ¯å¦ä½åçï¼æ¬è´¨å¶å®å°±æ¯å°x29,x30å¯å­å¨çå¼ä¿®æ¹ï¼<br>
-æä¹æç½äºï¼ä»ä¹æ¯ãæ æº¢åºãï¼ä»ä¹æ¯ãè°ç¨æ ãã<br>
-å è¡çC++æ¢ææ±ç¼å°±å¯è½éè¦æ°åè¡ï¼è¿è®©æåä»£ç æ¶ä¼æèçæ±ç¼çæ ·å­ã<br>
-ä¸å¾ä¸è¯´ï¼è¿ç¡®å®æ¯ä¸æ¬¡å¾å¥½çåç»ã</p>
-<p><a id="orgabafce1"></a></p>
-<h2 id="ä¸äºææ³">ä¸äºææ³</h2>
-<p>åé¦è¿å ä¸ªæææç»åçï¼å¯è½æ¯æä¹åä¸å¹´å­¦çé½è¦å¤ï¼é½è¦æï¼</p>
-<p><strong>è¿äºç¥è¯æ çå¸¦ç»äºæå¾å¼ºçå¡é ä½ç¨ï¼<br>
-è®¾è®¡LUTMï¼é»ç¼äºæè¿è¡2å°æ¶ä»¥ä¸çæ·±åº¦æèçè½åï¼<br>
-å­¦ä¹ æ±ç¼ï¼è®©æå¯¹åºå±æäºææ§ï¼<br>
-å­¦ä¹ lambdaæ¼ç®ï¼è®©æå¯¹å½æ°æäºæ´å½»åºçè®¤è¯ï¼<br>
-å¯ä»¥è¯´ï¼å¯¹ä¸ä¸ªåä¸­çèè¨ï¼è¿æ¡è·¯å¾ç¬ä¸æ äºã<br>
-æç»è¯äºä¸ç¾¤å¿åéåçæåï¼æäºèªå·±çå¢éãç»ç»ï¼<br>
-æ¾ç»é£ä¸ªè¢«å²ç¬âåè¿äºæä»ä¹ç¨âãâè¿ä¸ªå¥é½æ¿ä¸å°âçäººï¼å¦ä»ç«æä¸ºä¸ä¸ªå¼æºé¡¹ç®çå¼åèãCSP-Jççä¸ã</strong><br>
-<strong>æ¯«æ çé®ï¼è¿æ¯æ æ¯æä»·å¼çåå¹´ï¼</strong></p>
-<p><a id="org89cb23b"></a></p>
-<h1 id="èµæ">èµæ</h1>
-<p>ä¸é¢æ¾ä¸ç¹èµæ</p>
-<p>1.è®¾è®¡LUTMæ¶ä¸Deepseekçå¯¹è¯ï¼<a href="https://chat.deepseek.com/share/wednovjlp5sa013j4q" target="_blank" rel="noopener nofollow">https://chat.deepseek.com/share/wednovjlp5sa013j4q</a><br>
-2.æç« ï¼ãæ­åèªå·±ï¼æææåãââââCSP-Jçä¸è·å¥æè¨ï¼<a href="https://www.cnblogs.com/SilverGo/p/19223328" target="_blank">https://www.cnblogs.com/SilverGo/p/19223328</a><br>
-3.æç« ï¼ãéè¢­å¯¼è®ºÂ·åä¸­ççå®ä¹¦ãï¼<a href="https://www.cnblogs.com/SilverGo/p/19284999" target="_blank">https://www.cnblogs.com/SilverGo/p/19284999</a><br>
-4.æç« ï¼ãç©éµä¹æ³ä¼åãï¼<a href="https://www.cnblogs.com/SilverGo/p/19019364" target="_blank">https://www.cnblogs.com/SilverGo/p/19019364</a><br>
-5.Ctorchçgithubï¼<a href="https://github.com/ShengFlow/CTorch/tree/feature-nn.Module?tab=contributing-ov-file" target="_blank" rel="noopener nofollow">https://github.com/ShengFlow/CTorch/tree/feature-nn.Module?tab=contributing-ov-file</a><br>
-6.ä»¥ä¸æ¯å¾çï¼<br>
-<img src="https://img2024.cnblogs.com/blog/3357339/202512/3357339-20251231224442471-111964913.png" alt="æªå±2025-12-28 10.22.19" width="1512" height="982" loading="lazy"><br>
-<img src="https://img2024.cnblogs.com/blog/3357339/202512/3357339-20251231224520016-1653169643.png" alt="æªå±2025-12-18 06.31.21" width="1512" height="982" loading="lazy"><br>
-<img src="https://img2024.cnblogs.com/blog/3357339/202512/3357339-20251231224619686-610660255.png" alt="æªå±2025-10-04 16.25.21" width="1512" height="982" loading="lazy"></p>
-<p><a id="org3319ea0"></a></p>
-<h1 id="ç»è¯­">ç»è¯­</h1>
+<h4 id="422æä»¶åé"><strong><div id="id4.2.2">4.2.2ãæä»¶åé</div></strong></h4>
+<p>å¨ä¸è¿°åéä¸­ï¼å³äºæä»¶åé host_varsãgroup_vars çææä¸å¤ªå¥½çè§£ï¼æä»¥ä¸ä¸ª ansible é¡¹ç®ç¤ºä¾åè¯´æï¼</p>
+<p>ï¼1ï¼é¦åï¼æç§å¦ä¸é¡¹ç®çç®å½ç»æå¶ä½ç¸åºçæä»¶ã</p>
+<pre><code class="language-wiki">nginx_install
+âââ inventory
+â   âââ group_vars
+â   â   âââ lin.yml
+â   âââ hosts
+â   âââ host_vars
+â       âââ 192.168.56.20.yml
+âââ main.yml
+</code></pre>
+<p>å¶ä¸­ï¼hosts ææ¬åå®¹å¦ä¸ï¼</p>
+<pre><code class="language-ini">[lin]
+192.168.56.20
+</code></pre>
+<p>ï¼2ï¼ç¶åï¼ä»¥ YAML çè¯­æ³æ ¼å¼å»ç¼åæä»¶ä¸­çåéãlin.yml ææ¬åå®¹å¦ä¸ï¼</p>
+<pre><code class="language-yaml">---
+v1: a
+v2: b
+</code></pre>
+<p>ï¼3ï¼æåï¼å¨å·¥ä½ç®å½ nginx_install ä¸æ§è¡å½ä»¤ <code>ansible-playbook -i inventory -v main.yml</code> å³å¯ããæ³¨ï¼åæ° i çå¼ä¸ä»å¯ä»¥æ¯æä»¶ä¹å¯ä»¥æ¯ç®å½ãã</p>
+<h4 id="423ç¹æ®åé"><strong><div id="id4.2.3">4.2.3ãç¹æ®åé</div></strong></h4>
+<h5 id="facts-åé">Facts åé</h5>
+<p>ä¸ºäºè®© Ansible æ´äºè§£ç®æ èç¹ï¼å¯ä»¥è®©å®å»æ¶éç®æ èç¹çä¿¡æ¯ï¼æ¯å¦è·åç®æ èç¹çï¼ä¸»æºåãç³»ç»çæ¬ãIP å°åãååºæè½½ä¿¡æ¯ç­ãè¿äºèç¹ä¿¡æ¯è¢«ç§°ä¸º Factsï¼å¯éè¿å½ä»¤ <code>ansible localhost -m gather_facts</code> å»æ¥çãæäºè¿äºä¿¡æ¯ï¼æä»¬ä¾¿å¯ä»¥æ´çµæ´»çç®¡çèç¹äºï¼æ¯å¦å½ IP å°åä¸º xxx æ¶å°±ææ ·ï¼å½ç³»ç»æ¯ CentOS 6 æ¶ææ ·ï¼ç­ç­è¿äºã</p>
+<p><strong>è¿äºåéä¸­ä»¥ <code>ansible_</code> å¼å¤´çåéé»è®¤é½è¢«  Ansible æ³¨å¥å°äºå¶èªèº«ç»´æ¤çåéè¡¨ hostvars ä¸­äºãå æ­¤ï¼æä»¬å¯ä»¥ç´æ¥å»è®¿é®åéæ¬èº«ï¼èæ éä»¥è®¿é®âç»åéæå­å¸åéâçæ¹å¼å»è®¿é®å®ä»¬ã</strong></p>
 <blockquote>
-<p>âPut yourself in places that are gonna cause you to stretch<br>
-è®©èªå·±ç½®èº«äºè½ä¿ä½¿èªå·±çªç ´çå¢å°<br><br>
-A fighter isn't someone that never fails<br>
-çæ­£çåå£«å¹¶éæ°¸ä¸å¤±è´¥<br><br>
-A fighter is someone who never quits<br>
-èæ¯æ°¸ä¸è¨å¼<br><br>
-You are more to me than you could never now<br>
-ä½ å¯¹æèè¨è¿æ¯èªå·±æ³è±¡çæ´éè¦<br><br>
-And I know I've got a full room of fighters in here right<br>
-æ­¤å»ææ·±ç¥è¿æ»¡åº§çæ¯åèâ<br></p>
+<p>æ³¨ï¼è¿äºåéåªè½éè¿ Playbook å»è°ç¨ï¼ä½¿ç¨å½ä»¤ <code>ansible localhost -m debug -a "var=ansible_facts.ansible_interfaces"</code> å¹¶ä¸è½å¤æ¥çï¼åºè¯¥æ¯ ansible å¨æ§è¡ä»»å¡æ¶é»è®¤å¹¶ä¸ä¼æ¶é Facts æå¯¼è´ï¼ä½ ansible-playbook é»è®¤æ¯ä¼æ¶éçã</p>
 </blockquote>
+<p>åé Facts å Hostvars çå¼è¿å¯éè¿ä»¥ä¸ Play å»æ¥çã</p>
+<pre><code class="language-yaml">- name: playbooks
+  hosts: lin
+  tasks:
+    - name: info in ansible_facts
+      debug:
+        var: ansible_facts
+    - name: info in hostvars
+      debug:
+        var: hostvars
+</code></pre>
+<h5 id="register-åé">register åé</h5>
+<p>ææ¶åï¼å¯è½éè¦å°æä¸æ¡ä»»å¡æ§è¡çç»æä¿å­ä¸æ¥ï¼ä»¥ä¾¿å¨æ¥ä¸çä»»å¡ä¸­è°ç¨æèåäºå¤æ­ãè¿æ¶å°±å¯ä»¥éè¿ register å³é®å­æ¥å°æä¸ä»»å¡ç»æä¿å­ä¸ºä¸ä¸ªåéããæ³¨ï¼è¿ä¸ªåéçç»æç±»ä¼¼äº ä¸é¢ç hostvars åéï¼å æ­¤å¨è°ç¨çæ¶åéè¦æ³¨æãã</p>
+<pre><code class="language-yaml">- name: register variables
+  hosts: lin
+  tasks:
+    - name: capture output of whoami command
+      command: whoami
+      register: login
+
+    - name: get var
+      debug:
+        msg: "login user is {{ login.stdout }}"
+</code></pre>
+<h4 id="424è°ç¨åé"><strong><div id="id4.2.4">4.2.4ãè°ç¨åé</div></strong></h4>
+<p>æé çåéæç»é½æ¯ä¸ºäºä½¿ç¨ï¼èåéçç±»ååå¤ç§å¤æ ·ï¼å¦ï¼æ´æ°ãå­ä¸²ãæ°ç»ãå­å¸ ç­ç±»åï¼é£ä¹é¢å¯¹è¿äºç±»åçåéè¯¥å¦ä½ä½¿ç¨å¢ï¼ä»¥ä¸ä»¥ä¸ä¸ªç¤ºä¾çä¸¤ç§ç¨æ³å»è°ç¨å®ä»¬ã</p>
+<p>ä»¥ä¸é¢æµè¯ register åéçç¤ºä¾ä¸ºä¾ï¼åè®¾è¾åºçå¤æåé login çå¼å¦ä¸ï¼</p>
+<pre><code class="language-wiki">"login": {
+        "changed": true,
+        "cmd": [
+            "whoami"
+        ],
+        "delta": "0:00:00.011976",
+        "end": "2025-12-31 05:27:48.401127",
+        "failed": false,
+        "msg": "",
+        "rc": 0,
+        "start": "2025-12-31 05:27:48.389151",
+        "stderr": "",
+        "stderr_lines": [],
+        "stdout": "kali",
+        "stdout_lines": [
+            "kali"
+        ]
+    }
+</code></pre>
+<p>é£ä¹å¨ Play ä¸­è°ç¨å¶ä¸­å¼çæ¹æ³å¦ä¸ï¼</p>
+<pre><code class="language-yaml">- name: register variables
+  hosts: lin
+  tasks:
+    - name: capture output of whoami command
+      command: whoami
+      register: login
+
+    - name: get var
+      debug:
+        msg: "login user1 is {{ login.stdout_lines[0] }}"
+
+    - name: get var
+      debug:
+        msg: "login user2 is {{ login['stdout_lines'][0] }}"
+</code></pre>
+<h3 id="43tasks---ä»»å¡"><strong><div id="id4.3">4.3ãTasks - ä»»å¡</div></strong></h3>
+<p>å¨ Play ä¸­ç¨æ¥æ§è¡ä»»å¡çæ¹å¼æä¸ç§ï¼åå«æ¯ï¼tasksï¼å¸¸è§ä»»å¡ï¼ãrolesï¼ä»»å¡ç»ç»åï¼ãhandlersï¼å¯å¤ç¨ä»»å¡ï¼ï¼ä¸èè½åæåçç¨æ³ï¼ä½æ¬è´¨ä¸é½æ¯ä¸æ ·çï¼æ§è¡ä»»å¡ã</p>
+<h4 id="431tasks"><strong><div id="id4.3.1">4.3.1ãTasks</div></strong></h4>
+<ul>
+<li><strong>ä»»å¡åè¡¨ä¸­çåä»»å¡ææ¬¡åºéä¸ªå¨ hosts ä¸­æå®çææä¸»æºä¸æ§è¡ï¼å¨ææä¸»æºä¸åå®æç¬¬ä¸ä¸ªä»»å¡ååå¼å§ç¬¬äºä¸ªã</strong></li>
+<li>å¨èªä¸èä¸è¿è¡æ playbook æ¶ï¼å¦æä¸­éåçéè¯¯ï¼åæ´ä¸ª playbook ä¼åæ­¢æ§è¡ï¼èç±äº playbook çå¹ç­æ§ï¼playbook å¯ä»¥è¢«åå¤æ§è¡ï¼æä»¥å³ä½¿åçäºéè¯¯ï¼å¨ä¿®å¤éè¯¯åï¼åæ§è¡ä¸æ¬¡å³å¯ã</li>
+</ul>
+<pre><code class="language-yaml">- name: task test
+  hosts: linux
+  tasks:
+    - name: make sure apache is running
+      service: 
+        name: httpd
+        state: started
+  
+    - name: run this command and ignore the result
+      command: /usr/bin/somecommand
+      ignore_errors: True		#è¥å½ä»¤ä¼è¿åéè¯¯ä¿¡æ¯ï¼ä½è¿ä¸ªéè¯¯å¯¹åç»­ä»»å¡çæ§è¡å½±åä¸å¤§æ¶ï¼å¯ä½¿ç¨æ­¤å³é®è¯å¿½ç¥éè¯¯ï¼è®©ä»»å¡ç»§ç»­é¡ºå©æ§è¡ã
+</code></pre>
+<h4 id="432roles"><strong><div id="id4.3.2">4.3.2ãRoles</div></strong></h4>
+<ul>
+<li>Roles çåºç°å®ç¾è§£å³äºå¨<strong>å¤æä»»å¡ä¸ playbook ç¯å¹è¿é¿ãè¿äºèè¿ãç¼ºä¹çµæ´»æ§ãç»´æ¤ææ¬å·¨å¤§</strong>ç­é®é¢ã</li>
+<li>Roles çæå»ºä¸¥éä¾èµç®å½å½åè§ååç®å½ææ¾ï¼æä»¥ç®å½çå½ååææ¾éå¸¸éè¦ããæ³¨ï¼ä½æ­¤å¤ä¸ä¼è¯¦è¿° Roles çæå»ºè¿ç¨ãã</li>
+<li>ç±äºè¿ç»´ä¸­çå¾å¤ä¸å¡åºæ¯é½æ¯ä¸æ ·çï¼å æ­¤å¯ä»¥å°ä¸äºä¸å¡ç Playbook è½¬æ¢ä¸º Role æ ¼å¼ä»¥ä¾å¶ä»äººå¤ç¨ãä¸ºæ­¤ï¼å®æ¹æä¾äºä¸ä¸ªå¯æç®¡ Role çå¹³å°ï¼è®© Role è§è²å¯ä»¥å APT è½¯ä»¶åä¸æ ·éä¸éç¨ããæ³¨ï¼<a href="https://galaxy.ansible.com/ui/standalone/roles/" target="_blank" rel="noopener nofollow">å®æ¹å°å</a>ã</li>
+</ul>
+<p><strong>ï¼1ï¼Role è§è²çç®¡ç</strong>ï¼</p>
+<pre><code class="language-bash">#ååºå·²å®è£ç Role
+ansible-galaxy role list
+
+#å®è£æ¾å°ç Role
+ansible-galaxy role install geerlingguy.nginx
+
+#å é¤æå®ç Role
+ansible-galaxy role remove geerlingguy.nginx
+</code></pre>
+<p><strong>ï¼2ï¼Role è§è²çåºç¨</strong>ï¼</p>
+<pre><code class="language-yaml">- name: install nginx
+  hosts: linux
+  roles:
+    - role: geerlingguy.nginx
+      vars:
+        v1: a
+        v2: b
+</code></pre>
+<p><strong>ï¼3ï¼Role è§è²çç»æ</strong>ï¼</p>
+<pre><code class="language-wiki">#ansible-galaxy init role_name
+#tree role_name/
+
+role_name/            \\ è§è²åç§°
+âââ defaults           \\ ä¸ºå½åè§è²è®¾å®é»è®¤åéæ¶ä½¿ç¨æ­¤ç®å½ï¼åºå½åå«ä¸ä¸ªmain.ymlæä»¶ï¼
+â   âââ main.yml        
+âââ files              \\ å­æ¾æcopyæscriptç­æ¨¡åè°ç¨çæä»¶
+âââ handlers           \\ æ­¤ç®å½åºå½åå«ä¸ä¸ªmain.ymlæä»¶ï¼ç¨äºå®ä¹åè§è²ç¨å°çåhandler
+â   âââ main.yml
+âââ meta               \\ åºå½åå«ä¸ä¸ªmain.ymlï¼ç¨äºå®ä¹è§è²çç¹æ®è®¾å®åå¶ä¾èµå³ç³»ï¼1.3åä»¥åçæ¬æ¯æ
+â   âââ main.yml
+âââ README.md
+âââ tasks              \\ è³å°åå«ä¸ä¸ªåä¸ºmain.ymlçæä»¶ï¼å®ä¹äºæ­¤è§è²çä»»å¡åè¡¨
+â   âââ main.yml
+âââ templates          \\ templateæ¨¡åä¼èªå¨å¨æ­¤ç®å½ä¸­å¯»æ¾Jinja2æ¨¡æ¿æä»¶
+âââ tests
+â   âââ inventory
+â   âââ test.yml
+âââ vars              \\ åºå½åå«ä¸ä¸ªmain.ymlï¼ç¨äºå®ä¹æ­¤è§è²ç¨å°çåé
+   âââ main.yml
+</code></pre>
+<h4 id="433handlers"><strong><div id="id4.3.3">4.3.3ãHandlers</div></strong></h4>
+<ul>
+<li>Handler éè¿ä»»å¡å³é®è¯ notify æ¥çè§æä¸ª taskï¼ä¸æ¦ task çæ§è¡ç»æåçååï¼åè§¦å Handler ä»»å¡ã</li>
+<li>Handler ä»»å¡å¹¶ä¸æ¯è¢« notify åç«å»æ§è¡çãé»è®¤æåµä¸ï¼æ¯å¨ <strong>âå½å Play çææ tasks æ§è¡å®ä¹åâ</strong> ææ§è¡ã</li>
+<li>é»è®¤æåµä¸ï¼å¨ä¸ä¸ª Play ä¸­ï¼åªè¦æ task æ§è¡å¤±è´¥ï¼å play ç»æ­¢ï¼å³ä½¿æ¯ä¸ handler å³èç task å¨å¤±è´¥ç task ä¹åè¿è¡æåäºï¼handler ä¹ä¸ä¼è¢«æ§è¡ãå¦æå¸æå¨è¿ç§æåµä¸ handler ä»ç¶è½å¤æ§è¡ï¼å¯å¼å¯ Play å³é®è¯ <code>force_handlers: yes</code>ã</li>
+</ul>
+<pre><code class="language-yaml">- name: handler task test
+  hosts: all
+  force_handlers: yes
+  tasks:
+    - name: a task which always notifies its handler
+      command: /bin/true
+      notify: restart the database
+    - name: a task which fails because the package doesn't exist
+      yum:
+        name: notapkg
+        state: latest
+      
+  handlers:
+    - name: restart the database
+      service:
+        name: mariadb
+        state: restarted
+</code></pre>
+<h3 id="44å¶å®æå·§"><strong><div id="id4.4">4.4ãå¶å®æå·§</div></strong></h3>
+<h4 id="441when---å¤æ­"><strong><div id="id4.4.1">4.4.1ãWhen - å¤æ­</div></strong></h4>
+<p>ä»»å¡å³é®è¯ when å¯æ ¹æ®æäºæ¡ä»¶çæ¯å¦è¾¾ææ¥å³å® task æ¯å¦åºè¯¥è¢«æ§è¡ã</p>
+<pre><code class="language-yaml">- name: Install vim
+  hosts: all
+  tasks:
+    - name:Install VIM via yum
+      yum: 
+        name: vim-enhanced 
+        state: installed
+      when: ansible_os_family == "RedHat"
+#      when: some_var | float &gt; 90
+#      when: result is changed
+</code></pre>
 <blockquote>
-<p>âI see ,I like ,I go ,I get.<br>
-ç®ä¹æåï¼å¿ä¹æåï¼è¸ä¸å¾ç¨ï¼å¿å¨å¿å¾ï¼â<br></p>
+<p>æ³¨ï¼When çæ¡ä»¶å¤æ­<strong>å ä¸ºå¯ä»¥éåè¿æ»¤å¨æä»¶åæµè¯æä»¶ä½¿ç¨ï¼æä½¿å¶åå¾å¾çµæ´»ä¹å¾å¤æ</strong>ï¼å·ä½å¯åè<a href="https://clay-wangzhi.com/devops/ansible/playbook-if.html" target="_blank" rel="noopener nofollow">ç¬¬ä¸æ¹æå</a>æ<a href="https://docs.ansible.org.cn/ansible/latest/playbook_guide/playbooks_conditionals.html" target="_blank" rel="noopener nofollow">å®æ¹æå</a>æ¥çã</p>
 </blockquote>
+<h4 id="442loop---å¾ªç¯"><strong><div id="id4.4.2">4.4.2ãLoop - å¾ªç¯</div></strong></h4>
+<p>ä»»å¡å³é®è¯ loop å¯æ§è¡ä¸äºéå¤æ§çæä½ã</p>
+<p><strong>ï¼1ï¼æ®éå¾ªç¯</strong></p>
+<pre><code class="language-yaml">tasks:
+  - name: postfix and httpd are running
+    service:
+      name: "{{ item }}"
+      state: started
+    loop:
+      - postfix
+      - httpd
+
+- name: retrieve the list of home directories
+    command: ls /home
+    register: home_dirs
+- name: add home dirs to the backup spooler
+    file: 
+      path: /mnt/{{ item }}
+      src: /home/{{ item }}
+      state: link
+    loop: "{{ home_dirs.stdout_lines }}"
+</code></pre>
+<p><strong>ï¼2ï¼é«çº§å¾ªç¯</strong></p>
+<pre><code class="language-yaml">- name: test loop
+  hosts: test
+  tasks:
+  - name: add several users
+    user: 
+      name: "{{ item.name }}"
+      state: present 
+      groups: "{{ item.groups }}"
+    loop:
+      - { name: 'user1', groups: 'wheel' }
+      - { name: 'user2', groups: 'sudo' }
+</code></pre>
 <blockquote>
-<p>âä¸ºå¤©å°ç«å¿ï¼<br><br>
-ä¸ºçæ°ç«å½ï¼<br><br>
-ä¸ºå¾å£ç»§ç»å­¦ï¼<br><br>
-ä¸ºä¸ä¸å¼å¤ªå¹³âââââå®Â·å¼ è½½ãæ¨ªæ¸ åå¥ã<br></p>
+<p>æ³¨ï¼loop å¾ªç¯çç¨æ³å¤ç§å¤æ ·ï¼å·ä½å¯åè<a href="https://clay-wangzhi.com/devops/ansible/playbook-for.html" target="_blank" rel="noopener nofollow">ç¬¬ä¸æ¹æå</a>æ<a href="https://docs.ansible.org.cn/ansible/latest/playbook_guide/playbooks_loops.html" target="_blank" rel="noopener nofollow">å®æ¹æå</a>æ¥çã</p>
 </blockquote>
+<h2 id="5å¸¸ç¨æ¨¡å"><div id="id5">5ãå¸¸ç¨æ¨¡å</div></h2>
+<p>ä»¥ä¸æ¨¡ååæ¥èªé»è®¤éå <a href="https://docs.ansible.org.cn/ansible/latest/collections/ansible/builtin/index.html#plugins-in-ansible-builtin" target="_blank" rel="noopener nofollow">ansible.builtinï¼é¢å linux ç³»ç»ï¼</a>ãæ­¤å¤ï¼è¿æä¸¤ä¸ªéåä¹å¼å¾å³æ³¨ï¼åå«æ¯ï¼<a href="https://docs.ansible.org.cn/ansible/latest/collections/ansible/windows/index.html#plugins-in-ansible-windows" target="_blank" rel="noopener nofollow">ansible.windowsï¼é¢å windows ç³»ç»ï¼</a>ã<a href="https://docs.ansible.org.cn/ansible/latest/collections/ansible/netcommon/index.html#plugins-in-ansible-netcommon" target="_blank" rel="noopener nofollow">ansible.netcommonï¼é¢åç½ç»è®¾å¤ï¼</a>ã</p>
+<ul>
+<li>
+<p>ping æ¨¡å â å¯¹ç®æ èç¹è¿è¡è¿éæ§æµè¯ããç¤ºä¾ï¼<code>ansible localhost -m ping</code>ã</p>
+</li>
+<li>
+<p>debug æ¨¡å â Playbook éç½®è°è¯ããç¤ºä¾ï¼<code>ansible localhost -m debug -e "str=123" -a "var=str"</code>ã</p>
+</li>
+<li>
+<p><strong>copy æ¨¡å</strong> â å°æ¬å°æä»¶å¤å¶å°ç®æ èç¹ããç¤ºä¾ï¼<code>ansible localhost -m copy -a "src=/etc/hosts dest=/tmp/hosts mode=0777"</code>ã</p>
+</li>
+<li>
+<p>file æ¨¡å â ç®¡çæä»¶åæä»¶å±æ§ããç¤ºä¾ï¼<code>ansible localhost -m file -a "path=/tmp/hosts state=directory"</code> - æ°å»ºç®å½ã</p>
+</li>
+<li>
+<p><strong>lineinfile æ¨¡å</strong> â ç±»ä¼¼ sed çææ¬ç¼è¾å¨ããç¤ºä¾ï¼<code>ansible localhost -m lineinfile -a "path=test  state=present line=c=345 regexp='^a'"</code> - å° a å¼å¤´çæ´è¡æ¿æ¢ä¸º c=345ã</p>
+</li>
+<li>
+<p><strong>template æ¨¡å</strong> â å°æ¨¡æ¿æä»¶è¾åºå°ç®æ èç¹ããç¤ºä¾ï¼<code>ansible localhost -m template -a "src=/root/test.sh.j2 dest=/tmp/test.sh" -e "arg=id"</code> - å° test.sh.j2 æä»¶ä¸­ç arg åéæ¿æ¢ä¹åï¼å°æä»¶ä¼ è¾å°ç®æ èç¹ãã</p>
+<pre><code class="language-yaml"># test.sh.j2 ææ¬åå®¹
+
+#!/bin/sh
+{{ arg }} &gt;&gt; /tmp/id.txt
+</code></pre>
+</li>
+<li>
+<p>package æ¨¡å â éç¨è½¯ä»¶åç®¡çå¨ããç¤ºä¾ï¼<code>ansible localhost -m package -a "name=hello state=present"</code> - å®è£ hello è½¯ä»¶åã</p>
+</li>
+<li>
+<p>service/systemd æ¨¡å â ç®¡çç³»ç»æå¡ããç¤ºä¾ï¼<code>ansible localhost -m service -a "name=apache2 state=stopped"</code> - å³é­ apache2 æå¡ã</p>
+</li>
+<li>
+<p>command æ¨¡å â å¨ç®æ èç¹ä¸æ§è¡å½ä»¤ï¼<strong>ä½è¯¥æ¨¡åä¸æ¯æåå¦ ééç¬¦ãç®¡éç¬¦ è¿ç±»ç¹æ®ç¬¦å·</strong>ããç¤ºä¾ï¼<code>ansible localhost -m command -a "id"</code>ã</p>
+</li>
+<li>
+<p><strong>shell æ¨¡å</strong> â å¨ç®æ èç¹ä¸å¯å¨ä¸ä¸ª shell ç¶åå¨å¶ä¸­æ§è¡å½ä»¤ããç¤ºä¾ï¼<code>ansible localhost -m shell -a "id"</code>ã</p>
+</li>
+<li>
+<p>raw æ¨¡å â ç®æ èç¹å³ä¾¿ä¸å·å¤ python ç¯å¢ï¼ä¾ç¶è½å¤æ§è¡å½ä»¤ï¼å°±åæ¯éè¿ ssh è¿æ¥ä¹åæ§è¡å½ä»¤ä¸æ ·ï¼æ­¤æ¶å°å¤±å» ansible ç<strong>å¹ç­æ§</strong>ç¹ç¹ããç¤ºä¾ï¼<code>ansible localhost -m raw -a "id"</code>ã</p>
+</li>
+<li>
+<p><strong>script æ¨¡å</strong> â- å°æ¬å°èæ¬ä¼ è¾å°ç®æ èç¹å¹¶æ§è¡ï¼æ§è¡ä¹åèæ¬è¢«å é¤ããç¤ºä¾ï¼<code>ansible localhost -m script -a "/root/test.sh --somearg"</code>ã</p>
+</li>
+</ul>
 <blockquote>
-<p>âèº«å¤ä½è°·ä¸èªå¼ï¼æå½ç±æä¸ç±å¤©ã<br><br>
-æ äººæ¶æéäºå¿ï¼æèªè¸éªè³å±±å·ã<br><br>
-è¥æ¯å½ä¸­æ æ­¤è¿ï¼äº¦å¯å­¤èº«ç»æä»ã<br><br>
-çº¢å°èµ æä¸å°ºåï¼éæ¢ç¦é©¬ä¸ä¸è¡ã<br><br>
-ä¸äººæè·¯ä¹ç»æ¶§ï¼ç¬è§ä¼çæ­¢æ­¥åã<br><br>
-æµ·å°å°½å¤´å¤©ä½å²¸ï¼å±±ç»ç»é¡¶æä¸ºå³°ã<br><br>
-å¦è¥ä¸å±±è½åèµ·ï¼å¤§é¹å±ç¿ä¹ä¸éã<br><br>
-ä¸å¥çº¢å°æ¢¦æçï¼ä¸ææéå¿å¢åã<br><br>
-ä¸ææéè§çæï¼ææ¥æ·éçäºçã<br><br>
-å¤©é¨å°è³ç¾è¿å¼ï¼æå°è½»ç¬é®ä»æ¥ã<br><br>
-ä½é¡»æ¶æéäºå¿ï¼æèªåäºè³å±±å·ï¼âââââå¾éå®¢ãéäºå¿ã<br></p>
+<p>æ³¨ï¼éè¿ ansible å½ä»¤ä½¿ç¨ commandãshellãraw è¿ä¸ä¸ªæ¨¡åæ§è¡å½ä»¤æ¶ï¼åæ°ä¸å¯ä»¥ä»¥ <code>ansible localhost -m shell -a "cmd=id"</code> è¿æ ·çæ¹å¼ä½¿ç¨ï¼åªè½ä»¥ <code>ansible localhost -m shell -a "id"</code> è¿æ ·çæ¹å¼ä½¿ç¨ã</p>
+<p>è¿æ¯å ä¸ºï¼åªæè¿ä¸ä¸ªæ¨¡åçâæ ¸å¿åæ°âä¸æ¯æ®é key = valueï¼èæ¯ _raw_paramsï¼è£¸åæ°ï¼ï¼å¶ä½å¤§å¤æ¨¡åé½æ¯ä»¥é®å¼å¯¹çæ¹å¼ä¼ éåæ°çã</p>
 </blockquote>
-<p><strong>2025ï¼å¯¹æèè¨ï¼æ³¨å®æ¯é¾å¿çä¸å¹´.</strong><br>
-<strong>è¯¸ä½ï¼æ°å¹´å¿«ä¹ï¼</strong></p>
-<p><strong>é¢åï¼æä»¬é¢è®¡å¨2026.2.16ï¼é¤å¤ï¼åå¸Ctorch RC v1.0ï¼æ¬è¯·æå¾ï¼æ¬¢è¿èç³»ï¼QQ 1113109729ï¼åä¸åæµï¼ææ¿ä¸å°½ï¼</strong></p>
-<p>GhostFace<br>
-2025.12.31</p>
+<h2 id="6å¸¸ç¨æä»¶"><strong><div id="id6">6ãå¸¸ç¨æä»¶</div></strong></h2>
+<p><a href="https://docs.ansible.org.cn/ansible/latest/collections/ansible/builtin/index.html#filter-plugins" target="_blank" rel="noopener nofollow">è¿æ»¤å¨æä»¶</a> ä¸»è¦éå when å¯¹ä¸äºåéåä¸äº<strong>ç±»åè½¬æ¢</strong>ï¼ä¹ååè¿è¡å¤æ­ã</p>
+<p><a href="https://docs.ansible.org.cn/ansible/latest/collections/ansible/builtin/index.html#filter-plugins" target="_blank" rel="noopener nofollow">æ¥æ¾æä»¶</a> ä¸»è¦éåæä»¶ lookup ä»åç§ç±»åçæä»¶ä¸­<strong>è¯»åææ¬åå®¹</strong>ã</p>
+<p><a href="https://docs.ansible.org.cn/ansible/latest/collections/ansible/builtin/index.html#test-plugins" target="_blank" rel="noopener nofollow">æµè¯æä»¶</a> ä¸»è¦éå when å¯¹åéåä¸äº<strong>æ¡ä»¶çå¤æ­</strong>ã</p>
+<h2 id="7æä¸æå«"><strong><div id="id7">7ãæä¸æå«</div></strong></h2>
+<p>ï¼1ï¼å­¦ä¹ åèéåã</p>
+<ul>
+<li>Playbook åèæåï¼<a href="https://docs.ansible.org.cn/ansible/latest/playbook_guide/index.html" target="_blank" rel="noopener nofollow">å®æ¹</a>/<a href="https://clay-wangzhi.com/devops/ansible/dir-handler.html" target="_blank" rel="noopener nofollow">ç¬¬ä¸æ¹</a>ã</li>
+<li>Inventory åèæåï¼<a href="https://docs.ansible.org.cn/ansible/latest/inventory_guide/index.html" target="_blank" rel="noopener nofollow">å®æ¹</a>/<a href="https://clay-wangzhi.com/devops/ansible/inventory.html" target="_blank" rel="noopener nofollow">ç¬¬ä¸æ¹</a>ã</li>
+<li>Ansible æ¨¡ååè¡¨ï¼<a href="https://docs.ansible.org.cn/ansible/latest/collections/index_module.html" target="_blank" rel="noopener nofollow">å®æ¹</a>ã</li>
+<li>Ansible éååè¡¨ï¼<a href="https://docs.ansible.org.cn/ansible/latest/collections/index.html" target="_blank" rel="noopener nofollow">å®æ¹</a>ã</li>
+<li>Ansible è§è²ååºï¼<a href="https://galaxy.ansible.com/ui/standalone/roles/" target="_blank" rel="noopener nofollow">å®æ¹</a>ã</li>
+<li>Playbook å³é®è¯ï¼<a href="https://docs.ansible.org.cn/ansible/latest/reference_appendices/playbooks_keywords.html" target="_blank" rel="noopener nofollow">å®æ¹</a>ã</li>
+<li>è§é¢æç¨ï¼<a href="https://www.bilibili.com/video/BV1qq4y1u7x2" target="_blank" rel="noopener nofollow">B ç«</a>ã</li>
+</ul>
+<p>ï¼2ï¼å½ä»¤æå·§ã</p>
+<pre><code class="language-bash">#å¯¹ä¸»æºæ¸åå playbook è¿è¡è¯­æ³æ£æ¥ã
+ansible-playbook -i hosts --syntax-check playbook
+
+#å¨å¼å§æ¹éæ§è¡ä»»å¡ä¹åï¼æå¥½åå¯¹ææçç®æ ä¸»æºè¿è¡éæ§æµè¯ã
+ansible all -i hosts -m ping
+
+#æ¥ç web ç»æåªäºä¸»æº
+ansible web --list
+
+#ä»¥ kali ç¨æ·çèº«ä»½å»è¿ç¨ç®æ ï¼åæ¶åè¿è¡ sudo ææï¼å¹¶æå¼ 5 ä¸ªå¹¶åè¿æ¥ã
+ansible lin -i hosts -u kali -k -b -K -f 5 -m command -a "whoami"
+</code></pre>
+<p>ï¼3ï¼Playbook ç¤ºä¾ã</p>
+<pre><code class="language-yaml">#æ¬éç½®ä¸­çææåå®¹å³ä»£è¡¨ä¸ä¸ªå§æ¬
+
+#å§éä¸
+- hosts: linux
+  tasks:
+##ä»»å¡1
+	- name: install nginx
+      yum:		#yum æ¨¡å
+        name: nginx
+        state: present
+##ä»»å¡2
+	- name: update nginx config
+      template:	#template æ¨¡å
+        src: nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+        notify: restart nginx	#è°ç¨å¤çå¨
+
+  handlers:						#å®ä¹å¤çå¨
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
+
+#å§éäº     
+- hosts: windows
+  collections:		#å£°æéåï¼ä¸å£°æè°ç¨éåæ¨¡åéå¸¦éååç§°ï¼å¦ ansible.windows.win_fileã
+    - ansible.windows
+  tasks:
+    - name: Remove a file, if present
+  	  win_file:		#è°ç¨ windows éåä¸­çæ¨¡å
+    	path: C:\Temp\foo.conf
+    	state: absent
+
+#å§éä¸
+- hosts: web
+  roles:	#è§è²
+    - nginx
+</code></pre>
 
 </div>
 <div class="clear"></div>
 
             </div>
             <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.029861111111111113" data-date-updated="2025-12-31 23:30">2025-12-31 22:47</span>&nbsp;
-<a href="https://www.cnblogs.com/SilverGo">Ghost-Face</a>&nbsp;
-éè¯»(<span id="post_view_count">143</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">2</span>)&nbsp;
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-01-02 17:46">2026-01-02 17:46</span>&nbsp;
+<a href="https://www.cnblogs.com/kqdssheng">ææªçä¹¦ç</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19428614);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19428614', targetLink: 'https://www.cnblogs.com/SilverGo/p/19428614', title: '2025å¹´åº¦æ»ç»' })">ä¸¾æ¥</a>
+<a href="javascript:void(0)" onclick="AddToWz(19432562);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19432562', targetLink: 'https://www.cnblogs.com/kqdssheng/p/19432562', title: 'Ansible å­¦ä¹ æ»ç»' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
     </item>
 <item>
-    <title><![CDATA[ ãå¤§æ°æ® & AIãFlink Agents æºç è§£è¯» --- (3) --- Agent ]]></title>
-    <link>https://www.cnblogs.com/rossiXYZ/p/19369869</link>
-    <guid>c06644ce10a5d81e7560983016a38e45</guid>
+    <title><![CDATA[ æ ¼å¼å¡åçï¼æ°æ®å¯è§åå¦ä½å¼å¯¼è§ä¼çæ³¨æå ]]></title>
+    <link>https://www.cnblogs.com/wang_yb/p/19431960</link>
+    <guid>eaea552305c7e25989bcda53f1f7d2b1</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/rossiXYZ/p/19369869" title="åå¸äº 2025-12-31 19:17">
-    <span role="heading" aria-level="2">ãå¤§æ°æ® &amp; AIãFlink Agents æºç è§£è¯» --- (3) --- Agent</span>
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/wang_yb/p/19431960" title="åå¸äº 2026-01-02 15:05">
+    <span role="heading" aria-level="2">æ ¼å¼å¡åçï¼æ°æ®å¯è§åå¦ä½å¼å¯¼è§ä¼çæ³¨æå</span>
     
 
 </a>
@@ -1965,1219 +2270,281 @@ And I know I've got a full room of fighters in here right<br>
             <div class="clear"></div>
             <div class="postBody">
                 <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h1 id="å¤§æ°æ®--aiflink-agents-æºç è§£è¯»-----3------agent">ãå¤§æ°æ® &amp; AIãFlink Agents æºç è§£è¯» --- (3) ---  Agent</h1>
-<p></p><div class="toc"><div class="toc-container-header">ç®å½</div><ul><li><a href="#å¤§æ°æ®--aiflink-agents-æºç è§£è¯»-----3------agent" rel="noopener nofollow">ãå¤§æ°æ® &amp; AIãFlink Agents æºç è§£è¯» --- (3) ---  Agent</a><ul><li><a href="#0x00-æ¦è¦" rel="noopener nofollow">0x00 æ¦è¦</a></li><li><a href="#0x01-æ ¸å¿æ½è±¡" rel="noopener nofollow">0x01 æ ¸å¿æ½è±¡</a><ul><li><a href="#11-agentæ½è±¡" rel="noopener nofollow">1.1 Agentæ½è±¡</a></li><li><a href="#12-action-æ½è±¡" rel="noopener nofollow">1.2 Action æ½è±¡</a></li><li><a href="#13-èµæºæ½è±¡" rel="noopener nofollow">1.3 èµæºæ½è±¡</a></li><li><a href="#14-æ§è¡ç¯å¢æ½è±¡" rel="noopener nofollow">1.4 æ§è¡ç¯å¢æ½è±¡</a></li><li><a href="#15-äºä»¶æ½è±¡" rel="noopener nofollow">1.5 äºä»¶æ½è±¡</a></li><li><a href="#16-éç½®æ½è±¡" rel="noopener nofollow">1.6 éç½®æ½è±¡</a></li></ul></li><li><a href="#0x02-workflow-style-agent-åreactagent" rel="noopener nofollow">0x02 Workflow Style Agent åReActAgent</a><ul><li><a href="#21-ç¹æ§" rel="noopener nofollow">2.1 ç¹æ§</a><ul><li><a href="#211-è®¾è®¡çå¿µ" rel="noopener nofollow">2.1.1 è®¾è®¡çå¿µ</a></li><li><a href="#212-æ§å¶æµ" rel="noopener nofollow">2.1.2 æ§å¶æµ</a></li><li><a href="#213-å®å¶çº§å«" rel="noopener nofollow">2.1.3 å®å¶çº§å«</a></li><li><a href="#214-ä½¿ç¨åºæ¯" rel="noopener nofollow">2.1.4 ä½¿ç¨åºæ¯</a></li><li><a href="#215-å¼åå¤æåº¦" rel="noopener nofollow">2.1.5 å¼åå¤æåº¦</a></li><li><a href="#216-æ»ç»" rel="noopener nofollow">2.1.6 æ»ç»</a></li></ul></li><li><a href="#22-workflow" rel="noopener nofollow">2.2 workflow</a><ul><li><a href="#221-ä»£ç å¯¼è¯»" rel="noopener nofollow">2.2.1 ä»£ç å¯¼è¯»</a><ul><li><a href="#åå¤ä»£çæ§è¡ç¯å¢" rel="noopener nofollow">åå¤ä»£çæ§è¡ç¯å¢</a></li><li><a href="#åå»ºä»£ç" rel="noopener nofollow">åå»ºä»£ç</a></li><li><a href="#ä¸-flink-éæ" rel="noopener nofollow">ä¸ Flink éæ</a></li></ul></li></ul></li><li><a href="#23-react-agent" rel="noopener nofollow">2.3 ReAct Agent</a><ul><li><a href="#231-ä»£ç å¯¼è¯»" rel="noopener nofollow">2.3.1 ä»£ç å¯¼è¯»</a><ul><li><a href="#åå¤ä»£çæ§è¡ç¯å¢-1" rel="noopener nofollow">åå¤ä»£çæ§è¡ç¯å¢</a></li><li><a href="#åå»º-react-agent" rel="noopener nofollow">åå»º ReAct Agent</a></li><li><a href="#ä¸-flink-éæ-1" rel="noopener nofollow">ä¸ Flink éæ</a></li></ul></li></ul></li></ul></li><li><a href="#0x03-reactagent" rel="noopener nofollow">0x03 ReActAgent</a><ul><li><a href="#31-å®ä¹" rel="noopener nofollow">3.1 å®ä¹</a></li><li><a href="#32-æ·±åº¦å®å¶" rel="noopener nofollow">3.2 æ·±åº¦å®å¶</a><ul><li><a href="#321-reactagent-ç¹è²" rel="noopener nofollow">3.2.1 ReActAgent ç¹è²</a><ul><li><a href="#æµå¼å¤çéé" rel="noopener nofollow">æµå¼å¤çéé</a></li><li><a href="#ç¹å®çè¡ä¸ºæ¨¡å¼" rel="noopener nofollow">ç¹å®çè¡ä¸ºæ¨¡å¼</a></li><li><a href="#é®æ§ç¶ææ¯æ" rel="noopener nofollow">é®æ§ç¶ææ¯æ</a></li><li><a href="#llm-éæä¼å" rel="noopener nofollow">LLM éæä¼å</a></li><li><a href="#èµæºç®¡çæ¹å¼" rel="noopener nofollow">èµæºç®¡çæ¹å¼</a></li><li><a href="#ç±»åä¿¡æ¯å¤ç" rel="noopener nofollow">ç±»åä¿¡æ¯å¤ç</a></li><li><a href="#éè¯¯å¤çæºå¶" rel="noopener nofollow">éè¯¯å¤çæºå¶</a></li><li><a href="#ç»æåè¾åºæ¯æ" rel="noopener nofollow">ç»æåè¾åºæ¯æ</a></li><li><a href="#æç¤ºè¯æ¨¡æ¿ç³»ç»" rel="noopener nofollow">æç¤ºè¯æ¨¡æ¿ç³»ç»</a></li><li><a href="#å·¥å·è°ç¨éæ" rel="noopener nofollow">å·¥å·è°ç¨éæ</a></li><li><a href="#è¿è¡æ¶åä½" rel="noopener nofollow">è¿è¡æ¶åä½</a></li></ul></li></ul></li><li><a href="#33-å¸åæ§è¡æµç¨" rel="noopener nofollow">3.3 å¸åæ§è¡æµç¨</a></li><li><a href="#34-start_action-ä¸-stop_action" rel="noopener nofollow">3.4 start_action ä¸ stop_action</a></li><li><a href="#35-è¾å¥è¾åº" rel="noopener nofollow">3.5 è¾å¥è¾åº</a><ul><li><a href="#351-äºä»¶é©±å¨æ¶æ" rel="noopener nofollow">3.5.1 äºä»¶é©±å¨æ¶æ</a></li><li><a href="#352-ç»ä¸çæ°æ®å°è£" rel="noopener nofollow">3.5.2 ç»ä¸çæ°æ®å°è£</a></li><li><a href="#353-æ¯æå¤ç§æ°æ®ç±»å" rel="noopener nofollow">3.5.3 æ¯æå¤ç§æ°æ®ç±»å</a></li><li><a href="#354-åç½®æ¨¡æ¿æ¯æ" rel="noopener nofollow">3.5.4 åç½®æ¨¡æ¿æ¯æ</a></li></ul></li><li><a href="#36-æ¨¡æ¿ç³»ç»" rel="noopener nofollow">3.6 æ¨¡æ¿ç³»ç»</a><ul><li><a href="#361-å­ç¬¦ä¸²æ¨¡æ¿" rel="noopener nofollow">3.6.1 å­ç¬¦ä¸²æ¨¡æ¿</a></li><li><a href="#362-æ¶æ¯æ¨¡æ¿" rel="noopener nofollow">3.6.2 æ¶æ¯æ¨¡æ¿</a></li></ul></li><li><a href="#37-functiontool-ä¸-action-çå³èåæ³¨åæºå¶" rel="noopener nofollow">3.7 FunctionTool ä¸ Action çå³èåæ³¨åæºå¶</a><ul><li><a href="#371-å®éè½¬æ¢æµç¨" rel="noopener nofollow">3.7.1 å®éè½¬æ¢æµç¨</a><ul><li><a href="#function-tool-æ³¨åå°-agent" rel="noopener nofollow">Function Tool æ³¨åå° Agent</a></li><li><a href="#ä¸æ¨¡åäº¤äº" rel="noopener nofollow">ä¸æ¨¡åäº¤äº</a></li></ul></li><li><a href="#372-agentplan-ç¼è¯è¿ç¨ä¸­å·¥å·çå¤ç" rel="noopener nofollow">3.7.2 AgentPlan ç¼è¯è¿ç¨ä¸­å·¥å·çå¤ç</a><ul><li><a href="#ç¨æ·å®ä¹ç-function-tool-è½¬æ¢ä¸º-action" rel="noopener nofollow">ç¨æ·å®ä¹ç Function Tool è½¬æ¢ä¸º Action</a></li><li><a href="#åç½®-tool-call-action" rel="noopener nofollow">åç½® Tool Call Action</a></li><li><a href="#tool_call_action-å¦ä½ç¼è¯å°agentplan" rel="noopener nofollow">TOOL_CALL_ACTION å¦ä½ç¼è¯å°AgentPlan</a></li></ul></li><li><a href="#373-å·¥å·è°ç¨æµç¨" rel="noopener nofollow">3.7.3 å·¥å·è°ç¨æµç¨</a></li><li><a href="#374-å®æ´æµç¨å¾" rel="noopener nofollow">3.7.4 å®æ´æµç¨å¾</a></li><li><a href="#375-ä»£ç " rel="noopener nofollow">3.7.5 ä»£ç </a></li></ul></li></ul></li><li><a href="#0xff-åè" rel="noopener nofollow">0xFF åè</a></li></ul></li></ul></div><p></p>
-<h2 id="0x00-æ¦è¦">0x00 æ¦è¦</h2>
-<p>Agentæ¯ Flink Agent æ¡æ¶çæ ¸å¿æ¦å¿µï¼å®æ¯ä¸ä¸ªå¯æ§è¡ååï¼ç¨äºå¤çè¾å¥äºä»¶å¹¶çæè¾åºäºä»¶ãä¸»è¦åè½åç¹è²å¦ä¸ï¼</p>
-<ul>
-<li>äºä»¶é©±å¨å¤çï¼åºäºäºä»¶é©±å¨æ¶æï¼ååºä¸åç±»åçäºä»¶ï¼å¦ InputEventï¼ChatRequestEventç­ï¼ï¼éè¿å®ä¹actionsæ¥å¤çç¹å®äºä»¶ç±»åã</li>
-<li>èµæºç®¡çï¼ç®¡çåç§èµæºï¼å¦èå¤©æ¨¡åãå·¥å·ãæç¤ºè¯ç­ãæ¯æå¤ç§èµæºç±»åï¼CHAT_MOEL, TOOL, PROMPTç­ï¼ã</li>
-<li>å¯æ©å±æ§ï¼æ¯æèªå®ä¹çactionsåèµæºï¼å¯ä»¥éè¿ç»§æ¿Agentç±»æ¥åå»ºç¹å®åè½çAgentï¼å¦ReActAgentã</li>
-<li>éç½®æ¯æï¼æ¯æéè¿éç½®éé¡¹èªå®ä¹è¡ä¸ºï¼æä¾ç»ä¸çéç½®ç®¡çæºå¶ã</li>
-<li>æ¨¡ååè®¾è®¡ï¼å°åè½åè§£ä¸ºç¬ç«çActionsï¼æ¯ä¸ªactionè´è´£å¤çç¹å®ç±»åçäºä»¶ã</li>
-<li>èµæºæ½è±¡ï¼éè¿ ResourceDescriptor æ½è±¡èµæºå®ä¹ï¼æ¯æä¸åç±»åçèµæºï¼æ¨¡åï¼å·¥å·ï¼æç¤ºè¯ç­ï¼</li>
-<li>ç¶æç®¡çï¼æä¾ç­æåå­ç®¡çæºå¶ï¼æ¯æåºäºkeyçç¶æéç¦»ã</li>
-<li>å¤ç¯å¢æ¯æï¼æ¯ææ¬å°æ§è¡ç¯å¢ç¨äºè°è¯ï¼æ¯æè¿ç¨ Flink ç¯å¢ç¨äºçäº§ã</li>
-</ul>
-<h2 id="0x01-æ ¸å¿æ½è±¡">0x01 æ ¸å¿æ½è±¡</h2>
-<h3 id="11-agentæ½è±¡">1.1 Agentæ½è±¡</h3>
-<p>Agent ä½ä¸ºåºç±»æä¾äºï¼</p>
-<ul>
-<li>èµæºç®¡çï¼resources å­å¸ï¼ã</li>
-<li>Action æ³¨åæºå¶ï¼actions å­å¸ï¼ã</li>
-<li>ç»ä¸çæ¥å£ä¾æ§è¡ç¯å¢ä½¿ç¨ã</li>
-</ul>
-<pre><code class="language-python">class Agent(ABC):
-    """Base class for defining agent logic.
+<p>å¨æ°æ®åæä¸­ï¼æä»¬å¸¸è¯´ï¼âä¸å¼ å¥½çå¾è¡¨èè¿åè¨ä¸è¯­ãâ</p>
+<p>ä½å¾å¤æ¶åï¼æä»¬ååºæ¥çå¾è¡¨å´æ¯âåè¨ä¸è¯­å µå¨å¿å£é¾å¼âãè¯»èçäºåå¤©ï¼æä¸ä½éç¹ã</p>
+<p>è¿æ¯ä¸ºä»ä¹ï¼</p>
+<p>å ä¸ºäººç±»çè§è§æç¥éµå¾ªä¸å¥è¢«ç§°ä¸º <strong>æ ¼å¼å¡ï¼Gestaltï¼</strong> çå¿çå­¦åçã</p>
+<p>ç®åæ¥è¯´ï¼å½æä»¬çå°ä¸ç»ç©ä½æ¶ï¼å¤§èä¼èªå¨å°å®ä»¬è§ä¸ºä¸ä¸ªæ´ä½æä¸ç§æ¨¡å¼ï¼èä¸æ¯å­¤ç«çç¢çã</p>
+<p>ä¸é¢æä»¬ç¨ <code>Python</code> ç <code>Matplotlib</code> åºï¼æ¥æ¼ç¤º <strong>æ ¼å¼å¡ï¼Gestaltï¼</strong> å¿çå­¦ä¸­ç 6 ä¸ªæ ¸å¿åçï¼ççå¦ä½å©ç¨è¿äºåçâæ§å¶âè¯»èçæ³¨æåã</p>
+<h1 id="1-é»è¿åçè·ç¦»äº§çå³ç³»">1. é»è¿åçï¼è·ç¦»äº§çâå³ç³»â</h1>
+<p><strong>é»è¿åç</strong>å°±æ¯è·ç¦»è¶è¿ï¼å³ç³»è¶äº²ï¼æä»¬çå¤§èä¼èªå¨æé å¾è¿çç©ä½å½ä¸ºä¸ç±»ã</p>
+<p>å°±åå¨ä¸ä¸ªæ´¾å¯¹ä¸ï¼ç«å¨ä¸èµ·èå¤©çå ä¸ªäººï¼ä½ ä¼ä¸æè¯è§å¾ä»ä»¬æ¯ä¸ä¼çã</p>
+<pre><code class="language-python"># é»è¿åç
+# åå»ºæµè¯æ°æ®
+np.random.seed(42)
+data_a = np.random.normal(5, 1.5, 30)
+data_b = np.random.normal(10, 1.5, 30)
+data_c = np.random.normal(15, 1.5, 30)
 
-    Example:
-        Users have two ways to create an Agent
+# ä¸ä½¿ç¨é»è¿åç
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
 
-        * Declare an Agent with decorators
-        ::
+# å·¦ä¾§ï¼æªåºç¨é»è¿åçï¼ææç¹åååå¸ï¼
+all_data = np.concatenate([data_a, data_b, data_c])
+x_positions = np.arange(90)
+ax1.scatter(x_positions, all_data, alpha=0.7)
+ax1.grid(True, alpha=0.3)
 
-            class MyAgent(Agent):
-                @action(InputEvent)
-                @staticmethod
-                def my_action(event: Event, ctx: RunnerContext) -&gt; None:
-                    action logic
+# å³ä¾§ï¼åºç¨é»è¿åçï¼æç»èéï¼
+for i, (data, x_offset) in enumerate(zip([data_a, data_b, data_c], [0, 30, 60])):
+    x_positions = np.arange(len(data)) + x_offset
+    ax2.scatter(x_positions, data, alpha=0.7, label=f'ç»{i+1}')
 
-                @chat_model_connection
-                @staticmethod
-                def my_connection() -&gt; ResourceDescriptor:
-                    return ResourceDescriptor(clazz=OllamaChatModelConnection,
-                                              model="qwen2:7b",
-                                              base_url="http://localhost:11434")
-
-                @chat_model_setup
-                @staticmethod
-                def my_chat_model() -&gt; ResourceDescriptor:
-                    return ResourceDescriptor(clazz=OllamaChatModel,
-                                              connection="my_connection")
-
-        * Add actions and resources to an Agent instance
-        ::
-
-            my_agent = Agent()
-            my_agent.add_action(name="my_action",
-                                events=[InputEvent],
-                                func=action_function)
-                    .add_resource(name="my_connection",
-                                  instance=ResourceDescriptor(
-                                        clazz=OllamaChatModelConnection,
-                                        arg1=xxx
-                                )
-                    .add_resource(
-                        name="my_connection",
-                        instance=ResourceDescriptor(
-                            clazz=OllamaChatModelConnection,
-                            arg1=xxx
-                        )
-                    )
-                    .add_resource(
-                        name="my_chat_model",
-                        instance=ResourceDescriptor(
-                            clazz=OllamaChatModelSetup,
-                            connection="my_connection"
-                        )
-                    )
-    """
-
-    _actions: Dict[str, Tuple[List[Type[Event]], Callable, Dict[str, Any]]]
-    _resources: Dict[ResourceType, Dict[str, Any]]
-    _mcp_servers: Dict[str, MCPServer]
-
-    def __init__(self) -&gt; None:
-        """Init method."""
-        self._actions = {}
-        self._resources = {}
-        for type in ResourceType:
-            self._resources[type] = {}
-
-    @property
-    def actions(self) -&gt; Dict[str, Tuple[List[Type[Event]], Callable, Dict[str, Any]]]:
-        """Get added actions."""
-        return self._actions
-
-    @property
-    def resources(self) -&gt; Dict[ResourceType, Dict[str, Any]]:
-        """Get added resources."""
-        return self._resources
-
-    def add_action(
-        self, name: str, events: List[Type[Event]], func: Callable, **config: Any
-    ) -&gt; "Agent":
-        """Add action to agent.
-
-        Parameters
-        ----------
-        name : str
-            The name of the action, should be unique in the same Agent.
-        events: List[Type[Event]]
-            The type of events listened by this action.
-        func: Callable
-            The function to be executed when receive listened events.
-        **config: Any
-            Key named arguments can be used by this action in runtime.
-
-        Returns:
-        -------
-        Agent
-            The modified Agent instance.
-        """
-        if name in self._actions:
-            msg = f"Action {name} already defined"
-            raise ValueError(msg)
-        self._actions[name] = (events, func, config if config else None)
-        return self
-
-    def add_resource(
-        self, name: str, instance: SerializableResource | ResourceDescriptor
-    ) -&gt; "Agent":
-        """Add resource to agent instance.
-
-        Parameters
-        ----------
-        name : str
-            The name of the prompt, should be unique in the same Agent.
-        instance: SerializableResource | ResourceDescriptor
-            The serializable resource instance, or the descriptor of resource.
-
-        Returns:
-        -------
-        Agent
-            The agent to add the resource.
-        """
-        if isinstance(instance, SerializableResource):
-            resource_type = instance.resource_type()
-        elif isinstance(instance, ResourceDescriptor):
-            resource_type = instance.clazz.resource_type()
-        else:
-            err_msg = f"Unexpected resource {instance}"
-            raise TypeError(err_msg)
-
-        if name in self._resources[resource_type]:
-            msg = f"{resource_type.value} {name} already defined"
-            raise ValueError(msg)
-
-        self._resources[resource_type][name] = instance
-        return self
+plt.tight_layout()
+plt.show()
 </code></pre>
-<h3 id="12-action-æ½è±¡">1.2 Action æ½è±¡</h3>
-<p>Action æä¾äºï¼</p>
-<ul>
-<li>äºä»¶çå¬æºå¶</li>
-<li>ä¸æ§è¡ä¸ä¸æçäº¤äºæ¥å£</li>
-<li>ç»ä¸çæ§è¡æ¥å£</li>
-</ul>
-<p>éè¿è£é¥°å¨æèadd_actionæ¹æ³å®ä¹ã</p>
-<pre><code class="language-python">    @action(InputEvent)
-    @staticmethod
-    def start_action(event: InputEvent, ctx: RunnerContext) -&gt; None:
-        """Start action to format user input and send chat request event."""
-        usr_input = event.input
-</code></pre>
-<h3 id="13-èµæºæ½è±¡">1.3 èµæºæ½è±¡</h3>
-<p>èµæºæ½è±¡åæ¬ï¼æ¨¡åè¿æ¥ï¼CHAT_MODEL_CONNECTION)ï¼å·¥å·ï¼æç¤ºè¯ï¼MCPæå¡å¨ç­ã</p>
-<pre><code class="language-python">class ResourceDescriptor:
-    """Descriptor of resource, includes the class and the initialize arguments."""
 
-    _clazz: Type[Resource]
-    _arguments: Dict[str, Any]
+<p><img src="https://img2024.cnblogs.com/blog/83005/202601/83005-20260102150252034-156796734.png" alt="" loading="lazy"></p>
+<p><strong>è®¾è®¡è¦ç¹</strong>ï¼å°ç¸å³çæ°æ®ç¹æåç´ æ¾å¨é è¿çä½ç½®ï¼å¯ä»¥è®©è§ä¼èªç¶å°çè§£å®ä»¬å±äºåä¸ç±»å«æå·ææç§å³èã</p>
+<h1 id="2-ç¸ä¼¼åçç¸ä¼¼çæ§æ ¼å¸å¼">2. ç¸ä¼¼åçï¼ç¸ä¼¼çâæ§æ ¼âå¸å¼</h1>
+<p><strong>ç¸ä¼¼åç</strong>å°±æ¯é¿å¾åçï¼å°±æ¯ä¸å®¶äººï¼å½ç©ä½å¨é¢è²ãå½¢ç¶æå¤§å°ä¸ç¸ä¼¼æ¶ï¼å¤§èä¼å°å®ä»¬åä¸ºä¸ç»ã</p>
+<p>æ¯å¦å¨è¶³çåºä¸ï¼ç©¿çç¸åé¢è²çè¡£çäººï¼ä½ ä¸éè¦çæ¸ä»ä»¬çè¸ï¼å°±ç¥éä»ä»¬æ¯éåã</p>
+<pre><code class="language-python"># ç¸ä¼¼åç
+# åå»ºæµè¯æ°æ®
+categories = ["A", "B", "C", "D", "E"]
+values1 = [12, 16, 14, 18, 15]
+values2 = [8, 11, 9, 12, 10]
+x_pos = np.arange(len(categories))
 
-    def __init__(self, *, clazz: Type[Resource], **arguments: Any) -&gt; None:
-        """Init method."""
-        self._clazz = clazz
-        self._arguments = arguments
+# ç¸ä¼¼åçç¤ºä¾
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
 
-    @property
-    def clazz(self) -&gt; Type[Resource]:
-        """Get the class of the resource."""
-        return self._clazz
-
-    @property
-    def arguments(self) -&gt; Dict[str, Any]:
-        """Get the initialize arguments of the resource."""
-        return self._arguments
-</code></pre>
-<h3 id="14-æ§è¡ç¯å¢æ½è±¡">1.4 æ§è¡ç¯å¢æ½è±¡</h3>
-<p>æ§è¡ä¸ä¸ææä¾ï¼</p>
-<ul>
-<li>äºä»¶åéæºå¶</li>
-<li>èµæºè®¿é®æ¥å£</li>
-<li>åå­ç®¡ç</li>
-<li>éç½®è®¿é®</li>
-</ul>
-<pre><code class="language-python">class RunnerContext(ABC):
-    """Abstract base class providing context for agent execution.
-
-    This context provides access to event handling.
-</code></pre>
-<h3 id="15-äºä»¶æ½è±¡">1.5 äºä»¶æ½è±¡</h3>
-<p>å³ Event ä½ç³»ï¼æä¾äºï¼</p>
-<ul>
-<li>ç»ä¸çäºä»¶å¤çæºå¶</li>
-<li>ç±»åå®å¨çäºä»¶åå</li>
-<li>å¯æ©å±çäºä»¶ç±»åç³»ç»</li>
-</ul>
-<pre><code class="language-python">class Event(BaseModel, ABC, extra="allow"):
-    """Base class for all event types in the system. Event allow extra properties, but
-    these properties are required isinstance of BaseModel, or json serializable.
-
-    Attributes:
-    ----------
-    id : UUID
-        Unique identifier for the event, automatically generated using uuid4.
-    """
-
-    id: UUID = Field(default_factory=uuid4)
-</code></pre>
-<h3 id="16-éç½®æ½è±¡">1.6 éç½®æ½è±¡</h3>
-<p>AgentConfiguration æä¾äºï¼</p>
-<ul>
-<li>ç±»åå®å¨çéç½®éé¡¹</li>
-<li>é»è®¤å¼ç®¡ç</li>
-<li>ä»æä»¶å è½½éç½®çè½å</li>
-</ul>
-<pre><code class="language-python">class AgentConfiguration(BaseModel, Configuration):
-    """Base class for config objects in the system.
-    Provides a flat dict interface to access nested config values.
-    """
-
-    conf_data: Dict[str, Any]
-
-    def __init__(self, conf_data: Dict[str, Any] | None = None) -&gt; None:
-        """Initialize with optional configuration data."""
-        if conf_data is None:
-            super().__init__(conf_data = {})
-        else:
-            super().__init__(conf_data = conf_data)
-
-</code></pre>
-<h2 id="0x02-workflow-style-agent-åreactagent">0x02 Workflow Style Agent åReActAgent</h2>
-<p>æä¸¤ç§ææ®éçAgentsï¼</p>
-<ul>
-<li><strong>Workflows</strong> æ¯ç±é¢å®ä¹çä»£ç è·¯å¾æ¥ç¼æ LLM åå·¥å·çç³»ç»ã</li>
-<li><strong>Agents</strong> åæ¯ LLM å¨ææå¯¼èªèº«æµç¨åå·¥å·ä½¿ç¨çç³»ç»ï¼å®ä»¬ææ§çèªå·±å®æä»»å¡çæ¹å¼ã</li>
-</ul>
-<p>å½éè¦å¤çæ´å¤æä»»å¡æ¶ï¼Workflows ä¸ºå®ä¹æç¡®çä»»å¡æä¾äºå¯é¢æµæ§åä¸è´æ§ï¼å¤ç°ï¼ï¼èå½éè¦å¤§è§æ¨¡ççµæ´»æ§åæ¨¡åé©±å¨çå³ç­æ¶ï¼agents åæ¯æ´å¥½çéæ©ã</p>
-<p>å¯¹åºè¿ä¸¤ç§Agentï¼Flink Agents æä¸¤ç§ä¸åçAgentï¼Workflow Style Agent åReActAgentã</p>
-<ul>
-<li>å¨ Flink-Agents ä¸­ï¼å·¥ä½æµé£æ ¼çä»£çï¼workflow-style agentï¼ææ¨çä¸è¡ä¸ºç»ç»æä¸æ¡ç±âå¨ä½ï¼actionï¼âææçæåå·¥ä½æµï¼å¨ä½ä¹é´éè¿äºä»¶è¿æ¥ãè¿ç§è®¾è®¡åé´äºå¤æå¤é¶æ®µä»»å¡çç¼æéæ±ï¼å¸æä»¥éæãå¯æ©å±ä¸ä»¥æ°æ®ä¸ºä¸­å¿çæ¹å¼å©ç¨ Apache Flink çæµå¼æ¶ææ¥å®æå·¥ä½ãWorkflow éåä»»å¡æ¯å¯ä»¥è¢«æ¸é¤çè§£ææåºå®çå­ä»»å¡ååãWorkflow ç¸å¯¹äº Agent æä¸ªå¤©ç¶çä¼å¿å°±æ¯é«æçï¼ä¸ææéå¸¸ç¨³å®ï¼æ§è¡åºæ¬é½è½å¨é¢æèå´åï¼ä¸å¯é¢ç¥æèè¯´æªç¥æ§å¾ä½ãç¼ºç¹èªç¶å°±æ¯ä¸å¤çµæ´»äºï¼é¢å¯¹ä¸äºå¼æ¾çæèæ æ³é¢å®ä¹çä»»å¡å°±æ æ³å¤çäºã</li>
-<li>ReActï¼Reasoning and Actingï¼Agent æ¯ä¸ç§éç¨èå¼ï¼ææ¨çä¸è¡å¨è½åç»åèµ·æ¥è§£å³å¤æä»»å¡ãåå©è¯¥èå¼ï¼ç¨æ·åªéå¨æç¤ºè¯éæå®ç®æ å¹¶æä¾å¯ç¨å·¥å·ï¼å¤§æ¨¡åä¾¿ä¼èªä¸»å³å®å¦ä½è¾¾æç®æ å¹¶æ§è¡ç¸åºå¨ä½ãReActéè¿æ¨¡æäººç±»çâReasoning-Actingâæ¨¡å¼ï¼ä½¿LLMè½å¤å¨æå°å³å®æ°æ®éæ± ãå¶æ ¸å¿æ¯ä¸ä¸ªå¾ªç¯ï¼æèï¼Thoughtï¼ï¼ LLMé¦åè¿è¡åé¨æ¨çãå®åæå½åä»»å¡åå·²æä¿¡æ¯ï¼å¤æ­æ¯å¦ç¼ºå°å®æä»»å¡æéçç¥è¯ï¼å¹¶å¶å®ä¸ä¸æ­¥çè¡å¨è®¡åãå¨è¿ä¸ªå¾ªç¯ä¸­ï¼æ°æ®æµæ¯æ ¹æ®LLMçâæèâç»æå¨æçæçãå½LLMå¤æ­éè¦å¤é¨æ°æ®æ¶ï¼å®ä¼ä¸»å¨è§¦åä¸ä¸ªâè¡å¨âæ¥è·åæ°æ®ï¼ç¶åå°è·åå°çâè§å¯âæ°æ®æ´åè¿èªå·±çä¸ä¸æä¸­ï¼ç¨äºä¸ä¸æ­¥çå³ç­ã</li>
-</ul>
-<h3 id="21-ç¹æ§">2.1 ç¹æ§</h3>
-<p>ä¸¤ç§Agentçè¯¦ç»æ¢³çå¦ä¸ï¼</p>
-<h4 id="211-è®¾è®¡çå¿µ">2.1.1 è®¾è®¡çå¿µ</h4>
-<p>Workflow Style Agent</p>
-<ul>
-<li>å¯å®å¶æ¡æ¶ï¼çµæ´»çæ¡æ¶ï¼åè®¸ç¨æ·å®ä¹èªå·±çä»£çé»è¾</li>
-<li>äºä»¶é©±å¨æ¶æï¼é»è¾è¢«ç»ç»ä¸ºç±äºä»¶è¿æ¥çå¨ä½æåå¾</li>
-<li>æ¨¡ååè®¾è®¡ï¼ç¨æ·éè¿å®ä¹åä¸ªå¨ä½åå¶äº¤äºæ¥ç»åä»£ç</li>
-</ul>
-<p>ReActAgent</p>
-<ul>
-<li>é¢æå»ºä»£çï¼åºäº ReActï¼æ¨ç+è¡å¨ï¼èå¼çåç½®ãå³ç¨åä»£çå®ç°</li>
-<li>ä»¥ LLM ä¸ºä¸­å¿ï¼ä¸é¨ä¸º LLM ååºéåä½ç§è¡å¨çå³ç­èè®¾è®¡</li>
-<li>æ ååå·¥ä½æµï¼éµå¾ªåºå®çâæç»´âè¡å¨âè§å¯âå¾ªç¯æ¨¡å¼</li>
-</ul>
-<h4 id="212-æ§å¶æµ">2.1.2 æ§å¶æµ</h4>
-<p>Workflow Style Agent</p>
-<ul>
-<li>æ¾å¼æµç¨ï¼ç¨æ·æç¡®å®ä¹äºä»¶å¦ä½è§¦åå¨ä½</li>
-<li>äºä»¶è·¯ç±ï¼å¨ä½ç±ç¹å®çäºä»¶ç±»åè§¦å</li>
-<li>çµæ´»æ¨¡å¼ï¼å¯ä»¥å®ç°åç§æ¨¡å¼ï¼å¦é¡ºåºãåæ¯æå¾ªç¯å·¥ä½æµ</li>
-</ul>
-<p>ReActAgent</p>
-<ul>
-<li>éå¼æµç¨ï¼å³ç­è¿ç¨å¨åé¨ç± LLM å¤ç</li>
-<li>å·¥å·è°ç¨ï¼ä½¿ç¨ LLM çåçå½æ°è°ç¨åè½æ¥ç¡®å®æä½</li>
-<li>åºå®æ¨¡å¼ï¼éµå¾ªæ åç ReAct æ¨¡å¼ï¼æèâè¡å¨âè§å¯ï¼</li>
-</ul>
-<h4 id="213-å®å¶çº§å«">2.1.3 å®å¶çº§å«</h4>
-<p>Workflow Style Agent</p>
-<ul>
-<li>é«åº¦å¯å®å¶ï¼å¯¹ä»£çé»è¾ãå¨ä½åäºä»¶æµæ¥æå®å¨æ§å¶æ</li>
-<li>èªå®ä¹å¨ä½ï¼ç¨æ·å®ä¹ææå¨ä½åå¶è¡ä¸º</li>
-<li>çµæ´»äºä»¶ï¼ç¨æ·å¯ä»¥å®ä¹èªå®ä¹äºä»¶ç±»ååå¤çé»è¾</li>
-</ul>
-<p>ReActAgent</p>
-<ul>
-<li>æéå®å¶ï¼å®å¶ä¸»è¦éè¿æç¤ºè¯ãæ¨¡ååè¾åºæ¨¡å¼å®ç°</li>
-<li>é¢å®ä¹å¨ä½ï¼ä½¿ç¨åç½®å¨ä½å¦ start_action å stop_action</li>
-<li>æ åæ¥å£ï¼ä¸ºç±»ä¼¼ç LLM ä»»å¡æä¾ä¸è´çæ¥å£</li>
-</ul>
-<h4 id="214-ä½¿ç¨åºæ¯">2.1.4 ä½¿ç¨åºæ¯</h4>
-<p>Workflow Style Agent</p>
-<ul>
-<li>å·æåºå®åºåææ¡ä»¶åæ¯çå¤æ­¥éª¤æµç¨</li>
-<li>éè¦ç²¾ç¡®æ§å¶ä»£çè¡ä¸ºçåºæ¯</li>
-<li>å¨é¢å®é¡ºåºä¸­ä¸å¤ä¸ªå¤é¨ç³»ç»éæ</li>
-</ul>
-<p>ReActAgent</p>
-<ul>
-<li>éè¦ LLM æ¨çä½¿ç¨åªäºå·¥å·/æä½çä»»å¡</li>
-<li>å¸¦å·¥å·ä½¿ç¨çæ åé®ç­</li>
-<li>LLM åºè¯¥å¨æå³å®å·¥ä½æµç¨çåºæ¯</li>
-</ul>
-<p>åªè¦âé®é¢ä¸å¯å®å¨ç©·ä¸¾ãè¦è·¨å¤ç³»ç»æ¥è¯ãå¹¶ä¸éè¦å¨å¯¹è¯ä¸­æ¾æ¸/åå/å³ç­âï¼å°±æ´åºè¯¥ç¨ReActAgentï¼èä¸æ¯çº¯ Workflowã</p>
-<h4 id="215-å¼åå¤æåº¦">2.1.5 å¼åå¤æåº¦</h4>
-<p>Workflow Style Agent</p>
-<ul>
-<li>æ´é«çµæ´»æ§ï¼éè¦æ´å¤ä»£ç ä½æ§å¶åæ´å¼º</li>
-<li>èªå®ä¹é»è¾ï¼éè¦å®ç°ææå¨ä½é»è¾</li>
-<li>æ ä¸»è§ï¼å¼åäººåæ§å¶ä»£çè¡ä¸ºçæææ¹é¢</li>
-</ul>
-<p>ReActAgent</p>
-<ul>
-<li>è¾ä½é¨æ§ï¼æ´å®¹æä¸æï¼å·æé¢å®ä¹åè½</li>
-<li>ä»£ç éå°ï¼è®¾ç½®æéçä»£ç æå°</li>
-<li>æä¸»è§ï¼ä»£è¡¨å¼åäººåååºè®¸å¤å³ç­</li>
-</ul>
-<h4 id="216-æ»ç»">2.1.6 æ»ç»</h4>
-<p>ReActAgent ä¸ºæ åçåºäº LLM çæ¨çä»»å¡æä¾äºç°æçè§£å³æ¹æ¡ï¼è Workflow Style Agent ä¸ºå¤æçèªå®ä¹ä»£çå®ç°æä¾äºæå¤§ççµæ´»æ§ã</p>
-<p>æäººæç§°ï¼ææèµç¨ Agent è®²æäºï¼åä¸å¡è¸è¸å®å®ç¨ Workflow ãè¿å¥ç©ç¬èåæå°åºç°å®çèéï¼Workflow èå¨ç¡®å®æ§ï¼è Agent èå¨ä¸éã</p>
-<h3 id="22-workflow">2.2 workflow</h3>
-<p>å®æ¹çå¿«éå¥é¨ï¼docs\content\docs\get-started\quickstart\workflow_agent.mdï¼éè¿ä¸¤ä¸ªæ¸è¿å¼æµå¼ç¤ºä¾ï¼å±ç¤ºå¦ä½ç¨ Flink Agents æå»ºç±å¤§æ¨¡åé©±å¨çæµæ°´çº¿ï¼</p>
-<ul>
-<li><strong>è¯è®ºåæ</strong>ï¼ç¤ºä¾ä¸ ä¼æç»­æ¥æ¶ååè¯è®ºæµï¼å¹¶ç¨åä¸ªä»£çä»æ¯æ¡è¯è®ºä¸­æåè¯åï¼1-5ï¼ä»¥åä¸æ»¡æåå ã</li>
-<li><strong>äº§åæ¹è¿å»ºè®®</strong>ï¼å¨ç¤ºä¾ä¸çåºç¡ä¸ï¼æçªå£èåæ¯æ¡è¯è®ºçåæç»æï¼çæååçº§å«çæ±æ»ï¼è¯ååå¸ãå¸¸è§æ±æ¨ï¼ï¼åè°ç¨ç¬¬äºä¸ªä»£çä¸ºæ¯ä»¶ååè¾åºå·ä½çæ¹è¿å»ºè®®ã</li>
-</ul>
-<p>ä¸¤ä¸ªç¤ºä¾åå¨ä¸èµ·ï¼æ¼ç¤ºäºå¦ä½ç¨ Flink Agents æå»ºå¤ä»£çå·¥ä½æµï¼å¹¶ç´æ¥å¨ Flink ç¬ç«éç¾¤ä¸è¿è¡ã</p>
-<h4 id="221-ä»£ç å¯¼è¯»">2.2.1 ä»£ç å¯¼è¯»</h4>
-<h5 id="åå¤ä»£çæ§è¡ç¯å¢">åå¤ä»£çæ§è¡ç¯å¢</h5>
-<p>åå»º Agents æ§è¡ç¯å¢ï¼æ³¨åå¯ä¾ä»£çä½¿ç¨çèå¤©æ¨¡åè¿æ¥ã</p>
-<pre><code class="language-Java">// Set up the Flink streaming environment and the Agents execution environment.
-StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-AgentsExecutionEnvironment agentsEnv =
-        AgentsExecutionEnvironment.getExecutionEnvironment(env);
-
-// Add Ollama chat model connection to be used by the ReviewAnalysisAgent.
-agentsEnv.addResource(
-        "ollamaChatModelConnection",
-        ResourceType.CHAT_MODEL_CONNECTION,
-        CustomTypesAndResources.OLLAMA_SERVER_DESCRIPTOR);
-</code></pre>
-<h5 id="åå»ºä»£ç">åå»ºä»£ç</h5>
-<p>ä»¥ <code>ReviewAnalysisAgent</code> ä¸ºä¾ï¼å±ç¤ºå¦ä½å®ä¹æç¤ºè¯ãå·¥å·ãèå¤©æ¨¡ååå¨ä½ï¼ä»¥åå¦ä½å¤çèå¤©ååºå¹¶åéè¾åºäºä»¶ãæ´å¤ç»èè¯·åè [å·¥ä½æµä»£ç] ææ¡£ã<code>ProductSuggestionAgent</code> çä»£ç ä¸ä¹ç±»ä¼¼ã</p>
-<pre><code class="language-Java">/**
- * An agent that uses a large language model (LLM) to analyze product reviews and generate a
- * satisfaction score and potential reasons for dissatisfaction.
- *
- * &lt;p&gt;This agent receives a product review and produces a satisfaction score and a list of reasons
- * for dissatisfaction. It handles prompt construction, LLM interaction, and output parsing.
- */
-public class ReviewAnalysisAgent extends Agent {
-
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
-    @Prompt
-    public static org.apache.flink.agents.api.prompt.Prompt reviewAnalysisPrompt() {
-        return REVIEW_ANALYSIS_PROMPT;
-    }
-
-    @ChatModelSetup
-    public static ResourceDescriptor reviewAnalysisModel() {
-        return ResourceDescriptor.Builder.newBuilder(OllamaChatModelSetup.class.getName())
-                .addInitialArgument("connection", "ollamaChatModelConnection")
-                .addInitialArgument("model", "qwen3:8b")
-                .addInitialArgument("prompt", "reviewAnalysisPrompt")
-                .addInitialArgument("tools", Collections.singletonList("notifyShippingManager"))
-                .addInitialArgument("extract_reasoning", "true")
-                .build();
-    }
-
-    /**
-     * Tool for notifying the shipping manager when product received a negative review due to
-     * shipping damage.
-     *
-     * @param id The id of the product that received a negative review due to shipping damage
-     * @param review The negative review content
-     */
-    @Tool(
-            description =
-                    "Notify the shipping manager when product received a negative review due to shipping damage.")
-    public static void notifyShippingManager(
-            @ToolParam(name = "id") String id, @ToolParam(name = "review") String review) {
-        CustomTypesAndResources.notifyShippingManager(id, review);
-    }
-
-    /** Process input event and send chat request for review analysis. */
-    @Action(listenEvents = {InputEvent.class})
-    public static void processInput(InputEvent event, RunnerContext ctx) throws Exception {
-        String input = (String) event.getInput();
-        MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        CustomTypesAndResources.ProductReview inputObj =
-                MAPPER.readValue(input, CustomTypesAndResources.ProductReview.class);
-
-        ctx.getShortTermMemory().set("id", inputObj.getId());
-
-        String content =
-                String.format(
-                        "{\n" + "\"id\": %s,\n" + "\"review\": \"%s\"\n" + "}",
-                        inputObj.getId(), inputObj.getReview());
-        ChatMessage msg = new ChatMessage(MessageRole.USER, "", Map.of("input", content));
-
-        ctx.sendEvent(new ChatRequestEvent("reviewAnalysisModel", List.of(msg)));
-    }
-
-    @Action(listenEvents = ChatResponseEvent.class)
-    public static void processChatResponse(ChatResponseEvent event, RunnerContext ctx)
-            throws Exception {
-        JsonNode jsonNode = MAPPER.readTree(event.getResponse().getContent());
-        JsonNode scoreNode = jsonNode.findValue("score");
-        JsonNode reasonsNode = jsonNode.findValue("reasons");
-        if (scoreNode == null || reasonsNode == null) {
-            throw new IllegalStateException(
-                    "Invalid response from LLM: missing 'score' or 'reasons' field.");
-        }
-        List&lt;String&gt; result = new ArrayList&lt;&gt;();
-        if (reasonsNode.isArray()) {
-            for (JsonNode node : reasonsNode) {
-                result.add(node.asText());
-            }
-        }
-
-        ctx.sendEvent(
-                new OutputEvent(
-                        new CustomTypesAndResources.ProductReviewAnalysisRes(
-                                ctx.getShortTermMemory().get("id").getValue().toString(),
-                                scoreNode.asInt(),
-                                result)));
-    }
-}
-</code></pre>
-<h5 id="ä¸-flink-éæ">ä¸ Flink éæ</h5>
-<p>è¯»åææ¬æä»¶ä¸­çååè¯è®ºæµä½ä¸ºè¾å¥ DataStreamï¼ç¨ <code>ReviewAnalysisAgent</code> åæå¹¶çæç»æ DataStreamï¼æåæå°è¾åºã</p>
-<pre><code class="language-Java">// Read product reviews from input_data.txt file as a streaming source.
-// Each element represents a ProductReview.
-DataStream&lt;String&gt; productReviewStream =
-       env.fromSource(
-               FileSource.forRecordStreamFormat(
-                               new TextLineInputFormat(),
-                               new Path(inputDataFile.getAbsolutePath()))
-                       .build(),
-               WatermarkStrategy.noWatermarks(),
-               "streaming-agent-example");
-
-// Use the ReviewAnalysisAgent to analyze each product review.
-DataStream&lt;Object&gt; reviewAnalysisResStream =
-       agentsEnv
-               .fromDataStream(productReviewStream)
-               .apply(new ReviewAnalysisAgent())
-               .toDataStream();
-
-// Print the analysis results to stdout.
-reviewAnalysisResStream.print();
-
-// Execute the Flink pipeline.
-agentsEnv.execute();
-</code></pre>
-<h3 id="23-react-agent">2.3 ReAct Agent</h3>
-<p>æ¬å¿«éå¥é¨ç¨ä¸ä¸ªè¿·ä½ ç¤ºä¾æ¼ç¤ºå¦ä½ç¨ Flink Agents æå»ºæµå¼ ReAct Agentï¼</p>
-<p><strong>è¯è®ºåæ</strong> ä»£çæç»­æ¶è´¹ååè¯è®ºæµï¼ç¨åä¸ªä»£çæåè¯åï¼1-5ï¼ä»¥åä¸æ»¡æåå ï¼è¥è¯è®ºæ¶åç©æµä¸æ»¡ï¼åèªå¨éç¥ç©æµç»çã</p>
-<h4 id="231-ä»£ç å¯¼è¯»">2.3.1 ä»£ç å¯¼è¯»</h4>
-<h5 id="åå¤ä»£çæ§è¡ç¯å¢-1">åå¤ä»£çæ§è¡ç¯å¢</h5>
-<p>åå»º Agents æ§è¡ç¯å¢ï¼æ³¨åå¯ç¨çèå¤©æ¨¡åè¿æ¥ä¸å·¥å·ã</p>
-<pre><code class="language-python"># Set up the Flink streaming environment and the Agents execution environment.
-env = StreamExecutionEnvironment.get_execution_environment()
-agents_env = AgentsExecutionEnvironment.get_execution_environment(env)
-
-# Add Ollama chat model connection and notify shipping manager tool to be used
-# by the Agent.
-agents_env.add_resource(
-    "ollama_server",
-    ResourceDescriptor(clazz=OllamaChatModelConnection, request_timeout=120),
-).add_resource(
-    "notify_shipping_manager", Tool.from_callable(notify_shipping_manager)
+# å·¦ä¾§ï¼æªåºç¨ç¸ä¼¼åçï¼éæºé¢è²åæ ·å¼ï¼
+bars1 = ax1.bar(x_pos - 0.2, values1, 0.4, color=colors1, edgecolor="black")
+bars2 = ax1.bar(
+    x_pos + 0.2, values2, 0.4, color=colors2, edgecolor="black", hatch=hatches[0]
 )
-</code></pre>
-<h5 id="åå»º-react-agent">åå»º ReAct Agent</h5>
-<p>å®ä¾å ReAct Agentï¼éç½®èå¤©æ¨¡åãæç¤ºè¯ä»¥åç»æçè¾åºæ¨¡å¼ã</p>
-<pre><code class="language-python">review_analysis_react_agent = ReActAgent(
-    chat_model=ResourceDescriptor(
-        clazz=OllamaChatModelSetup,
-        connection="ollama_server",
-        model="qwen3:8b",
-        tools=["notify_shipping_manager"],
-    ),
-    prompt=review_analysis_react_prompt,
-    output_schema=ProductReviewAnalysisRes,
+
+# ä¸ºæ¯ç»æ¡å½¢æ·»å ä¸åå¾æ¡
+for i, bar in enumerate(bars2):
+    bar.set_hatch(hatches[i % len(hatches)])
+
+# å³ä¾§ï¼åºç¨ç¸ä¼¼åçï¼ä¸è´çé¢è²åæ ·å¼ï¼
+ax2.bar(x_pos - 0.2, values1, 0.4, color="skyblue", edgecolor="black", label="æ°æ®é1")
+ax2.bar(
+    x_pos + 0.2, values2, 0.4, color="lightcoral", edgecolor="black", label="æ°æ®é2"
 )
+
+plt.tight_layout()
+plt.show()
 </code></pre>
-<h5 id="ä¸-flink-éæ-1">ä¸ Flink éæ</h5>
-<p>è¯»åååè¯è®ºææ¬æä»¶çæ Source DataStreamï¼ç¨ ReAct Agent åæå¹¶çæç»æ DataStreamï¼æåæå°è¾åºã</p>
-<pre><code class="language-python"># Read product reviews from a text file as a streaming source.
-# Each line in the file should be a JSON string representing a ProductReview.
-product_review_stream = env.from_source(
-    source=FileSource.for_record_stream_format(
-        StreamFormat.text_line_format(),
-        f"file:///{current_dir}/resources/",
+
+<p><img src="https://img2024.cnblogs.com/blog/83005/202601/83005-20260102150251991-767107594.png" alt="" loading="lazy"></p>
+<p><strong>è®¾è®¡è¦ç¹</strong>ï¼ä½¿ç¨ä¸è´çé¢è²ãå½¢ç¶ææ ·å¼æ¥è¡¨ç¤ºç¸åç±»åçæ°æ®ï¼å¯ä»¥å¤§å¤§éä½è§ä¼çè®¤ç¥è´æã</p>
+<h1 id="3-åå´åçè¾¹çåé å½å±æ">3. åå´åçï¼è¾¹çåé "å½å±æ"</h1>
+<p>åå´åçå°±æ¯æå´å¢çå°æ¹å°±æ¯å®¶ãå¦æå¨æäºç©ä½å¨å´å ä¸è¾¹çæèæ¯è²ï¼å®ä»¬å°±è¢«è§ä¸ºä¸ä¸ªç¬ç«çç¾¤ä½ã</p>
+<p>è¿ä¸ªåççè³æ¯ <strong>âé»è¿â</strong> å <strong>âç¸ä¼¼â</strong> æ´å¼ºå¤§ã</p>
+<p>æ¯å¦ï¼èå°ä¸æ£è½çç¾ç¾¤ï¼ä¸æ¦ä½ ç¨æ æ åä½å¶ä¸­å åªï¼å¤§å®¶å°±ä¼è®¤ä¸ºè¿å åªæ¯è¢«ç¹å«éä¸­çã</p>
+<pre><code class="language-python"># åå´åç
+# åå»ºæµè¯æ°æ®
+np.random.seed(42)
+x1 = np.random.normal(2, 0.8, 50)
+y1 = np.random.normal(3, 0.8, 50)
+
+x2 = np.random.normal(5, 0.8, 50)
+y2 = np.random.normal(5, 0.8, 50)
+
+# åå´åçç¤ºä¾
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+
+# å·¦ä¾§ï¼æªåºç¨åå´åç
+ax1.scatter(x1, y1, alpha=0.7, color="blue")
+ax1.scatter(x2, y2, alpha=0.7, color="red")
+
+# å³ä¾§ï¼åºç¨åå´åç
+from matplotlib.patches import Ellipse
+
+ax2.scatter(x1, y1, alpha=0.7, color="blue", label="ç»A")
+ax2.scatter(x2, y2, alpha=0.7, color="red", label="ç»B")
+
+# æ·»å åå´åºå
+ellipse1 = Ellipse((2, 3), width=4, height=3, edgecolor="blue")
+ellipse2 = Ellipse((5, 5), width=4, height=3, edgecolor="red")
+
+ax2.add_patch(ellipse1)
+ax2.add_patch(ellipse2)
+
+plt.tight_layout()
+plt.show()
+</code></pre>
+
+<p><img src="https://img2024.cnblogs.com/blog/83005/202601/83005-20260102150252070-854536119.png" alt="" loading="lazy"></p>
+<p><strong>è®¾è®¡è¦ç¹</strong>ï¼ä½¿ç¨è¾¹çãèæ¯è²æå®¹å¨å°ç¸å³çæ°æ®åç´ åå´èµ·æ¥ï¼å¯ä»¥æç¡®å°åè¯è§ä¼è¿äºåç´ å±äºåä¸ç»ã</p>
+<h1 id="4-é­ååçå¤§èçèªå¨è¡¥å¨">4. é­ååçï¼å¤§èç"èªå¨è¡¥å¨"</h1>
+<p><strong>é­ååç</strong>å°±æ¯å¤§èæ¯å¤©ççâè¡¥å¾é«æâãå³ä½¿å¾å½¢ä¸å®æ´ï¼åªè¦æè¶³å¤çæç¤ºï¼å¤§èä¹ä¼èªå¨èè¡¥åºç¼ºå¤±çé¨åã</p>
+<p>æ¯å¦çå°ä¸ä¸ªèçº¿ç»åï¼ä½ ä¸ä¼è§å¾é£æ¯æ­æ­ç»­ç»­ççº¿æ®µï¼ä½ ä¼ç´æ¥è¯´ï¼âè¿æ¯ä¸ä¸ªåâã</p>
+<pre><code class="language-python"># é­ååçç¤ºä¾
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+
+# åå»ºä¸äºä¸å®æ´çæ°æ®ç¹
+np.random.seed(42)
+angles = np.linspace(0, 2*np.pi, 7)[:-1]  # ææå°ä¸ä¸ªç¹å½¢æä¸é­å
+radii = np.random.uniform(3, 5, 6)
+x = radii * np.cos(angles)
+y = radii * np.sin(angles)
+
+# å·¦ä¾§ï¼ä¸å®æ´çå½¢ç¶ï¼æªå©ç¨é­ååçï¼
+ax1.plot(x, y, 'o-', linewidth=2, markersize=8)
+
+# å³ä¾§ï¼é­åçå½¢ç¶ï¼åºç¨é­ååçï¼
+# æ·»å ç¼ºå¤±çç¹ä½¿å½¢ç¶é­å
+angles_closed = np.linspace(0, 2*np.pi, 7)
+radii_closed = np.append(radii, radii[0])  # åå°èµ·ç¹
+x_closed = radii_closed * np.cos(angles_closed)
+y_closed = radii_closed * np.sin(angles_closed)
+
+ax2.plot(x_closed, y_closed, 'o-', linewidth=2, markersize=8)
+ax2.fill(x_closed, y_closed, alpha=0.3)  # å¡«åå¢å¼ºé­åæ
+
+plt.tight_layout()
+plt.show()
+</code></pre>
+
+<p><img src="https://img2024.cnblogs.com/blog/83005/202601/83005-20260102150252005-1834837851.png" alt="" loading="lazy"></p>
+<p><strong>è®¾è®¡è¦ç¹</strong>ï¼æä»¬ä¸éè¦å±ç¤ºæ¯ä¸ä¸ªç»èï¼å¯ä»¥å©ç¨è§ä¼çèªå¨è¡¥å¨è½åæ¥ç®åå¾è¡¨ã</p>
+<p>ä½è¦<strong>æ³¨æ</strong>ï¼è¿äºä¸å®æ´çå¾å½¢å¯è½å¯¼è´è¯¯è§£ã</p>
+<h1 id="5-è¿ç»­åçæµççè§è§è·¯å¾">5. è¿ç»­åçï¼æµçç"è§è§è·¯å¾"</h1>
+<p><strong>è¿ç»­åç</strong>å°±æ¯é¡ºè¤æ¸çãæä»¬çè§çº¿å¾åäºè·éå¹³æ»ãè¿ç»­çè·¯å¾ï¼èä¸æ¯å§çæçº¿æä¸è§åçæåã</p>
+<p>æ¯å¦æéæ¶ï¼å¦æéä¼å¼¯å¼¯æ²æ²ä½æ¯ä¸ªäººé½ççåä¸ä¸ªäººçåèåºï¼ä½ ç¥éè¿è¿æ¯ä¸æ¡éã</p>
+<pre><code class="language-python"># è¿ç»­åçç¤ºä¾
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+
+# åå»ºæ°æ®
+np.random.seed(42)
+time = np.arange(0, 10, 0.1)
+signal1 = np.sin(time) + np.random.normal(0, 0.1, len(time))
+signal2 = np.cos(time) + np.random.normal(0, 0.1, len(time))
+
+# å·¦ä¾§ï¼ä¸è¿ç»­çå±ç¤º
+ax1.plot(time[:50], signal1[:50], 'b-', linewidth=2, label='ä¿¡å·A (ç¬¬ä¸é¨å)')
+ax1.plot(time[70:], signal1[70:], 'b--', linewidth=2, label='ä¿¡å·A (ç¬¬äºé¨å)')
+ax1.plot(time[:40], signal2[:40], 'r-', linewidth=2, label='ä¿¡å·B (ç¬¬ä¸é¨å)')
+ax1.plot(time[60:], signal2[60:], 'r--', linewidth=2, label='ä¿¡å·B (ç¬¬äºé¨å)')
+
+# å³ä¾§ï¼è¿ç»­çå±ç¤º
+ax2.plot(time, signal1, 'b-', linewidth=2, label='ä¿¡å·A')
+ax2.plot(time, signal2, 'r-', linewidth=2, label='ä¿¡å·B')
+
+plt.tight_layout()
+plt.show()
+</code></pre>
+
+<p><img src="https://img2024.cnblogs.com/blog/83005/202601/83005-20260102150252039-1585935589.png" alt="" loading="lazy"></p>
+<p><strong>è®¾è®¡è¦ç¹</strong>ï¼ä¿æçº¿æ¡ãå½¢ç¶æåç´ çè¿ç»­æ§å¯ä»¥å¸®å©è§ä¼è¿½è¸ªæ°æ®çååè¶å¿ãå¨æçº¿å¾ãé¢ç§¯å¾ä¸­å°¤å¶éè¦ã</p>
+<h1 id="6-è¿æ¥åççå¾è§çå³ç³»çº¿">6. è¿æ¥åçï¼çå¾è§ç"å³ç³»çº¿"</h1>
+<p><strong>è¿æ¥åç</strong>å°±æ¯èæ­ä¸è¿ãè¢«çº¿è¿æ¥çç©ä½ï¼è¢«è§ä¸ºå¼ºå³èãè¿ä¸ªè§è§ä¿¡å·æ¯é¢è²åè·ç¦»é½è¦å¼ºã</p>
+<p>æ¯å¦ï¼ä¸¤ä¸ªäººç«å¾åè¿ï¼å¦ææéçµçä¸æ ¹ç»³å­ï¼ä½ ä¹ä¼è§å¾ä»ä»¬ä¿©å¨äºå¨ã</p>
+<pre><code class="language-python"># è¿æ¥åçç¤ºä¾ - æ£ç¹å¾çæ¬
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+
+# åå»ºæ£ç¹æ°æ®ï¼4ä¸ªç¸å³ç¹éï¼æ¯ä¸ªç¹éæ5ä¸ªç¹
+np.random.seed(42)
+n_points = 5
+n_groups = 4
+
+# ä¸ºæ¯ç»çæç¸å³ç¹
+groups = []
+for i in range(n_groups):
+    center_x = np.random.uniform(2, 8)
+    center_y = np.random.uniform(2, 8)
+
+    # çæå´ç»ä¸­å¿çç¸å³ç¹
+    x_points = center_x + np.random.normal(0, 0.8, n_points)
+    y_points = center_y + np.random.normal(0, 0.8, n_points)
+
+    # æ·»å ä¸äºè¶å¿
+    trend = np.random.uniform(-1, 1)
+    y_points = y_points + trend * (x_points - center_x)
+
+    groups.append((x_points, y_points))
+
+# å·¦ä¾§ï¼æªåºç¨è¿æ¥åçï¼ç¬ç«çæ£ç¹ï¼
+colors = ["blue", "red", "green", "orange"]
+markers = ["o", "s", "^", "D"]
+
+for i, (x_points, y_points) in enumerate(groups):
+    ax1.scatter(
+        x_points,
+        y_points,
+        color=colors[i],
+        marker=markers[i],
+        alpha=0.7,
+        s=80,
+        label=f"æ°æ®é{i+1}",
     )
-    .monitor_continuously(Duration.of_minutes(1))
-    .build(),
-    watermark_strategy=WatermarkStrategy.no_watermarks(),
-    source_name="streaming_agent_example",
-).map(
-    lambda x: ProductReview.model_validate_json(
-        x
-    )  # Deserialize JSON to ProductReview.
-)
 
-# Use the ReAct agent to analyze each product review and notify the shipping manager
-# when needed.
-review_analysis_res_stream = (
-    agents_env.from_datastream(
-        input=product_review_stream, key_selector=lambda x: x.id
+
+# å³ä¾§ï¼åºç¨è¿æ¥åçï¼è¿æ¥ç¸å³æ£ç¹ï¼
+for i, (x_points, y_points) in enumerate(groups):
+    # é¦åç»å¶è¿æ¥çº¿
+    # æç§xå¼æåºï¼ä½¿è¿æ¥çº¿æ´æåº
+    sorted_indices = np.argsort(x_points)
+    sorted_x = x_points[sorted_indices]
+    sorted_y = y_points[sorted_indices]
+
+    ax2.plot(
+        sorted_x,
+        sorted_y,
+        color=colors[i],
+        linewidth=2,
+        alpha=0.5,
+        linestyle="--",
+        label=f"æ°æ®é{i+1}è¶å¿çº¿",
     )
-    .apply(review_analysis_react_agent)
-    .to_datastream()
-)
 
-# Print the analysis results to stdout.
-review_analysis_res_stream.print()
-</code></pre>
-<h2 id="0x03-reactagent">0x03 ReActAgent</h2>
-<p>ReActAgent æ¯ Agent æ½è±¡çä¸ä¸ªå·ä½å®ç°ï¼å±ç¤ºäºè¿äºæ½è±¡å¦ä½ååå·¥ä½ã</p>
-<ul>
-<li>èµæºç®¡çï¼ç®¡çèå¤©æ¨¡ååæç¤ºè¯èµæº</li>
-<li>Actionå®ä¹ï¼å®ä¹ start_action å stop_action å¤çè¾å¥åè¾åº</li>
-<li>äºä»¶å¤çï¼ååº InputEvent å ChatResponseEvent</li>
-<li>éç½®ç®¡çï¼æ¯æéè¯¯å¤çç­ç¥éç½®</li>
-<li>è¾åºæ ¼å¼åï¼æ¯æåºäº schema çè¾åºéªè¯åæ ¼å¼å</li>
-</ul>
-<p>è¿ç§æ½è±¡è®¾è®¡ä½¿å¾ Agent ç³»ç»å·æé«åº¦ççµæ´»æ§åå¯æ©å±æ§ï¼å¼åèå¯ä»¥éè¿ç»åä¸åçèµæºãactionsåéç½®æ¥æå»ºæ»¡è¶³ç¹å®éæ±çAgentã</p>
-<h3 id="31-å®ä¹">3.1 å®ä¹</h3>
-<p>ReActAgent çå®ä¹å¦ä¸ã</p>
-<pre><code class="language-python">class ReActAgent(Agent):
-    """Built-in implementation of ReAct agent which is based on the function
-    call ability of llm.
-
-    This implementation is not based on the foundational ReAct paper which uses
-    prompt to force llm output contain &lt;Thought&gt;, &lt;Action&gt; and &lt;Observation&gt; and
-    extract tool calls by text parsing. For a more robust and feature-rich
-    implementation we use the tool/function call ability of current llm, and get
-    the tool calls from response directly.
-
-    Example:
-        ::
-
-            class OutputData(BaseModel):
-                result: int
-
-
-            env = AgentsExecutionEnvironment.get_execution_environment()
-
-            # register resource to execution environment
-            (
-                env.add_resource(
-                    "ollama",
-                    ResourceDescriptor(clazz=OllamaChatModelConnection, model=model),
-                )
-                .add_resource("add", add)
-                .add_resource("multiply", multiply)
-            )
-
-            # prepare prompt
-            prompt = Prompt.from_messages(
-                messages=[
-                    ChatMessage(
-                        role=MessageRole.SYSTEM,
-                        content='An example of output is {"result": 30.32}.',
-                    ),
-                    ChatMessage(
-                        role=MessageRole.USER, content="What is ({a} + {b}) * {c}"
-                    ),
-                ],
-            )
-
-            # create ReAct agent.
-            agent = ReActAgent(
-                chat_model=ResourceDescriptor(
-                    clazz=OllamaChatModelSetup,
-                    connection="ollama_server",
-                    tools=["notify_shipping_manager"],
-                ),
-                prompt=prompt,
-                output_schema=OutputData,
-            )
-    """
-
-    def __init__(
-        self,
-        *,
-        chat_model: ResourceDescriptor,
-        prompt: Prompt | None = None,
-        output_schema: type[BaseModel] | RowTypeInfo | None = None,
-    ) -&gt; None:
-        """Init method of ReActAgent.
-
-        Parameters
-        ----------
-        chat_model : ResourceDescriptor
-            The descriptor of the chat model used in this ReAct agent.
-        prompt : Optional[Prompt] = None
-            Prompt to instruct the llm, could include input and output example,
-            task and so on.
-        output_schema : Optional[Union[type[BaseModel], RowTypeInfo]] = None
-            The schema should be RowTypeInfo or subclass of BaseModel. When user
-            provide output schema, ReAct agent will add system prompt to instruct
-            response format of llm, and add output parser according to the schema.
-        """
-        super().__init__()
-        self.add_resource(_DEFAULT_CHAT_MODEL, chat_model)
-
-        if output_schema:
-            if isinstance(output_schema, type) and issubclass(output_schema, BaseModel):
-                json_schema = output_schema.model_json_schema()
-            elif isinstance(output_schema, RowTypeInfo):
-                json_schema = str(output_schema)
-            else:
-                err_msg = f"Output schema {output_schema.__class__} is not supported."
-                raise TypeError(err_msg)
-            schema_prompt = f"The final response should be json format, and match the schema {json_schema}."
-            self._resources[ResourceType.PROMPT][_DEFAULT_SCHEMA_PROMPT] = (
-                Prompt.from_text(text=schema_prompt)
-            )
-
-        if prompt:
-            self._resources[ResourceType.PROMPT][_DEFAULT_USER_PROMPT] = prompt
-
-        self.add_action(
-            name="stop_action",
-            events=[ChatResponseEvent],
-            func=self.stop_action,
-            output_schema=OutputSchema(output_schema=output_schema),
-        )
-</code></pre>
-<h3 id="32-æ·±åº¦å®å¶">3.2 æ·±åº¦å®å¶</h3>
-<p>Flink å¯¹ ReActAgent åäºæ·±åº¦å®å¶ï¼ä½¿å¶è½å¨åå¸å¼æµå¤çç¯å¢ä¸­é«ææ§è¡ï¼å¹¶æä¾äºä¸°å¯çåè½æ¥ç®å LLM åºç¨å¼åã</p>
-<h4 id="321-reactagent-ç¹è²">3.2.1 ReActAgent ç¹è²</h4>
-<h5 id="æµå¼å¤çéé">æµå¼å¤çéé</h5>
-<p>Flink å°ä¼ ç»ç ReAct æ¨¡å¼ééå°äºæµå¤çç¯å¢ä¸­ï¼</p>
-<ul>
-<li>éè¿ InputEvent å OutputEvent åè£è¾å¥è¾åºæ°æ®</li>
-<li>å©ç¨ Flink çäºä»¶é©±å¨æ¶æå®ç°å¼æ­¥å¤ç</li>
-<li>éè¿ RunnerContext ç®¡çç¶æåèµæº</li>
-</ul>
-<pre><code class="language-python">agents_env = AgentsExecutionEnvironment.get_execution_environment(env)
-agents_env.fromDataStream(dataStream) # ä»DataStreamè¾å¥
-agents_env.fromTable(table) # ä»Tableè¾å¥
-agents_env.fromList(list) # ä»Listè¾å¥
-
-review_analysis_res_stream = (
-        agents_env.from_datastream( # ä»DataSteamåå»ºAgentæµç¨
-            input=product_review_stream, key_selector=lambda x: x.id
-        )
-        .apply(review_analysis_react_agent) # åºç¨Agent
-        .to_datastream() # è½¬æ¢åStream
+    # ç¶åç»å¶æ£ç¹ï¼å¨çº¿ä¸æ¹ï¼é¿åè¢«çº¿é®æ¡ï¼
+    ax2.scatter(
+        x_points,
+        y_points,
+        color=colors[i],
+        marker=markers[i],
+        alpha=0.7,
+        s=80,
+        edgecolor="black",
+        linewidth=1,
     )
+
+plt.tight_layout()
+plt.show()
 </code></pre>
-<h5 id="ç¹å®çè¡ä¸ºæ¨¡å¼">ç¹å®çè¡ä¸ºæ¨¡å¼</h5>
-<p>ReActAgent å®ç°äºç¹å®ç ReActï¼Reasoning + Actionï¼èå¼ï¼è¿æ¯ä¸ç§ç»åæ¨çåè¡å¨ç AI Agent æ¨¡å¼ãå®åç½®äºä¸¤ä¸ªæ ¸å¿å¨ä½ï¼start_action()å stop_action()ãä½¿ç¨é¢å®ä¹çæµç¨æ¥å¤çè¾å¥å¹¶çæè¾åºï¼èéè®©ç¨æ·å®å¨èªå®ä¹è¡ä¸ºé»è¾ã</p>
+
+<p><img src="https://img2024.cnblogs.com/blog/83005/202601/83005-20260102150251985-1606569356.png" alt="" loading="lazy"></p>
+<p><strong>è®¾è®¡è¦ç¹</strong>ï¼å¨æ£ç¹å¾ä¸­ï¼è¿æ¥ç¸å³æ°æ®ç¹ççº¿å¯ä»¥å¸®å©è§ä¼è¯å«åºæ°æ®çæ¨¡å¼ãè¶å¿æåç»å³ç³»ã</p>
+<p>è¿å°±åå¨å°å¾ä¸è¿æ¥åä¸ªåå¸æ¥æ¾ç¤ºæè¡è·¯çº¿ä¸æ ·ï¼ä½¿ç¸å³çç¹ä¹é´å»ºç«äºæç¡®çè§è§èç³»ã</p>
+<h1 id="7-æ»ç»">7. æ»ç»</h1>
+<p>åæ°æ®å¯è§åï¼ä¸ä»ä»æ¯åä»£ç ç»å¾ï¼æ´æ¯ä¸åº <strong>âæ³¨æåäºå¤ºæâ</strong>ã<br>
+éè¿è¿ 6 ä¸ªæ ¼å¼å¡åçï¼æä»¬ä¸æ¯å¨æ¹åæ°æ®æ¬èº«ï¼èæ¯å¨ä¼åæ°æ®çåç°æ¹å¼ï¼è®©è¯»èçèåæ¶èéå°æä½ã</p>
+<p>æ¯æ¬¡æä»¬ç»å¾æ¶ï¼ä¸å¦¨é®èªå·±ä¸å¥ï¼</p>
 <ul>
-<li>start_action æ¥æ¶è¾å¥å¹¶åé ChatRequestEvent</li>
-<li>stop_action å¤ç ChatResponseEvent å¹¶äº§çæç»è¾åº</li>
+<li>âè¿äºæ°æ®åºè¯¥æ¯ä¸ç»åï¼å®ä»¬é å¾å¤è¿åï¼âï¼é»è¿ï¼</li>
+<li>âéç¹æ°æ®çªåºäºåï¼âï¼åå´/ç¸ä¼¼ï¼</li>
+<li>âè§çº¿æµå¨é¡ºçåï¼âï¼è¿ç»­ï¼</li>
 </ul>
-<h5 id="é®æ§ç¶ææ¯æ">é®æ§ç¶ææ¯æ</h5>
-<p>æ¯æFlinkçé®æ§ç¶æç¹æ§</p>
-<pre><code class="language-python">review_analysis_res_stream = (
-    agents_env.from_datastream(
-        input=product_review_stream, key_selector=lambda x: x.id
-    )
-    .apply(review_analysis_react_agent)
-    .to_datastream()
-)
-</code></pre>
-<h5 id="llm-éæä¼å">LLM éæä¼å</h5>
-<p>ReActAgent ä¸é¨ä¸º LLM äº¤äºè¿è¡ä¼åï¼åç½®äºæç¤ºè¯ç®¡çåæ ¼å¼ååè½ï¼æ¯æç»æåè¾åºæ¨¡å¼ï¼å¯ä»¥æå®è¾åºçæ°æ®schemaï¼éæäºéè¯¯å¤çç­ç¥ï¼å½LLMè¾åºä¸ç¬¦åé¢ææ ¼å¼æ¶å¯ä»¥éæ©å¤±è´¥æèå¿½ç¥ã</p>
-<h5 id="èµæºç®¡çæ¹å¼">èµæºç®¡çæ¹å¼</h5>
-<p>ReActAgent ä¸­èªå¨æ·»å é»è®¤èµæºï¼ç¸æ¯æ®éçAgentï¼ReActAgent ä¼èªå¨ä¸ºç¨æ·è®¾ç½®å¥½å¿è¦çèµæºï¼ç®åä½¿ç¨æµç¨ãéè¿ç»ä¸çèµæºç®¡çç³»ç»ä¸FlinkéæãReActAgent éè¿ _DEFAULT_CHAT_MODEL ç­å¸¸éå¼ç¨å¨ AgentsExecutionEnvironment ä¸­æ³¨åçèµæºã</p>
-<pre><code class="language-python">agents_env.add_resource(_DEFAULT_CHAT_MODEL, chat_model)
-agents_env.addResource("ollama_server", ResourceDescriptor(...))
-agents_env.addResource("notify_shipping_manager", Tool.from_callable(...))
-</code></pre>
-<h5 id="ç±»åä¿¡æ¯å¤ç">ç±»åä¿¡æ¯å¤ç</h5>
-<p>Flink Agentè½å¤å¤çFlinkçç±»åç³»ç»</p>
-<pre><code class="language-python">        if (outputSchema != null) {
-            String jsonSchema;
-            // æ¯æRowTypeInfoåPOJOç±»å
-            if (outputSchema instanceof RowTypeInfo) {
-            	// å¤çRowç±»å
-                jsonSchema = outputSchema.toString();
-                outputSchema = new OutputSchema((RowTypeInfo) outputSchema);
-            } else if (outputSchema instanceof Class) {
-            	// å¤çPOJOç±»å
-                try {
-                    jsonSchema = mapper.generateJsonSchema((Class&lt;?&gt;) outputSchema).toString();
-                } catch (JsonMappingException e) {
-                    throw new RuntimeException(e);
-                }
-            } 
-</code></pre>
-<h5 id="éè¯¯å¤çæºå¶">éè¯¯å¤çæºå¶</h5>
-<p>Flink ä¸º ReActAgent å®ç°äºçµæ´»çå¤çå¤çç­ç¥ï¼è¿è¡ç¨æ·éæ©å¨è§£æå¤±è´¥æ¶æåºå¼å¸¸è¿æ¯å¿½ç¥éè¯¯ã</p>
-<pre><code class="language-python">        except Exception:
-            if error_handling_strategy == ErrorHandlingStrategy.IGNORE:
-                logging.warning(
-                    f"The response of llm {output} doesn't match schema constraint, ignoring."
-                )
-                return
-            elif error_handling_strategy == ErrorHandlingStrategy.FAIL:
-                raise
-</code></pre>
-<h5 id="ç»æåè¾åºæ¯æ">ç»æåè¾åºæ¯æ</h5>
-<p>Flink ä¸º ReActAgent æ·»å äºç»æåè¾åºçè½åï¼è¿æ ·å¯ä»¥è®© LLM çè¾åºç¬¦åé¢å®ä¹çæ°æ®ç»æï¼ä¾¿äºåç»­ç®¡çã</p>
-<pre><code class="language-python">        if output_schema:
-            if isinstance(output_schema, type) and issubclass(output_schema, BaseModel):
-                json_schema = output_schema.model_json_schema()
-            elif isinstance(output_schema, RowTypeInfo):
-                json_schema = str(output_schema)
-            else:
-                err_msg = f"Output schema {output_schema.__class__} is not supported."
-                raise TypeError(err_msg)
-            schema_prompt = f"The final response should be json format, and match the schema {json_schema}."
-            self._resources[ResourceType.PROMPT][_DEFAULT_SCHEMA_PROMPT] = (
-                Prompt.from_text(text=schema_prompt)
-            )
-</code></pre>
-<h5 id="æç¤ºè¯æ¨¡æ¿ç³»ç»">æç¤ºè¯æ¨¡æ¿ç³»ç»</h5>
-<p>Flink å®ç°äºä¸ä¸ªå®æ´çæç¤ºè¯æ¨¡æ¿ç®¡çç³»ç»ï¼</p>
-<ul>
-<li>æ¯æå­ç¬¦ä¸²æ¨¡æ¿åæ¶æ¯åè¡¨æ¨¡å</li>
-<li>æä¾æ ¼å¼ååè½ï¼å¯ä»¥å¨ææ¿æ¢æ¨¡æ¿ä¸­çå ä½ç¬¦</li>
-<li>èªå¨å¤çä¸åç±»åè¾å¥çè½¬æ¢</li>
-</ul>
-<h5 id="å·¥å·è°ç¨éæ">å·¥å·è°ç¨éæ</h5>
-<p>Flink å°å·¥å·è°ç¨éæå° ReActAgentä¸­ã</p>
-<pre><code class="language-python"># æ³¨åå·¥å·èµæº
-    # Add Ollama chat model connection and notify shipping manager tool to be used
-    # by the Agent.
-    agents_env.add_resource(
-        "ollama_server",
-        ResourceDescriptor(clazz=OllamaChatModelConnection, request_timeout=120),
-    ).add_resource(
-        "notify_shipping_manager", Tool.from_callable(notify_shipping_manager)
-    )
-    
-# å¨Agent ä¸­ä½¿ç¨å·¥å·
-    # Create react agent
-    review_analysis_react_agent = ReActAgent(
-        chat_model=ResourceDescriptor(
-            clazz=OllamaChatModelSetup,
-            connection="ollama_server",
-            model="qwen3:8b",
-            tools=["notify_shipping_manager"],
-        ),
-        prompt=review_analysis_react_prompt,
-        output_schema=ProductReviewAnalysisRes,
-    )
-</code></pre>
-<h5 id="è¿è¡æ¶åä½">è¿è¡æ¶åä½</h5>
-<ul>
-<li>æ§è¡ç¯å¢è´è´£è°åº¦åè¿è¡Agentä¸­çåä¸ªç»ä»¶</li>
-<li>Agentéè¿RunnerContext è®¿é®å¨ç¯å¢ä¸­æ³¨åçèµæº</li>
-<li>æ´ä¸ªè¿ç¨éç¨äºä»¶é©±å¨çæ¹å¼ï¼éè¿åéåæ¥æ¶äºä»¶æ¥æ¨è¿æ§è¡æµç¨</li>
-</ul>
-<h3 id="33-å¸åæ§è¡æµç¨">3.3 å¸åæ§è¡æµç¨</h3>
-<p>å¯¹äº ReActAgent æ¥è¯´ï¼å·ä½ééæµç¨å¦ä¸ï¼</p>
-<ul>
-<li>ç¯å¢åå§åï¼éè¿ AgentsExecutionEnvironment.get_execution_environment(env) è·åéå½çæ§è¡ç¯å¢</li>
-<li>èµæºéç½®ï¼ä½¿ç¨ addResource() æ·»å æ¨¡åãå·¥å·ç­èµæº</li>
-<li>è¾å¥è®¾ç½®ï¼éè¿fromDataStream()ã fromTable()ç­è®¾ç½®è¾å¥æº</li>
-<li>Agentåºç¨ï¼ä½¿ç¨ apply()æ¹æ³åºç¨Agent é»è¾</li>
-<li>è¾åºè·åï¼éè¿ toDataStream() è·åå¤çåç DataStream</li>
-<li>æ§è¡ï¼éè¿execute() è§¦åFlinkä½ä¸æ§è¡</li>
-</ul>
-<p>å¸åçæ§è¡æµç¨å¦ä¸ï¼</p>
-<ul>
-<li>run å½æ°æ¥æ¶å°è¾å¥æ°æ®</li>
-<li>åå»ºInputEvent å¹¶åéå°äºä»¶éå</li>
-<li>start_actionå¤çInputEventï¼æ ¼å¼åè¾å¥å¹¶åé ChatRequestEvent</li>
-<li>LLMå¤çåäº§ç ChatResponseEvent</li>
-<li>stop_action å¤ç ChatResponseEventï¼è§£æç»æå¹¶åé OutputEvent</li>
-<li>run å½æ°æ¶é OutputEvent å¹¶è¿åç»æ</li>
-</ul>
-<p>å³é®ç¹ç¹æ¯ï¼</p>
-<ul>
-<li>äºä»¶é©±å¨ï¼ä½¿ç¨äºä»¶éåé©±å¨æ´ä¸ªæ§è¡æµç¨</li>
-<li>ä¸ä¸æéç¦»ï¼æ¯ä¸ªé®å¼å¯¹åºç¬ç«çæ§è¡ä¸ä¸æ</li>
-<li>å¼æ­¥æ¯æï¼è½ç¶æ¬å°æ§è¡ç¯å¢åéå°åæ­¥æ§è¡ï¼ä½ä»ç¶æ¯æå¼æ­¥æ¥å£</li>
-<li>ç¶æç®¡çï¼éè¿ LocalRunnerContext ç®¡çç­æè®°å¿åèµæºéç½®</li>
-</ul>
-<h3 id="34-start_action-ä¸-stop_action">3.4 start_action ä¸ stop_action</h3>
-<p><strong>æ´ä½æµç¨ç¹è²</strong></p>
-<p>è¿ä¸¤ä¸ª action ææå®æ´ç ReAct æ¨¡å¼ï¼</p>
-<ul>
-<li>å¼å§-ç»ææ¨¡å¼ï¼start_action ä½ä¸ºå¥å£ï¼å°åå§è¾å¥è½¬åä¸ºéå LLM å¤ççæ ¼å¼ï¼stop_action ä½ä¸ºåºå£ï¼å° LLM ååºè½¬æ¢ä¸ºç»æåè¾åºã</li>
-<li>ä¸­é´å¤çéæåï¼ç¨æ·æ éå³å¿ä¸­é´æ­¥éª¤ï¼å¦å·¥å·è°ç¨ãä¸ä¸ææ£ç´¢ç­ï¼ï¼è¿äºç±åç½®ç CHAT_MODEL_ACTIONãTOOL_CALL_ACTION ç­èªå¨å¤çã</li>
-<li>å¯éç½®æ§ï¼æ¯æèªå®ä¹ Promptãè¾åº schema å®ä¹åéè¯¯å¤çç­ç¥ã</li>
-</ul>
-<p><strong>åè½</strong></p>
-<p>ReActAgent ç start_action ä¸ stop_action åå·ç¹å¾ï¼äºèåå«æ¿æå¯¹è¯çåèµ·ä¸ç»ç»èè´£ã</p>
-<ul>
-<li>start_action è´è´£è¾å¥äºä»¶çå¤çãå®é¦åæ¥æ¶ InputEventï¼ä½ä¸ºæ´ä¸ª Agent æµç¨çèµ·ç¹ï¼å¯æ¥ååå§ç±»åãå¤æå¯¹è±¡æ Row ç­å¤ç§æ°æ®ãè¥æä¾ Promptï¼åä»¥æ­¤æ ¼å¼åç¨æ·è¾å¥ï¼å°ç®åå­ç¬¦ä¸²æå¤æå¯¹è±¡ï¼å¦ Row æ POJOï¼çå±æ§èªå¨æåå¹¶å¡«å¥æ¨¡æ¿ãéåï¼ç³»ç»èªå¨è¿½å  schema promptï¼çº¦æå¤§æ¨¡åè¾åºç»æï¼åå°æ´çåçåå®¹å°è£ä¸º ChatRequestEventï¼è§¦ååç»­å¤çï¼é»è®¤è°ç¨ _DEFAULT_CHAT_MODEL å®æé¦æ¬¡çæã</li>
-<li>stop_action åå¤çè¾åºäºä»¶ãå®ä»¥ ChatResponseEvent ä¸ºè¾å¥ï¼æ å¿å¤§æ¨¡åçæå®æ¯ï¼æ¯æ´ä¸ªæµç¨çç»ç¹ãè¯¥å¨ä½æ¯ææ schema è§£æä¸éªè¯è¿åç»æï¼å¯å° JSON ææ¬è½¬æ¢ä¸º Pydantic æ¨¡åæ RowTypeInfo æå®ç»æï¼å¹¶æä¾éè¯¯å¤çç­ç¥ï¼å¿½ç¥ææåºå¼å¸¸ï¼ï¼ä¿è¯è¾åºç±»åå®å¨ä¸ä¸å¡ä¸è´æ§ã</li>
-</ul>
-<p><strong>ä¸å¶ä»ç»ä»¶çåä½</strong></p>
-<p>å¨ ReActAgent åå§åæ¶æ³¨åè¿ä¸¤ä¸ª actionï¼</p>
-<pre><code class="language-python">self.add_action(
-    name="stop_action",
-    events=[ChatResponseEvent],
-    func=self.stop_action,
-    output_schema=OutputSchema(output_schema=output_schema),
-)
-</code></pre>
-<p>è¿ä¸¤ä¸ª action ä¸ Agent åç½®çå¶ä» actionï¼å¦å·¥å·è°ç¨ãä¸ä¸ææ£ç´¢ï¼éåå·¥ä½ï¼å¨ ActionExecutionOperator ä¸­å½¢æä¸ä¸ªå®æ´çäºä»¶é©±å¨å¤çé¾ã</p>
-<h3 id="35-è¾å¥è¾åº">3.5 è¾å¥è¾åº</h3>
-<p>Flink Agent çè¾å¥è¾åºå·æä»¥ä¸å ä¸ªæ¾èç¹ç¹ï¼å¹¶éè¿ç¹å®æºå¶ä¸Flinkè¿è¡ééã</p>
-<h4 id="351-äºä»¶é©±å¨æ¶æ">3.5.1 äºä»¶é©±å¨æ¶æ</h4>
-<p>Flink Agent åºäºäºä»¶é©±å¨æ¨¡åï¼è¾å¥åè¾åºé½æ¯éè¿äºä»¶å¯¹è±¡è¿è¡ä¼ éï¼</p>
-<ul>
-<li>è¾å¥ï¼éè¿InputEvent å°è£åå§æ°æ®</li>
-<li>è¾åºï¼éè¿OutputEventå°è£å¤çç»æ</li>
-<li>ä¸­é´äºä»¶ï¼åæ¬ ChatRequestEventãChatResponseEventãToolRequestEventãToolResponseEventç­</li>
-</ul>
-<h4 id="352-ç»ä¸çæ°æ®å°è£">3.5.2 ç»ä¸çæ°æ®å°è£</h4>
-<p>æææ°æ®é½è¢«å°è£æäºä»¶å¯¹è±¡ï¼ä¾¿äºAgentåé¨æµè½¬åå¤çã</p>
-<h4 id="353-æ¯æå¤ç§æ°æ®ç±»å">3.5.3 æ¯æå¤ç§æ°æ®ç±»å</h4>
-<p>è¾å¥æ¯æå¤ç§æ°æ®ç±»åï¼</p>
-<ul>
-<li>åºæ¬æ°æ®ç±»å</li>
-<li>Flink Rowå¯¹è±¡</li>
-<li>POJOå¯¹è±¡</li>
-<li>å¤æåµå¥ç»æ</li>
-</ul>
-<p>è¾åºåæ ·æ¯æçµæ´»çæ°æ®ç»æï¼å¯ä»¥éè¿schemaè¿è¡çº¦æ</p>
-<h4 id="354-åç½®æ¨¡æ¿æ¯æ">3.5.4 åç½®æ¨¡æ¿æ¯æ</h4>
-<p>éè¿Promptç±»æ¯ææ¨¡æ¿åè¾å¥å¤çï¼å¯ä»¥å®ä¹å¤æçæç¤ºè¯æ¨¡æ¿</p>
-<h3 id="36-æ¨¡æ¿ç³»ç»">3.6 æ¨¡æ¿ç³»ç»</h3>
-<p>æ¨¡æ¿å¯ä»¥ç¨å¨æç¤ºè¯åSchemaãFlink Agent ä¸­çæ¨¡æ¿ç³»ç»ä¸»è¦å¨ Prompt ç±»ä¸­å®ç°ï¼æ¯æä¸¤ç§ç±»åçæ¨¡æ¿ï¼</p>
-<h4 id="361-å­ç¬¦ä¸²æ¨¡æ¿">3.6.1 å­ç¬¦ä¸²æ¨¡æ¿</h4>
-<p>æåºæ¬çæ¨¡æ¿å½¢å¼ï¼å°±æ¯ä¸ä¸ªåå«å ä½ç¬¦çå­ç¬¦ä¸²ï¼</p>
-<pre><code class="language-java">        String specialTemplate = "Handle special chars: {text} with symbols like @#$%^&amp;*()";
-        Prompt specialPrompt = new Prompt(specialTemplate);
-
-        Map&lt;String, String&gt; specialVars = new HashMap&lt;&gt;();
-        specialVars.put("text", "Hello &amp; Welcome!");
-
-        String result = specialPrompt.formatString(specialVars);
-
-</code></pre>
-<h4 id="362-æ¶æ¯æ¨¡æ¿">3.6.2 æ¶æ¯æ¨¡æ¿</h4>
-<p>æ´å¤æçæ¨¡æ¿å½¢å¼ï¼åå«å¤ä¸ª ChatMessage å¯¹è±¡ï¼å¯ä»¥æå®ä¸åçè§è²ã</p>
-<pre><code class="language-python">        List&lt;ChatMessage&gt; multipleMessages =
-                Arrays.asList(
-                        new ChatMessage(MessageRole.SYSTEM, "You are a helpful assistant."),
-                        new ChatMessage(MessageRole.USER, "First message"),
-                        new ChatMessage(MessageRole.ASSISTANT, "I understand"),
-                        new ChatMessage(
-                                MessageRole.USER, "Second message - this should be the response"));
-
-        Prompt multiPrompt = new Prompt(multipleMessages);
-
-</code></pre>
-<p>æ¨¡æ¿çç®¡çæµç¨å¦ä¸ï¼</p>
-<ul>
-<li>æ¨¡æ¿åå»ºï¼ç¨æ·åå»º Prompt  å¯¹è±¡ï¼å¯ä»¥æ¯å­ç¬¦ä¸²ææ¶æ¯åè¡¨ã</li>
-<li>åéæ¿æ¢ï¼ä½¿ç¨ formatString() æè formatMessages() æ¹æ³å¯¹ä¼ å¥åéæ å°è¿è¡æ¿æ¢</li>
-<li>LLM è°ç¨ï¼æ ¼å¼åçæ¶æ¯è¢«åéç»LLMè¿è¡å¤çã</li>
-</ul>
-<pre><code class="language-python">class Prompt(SerializableResource, ABC):
-    """Base prompt abstract."""
-
-    @staticmethod
-    def from_messages(messages: Sequence[ChatMessage]) -&gt; "Prompt":
-        """Create prompt from sequence of ChatMessage."""
-        return LocalPrompt(template=messages)
-
-    @staticmethod
-    def from_text(text: str) -&gt; "Prompt":
-        """Create prompt from text string."""
-        return LocalPrompt(template=text)
-
-    @abstractmethod
-    def format_string(self, **kwargs: str) -&gt; str:
-        """Generate text string from template with additional arguments."""
-
-    @abstractmethod
-    def format_messages(
-        self, role: MessageRole = MessageRole.SYSTEM, **kwargs: str
-    ) -&gt; List[ChatMessage]:
-        """Generate list of ChatMessage from template with additional arguments."""
-
-    @classmethod
-    @override
-    def resource_type(cls) -&gt; ResourceType:
-        """Get the resource type."""
-        return ResourceType.PROMPT
-
-class LocalPrompt(Prompt):
-    """Prompt for a language model.
-
-    Attributes:
-    ----------
-    template : Union[Sequence[ChatMessage], str]
-        The prompt template.
-    """
-
-    template: Sequence[ChatMessage] | str
-
-    def format_string(self, **kwargs: str) -&gt; str:
-        """Generate text string from template with input arguments."""
-        if isinstance(self.template, str):
-            return format_string(self.template, **kwargs)
-        else:
-            msgs = []
-            for m in self.template:
-                msg = f"{m.role.value}: {format_string(m.content, **kwargs)}"
-                if m.extra_args is not None and len(m.extra_args) &gt; 0:
-                    msg += f"{m.extra_args}"
-                msgs.append(msg)
-            return "\n".join(msgs)
-
-    def format_messages(
-        self, role: MessageRole = MessageRole.SYSTEM, **kwargs: str
-    ) -&gt; List[ChatMessage]:
-        """Generate list of ChatMessage from template with input arguments."""
-        if isinstance(self.template, str):
-            return [
-                ChatMessage(role=role, content=format_string(self.template, **kwargs))
-            ]
-        else:
-            msgs = []
-            for m in self.template:
-                msg = ChatMessage(
-                    role=m.role, content=format_string(m.content, **kwargs)
-                )
-                msgs.append(msg)
-            return msgs
-</code></pre>
-<h3 id="37-functiontool-ä¸-action-çå³èåæ³¨åæºå¶">3.7 FunctionTool ä¸ Action çå³èåæ³¨åæºå¶</h3>
-<p>å¨ Flink Agents æ¡æ¶ä¸­ï¼function tool ä¸ action çèç³»åæ³¨åæ¶åå¤ä¸ªç»ä»¶åæ­¥éª¤ã</p>
-<h4 id="371-å®éè½¬æ¢æµç¨">3.7.1 å®éè½¬æ¢æµç¨</h4>
-<p>å·ä½çå·¥å·å° prompt çè½¬æ¢è¿ç¨å¦ä¸ï¼</p>
-<ol>
-<li>å·¥å·éè¿ @Tool æ @tool æ³¨åå°æ§è¡ç¯å¢ä¸­</li>
-<li>å¨åå»º ResourceDescriptor æ¶ï¼éè¿ tools åæ°å¼ç¨è¿äºå·²æ³¨åçå·¥å·</li>
-<li>å½èå¤©æ¨¡å setup ç±»ï¼å¦ OllamaChatModelSetupï¼åå§åæ¶ï¼å®ä¼è·åè¿äºå·¥å·çåæ°æ®ï¼åæ¬åç§°åæè¿°ï¼</li>
-<li>è¿äºå·¥å·ä¿¡æ¯ä¼è¢«èªå¨æ´åå°åéç» LLM çç³»ç» prompt ä¸­ï¼åç¥ LLM æåªäºå¯ç¨å·¥å·åå¶ç¨é</li>
-</ol>
-<p>è¿ç§æ¹å¼ä½¿å¾å¼åèåªéå³æ³¨å·¥å·çå®ä¹åæ³¨åï¼èæ éæå¨ç¼åå·¥å·æè¿°å° prompt ä¸­ï¼æé«äºå¼åæçå¹¶åå°äºåºéå¯è½æ§ã</p>
-<h5 id="function-tool-æ³¨åå°-agent">Function Tool æ³¨åå° Agent</h5>
-<p>Function tool é¦åéè¿ä»¥ä¸å ç§æ¹å¼æ³¨åå°æ§è¡ç¯å¢ä¸­ï¼</p>
-<p><strong>æ¹å¼ä¸ï¼ä½¿ç¨è£é¥°å¨</strong></p>
-<pre><code class="language-python">    @tool
-    @staticmethod
-    def notify_shipping_manager(id: str, review: str) -&gt; None:
-        """Notify the shipping manager when product received a negative review due to
-        shipping damage.
-
-        Parameters
-        ----------
-        id : str
-            The id of the product that received a negative review due to shipping damage
-        review: str
-            The negative review content
-        """
-        # reuse the declared function, but for parsing the tool metadata, we write doc
-        # string here again.
-        notify_shipping_manager(id=id, review=review)
-</code></pre>
-<p><strong>æ¹å¼äºï¼ä½¿ç¨ add_resource æ¹æ³</strong></p>
-<p>å³ï¼å¨æ§è¡ç¯å¢æ³¨åå·¥å·èµæºã</p>
-<pre><code class="language-python">def add(a: int, b: int) -&gt; int:
-    """Calculate the sum of a and b.
-
-    Parameters
-    ----------
-    a : int
-        The first operand
-    b : int
-        The second operand
-
-    Returns:
-    -------
-    int:
-        The sum of a and b
-    """
-    return a + b
-
-env.add_resource("add", ResourceType.TOOL, add)
-</code></pre>
-<p><strong>æ¹å¼ä¸ï¼å¨ Agent æé å½æ°ä¸­æ·»å </strong></p>
-<pre><code class="language-python">class MyAgent(Agent):
-    def __init__(self):
-        super().__init__()
-        self.add_resource("add", add) # æ·»å å° TOOL ç±»åèµæºä¸­
-</code></pre>
-<p><strong>æ¹å¼åï¼å¨  ReActAgent æå»ºæ¶åä¼ å¥</strong></p>
-<p>å³ï¼éè¿ tools åæ°æå®ã</p>
-<pre><code class="language-java">    // Create ReAct agent.
-    private static ReActAgent getReActAgent() {
-        return new ReActAgent(
-                ResourceDescriptor.Builder.newBuilder(OllamaChatModelSetup.class.getName())
-                        .addInitialArgument("connection", "ollamaChatModelConnection")
-                        .addInitialArgument("model", "qwen3:8b")
-                        .addInitialArgument(
-                                "tools", Collections.singletonList("notifyShippingManager"))
-                        .build(),
-                reviewAnalysisReactPrompt(),
-                CustomTypesAndResources.ProductReviewAnalysisRes.class);
-    }
-</code></pre>
-<h5 id="ä¸æ¨¡åäº¤äº">ä¸æ¨¡åäº¤äº</h5>
-<p>Chat Model Setup ä¸­å¼ç¨å·¥å·</p>
-<p>å¨åå»º Chat Model Setup æ¶ï¼éè¿ tools åæ°æå®è¦ä½¿ç¨çå·¥å·åè¡¨ï¼</p>
-<pre><code class="language-python">chat_model_descriptor = ResourceDescriptor(
-clazz=OllamaChatModelSetup,
-connection="my_ollama_connection",
-model="qwen3:8b",
-tools=["notify_shipping_manager"]   # å¼ç¨å·²æ³¨åçå·¥å·
-)
-</code></pre>
-<h4 id="372-agentplan-ç¼è¯è¿ç¨ä¸­å·¥å·çå¤ç">3.7.2 AgentPlan ç¼è¯è¿ç¨ä¸­å·¥å·çå¤ç</h4>
-<p>Flink Agents åç½®äºä¸ä¸ª TOOL_CALL_ACTIONï¼ï¼ä¸é¨ç¨äºè°ç¨å·¥å·ãTOOL_CALL_ACTION ä¸ç¨æ·å®ä¹å·¥å·å½æ°çèç³»ä¸»è¦ä¾èµäºï¼</p>
-<ul>
-<li>ç»ä¸çå½åç³»ç»ï¼å·¥å·å½æ°çåç§°ä½ä¸ºå¯ä¸æ è¯ç¬¦</li>
-<li>èµæºç®¡çæºå¶ï¼éè¿ RunnerContext.get_resource() æ¹æ³æåç§°æ£ç´¢å·¥å·</li>
-<li>æ ååæ¥å£ï¼ææå·¥å·é½å®ç°ç¸åç call() æ¥å£</li>
-<li>äºä»¶é©±å¨æ¶æï¼éè¿ ToolRequestEvent å ToolResponseEvent ä¼ éè°ç¨ä¿¡æ¯</li>
-</ul>
-<p>è¿ç§è®¾è®¡ä½¿å¾ç³»ç»å¯ä»¥å¨è¿è¡æ¶å¨æå°å° LLM çå·¥å·è°ç¨è¯·æ±è·¯ç±å°æ­£ç¡®çç¨æ·å®ä¹å½æ°ï¼èæ éç¡¬ç¼ç å·ä½çå½æ°å¼ç¨ã</p>
-<p><img alt="3-1" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1850883/202512/1850883-20251219091153807-2024238587.png" class="lazyload"></p>
-<h5 id="ç¨æ·å®ä¹ç-function-tool-è½¬æ¢ä¸º-action">ç¨æ·å®ä¹ç Function Tool è½¬æ¢ä¸º Action</h5>
-<p>å½ Agent è¢«ç¼è¯æ AgentPlan æ¶ï¼ç³»ç»ä¼æ¶éææèµæºï¼åæ¬å·¥å·ï¼ ï¼è¿äºå·¥å·ä¼è¢«è½¬æ¢ä¸ºå¯æ§è¡ç Actionï¼</p>
-<ul>
-<li>å¨ _get_resource_providers å½æ°ä¸­ï¼è¯å«å¸¦æ _is_tool å±æ§çèµæº</li>
-<li>ä½¿ç¨ from_callable å°å½æ°è½¬æ¢ä¸ºå·¥å·å¯¹è±¡</li>
-<li>å·¥å·è¢«åè£ä¸º ResourceProvider å¹¶å­å¨å¨ AgentPlan ä¸­ï¼å³éè¿ PythonSerializableResourceProvider åè£å·¥å·èµæº</li>
-</ul>
-<h5 id="åç½®-tool-call-action">åç½® Tool Call Action</h5>
-<p>æ¡æ¶æä¾äºä¸ä¸ªåç½®ç TOOL_CALL_ACTIONï¼ä¸é¨ç¨äºè°ç¨å·¥å·ï¼</p>
-<pre><code class="language-python">TOOL_CALL_ACTION = Action(
-    name="tool_call_action",
-    exec=PythonFunction.from_callable(process_tool_request),
-    listen_event_types=[f"{ToolRequestEvent.__module__}.{ToolRequestEvent.__name__}"],
-)
-</code></pre>
-<p>å¯¹åºAction ä¸ºToolCallActionï¼å¶ä¸­ processToolRequest å½æ°ä¼ä¸ç¨æ·èªå®ä¹çå·¥å·å½æ°ç¸äºå³èãå·ä½èç³»æºå¶å¦ä¸ï¼</p>
-<ul>
-<li>å½åå¹éï¼å½ LLM å³å®è°ç¨æä¸ªå·¥å·æ¶ï¼å®ä¼å¨ tool_call ä¸­æå®å·¥å·åç§°ï¼å¦ "notify_shipping_manager"ï¼</li>
-<li>èµæºæ¥æ¾ï¼TOOL_CALL_ACTION ä½¿ç¨è¿ä¸ªåç§°éè¿ ctx.get_resource(name, ResourceType.TOOL) æ¥æ¾å·²æ³¨åçå·¥å·</li>
-<li>å¨æè°ç¨ï¼æ¾å°å·¥å·åï¼éè¿ tool.call(**kwargs) è°ç¨ç¨æ·å®ä¹çå®éå½æ°</li>
-</ul>
-<pre><code class="language-java">public class ToolCallAction {
-    public static Action getToolCallAction() throws Exception {
-        return new Action(
-                "tool_call_action",
-                new JavaFunction(
-                        ToolCallAction.class,
-                        "processToolRequest",
-                        new Class[] {ToolRequestEvent.class, RunnerContext.class}),
-                List.of(ToolRequestEvent.class.getName()));
-    }
-
-    @SuppressWarnings("unchecked")
-    public static void processToolRequest(ToolRequestEvent event, RunnerContext ctx) {
-        Map&lt;String, Boolean&gt; success = new HashMap&lt;&gt;();
-        Map&lt;String, String&gt; error = new HashMap&lt;&gt;();
-        Map&lt;String, ToolResponse&gt; responses = new HashMap&lt;&gt;();
-        Map&lt;String, String&gt; externalIds = new HashMap&lt;&gt;();
-        for (Map&lt;String, Object&gt; toolCall : event.getToolCalls()) {
-            String id = String.valueOf(toolCall.get("id"));
-            Map&lt;String, Object&gt; function = (Map&lt;String, Object&gt;) toolCall.get("function");
-            String name = (String) function.get("name");// è·åå·¥å·åç§°
-            Map&lt;String, Object&gt; arguments = (Map&lt;String, Object&gt;) function.get("arguments"); // è·åå·¥å·åæ°
-
-            if (toolCall.containsKey("original_id")) {
-                externalIds.put(id, (String) toolCall.get("original_id"));
-            }
-
-            Tool tool = null;
-            try {
-                // ä»ä¸ä¸æè·åå¯¹åºåç§°çå·¥å·èµæº
-                tool = (Tool) ctx.getResource(name, ResourceType.TOOL);
-            } catch (Exception e) {
-                success.put(id, false);
-                responses.put(
-                        id, ToolResponse.error(String.format("Tool %s does not exist.", name)));
-                error.put(id, e.getMessage());
-            }
-
-            if (tool != null) {
-                try {
-                    // è°ç¨ç¨æ·å®éå·¥å·
-                    ToolResponse response = tool.call(new ToolParameters(arguments));
-                    success.put(id, true);
-                    responses.put(id, response);
-                } catch (Exception e) {
-                    success.put(id, false);
-                    responses.put(
-                            id, ToolResponse.error(String.format("Tool %s execute failed.", name)));
-                    error.put(id, e.getMessage());
-                }
-            }
-        }
-        // è¿åå·¥å·ååºäºä»¶
-        ctx.sendEvent(new ToolResponseEvent(event.getId(), responses, success, error, externalIds));
-    }
-}
-</code></pre>
-<p>è¿ä¸ª action çå¬ ToolRequestEvent äºä»¶ï¼å¹¶æ§è¡å·¥å·è°ç¨ãè°ç¨å®æåï¼å°ç»æéè¿ ToolReponseEvent è¿åã</p>
-<pre><code class="language-json">    "tool_call_action": {
-      "name": "tool_call_action",
-      "exec": {
-        "func_type": "PythonFunction",
-        "module": "flink_agents.plan.actions.tool_call_action",
-        "qualname": "process_tool_request"
-      },
-      "listen_event_types": [
-        "flink_agents.api.events.tool_event.ToolRequestEvent"
-      ]
-    }
-</code></pre>
-<h5 id="tool_call_action-å¦ä½ç¼è¯å°agentplan">TOOL_CALL_ACTION å¦ä½ç¼è¯å°AgentPlan</h5>
-<ul>
-<li>
-<p>å¨ AgentPlan.from_agent æ¹æ³ä¸­ï¼</p>
-<ul>
-<li>å½åå»º AgentPlan æ¶ï¼ä¼æ¶éææå¨ä½ï¼åæ¬ç¨æ·å®ä¹çå¨ä½ååç½®å¨ä½</li>
-<li>ä»£ç ä¸­æç¡®åå«äºåç½®å¨ä½ï¼<br>
-BUILT_IN_ACTIONS = [CHAT_MODEL_ACTION, TOOL_CALL_ACTION, CONTEXT_RETRIEVAL_ACTION]</li>
-<li>å¨ _get_actions(agent) å½æ°ä¸­ï¼è¿äºåç½®å¨ä½ä¼è¢«æ·»å å°å¨ä½åè¡¨ä¸­</li>
-</ul>
-</li>
-<li>
-<p>å·ä½ç¼è¯è¿ç¨ï¼</p>
-<ul>
-<li>AgentPlan.from_agent() æ¹æ³è°ç¨ _get_actions(agent) è·åææå¨ä½</li>
-<li>_get_actions() å½æ°ä¸ä»æåç¨æ·å®ä¹çå¨ä½ï¼è¿ä¼åå« BUILT_IN_ACTIONS</li>
-<li>è¿äºå¨ä½éåè¢«ç¼è¯è¿ AgentPlan ç actions å actions_by_event å­æ®µä¸­</li>
-</ul>
-</li>
-<li>
-<p>å¨æç»ç AgentPlan ä¸­ï¼</p>
-<ul>
-<li>TOOL_CALL_ACTION ä¼ä½ä¸ºä¸ä¸ªæ®éçå¨ä½å­å¨äº actions æ å°ä¸­</li>
-<li>å®ä¼çå¬ ToolRequestEvent äºä»¶ç±»åï¼å¹¶å¨è¯¥äºä»¶åçæ¶è¢«è§¦åæ§è¡</li>
-</ul>
-</li>
-</ul>
-<p>å æ­¤ï¼TOOL_CALL_ACTION ç¡®å®ä¼è¢«ç¼è¯å° AgentPlan ä¸­ï¼ä½ä¸ºå¤çå·¥å·è°ç¨çæ åæºå¶ãå½ LLM å³å®è°ç¨å·¥å·æ¶ï¼ä¼ååº ToolRequestEventï¼ç¶å TOOL_CALL_ACTION å°±ä¼è¢«è§¦åæ¥å®éæ§è¡ç¸åºçå·¥å·è°ç¨ã</p>
-<h4 id="373-å·¥å·è°ç¨æµç¨">3.7.3 å·¥å·è°ç¨æµç¨</h4>
-<p>æ´ä¸ªæµç¨ä¸­ï¼å·¥å·ä¸æ¯ç´æ¥ç»å®å° ActionExecutionOperatorï¼èæ¯éè¿ AgentPlan ä¸­çèµæºæä¾èæºå¶ï¼å¨éè¦æ¶å¨æè·ååå®ä¾åãè¿ç§è®¾è®¡å®ç°äºå·¥å·ä¸æä½ç¬¦çæ¾è¦åï¼åæ¶æ¯æå¤ç§ç±»åçå·¥å·ï¼JavaãPython ç­ï¼ã</p>
-<ul>
-<li>LLM å³å®è°ç¨æä¸ªå·¥å·</li>
-<li>TOOL_CALL_ACTION åç½®å¨ä½è¢«è§¦å</li>
-<li>éè¿ RunnerContext è·åå¯¹åºå·¥å·èµæº</li>
-<li>RunnerContextImpl.get_resource() æ¹æ³æ ¹æ®åç§°åç±»åæ¥æ¾å·¥å·èµæº</li>
-<li>å·¥å·å®éå¨éè¦æ¶æéè¿ ResourceProvider å®ä¾å</li>
-<li>éè¿ ToolCallFunction æ¥æ¾å¹¶æ§è¡ç¸åºçå·¥å·å½æ°</li>
-<li>ç»æä½ä¸ºæ°äºä»¶åéå°äºä»¶éå</li>
-</ul>
-<h4 id="374-å®æ´æµç¨å¾">3.7.4 å®æ´æµç¨å¾</h4>
-<p><img alt="3-2" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1850883/202512/1850883-20251219091138725-203672539.png" class="lazyload"></p>
-<h4 id="375-ä»£ç ">3.7.5 ä»£ç </h4>
-<p>å¨ agent_plan.pyä¸­å¤çå·¥å·èµæºçä»£ç å¦ä¸ï¼</p>
-<pre><code class="language-python">        # è¯å«å·¥å·èµæºå¹¶åå»ºæä¾è
-        elif hasattr(value, "_is_tool"):
-            if isinstance(value, staticmethod):
-                value = value.__func__
-
-            if callable(value):
-                # TODO: support other tool type.
-                tool = from_callable(func=value)
-                resource_providers.append(
-                    PythonSerializableResourceProvider.from_resource(
-                        name=name, resource=tool
-                    )
-                )
-    # æèéè¿add_resource æ·»å çå·¥å·            
-    for name, tool in agent.resources[ResourceType.TOOL].items():
-        resource_providers.append(
-            PythonSerializableResourceProvider.from_resource(
-                name=name, resource=from_callable(tool.func)
-            )
-        )                
-</code></pre>
-<p>æ»ç»æ¥è¯´ï¼function_tool  éè¿èµæºæ³¨åæºå¶ä¸Agentå³èï¼ç¶åå¨ç¼è¯é¶æ®µè¢«è½¬æ¢ä¸ºå¯åºååçèµæºæä¾èï¼æç»éè¿åç½®çå·¥å·è°ç¨Actionæ¥æ§è¡ãè¿ç§è®¾è®¡ä½¿å¾å·¥å·å¯ä»¥å¨åå¸å¼ç¯å¢ç§æ­£ç¡®ä¼ è¾åæ§è¡ã</p>
-<h2 id="0xff-åè">0xFF åè</h2>
-<p><a href="https://ce101.mintlify.app/core-tech/agent#7-2-5-multi-agent" target="_blank" rel="noopener nofollow">https://ce101.mintlify.app/core-tech/agent#7-2-5-multi-agent</a></p>
-<p><a href="https://www.zhihu.com/question/1959742114519844109/answer/1983526566437880277" target="_blank" rel="noopener nofollow">https://www.zhihu.com/question/1959742114519844109/answer/1983526566437880277</a></p>
+<p>æå¥½çå¯è§åä¸æ¯å±ç¤ºæææ°æ®ï¼èæ¯å¼å¯¼è§ä¼çå°æéè¦çä¿¡æ¯ãæ ¼å¼å¡åçå°±æ¯æä»¬å®ç°è¿ä¸ç®æ çå¼ºå¤§å·¥å·ã</p>
+<p>å¸æè¿ç¯æç« è½å¸®å©ä½ å¨åå»ºæ°æ®å¯è§åæ¶ï¼æ´å ææå°å¼å¯¼è§ä¼çæ³¨æåã</p>
 
 </div>
 <div class="clear"></div>
 
             </div>
             <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2025-12-31 19:18">2025-12-31 19:17</span>&nbsp;
-<a href="https://www.cnblogs.com/rossiXYZ">ç½è¥¿çæè</a>&nbsp;
-éè¯»(<span id="post_view_count">70</span>)&nbsp;
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-01-02 15:06">2026-01-02 15:05</span>&nbsp;
+<a href="https://www.cnblogs.com/wang_yb">wang_yb</a>&nbsp;
+éè¯»(<span id="post_view_count">14</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19369869);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19369869', targetLink: 'https://www.cnblogs.com/rossiXYZ/p/19369869', title: 'ãå¤§æ°æ® &amp;amp; AIãFlink Agents æºç è§£è¯» --- (3) --- Agent' })">ä¸¾æ¥</a>
+<a href="javascript:void(0)" onclick="AddToWz(19431960);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19431960', targetLink: 'https://www.cnblogs.com/wang_yb/p/19431960', title: 'æ ¼å¼å¡åçï¼æ°æ®å¯è§åå¦ä½å¼å¯¼è§ä¼çæ³¨æå' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -3291,8 +2658,8 @@ const blogData = await response.json();
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-01-02 13:54">2026-01-02 13:53</span>&nbsp;
 <a href="https://www.cnblogs.com/charlee44">charlee44</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">19</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19431854);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19431854', targetLink: 'https://www.cnblogs.com/charlee44/p/19431854', title: 'ä»åç«¯è·åæ°æ®ä¼ è¾å°åç«¯è¿è¡æ¾ç¤º(cpp-httplib+Vditor+Handlebars)' })">ä¸¾æ¥</a>
