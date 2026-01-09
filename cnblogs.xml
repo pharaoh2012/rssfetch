@@ -3,20 +3,20 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-01-09T08:25:24.839Z</lastBuildDate>
+        <lastBuildDate>2026-01-09T12:35:13.556Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
-    <title><![CDATA[ Grafana Lokièªå¨çæ§æ¥å¿ ]]></title>
-    <link>https://www.cnblogs.com/ZouYua/p/19462083</link>
-    <guid>d66c88bdfc11440e4d37e3aab93520df</guid>
+    <title><![CDATA[ Flinkæºç éè¯»ï¼Taskæ°æ®äº¤äº ]]></title>
+    <link>https://www.cnblogs.com/Jackeyzhe/p/19463278</link>
+    <guid>6a8e436530e1c28164345f05f0039b7b</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/ZouYua/p/19462083" title="åå¸äº 2026-01-09 16:06">
-    <span role="heading" aria-level="2">Grafana Lokièªå¨çæ§æ¥å¿</span>
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/Jackeyzhe/p/19463278" title="åå¸äº 2026-01-09 20:11">
+    <span role="heading" aria-level="2">Flinkæºç éè¯»ï¼Taskæ°æ®äº¤äº</span>
     
 
 </a>
@@ -24,490 +24,747 @@
             </h1>
             <div class="clear"></div>
             <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h1 id="grafana-loki-æ¥å¿çæ§éç½®æå">Grafana Loki æ¥å¿çæ§éç½®æå</h1>
-<p><img src="https://img2024.cnblogs.com/blog/3196947/202601/3196947-20260109160333955-1410605029.jpg" alt="d3135d676e_1_k-hdOAQjRXKoyguzKuoeKg" loading="lazy"></p>
-<h2 id="åè¨">åè¨</h2>
-<p>å¨å¾®æå¡æ¶æä¸­ï¼æ¥å¿æ¶éååææ¯è¿ç»´çéè¦ç¯èãæ¬æä»ç»å¦ä½ä½¿ç¨ Grafana Loki æ­å»ºè½»éçº§æ¥å¿çæ§ç³»ç»ï¼å¹¶ä¸ä¼ ç»ç ELK ææ¯æ è¿è¡å¯¹æ¯ã</p>
-<h2 id="loki-vs-elk-ææ¯æ å¯¹æ¯">Loki vs ELK ææ¯æ å¯¹æ¯</h2>
-<h3 id="æ¶æå¯¹æ¯">æ¶æå¯¹æ¯</h3>
-<table>
-<thead>
-<tr>
-<th>ç»ä»¶</th>
-<th>ELK</th>
-<th>Loki</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>æ¥å¿éé</td>
-<td>Logstash / Filebeat</td>
-<td>Promtail</td>
-</tr>
-<tr>
-<td>æ¥å¿å­å¨</td>
-<td>Elasticsearch</td>
-<td>Loki</td>
-</tr>
-<tr>
-<td>å¯è§å</td>
-<td>Kibana</td>
-<td>Grafana</td>
-</tr>
-</tbody>
-</table>
-<h3 id="æ ¸å¿å·®å¼">æ ¸å¿å·®å¼</h3>
-<table>
-<thead>
-<tr>
-<th>å¯¹æ¯é¡¹</th>
-<th>ELK</th>
-<th>Loki</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ç´¢å¼æ¹å¼</td>
-<td>å¨æç´¢å¼</td>
-<td>ä»ç´¢å¼æ ç­¾ï¼Labelï¼</td>
-</tr>
-<tr>
-<td>å­å¨å ç¨</td>
-<td>é«ï¼åå§æ¥å¿ + ç´¢å¼ï¼</td>
-<td>ä½ï¼åç¼©å­å¨ï¼ç´¢å¼å°ï¼</td>
-</tr>
-<tr>
-<td>èµæºæ¶è</td>
-<td>é«ï¼ES éè¦å¤§éåå­ï¼</td>
-<td>ä½ï¼åæº 256MB å¯è¿è¡ï¼</td>
-</tr>
-<tr>
-<td>æ¥è¯¢æ¹å¼</td>
-<td>Lucene è¯­æ³</td>
-<td>LogQLï¼ç±» PromQLï¼</td>
-</tr>
-<tr>
-<td>æ¥è¯¢éåº¦</td>
-<td>å¨ææç´¢å¿«</td>
-<td>æ ç­¾è¿æ»¤å¿«ï¼å¨ææç´¢æ¢</td>
-</tr>
-<tr>
-<td>é¨ç½²å¤æåº¦</td>
-<td>å¤æï¼å¤ç»ä»¶åè°ï¼</td>
-<td>ç®åï¼3 ä¸ªå®¹å¨å³å¯ï¼</td>
-</tr>
-<tr>
-<td>å­¦ä¹ ææ¬</td>
-<td>è¾é«</td>
-<td>è¾ä½ï¼çæ Prometheus æ´å®¹æï¼</td>
-</tr>
-<tr>
-<td>ä¸ Prometheus éæ</td>
-<td>éé¢å¤éç½®</td>
-<td>åçéæ</td>
-</tr>
-</tbody>
-</table>
-<p><img src="https://img2024.cnblogs.com/blog/3196947/202601/3196947-20260109160412006-423286371.jpg" alt="567ffc184541f44c0384d02f8b991447" loading="lazy"></p>
-<p><img src="https://img2024.cnblogs.com/blog/3196947/202601/3196947-20260109160528026-1366870051.gif" alt="056f09368ad6dde870727e48171c89ee" loading="lazy"></p>
-<h3 id="éåå»ºè®®">éåå»ºè®®</h3>
-<p><strong>éæ© ELK çåºæ¯ï¼</strong></p>
+                    <div id="cnblogs_post_description" style="display: none">
+        <img src="https://img2024.cnblogs.com/blog/1828322/202601/1828322-20260109201055245-933532869.png" alt="Flinkæºç éè¯»ï¼Taskæ°æ®äº¤äº" class="desc_img">
+        ç»è¿åé¢çå­¦ä¹ ï¼Flink çå ä¸ªæ ¸å¿æ¦å¿µç¸å³çæºç å®ç°æä»¬å·²ç»äºè§£äºãæ¬ææä»¬æ¥æ¢³ç Task çæ°æ®äº¤äºç¸å³çæºç ã
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>ç»è¿åé¢çå­¦ä¹ ï¼Flink çå ä¸ªæ ¸å¿æ¦å¿µç¸å³çæºç å®ç°æä»¬å·²ç»äºè§£äºãæ¬ææä»¬æ¥æ¢³ç Task çæ°æ®äº¤äºç¸å³çæºç ã</p>
+<h3 id="æ°æ®è¾åº">æ°æ®è¾åº</h3>
+<p>è¯ä¸å¤è¯´ï¼æä»¬ç´æ¥è¿å¥æ­£é¢ãé¦åæ¥ç Task çæ°æ®è¾åºï¼å¨è¿å¥æµç¨ä¹åï¼æä»¬åä»ç»å ä¸ªåºæ¬æ¦å¿µã</p>
+<h4 id="åºæ¬æ¦å¿µ">åºæ¬æ¦å¿µ</h4>
 <ul>
-<li>éè¦å¤æçå¨ææç´¢</li>
-<li>æ¥å¿åææ¯æ ¸å¿ä¸å¡éæ±</li>
-<li>æä¸é¨çè¿ç»´å¢é</li>
-<li>æå¡å¨èµæºåè¶³</li>
+<li>
+<p>RecordWriterOutputï¼å®æ¯ Output æ¥å£çä¸ä¸ªå·ä½å®ç°ç±»ï¼åºå±ä½¿ç¨ RecordWriter æ¥åéæ°æ®ã</p>
+</li>
+<li>
+<p>RecordWriterï¼æ°æ®åå¥çæ§è¡èï¼è´è´£å°æ°æ®åå° ResultPartitionã</p>
+</li>
+<li>
+<p>ResultPartition å ResultSubpartitionï¼ResultPartition æ¯ ExecutionGraph ä¸­ä¸ä¸ªèç¹çè¾åºç»æï¼ä¸æ¸¸çæ¯ä¸ªéè¦ä»å½å ResultPartition æ¶è´¹æ°æ®ç Task é½ä¼æä¸ä¸ª ResultSubpartitionã</p>
+</li>
+<li>
+<p>ChannelSelectorï¼ç¨æ¥å³å®ä¸ä¸ª Record è¦è¢«åå°åªä¸ª Subpartition ä¸­ã</p>
+</li>
+<li>
+<p>LocalBufferPoolï¼ç¨æ¥ç®¡ç Buffer çç¼å²æ± ãå¨ä»ç»ååçåçæ¶ï¼æä»¬æå°è¿ã</p>
+</li>
 </ul>
-<p><strong>éæ© Loki çåºæ¯ï¼</strong></p>
+<p>å¯¹è¿äºåºæ¬æ¦å¿µæäºä¸å®çäºè§£ä¹åï¼æä»¬æ¥çæ°æ®è¾åºçå·ä½æµç¨ã</p>
+<h4 id="æ§è¡æµç¨">æ§è¡æµç¨</h4>
+<p>æä»¬ä»¥ map ä¸ºä¾ï¼çä¸ä¸æ°æ®çè¾åºè¿ç¨ã</p>
+<p><img alt="DataOutput" loading="lazy" data-src="https://res.cloudinary.com/dxydgihag/image/upload/v1767175113/Blog/flink/18/RecordOutput.png" class="lazyload"></p>
+<p>å¨ <code>StreamMap.processElement</code> æ¹æ³ä¸­ï¼è°ç¨å® map æ¹æ³ä¹åï¼å°±ä¼è°ç¨ <code>output.collect</code> æ¹æ³å°æ°æ®è¾åºï¼è¿éç output å°±æ¯ RecordWriterOutputãå¨ RecordWriterOutput ä¸­ï¼ä¼è°ç¨ RecordWriter ç emit æ¹æ³ã</p>
+<pre><code class="language-java">private &lt;X&gt; void pushToRecordWriter(StreamRecord&lt;X&gt; record) {
+    serializationDelegate.setInstance(record);
+
+    try {
+        recordWriter.emit(serializationDelegate);
+    } catch (IOException e) {
+        throw new UncheckedIOException(e.getMessage(), e);
+    }
+}
+</code></pre>
+<p>è¿éç serializationDelegate æ¯ç¨æ¥å¯¹ record è¿è¡åºååçãRecordWriter æä¸¤ä¸ªå®ç°ç±»ï¼ä¸ä¸ªæ¯ ChannelSelectorRecordWriterï¼å¦ä¸ä¸ªæ¯ BroadcastRecordWriterãChannelSelectorRecordWriter éè¦åè°ç¨ ChannelSelector éæ©å¯¹åºç subparitionï¼ç¶åè¿è¡åå¥ãBroadcastRecordWriter åæ¯åå°ææç subparitionã</p>
+<p>æ¥ä¸æ¥å°±æ¯è°ç¨ <code>BufferWritingResultPartition.emitRecord</code> æ¥åå¥æ°æ®ã</p>
+<pre><code class="language-java">public void emitRecord(ByteBuffer record, int targetSubpartition) throws IOException {
+    totalWrittenBytes += record.remaining();
+
+    BufferBuilder buffer = appendUnicastDataForNewRecord(record, targetSubpartition);
+
+    while (record.hasRemaining()) {
+        // full buffer, partial record
+        finishUnicastBufferBuilder(targetSubpartition);
+        buffer = appendUnicastDataForRecordContinuation(record, targetSubpartition);
+    }
+
+    if (buffer.isFull()) {
+        // full buffer, full record
+        finishUnicastBufferBuilder(targetSubpartition);
+    }
+
+    // partial buffer, full record
+}
+</code></pre>
+<p>è¿éæ record åå¥å° buffer ä¸­ï¼å¦æ buffer ä¸å¤ï¼åä¼ä» LocalBufferPool ä¸­ç³è¯·æ°ç bufferï¼ç³è¯·å°ä¹åå°±ä¼ç»§ç»­åå¥ãä¸é¢æ¯å·ä½çç³è¯·è¿ç¨ã</p>
+<pre><code class="language-java">private MemorySegment requestMemorySegment(int targetChannel) {
+    MemorySegment segment = null;
+    synchronized (availableMemorySegments) {
+        checkDestroyed();
+
+        if (!availableMemorySegments.isEmpty()) {
+            segment = availableMemorySegments.poll();
+        } else if (isRequestedSizeReached()) {
+            // Only when the buffer request reaches the upper limit(i.e. current pool size),
+            // requests an overdraft buffer.
+            segment = requestOverdraftMemorySegmentFromGlobal();
+        }
+
+        if (segment == null) {
+            return null;
+        }
+
+        if (targetChannel != UNKNOWN_CHANNEL) {
+            if (++subpartitionBuffersCount[targetChannel] == maxBuffersPerChannel) {
+                unavailableSubpartitionsCount++;
+            }
+        }
+
+        checkAndUpdateAvailability();
+    }
+    return segment;
+}
+</code></pre>
+<p>å¦ææå¯ç¨åå­ï¼å°±ç´æ¥ä»éåä¸­åºéãå¦æè¾¾å°äºæ¬å° BufferPool çä¸éï¼å°±ä»å¨å±ç NetworkBufferPool ä¸­ç³è¯·ï¼ç³è¯·ä¸å°å°±ä¼é»å¡åå¥è¿ç¨ï¼ç­å¾ç³è¯·ãæåè¿ä¼æ£æ¥å¹¶æ´æ°å¯ç¨åå­ç¶æã</p>
+<p>æäºå¯ç¨ç buffer ä¹åï¼å°±ä¼è°ç¨ addToSubpartitionï¼æç»æ°æ®å­å¨å¨ PipelinedSubpartition ç buffers éåä¸­ã</p>
+<pre><code class="language-java">private void addToSubpartition(
+        BufferBuilder buffer,
+        int targetSubpartition,
+        int partialRecordLength,
+        int minDesirableBufferSize)
+        throws IOException {
+    int desirableBufferSize =
+            subpartitions[targetSubpartition].add(
+                    buffer.createBufferConsumerFromBeginning(), partialRecordLength);
+
+    resizeBuffer(buffer, desirableBufferSize, minDesirableBufferSize);
+}
+</code></pre>
+<h3 id="æ°æ®è¾å¥">æ°æ®è¾å¥</h3>
+<p>çå®äºæ°æ®è¾åºçè¿ç¨ä¹åï¼æä»¬åæ¥çä¸ä¸æ°æ®è¾å¥çè¿ç¨ãé¦åè¿æ¯äºè§£å ä¸ªåºæ¬æ¦å¿µã</p>
+<h4 id="åºæ¬æ¦å¿µ-1">åºæ¬æ¦å¿µ</h4>
 <ul>
-<li>ä¸­å°åé¡¹ç®ï¼èµæºæé</li>
-<li>å·²ä½¿ç¨ Prometheus + Grafana çæ§ä½ç³»</li>
-<li>ä¸»è¦éæ±æ¯æ¥å¿æ¥çåç®åè¿æ»¤</li>
-<li>è¿½æ±å¿«éé¨ç½²åä½ç»´æ¤ææ¬</li>
+<li>
+<p>InputGateï¼InputGate æ¯å¯¹è¾å¥çå°è£ï¼ä¸ JobGraph ä¸­ç JobEdge ä¸ä¸å¯¹åºï¼æ¯ä¸ª InputGate æ¶è´¹ä¸æ¸¸ä¸ä¸ªæå¤ä¸ª Resultpartitionã</p>
+</li>
+<li>
+<p>InputChannelï¼InputChannel æ¯å ExecutionGraph ä¸­ç ExecutionEdge ä¸ä¸å¯¹åºçãæ¯ä¸ª InputChannel æ¥æ¶ä¸ä¸ª ResultSubpartition çè¾åºï¼InputChannel ä¸»è¦å³æ³¨ LocalInputChannel å RemoteInputChannel ä¸¤ç§å®ç°ã</p>
+</li>
 </ul>
-<h2 id="ç³»ç»æ¶æ">ç³»ç»æ¶æ</h2>
-<pre><code>âââââââââââââââ     âââââââââââââââ     âââââââââââââââ     âââââââââââââââ
-â  å¾®æå¡åºç¨   â âââ¶ â   æ¥å¿æä»¶   â âââ¶ â  Promtail   â âââ¶ â    Loki     â
-â (Java/Goç­) â     â (.log files)â     â  (ééå¨)    â     â  (å­å¨)      â
-âââââââââââââââ     âââââââââââââââ     âââââââââââââââ     ââââââââ¬âââââââ
-                                                                    â
-                                                                    â¼
-                                                            âââââââââââââââ
-                                                            â   Grafana   â
-                                                            â  (å¯è§å)    â
-                                                            âââââââââââââââ
+<h4 id="æ§è¡æµç¨-1">æ§è¡æµç¨</h4>
+<p>äºè§£äºå·ä½æ¦å¿µä¹åï¼æä»¬åçæ°æ®è¾å¥çå·ä½æµç¨ã</p>
+<p><img alt="RecordInput" loading="lazy" data-src="https://res.cloudinary.com/dxydgihag/image/upload/v1767531100/Blog/flink/18/RecordInput.png" class="lazyload"></p>
+<p>æ°æ®è¾å¥çå¥å£æ¯ <code>StreamTask.processInput</code> æ¹æ³ï¼è¿ä¸ªæ¹æ³ä¸­ä¸»è¦æ¯è°ç¨ <code>inputProcessor.processInput</code> æ¹æ³ï¼æä»¬ä»¥ StreamOneInputProcessor ä¸ºä¾ãè¿ä¸ªæ¹æ³å°±æ¯è°ç¨ <code>input.emitNext</code> æ¹æ³ã</p>
+<pre><code class="language-java">public DataInputStatus emitNext(DataOutput&lt;T&gt; output) throws Exception {
+
+    while (true) {
+        // get the stream element from the deserializer
+        if (currentRecordDeserializer != null) {
+            RecordDeserializer.DeserializationResult result;
+            try {
+                result = currentRecordDeserializer.getNextRecord(deserializationDelegate);
+            } catch (IOException e) {
+                throw new IOException(
+                        String.format("Can't get next record for channel %s", lastChannel), e);
+            }
+            if (result.isBufferConsumed()) {
+                currentRecordDeserializer = null;
+            }
+
+            if (result.isFullRecord()) {
+                final boolean breakBatchEmitting =
+                        processElement(deserializationDelegate.getInstance(), output);
+                if (canEmitBatchOfRecords.check() &amp;&amp; !breakBatchEmitting) {
+                    continue;
+                }
+                return DataInputStatus.MORE_AVAILABLE;
+            }
+        }
+
+        Optional&lt;BufferOrEvent&gt; bufferOrEvent = checkpointedInputGate.pollNext();
+        if (bufferOrEvent.isPresent()) {
+            // return to the mailbox after receiving a checkpoint barrier to avoid processing of
+            // data after the barrier before checkpoint is performed for unaligned checkpoint
+            // mode
+            if (bufferOrEvent.get().isBuffer()) {
+                processBuffer(bufferOrEvent.get());
+            } else {
+                DataInputStatus status = processEvent(bufferOrEvent.get(), output);
+                if (status == DataInputStatus.MORE_AVAILABLE &amp;&amp; canEmitBatchOfRecords.check()) {
+                    continue;
+                }
+                return status;
+            }
+        } else {
+            if (checkpointedInputGate.isFinished()) {
+                checkState(
+                        checkpointedInputGate.getAvailableFuture().isDone(),
+                        "Finished BarrierHandler should be available");
+                return DataInputStatus.END_OF_INPUT;
+            }
+            return DataInputStatus.NOTHING_AVAILABLE;
+        }
+    }
+}
 </code></pre>
-<h2 id="ç¯å¢åå¤">ç¯å¢åå¤</h2>
-<ul>
-<li>Docker 20.10+</li>
-<li>Docker Compose 2.0+</li>
-<li>æå¡å¨åå­ &gt;= 2GB</li>
-</ul>
-<h2 id="ç®å½ç»æ">ç®å½ç»æ</h2>
-<pre><code>/docker/
-âââ docker-compose.yaml
-âââ loki/
-â   âââ loki-config.yaml
-âââ promtail/
-    âââ promtail-config.yaml
+<p>è¿éæ¯è°ç¨ <code>checkpointedInputGate.pollNext</code> æ¥è·åè¾å¥çæ°æ®ãå®çåé¨å°±æ¯è°ç¨ InputGate ç pollNext æ¹æ³æ¥è·åæ°æ®ãå½è·åå°å®æ´æ°æ®ä¹åï¼å°±ä¼è°ç¨ processElement æ¥å¤çæ°æ®ã</p>
+<p>æä»¬ä»¥ SingleInputGate ä¸ºä¾ç InputGate ç pollNext æ¹æ³ãå®çåé¨è°ç¨é¾è·¯å¯ç¨ä¸ç´è¿½è¸ªå° readBufferFromInputChannel æ¹æ³ï¼è¿ä¸ªæ¹æ³åä¼è°ç¨ <code>inputChannel.getNextBuffer</code>ï¼è¿éäº¤ç» InputChannel æ¥å·ä½æ§è¡æ°æ®è¯»åã</p>
+<pre><code class="language-java">public Optional&lt;BufferAndAvailability&gt; getNextBuffer() throws IOException {
+    checkError();
+
+    if (!toBeConsumedBuffers.isEmpty()) {
+        return getBufferAndAvailability(toBeConsumedBuffers.removeFirst());
+    }
+
+    ResultSubpartitionView subpartitionView = this.subpartitionView;
+    if (subpartitionView == null) {
+        // There is a possible race condition between writing a EndOfPartitionEvent (1) and
+        // flushing (3) the Local
+        // channel on the sender side, and reading EndOfPartitionEvent (2) and processing flush
+        // notification (4). When
+        // they happen in that order (1 - 2 - 3 - 4), flush notification can re-enqueue
+        // LocalInputChannel after (or
+        // during) it was released during reading the EndOfPartitionEvent (2).
+        if (isReleased) {
+            return Optional.empty();
+        }
+
+        // this can happen if the request for the partition was triggered asynchronously
+        // by the time trigger
+        // would be good to avoid that, by guaranteeing that the requestPartition() and
+        // getNextBuffer() always come from the same thread
+        // we could do that by letting the timer insert a special "requesting channel" into the
+        // input gate's queue
+        subpartitionView = checkAndWaitForSubpartitionView();
+    }
+
+    BufferAndBacklog next = subpartitionView.getNextBuffer();
+    // ignore the empty buffer directly
+    while (next != null &amp;&amp; next.buffer().readableBytes() == 0) {
+        next.buffer().recycleBuffer();
+        next = subpartitionView.getNextBuffer();
+        numBuffersIn.inc();
+    }
+
+    if (next == null) {
+        if (subpartitionView.isReleased()) {
+            throw new CancelTaskException(
+                    "Consumed partition " + subpartitionView + " has been released.");
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    Buffer buffer = next.buffer();
+
+    if (buffer instanceof FullyFilledBuffer) {
+        List&lt;Buffer&gt; partialBuffers = ((FullyFilledBuffer) buffer).getPartialBuffers();
+        int seq = next.getSequenceNumber();
+        for (Buffer partialBuffer : partialBuffers) {
+            toBeConsumedBuffers.add(
+                    new BufferAndBacklog(
+                            partialBuffer,
+                            next.buffersInBacklog(),
+                            buffer.getDataType(),
+                            seq++));
+        }
+
+        return getBufferAndAvailability(toBeConsumedBuffers.removeFirst());
+    }
+
+    return getBufferAndAvailability(next);
+}
 </code></pre>
-<h2 id="éç½®æä»¶">éç½®æä»¶</h2>
-<h3 id="1-loki-éç½®-loki-configyaml">1. Loki éç½® (loki-config.yaml)</h3>
-<pre><code class="language-yaml">auth_enabled: false
-
-server:
-  http_listen_port: 3100
-  grpc_listen_port: 9096
-
-common:
-  instance_addr: 127.0.0.1
-  path_prefix: /loki
-  storage:
-    filesystem:
-      chunks_directory: /loki/chunks
-      rules_directory: /loki/rules
-  replication_factor: 1
-  ring:
-    kvstore:
-      store: inmemory
-
-query_range:
-  results_cache:
-    cache:
-      embedded_cache:
-        enabled: true
-        max_size_mb: 100
-
-limits_config:
-  metric_aggregation_enabled: true
-  retention_period: 720h  # æ¥å¿ä¿ç 30 å¤©
-
-schema_config:
-  configs:
-    - from: 2020-10-24
-      store: tsdb
-      object_store: filesystem
-      schema: v13
-      index:
-        prefix: index_
-        period: 24h
-
-pattern_ingester:
-  enabled: true
-  metric_aggregation:
-    loki_address: localhost:3100
-
-compactor:
-  working_directory: /loki/compactor
-  retention_enabled: true
-  delete_request_store: filesystem
-
-frontend:
-  encoding: protobuf
-</code></pre>
-<p><strong>éç½®è¯´æï¼</strong></p>
-<table>
-<thead>
-<tr>
-<th>éç½®é¡¹</th>
-<th>è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>auth_enabled: false</code></td>
-<td>å³é­è®¤è¯ï¼åæºé¨ç½²ä½¿ç¨</td>
-</tr>
-<tr>
-<td><code>http_listen_port: 3100</code></td>
-<td>Loki HTTP API ç«¯å£</td>
-</tr>
-<tr>
-<td><code>path_prefix: /loki</code></td>
-<td>æ°æ®å­å¨è·¯å¾åç¼</td>
-</tr>
-<tr>
-<td><code>retention_period: 720h</code></td>
-<td>æ¥å¿ä¿ç 30 å¤©</td>
-</tr>
-<tr>
-<td><code>store: tsdb</code></td>
-<td>ä½¿ç¨ TSDB å­å¨å¼æï¼Loki 3.x æ¨èï¼</td>
-</tr>
-<tr>
-<td><code>schema: v13</code></td>
-<td>ææ°ç schema çæ¬</td>
-</tr>
-<tr>
-<td><code>embedded_cache</code></td>
-<td>åç½®æ¥è¯¢ç¼å­ï¼æåæ¥è¯¢æ§è½</td>
-</tr>
-<tr>
-<td><code>compactor</code></td>
-<td>èªå¨åç¼©åæ¸çè¿ææ¥å¿</td>
-</tr>
-</tbody>
-</table>
-<h3 id="2-promtail-éç½®-promtail-configyaml">2. Promtail éç½® (promtail-config.yaml)</h3>
-<pre><code class="language-yaml">server:
-  http_listen_port: 9080
-  grpc_listen_port: 0
-
-positions:
-  filename: /tmp/positions.yaml
-
-clients:
-  - url: http://loki:3100/loki/api/v1/push
-
-scrape_configs:
-  - job_name: xiaohashu
-    static_configs:
-      - targets:
-          - localhost
-        labels:
-          job: xiaohashu
-          __path__: /var/log/xiaohashu/*.log
-
-    pipeline_stages:
-      # ä»æä»¶åæåæå¡å: note.2025-07-01-0.log â service=note
-      - regex:
-          source: filename
-          expression: '(?P&lt;service&gt;[a-z-]+)\.\d{4}-\d{2}-\d{2}-\d+\.log$'
-      - labels:
-          service:
-      
-      # ä»æ¥å¿åå®¹æåçº§å«: INFO/WARN/ERROR/DEBUG
-      - regex:
-          expression: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} \[[^\]]+\] (?P&lt;level&gt;\w+)'
-      - labels:
-          level:
-</code></pre>
-<p><strong>éç½®è¯´æï¼</strong></p>
-<table>
-<thead>
-<tr>
-<th>éç½®é¡¹</th>
-<th>è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>positions.filename</code></td>
-<td>è®°å½è¯»åä½ç½®ï¼éå¯åç»§ç»­è¯»å</td>
-</tr>
-<tr>
-<td><code>clients.url</code></td>
-<td>Loki æ¨éå°å</td>
-</tr>
-<tr>
-<td><code>__path__</code></td>
-<td>æ¥å¿æä»¶å¹éè·¯å¾</td>
-</tr>
-<tr>
-<td><code>pipeline_stages</code></td>
-<td>æ¥å¿å¤çç®¡é</td>
-</tr>
-<tr>
-<td><code>regex</code> + <code>labels</code></td>
-<td>ä»æä»¶å/åå®¹æåæ ç­¾</td>
-</tr>
-</tbody>
-</table>
-<p><strong>æ¥å¿æ ¼å¼ç¤ºä¾ï¼</strong></p>
-<pre><code>2025-07-01 10:30:00.123 [main] INFO  com.example.Service - å¯å¨æå
-</code></pre>
-<p>ç»è¿ pipeline å¤çåï¼ä¼èªå¨æ·»å æ ç­¾ï¼</p>
-<ul>
-<li><code>service=note</code>ï¼ä»æä»¶åæåï¼</li>
-<li><code>level=INFO</code>ï¼ä»æ¥å¿åå®¹æåï¼</li>
-</ul>
-<h3 id="3-docker-compose-éç½®">3. Docker Compose éç½®</h3>
-<pre><code class="language-yaml">services:
-  loki:
-    image: grafana/loki:3.5.0
-    container_name: loki
-    ports:
-      - "3100:3100"
-    volumes:
-      - ./loki/loki-config.yaml:/etc/loki/local-config.yaml
-      - loki-data:/loki
-    command: -config.file=/etc/loki/local-config.yaml
-    restart: unless-stopped
-
-  promtail:
-    image: grafana/promtail:3.5.0
-    container_name: promtail
-    volumes:
-      - ./promtail/promtail-config.yaml:/etc/promtail/config.yaml
-      - /www/wwwroot/life_diary/logs:/var/log/xiaohashu:ro
-    command: -config.file=/etc/promtail/config.yaml
-    restart: unless-stopped
-    depends_on:
-      - loki
-
-  grafana:
-    image: grafana/grafana:11.4.0
-    container_name: grafana
-    ports:
-      - "3000:3000"
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin123
-    volumes:
-      - grafana-data:/var/lib/grafana
-    restart: unless-stopped
-    depends_on:
-      - loki
-
-volumes:
-  loki-data:
-  grafana-data:
-</code></pre>
-<p><strong>å³é®éç½®è¯´æï¼</strong></p>
-<table>
-<thead>
-<tr>
-<th>éç½®</th>
-<th>è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>loki-data:/loki</code></td>
-<td>Loki æ°æ®æä¹åï¼å®¹å¨éå¯ä¸ä¸¢å¤±</td>
-</tr>
-<tr>
-<td><code>/www/wwwroot/life_diary/logs:/var/log/xiaohashu:ro</code></td>
-<td>æè½½å®¿ä¸»æºæ¥å¿ç®å½ï¼<code>:ro</code> è¡¨ç¤ºåªè¯»</td>
-</tr>
-<tr>
-<td><code>grafana-data:/var/lib/grafana</code></td>
-<td>Grafana éç½®æä¹å</td>
-</tr>
-<tr>
-<td><code>depends_on</code></td>
-<td>æå¡å¯å¨ä¾èµé¡ºåº</td>
-</tr>
-</tbody>
-</table>
-<h2 id="é¨ç½²æ­¥éª¤">é¨ç½²æ­¥éª¤</h2>
-<h3 id="1-åå»ºç®å½åéç½®æä»¶">1. åå»ºç®å½åéç½®æä»¶</h3>
-<pre><code class="language-bash">mkdir -p /docker/loki /docker/promtail
-cd /docker
-
-# åå»ºéç½®æä»¶ï¼åå®¹è§ä¸æï¼
-vim loki/loki-config.yaml
-vim promtail/promtail-config.yaml
-vim docker-compose.yaml
-</code></pre>
-<h3 id="2-å¯å¨æå¡">2. å¯å¨æå¡</h3>
-<pre><code class="language-bash">cd /docker
-docker-compose up -d
-</code></pre>
-<h3 id="3-æ¥çæå¡ç¶æ">3. æ¥çæå¡ç¶æ</h3>
-<pre><code class="language-bash">docker-compose ps
-docker-compose logs -f loki      # æ¥ç Loki æ¥å¿
-docker-compose logs -f promtail  # æ¥ç Promtail æ¥å¿
-</code></pre>
-<h3 id="4-éç½®-grafana-æ°æ®æº">4. éç½® Grafana æ°æ®æº</h3>
-<ol>
-<li>æµè§å¨è®¿é® <code>http://æå¡å¨IP:3000</code></li>
-<li>ç»å½ï¼é»è®¤ admin / admin123ï¼</li>
-<li>å·¦ä¾§èå â <strong>Connections</strong> â <strong>Data sources</strong></li>
-<li>ç¹å» <strong>Add data source</strong> â éæ© <strong>Loki</strong></li>
-<li>URL å¡«åï¼<code>http://loki:3100</code></li>
-<li>ç¹å» <strong>Save &amp; Test</strong>ï¼æ¾ç¤ºç»¿è² â è¡¨ç¤ºæå</li>
-</ol>
-<h2 id="logql-æ¥è¯¢è¯­æ³">LogQL æ¥è¯¢è¯­æ³</h2>
-<h3 id="åºç¡æ¥è¯¢">åºç¡æ¥è¯¢</h3>
-<pre><code class="language-logql"># æ¥çæææ¥å¿
-{job="xiaohashu"}
-
-# ææå¡ç­é
-{service="note"}
-{service="gateway"}
-
-# ææ¥å¿çº§å«ç­é
-{level="ERROR"}
-{level="WARN"}
-
-# ç»åæ¡ä»¶
-{service="note", level="ERROR"}
-</code></pre>
-<h3 id="å³é®å­æç´¢">å³é®å­æç´¢</h3>
-<pre><code class="language-logql"># åå«å³é®å­
-{job="xiaohashu"} |= "Exception"
-{service="note"} |= "NullPointer"
-
-# ä¸åå«å³é®å­
-{service="gateway"} != "health"
-
-# æ­£åå¹é
-{job="xiaohashu"} |~ "user.*login"
-</code></pre>
-<h3 id="ç»è®¡åæ">ç»è®¡åæ</h3>
-<pre><code class="language-logql"># æè¿ 5 åéåæå¡éè¯¯æ°
-count_over_time({level="ERROR"}[5m]) by (service)
-
-# æ¯åéæ¥å¿é
-rate({job="xiaohashu"}[1m])
-
-# éè¯¯ç
-sum(rate({level="ERROR"}[5m])) / sum(rate({job="xiaohashu"}[5m]))
-</code></pre>
-<h2 id="å¸¸ç¨è¿ç»´å½ä»¤">å¸¸ç¨è¿ç»´å½ä»¤</h2>
-<pre><code class="language-bash"># å¯å¨æææå¡
-docker-compose up -d
-
-# åæ­¢æææå¡
-docker-compose down
-
-# éå¯åä¸ªæå¡
-docker-compose restart loki
-
-# æ¥çèµæºå ç¨
-docker stats loki promtail grafana
-
-# æ¥çæ¥å¿
-docker-compose logs -f --tail=100 loki
-
-# æ¸çæ§æ°æ®ï¼è°¨æä½¿ç¨ï¼
-docker volume rm docker_loki-data
-</code></pre>
-<h2 id="å¸¸è§é®é¢">å¸¸è§é®é¢</h2>
-<h3 id="1-promtail-cpu-å ç¨é«">1. Promtail CPU å ç¨é«</h3>
-<p>åå¯å¨æ¶éè¦æ«æåå²æ¥å¿ï¼å±äºæ­£å¸¸ç°è±¡ãç­å¤çå®åå²æ°æ®åä¼éä¸æ¥ã</p>
-<h3 id="2-grafana-è¿æ¥-loki-å¤±è´¥">2. Grafana è¿æ¥ Loki å¤±è´¥</h3>
-<p>æ£æ¥ URL æ¯å¦æ­£ç¡®ï¼å®¹å¨åé¨éä¿¡ä½¿ç¨æå¡å <code>http://loki:3100</code>ï¼ä¸æ¯ <code>localhost</code>ã</p>
-<h3 id="3-çä¸å°æ¥å¿">3. çä¸å°æ¥å¿</h3>
-<ul>
-<li>æ£æ¥æ¥å¿è·¯å¾æè½½æ¯å¦æ­£ç¡®</li>
-<li>æ£æ¥ Promtail æ¥å¿ï¼<code>docker logs promtail</code></li>
-<li>ç¡®è®¤æ¥å¿æä»¶åæ ¼å¼ä¸ <code>__path__</code> å¹é</li>
-</ul>
-<h3 id="4-ç£çç©ºé´ä¸è¶³">4. ç£çç©ºé´ä¸è¶³</h3>
-<p>è°æ´ <code>retention_period</code> ç¼©ç­ä¿çæ¶é´ï¼ææå¨æ¸çï¼</p>
-<pre><code class="language-bash">docker-compose down
-docker volume rm docker_loki-data
-docker-compose up -d
-</code></pre>
-<h2 id="æ»ç»">æ»ç»</h2>
-<p>Grafana Loki ç¸æ¯ ELK æ´å è½»éï¼éåä¸­å°åé¡¹ç®åèµæºæéçåºæ¯ãéè¿åçéç½® Promtail ç pipelineï¼å¯ä»¥èªå¨æåæå¡ååæ¥å¿çº§å«ï¼å®ç°é«æçæ¥å¿æ¥è¯¢ååæã</p>
-<p>å¯¹äºå·²ç»ä½¿ç¨ Prometheus + Grafana çå¢éï¼Loki æ¯æ¥å¿çæ§çæä½³éæ©ï¼å¯ä»¥å¨åä¸ä¸ª Grafana çé¢ä¸­åæ¶æ¥çææ åæ¥å¿ï¼å¤§å¤§æåææ¥é®é¢çæçã</p>
+<p>æä»¬åæ¥ç LocalInputChannelï¼åè·åå°äº subpartitionViewï¼å¹¶è°ç¨ getNextBufferï¼è¿éå¶å®å°±æ¯ä» PipelinedSubpartition ç buffers éåä¸­è¯»åæ°æ®ã</p>
+<p>RemoteInputChannel åéè¦ä» receivedBuffers ä¸­è¯»åæ°æ®ï¼è¿ä¸ªéåçæ°æ®å°±æ¯æ¶è´¹ä¸æ¸¸æ°æ®åä¿å­çã</p>
+<p>è³æ­¤ï¼Flink ä¸­ Task çæ°æ®è¾å¥åè¾åºè¿ç¨çæºç å°±æ¢³çå®äºï¼æ´å åºå±ç Netty ç¸å³ä»£ç æä»¬å¨åé¢ç»§ç»­æ¢³çã</p>
+<h3 id="æ»ç»">æ»ç»</h3>
+<p>æåç®åæ»ç»ä¸ä¸ï¼æ¬ææä»¬æ¢³çäº Task çæ°æ®è¾åºåè¾å¥çè¿ç¨ãè¾åºè¿ç¨ä¸»è¦æ¯å©ç¨ RecordWriter å°æ°æ®åå¥å° Buffer ä¸­ï¼è¾å¥è¿ç¨åæ¯å©ç¨ InputChannel ä» Buffer æ¶è´¹çè¿ç¨ãå¦æä½ ç Flink ä»»å¡æ°æ®éç¹å«å¤§ï¼å¹¶ä¸æ²¡ä»ä¹å¤æçé»è¾ï¼å¯ä»¥èèéå½è°æ´ localBufferPool çå¤§å°æ¥è°ä¼ä»»å¡çååã</p>
 
 </div>
 <div class="clear"></div>
 
             </div>
             <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.0006944444444444445" data-date-updated="2026-01-09 16:07">2026-01-09 16:06</span>&nbsp;
-<a href="https://www.cnblogs.com/ZouYua">zouyua</a>&nbsp;
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-01-09 20:11">2026-01-09 20:11</span>&nbsp;
+<a href="https://www.cnblogs.com/Jackeyzhe">Jackeyzhe</a>&nbsp;
 éè¯»(<span id="post_view_count">0</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19462083);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19462083', targetLink: 'https://www.cnblogs.com/ZouYua/p/19462083', title: 'Grafana Lokièªå¨çæ§æ¥å¿' })">ä¸¾æ¥</a>
+<a href="javascript:void(0)" onclick="AddToWz(19463278);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19463278', targetLink: 'https://www.cnblogs.com/Jackeyzhe/p/19463278', title: 'Flinkæºç éè¯»ï¼Taskæ°æ®äº¤äº' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ å¬ä¼å·æ¨èæºå¶æ´çï¼ç§æå·æä¹æç¤¾äº¤æµéåèµ·æ¥ ]]></title>
+    <link>https://www.cnblogs.com/reachteam/p/19463233</link>
+    <guid>c1bbd77ef1e4ce0077e0c8ba1aa44ec2</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/reachteam/p/19463233" title="åå¸äº 2026-01-09 19:39">
+    <span role="heading" aria-level="2">å¬ä¼å·æ¨èæºå¶æ´çï¼ç§æå·æä¹æç¤¾äº¤æµéåèµ·æ¥</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
+<h1 data-heading="true">01 èæ¯</h1>
+<p><span>æè¿æä»¬è½¯ä»¶å¢éåå äºä¸ä¸ªé«æ ¡å³äºå¬ä¼å·è¿è¥çåäº«ï¼å¬å®æºæå¯åï¼æä»¥æéç¹æ´çæä¸ç¯ç¬è®°ï¼ååºæ¥ç»å¤§å®¶åèã</span></p>
+<p><span>ä» 2023 å¹´å¼å§ï¼å¬ä¼å·çååä¸ååªæ¯è®¢éæ¨éé£ä¸å¥äºï¼ç°å¨æ´åæ¯ç¤¾äº¤ä¿¡å· + ç®æ³æ¨èä¸èµ·å¨ååãææ°æ®æå°ï¼2025 å¹´æç§æ/è½¯ä»¶å°å·éè¿ç¤¾äº¤æ¨èæ¿å°çæµéå æ¯å·²ç»å° 45.9%ï¼çè³è¶è¿äºä¼ ç»è®¢éæ¨éã</span></p>
+<p><span>æä»¥è¿ç¯æç« æ³è§£å³çå°±ä¸ä»¶äºï¼</span></p>
+<p><span>ç§æå·å°åºè¦æä¹åï¼æè½æ´å®¹æè¢«æ¨èï¼ä¹æ´å®¹æè¢«è½¬åã</span></p>
+<p><span>ä¸é¢æ 6 ä¸ªæ¹åè®²æ¸æ¥ï¼ææ¯é»è¾ãå³é®ææ ãååæµç¨ãè´¦å·å·®å¼ãæ¼è¿ååãæ¡ä¾åå¯æä½å»ºè®®ã</span></p>
+<h2 data-heading="true"><span>02 æ¨èç³»ç»å¤§æ¦æä¹è·</span></h2>
+<h3 data-heading="true"><span>2.1 ä¸ç±»ä¿¡å·æéè¦</span></h3>
+<p><span>2025 å¹´ä¹åï¼å¬ä¼å·çæ¨èæ´å¼ºè°ä¸ç±»ä¿¡å·ä¸èµ·çï¼</span></p>
+<p><span>1. ç¤¾äº¤å³ç³»ï¼æåçè¿ãè½¬åãå¨çç­</span></p>
+<p><span>2. å´è¶£æ ç­¾ï¼ä½ æ¯ä»ä¹äººç¾¤ï¼åå®¹æ¯ä»ä¹ä¸»é¢</span></p>
+<p><span>3. è¡ä¸ºæ°æ®ï¼ç¹å»ãåçãå®è¯»ãæ»å¨éåº¦ãç¹èµåçå¨ä»ä¹æ¶å</span></p>
+<p><span>ç³»ç»ä¼åä»åå®¹éæåå³é®è¯ï¼åç»åç¨æ·è¡ä¸ºæ´æ°ç»åï¼æåå³å®ç»è°æ´å¤æåãå¯ä»¥æå®çè§£æä¸ä¸ªå¾ªç¯ï¼åæåä¸å°æ³¢ï¼çåé¦ï¼åå³å®è¦ä¸è¦ç»§ç»­ç»éã</span></p>
+<p><span>å¦å¤æä¸ç¹å¾å³é®ï¼æç« ååºå»ä¹åéå¸¸ 1 å° 3 åéåå°±ä¼åä¸è½®è´¨éè¯ä¼°ï¼ä¸»é¢ä»·å¼ãé»è¾ç»æãååæ§ãä»¥å AI çæçè¿¹è¿äºé½ä¼è¢«ç»¼åå¤æ­ã</span></p>
+<h3 data-heading="true"><span>2.2 ææ æéé¿ä»ä¹æ ·</span></h3>
+<p><span>åæå¤§çæ¾å¨è¿ãæ°å­æ¯ç ç©¶æ´çå£å¾ï¼å¤§å®¶çè¶å¿åéç¹å°±è¡ã</span></p>
+<p><span>è¡¨ 1ï¼å¬ä¼å·ç®æ³æ ¸å¿æéåé</span></p>
+<table>
+<thead>
+<tr><th><span>æéç»´åº¦</span></th><th><span>å·ä½ææ </span></th><th><span>æéå æ¯</span></th><th><span>å³é®éå¼ï¼ç¤ºä¾ï¼</span></th></tr>
+</thead>
+<tbody>
+<tr>
+<td><span>ç¤¾äº¤ä¼ æ­ç³»æ°</span></td>
+<td><span>å¥½åæ¨èçãè½¬åå°æåå/ç¤¾ç¾¤æ¬¡æ°ãè·¨åå±ä¼ æ­æ·±åº¦</span></td>
+<td><span>35%</span></td>
+<td><span>ç¤¾äº¤æ¨èæµéå æ¯ â¥ 45%</span></td>
+</tr>
+<tr>
+<td><span>åå®¹è´¨éå å­</span></td>
+<td><span>å®è¯»çï¼â¥65%ï¼ãå¹³åéè¯»æ¶é¿ï¼â¥2 åéï¼ãåååº¦ï¼3 åæéï¼</span></td>
+<td><span>30%</span></td>
+<td><span>å®è¯»ç â¥ 50%</span></td>
+</tr>
+<tr>
+<td><span>ç¨æ·è¡ä¸ºç»å</span></td>
+<td><span>ç¹å»çãæ»å¨éåº¦ãç¹èµæ¶é´ç¹ç­å¾®è§è¡ä¸º</span></td>
+<td><span>20%</span></td>
+<td><span>ç¹å»ç â¥ 15%</span></td>
+</tr>
+<tr>
+<td><span>è´¦å·ä¿¡èªä½ç³»</span></td>
+<td><span>æ´æ°é¢çãè¿è§è®°å½ãç¨æ·æè¯ç</span></td>
+<td><span>10%</span></td>
+<td><span>æ¥æ´å¯æå 300% åå§æ¨è</span></td>
+</tr>
+<tr>
+<td><span>å®æ¶æµéåå¼</span></td>
+<td><span>15 åéå¨æè°æ´</span></td>
+<td><span>5%</span></td>
+<td><span>å·å¯å¨æç¹å»ç &gt; 8%</span></td>
+</tr>
+</tbody>
+</table>
+<p><span>å¦å¤è¿æä¸ç»å¸¸è§æåå£å¾ï¼æå¼çå¤§æ¦å  40%ï¼äºå¨çï¼èµ/å¨ç/æ¶èï¼å  30%ï¼åäº«çå  20%ï¼å®è¯»çå  10%ã</span></p>
+<p><span>æéä¸¤ç¹ï¼</span></p>
+<p><span>1. ååçæ¨èæéä¼æ´é«ï¼ç ç©¶å£å¾éæå°æ¯è½¬è½½ç 3 åï¼</span></p>
+<p><span>2. è®¤è¯ç±»åä¹ä¼å½±åæéï¼æ¿åº &gt; åªä½ &gt; ä¼ä¸ &gt; ä¸ªä½ï¼ï¼è®¤è¯è´¦å·å¨æç´¢éæ´å®¹ææ¿å°é åæå</span></p>
+<h3 data-heading="true"><span>2.3 è¿å å¹´ååæä¹åäº</span></h3>
+<p><span>ç®åæé¶æ®µæä¸ä¸ï¼</span></p>
+<p><span>1. 2013 å° 2017ï¼è®¢éä¸ºä¸»ï¼å³æ³¨å°±è½æ¶å°</span></p>
+<p><span>2. 2017 å° 2020ï¼å¼å§å¼å¥ç¤¾äº¤æ¨èï¼çä¸çç­å¥å£åºç°</span></p>
+<p><span>3. 2020 å° 2023ï¼ç®æ³æ¨èéæ­¥åå¼ºï¼å¼å§æ¨èæªå³æ³¨åå®¹</span></p>
+<p><span>4. 2023 è³ä»ï¼ç¤¾äº¤ + ç®æ³åé©±å¨æ´ææ¾ï¼æåç¸å³å¥å£çæéåé«</span></p>
+<h2 data-heading="true"><span>03 æµéæ± èµé©¬ï¼æç« ä¸ºå¥ä¼çªç¶ç</span></h2>
+<h3 data-heading="true"><span>3.1 å·å¯å¨é£ä¸å³å¾å³é®</span></h3>
+<p><span>æç« ååºå»ä¹åï¼éå¸¸ä¼åæ¿å°ä¸å°æ³¢æµè¯æåï¼æ¯å¦ 500 å° 1000 æ¬¡ï¼ï¼ç³»ç»ä¸»è¦çä¸é¡¹ï¼ç¹å»çãå®è¯»çãäºå¨çã</span></p>
+<p><span>ç ç©¶éç»äºä¸äºå¸¸è§éå¼ååèï¼</span></p>
+<p><span>1. å·å¯å¨æï¼0 å° 24 å°æ¶ï¼ç¹å»çè¦è½å° 8% ä»¥ä¸ï¼æ´å¯è½è¿ä¸ä¸å±</span></p>
+<p><span>2. è¿å¥çåæåï¼å®è¯»çæå¥½è½ç»´æ 55% ä»¥ä¸ï¼äºå¨ç 3% ä»¥ä¸</span></p>
+<h3 data-heading="true"><span>3.2 å¤è½®æ¨èä¸æ¯ä¸æ¬¡æ§ç»å®</span></h3>
+<p><span>éè¿ç¬¬ä¸è½®æµè¯åï¼ä¼æäºæ¬¡ãä¸æ¬¡çè³æ´å¤è½®çæ¨èï¼æ¯ä¸è½®æåéä¼åå¤§ã</span></p>
+<p><span>å¦å¤ç³»ç»ä¼æ 15 åéä¸è½®å¨æè°æ´æµéï¼æä»¥åä¸ç¯æç« çæ°æ®ä¼ä¸ç´ååãéè¯»éå° 1 ä¸è¿ä¸ªéçº§åï¼ææ¶è¿ä¼è§¦åäººå·¥å®¡æ ¸ã</span></p>
+<h3 data-heading="true"><span>3.3 ç¤¾äº¤æ©æ£ä¼å¸¦æ¥æ¾å¤§</span></h3>
+<p><span>å½ç¨æ·ç¹å¨çæèè½¬åï¼æç« å°±ä¼æ²¿çç¤¾äº¤ç½ç»æ©æ£ãæè´¦å·çæ°æ®éï¼æåç¸å³å¥å£è´¡ç®çéè¯»éè½å° 45.9%ã</span></p>
+<p><span>æ¯è¾å®¹æè§¦ååäº«çåå ä¸è¬æ¯è¿ä¸ç±»ï¼</span></p>
+<p><span>1. åå®¹æ¬èº«æç¤¾äº¤ä»·å¼ï¼å±é¸£ãå®ç¨ãè¯é¢æ§ï¼</span></p>
+<p><span>2. æä¸­åæ¸æ¥åäº«å¨æºï¼æ¯å¦è½¬ç»åäºãè½¬ç»åå­¦ãè½¬ç»ç¾¤éè°ï¼</span></p>
+<p><span>3. åå®¹ééåäº«åºæ¯ï¼å·¥ä½ç¾¤ãåå­¦ç¾¤ãè¡ä¸ç¾¤è½ç¨å¾ä¸ï¼</span></p>
+<h3 data-heading="true"><span>3.4 å¬åå¥å£ä¹å¾éè¦</span></h3>
+<p><span>è¡¨ 2ï¼å¬ä¼å·ä¸»è¦æµéæ¥æºåå¸</span></p>
+<table>
+<thead>
+<tr><th><span>æµéæ¥æº</span></th><th><span>å æ¯</span></th><th><span>ç¹ç¹</span></th></tr>
+</thead>
+<tbody>
+<tr>
+<td><span>æ¨èæµé</span></td>
+<td><span>54.5%</span></td>
+<td><span>ç®æ³æ¨èä¸ºä¸»</span></td>
+</tr>
+<tr>
+<td><span>å¬ä¼å·æ¶æ¯</span></td>
+<td><span>16.52%</span></td>
+<td><span>è®¢éç¨æ·</span></td>
+</tr>
+<tr>
+<td><span>å¬ä¼å·ä¸»é¡µ</span></td>
+<td><span>13.17%</span></td>
+<td><span>ä¸»å¨è®¿é®</span></td>
+</tr>
+<tr>
+<td><span>æä¸æ</span></td>
+<td><span>10.44%</span></td>
+<td><span>ç²¾åæç´¢</span></td>
+</tr>
+<tr>
+<td><span>èå¤©ä¼è¯</span></td>
+<td><span>2.88%</span></td>
+<td><span>ç§ååäº«</span></td>
+</tr>
+<tr>
+<td><span>æåå</span></td>
+<td><span>0.96%</span></td>
+<td><span>æåååäº«</span></td>
+</tr>
+<tr>
+<td><span>æåæ¨è</span></td>
+<td><span>0.12%</span></td>
+<td><span>å¥½åç´æ¥æ¨è</span></td>
+</tr>
+</tbody>
+</table>
+<p><span>è¡¥åä¸¤ç¹ï¼</span></p>
+<p><span>1. çä¸çæ¯å¾éè¦çå¬åå¥å£ï¼çæ¬¾éçä¸çå æ¯è½å° 60% å° 70%</span></p>
+<p><span>2. æä¸æå æ¯å¤§æ¦ 10.44%ï¼æ é¢å³é®è¯åå¾å¥½ï¼æç´¢æµéå æ¯ä¹å¯è½å¾å¯è§</span></p>
+<h2 data-heading="true"><span>04 ä¸åè´¦å·çå·®å¼</span></h2>
+<h3 data-heading="true"><span>4.1 è®¤è¯åè´¦å·ä¿¡èª</span></h3>
+<p><span>è®¤è¯ç±»åä¼å½±åæéåä¿¡ä»»ï¼æ¿åº &gt; åªä½ &gt; ä¼ä¸ &gt; ä¸ªä½ï¼ã</span></p>
+<p><span>åæ¶ä¹ä¼çè¿äºï¼æ³¨åæ¶é´ãè¿è§è®°å½ãç²ä¸æ´»è·åº¦ï¼å¸¸è¯»ç¨æ·ï¼ãæ´æ°é¢çï¼åæå¤ä¸ååå æ¯é«æ´å ä¼ï¼ã</span></p>
+<h3 data-heading="true"><span>4.2 æ°å·åèå·ä¸ä¸æ ·</span></h3>
+<p><span>æ°å·ä¸è¬ä¼æè§å¯æï¼åææåå¯è½æ¯è¾å°ï¼å¹³å°ä¼åå¤æ­ä½ æ¯ä¸æ¯ç¨³å®çæ­£å¸¸åä½èï¼æ ç­¾æ¸ä¸æ¸æ°ï¼åå®¹åä¸åè§ã</span></p>
+<p><span>èå·å ä¸ºç»åç§¯ç´¯æ´å®æ´ï¼æ¨èæ´å®¹æç²¾åï¼ä½é¿æä¸æ´»è·æèè´¨éä¸æ»ä¹å¯è½è¢«éæã</span></p>
+<h3 data-heading="true"><span>4.3 åç´é¢åæ´åé¦ï¼ä½å«ä¹±è·</span></h3>
+<p><span>ç§æãæè²ç­åç´é¢åå¨åç±»éå¯è½æ´å®¹ææ¿å°å¾æï¼ä½åææ¯å®ä½è¶³å¤ç»ï¼åå®¹æç»­åç´è¾åºï¼å¹¶ä¸ç¨åéãæ ç­¾ç­æ¹å¼å¼ºåè¯å«ã</span></p>
+<h2 data-heading="true"><span>05 ç§æå·æä¹åæ´å®¹æèµ·é</span></h2>
+<p><span>ææ´å»ºè®®æææ å½æé¨æ§ï¼èä¸æ¯å½ KPIã</span></p>
+<h3 data-heading="true"><span>5.1 æ é¢åæç¹å»çé¡¶èµ·æ¥</span></h3>
+<p><span>æ é¢å¯ä»¥ç¨ä¸ä¸ªæ¯è¾ç¨³çç»æï¼çç¹åºæ¯ + æ°æ®èä¹¦ + æç»ªå±é¸£ã</span></p>
+<p><span>ç¤ºä¾ï¼æä½ ä»¬è´¦å·æ¹åæ¿æ¢å³å¯ï¼ï¼</span></p>
+<p><span>1. ææçµèåå¿«äºï¼3 ä¸ª Windows è®¾ç½®ç«å»è§æ</span></p>
+<p><span>2. å«åè¢«éé±¼äºï¼æ ¡å­/ä¼ä¸é®ç®±æå¸¸è§ç 5 ç§è¯éª</span></p>
+<p><span>3. ä» 0 å° 1ï¼ç¨ 10 åéæ­å¥½ä¸ä¸ªèªå¨åæ¥è¡¨æµç¨</span></p>
+<h3 data-heading="true"><span>5.2 åå®¹ç»æè¦ç§é¡¾å®è¯»</span></h3>
+<p><span>ä¸ä¸ªæ¯è¾å¥½ç¨çåæ³æ¯ï¼å¼å¤´ç´æ¥ç»ç»è®ºï¼ä¸­é´ä¿æä¿¡æ¯å¯åº¦ï¼å¤§æ¦æ¯ 300 å­ä¸ä¸ªå³é®ç¹ï¼ï¼ç»å°¾ç»è¡å¨å»ºè®®ææé®ï¼å¼å¯¼è¯è®º/æ¶è/è½¬åã</span></p>
+<h3 data-heading="true"><span>5.3 ååæ¯åºç</span></h3>
+<p><span>ç ç©¶éæå°åååº¦å»ºè®®å¤§äº 70%ãå¦æç¨ AI åè¾å©ï¼ä¹å»ºè®®ææ¯ä¾åç¨éè¯´æ¸æ¥ï¼é¿åè¢«ç³»ç»è¯¯å¤æä½è´¨ã</span></p>
+<h3 data-heading="true"><span>5.4 æå¯è½¬ååè¿æ­£æ</span></h3>
+<p><span>æç«  25% / 50% / 75% çä½ç½®ï¼å¯ä»¥é¡ºæå ä¸å¥è¯ï¼åè¯è¯»èè¿æ®µéåè½¬ç»è°ã</span></p>
+<p><span>æ¯å¦ï¼è¿ä»½ææ¥æ¸åè½¬ç» IT åäº/åå­¦ï¼è¿æ®µè®¾ç½®è½¬å°ç¾¤éï¼å¤§å®¶å°è¸©åã</span></p>
+<h3 data-heading="true"><span>5.5 ååºå»åç 2 å°æ¶å«æµªè´¹</span></h3>
+<p><span>å·å¯å¨æ°æ®å¾å³é®ï¼å»ºè®®åæåé©¬ä¸ç¨ç§å­ç¨æ·æ©æ£ä¸æ³¢ï¼ç¤¾ç¾¤ãåäºç¾¤ãåå­¦ç¾¤ï¼ï¼åæç¹å»ãå®è¯»ãäºå¨è·èµ·æ¥ã</span></p>
+<h3 data-heading="true"><span>5.6 æ¯å¨å°±ç¯ 3 ä¸ªææ </span></h3>
+<p><span>1. ç¤¾äº¤æ¨èæµéå æ¯ï¼ç®æ å¼å¯åè 45%ï¼</span></p>
+<p><span>2. èåæ ç¹å»éï¼è½çåºäºå¨æ·±åº¦ï¼</span></p>
+<p><span>3. 48 å°æ¶äºå¨çï¼è½çåºåå®¹å³æ¶å½±ååï¼</span></p>
+<p><span>å¦å¤æ é¢ãå°é¢ãå¼å¤´æ®µè½é½å¯ä»¥åå°èå´ A/B æµè¯ï¼æ¾æåéçç»åã</span></p>
+<h2 data-heading="true"><span>06 æ¡ä¾ç»æä»¬çæç¤º</span></h2>
+<p><span>è¿éåå ä¸ªç ç©¶éçå¸åç°è±¡ï¼ä¸»è¦çè§å¾ï¼</span></p>
+<p><span>1. ææç« éè¯» 48 ä¸ï¼çä¸çè´¡ç® 60%</span></p>
+<p><span>2. ææ°å·ç²ä¸ä¸å¤ï¼åç¯ 10 ä¸+ï¼çä¸çè´¡ç® 98%</span></p>
+<p><span>3. æçæ¯ä¼ æ­æ¡ä¾ï¼ç¬¬ 1 å¤© 500+ï¼ç¬¬ 2 å¤© 1 ä¸+ï¼ç¬¬ 3 å¤©æååå·å±</span></p>
+<p><span>å±åç¹å¶å®å¾æ´ç´ ï¼å·å¯å¨è¿å³ï¼ç¤¾äº¤æ©æ£è¢«ç¹çï¼åå®¹è´¨éè½æä½å®è¯»åäºå¨ã</span></p>
+<h2 data-heading="true"><span>07 é£é©ååè§å«è¸©å</span></h2>
+<p><span>å¸¸è§è¯¯åºï¼</span></p>
+<p><span>1. è¿½ç­ç¹ä½åå®ä½ä¸æ­ï¼å®¹æç½å¿</span></p>
+<p><span>2. ä¾èµå·éï¼å¹³å°ææ ææµéææ¥ï¼é£é©å¾é«</span></p>
+<p><span>3. åªè¦æåä¸è¦è´¨éï¼å®è¯»çæå¾å¾å¿«ï¼æ¨èä¹ä¼å¾å¿«å</span></p>
+<p><span>åè§æ¹é¢ï¼</span></p>
+<p><span>1. åååº¦å°½éåå° 70% ä»¥ä¸</span></p>
+<p><span>2. æ é¢åæ­£æåææè¯æ«æï¼å°ç¨ç»å¯¹åãå¤¸å¤§åè¡¨è¿°</span></p>
+<p><span>3. å¾çç´ ææ³¨æçæï¼ç¨ CC0 ç«ç¹æèåè§äºå</span></p>
+<h2 data-heading="true"><span>08 æ»ç»</span></h2>
+<p><span>ä¸å¥è¯æ»ç»ï¼å¬ä¼å·ç°å¨æ¯ç¤¾äº¤ä¿¡å· + ç®æ³æ¨èä¸èµ·å¨è·ï¼ç§æå·æ³èµ·éï¼æ ¸å¿è¿æ¯ä¸ä»¶äºï¼å·å¯å¨æ°æ®è¿å³ãåå®¹æ´å®¹æè¢«è½¬åãé¿æåæååååç´ã</span></p>
+<p><span>å¦æä½ åªæ³ååæå°æ¹å¨ï¼å»ºè®®ä»è¿ 3 ä¸ªå¼å§ï¼</span></p>
+<p><span>1. åæå 0 å° 2 å°æ¶ï¼æç¹å»çãå®è¯»çãäºå¨çåè·èµ·æ¥</span></p>
+<p><span>2. ææ¸åãæ­¥éª¤ãæéæµç¨åå¾æ´å¯æªå¾è½¬åï¼é¡ºæåæ¸æ¥è½¬ç»è°</span></p>
+<p><span>3. è¿ç»­åä¸ä¸ªç»åæ¹åï¼æ¯å¦æ ¡å­ç½ç»å®å¨ãç³»ç»ä½¿ç¨æåãåå¬æçï¼ï¼è®©æ ç­¾ç¨³å®ä¸æ¥</span></p>
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0.0006944444444444445" data-date-updated="2026-01-09 19:40">2026-01-09 19:39</span>&nbsp;
+<a href="https://www.cnblogs.com/reachteam">H5å¼åææ¯</a>&nbsp;
+éè¯»(<span id="post_view_count">3</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19463233);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19463233', targetLink: 'https://www.cnblogs.com/reachteam/p/19463233', title: 'å¬ä¼å·æ¨èæºå¶æ´çï¼ç§æå·æä¹æç¤¾äº¤æµéåèµ·æ¥' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ MAFå¿«éå¥é¨ï¼11ï¼å¹¶è¡å·¥ä½æµ ]]></title>
+    <link>https://www.cnblogs.com/edisontalk/p/-/quick-start-on-maf-chatper11</link>
+    <guid>dc5c053d27601d259b31b8109c0577d1</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/edisontalk/p/-/quick-start-on-maf-chatper11" title="åå¸äº 2026-01-09 18:30">
+    <span role="heading" aria-level="2">MAFå¿«éå¥é¨ï¼11ï¼å¹¶è¡å·¥ä½æµ</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                    <div id="cnblogs_post_description" style="display: none">
+        <img src="https://img2024.cnblogs.com/blog/381412/202601/381412-20260104201029946-1112217715.png" alt="MAFå¿«éå¥é¨ï¼11ï¼å¹¶è¡å·¥ä½æµ" class="desc_img">
+        å¨å®éä¸å¡åºæ¯ä¸­ï¼å¾å¾éè¦å¨å·¥ä½æµä¸­è®©å¤ä¸ªAgentåæ¶è¿è¡åéè¿èåç»æååä¸äºæ°æ®åææå³ç­åç°ï¼è¿æ¶å°±éè¦å¹¶è¡æ§è¡æºå¶ãæ¬æä»ç»äºMAFä¸­å¹¶è¡å·¥ä½æµä»¥åå¦ä½å®ç°âFan-Out/Fan-Inâçå·¥ä½æ¨¡å¼ï¼æåéè¿ä¸ä¸ªè·¨å¢çµåä»·æ ¼æ¥è¯¢æºè½å®ä»·çæ¡ä¾ä»ç»äºè¿ç§æ¨¡å¼çä»£ç å®ç°ã
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
+<p>å¤§å®¶å¥½ï¼ææ¯Edisonã</p>
+<p>æè¿æä¸ç´å¨è·çå£æ°çã<a class="normal_text_link mp_article_text_link" href="https://www.cnblogs.com/sheng-jie/p/19200934" target="_blank" data-itemshowtype="0" data-linktype="2">.NET+AIæºè½ä½å¼åè¿é¶</a>ãè¯¾ç¨å­¦ä¹ MAFçå¼åæå·§ï¼æå¼ºçæ¨èä½ ä¹ä¸è½¦è·æä¸èµ·åºåï¼</p>
+<p><a class="normal_text_link mp_article_text_link" href="https://www.cnblogs.com/edisontalk/p/-/quick-start-on-maf-chatper10" target="_blank" data-itemshowtype="0" data-linktype="2">ä¸ä¸ç¯</a>ï¼<span>æä»¬å­¦ä¹ äºMAFä¸­å¦ä½è¿è¡å¾ªç¯ï¼loopï¼è·¯ç±<span>ãæ¬ç¯ï¼æä»¬æ¥äºè§£ä¸å¨MAFä¸­å¦ä½å¹¶è¡æ§è¡ï¼fan-out/fan-inï¼çå·¥ä½æµã</span></span></p>
+<h1><strong>1 å¹¶è¡æ§è¡æ¨¡å¼</strong></h1>
+<p><span data-pm-slice="0 0 []"><span><span>å¨å®éä¸å¡åºæ¯ä¸­ï¼å¾å¾éè¦å¨å·¥ä½æµä¸­è®©å¤ä¸ªAgentåæ¶è¿è¡åéè¿èåç»æååä¸äºæ°æ®åææå³ç­åç°ï¼è¿æ¶å°±éè¦å¹¶è¡æ§è¡æºå¶<span>ã</span></span></span></span></p>
+<p><span data-pm-slice="0 0 []"><span><span>å¨MAFä¸­ï¼æä»¬å¯ä»¥ä½¿ç¨ Fan-Out/Fan-In æ¨¡å¼æ¥å®ç°è¿ä¸ªç®ç<span>ï¼å¦ä¸ä»£ç çæ®µæç¤ºï¼</span></span></span></span></p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 255, 1)">var</span> workflow = <span style="color: rgba(0, 0, 255, 1)">new</span><span style="color: rgba(0, 0, 0, 1)"> WorkflowBuilder(startExecutor)
+    .AddFanOutEdge(startExecutor, [amazonExecutor, ebayExecutor, shopeeExecutor])
+    .AddFanInEdge([amazonExecutor, ebayExecutor, shopeeExecutor], strategyExecutor)
+    .WithOutputFrom(strategyExecutor)
+    .Build();</span></pre>
+</div>
+<p><span data-pm-slice="0 0 []"><span><span><span><span data-pm-slice="0 0 []"><span><span>å¯ä»¥çå°ï¼æä»¬éè¿MAFç AddFanOutEdge å AddFanInEdge æ¥å®ç°äºå¹¶è¡æ§è¡çç®çï¼æåéè¿ä¸ä¸ªèªå®ä¹çæ§è¡å¨æ¥åèåã</span></span></span></span></span></span></span></p>
+<p><span data-pm-slice="0 0 []"><span><span><span><span data-pm-slice="0 0 []"><span><span>æ ¸å¿æ¦å¿µè¡¥åï¼</span></span></span></span></span></span></span></p>
+<ul>
+<li><span data-pm-slice="0 0 []"><span><span><span><span data-pm-slice="0 0 []"><span><span>Fan-Out Edge =&gt; å¹¶åæ§è¡è¾¹</span></span></span></span></span></span></span></li>
+<li><span data-pm-slice="0 0 []"><span><span><span><span data-pm-slice="0 0 []"><span><span>Fan-In Edge =&gt; æ±èè¾¹</span></span></span></span></span></span></span></li>
+</ul>
+<h1><strong>2 å¹¶è¡å·¥ä½æµå®éªæ¡ä¾</strong></h1>
+<p><span data-pm-slice="0 0 []"><span><span><span><span data-pm-slice="0 0 []"><span><span><span>åè®¾æä»¬æ¯ä¸ä¸ªè·¨å¢çµåå¢éï¼æ³è¦å®æ¶çæ§åä¸ä¸ªååå¨å¤ä¸ªçµåå¹³å°ï¼å¦äºé©¬éãeBayãShopeeç­ï¼çå®ä»·ç­ç¥ï¼å¨æ£æµå°ç«äºå¯¹æéä»·æ¶å¿«éååºååºå³ç­ã</span></span></span></span></span></span></span></span></p>
+<p><span data-pm-slice="0 0 []"><span><span><span><span data-pm-slice="0 0 []"><span><span><span><span>å æ­¤ï¼æä»¬çç®æ æ¯ï¼éç½®ä¸ä¸ª&nbsp;<span>Fan-Out + Fan-In<span>&nbsp;å·¥ä½æµï¼å®ç°ä¸æ¬¡æ¥è¯¢ãå¹¶è¡æåãæºè½å³ç­çä¼ä¸çº§æ¨¡å¼ã</span></span></span></span></span></span></span></span></span></span></span></p>
+<h3><strong><span><span>2.1 å³é®ä¾èµåå¼å¥</span></span></strong></h3>
+<p><span data-pm-slice="0 0 []"><span><span><span><span data-pm-slice="0 0 []"><span><span><span><span><span><span><span>å¨ä»å¤©çè¿ä¸ªæ¡ä¾ä¸­ï¼æä»¬ä»ç¶åå»ºäºä¸ä¸ª.NETæ§å¶å°åºç¨ç¨åºï¼å®è£äºä»¥ä¸NuGetåï¼</span></span></span></span></span></span></span></span></span></span></span></span></p>
+<ul class="list-paddingleft-1">
+<li><span>Microsoft.Agents.AI.OpenAI</span></li>
+<li><span>Microsoft.Agents.AI.Workflows</span></li>
+<li><span>Microsoft.Extensions.AI.OpenAI</span></li>
+</ul>
+<h3><span><span>2.2 å®ä¹æ°æ®ä¼ è¾æ¨¡å</span></span></h3>
+<p><span><span>é¦åï¼æä»¬å®ä¹ä¸ä¸å¨è¿ä¸ªå·¥ä½æµä¸­éè¦çæä¼ éçæ°æ®æ¨¡åï¼</span></span></p>
+<p><span><span>PriceQueryDto ï¼ä»·æ ¼æ¥è¯¢æ¨¡åDTO</span></span></p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 255, 1)">internal</span> <span style="color: rgba(0, 0, 255, 1)">class</span><span style="color: rgba(0, 0, 0, 1)"> PriceQueryDto
+{
+    </span><span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">string</span> ProductId { <span style="color: rgba(0, 0, 255, 1)">get</span>; <span style="color: rgba(0, 0, 255, 1)">private</span> <span style="color: rgba(0, 0, 255, 1)">set</span><span style="color: rgba(0, 0, 0, 1)">; }
+    </span><span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">string</span> ProductName { <span style="color: rgba(0, 0, 255, 1)">get</span>; <span style="color: rgba(0, 0, 255, 1)">private</span> <span style="color: rgba(0, 0, 255, 1)">set</span><span style="color: rgba(0, 0, 0, 1)">; }
+    </span><span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">string</span> TargetRegion { <span style="color: rgba(0, 0, 255, 1)">get</span>; <span style="color: rgba(0, 0, 255, 1)">private</span> <span style="color: rgba(0, 0, 255, 1)">set</span><span style="color: rgba(0, 0, 0, 1)">; }
+    </span><span style="color: rgba(0, 0, 255, 1)">public</span> PriceQueryDto(<span style="color: rgba(0, 0, 255, 1)">string</span> productId, <span style="color: rgba(0, 0, 255, 1)">string</span> productName, <span style="color: rgba(0, 0, 255, 1)">string</span><span style="color: rgba(0, 0, 0, 1)"> targetRegion)
+    {
+        ProductId </span>=<span style="color: rgba(0, 0, 0, 1)"> productId;
+        ProductName </span>=<span style="color: rgba(0, 0, 0, 1)"> productName;
+        TargetRegion </span>=<span style="color: rgba(0, 0, 0, 1)"> targetRegion;
+    }
+}</span></pre>
+</div>
+<h3><span data-pm-slice="1 1 [&quot;para&quot;,{&quot;tagName&quot;:&quot;p&quot;,&quot;attributes&quot;:{&quot;style&quot;:&quot;background-color: rgb(255, 255, 255);outline: 0px;visibility: visible;line-height: 1.75em;margin-top: 16px;margin-bottom: 16px;&quot;},&quot;namespaceURI&quot;:&quot;http://www.w3.org/1999/xhtml&quot;}]"><span>2.3 å®ä¹Agents&amp;Executors</span></span></h3>
+<p><span data-pm-slice="1 1 [&quot;para&quot;,{&quot;tagName&quot;:&quot;section&quot;,&quot;attributes&quot;:{&quot;style&quot;:&quot;font-style: normal;font-variant-ligatures: normal;font-variant-caps: normal;text-transform: none;word-spacing: 0px;-webkit-text-stroke-width: 0px;white-space: normal;text-align: left;line-height: 1.75em;margin-bottom: 8px;margin-top: 8px;&quot;},&quot;namespaceURI&quot;:&quot;http://www.w3.org/1999/xhtml&quot;},&quot;node&quot;,{&quot;tagName&quot;:&quot;strong&quot;,&quot;attributes&quot;:{},&quot;namespaceURI&quot;:&quot;http://www.w3.org/1999/xhtml&quot;}]"><strong>ï¼1ï¼ä»·æ ¼æ¥è¯¢ï¼</strong>å°è£åå¤§çµåå¹³å°çä»·æ ¼æ¥è¯¢é»è¾ï¼æ¨¡æå¶APIååºï¼ä»ä»åæ¼ç¤ºç¨æ å®éé»è¾</span>ï¼</p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 255, 1)">internal</span> <span style="color: rgba(0, 0, 255, 1)">sealed</span> <span style="color: rgba(0, 0, 255, 1)">class</span> PlatformPriceExecutor : Executor&lt;ChatMessage&gt;<span style="color: rgba(0, 0, 0, 1)">
+{
+    </span><span style="color: rgba(0, 0, 255, 1)">private</span> <span style="color: rgba(0, 0, 255, 1)">readonly</span> <span style="color: rgba(0, 0, 255, 1)">string</span><span style="color: rgba(0, 0, 0, 1)"> _instructions;
+    </span><span style="color: rgba(0, 0, 255, 1)">private</span> <span style="color: rgba(0, 0, 255, 1)">readonly</span><span style="color: rgba(0, 0, 0, 1)"> IChatClient _chatClient;
+
+    </span><span style="color: rgba(0, 0, 255, 1)">public</span> PlatformPriceExecutor(<span style="color: rgba(0, 0, 255, 1)">string</span> id, IChatClient chatClient, <span style="color: rgba(0, 0, 255, 1)">string</span><span style="color: rgba(0, 0, 0, 1)"> platformInstructions)
+        : </span><span style="color: rgba(0, 0, 255, 1)">base</span><span style="color: rgba(0, 0, 0, 1)">(id)
+    {
+        _chatClient </span>=<span style="color: rgba(0, 0, 0, 1)"> chatClient;
+        _instructions </span>=<span style="color: rgba(0, 0, 0, 1)"> platformInstructions;
+    }
+
+    </span><span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">override</span> <span style="color: rgba(0, 0, 255, 1)">async</span> ValueTask HandleAsync(ChatMessage message, IWorkflowContext context, CancellationToken cancellationToken = <span style="color: rgba(0, 0, 255, 1)">default</span><span style="color: rgba(0, 0, 0, 1)">)
+    {
+        </span><span style="color: rgba(0, 0, 255, 1)">var</span> messages = <span style="color: rgba(0, 0, 255, 1)">new</span> List&lt;ChatMessage&gt;<span style="color: rgba(0, 0, 0, 1)">
+        {
+            </span><span style="color: rgba(0, 0, 255, 1)">new</span><span style="color: rgba(0, 0, 0, 1)">(ChatRole.System, _instructions),
+            message
+        };
+
+        </span><span style="color: rgba(0, 0, 255, 1)">var</span> response = <span style="color: rgba(0, 0, 255, 1)">await</span><span style="color: rgba(0, 0, 0, 1)"> _chatClient.GetResponseAsync(messages, cancellationToken: cancellationToken);
+        </span><span style="color: rgba(0, 0, 255, 1)">var</span> replyMessage = <span style="color: rgba(0, 0, 255, 1)">new</span> ChatMessage(ChatRole.Assistant, response.Text ?? <span style="color: rgba(0, 0, 255, 1)">string</span><span style="color: rgba(0, 0, 0, 1)">.Empty)
+        {
+            AuthorName </span>= <span style="color: rgba(0, 0, 255, 1)">this</span><span style="color: rgba(0, 0, 0, 1)">.Id
+        };
+
+        </span><span style="color: rgba(0, 0, 255, 1)">await</span><span style="color: rgba(0, 0, 0, 1)"> context.SendMessageAsync(replyMessage, cancellationToken: cancellationToken);
+        Console.WriteLine($</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">â {this.Id} å®ææ¥è¯¢</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
+    }
+}</span></pre>
+</div>
+<p><strong><span data-pm-slice="1 1 [&quot;para&quot;,{&quot;tagName&quot;:&quot;section&quot;,&quot;attributes&quot;:{&quot;style&quot;:&quot;font-style: normal;font-variant-ligatures: normal;font-variant-caps: normal;text-transform: none;word-spacing: 0px;-webkit-text-stroke-width: 0px;white-space: normal;text-align: left;line-height: 1.75em;margin-bottom: 8px;margin-top: 8px;&quot;},&quot;namespaceURI&quot;:&quot;http://www.w3.org/1999/xhtml&quot;},&quot;node&quot;,{&quot;tagName&quot;:&quot;strong&quot;,&quot;attributes&quot;:{},&quot;namespaceURI&quot;:&quot;http://www.w3.org/1999/xhtml&quot;}]"><span>ï¼2ï¼<span>å¹¿æ­æ¥è¯¢è¯·æ±æ§è¡å¨<span>ï¼</span></span></span></span></strong><span data-pm-slice="1 1 [&quot;para&quot;,{&quot;tagName&quot;:&quot;section&quot;,&quot;attributes&quot;:{&quot;style&quot;:&quot;font-style: normal;font-variant-ligatures: normal;font-variant-caps: normal;text-transform: none;word-spacing: 0px;-webkit-text-stroke-width: 0px;white-space: normal;text-align: left;line-height: 1.75em;margin-bottom: 8px;margin-top: 8px;&quot;},&quot;namespaceURI&quot;:&quot;http://www.w3.org/1999/xhtml&quot;},&quot;node&quot;,{&quot;tagName&quot;:&quot;strong&quot;,&quot;attributes&quot;:{},&quot;namespaceURI&quot;:&quot;http://www.w3.org/1999/xhtml&quot;}]">è´è´£å¹¿æ­ä»·æ ¼æ¥è¯¢è¯·æ±å°åå¤§çµåå¹³å°å¹¶åæ¾TurnTokenã</span></p>
+<p><span data-pm-slice="1 1 [&quot;para&quot;,{&quot;tagName&quot;:&quot;section&quot;,&quot;attributes&quot;:{&quot;style&quot;:&quot;font-style: normal;font-variant-ligatures: normal;font-variant-caps: normal;text-transform: none;word-spacing: 0px;-webkit-text-stroke-width: 0px;white-space: normal;text-align: left;line-height: 1.75em;margin-bottom: 8px;margin-top: 8px;&quot;},&quot;namespaceURI&quot;:&quot;http://www.w3.org/1999/xhtml&quot;},&quot;node&quot;,{&quot;tagName&quot;:&quot;strong&quot;,&quot;attributes&quot;:{},&quot;namespaceURI&quot;:&quot;http://www.w3.org/1999/xhtml&quot;}]">NOTEï¼åªæåæ¾äºTurnTokenæè½çæ­£å¼å¯æ§è¡åç»­LLMèç¹ï¼</span></p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 255, 1)">internal</span> <span style="color: rgba(0, 0, 255, 1)">sealed</span> <span style="color: rgba(0, 0, 255, 1)">class</span> PriceQueryStartExecutor() : Executor&lt;PriceQueryDto&gt;<span style="color: rgba(0, 0, 0, 1)">(nameof(PriceQueryStartExecutor))
+{
+    </span><span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">override</span> <span style="color: rgba(0, 0, 255, 1)">async</span> ValueTask HandleAsync(PriceQueryDto query, IWorkflowContext context, CancellationToken cancellationToken = <span style="color: rgba(0, 0, 255, 1)">default</span><span style="color: rgba(0, 0, 0, 1)">)
+    {
+        </span><span style="color: rgba(0, 0, 255, 1)">var</span> userPrompt = $<span style="color: rgba(128, 0, 0, 1)">@"</span><span style="color: rgba(128, 0, 0, 1)">ååID: {query.ProductId}
+åååç§°: {query.ProductName}
+ç®æ åºå: {query.TargetRegion}
+
+è¯·æ¥è¯¢è¯¥ååå¨ä½ çå¹³å°ä¸çå½åä»·æ ¼ãåºå­ç¶æåééä¿¡æ¯ã</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">;
+        </span><span style="color: rgba(0, 0, 255, 1)">await</span> context.SendMessageAsync(<span style="color: rgba(0, 0, 255, 1)">new</span><span style="color: rgba(0, 0, 0, 1)"> ChatMessage(ChatRole.User, userPrompt), cancellationToken: cancellationToken);
+        </span><span style="color: rgba(0, 0, 255, 1)">await</span> context.SendMessageAsync(<span style="color: rgba(0, 0, 255, 1)">new</span> TurnToken(emitEvents: <span style="color: rgba(0, 0, 255, 1)">true</span><span style="color: rgba(0, 0, 0, 1)">), cancellationToken: cancellationToken);
+
+        Console.WriteLine(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">ð¡ Fan-out ä»·æ ¼æ¥è¯¢å¹¿æ­å·²åé</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
+    }
+}</span></pre>
+</div>
+<p><strong><strong><span data-pm-slice="1 1 [&quot;para&quot;,{&quot;tagName&quot;:&quot;section&quot;,&quot;attributes&quot;:{&quot;style&quot;:&quot;font-style: normal;font-variant-ligatures: normal;font-variant-caps: normal;text-transform: none;word-spacing: 0px;-webkit-text-stroke-width: 0px;white-space: normal;text-align: left;line-height: 1.75em;margin-bottom: 8px;margin-top: 8px;&quot;},&quot;namespaceURI&quot;:&quot;http://www.w3.org/1999/xhtml&quot;},&quot;node&quot;,{&quot;tagName&quot;:&quot;strong&quot;,&quot;attributes&quot;:{},&quot;namespaceURI&quot;:&quot;http://www.w3.org/1999/xhtml&quot;}]"><span>ï¼3ï¼<span>å®ä»·èå<span>ï¼</span></span></span></span></strong></strong><span data-pm-slice="1 1 [&quot;para&quot;,{&quot;tagName&quot;:&quot;section&quot;,&quot;attributes&quot;:{&quot;style&quot;:&quot;font-style: normal;font-variant-ligatures: normal;font-variant-caps: normal;text-transform: none;word-spacing: 0px;-webkit-text-stroke-width: 0px;white-space: normal;text-align: left;line-height: 1.75em;margin-bottom: 8px;margin-top: 8px;&quot;},&quot;namespaceURI&quot;:&quot;http://www.w3.org/1999/xhtml&quot;},&quot;node&quot;,{&quot;tagName&quot;:&quot;strong&quot;,&quot;attributes&quot;:{},&quot;namespaceURI&quot;:&quot;http://www.w3.org/1999/xhtml&quot;}]">æ¨¡ææ¶éå°ææå¹³å°çå®ä»·ä¹åæ§è¡çæ°æ®èåæä½ã</span></p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 255, 1)">internal</span> <span style="color: rgba(0, 0, 255, 1)">sealed</span> <span style="color: rgba(0, 0, 255, 1)">class</span> PricingStrategyExecutor : Executor&lt;ChatMessage&gt;<span style="color: rgba(0, 0, 0, 1)">
+{
+    </span><span style="color: rgba(0, 0, 255, 1)">private</span> <span style="color: rgba(0, 0, 255, 1)">readonly</span> List&lt;ChatMessage&gt; _messages =<span style="color: rgba(0, 0, 0, 1)"> [];
+    </span><span style="color: rgba(0, 0, 255, 1)">private</span> <span style="color: rgba(0, 0, 255, 1)">readonly</span> <span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> _targetCount;
+
+    </span><span style="color: rgba(0, 0, 255, 1)">public</span> PricingStrategyExecutor(<span style="color: rgba(0, 0, 255, 1)">int</span> targetCount) : <span style="color: rgba(0, 0, 255, 1)">base</span><span style="color: rgba(0, 0, 0, 1)">(nameof(PricingStrategyExecutor))
+    {
+        _targetCount </span>=<span style="color: rgba(0, 0, 0, 1)"> targetCount;
+    }
+
+    </span><span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">override</span> <span style="color: rgba(0, 0, 255, 1)">async</span> ValueTask HandleAsync(ChatMessage message, IWorkflowContext context, CancellationToken cancellationToken = <span style="color: rgba(0, 0, 255, 1)">default</span><span style="color: rgba(0, 0, 0, 1)">)
+    {
+        </span><span style="color: rgba(0, 0, 255, 1)">this</span><span style="color: rgba(0, 0, 0, 1)">._messages.Add(message);
+        Console.WriteLine($</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">ð å·²æ¶é {_messages.Count}/{_targetCount} ä¸ªå¹³å°æ°æ® - æ¥èª {message.AuthorName}</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
+
+        </span><span style="color: rgba(0, 0, 255, 1)">if</span> (<span style="color: rgba(0, 0, 255, 1)">this</span>._messages.Count == <span style="color: rgba(0, 0, 255, 1)">this</span><span style="color: rgba(0, 0, 0, 1)">._targetCount)
+        {
+            </span><span style="color: rgba(0, 0, 255, 1)">var</span> platformData = <span style="color: rgba(0, 0, 255, 1)">string</span>.Join(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">\n</span><span style="color: rgba(128, 0, 0, 1)">"</span>, <span style="color: rgba(0, 0, 255, 1)">this</span>._messages.Select(m =&gt; $<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">â¢ {m.AuthorName}: {m.Text}</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">));
+            </span><span style="color: rgba(0, 0, 255, 1)">var</span> strategyReport = $<span style="color: rgba(128, 0, 0, 1)">@"</span><span style="color: rgba(128, 0, 0, 1)">ââââââââââââââââââââââââââââââââ
+ð å¤å¹³å°ä»·æ ¼æ±æ»ï¼å± {this._messages.Count} ä¸ªå¹³å°ï¼
+ââââââââââââââââââââââââââââââââ
+
+{platformData}
+
+ââââââââââââââââââââââââââââââââ
+ð¡ æºè½å®ä»·å»ºè®®
+ââââââââââââââââââââââââââââââââ
+åºäºä»¥ä¸æ°æ®ï¼å»ºè®®åæç«äºå¯¹æä»·æ ¼åºé´ï¼å¶å®å·®å¼åå®ä»·ç­ç¥ã
+èèå ç´ ï¼åºå­ååãééææ¬ãå¹³å°ä½£éçãç®æ å©æ¶¦çã</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">;
+
+            </span><span style="color: rgba(0, 0, 255, 1)">await</span><span style="color: rgba(0, 0, 0, 1)"> context.YieldOutputAsync(strategyReport, cancellationToken);
+
+            Console.WriteLine(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">â¨ Fan-in å®ä»·ç­ç¥çæå®æ</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
+        }
+    }
+}</span></pre>
+</div>
+<h3>2.4 æå»ºå·¥ä½æµ</h3>
+<p>ç°å¨ä¸äºä¿±å¤ï¼åªæ¬ ä¸ä¸ªWorkflowï¼ç°å¨Let's do it!</p>
+<p>Step1: è·åChatClient</p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 255, 1)">var</span> chatClient = <span style="color: rgba(0, 0, 255, 1)">new</span><span style="color: rgba(0, 0, 0, 1)"> OpenAIClient(
+        </span><span style="color: rgba(0, 0, 255, 1)">new</span><span style="color: rgba(0, 0, 0, 1)"> ApiKeyCredential(openAIProvider.ApiKey),
+        </span><span style="color: rgba(0, 0, 255, 1)">new</span> OpenAIClientOptions { Endpoint = <span style="color: rgba(0, 0, 255, 1)">new</span><span style="color: rgba(0, 0, 0, 1)"> Uri(openAIProvider.Endpoint) })
+    .GetChatClient(openAIProvider.ModelId)
+    .AsIChatClient();</span></pre>
+</div>
+<p>Step2: å®ä¾åèªå®ä¹Agent &amp; Executors</p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 255, 1)">var</span> amazonExecutor = <span style="color: rgba(0, 0, 255, 1)">new</span><span style="color: rgba(0, 0, 0, 1)"> PlatformPriceExecutor(
+    </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">AmazonPriceAgent</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">,
+    chatClient,
+    </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">ä½ æ¯Amazonå¹³å°ä»·æ ¼æ¥è¯¢Agentãè¿åæ ¼å¼ï¼ä»·æ ¼=$XXXï¼åºå­ç¶æ=åè¶³/ç´§å¼ ï¼ééè¯´æ=Primeä¼ååè¿è´¹/æ åééã</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+);
+</span><span style="color: rgba(0, 0, 255, 1)">var</span> ebayExecutor = <span style="color: rgba(0, 0, 255, 1)">new</span><span style="color: rgba(0, 0, 0, 1)"> PlatformPriceExecutor(
+    </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">eBayPriceAgent</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">,
+    chatClient,
+    </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">ä½ æ¯eBayå¹³å°ä»·æ ¼æ¥è¯¢Agentãè¿åæ ¼å¼ï¼ä»·æ ¼=$XXXï¼ååç¶æ=å¨æ°/äºæXXæ°ï¼è¿è´¹è¯´æ=åé®/ä¹°å®¶æ¿æã</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+);
+</span><span style="color: rgba(0, 0, 255, 1)">var</span> shopeeExecutor = <span style="color: rgba(0, 0, 255, 1)">new</span><span style="color: rgba(0, 0, 0, 1)"> PlatformPriceExecutor(
+    </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">ShopeePriceAgent</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">,
+    chatClient,
+    </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">ä½ æ¯Shopeeå¹³å°ä»·æ ¼æ¥è¯¢Agentãè¿åæ ¼å¼ï¼ä»·æ ¼=$XXXï¼å«ç¨ï¼ï¼åºå=ä¸åäº/å°æ¹¾ï¼ä¿éä¿¡æ¯=æ»¡åæ´»å¨/æ ã</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+);
+</span><span style="color: rgba(0, 0, 255, 1)">var</span> startExecutor = <span style="color: rgba(0, 0, 255, 1)">new</span><span style="color: rgba(0, 0, 0, 1)"> PriceQueryStartExecutor();
+</span><span style="color: rgba(0, 0, 255, 1)">var</span> strategyExecutor = <span style="color: rgba(0, 0, 255, 1)">new</span> PricingStrategyExecutor(<span style="color: rgba(128, 0, 128, 1)">3</span>);</pre>
+</div>
+<p>Step3: åå»ºå¹¶è¡æ§è¡å·¥ä½æµ</p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 255, 1)">var</span> workflow = <span style="color: rgba(0, 0, 255, 1)">new</span><span style="color: rgba(0, 0, 0, 1)"> WorkflowBuilder(startExecutor)
+        .AddFanOutEdge(startExecutor, [amazonExecutor, ebayExecutor, shopeeExecutor])
+        .AddFanInEdge([amazonExecutor, ebayExecutor, shopeeExecutor], strategyExecutor)
+        .WithOutputFrom(strategyExecutor)
+        .Build();
+Console.OutputEncoding </span>=<span style="color: rgba(0, 0, 0, 1)"> Encoding.UTF8;
+Console.WriteLine(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">â Loop Workflow æå»ºå®æ</span><span style="color: rgba(128, 0, 0, 1)">"</span>);</pre>
+</div>
+<h3><span><span>2.5 æµè¯å·¥ä½æµ</span></span></h3>
+<p><span><span>å®ä¹æ¥è¯¢çååæ¯IPhone15ï¼</span></span></p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 255, 1)">var</span> priceQuery = <span style="color: rgba(0, 0, 255, 1)">new</span><span style="color: rgba(0, 0, 0, 1)"> PriceQueryDto(
+    productId: </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">IPHONE15-PRO-256</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">,
+    productName: </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">iPhone 15 Pro 256GB</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">,
+    targetRegion: </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">US</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+);</span></pre>
+</div>
+<p><span><span>éè¿Streamingæµå¼æ§è¡ï¼</span></span></p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 255, 1)">await</span> <span style="color: rgba(0, 0, 255, 1)">using</span> (<span style="color: rgba(0, 0, 255, 1)">var</span> run = <span style="color: rgba(0, 0, 255, 1)">await</span><span style="color: rgba(0, 0, 0, 1)"> InProcessExecution.StreamAsync(workflow, priceQuery))
+{
+    </span><span style="color: rgba(0, 0, 255, 1)">await</span> <span style="color: rgba(0, 0, 255, 1)">foreach</span> (<span style="color: rgba(0, 0, 255, 1)">var</span> evt <span style="color: rgba(0, 0, 255, 1)">in</span><span style="color: rgba(0, 0, 0, 1)"> run.WatchStreamAsync())
+    {
+        </span><span style="color: rgba(0, 0, 255, 1)">switch</span><span style="color: rgba(0, 0, 0, 1)"> (evt)
+        {
+            </span><span style="color: rgba(0, 0, 255, 1)">case</span><span style="color: rgba(0, 0, 0, 1)"> ExecutorInvokedEvent started:
+                Console.WriteLine($</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">ð {started.ExecutorId} å¼å§è¿è¡</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
+                </span><span style="color: rgba(0, 0, 255, 1)">break</span><span style="color: rgba(0, 0, 0, 1)">;
+            </span><span style="color: rgba(0, 0, 255, 1)">case</span><span style="color: rgba(0, 0, 0, 1)"> ExecutorCompletedEvent completed:
+                Console.WriteLine($</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">â {completed.ExecutorId} ç»æè¿è¡</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
+                </span><span style="color: rgba(0, 0, 255, 1)">break</span><span style="color: rgba(0, 0, 0, 1)">;
+            </span><span style="color: rgba(0, 0, 255, 1)">case</span><span style="color: rgba(0, 0, 0, 1)"> WorkflowOutputEvent outputEvent:
+                Console.WriteLine(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">ð Fan-in æ±æ»è¾åºï¼</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
+                Console.WriteLine($</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">{outputEvent.Data}</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
+                </span><span style="color: rgba(0, 0, 255, 1)">break</span><span style="color: rgba(0, 0, 0, 1)">;
+            </span><span style="color: rgba(0, 0, 255, 1)">case</span><span style="color: rgba(0, 0, 0, 1)"> WorkflowErrorEvent errorEvent:
+                Console.WriteLine(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">â¨ æ¶å° Workflow Error Eventï¼</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
+                Console.WriteLine($</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">{errorEvent.Data}</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
+                </span><span style="color: rgba(0, 0, 255, 1)">break</span><span style="color: rgba(0, 0, 0, 1)">;
+        }
+    }
+}</span></pre>
+</div>
+<p>æµè¯ç»æå¦ä¸å¾æç¤ºï¼</p>
+<p><img src="https://img2024.cnblogs.com/blog/381412/202601/381412-20260104200929287-1279437489.png" alt="image" loading="lazy" style="display: block; margin-left: auto; margin-right: auto"></p>
+<p>å¯ä»¥çè§ï¼ç»è¿å¹¶è¡æ§è¡ä»·æ ¼æ¥è¯¢åï¼ç±èåæ§è¡å¨è¿è¡äºä»·æ ¼æ±æ»å¹¶åéç»LLMè¿è¡äºæç»çå®ä»·å»ºè®®ã</p>
+<h1><strong><span>3 å°ç»</span></strong></h1>
+<p>æ¬æä»ç»äºMAFä¸­å¹¶è¡å·¥ä½æµä»¥åå¦ä½å®ç°âFan-Out/Fan-In<span data-pm-slice="2 3 [&quot;para&quot;,{&quot;tagName&quot;:&quot;section&quot;,&quot;attributes&quot;:{&quot;style&quot;:&quot;margin: 8px;text-align: left;&quot;},&quot;namespaceURI&quot;:&quot;http://www.w3.org/1999/xhtml&quot;}]"><span data-pm-slice="0 0 []"><span data-pm-slice="1 1 [&quot;para&quot;,{&quot;tagName&quot;:&quot;section&quot;,&quot;attributes&quot;:{&quot;style&quot;:&quot;letter-spacing: 0.578px;text-align: left;margin: 8px;&quot;,&quot;data-pm-slice&quot;:&quot;6 3 []&quot;},&quot;namespaceURI&quot;:&quot;http://www.w3.org/1999/xhtml&quot;},&quot;node&quot;,{&quot;tagName&quot;:&quot;span&quot;,&quot;attributes&quot;:{&quot;style&quot;:&quot;outline: 0px;max-width: 100%;color: rgb(34, 34, 34);font-style: normal;font-variant-ligatures: normal;font-variant-caps: normal;font-weight: 400;orphans: 2;text-indent: 0px;text-transform: none;widows: 2;word-spacing: 0px;-webkit-text-stroke-width: 0px;background-color: rgb(255, 255, 255);text-decoration-thickness: initial;text-decoration-style: initial;text-decoration-color: initial;min-height: 1em;text-align: left;visibility: visible;font-family: system-ui, -apple-system, BlinkMacSystemFont, \&quot;Helvetica Neue\&quot;, \&quot;PingFang SC\&quot;, \&quot;Hiragino Sans GB\&quot;, \&quot;Microsoft YaHei UI\&quot;, \&quot;Microsoft YaHei\&quot;, Arial, sans-serif;font-size: 15px;letter-spacing: 0.544px;caret-color: var(--weui-BRAND);box-sizing: border-box !important;overflow-wrap: break-word !important;&quot;,&quot;data-pm-slice&quot;:&quot;0 0 []&quot;},&quot;namespaceURI&quot;:&quot;http://www.w3.org/1999/xhtml&quot;}]">âçå·¥ä½æ¨¡å¼ï¼æåéè¿ä¸ä¸ªè·¨å¢çµåä»·æ ¼æ¥è¯¢æºè½å®ä»·çæ¡ä¾ä»ç»äºè¿ç§æ¨¡å¼çä»£ç å®ç°ã</span></span></span></p>
+<p>ä¸ä¸ç¯ï¼æä»¬å°ç»§ç»­å­¦ä¹ MAFä¸­å·¥ä½æµçå¤éè·¯ç±å·¥ä½æµã</p>
+<h1>ç¤ºä¾æºç </h1>
+<p>GitHub:&nbsp;<a href="https://github.com/EdisonTalk/MAFD" target="_blank" rel="noopener nofollow">https://github.com/EdisonTalk/MAFD</a></p>
+<h1>åèèµæ</h1>
+<p><span data-pm-slice="0 0 []"><span>å£æ°ï¼ã<a href="https://www.cnblogs.com/sheng-jie/p/19200934" target="_blank">.NET + AI æºè½ä½å¼åè¿é¶</a>ãï¼æ¨èææ°ï¼âââââï¼</span></span></p>
+<p><span data-pm-slice="0 0 []"><span>Microsoft Learnï¼<span>ã<a href="https://learn.microsoft.com/en-us/agent-framework/overview/agent-framework-overview?wt.mc_id=MVP_397012" target="_blank" rel="noopener nofollow">Agent Framework Tutorials</a>ã</span></span></span></p>
+<div><span data-pm-slice="0 0 []"><span>&nbsp;</span></span></div>
+<p style="text-align: center"><img src="https://images.cnblogs.com/cnblogs_com/edisonchou/1647700/o_200902144330EdisonTalk-Footer.jpg" alt="" style="width: 65%; border: 1px solid rgba(221, 221, 221, 1); border-radius: 3px; box-shadow: 0 4px 8px rgba(3, 27, 78, 0.12)"></p>
+<div id="Copyright">
+<p>ä½èï¼<span style="text-decoration: underline">ç±è¿ªç</span></p>
+<p>åºå¤ï¼<a title="from" href="https://edisontalk.cnblogs.com" target="_blank">https://edisontalk.cnblogs.com</a></p>
+<p>æ¬æçæå½ä½èååå®¢å­å±æï¼æ¬¢è¿è½¬è½½ï¼ä½æªç»ä½èåæå¿é¡»ä¿çæ­¤æ®µå£°æï¼ä¸å¨æç« é¡µé¢ææ¾ä½ç½®ç»åºåæé¾æ¥ã</p>
+</div>
+</div>
+<div id="MySignature" role="contentinfo">
+    <div align="center"><a href="https://weibo.com/u/2068032061?s=6uyXnP" target="_blank"><img border="0" src="http://service.t.sina.com.cn/widget/qmd/2068032061/d643d182/10.png"></a></div>
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-01-09 18:30">2026-01-09 18:30</span>&nbsp;
+<a href="https://www.cnblogs.com/edisontalk">EdisonZhou</a>&nbsp;
+éè¯»(<span id="post_view_count">9</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19439665);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19439665', targetLink: 'https://www.cnblogs.com/edisontalk/p/-/quick-start-on-maf-chatper11', title: 'MAFå¿«éå¥é¨ï¼11ï¼å¹¶è¡å·¥ä½æµ' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -670,7 +927,7 @@ CREATE INDEX idx_artist_bio_en ON "Artists" (( "Biography" -&gt;&gt; 'en' ));
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-01-09 15:09">2026-01-09 15:09</span>&nbsp;
 <a href="https://www.cnblogs.com/netry">é©¬è¡ç©ºçåå®¢</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">75</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19452236);return false;">æ¶è</a>&nbsp;
@@ -2146,7 +2403,7 @@ J_{GSPO}(\theta) = E[x\sim D, {\{y_i}\}_{i=1}^G \sim \pi_{\theta_{old}(.|x)}] [
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-01-09 11:30">2026-01-09 11:30</span>&nbsp;
 <a href="https://www.cnblogs.com/yupi">ç¨åºåé±¼ç®</a>&nbsp;
-éè¯»(<span id="post_view_count">510</span>)&nbsp;
+éè¯»(<span id="post_view_count">883</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19460549);return false;">æ¶è</a>&nbsp;
@@ -2814,7 +3071,7 @@ J_{GSPO}(\theta) = E[x\sim D, {\{y_i}\}_{i=1}^G \sim \pi_{\theta_{old}(.|x)}] [
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-01-08 21:56">2026-01-08 21:56</span>&nbsp;
 <a href="https://www.cnblogs.com/charlee44">charlee44</a>&nbsp;
-éè¯»(<span id="post_view_count">34</span>)&nbsp;
+éè¯»(<span id="post_view_count">167</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19458808);return false;">æ¶è</a>&nbsp;
@@ -2957,214 +3214,11 @@ g, &amp; \lVert g \rVert \le c \\
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-01-08 21:37">2026-01-08 21:37</span>&nbsp;
 <a href="https://www.cnblogs.com/Goblinscholar">å¥å¸æå­¦è</a>&nbsp;
-éè¯»(<span id="post_view_count">79</span>)&nbsp;
+éè¯»(<span id="post_view_count">143</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19458774);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19458774', targetLink: 'https://www.cnblogs.com/Goblinscholar/p/19458774', title: 'å´æ©è¾¾æ·±åº¦å­¦ä¹ è¯¾ç¨äºï¼èªç¶è¯­è¨å¤ç  ç¬¬ä¸å¨ï¼å¾ªç¯ç¥ç»ç½ç» ï¼åï¼RNN ä¸­çæ¢¯åº¦ç°è±¡' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ 20250702 - FPC Token æ»å»äºä»¶ï¼ä¸¥æ ¼çéå¶ï¼çµæ´»çé»å®¢ ]]></title>
-    <link>https://www.cnblogs.com/ACaiGarden/p/19458550</link>
-    <guid>15731b3f313bd5f5b158f7f6239c2645</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/ACaiGarden/p/19458550" title="åå¸äº 2026-01-08 19:56">
-    <span role="heading" aria-level="2">20250702 - FPC Token æ»å»äºä»¶ï¼ä¸¥æ ¼çéå¶ï¼çµæ´»çé»å®¢</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h1 id="èæ¯">èæ¯</h1>
-<p>FPC æ¯ BPE-20 é¡¹ç®ï¼å®ç°äºå¤æçäº¤ææºå¶ï¼åæ¬<strong>ä¹°åæç»­è´¹ãæµå¨æ§æ± çç§æºå¶ãéå¶äº¤æé¢çãéå¶äº¤ææ°é</strong>ç­åè½ãæ¼æ´äº§ççåå æ¯å½ç¨æ·ååºä»£å¸æ¶ï¼<strong>åçº¦ä¼ä»æµå¨æ§æ± ä¸­çç§ä»£å¸ï¼èéä»ååºèä½é¢ä¸­çç§ï¼</strong>ï¼å¯¼è´æ± å­ä¸­ FPC ä»£å¸æ°éåå°ï¼ä»·æ ¼æ¬é«ã</p>
-<blockquote>
-<p>é¡¹ç®æ¹åºè¯¥æ¯ä¸ºäºå ä¸æµå¨æ§æ± çç§æºå¶ï¼åç°ç´æ¥å ä¸è¿ä¸è¡åï¼è¿ä¸ªä¼è¢«å©ç¨å»å¥å©çãç¶åæäºéå¶äº¤æé¢çåéå¶äº¤ææ°éä¸¤ä¸ªè¡¥ä¸ãå¸æä»¥æ­¤æ¥éå¶ä»£å¸ææèéè¿æºå¶è¿è¡è·å©ã</p>
-</blockquote>
-<p>æ»å»äº¤æ</p>
-<ul>
-<li><strong>æ»å»äº¤æåå¸</strong>: <code>0x3a9dd216fb6314c013fa8c4f85bfbbe0ed0a73209f54c57c1aab02ba989f5937</code></li>
-<li><strong>æ»å»èå°å</strong>: <code>0xbf6e706d505e81ad1f73bbc0babfe2b414ba3eb3</code></li>
-</ul>
-<p>æ¼æ´åçº¦</p>
-<ul>
-<li><strong>FPCä»£å¸åçº¦</strong>: <code>0xb192d4a737430aa61cea4ce9bfb6432f7d42592f</code></li>
-<li><strong>ä¸»è¦æµå¨æ§æ± </strong>: <code>0xa1e08e10eb09857a8c6f2ef6cca297c1a081ed6b</code></li>
-</ul>
-<h1 id="trace-åæ">Trace åæ</h1>
-<p><img src="https://img2024.cnblogs.com/blog/1483609/202601/1483609-20260108195418546-1108887978.png" alt="image" loading="lazy"></p>
-<ol>
-<li>
-<p>æ»å»èéè¿éªçµè´·è·å¾å¤§éç USDT</p>
-</li>
-<li>
-<p>å¨ [FPC, USDT] æ± å­ä¸­è´­ä¹°å¤§éç FPC</p>
-</li>
-<li>
-<p>æ FPC è½¬ç§»å°æ°çå°åä¸­</p>
-</li>
-<li>
-<p>åºå®ææç FPCï¼åè§¦å<strong>æµå¨æ§æ± çç§æºå¶</strong>ï¼æ¨é«äº FPC çä»·æ ¼ï¼ç¶ååè®¡ç®åºå®è·å¾ç USDTï¼ä»èè·å¾è¶é¢çå©æ¶¦ã</p>
-<p><img src="https://img2024.cnblogs.com/blog/1483609/202601/1483609-20260108195438039-1592352059.png" alt="image" loading="lazy"></p>
-</li>
-</ol>
-<h1 id="ä»£ç åæ">ä»£ç åæ</h1>
-<p>å¨èæ¯ä»ç»äº FPC ä»£å¸å®ç°äº<strong>æµå¨æ§æ± çç§æºå¶ãéå¶äº¤æé¢çãéå¶äº¤ææ°é</strong>ç­åè½ï¼æ¥ä¸æ¥å°ä¼éè¿ä»£ç å®ç°ä»¥åæ»å»èçææ³åè¯»èå±ç¤ºã</p>
-<h2 id="å¨-fpc-usdt-æ± å­ä¸­è´­ä¹°å¤§éç-fpc">å¨ [FPC, USDT] æ± å­ä¸­è´­ä¹°å¤§éç FPC</h2>
-<p>å¨é»å®¢è´­ä¹° FPC çæä½ä¸­ï¼é»å®¢æ²¡æéè¿ router è¿è¡åæ¢ï¼èæ¯ç´æ¥è°ç¨ pool è¿è¡åæ¢ã</p>
-<pre><code class="language-markdown">CALLCake-LP.swap(**amount0Out=1,000,000,000,000,000,000**, amount1Out=790,178,970,489,172,772,916,652)
-</code></pre>
-<p>å¹¶ä¸å¨è´­ä¹°å¤§é FPC ä»£å¸çåæ¶ï¼è¿æ¢åºäº 1 USDTãå¾åå¸¸çæä½ï¼å¦æåªæ¯ä¸ºäºè´­ä¹° FPCï¼è¿ä¸ªamount0Out çå¼åºä¸ºä¸º 0ã</p>
-<blockquote>
-<p>é»å®¢è¿æ ·åçç®çæ¯ä¸ºäºç»å¼æå¤§è´­ä¹°æ°éçéå¶</p>
-</blockquote>
-<p>å¨ç´æ¥éè¿ pool å¤§éè´­ä¹° FPC æ¶åæ¶æ¢åº 1 ä¸ª USDTï¼ç®çå°±ä¸ºäºæ¬ºéª _isLiquidity å½æ°çæ£æ¥ï¼ä¼ªè£æç§»é¤æµå¨æ§çæä½ï¼ä½¿å¾ isDel çå¼ä¸º trueã</p>
-<p><img src="https://img2024.cnblogs.com/blog/1483609/202601/1483609-20260108195457477-1676036854.png" alt="image" loading="lazy"></p>
-<p>å¦æ  isDel çå¼ä¸º trueï¼å°±ä¼ç»è¿ <code>value &lt;= _maxBuyAmount()</code> çéé¢æ£æ¥äºã</p>
-<p><img src="https://img2024.cnblogs.com/blog/1483609/202601/1483609-20260108195511387-780783212.png" alt="image" loading="lazy"></p>
-<h2 id="æ-fpc-è½¬ç§»å°æ°çå°åä¸­">æ FPC è½¬ç§»å°æ°çå°åä¸­</h2>
-<p>å¨ FPC ä»£å¸ä¸­ï¼å¦æç¨æ·è¿è¡ swap æä½ï¼ä¼è¢«è®°å½ä¸æä½çåºåå·ï¼å¹¶ä¸éå¶ 3 ä¸ªåºååä¸åè®¸åæ¬¡äº¤æãä½æ¯å®æ²¡æå¯¹è½¬è´¦æä½è¿è¡éå¶ï¼æä»¥æ»å»èå¯ä»¥éè¿æ FPC è½¬ç§»å°æ²¡æè¿è¡è¿ swap çå°åè¿è¡åºå®ï¼ä»èç»è¿è¿ä¸ªéå¶ã</p>
-<p><img src="https://img2024.cnblogs.com/blog/1483609/202601/1483609-20260108195529422-1735776335.png" alt="image" loading="lazy"></p>
-<h2 id="åºå®ææç-fpcè§¦åæµå¨æ§æ± çç§æºå¶">åºå®ææç FPCï¼è§¦å<strong>æµå¨æ§æ± çç§æºå¶</strong></h2>
-<p>è¿ä¸æ­¥æ¯å³é®çæ­¥éª¤ï¼ååº FPC ä»£å¸ï¼è§¦ååçº¦ççç§æºå¶</p>
-<pre><code class="language-markdown">CALLPancakeSwap: Router v2.swapExactTokensForTokensSupportingFeeOnTransferTokens(
-  amountIn=247,441,170,766,403,071,054,109)
-</code></pre>
-<p>å¨ sell çé»è¾åæ¯ä¸­ï¼ä¼è°ç¨ burnLpToken å½æ°æç§åºå®çæ°é value æ¥éæ¯ FPC ä»£å¸ã</p>
-<p><img src="https://img2024.cnblogs.com/blog/1483609/202601/1483609-20260108195542694-2016383265.png" alt="image" loading="lazy"></p>
-<p>èå¨ burnLpToken å½æ°å½æ°ä¸­ï¼çç§çæ¯ pool ä¸­çä»£å¸ï¼ä¸æ¯çç§ seller æä¾çä»£å¸ï¼èæ¯ç´æ¥çç§ pool ä¸­çä»£å¸ï¼ãè¿æ ·ä¼ä½¿å¾ pool ä¸­ FPC çä»·æ ¼è¢«æ¨é«ãä½¿å¾é»å®¢å¨ååº FPC ä»£å¸æ¶è½å¤è·åå°æ´å¤çå©æ¶¦ã</p>
-<p><img src="https://img2024.cnblogs.com/blog/1483609/202601/1483609-20260108195628531-1501728881.png" alt="image" loading="lazy"></p>
-<h1 id="åè®°">åè®°</h1>
-<p>è¿ä¸ªä»£å¸å¨æ·»å æµå¨æ§æ± çç§æºå¶çåè¡·åºè¯¥æ¯å¸æå¨ç¨æ·åºå®ä»£å¸çæ¶åï¼åææ± å­éé¢çä»£å¸ååºæ¥ä¸ç¹ï¼ä¸ä¸ªæ¯æ¶å½é¡¹ç®æ¹ææï¼ç¬¬äºä¸ªæ¯æ¬é«ä¸ç¹å¸ä»·ä¸è¦è·çè¿ä¹å¿«ã</p>
-<p>ä½æ¯ï¼ä½æ¯å¨ Pancake å Uniswap ç V2/V3 çæ¬ä¸­ï¼é½æ¯éµå¾ªçâåè½¬è´¦ï¼åç»ç®âçæ¨¡å¼å»è¿è¡ swap çãèä»£å¸è®¾ç½®çåç§æºå¶åªè½å¨è½¬è´¦çè¿ç¨ä¸­è§¦åï¼è¿å°±ä½¿å¾äºè¿ä¸ªçç§æºå¶å§ç»é½æ¯åçå¨ç»ç®åçï¼è¿å°±ç»äºé»å®¢å¥å©çç©ºé´ãå¦ææ³è¦å®ç°è¿ç§ç¹æ®æºå¶ï¼å¯ä»¥èèä¸ä¸éè¿ Uniswap V4 ç Hook å»å®ç°ï¼ä½æ¯ä¼å¯¹å¼åçææ¯ä¸è´¨éè¦æ±æ´é«ï¼ä¸å¾ä¸è¯´åç»­æ´æ°ççæ¬é½ä¸å¦ V2 ç x * y = k æ¥å¾ç®åç´æ¥ï¼å½éåååéä¸­æµå¨æ§å Hook è¯´å¥å¢ï¼æ V2 ä¸æå å®æµå¨æ§å°±è½ç¨ãä¹æ¯ä¸ºä»ä¹ç´è³ç°å¨å¾å¤ä»£å¸çåè¡æ¹é½éç±å¨ V2 ä¸é¨ç½²æ± å­ï¼ã</p>
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-01-08 19:57">2026-01-08 19:56</span>&nbsp;
-<a href="https://www.cnblogs.com/ACaiGarden">ACai_sec</a>&nbsp;
-éè¯»(<span id="post_view_count">36</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19458550);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19458550', targetLink: 'https://www.cnblogs.com/ACaiGarden/p/19458550', title: '20250702 - FPC Token æ»å»äºä»¶ï¼ä¸¥æ ¼çéå¶ï¼çµæ´»çé»å®¢' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ äºåçAIç®åå¹³å°çæ¶æè§£è¯» ]]></title>
-    <link>https://www.cnblogs.com/JulianHuang/p/19458390</link>
-    <guid>6932e389877fec3b5a63638fc613b928</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/JulianHuang/p/19458390" title="åå¸äº 2026-01-08 18:41">
-    <span role="heading" aria-level="2">äºåçAIç®åå¹³å°çæ¶æè§£è¯»</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<blockquote>
-<p>ç»è¿åå¹´åçäºåçAIç®åå¹³å°åä¸ä¸ªåé¡¾ï¼ æèåå®è·µåèäºäºæºªå¤§ä¼ä¸çåäº«ï¼<a href="https://developer.aliyun.com/article/1414573" title="ä¸ºå¤§æ¨¡åå·¥ç¨ææï¼åºäºé¿éäº ACK çäºåç AI å·¥ç¨åå®è·µ" target="_blank" rel="noopener nofollow">ä¸ºå¤§æ¨¡åå·¥ç¨ææï¼åºäºé¿éäº ACK çäºåç AI å·¥ç¨åå®è·µ</a>ï¼å¨æå¾é¿ï¼æè¿è¾¹åä¸ä¸ªçµå¼åè§£è¯»ã</p>
-</blockquote>
-<h2 id="1-äºè®¡ç®è¿æ¥æºç®æ¶ä»£">1. äºè®¡ç®è¿æ¥âæºç®âæ¶ä»£</h2>
-<p>äºè®¡ç®æ¯ä¸ç§<strong>éè¿äºèç½çæ¹å¼æéæä¾è®¡ç®èµæºï¼å¦æå¡å¨ãå­å¨ãæ°æ®åºãç½ç»ãè½¯ä»¶ç­ï¼</strong>çæå¡æ¨¡å¼ï¼ ç¨æ·å¯ä»¥åä½¿ç¨æ°´çµæ°ä¸æ ·,æéè´­ä¹°ãçµæ´»ä»è´¹ï¼æ éè´­ä¹°åç»´æ¤ç©çè®¾å¤ã</p>
-<p>ç¹å¾æ¯â  æéèªå©æå¡ â¡ å¹¿æ³çç½ç»è®¿é® â¢ èµæºæ± å  â£ å¿«éå¼¹æ§ä¼¸ç¼©  â¤ ä½¿ç¨éè®¡è´¹</p>
-<blockquote>
-<p>ä¸ºä»ä¹å«âäºè®¡ç®âï¼<br>
-å¨å¯è¯ºä¾æ¼ä½ç³»ä¸­ï¼è®¡ç®èµæºæ¯CPUï¼ä½æä»¬è¿æ¯ä»¥âè®¡ç®æºâæ¥æä»£åå«è®¡ç®ãå­å¨ãç½ç»ãè½¯ä»¶å½¢æçå®æ´æå¡å¨ï¼<br>
-å¨äºè®¡ç®é¢åï¼âè®¡ç®âä¸æ¬¡è¢«æ²¿ç¨ï¼å°ä¼ ç»è®¡ç®æºæ ¸å¿ç»ä»¶æå¼èæåãæ± åï¼å¹¶æä¾äºâç¨äºä¿¡æ¯å¤çææè½¯ç¡¬ä»¶è¦ç´ çæ»åæ½è±¡âã</p>
-</blockquote>
-<p>ä»å¤©çäºè®¡ç®å·²ç»æ¿è½½äºwebåºç¨ãæ°æ®åºãå¤§æ°æ®ãæºå¨å­¦ä¹ åé«æ§è½è®¡ç®ç­è®¡ç®è´è½½ã</p>
-<p>é¢å¯¹LLMåGAIè¿ç±»å¯¹ç®ååæ°æ®é½ææé«éæ±çæ°è´è½½ï¼äºè®¡ç®ä¹è¿æ¥äºâæºç®âæ¶ä»£ï¼<br>
-ä¸æ¹é¢ä»¥æå¡åèµæºæ± çæ¦å¿µæä¾ä¸å¡ç®åãPBçº§å­å¨ãååæºTBçº§é«éç½ç»äºèï¼å¦ä¸æ¹é¢ä»¥äºåçæ ååäº¤ä»ç®åç»å¤§æ¨¡åççäº§èåä½¿ç¨èã</p>
-<h2 id="2-å¤§æ¨¡åå¸¦æ¥çææ">2. å¤§æ¨¡åå¸¦æ¥çææ</h2>
-<p>AIæå·¥ç¨åçè¦æ±ï¼åæ¶ä¹å¯¹åºç¡è®¾æ½æåºææã<br>
-<img src="https://img2024.cnblogs.com/blog/587720/202601/587720-20260108183944896-1604958658.png" alt="image" loading="lazy"><br>
-<img src="https://img2024.cnblogs.com/blog/587720/202601/587720-20260108183950488-1199602426.png" alt="image" loading="lazy"></p>
-<h2 id="3-äºåçaiçè½å">3. äºåçAIçè½å</h2>
-<p>æè¿å¨åçâAIå¤§æ¨¡ååºç¡è®¾æ½âï¼ å®è§ç®æ ä¹æ¯å¸®å©AIå·¥ç¨ä»å°ä½ååç«¯å°ç«¯äºåçè§£å³æ¹æ¡æ¼è¿ã</p>
-<p><img src="https://img2024.cnblogs.com/blog/587720/202601/587720-20260108183959371-1234056611.png" alt="image" loading="lazy"></p>
-<h3 id="ç»ä¸ç®¡çå¼æèµæºæä¾èµæºå©ç¨ç">ç»ä¸ç®¡çå¼æèµæºï¼æä¾èµæºå©ç¨ç</h3>
-<p>å¯¹idcååç§å¼æè®¡ç®ï¼GPUãCPUãNPUç­ï¼ãå­å¨ï¼OSSãNASãCPFSãHDFSï¼ãç½ç»ï¼TCPãRDMAï¼èµæºè¿è¡æ½è±¡ï¼ç»ä¸ç®¡çåè¿ç»´ååéï¼éè¿è½¯ç¡¬ååä¼åï¼æä¾èµæºå©ç¨çã</p>
-<h3 id="éè¿ç»ä¸å·¥ä½æµ--ç»ä¸è°åº¦-å®ç°aiå¤§æ°æ®ç­å¤æä»»å¡çé«æç®¡ç">éè¿â ç»ä¸å·¥ä½æµ â¡ ç»ä¸è°åº¦ï¼ å®ç°AI/å¤§æ°æ®ç­å¤æä»»å¡çé«æç®¡ç</h3>
-<ul>
-<li>
-<p>ä»å¼æèµæºç®¡ççè§åº¦ï¼å¯ä¸é®é¨ç½²ãæä½åç§å¼æèµæºï¼å¨è¿ç»´è¿ç¨ä¸­ï¼éè¦å¤ç»´åº¦çå¼æèµæºå¯è§æµæ§ï¼ çæ§ãå¥åº·æ£æ¥ãåè­¦ãèªæç­èªå¨åè¿ç»´è½å</p>
-</li>
-<li>
-<p>å¯¹äºå®è´µçGPU/NPUç®åèµæºï¼ä½¿ç¨åç§è°åº¦ãéç¦»ãå±äº«çæ¹å¼æä¾èµæºå©ç¨ç</p>
-</li>
-<li>
-<p>åéçº§åå¤å¥½å¼ååæµè¯ç¯å¢ï¼å¸®å©ç®æ³å·¥ç¨å¸æ â æ§è¡æ·±åº¦å­¦ä¹ ä»»å¡â¡äº§åº/è¯æµæ¨¡åâ¢æ¨¡åé¨ç½² ä»¥ç«¯å°ç«¯çå·¥ä½æµä¸²èµ·æ¥ï¼ å¤©ç¶æ¯æä¸»æµæ¡æ¶ tensorflow/pytorchjob/mpi<br>
---  å¯¹äºåå¸å¼ä»»å¡ï¼æä¾ä¸°å¯çä»»å¡è°åº¦ç­ç¥ï¼å¦Gang schedulingãCapacity schedulingãTopology aware schedulingãä¼åçº§éåç­ã</p>
-</li>
-<li>
-<p>æä¾å¼¹æ§è®­ç»åå¼¹æ§æ¨çæå¡ï¼ å»ºç«ç»ä¸çæ°æ®éç®¡çï¼æ¨¡åçå½å¨æç®¡çï¼ ä¼åæ¨¡åè®¿é®æ§è½ï¼éè¿æ åAPIä½¿æ¨çè½åæäºè¢«ä¸å¡åºç¨éæã</p>
-</li>
-</ul>
-<h2 id="4-äºåçaiçæ¶æå®è·µ">4. äºåçAIçæ¶æå®è·µ</h2>
-<p><img src="https://img2024.cnblogs.com/blog/587720/202601/587720-20260108184015761-1427603173.png" alt="image" loading="lazy"></p>
-<p>æä»¬çäºåçAIç®åå¹³å°ï¼ æåèä¸é¢çå®è·µï¼éå¯¹ä¼ä¸ä¸å¡çç°ç¶åä¾§éï¼ ææ¯è°ç ä¸åäºè°æ´åè£åªã</p>
-<p><img src="https://img2024.cnblogs.com/blog/587720/202601/587720-20260108184025350-220307939.png" alt="image" loading="lazy"></p>
-<p>æ²¡æä»0å°1çä½¿ç¨kubeflowå¨å®¶æ¡¶ï¼ä½¿ç¨äºarenaã kubeflow  trainerã</p>
-<blockquote>
-<p><a href="https://www.kubeflow.org/docs/started/architecture/" title="kubeflow" target="_blank" rel="noopener nofollow">kubeflow</a>æ¯ä¸ä¸ªåå«å¤ä¸ªå¼æºé¡¹ç®çAIçæç»åï¼ kubeflowä»¥Kubernetesä¸ºåºåº§ï¼ç®æ æ¯æä¸ºé¨ç½²ãæ©å±åç®¡çAIå¹³å°çç³»ç»ã</p>
-</blockquote>
-<p>å¨å¹³å°ä¾§ï¼æä»¬ç»ä¸çº³ç®¡äºéç¾¤èµæºï¼å®ç°äºç»ä¸è°åº¦è½ååæ¨¡åçå½å¨æç®¡çï¼å³èäºå¬å¸èªæçæ°æ®å­å¨ï¼æ¶åæ°æ®éé¢ç­ãæ¨¡åå­å¨ï¼ï¼<br>
-è¿éæä¸ä¸ªææ¯ç¹ï¼Goå¨ææç¥èµæºåæ´çææ¯å®è·µï¼ä½ æå®ç¨è¿ï¼</p>
-<p><img src="https://img2024.cnblogs.com/blog/587720/202601/587720-20260108184044867-660442933.png" alt="image" loading="lazy"></p>
-<p>ç¨æ·è¡ä¸ºçè§¦åç¹æ¯arenaï¼ æä»¬ä½¿ç¨arenaæäº¤äºè®­ç»ä»»å¡ã ref:  Golang ææ¬æ¨¡æ¿ï¼ä½ æå®æ²¡ç¨è¿!</p>
-<p>å¨è°åº¦ä¾§ï¼ä½¿ç¨tranning operatoråkerveç»ä»¶ï¼tranning operator æä¾ç»ä¸çè®­ç»å·¥ä½æµï¼ kserveæä¾äºå°æ¨¡åä»¥äºåçæ¹å¼é¨ç½²ãæ©ç¼©å®¹çè½åã</p>
-<p>arenaäº§çè®­ç»ä»»å¡/é¨ç½²å¨ä½---&gt; åé¨helmå½¢æå¯¹åºçCRDï¼pytorchjobãInferenceService)---&gt;æ§å¶å¨çå¬CRDçåæ´---&gt; çæåºå±èµæºï¼deploy/service/network)</p>
-<p><img src="https://img2024.cnblogs.com/blog/587720/202601/587720-20260108184107591-1084626310.png" alt="image" loading="lazy"></p>
-<p>åç®æ³å¢éå¤©ç¶å¯¹åºç§æ·æ¦å¿µï¼ä¹å°±æ¯k8så½åç©ºé´ï¼ æä»¬ç»ç§æ·ä¸é¢æ¯ä¸ä¸ªç¨æ·é¢åäºä¸ä¸ª<a href="https://blog.miniasp.com/post/2022/08/24/Understanding-Service-Account-in-Kubernetes-through-MicroK8s" title="serviceAccount" target="_blank" rel="noopener nofollow">serviceAccount</a>ä½ä¸ºç»å½åæä½å­æ®ã</p>
-<p>ä¸ºå®ç°èªå¨ä»»å¡è°åº¦ï¼æä»¬å¼å¥äºkueueè¿æ ·çä»»å¡éåç»ä»¶ï¼å¨ä»»å¡è¢«k8sè°åº¦å¨è°åº¦ä¹åååå¥ï¼kueueæä¸ºäºå¼æèµæºæ± åå¤ç§æ·éé¢ãä»»å¡æéçææ¯æ¯æã</p>
-<p>æå³kueueçä½¿ç¨ï¼è¯·åèï¼ðå¨k8sè°åº¦çè±å­éé¢æåæ ã<br>
-<img src="https://img2024.cnblogs.com/blog/587720/202601/587720-20260108184122928-1792259600.png" alt="image" loading="lazy"></p>
-<p>ä¸ºééAIå·¥ç¨åçè°åº¦è¦æ±ï¼æä»¬ä½¿ç¨Koordinatorè°åº¦å¨æ¯æäºbinpackè£ç®±è°åº¦ã</p>
-<p>ä»ä¹å«binpackï¼ ä¸ºä»ä¹AIè®­ç»éè¦binpackï¼ è¯·åè:ðå·ä¸è¿AIç®æ³ï¼ AIå·¥ç¨åæè®¸æ¯ä¸ä¸ªåºè·¯ï¼<br>
-<img src="https://img2024.cnblogs.com/blog/587720/202601/587720-20260108184133179-1065900826.png" alt="image" loading="lazy"></p>
-<p>æåå¹³å°éè¦ç®¡æ§å¤æ¸ éçä»»å¡ï¼æä»¬ä½¿ç¨ informeræºå¶çå¬äºå¤æ¸ éä»»å¡å¹¶åæ¾å°é¡µé¢ï¼ è¿éæä¸ªææ¯ç¹ï¼å¼å¾åèã</p>
-<p>ðç³ç³ï¼æå®ç°çk8s informerå¥½åæ¯ä¾æç­è¾©<br>
-<img src="https://img2024.cnblogs.com/blog/587720/202601/587720-20260108184141433-1556621842.png" alt="image" loading="lazy"></p>
-<p><img src="https://files.mdnice.com/user/4236/528d857f-9d29-4937-8275-20accf704f4e.png" alt="" loading="lazy"></p>
-
-</div>
-<div id="MySignature" role="contentinfo">
-    <hr style="FILTER: alpha(opacity=100,finishopacity=0,style=3)" width="80%" color="#987cb9" size="3">
-<div style="text-align:center;">
-<p>æ¬ææ¥èªåå®¢å­ï¼ä½èï¼{ææåº¦çé©¬ç²}ï¼è½¬è½½è¯·æ³¨æåæé¾æ¥ï¼<a href="https://www.cnblogs.com/JulianHuang/p/19458390" target="_blank">https://www.cnblogs.com/JulianHuang/p/19458390</a></p>
-<strong style="color: red; ">æ¬¢è¿å³æ³¨æçååææ¯ãèåºå¬ä¼å·ï¼ å å¥½åè°å¤©è¯´å°ï¼ä¸èµ·è¿å</strong>
-<div><img style="width: 250px;height:250px;" src="https://blog-static.cnblogs.com/files/JulianHuang/QR.gif"> </div>
-
-</div>
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-01-08 18:42">2026-01-08 18:41</span>&nbsp;
-<a href="https://www.cnblogs.com/JulianHuang">ç ç²å¥ä¸å·</a>&nbsp;
-éè¯»(<span id="post_view_count">78</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19458390);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19458390', targetLink: 'https://www.cnblogs.com/JulianHuang/p/19458390', title: 'äºåçAIç®åå¹³å°çæ¶æè§£è¯»' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
