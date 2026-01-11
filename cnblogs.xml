@@ -3,12 +3,2321 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-01-11T08:21:39.747Z</lastBuildDate>
+        <lastBuildDate>2026-01-11T12:32:00.548Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
+    <title><![CDATA[ TensorRtSharpï¼å¨ C# ä¸çä¸­éæ¾ GPU æ¨ççæè´æ§è½ ]]></title>
+    <link>https://www.cnblogs.com/guojin-blogs/p/19468745</link>
+    <guid>828f9f740e0b98b8de74655291c2b8b2</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/guojin-blogs/p/19468745" title="åå¸äº 2026-01-11 18:47">
+    <span role="heading" aria-level="2">TensorRtSharpï¼å¨ C# ä¸çä¸­éæ¾ GPU æ¨ççæè´æ§è½</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                    <div id="cnblogs_post_description" style="display: none">
+        <img src="https://img2024.cnblogs.com/blog/2933426/202601/2933426-20260111184433092-325501944.png" alt="TensorRtSharpï¼å¨ C# ä¸çä¸­éæ¾ GPU æ¨ççæè´æ§è½" class="desc_img">
+        TensorRtSharp 3.0 æ¯ä¸ä¸ªä¸º C# å¼åèæé ç TensorRT å°è£åºï¼éè¿ NuGet ä¸é®å®è£ï¼æä¾å®æ´ç GPU æ¨çå éåè½ãè¯¥åºåºäº TensorRT 10.x å¼åï¼æ¯æ CUDA 11/12ï¼å·å¤ç±»åå®å¨ãèªå¨èµæºç®¡çç­ç¹æ§ï¼æ¾èæå .NET ç¯å¢ä¸çæ·±åº¦å­¦ä¹ æ¨çæ§è½ï¼éåº¦æå 2-10 åï¼æ¾å­éä½ 50%+ï¼ãå®è£ç®åï¼åªéæ·»å ä¸¤ä¸ª NuGet åï¼å¹¶éè¿ç¯å¢åééç½®åçåºè·¯å¾å³å¯ä½¿ç¨ãæ¨èéç½®ä¸º CUDA 11.6 + TensorRT 10.13.0.35ï¼æ¯æ
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h1 id="tensorrtsharpå¨-c-ä¸çä¸­éæ¾-gpu-æ¨ççæè´æ§è½">TensorRtSharpï¼å¨ C# ä¸çä¸­éæ¾ GPU æ¨ççæè´æ§è½</h1>
+<h2 id="ç®å½">ç®å½</h2>
+<ul>
+<li><a href="#%E4%B8%80%E5%89%8D%E8%A8%80" rel="noopener nofollow">ä¸ãåè¨</a></li>
+<li><a href="#%E4%BA%8C%E4%BB%80%E4%B9%88%E6%98%AF-tensortrtsharp" rel="noopener nofollow">äºãä»ä¹æ¯ TensorRtSharp</a></li>
+<li><a href="#%E4%B8%89%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE" rel="noopener nofollow">ä¸ãå®è£ä¸éç½®</a></li>
+<li><a href="#%E5%9B%9B%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1" rel="noopener nofollow">åãæ ¸å¿æ¶æè®¾è®¡</a></li>
+<li><a href="#%E4%BA%94%E6%A0%B8%E5%BF%83%E7%B1%BB%E4%B8%8E-api" rel="noopener nofollow">äºãæ ¸å¿ç±»ä¸ API</a></li>
+<li><a href="#%E5%85%AD%E5%AE%8C%E6%95%B4%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B" rel="noopener nofollow">å­ãå®æ´ä½¿ç¨ç¤ºä¾</a></li>
+<li><a href="#%E4%B8%83%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86" rel="noopener nofollow">ä¸ãå¼å¸¸å¤ç</a></li>
+<li><a href="#%E5%85%AB%E6%97%A5%E5%BF%97%E7%B3%BB%E7%BB%9F" rel="noopener nofollow">å«ãæ¥å¿ç³»ç»</a></li>
+<li><a href="#%E4%B9%9D%E4%B8%8E%E5%85%B6%E4%BB%96%E5%BA%93%E7%9A%84%E5%AF%B9%E6%AF%94" rel="noopener nofollow">ä¹ãä¸å¶ä»åºçå¯¹æ¯</a></li>
+<li><a href="#%E5%8D%81%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98" rel="noopener nofollow">åãå¸¸è§é®é¢</a></li>
+<li><a href="#%E5%8D%81%E4%B8%80%E6%80%BB%E7%BB%93" rel="noopener nofollow">åä¸ãæ»ç»</a></li>
+</ul>
+<hr>
+<h2 id="ä¸åè¨">ä¸ãåè¨</h2>
+<h3 id="11-ä¸ºä»ä¹éè¦-tensorrtsharp">1.1 ä¸ºä»ä¹éè¦ TensorRtSharpï¼</h3>
+<p>å¨æ·±åº¦å­¦ä¹ æ¨¡åé¨ç½²é¢åï¼NVIDIA TensorRT å­åå¶åè¶çæ¨çæ§è½å·²æä¸º GPU å éçäºå®æ åãæ ¹æ® NVIDIA å®æ¹æ°æ®ï¼ä½¿ç¨ TensorRT è¿è¡æ¨¡åä¼ååæ¨çå éï¼éå¸¸å¯ä»¥è·å¾ï¼</p>
+<ul>
+<li>ð <strong>æ¨çéåº¦æå 2-10 å</strong>ï¼ç¸æ¯åçæ¡æ¶ï¼</li>
+<li>ð¾ <strong>æ¾å­å ç¨éä½ 50% ä»¥ä¸</strong>ï¼éè¿ç²¾åº¦ä¼ååå±èåï¼</li>
+<li>â¡ <strong>å»¶è¿éä½è³æ¯«ç§çº§</strong>ï¼æ»¡è¶³å®æ¶åºç¨éæ±ï¼</li>
+</ul>
+<p>ç¶èï¼TensorRT å®æ¹ä»æä¾ C++ å Python APIï¼è¿è®©å¹¿å¤§ .NET å¼åèé¢ä¸´ä¸ä¸ªä¸¤é¾çéæ©ï¼</p>
+<ul>
+<li><strong>æ¾å¼çæç C# çæ</strong>ï¼è½¬å C++ æ Python</li>
+<li><strong>éè¿å¤æçäºæä½å±</strong>è¿è¡è°ç¨ï¼å¼åæçä½ä¸</li>
+</ul>
+<p><strong>TensorRtSharp</strong> åºè¿èç ââ è¿æ¯ä¸ä¸ªçº¯ C# ç¼åç TensorRT å®æ´å°è£åºï¼ä¸º .NET å¼åèæä¾äºï¼</p>
+<ul>
+<li>â <strong>ç±»åå®å¨ç API æ¥å£</strong> - å¼ºç±»åç³»ç»ï¼ç¼è¯æ¶éè¯¯æ£æ¥</li>
+<li>â <strong>æäºä½¿ç¨ä¸æ§è½åè¶</strong> - ç´è§ç API è®¾è®¡ï¼é¶æ§è½æå¤±</li>
+<li>â <strong>å®æ´ç TensorRT åè½è¦ç</strong> - æ¯ææææ ¸å¿åè½</li>
+<li>â <strong>èªå¨èµæºç®¡ç</strong> - åºäº RAII å Dispose æ¨¡å¼ï¼æ éæå¿åå­æ³æ¼</li>
+<li>â <strong>å¼ç®±å³ç¨</strong> - NuGet ä¸é®å®è£ï¼æ éå¤æéç½®</li>
+<li>â <strong>å®åçææ¡£åç¤ºä¾</strong> - ä¸°å¯çä»£ç ç¤ºä¾åè¯¦ç»çä½¿ç¨è¯´æ</li>
+</ul>
+<h3 id="12-tensorrtsharp-çæ ¸å¿ä¼å¿">1.2 TensorRtSharp çæ ¸å¿ä¼å¿</h3>
+<p><strong>1. åç C# ä½éª</strong></p>
+<pre><code class="language-csharp">// ç®æ´ç´è§ç API è®¾è®¡
+using Runtime runtime = new Runtime();
+using CudaEngine engine = runtime.deserializeCudaEngineByBlob(data, size);
+using ExecutionContext context = engine.createExecutionContext();
+context.executeV3(stream);
+</code></pre>
+<p><strong>2. å®æ´åè½è¦ç</strong></p>
+<ul>
+<li>â æ¨¡åæå»ºï¼ONNX â Engineï¼</li>
+<li>â æ¨çæ§è¡ï¼åæ­¥/å¼æ­¥ï¼</li>
+<li>â å¨æå½¢ç¶æ¯æ</li>
+<li>â å¤ç²¾åº¦æ¨çï¼FP32/FP16/INT8ï¼</li>
+<li>â å¤ GPU å¹¶è¡æ¨ç</li>
+</ul>
+<h3 id="13-tensorrtsharp-30-çéå¤§æ¹è¿">1.3 TensorRtSharp 3.0 çéå¤§æ¹è¿</h3>
+<p>å¨åæå¼åç TensorRtSharp 1.0 å 2.0 ä¸­ï¼ä½¿ç¨èéè¦ä¸è½½æºç ç¼è¯æè½ä½¿ç¨ï¼è¿ç¨ç¹çä¸å®¹æåºéã</p>
+<p><strong>å¨ææ°ç 3.0 çæ¬ä¸­ï¼æä»¬è¿è¡äºéå¤§æ¹è¿</strong>ï¼</p>
+<p>â <strong>ä¸é®å®è£</strong> - ç´æ¥å°ç¼è¯å¥½çåçåºä¸æç®¡ä»£ç æåè³ NuGet åä¸­<br>
+â <strong>å¼ç®±å³ç¨</strong> - æ ééç½®å¤æçæå»ºç¯å¢<br>
+â <strong>çæ¬ä¸è´</strong> - éä½å ç¯å¢å·®å¼å¯¼è´çæ½å¨éè¯¯</p>
+<p>å¼åèä»ééè¿ Visual Studio ç NuGet åç®¡çå¨å®è£å³å¯ç´æ¥ä½¿ç¨ï¼æ¾èæåäºå¼åæçä¸é¨ç½²ä¾¿æ·æ§ï¼</p>
+<p>æ¬æå°å¨é¢ä»ç» TensorRtSharp çè®¾è®¡çå¿µãæ ¸å¿åè½åä½¿ç¨æ¹æ³ï¼å©åå¤§å®¶å¿«éä¸æä½¿ç¨ã</p>
+<hr>
+<h2 id="äºä»ä¹æ¯-tensorrtsharp">äºãä»ä¹æ¯ TensorRtSharp</h2>
+<h3 id="21-é¡¹ç®ç®ä»">2.1 é¡¹ç®ç®ä»</h3>
+<p><strong>TensorRtSharp 3.0</strong> æ¯ä½èå¯¹ NVIDIA TensorRT å®æ¹åºçå®æ´ C# æ¥å£å°è£ãéè¿ P/Invoke ææ¯ï¼å®å° TensorRT çåç C++ API æ å°ä¸ºç¬¦å .NET è®¾è®¡è§èçæç®¡ä»£ç ï¼è®© C# å¼åèè½å¤æ ç¼ä½¿ç¨ TensorRT çå¨é¨åè½ã</p>
+<h3 id="22-æ ¸å¿ç¹æ§">2.2 æ ¸å¿ç¹æ§</h3>
+<table>
+<thead>
+<tr>
+<th>ç¹æ§</th>
+<th>è¯´æ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>å®æ´ç API è¦ç</strong></td>
+<td>æ¯æ TensorRT æ ¸å¿åè½ï¼åæ¬æ¨¡åæå»ºãæ¨çæ§è¡ãå¨æå½¢ç¶ç­</td>
+</tr>
+<tr>
+<td><strong>ç±»åå®å¨</strong></td>
+<td>å¼ºç±»åç³»ç»ï¼ç¼è¯æ¶éè¯¯æ£æ¥ï¼é¿åè¿è¡æ¶ç±»åéè¯¯</td>
+</tr>
+<tr>
+<td><strong>èªå¨èµæºç®¡ç</strong></td>
+<td>åºäº RAII å Dispose æ¨¡å¼çèµæºç®¡çï¼é²æ­¢åå­æ³æ¼</td>
+</tr>
+<tr>
+<td><strong>è·¨å¹³å°æ¯æ</strong></td>
+<td>æ¯æ WindowsãLinuxï¼å¼å®¹ .NET 5.0-10.0ã.NET Core 3.1ã.NET Framework 4.7.1-4.8.1</td>
+</tr>
+<tr>
+<td><strong>é«æ§è½å¼æ­¥æ§è¡</strong></td>
+<td>æ¯æ CUDA Streamãå¤æ§è¡ä¸ä¸æå¹¶è¡æ¨ç</td>
+</tr>
+<tr>
+<td><strong>å¼ç®±å³ç¨</strong></td>
+<td>NuGet åå«ææä¾èµï¼æ éå¤æéç½®</td>
+</tr>
+</tbody>
+</table>
+<h3 id="23-é¡¹ç®ä¿¡æ¯">2.3 é¡¹ç®ä¿¡æ¯</h3>
+<table>
+<thead>
+<tr>
+<th>é¡¹ç®</th>
+<th>ä¿¡æ¯</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>çæ¬</strong></td>
+<td>ç®åææ° NuGet çæ¬ä¸º 0.0.5ï¼æç»­æ´æ°ä¸­ï¼å»ºè®®ä½¿ç¨ææ°çæ¬ï¼</td>
+</tr>
+<tr>
+<td><strong>GitHub</strong></td>
+<td><code>https://github.com/guojin-yan/TensorRT-CSharp-API</code></td>
+</tr>
+<tr>
+<td><strong>æ¥å£ NuGet</strong></td>
+<td><code>JYPPX.TensorRT.CSharp.API</code></td>
+</tr>
+<tr>
+<td><strong>Runtime NuGet</strong></td>
+<td><code>JYPPX.TensorRT.CSharp.API.runtime.win-x64.cuda12</code> æ <code>JYPPX.TensorRT.CSharp.API.runtime.win-x64.cuda11</code></td>
+</tr>
+<tr>
+<td><strong>ç¼ç¨è¯­è¨</strong></td>
+<td>C# 10</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="ä¸å®è£ä¸éç½®">ä¸ãå®è£ä¸éç½®</h2>
+<h3 id="31-éè¿-nuget-å®è£">3.1 éè¿ NuGet å®è£</h3>
+<p>å®è£ TensorRtSharp éå¸¸ç®åï¼åªéå®è£ä¸¤ä¸ª NuGet åï¼</p>
+<pre><code class="language-bash"># å®è£æ¥å£å
+dotnet add package JYPPX.TensorRT.CSharp.API
+
+# å®è£è¿è¡æ¶åï¼æ ¹æ®æ¨ç CUDA çæ¬éæ©ï¼
+# CUDA 12.x çæ¬
+dotnet add package JYPPX.TensorRT.CSharp.API.runtime.win-x64.cuda12
+
+# æ CUDA 11.x çæ¬
+dotnet add package JYPPX.TensorRT.CSharp.API.runtime.win-x64.cuda11
+</code></pre>
+<blockquote>
+<p><strong>ð¡ å°è´´å£«</strong>ï¼Runtime åä¸ CUDA çæ¬ç¸å³ï¼è¯·æ ¹æ®æ¨è®¾å¤ä¸å®è£ç CUDA çæ¬éæ©å¯¹åºçåã</p>
+</blockquote>
+<p><img alt="image-20260109233203782" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2933426/202601/2933426-20260111184155212-1410768222.png" class="lazyload"></p>
+<h3 id="32-ç³»ç»è¦æ±">3.2 ç³»ç»è¦æ±</h3>
+<table>
+<thead>
+<tr>
+<th>è¦æ±</th>
+<th>è¯´æ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>æä½ç³»ç»</strong></td>
+<td>Windows 10+ãLinuxï¼Ubuntu 18.04+ï¼ãmacOS 10.15+</td>
+</tr>
+<tr>
+<td><strong>.NET çæ¬</strong></td>
+<td>.NET 5.0-10.0ã.NET Core 3.1ã.NET Framework 4.7.1+</td>
+</tr>
+<tr>
+<td><strong>GPU</strong></td>
+<td>NVIDIA GPUï¼æ¯æ CUDA 11.x æ 12.xï¼</td>
+</tr>
+<tr>
+<td><strong>ä¾èµ</strong></td>
+<td>NVIDIA TensorRT 10.xãCUDA Runtime</td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-éè¦çæ¬è¯´æ">3.3 éè¦çæ¬è¯´æ</h3>
+<blockquote>
+<p><strong>â ï¸ éè¦æéï¼NVIDIA TensorRT å¿é¡»æ¯ 10.x ç³»åï¼ï¼</strong></p>
+</blockquote>
+<p>TensorRtSharp 3.0 åºäº TensorRT 10.x å¼åï¼ä¸æ¯æ TensorRT 8.x æ 9.x çæ¬ã</p>
+<p>ä¸ºäºé²æ­¢åºç°å¼å®¹æ§é®é¢ï¼å»ºè®®ä½¿ç¨ä¸åä¸»ç¸åçéç½®ï¼</p>
+<p><strong>éç½® 1ï¼æ¨èï¼ï¼</strong></p>
+<ul>
+<li>CUDA 11.6</li>
+<li>cuDNN 9.2.0</li>
+<li>TensorRT 10.13.0.35</li>
+</ul>
+<p><strong>éç½® 2ï¼</strong></p>
+<ul>
+<li>CUDA 12.3</li>
+<li>cuDNN 9.2.0</li>
+<li>TensorRT 10.11.0.33</li>
+</ul>
+<h3 id="34-éç½®åçåº">3.4 éç½®åçåº</h3>
+<p>TensorRtSharp ä¾èµ TensorRT çåçåºï¼<code>nvinfer.dll</code>ï¼å CUDA çåçåºï¼<code>cudart64_*.dll</code> ç­ï¼ãæä¸¤ç§éç½®æ¹å¼ï¼</p>
+<h4 id="æ¹å¼ä¸æ·è´-dll-å°åºç¨ç¨åºç®å½ä¸æ¨è">æ¹å¼ä¸ï¼æ·è´ DLL å°åºç¨ç¨åºç®å½ï¼ä¸æ¨èï¼</h4>
+<p>å° TensorRT å CUDA çææ DLL æä»¶æ·è´å°ç¨åºå¯æ§è¡ç®å½ä¸ã</p>
+<p><strong>ç¼ºç¹</strong>ï¼</p>
+<ul>
+<li>ä¼å¯¼è´ç¨åºç®å½æä»¶åºå¤§</li>
+<li>ä¸æ¹ä¾¿ç®¡çä¸é¨ç½²</li>
+<li><strong>ä¸æ¨èä½¿ç¨æ­¤æ¹å¼</strong></li>
+</ul>
+<h4 id="æ¹å¼äºè®¾ç½®ç³»ç»-pathæ¨è">æ¹å¼äºï¼è®¾ç½®ç³»ç» PATHï¼æ¨èï¼</h4>
+<p>å° TensorRT ç lib ç®å½å CUDA ç bin ç®å½è·¯å¾æ·»å å°ç³»ç» PATH ç¯å¢åéä¸­ã</p>
+<p><strong>ä¼ç¹</strong>ï¼</p>
+<ul>
+<li>æ éå¤å¶å¤§éæä»¶</li>
+<li>ä¿æåºç¨ç®å½æ´æ´</li>
+<li>ä¾¿äºçæ¬ç®¡çåé¨ç½²ç»´æ¤</li>
+</ul>
+<p><strong>éç½®æ­¥éª¤</strong>ï¼</p>
+<ol>
+<li><strong>è®¾ç½® CUDA_PATH ç¯å¢åé</strong></li>
+</ol>
+<p><img alt="CUDA_PATH éç½®" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2933426/202601/2933426-20260111184155230-1674511893.jpg" class="lazyload"></p>
+<ol start="2">
+<li><strong>è®¾ç½® PATH ç¯å¢åé</strong></li>
+</ol>
+<p>å°ä»¥ä¸è·¯å¾æ·»å å° PATHï¼</p>
+<ul>
+<li>CUDA ç bin ç®å½ï¼å¦ <code>C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.6\bin</code>ï¼</li>
+<li>TensorRT ç lib ç®å½ï¼å¦ <code>C:\TensorRT-10.13.0.35\lib</code>ï¼</li>
+</ul>
+<p><img alt="PATH éç½®" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2933426/202601/2933426-20260111184155212-1478801897.jpg" class="lazyload"></p>
+<blockquote>
+<p><strong>ð¡ å»ºè®®</strong>ï¼ä¼åä½¿ç¨ç¯å¢åéæ¹å¼éç½®ï¼é¿åå æä»¶åä½å¯¼è´é¨ç½²å¤æãåæ¶æ³¨æä¸å CUDA çæ¬é´çå¼å®¹æ§é®é¢ã</p>
+</blockquote>
+<hr>
+<h2 id="åæ ¸å¿æ¶æè®¾è®¡">åãæ ¸å¿æ¶æè®¾è®¡</h2>
+<h3 id="41-ä¸å±æ¶æ">4.1 ä¸å±æ¶æ</h3>
+<p>TensorRtSharp éç¨æ¸æ°çä¸å±æ¶æè®¾è®¡ï¼</p>
+<pre><code>âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+â           ä¸å¡ API å± (High-Level API)                   â
+â  Runtime, Builder, CudaEngine, ExecutionContext         â
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+                           â²
+                           â
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+â         èµæºç®¡çå± (Resource Management)                 â
+â  DisposableTrtObject, DisposableObject, IOvPtrHolder    â
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+                           â²
+                           â
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+â         P/Invoke å± (Native Interop)                    â
+â  NativeMethodsTensorRt*, NativeMethodsCuda*             â
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+</code></pre>
+<h3 id="42-èªå¨èµæºç®¡ç">4.2 èªå¨èµæºç®¡ç</h3>
+<p>TensorRtSharp å®ç°äºå®åçèµæºç®¡çæºå¶ï¼ææ TensorRT å¯¹è±¡é½ç»§æ¿èª <code>DisposableTrtObject</code>ï¼</p>
+<pre><code class="language-csharp">// ææ TensorRT å¯¹è±¡ç»§æ¿èª DisposableTrtObject
+public abstract class DisposableTrtObject : DisposableObject
+{
+    protected IntPtr ptr;                      // åçå¯¹è±¡æé
+    public bool IsDisposed { get; protected set; }
+
+    // å®å¨è®¿é®åçæéï¼èªå¨æ£æ¥éæ¾ç¶æï¼
+    public IntPtr TrtPtr
+    {
+        get
+        {
+            ThrowIfDisposed();
+            return ptr;
+        }
+    }
+
+    // éæ¾éæç®¡èµæº
+    protected override void DisposeUnmanaged()
+    {
+        if (ptr != IntPtr.Zero)
+        {
+            // è°ç¨åçéæ¾å½æ°
+            NativeDestroy(ptr);
+            ptr = IntPtr.Zero;
+        }
+    }
+}
+
+// ä½¿ç¨ using è¯­å¥èªå¨éæ¾èµæº
+using Runtime runtime = new Runtime();
+using CudaEngine engine = runtime.deserializeCudaEngineByBlob(data, size);
+// ç¦»å¼ä½ç¨åæ¶èªå¨éæ¾
+</code></pre>
+<p><strong>è®¾è®¡äº®ç¹</strong>ï¼</p>
+<ul>
+<li>â éç¨æ å Dispose æ¨¡å¼ï¼ç¡®ä¿èµæºæ­£ç¡®éæ¾</li>
+<li>â çº¿ç¨å®å¨çèµæºéæ¾æºå¶ï¼ä½¿ç¨ <code>Interlocked.Exchange</code>ï¼</li>
+<li>â èªå¨åå­ååéç¥ï¼<code>GC.AddMemoryPressure</code>ï¼</li>
+<li>â æéå®å¨è®¿é®ï¼<code>ThrowIfDisposed</code> æ£æ¥ï¼</li>
+</ul>
+<hr>
+<h2 id="äºæ ¸å¿ç±»ä¸-api">äºãæ ¸å¿ç±»ä¸ API</h2>
+<h3 id="51-å½åç©ºé´">5.1 å½åç©ºé´</h3>
+<p>å¨ä½¿ç¨ TensorRtSharp ä¹åï¼é¦åå¼å¥å¿è¦çå½åç©ºé´ï¼</p>
+<pre><code class="language-csharp">using JYPPX.TensorRtSharp.Cuda;      // CUDA æ¥å£çç¨åºéå½åç©ºé´
+using JYPPX.TensorRtSharp.Nvinfer;   // TensorRT æ¥å£çç¨åºéå½åç©ºé´
+</code></pre>
+<h3 id="52-runtimeæ¨çè¿è¡æ¶">5.2 Runtimeï¼æ¨çè¿è¡æ¶ï¼</h3>
+<p>Runtime æ¯ TensorRT æ¨ççå¥å£ç¹ï¼è´è´£ä»åºååçå¼ææä»¶åå»ºæ¨çå¼æã</p>
+<pre><code class="language-csharp">// åå»º Runtime å®ä¾
+Runtime runtime = new Runtime();
+string filePath = "yolov8s-obb.engine";
+
+// ä»å­èæ°ç»ååºååå¼æ
+byte[] data = File.ReadAllBytes(filePath);
+using CudaEngine cudaEngine = runtime.deserializeCudaEngineByBlob(data, (ulong)data.Length);
+
+// ä»æä»¶æµååºåå
+using var reader = new FileStreamReader();
+reader.open(filePath);
+using CudaEngine cudaEngine = runtime.deserializeCudaEngineByFileStreamReader(reader);
+
+// éç½® DLAï¼æ·±åº¦å­¦ä¹ å éå¨ï¼
+runtime.setDLACore(0);  // ä½¿ç¨ DLA æ ¸å¿ 0
+int dlaCores = runtime.getNbDLACores();
+
+// è®¾ç½®æå¤§çº¿ç¨æ°
+runtime.setMaxThreads(4);
+</code></pre>
+<p><strong>ä¸»è¦ç¨é</strong>ï¼</p>
+<ul>
+<li>ååºåå TensorRT å¼ææä»¶</li>
+<li>éç½® DLA å éå¨</li>
+<li>å è½½æä»¶åº</li>
+</ul>
+<h3 id="53-builderæ¨¡åæå»ºå¨">5.3 Builderï¼æ¨¡åæå»ºå¨ï¼</h3>
+<p>Builder ç¨äºä» ONNX æ¨¡åæå»º TensorRT å¼æã</p>
+<pre><code class="language-csharp">using Builder builder = new Builder();
+
+// æ¥è¯¢å¹³å°è½å
+bool hasFP16 = builder.platformHasFastFp16();  // æ¯å¦æ¯æ FP16
+bool hasINT8 = builder.platformHasFastInt8();  // æ¯å¦æ¯æ INT8
+int maxDLABatch = builder.maxDLABatchSize();   // DLA æå¤§æ¹å¤§å°
+
+// åå»ºç½ç»å®ä¹ï¼æ¾å¼æ¹å¤çæ¨¡å¼ï¼
+using NetworkDefinition network = builder.createNetworkV2(
+    TrtNetworkDefinitionCreationFlag.kEXPLICIT_BATCH);
+
+// åå»ºæå»ºå¨éç½®
+using BuilderConfig config = builder.createBuilderConfig();
+
+// åå»ºä¼åéç½®æä»¶ï¼ç¨äºå¨æå½¢ç¶ï¼
+using OptimizationProfile profile = builder.createOptimizationProfile();
+
+// æå»ºåºååç½ç»
+using HostMemory serialized = builder.buildSerializedNetwork(network, config);
+
+// ä¿å­å¼ææä»¶
+using (FileStream fs = new FileStream("model.engine", FileMode.Create, FileAccess.Write))
+{
+    fs.Write(serialized.getByteData(), 0, (int)serialized.Size);
+}
+</code></pre>
+<p><strong>ä¸»è¦ç¨é</strong>ï¼</p>
+<ul>
+<li>åå»ºç½ç»å®ä¹åæå»ºéç½®</li>
+<li>æ¥è¯¢ç¡¬ä»¶è½åï¼FP16ãINT8ãDLAï¼</li>
+<li>æå»º TensorRT å¼æ</li>
+<li>æ³¨åèªå®ä¹æä»¶</li>
+</ul>
+<h3 id="54-cudaengineæ¨çå¼æ">5.4 CudaEngineï¼æ¨çå¼æï¼</h3>
+<p>CudaEngine æ¯æ¨ççæ ¸å¿å¯¹è±¡ï¼åå«ä¼ååçæ¨¡åè®¡ç®å¾ã</p>
+<pre><code class="language-csharp">// è·åå¼ éä¿¡æ¯
+int numTensors = engine.getNbIOTensors();
+string inputName = engine.getIOTensorName(0);    // è¾å¥å¼ éåç§°
+string outputName = engine.getIOTensorName(1);   // è¾åºå¼ éåç§°
+
+Dims inputShape = engine.getTensorShape(inputName);
+TrtDataType inputType = engine.getTensorDataType(inputName);
+
+// åå»ºæ§è¡ä¸ä¸æ
+using ExecutionContext context = engine.createExecutionContext();
+using ExecutionContext contextStatic = engine.createExecutionContext(
+    TrtExecutionContextAllocationStrategy.kSTATIC);
+
+// åºååå¼æ
+using HostMemory memory = engine.serialize();
+
+// æ¥è¯¢å¼æå±æ§
+int numLayers = engine.getNbLayers();
+string name = engine.getName();
+long deviceMemory = engine.getDeviceMemorySize();
+</code></pre>
+<p><strong>ä¸»è¦ç¨é</strong>ï¼</p>
+<ul>
+<li>æ¥è¯¢æ¨¡åè¾å¥è¾åºä¿¡æ¯</li>
+<li>åå»ºæ§è¡ä¸ä¸æ</li>
+<li>åºååå¼æ</li>
+<li>æ§è½åæ</li>
+</ul>
+<h3 id="55-executioncontextæ§è¡ä¸ä¸æ">5.5 ExecutionContextï¼æ§è¡ä¸ä¸æï¼</h3>
+<p>ExecutionContext ç®¡çåæ¬¡æ¨ççæ§è¡ç¯å¢ï¼æ¯æå¼æ­¥æ¨çåå¨æå½¢ç¶ã</p>
+<pre><code class="language-csharp">// ç»å®å¼ éå°å
+Cuda1DMemory&lt;float&gt; input = new Cuda1DMemory&lt;float&gt;(3 * 1024 * 1024);
+Cuda1DMemory&lt;float&gt; output = new Cuda1DMemory&lt;float&gt;(1 * 20 * 21504);
+context.setInputTensorAddress("images", input.get());
+context.setOutputTensorAddress("output0", output.get());
+
+// è®¾ç½®å¨æå½¢ç¶
+context.setinputShape("images", new Dims(1, 3, 1024, 1024));
+Dims shape = context.getTensorShape("images");
+
+// æ§è¡æ¨çï¼å¼æ­¥ï¼ä½¿ç¨ CUDA Streamï¼
+using CudaStream stream = new CudaStream();
+context.executeV3(stream);
+stream.Synchronize();  // ç­å¾å®æ
+
+// è®¾ç½®ä¼åéç½®æä»¶ï¼å¨æå½¢ç¶ï¼
+context.setOptimizationProfileAsync(0, stream);
+
+// è°è¯åè½
+context.setDebugSync(true);
+</code></pre>
+<p><strong>ä¸»è¦ç¨é</strong>ï¼</p>
+<ul>
+<li>ç»å®è¾å¥è¾åºå¼ é</li>
+<li>è®¾ç½®å¨æå½¢ç¶</li>
+<li>æ§è¡æ¨çï¼å¼æ­¥ï¼</li>
+<li>æ§è½åæåè°è¯</li>
+</ul>
+<h3 id="56-onnxparseronnx-è§£æå¨">5.6 OnnxParserï¼ONNX è§£æå¨ï¼</h3>
+<p>OnnxParser å° ONNX æ¨¡åè½¬æ¢ä¸º TensorRT ç½ç»å®ä¹ã</p>
+<pre><code class="language-csharp">// è§£æ ONNX æä»¶
+using NetworkDefinition network = build.createNetworkV2(TrtNetworkDefinitionCreationFlag.kEXPLICIT_BATCH);
+using OnnxParser parser = new OnnxParser(network);
+bool success = parser.parseFromFile("yolov8s-obb.onnx", verbosity: 2);
+
+// æ£æ¥ç®å­æ¯æ
+bool supportsConv = parser.supportsOperator("Conv");
+
+// å­å¾æ¯æ
+long numSubgraphs = parser.getNbSubgraphs();
+bool supported = parser.isSubgraphSupported(0);
+long[] nodes = parser.getSubgraphNodes(0);
+
+// è®¾ç½®è§£æå¨æ å¿
+parser.setFlag(TrtOnnxParserFlag.kNATIVE_INSTANCENORM);
+</code></pre>
+<p><strong>ä¸»è¦ç¨é</strong>ï¼</p>
+<ul>
+<li>è§£æ ONNX æ¨¡å</li>
+<li>æ£æ¥ç®å­æ¯æ</li>
+<li>å¤çå­å¾</li>
+</ul>
+<h3 id="57-cuda-åå­ç®¡ç">5.7 CUDA åå­ç®¡ç</h3>
+<h4 id="1è®¾å¤åå­cuda1dmemory">ï¼1ï¼è®¾å¤åå­ï¼Cuda1DMemory<t>ï¼</t></h4>
+<pre><code class="language-csharp">// åå»ºè®¾å¤åå­
+using Cuda1DMemory&lt;float&gt; input = new Cuda1DMemory&lt;float&gt;(1000);
+ulong numElements = input.SizeElements;
+ulong numBytes = input.SizeBytes;
+IntPtr ptr = input.DevicePointer;
+
+// åæ­¥æ°æ®ä¼ è¾
+float[] hostData = new float[1000];
+input.copyFromHost(hostData);   // ä¸»æº â è®¾å¤
+input.copyToHost(hostData);      // è®¾å¤ â ä¸»æº
+
+// å¼æ­¥æ°æ®ä¼ è¾
+using CudaStream stream = new CudaStream();
+input.copyFromHostAsync(hostData, stream);
+input.copyToHostAsync(hostData, stream);
+
+// åå­æä½
+input.memset(0);                 // å¡«åä¸º 0
+input.memsetAsync(0, stream);    // å¼æ­¥å¡«å
+</code></pre>
+<h4 id="2cuda-æµcudastream">ï¼2ï¼CUDA æµï¼CudaStreamï¼</h4>
+<pre><code class="language-csharp">// åå»ºæµï¼å¸¦ä¼åçº§ï¼
+using CudaStream stream = new CudaStream();
+using CudaStream streamHigh = new CudaStream(0, -1);  // é«ä¼åçº§
+
+// åæ­¥æä½
+stream.Synchronize();  // ç­å¾æµå®æ
+bool isComplete = stream.Query();  // æ¥è¯¢æ¯å¦å®æ
+
+// äºä»¶ä¾èµ
+using CudaEvent cudaEvent = new CudaEvent();
+stream.WaitEvent(cudaEvent);  // ç­å¾äºä»¶
+
+// æ·»å åè°
+stream.AddCallback((streamPtr, statue, userData) =&gt;
+{
+    Console.WriteLine("Stream callback executed");
+}, IntPtr.Zero, 0);
+
+// CUDA Graph æè·
+stream.BeginCapture(CudaStreamCaptureMode.Global);
+// ... æ§è¡æä½ ...
+CudaGraph_t graph = stream.EndCapture();
+</code></pre>
+<h4 id="3cuda-è®¾å¤cudadevice">ï¼3ï¼CUDA è®¾å¤ï¼CudaDeviceï¼</h4>
+<pre><code class="language-csharp">// è·åç³»ç»ä¸­å¯ç¨ç CUDA å¼å®¹è®¾å¤çæ°é
+int nbDevices = CudaDevice.GetDeviceCount();
+
+// è·åæå®è®¾å¤çå±æ§
+CudaDeviceProp properties = CudaDevice.GetDeviceProperties(deviceIdx);
+
+// è®¾ç½®æ§è¡è®¾å¤
+CudaDevice.SetDevice(device);
+
+// è·åæå³è®¾å¤çè¯·æ±ä¿¡æ¯
+int clockRate = CudaDevice.GetAttribute(CudaDeviceAttr.ClockRate, device);
+</code></pre>
+<hr>
+<h2 id="å­å®æ´ä½¿ç¨ç¤ºä¾">å­ãå®æ´ä½¿ç¨ç¤ºä¾</h2>
+<h3 id="ç¤ºä¾-1è·ååè®¾ç½®è®¾å¤ä¿¡æ¯">ç¤ºä¾ 1ï¼è·ååè®¾ç½®è®¾å¤ä¿¡æ¯</h3>
+<p>ä¸é¢çä»£ç å¯ä»¥è·åå½åè®¾å¤çç¸å³ä¿¡æ¯ï¼åæ¶å¯ä»¥è®¾ç½®æ¨çè®¾å¤ã</p>
+<pre><code class="language-csharp">using JYPPX.TensorRtSharp.Cuda;
+using JYPPX.TensorRtSharp.Nvinfer;
+
+namespace TestDemo
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            // æå®é»è®¤ä½¿ç¨ç GPU è®¾å¤ç´¢å¼
+            // å¨å¤ GPU ç¯å¢ä¸ï¼å¯ä»¥éè¿ä¿®æ¹æ­¤åéæ¥éæ©ç¹å®çæ¾å¡
+            int device = 0;
+
+            // è®°å½æ¥å¿ï¼æ è®°è®¾å¤ä¿¡æ¯æ¥è¯¢çå¼å§
+            Logger.Instance.INFO("=== Device Information ===");
+
+            // è·åå½åç³»ç»ä¸­å¯è§ç NVIDIA GPU æ°é
+            int nbDevices = CudaDevice.GetDeviceCount();
+
+            // æ£æ¥ç³»ç»ä¸­æ¯å¦å­å¨å¯ç¨ç GPU è®¾å¤
+            if (nbDevices &lt;= 0)
+            {
+                Logger.Instance.ERROR("Cannot find any available devices (GPUs)!");
+                Environment.Exit(0);
+            }
+
+            // æå°ææå¯ç¨è®¾å¤çåè¡¨
+            Logger.Instance.INFO("Available Devices: ");
+
+            // éåç³»ç»ä¸­çæ¯ä¸ä¸ª GPU
+            for (int deviceIdx = 0; deviceIdx &lt; nbDevices; ++deviceIdx)
+            {
+                // è·åç´¢å¼ä¸º deviceIdx ç GPU çè¯¦ç»å±æ§
+                CudaDeviceProp tempProperties = CudaDevice.GetDeviceProperties(deviceIdx);
+
+                // æå°è®¾å¤ IDãè®¾å¤åç§°ä»¥å UUID (å¯ä¸æ è¯ç¬¦)
+                Logger.Instance.INFO($"  Device {deviceIdx}: \"{tempProperties.Name}\" UUID: {GetUuidString(tempProperties.Uuid)}");
+
+                // å¦æå½åéåå°çè®¾å¤ ID æ¯æä»¬æ³è¦ä½¿ç¨çç®æ è®¾å¤
+                // åå°è¯¥è®¾å¤çå±æ§ä¿å­ä¸æ¥ï¼ä¾åç»­ä½¿ç¨
+                if (deviceIdx == device)
+                {
+                    properties = tempProperties;
+                }
+            }
+
+            // å®å¨æ£æ¥ï¼ç¡®ä¿è¯·æ±çç®æ è®¾å¤ ID å¨ææèå´å
+            if (device &lt; 0 || device &gt;= nbDevices)
+            {
+                Logger.Instance.ERROR($"Cannot find device ID {device}!");
+                Environment.Exit(0);
+            }
+
+            // å° CUDA ä¸ä¸æè®¾ç½®å°æå®ç GPU è®¾å¤ä¸
+            CudaDevice.SetDevice(device);
+
+            // æå°éå®è®¾å¤çè¯¦ç»ä¿¡æ¯
+            Logger.Instance.INFO($"Selected Device: {properties.Name}");
+            Logger.Instance.INFO($"Selected Device ID: {device}");
+            Logger.Instance.INFO($"Selected Device UUID: {GetUuidString(properties.Uuid)}");
+            Logger.Instance.INFO($"Compute Capability: {properties.Major}.{properties.Minor}");
+            Logger.Instance.INFO($"SMs: {properties.MultiProcessorCount}");
+            Logger.Instance.INFO($"Device Global Memory: {(properties.TotalGlobalMem + 20)} MiB");
+            Logger.Instance.INFO($"Shared Memory per SM: {(properties.SharedMemPerMultiprocessor &gt;&gt; 10)} KiB");
+            Logger.Instance.INFO($"Memory Bus Width: {properties.MemoryBusWidth} bits (ECC {(properties.ECCEnabled != 0 ? "enabled" : "disabled")})");
+
+            // è·åå¹¶æå° GPU æ ¸å¿æ¶éé¢çåæ¾å­æ¶éé¢ç
+            int clockRate = CudaDevice.GetAttribute(CudaDeviceAttr.ClockRate, device);
+            int memoryClockRate = CudaDevice.GetAttribute(CudaDeviceAttr.MemoryClockRate, device);
+
+            Logger.Instance.INFO($"Application Compute Clock Rate: {clockRate / 1000000.0F} GHz");
+            Logger.Instance.INFO($"Application Memory Clock Rate: {memoryClockRate / 1000000.0F} GHz");
+        }
+
+        /// &lt;summary&gt;
+        /// è¾å©æ¹æ³ï¼å° CudaUUID ç»æä½è½¬æ¢ä¸ºæ ¼å¼åç GPU UUID å­ç¬¦ä¸²
+        /// æ ¼å¼éå¸¸ä¸ºï¼GPU-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        /// &lt;/summary&gt;
+        public static string GetUuidString(CudaUUID uuid)
+        {
+            int kUUID_SIZE = uuid.Bytes.Length;
+            var ss = new System.Text.StringBuilder();
+
+            // å®ä¹ UUID çåæ®µç¹ï¼ç¨äºæå¥è¿å­ç¬¦ "-"
+            int[] splits = { 0, 4, 6, 8, 10, kUUID_SIZE };
+
+            // æ·»å åºå®ç "GPU" åç¼
+            ss.Append("GPU");
+
+            // éååæ®µå®ä¹ï¼æ ¼å¼åæ¯ä¸é¨åçå­è
+            for (int splitIdx = 0; splitIdx &lt; splits.Length - 1; ++splitIdx)
+            {
+                ss.Append("-");
+                for (int byteIdx = splits[splitIdx]; byteIdx &lt; splits[splitIdx + 1]; ++byteIdx)
+                {
+                    ss.AppendFormat("{0:x2}", uuid.Bytes[byteIdx]);
+                }
+            }
+
+            return ss.ToString();
+        }
+    }
+}
+</code></pre>
+<p><strong>ç¨åºè¿è¡ç»æï¼</strong></p>
+<p><img alt="è®¾å¤ä¿¡æ¯è¾åº" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2933426/202601/2933426-20260111184155226-526554276.png" class="lazyload"></p>
+<blockquote>
+<p><strong>ð¡ æ³¨æ</strong>ï¼ä¸åçè®¾å¤è¾åºä¼æä¸åï¼ä»¥å·ä½è®¾å¤è¾åºä¸ºåã</p>
+<p>ð<strong>ç¨åºè·¯å¾é¾æ¥</strong>ï¼å®æ´ç¨åºå·²ç»ä¸ä¼ å°GitHubï¼è¯·èªè¡ä¸è½½ï¼é¾æ¥ä¸ºï¼</p>
+<pre><code>https://github.com/guojin-yan/TensorRT-CSharp-API/tree/TensorRtSharp3.0/samples/SetCudaDeviceInfo
+</code></pre>
+</blockquote>
+<hr>
+<h3 id="ç¤ºä¾-2onnx-è½¬-engine-æ¨¡å">ç¤ºä¾ 2ï¼ONNX è½¬ Engine æ¨¡å</h3>
+<p>ä¸é¢æ¯æç§å®æ¹æ¨¡åè½¬æ¢ä»£ç ç¼åçä¸ä¸ªç®åçè½¬æ¢ä»£ç ï¼</p>
+<pre><code class="language-csharp">using JYPPX.TensorRtSharp.Cuda;
+using JYPPX.TensorRtSharp.Nvinfer;
+
+namespace OnnxToEngine
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            // === éç½® TensorRT æ¥å¿åè° ===
+            // å®ä¹ä¸ä¸ªå§æï¼ç¨äºå¤ç TensorRT åé¨äº§ççæ¥å¿æ¶æ¯
+            LogCallbackFunction _callbackDelegate = (message) =&gt;
+            {
+                Console.WriteLine(message);
+            };
+
+            // å°èªå®ä¹çåè°å½æ°æ³¨åç» TensorRT çå¨å± Logger å®ä¾
+            Logger.Instance.SetCallback(_callbackDelegate);
+
+            // è®¾ç½®æ¥å¿çä¸¥éæ§çº§å«éå¼
+            // LoggerSeverity.kINFO: æå°ä¿¡æ¯ãè­¦ååéè¯¯
+            Logger.Instance.SetThreshold(LoggerSeverity.kINFO);
+
+            // 1. åå»º TensorRT Builder (æå»ºå¨)
+            Builder build = new Builder();
+
+            // 2. åå»ºç½ç»å®ä¹ (Network Definition)
+            // æ¾å¼æ¹å¤ç æ å¿è¡¨ç¤ºç½ç»å®ä¹ä¸­æ¾å¼åå«æ¹å¤çç»´åº¦
+            NetworkDefinition networkDefinition = build.createNetworkV2(TrtNetworkDefinitionCreationFlag.kEXPLICIT_BATCH);
+
+            // 3. åå»ºæå»ºå¨éç½®
+            BuilderConfig builderConfig = build.createBuilderConfig();
+
+            // 4. åå»º ONNX è§£æå¨
+            OnnxParser onnxParser = new OnnxParser(networkDefinition);
+
+            // æå®å¾è½¬æ¢ç ONNX æ¨¡åæä»¶è·¯å¾
+            string modelpath = "yolo11s-obb.onnx";
+
+            // 5. è§£æ ONNX æ¨¡åæä»¶
+            // åæ° 2: æ¥å¿çº§å« (1=ERROR, 2=WARNING, 3=INFO, 4=VERBOSE)
+            if (onnxParser.parseFromFile(modelpath, 2) == false)
+            {
+                Console.WriteLine($"parse onnx model failed");
+                return;
+            }
+
+            // 6. è®¾ç½®æå»ºç²¾åº¦æ å¿
+            // kFP16: å¯ç¨åç²¾åº¦ (FP16) æ¨çæ¨¡å¼
+            builderConfig.setFlag(TrtBuilderFlag.kFP16);
+
+            // 7. åå»º CUDA æµ
+            CudaStream cudaStream = new CudaStream();
+
+            // 8. è®¾ç½®ä¼åéç½®æä»¶çæµ
+            builderConfig.setProfileStream(cudaStream);
+
+            // 9. æå»ºå¹¶åºååç½ç»
+            // è¿æ¯ä¸ä¸ªèæ¶è¾é¿çè¿ç¨ï¼å ä¸º TensorRT ä¼è¿è¡åæ ¸èªå¨è°ä¼ãå±èåç­ä¼å
+            HostMemory hostMemory = build.buildSerializedNetwork(networkDefinition, builderConfig);
+
+            // 10. ä¿å­ Engine å°ç£ç
+            string filePath = "yolo11s-obb.engine";
+            using (FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+            {
+                fs.Write(hostMemory.getByteData(), 0, (int)hostMemory.Size);
+            }
+
+            Console.WriteLine("Engine saved successfully!");
+        }
+    }
+}
+</code></pre>
+<p><strong>ç¨åºè¿è¡ç»æï¼</strong></p>
+<p><img alt="ONNX è½¬æ¢ç»æ" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2933426/202601/2933426-20260111184155199-25493962.png" class="lazyload"></p>
+<blockquote>
+<p>ð<strong>ç¨åºè·¯å¾é¾æ¥</strong>ï¼å®æ´ç¨åºå·²ç»ä¸ä¼ å°GitHubï¼è¯·èªè¡ä¸è½½ï¼é¾æ¥ä¸ºï¼</p>
+<pre><code>https://github.com/guojin-yan/TensorRT-CSharp-API/tree/TensorRtSharp3.0/samples/OnnxToEngine
+</code></pre>
+</blockquote>
+<hr>
+<h3 id="-ä½¿ç¨-trtexec-å·¥å·è½¬æ¢æ¨¡åæ¨è">ð¡ ä½¿ç¨ trtexec å·¥å·è½¬æ¢æ¨¡åï¼æ¨èï¼</h3>
+<p>å½å ONNX è½¬ Engine ä»£ç ç±äºæ²¡æè¿è¡ä¼åï¼è½¬æ¢éåº¦ä¼è¾æ¢ã<strong>å»ºè®®ä½¿ç¨ TensorRT SDK èªå¸¦ç <code>trtexec.exe</code> å·¥å·è½¬æ¢æ¨¡å</strong>ã</p>
+<h4 id="trtexec-ä½¿ç¨æ¹å¼">trtexec ä½¿ç¨æ¹å¼</h4>
+<p><strong>ï¼1ï¼ä½¿ç¨ CMD åæ¢å°å·¥å·ç®å½</strong></p>
+<p>è¯¥å·¥å·å­æ¾å¨ä¸è½½ç TensorRT åºä¸­ï¼</p>
+<p><img alt="trtexec ä½ç½®" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2933426/202601/2933426-20260111184155192-868591871.png" class="lazyload"></p>
+<p>æå¼ CMD å¹¶åæ¢å°è¯¥è·¯å¾ï¼</p>
+<p><img alt="CMD åæ¢è·¯å¾" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2933426/202601/2933426-20260111184155220-2043771179.png" class="lazyload"></p>
+<p><strong>ï¼2ï¼åºå®å½¢ç¶æ¨¡åè½¬æ¢æä»¤</strong></p>
+<p>å¯¹äºå½¢ç¶åºå®çæ¨¡åï¼ç´æ¥è¾å¥å¸¸è§æä»¤è½¬æ¢å³å¯ï¼</p>
+<pre><code class="language-bash">trtexec.exe --onnx=yolov8s-obb.onnx --saveEngine=yolov8s-obb.engine --fp16 --workspace=1024
+</code></pre>
+<p><strong>åæ°è¯´æï¼</strong></p>
+<ul>
+<li><code>--onnx=yolov8s-obb.onnx</code>ï¼æå®è¾å¥ç ONNX æ¨¡åæä»¶è·¯å¾</li>
+<li><code>--saveEngine=yolov8s-obb.engine</code>ï¼æå®è¾åºç Engine æä»¶ä¿å­è·¯å¾</li>
+<li><code>--fp16</code>ï¼å¯ç¨ FP16 ç²¾åº¦ï¼å¯éï¼</li>
+<li><code>--workspace=1024</code>ï¼æå®æå¤§å·¥ä½ç©ºé´ï¼åä½ MBï¼å¯éï¼</li>
+</ul>
+<p><img alt="trtexec è½¬æ¢ä¸­" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2933426/202601/2933426-20260111184155240-1040135131.png" class="lazyload"></p>
+<p><strong>ï¼3ï¼å¨æå½¢ç¶æ¨¡åè½¬æ¢æä»¤</strong></p>
+<p>å¯¹äºè¾å¥å½¢ç¶æ¯å¨æçæåµï¼è½¬æ¢æ¶è¦è®¾ç½®å½¢ç¶åæ°ï¼</p>
+<pre><code class="language-bash">trtexec.exe --onnx=yolov8s-obb_b.onnx --saveEngine=yolov8s-obb_b.engine --fp16 --minShapes=images:1x3x1024x1024 --optShapes=images:8x3x1024x1024 --maxShapes=images:24x3x1024x1024
+</code></pre>
+<p><strong>åæ°è¯´æï¼</strong></p>
+<ul>
+<li><code>--minShapes=images:1x3x1024x1024</code>ï¼æå°è¾å¥å½¢ç¶</li>
+<li><code>--optShapes=images:8x3x1024x1024</code>ï¼æä¼è¾å¥å½¢ç¶ï¼Engine ä¼ä¸ºæ­¤å½¢ç¶ä¼åï¼</li>
+<li><code>--maxShapes=images:24x3x1024x1024</code>ï¼æå¤§è¾å¥å½¢ç¶</li>
+</ul>
+<p><img alt="å¨æå½¢ç¶è½¬æ¢" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2933426/202601/2933426-20260111184155195-1777862369.png" class="lazyload"></p>
+<p><strong>å¤è¾å¥æ¨¡åè½¬æ¢æä»¤ï¼</strong></p>
+<pre><code class="language-bash">trtexec --onnx=model.onnx --minShapes=input1:1x3x224x224,input2:1x256 --optShapes=input1:4x3x224x224,input2:4x256 --maxShapes=input1:8x3x224x224,input2:8x256
+</code></pre>
+<hr>
+<h3 id="ç¤ºä¾-3yolo-ç®æ æ£æµ">ç¤ºä¾ 3ï¼YOLO ç®æ æ£æµ</h3>
+<p>ä¸é¢æ¯ä¸ä¸ªå®æ´ç YOLO ç®æ æ£æµç¤ºä¾ï¼å±ç¤ºä»æ¨¡åæå»ºå°æ¨ççå¨æµç¨ã</p>
+<blockquote>
+<p><strong>â ï¸ ç±äºä»£ç è¾é¿ï¼æ­¤å¤ä»å±ç¤ºæ ¸å¿æè·¯ãå®æ´ä»£ç è¯·åèé¡¹ç®ç¤ºä¾ã</strong></p>
+</blockquote>
+<pre><code class="language-csharp">using JYPPX.TensorRtSharp.Cuda;
+using JYPPX.TensorRtSharp.Nvinfer;
+using OpenCvSharp;
+using OpenCvSharp.Dnn;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+
+namespace YoloDetInfer
+{
+    internal class Program
+    {
+        // ================= éç½®åæ° =================
+        // æ¨¡åè¾å¥å°ºå¯¸ (å®½=é«)
+        private const int InputSize = 640;
+
+
+        // å»ºè®®æ ¹æ®å®éæ¨¡åå¨æè·åæä½¿ç¨ Netron æ¥ç
+        private const int OutputSize = 8400;
+
+        // æ¨¡åç±»å«æ° (æ ¹æ®æ¨çå·ä½æ°æ®éä¿®æ¹ï¼æ­¤å¤åè®¾ä¸º15ç±»)
+        private const int CategoryNum = 80;
+
+        // ç½®ä¿¡åº¦éå¼
+        private const float ConfThreshold = 0.25f;
+
+        // NMS IOU éå¼
+        private const float NmsThreshold = 0.3f;
+
+        static void Main(string[] args)
+        {
+            //  ============= éç½® TensorRT æ¥å¿åè° =============
+            // å®ä¹ä¸ä¸ªå§æï¼ç¨äºå¤ç TensorRT åé¨äº§ççæ¥å¿æ¶æ¯ã
+            // è¿åè®¸æä»¬å° C++ å±é¢çæ¥å¿è¾åºå° C# çæ§å¶å°ã
+            LogCallbackFunction _callbackDelegate = (message) =&gt;
+            {
+                Console.WriteLine(message);
+            };
+
+            // å°èªå®ä¹çåè°å½æ°æ³¨åç» TensorRT çå¨å± Logger å®ä¾ã
+            Logger.Instance.SetCallback(_callbackDelegate);
+
+            // è®¾ç½®æ¥å¿çä¸¥éæ§çº§å«éå¼ã
+            // LoggerSeverity.kINFO: æå°ä¿¡æ¯ãè­¦ååéè¯¯ã
+            // å¼åè°è¯é¶æ®µéå¸¸è®¾ä¸º kINFO æ kVERBOSEï¼çäº§ç¯å¢å¯è®¾ä¸º kWARNING æ kERROR ä»¥åå°è¾åºã
+            Logger.Instance.SetThreshold(LoggerSeverity.kINFO);
+
+            string enginePath = "yolov8s.engine";
+            string imagePath = "bus.jpg";
+
+
+            // ================= 1. å è½½ TensorRT Engine =================
+            // ä½¿ç¨ using è¯­å¥ç¡®ä¿æä»¶æµæ­£ç¡®å³é­
+            byte[] engineData;
+            using (FileStream fs = new FileStream(enginePath, FileMode.Open, FileAccess.Read))
+            using (BinaryReader br = new BinaryReader(fs))
+            {
+                engineData = br.ReadBytes((int)fs.Length);
+            }
+
+            // ååºåå Engine
+            // Runtime å¿é¡»å¨ Engine çå½å¨æåä¿æå­æ´»ï¼éå¸¸å»ºè®®è®¾ä¸ºå¨å±æéæï¼æèç¡®ä¿å®æåéæ¾
+            Runtime runtime = new Runtime();
+
+            // åå»º CudaEngine (æ­¤å¤ä½¿ç¨ using ç¡®ä¿æ¨çå®æåå¼æè¢«éæ¯)
+            using (CudaEngine cudaEngine = runtime.deserializeCudaEngineByBlob(engineData, (ulong)engineData.Length))
+            {
+                // ================= 2. åå§åæ¨çä¸ä¸æä¸æ¾å­ =================
+                // åå»ºæ§è¡ä¸ä¸æ
+                using (JYPPX.TensorRtSharp.Nvinfer.ExecutionContext executionContext = cudaEngine.createExecutionContext(TrtExecutionContextAllocationStrategy.kSTATIC))
+                using (CudaStream cudaStream = new CudaStream()) // åå»º CUDA æµç¨äºå¼æ­¥æ§è¡
+                {
+                    // è·åè¾å¥ç»´åº¦ä¿¡æ¯ (ç¨äºæ ¡éª)
+                    Dims inputDims = executionContext.getTensorShape("images");
+                    Logger.Instance.INFO($"Input Shape: {inputDims.d[0]}x{inputDims.d[1]}x{inputDims.d[2]}x{inputDims.d[3]}");
+
+                    // è®¡ç®æéæ¾å­å¤§å°
+                    // è¾å¥: Batch=1, Channel=3, Height=640, Width=640
+                    ulong inputSizeInBytes = 1 * 3 * InputSize * InputSize;
+                    // è¾åº: Batch=1, Channels=CategoryNum+4(box)+1(angle), Num=8400
+                    int outputChannels = CategoryNum + 4; // 4åæ  + Nç±»å«
+                    ulong outputSizeInBytes = (ulong)(1 * outputChannels * OutputSize);
+
+                    Stopwatch sw = new Stopwatch();
+                    // åé GPU æ¾å­
+                    using (Cuda1DMemory&lt;float&gt; inputGpuMemory = new Cuda1DMemory&lt;float&gt;(inputSizeInBytes))
+                    using (Cuda1DMemory&lt;float&gt; outputGpuMemory = new Cuda1DMemory&lt;float&gt;(outputSizeInBytes))
+                    {
+                        // ç»å®æ¾å­å°åå° TensorRT ä¸ä¸æ
+                        executionContext.setInputTensorAddress("images", inputGpuMemory.get());
+                        executionContext.setOutputTensorAddress("output0", outputGpuMemory.get());
+                        // é¢ç­æ¨ç (å¯éï¼ä½æ¨èï¼å°¤å¶æ¯é¦æ¬¡æ¨çæ¶)
+                        executionContext.executeV3(cudaStream);
+                        cudaStream.Synchronize();
+                        // ================= 3. å¾åé¢å¤ç =================
+                        Mat img = Cv2.ImRead(imagePath);
+                        if (img.Empty())
+                        {
+                            Logger.Instance.INFO("Image not found!");
+                            return;
+                        }
+
+                        sw.Start();
+                        float[] inputData = PreProcess(img, out float scale, out int xOffset, out int yOffset);
+                        sw.Stop();
+                        Logger.Instance.INFO($"Pre-processing time: {sw.ElapsedMilliseconds} ms");
+                        // ================= 4. æ¨ç =================
+                        // åå¤ä¸»æºåå­æ¥æ¶ç»æ
+                        float[] outputData = new float[outputChannels * OutputSize];
+
+
+                        sw.Restart();
+                        // å°æ°æ®ä»ä¸»æº æ·è´å°è®¾å¤
+                        inputGpuMemory.copyFromHostAsync(inputData, cudaStream);
+
+                        // æ§è¡æ¨ç (enqueueV3 æ¯å¼æ­¥ç)
+                        executionContext.executeV3(cudaStream);
+                        // ç­å¾æ¨çå®æ
+                        cudaStream.Synchronize();
+
+           
+
+                        // å°ç»æä»è®¾å¤ æ·è´åä¸»æº
+                        // è¿éçæ·è´æ¯åæ­¥çï¼ä¼ç­å¾ GPU è®¡ç®å®æ
+                        outputGpuMemory.copyToHostAsync(outputData, cudaStream);
+                        sw.Stop();
+                        Logger.Instance.INFO($"Inference time: {sw.ElapsedMilliseconds} ms");
+                        // ================= 5. åå¤ç =================
+
+                        sw.Restart();
+                        List&lt;DetData&gt; results = PostProcess(outputData, scale, xOffset, yOffset);
+                        sw.Stop();
+                        Logger.Instance.INFO($"Post-processing time: {sw.ElapsedMilliseconds} ms");
+
+                        // ================= 6. ç»æå¯è§å =================
+                        Mat resultImg = DrawDetResult(results, img);
+                        Cv2.ImShow("YOLO11-DET Result", resultImg);
+                        Cv2.WaitKey(0);
+                    }
+                }
+            }
+        }
+
+        /// &lt;summary&gt;
+        /// å¾åé¢å¤çï¼Letterbox ç¼©æ¾ãå½ä¸åãHWC è½¬ CHW
+        /// &lt;/summary&gt;
+        private static float[] PreProcess(Mat img, out float scale, out int xOffset, out int yOffset)
+        {
+            // è½¬æ¢é¢è²ç©ºé´ BGR -&gt; RGB
+            Mat rgbImg = new Mat();
+            Cv2.CvtColor(img, rgbImg, ColorConversionCodes.BGR2RGB);
+
+            // è®¡ç® Letterbox ç¼©æ¾æ¯ä¾
+            int maxDim = Math.Max(rgbImg.Width, rgbImg.Height);
+            scale = (float)maxDim / InputSize;
+
+            // è®¡ç®ç¼©æ¾åçå°ºå¯¸
+            int newWidth = (int)(rgbImg.Width / scale);
+            int newHeight = (int)(rgbImg.Height / scale);
+
+            // Resize å¾å
+            Mat resizedImg = new Mat();
+            Cv2.Resize(rgbImg, resizedImg, new Size(newWidth, newHeight));
+
+            // åå»ºé»è²èæ¯ Canvas (InputSize x InputSize)
+            Mat paddedImg = Mat.Zeros(InputSize, InputSize, MatType.CV_8UC3);
+
+            // è®¡ç®ç²è´´ä½ç½® (å±ä¸­)
+            xOffset = (InputSize - newWidth) / 2;
+            yOffset = (InputSize - newHeight) / 2;
+
+            // å°å¾åæ·è´å° Canvas ä¸­å¤®
+            Rect roi = new Rect(xOffset, yOffset, newWidth, newHeight);
+            resizedImg.CopyTo(new Mat(paddedImg, roi));
+
+            // å½ä¸å (0-255 -&gt; 0-1) å¹¶è½¬ä¸º float ç±»å
+            Mat floatImg = new Mat();
+            paddedImg.ConvertTo(floatImg, MatType.CV_32FC3, 1.0 / 255.0);
+
+            // HWC è½¬ CHW å¹¶å±å¹³ä¸ºä¸ç»´æ°ç»
+            Mat[] channels = Cv2.Split(floatImg);
+            float[] chwData = new float[3 * InputSize * InputSize];
+
+            // æ·è´æ°æ®ï¼Réé -&gt; Céé -&gt; Béé (OpenCV Split åºæ¥é¡ºåºæ¯ B, G, Rï¼å¯¹åºç´¢å¼ 0, 1, 2)
+            int channelSize = InputSize * InputSize;
+            // å° R, G, B ä¾æ¬¡æ·å¥æ°ç»
+            Marshal.Copy(channels[0].Data, chwData, 0, channelSize); // R
+            Marshal.Copy(channels[1].Data, chwData, channelSize, channelSize); // G
+            Marshal.Copy(channels[2].Data, chwData, channelSize * 2, channelSize); // B
+
+            // éæ¾ä¸´æ¶ Mat
+            rgbImg.Dispose();
+            resizedImg.Dispose();
+            paddedImg.Dispose();
+            floatImg.Dispose();
+            foreach (var c in channels) c.Dispose();
+
+            return chwData;
+        }
+
+        /// &lt;summary&gt;
+        /// åå¤çï¼è§£æ TensorRT è¾åºãNMS è¿æ»¤
+        /// &lt;/summary&gt;
+        private static List&lt;DetData&gt; PostProcess(float[] result, float scale, int xOffset, int yOffset)
+        {
+            List&lt;Rect&gt; boxes = new List&lt;Rect&gt;();
+            List&lt;float&gt; confidences = new List&lt;float&gt;();
+            List&lt;int&gt; classIds = new List&lt;int&gt;();
+
+            // éåææé¢æµæ¡ (OutputSize)
+            // æ°æ®å¸å±: [4(box) + 80(classes)] * OutputSize
+            // å±å¹³æ°ç»ä¸­ï¼åä¸å±æ§çæ°æ®æ¯è¿ç»­å­å¨çï¼ä¾å¦ææ cx å¨ä¸èµ·ï¼ææ cy å¨å¨ä¸èµ·...
+            int stride = OutputSize; // æ­¥é¿ï¼ä¸åå±æ§å¨æ°ç»ä¸­çåç§»é
+
+            for (int i = 0; i &lt; OutputSize; i++)
+            {
+                // æ¥æ¾æå¤§ç±»å«æ¦çåå¶ç´¢å¼
+                float maxConf = 0;
+                int maxClassId = -1;
+
+                // éåç±»å«
+                for (int c = 0; c &lt; CategoryNum; c++)
+                {
+                    // æ°ç»ç´¢å¼ï¼(åæ /è§åº¦åç§»é + ç±»å«åç§») * æ¡ç´¢å¼
+                    // æ³¨æï¼åå§ä»£ç ä¸­ result[outputSize * j + i] è¿ç§è®¿é®æ¹å¼åºäº Transposed æ°æ®å¸å±
+                    float conf = result[(4 + c) * stride + i];
+                    if (conf &gt; maxConf)
+                    {
+                        maxConf = conf;
+                        maxClassId = c;
+                    }
+                }
+
+                // ç½®ä¿¡åº¦è¿æ»¤
+                if (maxConf &gt; ConfThreshold)
+                {
+                    // æååæ  (cx, cy, w, h)
+                    float cx = result[0 * stride + i];
+                    float cy = result[1 * stride + i];
+                    float w = result[2 * stride + i];
+                    float h = result[3 * stride + i];
+                    // è¿ååæ å°åå¾å°ºå¯¸
+                    int rx = (int)((cx - xOffset - 0.5 * w) * scale);
+                    int ry = (int)((cy - yOffset - 0.5 * h) * scale);
+                    int rw = (int)(w * scale);
+                    int rh = (int)(h * scale);
+
+                    boxes.Add(new Rect(rx, ry, rw, rh));
+                    confidences.Add(maxConf);
+                    classIds.Add(maxClassId);
+                }
+            }
+
+            // æ§è¡ NMS (æè½¬æ¡ NMS)
+            // OpenCV ç NMSBoxes æ¯æ RotatedRect
+            int[] indices;
+            CvDnn.NMSBoxes(boxes, confidences, ConfThreshold, NmsThreshold, out indices);
+
+            List&lt;DetData&gt; finalResults = new List&lt;DetData&gt;();
+            foreach (int idx in indices)
+            {
+                finalResults.Add(new DetData
+                {
+                    index = classIds[idx],
+                    score = confidences[idx],
+                    box = boxes[idx]
+                });
+            }
+
+            return finalResults;
+        }
+
+        /// &lt;summary&gt;
+        /// ç»å¶æ£æµç»æï¼æ°´å¹³ç©å½¢æ¡ï¼
+        /// &lt;/summary&gt;
+        /// &lt;param name="results"&gt;æ£æµç»æåè¡¨&lt;/param&gt;
+        /// &lt;param name="image"&gt;åå§å¾å&lt;/param&gt;
+        /// &lt;returns&gt;ç»å¶åçå¾å&lt;/returns&gt;
+        public static Mat DrawDetResult(List&lt;DetData&gt; results, Mat image)
+        {
+            // åéå¾åä»¥åä¿®æ¹åå¾
+            Mat mat = image.Clone();
+
+            foreach (var item in results)
+            {
+                // 1. ç»å¶ç©å½¢æ¡
+                // Rect ç»æåå« X, Y, Width, Height
+                Cv2.Rectangle(mat, item.box, new Scalar(0, 255, 0), thickness: 2);
+                // 2. åå¤æ ç­¾ææ¬ (ç±»å«ID - ç½®ä¿¡åº¦)
+                string label = $"{item.index} - {item.score:F2}";
+                // 3. è®¡ç®ææ¬çå°ºå¯¸ï¼ç¨äºç»å¶èæ¯
+                int baseLine = 1;
+                Size textSize = Cv2.GetTextSize(label, HersheyFonts.HersheySimplex, 0.6, 1, out baseLine);
+                // 4. ç»å¶æ ç­¾èæ¯ï¼åéæé»è²ç©å½¢ï¼ï¼é²æ­¢æå­ä¸èæ¯æ··æ·
+                // ä½ç½®ï¼ç©å½¢å·¦ä¸è§ç¥å¾®ä¸ç§»ï¼æèç´æ¥è´´çå·¦ä¸è§
+                Point labelPosition = new Point(item.box.X, item.box.Y - (int)textSize.Height - 5);
+
+                // ç¡®ä¿æ ç­¾ä¸ç»åºå¾åè¾¹ç
+                if (labelPosition.Y &lt; 0) labelPosition.Y = item.box.Y + (int)textSize.Height + 5;
+                Rect labelBgRect = new Rect(labelPosition.X,
+                                            labelPosition.Y - (int)textSize.Height, // OpenCV GetTextSize è¿åçé«åº¦æ¯åºçº¿å°åºé¨çè·ç¦»ï¼éè°æ´
+                                            (int)textSize.Width,
+                                            (int)textSize.Height + (int)baseLine);
+                // å¦æèæ¯æ¡ä¹å¨å¾åèå´åï¼åç»å¶
+                // æ³¨æï¼è¿éç®åå¤çï¼ç´æ¥ç»å¨æ¡ä¸æ¹
+                Cv2.Rectangle(mat,
+                               new Point(item.box.X, item.box.Y - textSize.Height - 5),
+                               new Point(item.box.X + textSize.Width, item.box.Y),
+                               new Scalar(0, 255, 0),
+                               thickness: -1); // -1 è¡¨ç¤ºå¡«å
+                // 5. ç»å¶ææ¬ï¼ç½è²æå­ï¼
+                Cv2.PutText(mat,
+                            label,
+                            new Point(item.box.X, item.box.Y - 5),
+                            HersheyFonts.HersheySimplex,
+                            0.6,
+                            new Scalar(0, 0, 0),
+                            1);
+            }
+            return mat;
+        }
+
+        public class DetData
+        {
+            public int index;
+            public float score;
+            public Rect box;
+        }
+    }
+}
+
+
+</code></pre>
+<p><strong>ç¨åºè¿è¡ç»æï¼</strong></p>
+<p><img alt="æ¨çç»æ" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2933426/202601/2933426-20260111184155202-328383312.png" class="lazyload"></p>
+<p><img alt="æ£æµç»æ" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2933426/202601/2933426-20260111184155266-1783868853.png" class="lazyload"></p>
+<p><strong>æ§è½æµè¯ç»æï¼</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center">Batch Size</th>
+<th style="text-align: center">1</th>
+<th style="text-align: center">2</th>
+<th style="text-align: center">4</th>
+<th style="text-align: center">6</th>
+<th style="text-align: center">8</th>
+<th style="text-align: center">10</th>
+<th style="text-align: center">12</th>
+<th style="text-align: center">14</th>
+<th style="text-align: center">16</th>
+<th style="text-align: center">18</th>
+<th style="text-align: center">20</th>
+<th style="text-align: center">22</th>
+<th style="text-align: center">24</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center">åå¤ç (ms)</td>
+<td style="text-align: center">9</td>
+<td style="text-align: center">13</td>
+<td style="text-align: center">27</td>
+<td style="text-align: center">38</td>
+<td style="text-align: center">56</td>
+<td style="text-align: center">59</td>
+<td style="text-align: center">63</td>
+<td style="text-align: center">83</td>
+<td style="text-align: center">96</td>
+<td style="text-align: center">105</td>
+<td style="text-align: center">118</td>
+<td style="text-align: center">130</td>
+<td style="text-align: center">144</td>
+</tr>
+<tr>
+<td style="text-align: center">æ¨¡åæ¨ç (ms)</td>
+<td style="text-align: center">7</td>
+<td style="text-align: center">15</td>
+<td style="text-align: center">24</td>
+<td style="text-align: center">36</td>
+<td style="text-align: center">48</td>
+<td style="text-align: center">60</td>
+<td style="text-align: center">96</td>
+<td style="text-align: center">84</td>
+<td style="text-align: center">93</td>
+<td style="text-align: center">153</td>
+<td style="text-align: center">120</td>
+<td style="text-align: center">133</td>
+<td style="text-align: center">203</td>
+</tr>
+<tr>
+<td style="text-align: center">åå¤ç (ms)</td>
+<td style="text-align: center">25</td>
+<td style="text-align: center">26</td>
+<td style="text-align: center">26</td>
+<td style="text-align: center">26</td>
+<td style="text-align: center">28</td>
+<td style="text-align: center">27</td>
+<td style="text-align: center">27</td>
+<td style="text-align: center">28</td>
+<td style="text-align: center">28</td>
+<td style="text-align: center">28</td>
+<td style="text-align: center">27</td>
+<td style="text-align: center">31</td>
+<td style="text-align: center">29</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>ð<strong>ç¨åºè·¯å¾é¾æ¥</strong>ï¼å®æ´ç¨åºå·²ç»ä¸ä¼ å°GitHubï¼è¯·èªè¡ä¸è½½ï¼é¾æ¥ä¸ºï¼</p>
+<pre><code>https://github.com/guojin-yan/TensorRT-CSharp-API/tree/TensorRtSharp3.0/samples/YoloDetInfer
+</code></pre>
+<p>åæ¶ä¹æä¾äº<strong>YoloOBB</strong>æ¨¡åçæ¨çç¨åºï¼è¯·èªè¡ä¸è½½ï¼é¾æ¥ä¸ºï¼</p>
+<pre><code>https://github.com/guojin-yan/TensorRT-CSharp-API/tree/TensorRtSharp3.0/samples/YoloObbInfer
+</code></pre>
+</blockquote>
+<hr>
+<h3 id="ç¤ºä¾-4å¨æå½¢ç¶æ¨ç">ç¤ºä¾ 4ï¼å¨æå½¢ç¶æ¨ç</h3>
+<p>å¯¹äºè¾å¥å°ºå¯¸å¯åçæ¨¡åï¼éè¦æ ¹æ®è¾å¥çæ°æ®éç½®å¨æå½¢ç¶ã</p>
+<p><strong>æ ¸å¿ä»£ç ï¼</strong></p>
+<pre><code class="language-csharp">using JYPPX.TensorRtSharp.Cuda;
+using JYPPX.TensorRtSharp.Nvinfer;
+using OpenCvSharp;
+using OpenCvSharp.Dnn;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+
+namespace YoloObbBatchInfer
+{
+    internal class Program
+    {
+        // ================= éç½®åæ° =================
+        // æ¨¡åè¾å¥å°ºå¯¸ (å®½=é«)
+        private const int InputSize = 1024;
+        // å»ºè®®æ ¹æ®å®éæ¨¡åå¨æè·åæä½¿ç¨ Netron æ¥ç
+        private const int OutputSize = 21504;
+        // æ¨¡åç±»å«æ° (æ ¹æ®æ¨çå·ä½æ°æ®éä¿®æ¹ï¼æ­¤å¤åè®¾ä¸º15ç±»)
+        private const int CategoryNum = 15;
+        // ç½®ä¿¡åº¦éå¼
+        private const float ConfThreshold = 0.25f;
+
+        // NMS IOU éå¼
+        private const float NmsThreshold = 0.3f;
+        private const int MaxBatchSize = 24;
+        static void Main(string[] args)
+        {
+            //  ============= éç½® TensorRT æ¥å¿åè° =============
+            // å®ä¹ä¸ä¸ªå§æï¼ç¨äºå¤ç TensorRT åé¨äº§ççæ¥å¿æ¶æ¯ã
+            // è¿åè®¸æä»¬å° C++ å±é¢çæ¥å¿è¾åºå° C# çæ§å¶å°ã
+            LogCallbackFunction _callbackDelegate = (message) =&gt;
+            {
+                Console.WriteLine(message);
+            };
+            // å°èªå®ä¹çåè°å½æ°æ³¨åç» TensorRT çå¨å± Logger å®ä¾ã
+            Logger.Instance.SetCallback(_callbackDelegate);
+
+            // è®¾ç½®æ¥å¿çä¸¥éæ§çº§å«éå¼ã
+            // LoggerSeverity.kINFO: æå°ä¿¡æ¯ãè­¦ååéè¯¯ã
+            // å¼åè°è¯é¶æ®µéå¸¸è®¾ä¸º kINFO æ kVERBOSEï¼çäº§ç¯å¢å¯è®¾ä¸º kWARNING æ kERROR ä»¥åå°è¾åºã
+            Logger.Instance.SetThreshold(LoggerSeverity.kINFO);
+
+            string enginePath = "yolov8s-obb_b.engine";
+            string[] imagePaths = { 
+                "P0006.png" , "P0016.png", "P0456.png", "P0813.png"};
+            // ================= 1. å è½½ TensorRT Engine =================
+            // ä½¿ç¨ using è¯­å¥ç¡®ä¿æä»¶æµæ­£ç¡®å³é­
+            byte[] engineData;
+            using (FileStream fs = new FileStream(enginePath, FileMode.Open, FileAccess.Read))
+            using (BinaryReader br = new BinaryReader(fs))
+            {
+                engineData = br.ReadBytes((int)fs.Length);
+            }
+
+            // ååºåå Engine
+            // Runtime å¿é¡»å¨ Engine çå½å¨æåä¿æå­æ´»ï¼éå¸¸å»ºè®®è®¾ä¸ºå¨å±æéæï¼æèç¡®ä¿å®æåéæ¾
+            Runtime runtime = new Runtime();
+            runtime.setMaxThreads(10);
+            // åå»º CudaEngine (æ­¤å¤ä½¿ç¨ using ç¡®ä¿æ¨çå®æåå¼æè¢«éæ¯)
+            using (CudaEngine cudaEngine = runtime.deserializeCudaEngineByBlob(engineData, (ulong)engineData.Length))
+            {
+                // ================= 2. åå§åæ¨çä¸ä¸æä¸æ¾å­ =================
+                // åå»ºæ§è¡ä¸ä¸æ
+                using (JYPPX.TensorRtSharp.Nvinfer.ExecutionContext executionContext = cudaEngine.createExecutionContext(TrtExecutionContextAllocationStrategy.kSTATIC))
+                using (CudaStream cudaStream = new CudaStream()) // åå»º CUDA æµç¨äºå¼æ­¥æ§è¡
+                {
+                    // è·åè¾å¥ç»´åº¦ä¿¡æ¯ (ç¨äºæ ¡éª)
+                    Dims inputDims = executionContext.getTensorShape("images");
+                    Logger.Instance.INFO($"Input Shape: {inputDims.d[0]}x{inputDims.d[1]}x{inputDims.d[2]}x{inputDims.d[3]}");
+
+                    // è®¡ç®æéæ¾å­å¤§å°
+                    // è¾å¥: Batch=1, Channel=3, Height=1024, Width=1024
+                    ulong inputSizeInBytes = MaxBatchSize * 3 * InputSize * InputSize;
+                    // è¾åº: Batch=1, Channels=CategoryNum+4(box)+1(angle), Num=8400
+                    int outputChannels = CategoryNum + 5; // 4åæ  + 1è§åº¦ + Nç±»å«
+                    ulong outputSizeInBytes = (ulong)(MaxBatchSize * outputChannels * OutputSize);
+
+                    Stopwatch sw = new Stopwatch();
+                    // åé GPU æ¾å­
+                    using (Cuda1DMemory&lt;float&gt; inputGpuMemory = new Cuda1DMemory&lt;float&gt;(inputSizeInBytes))
+                    using (Cuda1DMemory&lt;float&gt; outputGpuMemory = new Cuda1DMemory&lt;float&gt;(outputSizeInBytes))
+                    {
+                        // ç»å®æ¾å­å°åå° TensorRT ä¸ä¸æ
+                        executionContext.setInputTensorAddress("images", inputGpuMemory.get());
+                        executionContext.setOutputTensorAddress("output0", outputGpuMemory.get());
+
+                        // å³é®ä¸æ­¥ï¼ä¿®æ¹æ¬æ¬¡æ¨ççå½¢ç¶
+                        executionContext.setinputShape("images", new Dims(imagePaths.Count(), 3, 1024, 1024));
+                        // é¢ç­æ¨ç (å¯éï¼ä½æ¨èï¼å°¤å¶æ¯é¦æ¬¡æ¨çæ¶)
+                        executionContext.executeV3(cudaStream);
+                        cudaStream.Synchronize();
+
+                        // ================= 3. å¾åé¢å¤ç =================
+                        List&lt;Mat&gt; images = new List&lt;Mat&gt;();
+                        foreach (var path in imagePaths) 
+                        {
+                            Mat img = Cv2.ImRead(path);
+                            if (img.Empty())
+                            {
+                                Logger.Instance.INFO("Image not found!");
+                                return;
+                            }
+                            images.Add(img);
+                        }
+
+                        (float[] inputData1, float[] scales1, int[] xOffsets1, int[] yOffsets1) = PreProcessBatch(images);
+                        sw.Start();
+                        (float[] inputData, float[] scales, int[] xOffsets, int[] yOffsets) = PreProcessBatch(images);
+                        sw.Stop();
+                        Logger.Instance.INFO($"Pre-processing time: {sw.ElapsedMilliseconds} ms");
+                        // ================= 4. æ¨ç =================
+
+                        // åå¤ä¸»æºåå­æ¥æ¶ç»æ
+                        float[] outputData1 = new float[imagePaths.Count() * outputChannels * OutputSize];
+                        // å°æ°æ®ä»ä¸»æº æ·è´å°è®¾å¤
+                        inputGpuMemory.copyFromHostAsync(inputData, cudaStream);
+
+                        // æ§è¡æ¨ç (enqueueV3 æ¯å¼æ­¥ç)
+                        executionContext.executeV3(cudaStream);
+                        // ç­å¾æ¨çå®æ
+                        cudaStream.Synchronize();
+                        // å°ç»æä»è®¾å¤ æ·è´åä¸»æº
+                        // è¿éçæ·è´æ¯åæ­¥çï¼ä¼ç­å¾ GPU è®¡ç®å®æ
+                        outputGpuMemory.copyToHostAsync(outputData1, cudaStream);
+
+                        sw.Restart();
+                        // åå¤ä¸»æºåå­æ¥æ¶ç»æ
+                        float[] outputData = new float[imagePaths.Count() * outputChannels * OutputSize];
+                        // å°æ°æ®ä»ä¸»æº æ·è´å°è®¾å¤
+                        inputGpuMemory.copyFromHostAsync(inputData, cudaStream);
+
+                        // æ§è¡æ¨ç (enqueueV3 æ¯å¼æ­¥ç)
+                        executionContext.executeV3(cudaStream);
+                        // ç­å¾æ¨çå®æ
+                        cudaStream.Synchronize();
+                        // å°ç»æä»è®¾å¤ æ·è´åä¸»æº
+                        // è¿éçæ·è´æ¯åæ­¥çï¼ä¼ç­å¾ GPU è®¡ç®å®æ
+                        outputGpuMemory.copyToHostAsync(outputData, cudaStream);
+
+                        sw.Stop();
+                        Logger.Instance.INFO($"Inference time: {sw.ElapsedMilliseconds} ms");
+                        // ================= 5. åå¤ç =================
+                        List&lt;List&lt;ObbData&gt;&gt; results1 = PostProcessBatch(outputData, scales, xOffsets, yOffsets);
+                        sw.Restart();
+                        List&lt;List&lt;ObbData&gt;&gt; results = PostProcessBatch(outputData, scales, xOffsets, yOffsets);
+                        sw.Stop();
+                        Logger.Instance.INFO($"Post-processing time: {sw.ElapsedMilliseconds} ms");
+
+                        // ================= 6. ç»æå¯è§å =================
+                        List&lt;Mat&gt; resultMats = new List&lt;Mat&gt;();
+                        for(int i = 0; i &lt; results.Count; ++i)
+                        {
+                            resultMats.Add(DrawObbResult(results[i], images[i]));
+                        }
+                        Mat putResultImgs = StitchHorizontalWithPadding(resultMats);
+                        Cv2.ImWrite("YOLO11-OBB Result.png", putResultImgs);
+                        Cv2.ImShow("YOLO11-OBB Result", putResultImgs);
+                        Cv2.WaitKey(0);
+                    }
+                }
+            }
+        }
+
+        /// &lt;summary&gt;
+        /// å¾åé¢å¤çï¼Letterbox ç¼©æ¾ãå½ä¸åãHWC è½¬ CHW
+        /// &lt;/summary&gt;
+        private static (float[], float[] ,  int[] , int[] ) PreProcessBatch(List&lt;Mat&gt; imgs)
+        {
+            int dataLen = 3 * InputSize * InputSize;
+            float[] chwData = new float[imgs.Count * dataLen];
+            float[] scales = new float[imgs.Count];
+            int[] xOffsets = new int[imgs.Count];
+            int[]  yOffsets = new int[imgs.Count];
+            Parallel.For(0, imgs.Count, i =&gt;
+            {
+                Mat img = imgs[i];
+                // è½¬æ¢é¢è²ç©ºé´ BGR -&gt; RGB
+                Mat rgbImg = new Mat();
+                Cv2.CvtColor(img, rgbImg, ColorConversionCodes.BGR2RGB);
+
+                // è®¡ç® Letterbox ç¼©æ¾æ¯ä¾
+                int maxDim = Math.Max(rgbImg.Width, rgbImg.Height);
+                scales[i] = (float)maxDim / InputSize;
+
+                // è®¡ç®ç¼©æ¾åçå°ºå¯¸
+                int newWidth = (int)(rgbImg.Width / scales[i]);
+                int newHeight = (int)(rgbImg.Height / scales[i]);
+
+                // Resize å¾å
+                Mat resizedImg = new Mat();
+                Cv2.Resize(rgbImg, resizedImg, new Size(newWidth, newHeight));
+
+                // åå»ºé»è²èæ¯ Canvas (InputSize x InputSize)
+                Mat paddedImg = Mat.Zeros(InputSize, InputSize, MatType.CV_8UC3);
+
+                // è®¡ç®ç²è´´ä½ç½® (å±ä¸­)
+                xOffsets[i] = (InputSize - newWidth) / 2;
+                yOffsets[i] = (InputSize - newHeight) / 2;
+
+                // å°å¾åæ·è´å° Canvas ä¸­å¤®
+                Rect roi = new Rect(xOffsets[i], yOffsets[i], newWidth, newHeight);
+                resizedImg.CopyTo(new Mat(paddedImg, roi));
+
+                // å½ä¸å (0-255 -&gt; 0-1) å¹¶è½¬ä¸º float ç±»å
+                Mat floatImg = new Mat();
+                paddedImg.ConvertTo(floatImg, MatType.CV_32FC3, 1.0 / 255.0);
+
+                // HWC è½¬ CHW å¹¶å±å¹³ä¸ºä¸ç»´æ°ç»
+                Mat[] channels = Cv2.Split(floatImg);
+
+
+                // æ·è´æ°æ®ï¼Réé -&gt; Céé -&gt; Béé (OpenCV Split åºæ¥é¡ºåºæ¯ B, G, Rï¼å¯¹åºç´¢å¼ 0, 1, 2)
+                int channelSize = InputSize * InputSize;
+                // å° R, G, B ä¾æ¬¡æ·å¥æ°ç»
+                Marshal.Copy(channels[0].Data, chwData, dataLen * i, channelSize); // R
+                Marshal.Copy(channels[1].Data, chwData, dataLen * i + channelSize, channelSize); // G
+                Marshal.Copy(channels[2].Data, chwData, dataLen * i + channelSize * 2, channelSize); // B
+
+                // éæ¾ä¸´æ¶ Mat
+                rgbImg.Dispose();
+                resizedImg.Dispose();
+                paddedImg.Dispose();
+                floatImg.Dispose();
+                foreach (var c in channels) c.Dispose();
+            });
+
+
+
+            return (chwData, scales, xOffsets, yOffsets);
+        }
+
+        /// &lt;summary&gt;
+        /// åå¤çï¼è§£æ TensorRT è¾åºãNMS è¿æ»¤
+        /// &lt;/summary&gt;
+        private static List&lt;List&lt;ObbData&gt;&gt; PostProcessBatch(float[] result, float[] scales, int[] xOffsets, int[] yOffsets)
+        {
+            List&lt;ObbData&gt;[] obbDatas = new List&lt;ObbData&gt;[scales.Length];
+
+            Parallel.For(0, scales.Length, b =&gt;
+            {
+                List&lt;RotatedRect&gt; boxes = new List&lt;RotatedRect&gt;();
+                List&lt;float&gt; confidences = new List&lt;float&gt;();
+                List&lt;int&gt; classIds = new List&lt;int&gt;();
+
+                // éåææé¢æµæ¡ (OutputSize)
+                // æ°æ®å¸å±: [4(box) + 15(classes) + 1(angle)] * OutputSize
+                // å±å¹³æ°ç»ä¸­ï¼åä¸å±æ§çæ°æ®æ¯è¿ç»­å­å¨çï¼ä¾å¦ææ cx å¨ä¸èµ·ï¼ææ cy å¨å¨ä¸èµ·...
+                int stride = OutputSize; // æ­¥é¿ï¼ä¸åå±æ§å¨æ°ç»ä¸­çåç§»é
+
+                int resultDataOffset = OutputSize * (CategoryNum + 5) * b;
+
+                for (int i = 0; i &lt; OutputSize; i++)
+                {
+                    // æ¥æ¾æå¤§ç±»å«æ¦çåå¶ç´¢å¼
+                    float maxConf = 0;
+                    int maxClassId = -1;
+
+                    // éåç±»å« 
+                    for (int c = 0; c &lt; CategoryNum; c++)
+                    {
+                        // æ°ç»ç´¢å¼ï¼(åæ /è§åº¦åç§»é + ç±»å«åç§») * æ¡ç´¢å¼
+                        // æ³¨æï¼åå§ä»£ç ä¸­ result[outputSize * j + i] è¿ç§è®¿é®æ¹å¼åºäº Transposed æ°æ®å¸å±
+                        float conf = result[(4 + c) * stride + i + resultDataOffset];
+                        if (conf &gt; maxConf)
+                        {
+                            maxConf = conf;
+                            maxClassId = c;
+                        }
+                    }
+
+                    // ç½®ä¿¡åº¦è¿æ»¤
+                    if (maxConf &gt; ConfThreshold)
+                    {
+                        // æååæ  (cx, cy, w, h)
+                        float cx = result[0 * stride + i + resultDataOffset];
+                        float cy = result[1 * stride + i + resultDataOffset];
+                        float w = result[2 * stride + i + resultDataOffset];
+                        float h = result[3 * stride + i + resultDataOffset];
+
+                        // æåè§åº¦ (éå¸¸å¨ç¬¬ 5 ä¸ªä½ç½®ï¼å³ç±»å«ä¹å)
+                        float angleRad = result[(CategoryNum + 4) * stride + i + resultDataOffset];
+
+                        // è¿ååæ å°åå¾å°ºå¯¸
+                        float rx = (cx - xOffsets[b]) * scales[b];
+                        float ry = (cy - yOffsets[b]) * scales[b];
+                        float rw = w * scales[b];
+                        float rh = h * scales[b];
+
+                        // å°å¼§åº¦è½¬æ¢ä¸ºè§åº¦
+                        // Normalize angle to [-Ï/2, Ï/2] range
+                        // å°è§åº¦å½ä¸åå°[-Ï/2, Ï/2]èå´
+                        if (angleRad &gt;= Math.PI &amp;&amp; angleRad &lt;= 0.75 * Math.PI)
+                        {
+                            angleRad -= (float)Math.PI;
+                        }
+                        float angleDeg = angleRad * (float)(180f / Math.PI);  // Convert to degrees/è½¬æ¢ä¸ºè§åº¦å¶
+
+                        boxes.Add(new RotatedRect(new Point2f(rx, ry), new Size2f(rw, rh), angleDeg));
+                        confidences.Add(maxConf);
+                        classIds.Add(maxClassId);
+                    }
+                }
+
+                // æ§è¡ NMS (æè½¬æ¡ NMS)
+                // OpenCV ç NMSBoxes æ¯æ RotatedRect
+                int[] indices;
+                CvDnn.NMSBoxes(boxes, confidences, ConfThreshold, NmsThreshold, out indices);
+
+                List&lt;ObbData&gt; finalResults = new List&lt;ObbData&gt;();
+                foreach (int idx in indices)
+                {
+                    finalResults.Add(new ObbData
+                    {
+                        index = classIds[idx],
+                        score = confidences[idx],
+                        box = boxes[idx]
+                    });
+                }
+                obbDatas[b] = finalResults;
+            });
+
+           
+
+            return obbDatas.Select(x =&gt; x?.ToList() ?? new List&lt;ObbData&gt;()).ToList();
+        }
+
+        /// &lt;summary&gt;
+        /// ç»å¶æè½¬æ£æµç»æ
+        /// &lt;/summary&gt;
+        public static Mat DrawObbResult(List&lt;ObbData&gt; results, Mat image)
+        {
+            // åéå¾åä»¥åä¿®æ¹åå¾
+            Mat mat = image.Clone();
+
+            foreach (var item in results)
+            {
+                // è·åæè½¬ç©å½¢çåä¸ªé¡¶ç¹
+                Point2f[] points = item.box.Points();
+
+                // ç»å¶å¤è¾¹å½¢æ¡
+                for (int j = 0; j &lt; 4; j++)
+                {
+                    Cv2.Line(mat, (Point)points[j], (Point)points[(j + 1) % 4],
+                            new Scalar(0, 255, 0), 2);
+                }
+
+                // ç»å¶æ ç­¾ (ç±»å« - ç½®ä¿¡åº¦)
+                string label = $"{item.index} - {item.score:F2}";
+                Point2f textPos = points[0]; // å·¦ä¸è§
+
+                Cv2.PutText(mat, label, (Point)textPos, HersheyFonts.HersheySimplex, 0.8,
+                            new Scalar(255, 0, 0), 2);
+            }
+
+            return mat;
+        }
+
+        public class ObbData
+        {
+            public int index;
+            public float score;
+            public RotatedRect box;
+        }
+
+
+        /// &lt;summary&gt;
+        /// æºè½æ°´å¹³æ¼æ¥ï¼èªå¨å¤çé«åº¦ä¸ä¸è´çå¾ç
+        /// &lt;/summary&gt;
+        /// &lt;param name="images"&gt;å¾çåè¡¨&lt;/param&gt;
+        /// &lt;param name="backgroundColor"&gt;å¡«åèæ¯é¢è²ï¼é»è®¤ä¸ºé»è²&lt;/param&gt;
+        /// &lt;returns&gt;æ¼æ¥åç Mat&lt;/returns&gt;
+        public static Mat StitchHorizontalWithPadding(List&lt;Mat&gt; images, Scalar? backgroundColor = null)
+        {
+            if (images == null || images.Count == 0)
+                return new Mat();
+            // 1. æ¾å°ææå¾çä¸­çæå¤§é«åº¦
+            int maxHeight = images.Max(img =&gt; img.Rows);
+            // è®¡ç®æ»å®½åº¦
+            int totalWidth = images.Sum(img =&gt; img.Cols);
+            // 2. åå¤ç»æç»å¸
+            Mat result = new Mat(maxHeight, totalWidth, images[0].Type(), backgroundColor ?? Scalar.Black);
+            // 3. å°æ¯ä¸å¼ å¾çå¤å¶å°ç»å¸çå¯¹åºä½ç½®
+            int currentX = 0; // å½å X è½´åç§»é
+            foreach (var img in images)
+            {
+                if (img.Empty()) continue;
+                // è®¡ç®å½åå¾çéè¦åç´åç§»å¤å°ï¼åºé¨å¯¹é½é»è¾ï¼
+                // å¦ææ³é¡¶é¨å¯¹é½ï¼yOffset = 0
+                // å¦ææ³å±ä¸­ï¼yOffset = (maxHeight - img.Rows) / 2
+                int yOffset = maxHeight - img.Rows;
+                // å®ä¹ ROI (æå´è¶£åºå)
+                Rect roi = new Rect(currentX, yOffset, img.Cols, img.Rows);
+
+                // å°åå¾çæ·è´å°ç»æå¾ç ROI åºå
+                img.CopyTo(new Mat(result, roi));
+                // ç§»å¨ X è½´æé
+                currentX += img.Cols;
+            }
+            return result;
+        }
+    }
+}
+
+
+</code></pre>
+<p>ä¸å¾ä¸ºä¸è¿°ç¨åºè¿è¡åçè¾åºï¼æ¨¡åè¾å¥å½¢ç¶ä¸º -1x3x1024x1024ï¼å¶ä¸­Batch Sizeä¸ºå¨æè¾å¥ï¼é¡¹ç®ç¤ºä¾ä½¿ç¨äºåå¼ å¾çè¿è¡åæ¶æ¨çï¼å¼å¯å¹¶è¡å¤çåï¼åå¼ å¾åé¢å¤çæ¶é´ä»ç¨21msï¼æ¨çæ¶é´ä¸º25msï¼åå¤çæ¶é´ä¸º26msï¼ç´¯è®¡æ¶é´ä¸º72ms.</p>
+<p><img alt="image-20260109225451392" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2933426/202601/2933426-20260111184155252-292402880.png" class="lazyload"></p>
+<p>ä¸å¾ä¸ºæ¨çç»æå±ç¤ºï¼</p>
+<p><img alt="YOLO11-OBB Result" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2933426/202601/2933426-20260111184156266-602207018.png" class="lazyload"></p>
+<p><strong>æ§è½æµè¯ï¼ä¸å Batch Sizeï¼ï¼</strong></p>
+<p>ä¸ºäºæ¢ç©¶ä¸åBatch Sizeæ¨çæ¶é´å·®å¼ï¼æ­¤å¤å¯¹ä¸åBatch Sizeè¿è¡äºæµè¯ï¼æµè¯ç»æå¦ä¸ï¼</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center">Batch Size</th>
+<th style="text-align: center">1</th>
+<th style="text-align: center">2</th>
+<th style="text-align: center">4</th>
+<th style="text-align: center">6</th>
+<th style="text-align: center">8</th>
+<th style="text-align: center">10</th>
+<th style="text-align: center">12</th>
+<th style="text-align: center">14</th>
+<th style="text-align: center">16</th>
+<th style="text-align: center">18</th>
+<th style="text-align: center">20</th>
+<th style="text-align: center">22</th>
+<th style="text-align: center">24</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center">åå¤ç (ms )</td>
+<td style="text-align: center">9</td>
+<td style="text-align: center">13</td>
+<td style="text-align: center">27</td>
+<td style="text-align: center">38</td>
+<td style="text-align: center">56</td>
+<td style="text-align: center">59</td>
+<td style="text-align: center">63</td>
+<td style="text-align: center">83</td>
+<td style="text-align: center">96</td>
+<td style="text-align: center">105</td>
+<td style="text-align: center">118</td>
+<td style="text-align: center">130</td>
+<td style="text-align: center">144</td>
+</tr>
+<tr>
+<td style="text-align: center">æ¨¡åæ¨ç (ms)</td>
+<td style="text-align: center">7</td>
+<td style="text-align: center">15</td>
+<td style="text-align: center">24</td>
+<td style="text-align: center">36</td>
+<td style="text-align: center">48</td>
+<td style="text-align: center">60</td>
+<td style="text-align: center">96</td>
+<td style="text-align: center">84</td>
+<td style="text-align: center">93</td>
+<td style="text-align: center">153</td>
+<td style="text-align: center">120</td>
+<td style="text-align: center">133</td>
+<td style="text-align: center">203</td>
+</tr>
+<tr>
+<td style="text-align: center">åå¤ç (ms)</td>
+<td style="text-align: center">25</td>
+<td style="text-align: center">26</td>
+<td style="text-align: center">26</td>
+<td style="text-align: center">26</td>
+<td style="text-align: center">28</td>
+<td style="text-align: center">27</td>
+<td style="text-align: center">27</td>
+<td style="text-align: center">28</td>
+<td style="text-align: center">28</td>
+<td style="text-align: center">28</td>
+<td style="text-align: center">27</td>
+<td style="text-align: center">31</td>
+<td style="text-align: center">29</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>ð<strong>ç¨åºè·¯å¾é¾æ¥</strong>ï¼å®æ´ç¨åºå·²ç»ä¸ä¼ å°GitHubï¼è¯·èªè¡ä¸è½½ï¼é¾æ¥ä¸ºï¼</p>
+<pre><code>https://github.com/guojin-yan/TensorRT-CSharp-API/tree/TensorRtSharp3.0/samples/YoloObbBatchInfer
+</code></pre>
+</blockquote>
+<hr>
+<h3 id="ç¤ºä¾-5å¹¶è¡æ¨ç">ç¤ºä¾ 5ï¼å¹¶è¡æ¨ç</h3>
+<p>ä½¿ç¨ä¸ä¸ª Runtime åå»ºå¤æ§è¡ä¸ä¸æï¼å®ç°å¤å¹¶è¡æ¨çã</p>
+<p><strong>æ ¸å¿ä»£ç ï¼</strong></p>
+<pre><code class="language-csharp">using JYPPX.TensorRtSharp.Cuda;
+using JYPPX.TensorRtSharp.Nvinfer;
+using OpenCvSharp;
+using OpenCvSharp.Dnn;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using static OpenCvSharp.FileStorage;
+
+namespace YoloDetParallelInfer
+{
+    internal class Program
+    {
+        // ================= éç½®åæ° =================
+        // æ¨¡åè¾å¥å°ºå¯¸ (å®½=é«)
+        private const int InputSize = 640;
+
+
+        // å»ºè®®æ ¹æ®å®éæ¨¡åå¨æè·åæä½¿ç¨ Netron æ¥ç
+        private const int OutputSize = 8400;
+
+        // æ¨¡åç±»å«æ° (æ ¹æ®æ¨çå·ä½æ°æ®éä¿®æ¹ï¼æ­¤å¤åè®¾ä¸º15ç±»)
+        private const int CategoryNum = 80;
+
+        // ç½®ä¿¡åº¦éå¼
+        private const float ConfThreshold = 0.25f;
+
+        // NMS IOU éå¼
+        private const float NmsThreshold = 0.3f;
+
+        static void Main(string[] args)
+        {
+            //  ============= éç½® TensorRT æ¥å¿åè° =============
+            // å®ä¹ä¸ä¸ªå§æï¼ç¨äºå¤ç TensorRT åé¨äº§ççæ¥å¿æ¶æ¯ã
+            // è¿åè®¸æä»¬å° C++ å±é¢çæ¥å¿è¾åºå° C# çæ§å¶å°ã
+            LogCallbackFunction _callbackDelegate = (message) =&gt;
+            {
+                Console.WriteLine(message);
+            };
+
+            // å°èªå®ä¹çåè°å½æ°æ³¨åç» TensorRT çå¨å± Logger å®ä¾ã
+            Logger.Instance.SetCallback(_callbackDelegate);
+
+            // è®¾ç½®æ¥å¿çä¸¥éæ§çº§å«éå¼ã
+            // LoggerSeverity.kINFO: æå°ä¿¡æ¯ãè­¦ååéè¯¯ã
+            // å¼åè°è¯é¶æ®µéå¸¸è®¾ä¸º kINFO æ kVERBOSEï¼çäº§ç¯å¢å¯è®¾ä¸º kWARNING æ kERROR ä»¥åå°è¾åºã
+            Logger.Instance.SetThreshold(LoggerSeverity.kINFO);
+
+            string enginePath = "yolov8s.engine";
+            string imagePath = "bus.jpg";
+
+                           Mat img = Cv2.ImRead(imagePath);
+                            if (img.Empty())
+                            {
+                                Logger.Instance.INFO("Image not found!");
+                                return;
+                            }
+            // ================= 1. å è½½ TensorRT Engine =================
+            // ä½¿ç¨ using è¯­å¥ç¡®ä¿æä»¶æµæ­£ç¡®å³é­
+            byte[] engineData;
+            using (FileStream fs = new FileStream(enginePath, FileMode.Open, FileAccess.Read))
+            using (BinaryReader br = new BinaryReader(fs))
+            {
+                engineData = br.ReadBytes((int)fs.Length);
+            }
+
+            // ååºåå Engine
+            // Runtime å¿é¡»å¨ Engine çå½å¨æåä¿æå­æ´»ï¼éå¸¸å»ºè®®è®¾ä¸ºå¨å±æéæï¼æèç¡®ä¿å®æåéæ¾
+            Runtime runtime = new Runtime();
+            runtime.setMaxThreads(6);
+            // åå»º CudaEngine (æ­¤å¤ä½¿ç¨ using ç¡®ä¿æ¨çå®æåå¼æè¢«éæ¯)
+            using (CudaEngine cudaEngine = runtime.deserializeCudaEngineByBlob(engineData, (ulong)engineData.Length))
+            {
+                // ================= 2. åå§åæ¨çä¸ä¸æä¸æ¾å­ =================
+                Stopwatch totalSw = new Stopwatch();
+                totalSw.Start();
+                Parallel.For(0, 24, b =&gt;
+                {           
+                    
+                    // åå»ºæ§è¡ä¸ä¸æ
+                    using (JYPPX.TensorRtSharp.Nvinfer.ExecutionContext executionContext = cudaEngine.createExecutionContext(TrtExecutionContextAllocationStrategy.kSTATIC))
+                    using (CudaStream cudaStream = new CudaStream()) // åå»º CUDA æµç¨äºå¼æ­¥æ§è¡
+                    {
+                        // è·åè¾å¥ç»´åº¦ä¿¡æ¯ (ç¨äºæ ¡éª)
+                        Dims inputDims = executionContext.getTensorShape("images");
+                        Logger.Instance.INFO($"Input Shape: {inputDims.d[0]}x{inputDims.d[1]}x{inputDims.d[2]}x{inputDims.d[3]}");
+
+                        // è®¡ç®æéæ¾å­å¤§å°
+                        // è¾å¥: Batch=1, Channel=3, Height=640, Width=640
+                        ulong inputSizeInBytes = 1 * 3 * InputSize * InputSize;
+                        // è¾åº: Batch=1, Channels=CategoryNum+4(box)+1(angle), Num=8400
+                        int outputChannels = CategoryNum + 4; // 4åæ  + Nç±»å«
+                        ulong outputSizeInBytes = (ulong)(1 * outputChannels * OutputSize);
+
+                        Stopwatch sw = new Stopwatch();
+                        // åé GPU æ¾å­
+                        using (Cuda1DMemory&lt;float&gt; inputGpuMemory = new Cuda1DMemory&lt;float&gt;(inputSizeInBytes))
+                        using (Cuda1DMemory&lt;float&gt; outputGpuMemory = new Cuda1DMemory&lt;float&gt;(outputSizeInBytes))
+                        {
+                            // ç»å®æ¾å­å°åå° TensorRT ä¸ä¸æ
+                            executionContext.setInputTensorAddress("images", inputGpuMemory.get());
+                            executionContext.setOutputTensorAddress("output0", outputGpuMemory.get());
+                            // é¢ç­æ¨ç (å¯éï¼ä½æ¨èï¼å°¤å¶æ¯é¦æ¬¡æ¨çæ¶)
+                            executionContext.executeV3(cudaStream);
+                            cudaStream.Synchronize();
+                            // ================= 3. å¾åé¢å¤ç =================
+             
+
+                            sw.Start();
+                            float[] inputData = PreProcess(img, out float scale, out int xOffset, out int yOffset);
+                            sw.Stop();
+                            Logger.Instance.INFO($"Channel {b}: Pre-processing time: {sw.ElapsedMilliseconds} ms");
+                            // ================= 4. æ¨ç =================
+                            // åå¤ä¸»æºåå­æ¥æ¶ç»æ
+                            float[] outputData = new float[outputChannels * OutputSize];
+
+
+                            sw.Restart();
+                            // å°æ°æ®ä»ä¸»æº æ·è´å°è®¾å¤
+                            inputGpuMemory.copyFromHostAsync(inputData, cudaStream);
+
+                            // æ§è¡æ¨ç (enqueueV3 æ¯å¼æ­¥ç)
+                            executionContext.executeV3(cudaStream);
+                            // ç­å¾æ¨çå®æ
+                            cudaStream.Synchronize();
+
+
+
+                            // å°ç»æä»è®¾å¤ æ·è´åä¸»æº
+                            // è¿éçæ·è´æ¯åæ­¥çï¼ä¼ç­å¾ GPU è®¡ç®å®æ
+                            outputGpuMemory.copyToHostAsync(outputData, cudaStream);
+                            sw.Stop();
+                            Logger.Instance.INFO($"Channel {b}: Inference time: {sw.ElapsedMilliseconds} ms");
+                            // ================= 5. åå¤ç =================
+
+                            sw.Restart();
+                            List&lt;DetData&gt; results = PostProcess(outputData, scale, xOffset, yOffset);
+                            sw.Stop();
+                            Logger.Instance.INFO($"Channel {b}: Post-processing time: {sw.ElapsedMilliseconds} ms");
+
+                            // ================= 6. ç»æå¯è§å =================
+                            //Mat resultImg = DrawDetResult(results, img);
+                            //Cv2.ImShow("YOLO11-DET Result", resultImg);
+                            //Cv2.WaitKey(0);
+                        }
+                    }
+                });
+
+                totalSw.Stop();
+                Logger.Instance.INFO($"Total time for 8 inferences: {totalSw.ElapsedMilliseconds} ms");
+
+
+            }
+        }
+
+        /// &lt;summary&gt;
+        /// å¾åé¢å¤çï¼Letterbox ç¼©æ¾ãå½ä¸åãHWC è½¬ CHW
+        /// &lt;/summary&gt;
+        private static float[] PreProcess(Mat img, out float scale, out int xOffset, out int yOffset)
+        {
+            // è½¬æ¢é¢è²ç©ºé´ BGR -&gt; RGB
+            Mat rgbImg = new Mat();
+            Cv2.CvtColor(img, rgbImg, ColorConversionCodes.BGR2RGB);
+
+            // è®¡ç® Letterbox ç¼©æ¾æ¯ä¾
+            int maxDim = Math.Max(rgbImg.Width, rgbImg.Height);
+            scale = (float)maxDim / InputSize;
+
+            // è®¡ç®ç¼©æ¾åçå°ºå¯¸
+            int newWidth = (int)(rgbImg.Width / scale);
+            int newHeight = (int)(rgbImg.Height / scale);
+
+            // Resize å¾å
+            Mat resizedImg = new Mat();
+            Cv2.Resize(rgbImg, resizedImg, new Size(newWidth, newHeight));
+
+            // åå»ºé»è²èæ¯ Canvas (InputSize x InputSize)
+            Mat paddedImg = Mat.Zeros(InputSize, InputSize, MatType.CV_8UC3);
+
+            // è®¡ç®ç²è´´ä½ç½® (å±ä¸­)
+            xOffset = (InputSize - newWidth) / 2;
+            yOffset = (InputSize - newHeight) / 2;
+
+            // å°å¾åæ·è´å° Canvas ä¸­å¤®
+            Rect roi = new Rect(xOffset, yOffset, newWidth, newHeight);
+            resizedImg.CopyTo(new Mat(paddedImg, roi));
+
+            // å½ä¸å (0-255 -&gt; 0-1) å¹¶è½¬ä¸º float ç±»å
+            Mat floatImg = new Mat();
+            paddedImg.ConvertTo(floatImg, MatType.CV_32FC3, 1.0 / 255.0);
+
+            // HWC è½¬ CHW å¹¶å±å¹³ä¸ºä¸ç»´æ°ç»
+            Mat[] channels = Cv2.Split(floatImg);
+            float[] chwData = new float[3 * InputSize * InputSize];
+
+            // æ·è´æ°æ®ï¼Réé -&gt; Céé -&gt; Béé (OpenCV Split åºæ¥é¡ºåºæ¯ B, G, Rï¼å¯¹åºç´¢å¼ 0, 1, 2)
+            int channelSize = InputSize * InputSize;
+            // å° R, G, B ä¾æ¬¡æ·å¥æ°ç»
+            Marshal.Copy(channels[0].Data, chwData, 0, channelSize); // R
+            Marshal.Copy(channels[1].Data, chwData, channelSize, channelSize); // G
+            Marshal.Copy(channels[2].Data, chwData, channelSize * 2, channelSize); // B
+
+            // éæ¾ä¸´æ¶ Mat
+            rgbImg.Dispose();
+            resizedImg.Dispose();
+            paddedImg.Dispose();
+            floatImg.Dispose();
+            foreach (var c in channels) c.Dispose();
+
+            return chwData;
+        }
+
+        /// &lt;summary&gt;
+        /// åå¤çï¼è§£æ TensorRT è¾åºãNMS è¿æ»¤
+        /// &lt;/summary&gt;
+        private static List&lt;DetData&gt; PostProcess(float[] result, float scale, int xOffset, int yOffset)
+        {
+            List&lt;Rect&gt; boxes = new List&lt;Rect&gt;();
+            List&lt;float&gt; confidences = new List&lt;float&gt;();
+            List&lt;int&gt; classIds = new List&lt;int&gt;();
+
+            // éåææé¢æµæ¡ (OutputSize)
+            // æ°æ®å¸å±: [4(box) + 80(classes)] * OutputSize
+            // å±å¹³æ°ç»ä¸­ï¼åä¸å±æ§çæ°æ®æ¯è¿ç»­å­å¨çï¼ä¾å¦ææ cx å¨ä¸èµ·ï¼ææ cy å¨å¨ä¸èµ·...
+            int stride = OutputSize; // æ­¥é¿ï¼ä¸åå±æ§å¨æ°ç»ä¸­çåç§»é
+
+            for (int i = 0; i &lt; OutputSize; i++)
+            {
+                // æ¥æ¾æå¤§ç±»å«æ¦çåå¶ç´¢å¼
+                float maxConf = 0;
+                int maxClassId = -1;
+
+                // éåç±»å«
+                for (int c = 0; c &lt; CategoryNum; c++)
+                {
+                    // æ°ç»ç´¢å¼ï¼(åæ /è§åº¦åç§»é + ç±»å«åç§») * æ¡ç´¢å¼
+                    // æ³¨æï¼åå§ä»£ç ä¸­ result[outputSize * j + i] è¿ç§è®¿é®æ¹å¼åºäº Transposed æ°æ®å¸å±
+                    float conf = result[(4 + c) * stride + i];
+                    if (conf &gt; maxConf)
+                    {
+                        maxConf = conf;
+                        maxClassId = c;
+                    }
+                }
+
+                // ç½®ä¿¡åº¦è¿æ»¤
+                if (maxConf &gt; ConfThreshold)
+                {
+                    // æååæ  (cx, cy, w, h)
+                    float cx = result[0 * stride + i];
+                    float cy = result[1 * stride + i];
+                    float w = result[2 * stride + i];
+                    float h = result[3 * stride + i];
+                    // è¿ååæ å°åå¾å°ºå¯¸
+                    int rx = (int)((cx - xOffset - 0.5 * w) * scale);
+                    int ry = (int)((cy - yOffset - 0.5 * h) * scale);
+                    int rw = (int)(w * scale);
+                    int rh = (int)(h * scale);
+
+                    boxes.Add(new Rect(rx, ry, rw, rh));
+                    confidences.Add(maxConf);
+                    classIds.Add(maxClassId);
+                }
+            }
+
+            // æ§è¡ NMS (æè½¬æ¡ NMS)
+            // OpenCV ç NMSBoxes æ¯æ RotatedRect
+            int[] indices;
+            CvDnn.NMSBoxes(boxes, confidences, ConfThreshold, NmsThreshold, out indices);
+
+            List&lt;DetData&gt; finalResults = new List&lt;DetData&gt;();
+            foreach (int idx in indices)
+            {
+                finalResults.Add(new DetData
+                {
+                    index = classIds[idx],
+                    score = confidences[idx],
+                    box = boxes[idx]
+                });
+            }
+
+            return finalResults;
+        }
+
+        /// &lt;summary&gt;
+        /// ç»å¶æ£æµç»æï¼æ°´å¹³ç©å½¢æ¡ï¼
+        /// &lt;/summary&gt;
+        /// &lt;param name="results"&gt;æ£æµç»æåè¡¨&lt;/param&gt;
+        /// &lt;param name="image"&gt;åå§å¾å&lt;/param&gt;
+        /// &lt;returns&gt;ç»å¶åçå¾å&lt;/returns&gt;
+        public static Mat DrawDetResult(List&lt;DetData&gt; results, Mat image)
+        {
+            // åéå¾åä»¥åä¿®æ¹åå¾
+            Mat mat = image.Clone();
+
+            foreach (var item in results)
+            {
+                // 1. ç»å¶ç©å½¢æ¡
+                // Rect ç»æåå« X, Y, Width, Height
+                Cv2.Rectangle(mat, item.box, new Scalar(0, 255, 0), thickness: 2);
+                // 2. åå¤æ ç­¾ææ¬ (ç±»å«ID - ç½®ä¿¡åº¦)
+                string label = $"{item.index} - {item.score:F2}";
+                // 3. è®¡ç®ææ¬çå°ºå¯¸ï¼ç¨äºç»å¶èæ¯
+                int baseLine = 1;
+                Size textSize = Cv2.GetTextSize(label, HersheyFonts.HersheySimplex, 0.6, 1, out baseLine);
+                // 4. ç»å¶æ ç­¾èæ¯ï¼åéæé»è²ç©å½¢ï¼ï¼é²æ­¢æå­ä¸èæ¯æ··æ·
+                // ä½ç½®ï¼ç©å½¢å·¦ä¸è§ç¥å¾®ä¸ç§»ï¼æèç´æ¥è´´çå·¦ä¸è§
+                Point labelPosition = new Point(item.box.X, item.box.Y - (int)textSize.Height - 5);
+
+                // ç¡®ä¿æ ç­¾ä¸ç»åºå¾åè¾¹ç
+                if (labelPosition.Y &lt; 0) labelPosition.Y = item.box.Y + (int)textSize.Height + 5;
+                Rect labelBgRect = new Rect(labelPosition.X,
+                                            labelPosition.Y - (int)textSize.Height, // OpenCV GetTextSize è¿åçé«åº¦æ¯åºçº¿å°åºé¨çè·ç¦»ï¼éè°æ´
+                                            (int)textSize.Width,
+                                            (int)textSize.Height + (int)baseLine);
+                // å¦æèæ¯æ¡ä¹å¨å¾åèå´åï¼åç»å¶
+                // æ³¨æï¼è¿éç®åå¤çï¼ç´æ¥ç»å¨æ¡ä¸æ¹
+                Cv2.Rectangle(mat,
+                               new Point(item.box.X, item.box.Y - textSize.Height - 5),
+                               new Point(item.box.X + textSize.Width, item.box.Y),
+                               new Scalar(0, 255, 0),
+                               thickness: -1); // -1 è¡¨ç¤ºå¡«å
+                // 5. ç»å¶ææ¬ï¼ç½è²æå­ï¼
+                Cv2.PutText(mat,
+                            label,
+                            new Point(item.box.X, item.box.Y - 5),
+                            HersheyFonts.HersheySimplex,
+                            0.6,
+                            new Scalar(0, 0, 0),
+                            1);
+            }
+            return mat;
+        }
+
+        public class DetData
+        {
+            public int index;
+            public float score;
+            public Rect box;
+        }
+    }
+}
+
+
+</code></pre>
+<p>ä¸ºäºæ¹ä¾¿ç¼åä»£ç ï¼ä¸è¿°å¹¶è¡å¤çå³ä½¿æ¶é´åæ¬äºæ¨çä¸ä¸æçåå»ºãæ¨çé¢ç­ç­æ­¥éª¤ï¼æä»¥å®éæ¶é´ä¼åé¿ï¼ä¸è¿°ç¨åºè¿è¡åè¾åºå¦ä¸æç¤ºï¼</p>
+<p><img alt="image-20260109230808256" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2933426/202601/2933426-20260111184155243-888464286.png" class="lazyload"></p>
+<p><strong>å¹¶è¡æµè¯ç»æï¼</strong></p>
+<p>åæ¶ä¸ºäºæ¯è¾ä¸åå¹¶è¡æ°ï¼æµè¯äºä»1å°24ä¸åå¹¶è¡æ°çæåµï¼æ¨çæ»æ¶é´å¦ä¸ï¼</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center">å¹¶è¡æ°</th>
+<th style="text-align: center">1</th>
+<th style="text-align: center">2</th>
+<th style="text-align: center">4</th>
+<th style="text-align: center">6</th>
+<th style="text-align: center">8</th>
+<th style="text-align: center">10</th>
+<th style="text-align: center">12</th>
+<th style="text-align: center">14</th>
+<th style="text-align: center">16</th>
+<th style="text-align: center">18</th>
+<th style="text-align: center">20</th>
+<th style="text-align: center">22</th>
+<th style="text-align: center">24</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center">æ¨çæ»æ¶é´ (ms)</td>
+<td style="text-align: center">80</td>
+<td style="text-align: center">85</td>
+<td style="text-align: center">95</td>
+<td style="text-align: center">115</td>
+<td style="text-align: center">130</td>
+<td style="text-align: center">155</td>
+<td style="text-align: center">180</td>
+<td style="text-align: center">210</td>
+<td style="text-align: center">230</td>
+<td style="text-align: center">255</td>
+<td style="text-align: center">270</td>
+<td style="text-align: center">285</td>
+<td style="text-align: center">310</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>ð<strong>ç¨åºè·¯å¾é¾æ¥</strong>ï¼å®æ´ç¨åºå·²ç»ä¸ä¼ å°GitHubï¼è¯·èªè¡ä¸è½½ï¼é¾æ¥ä¸ºï¼</p>
+<pre><code>https://github.com/guojin-yan/TensorRT-CSharp-API/tree/TensorRtSharp3.0/samples/YoloObbBatchInfer
+</code></pre>
+</blockquote>
+<hr>
+<h2 id="ä¸å¼å¸¸å¤ç">ä¸ãå¼å¸¸å¤ç</h2>
+<p>TensorRtSharp æä¾äºå®åçå¼å¸¸å¤çæºå¶ã</p>
+<pre><code class="language-csharp">try
+{
+    Runtime runtime = new Runtime();
+    byte[] data = File.ReadAllBytes("model.engine");
+    using CudaEngine engine = runtime.deserializeCudaEngineByBlob(data, (ulong)data.Length);
+}
+catch (TrtException ex)
+{
+    // TensorRT ç¹å®éè¯¯
+    Console.WriteLine($"TensorRT Error: {ex.ErrMsg}");
+    Console.WriteLine($"Status: {ex.Status}");
+}
+catch (CudaException ex)
+{
+    // CUDA è¿è¡æ¶éè¯¯
+    Console.WriteLine($"CUDA Error: {ex.Message}");
+    Console.WriteLine($"Status: {ex.Status}");
+}
+catch (InitException ex)
+{
+    // åå§åéè¯¯
+    Console.WriteLine($"Initialization Failed: {ex.Message}");
+    Console.WriteLine($"Status: {ex.Status}");
+}
+</code></pre>
+<p><strong>å¼å¸¸ç±»åè¯´æï¼</strong></p>
+<table>
+<thead>
+<tr>
+<th>å¼å¸¸ç±»å</th>
+<th>è¯´æ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TrtException</code></td>
+<td>TensorRT API éè¯¯ï¼20+ éè¯¯ç ï¼</td>
+</tr>
+<tr>
+<td><code>CudaException</code></td>
+<td>CUDA è¿è¡æ¶éè¯¯ï¼40+ éè¯¯ç ï¼</td>
+</tr>
+<tr>
+<td><code>InitException</code></td>
+<td>åºåå§åéè¯¯</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="å«æ¥å¿ç³»ç»">å«ãæ¥å¿ç³»ç»</h2>
+<p>TensorRtSharp æä¾äºåä¾æ¥å¿ç³»ç»ã</p>
+<pre><code class="language-csharp">// è·åæ¥å¿å®ä¾
+Logger logger = Logger.Instance;
+
+// è®¾ç½®æ¥å¿çº§å«
+logger.SetThreshold(LoggerSeverity.kINFO);  // INFOãWARNINGãERROR
+
+// è®¾ç½®èªå®ä¹åè°
+logger.SetCallback((message) =&gt;
+{
+    Console.WriteLine($"[TensorRT] {message}");
+});
+
+// è®°å½æ¥å¿
+logger.INFO("Engine building started...");
+logger.WARNING("FP16 not supported, falling back to FP32");
+logger.ERROR("Failed to parse ONNX model");
+
+// éé»æ¨¡å¼
+logger.SetThreshold(LoggerSeverity.kINTERNAL_ERROR);  // ä»ä¸¥ééè¯¯
+</code></pre>
+<hr>
+<h2 id="ä¹ä¸å¶ä»åºçå¯¹æ¯">ä¹ãä¸å¶ä»åºçå¯¹æ¯</h2>
+<table>
+<thead>
+<tr>
+<th>ç¹æ§</th>
+<th>TensorRtSharp</th>
+<th>ML.NET</th>
+<th>ONNX Runtime</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ç¼ç¨è¯­è¨</strong></td>
+<td>C#</td>
+<td>C#</td>
+<td>C++/Python</td>
+</tr>
+<tr>
+<td><strong>API ç±»å</strong></td>
+<td>æç®¡å°è£</td>
+<td>æç®¡åº</td>
+<td>åçç»å®</td>
+</tr>
+<tr>
+<td><strong>æ§è½</strong></td>
+<td>åçéåº¦</td>
+<td>ä¸­ç­</td>
+<td>åçéåº¦</td>
+</tr>
+<tr>
+<td><strong>æç¨æ§</strong></td>
+<td>é«</td>
+<td>é«</td>
+<td>ä¸­ç­</td>
+</tr>
+<tr>
+<td><strong>TensorRT æ¯æ</strong></td>
+<td>å®æ´</td>
+<td>æ </td>
+<td>æé</td>
+</tr>
+<tr>
+<td><strong>èªå®ä¹ç®å­</strong></td>
+<td>æ¯æ</td>
+<td>å°é¾</td>
+<td>æ¯æ</td>
+</tr>
+<tr>
+<td><strong>å¨æå½¢ç¶</strong></td>
+<td>æ¯æ</td>
+<td>æé</td>
+<td>æ¯æ</td>
+</tr>
+<tr>
+<td><strong>å¤ GPU</strong></td>
+<td>æ¯æ</td>
+<td>æé</td>
+<td>æ¯æ</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="åå¸¸è§é®é¢">åãå¸¸è§é®é¢</h2>
+<h3 id="é®é¢ä¸æ¾ä¸å°-dll-æ¨¡å">é®é¢ä¸ï¼æ¾ä¸å° DLL æ¨¡å</h3>
+<p><strong>éè¯¯ä¿¡æ¯ï¼</strong></p>
+<pre><code>Unable to load DLL 'TensorRT-C-API' or one of its dependencies: æ¾ä¸å°æå®çæ¨¡åã
+</code></pre>
+<p><strong>è§£å³æ¹æ¡ï¼</strong></p>
+<ol>
+<li>æ£æ¥æ¯å¦å®è£äºå¯¹åºçæ¬ç Runtime NuGet å</li>
+<li>ç¡®è®¤ç³»ç» PATH ç¯å¢åéä¸­åå« TensorRT ç lib ç®å½å CUDA ç bin ç®å½</li>
+<li>ç¡®è®¤ TensorRT çæ¬ä¸º 10.x ç³»å</li>
+</ol>
+<p><strong>éè¯¯æªå¾ï¼</strong></p>
+<p><img alt="éè¯¯1" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2933426/202601/2933426-20260111184155241-2119782141.png" class="lazyload"><br>
+<img alt="éè¯¯2" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2933426/202601/2933426-20260111184155226-1230745435.png" class="lazyload"></p>
+<hr>
+<h3 id="é®é¢äºsehexception-å¼å¸¸">é®é¢äºï¼SEHException å¼å¸¸</h3>
+<p><strong>éè¯¯ä¿¡æ¯ï¼</strong></p>
+<pre><code>System.Runtime.InteropServices.SEHException: "External component has thrown an exception."
+</code></pre>
+<p><strong>å¯è½åå ï¼</strong></p>
+<ul>
+<li>TensorRT çæ¬ä¸å¹éï¼å¿é¡»ä½¿ç¨ 10.xï¼</li>
+<li>CUDA çæ¬ä¸å¼å®¹</li>
+<li>æ¨¡åæä»¶æå</li>
+</ul>
+<p><strong>è§£å³æ¹æ¡ï¼</strong></p>
+<ol>
+<li>ç¡®è®¤ TensorRT çæ¬ä¸º 10.x</li>
+<li>æ£æ¥ CUDA çæ¬æ¯å¦å¹é</li>
+<li>éæ°çæ Engine æä»¶</li>
+</ol>
+<p><strong>éè¯¯æªå¾ï¼</strong></p>
+<p><img alt="SEHException" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2933426/202601/2933426-20260111184155221-1792773455.png" class="lazyload"></p>
+<h3 id="é®é¢ä¸systemexecutionengineexception-å¼å¸¸">é®é¢ä¸ï¼System.ExecutionEngineException å¼å¸¸</h3>
+<p><strong>éè¯¯ä¿¡æ¯ï¼</strong></p>
+<pre><code>System.ExecutionEngineException 
+</code></pre>
+<p><strong>å¯è½åå ï¼</strong></p>
+<ul>
+<li>æ¨¡åæä»¶ä¸è®¾å¤ä¸å¹é</li>
+</ul>
+<p><strong>è§£å³æ¹æ¡ï¼</strong></p>
+<ol>
+<li>å¨å½åè®¾å¤ä¸éæ°çææ¨¡åæä»¶</li>
+</ol>
+<p><strong>éè¯¯æªå¾ï¼</strong></p>
+<p><img alt="image-20260110002045090" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2933426/202601/2933426-20260111184155216-891120170.png" class="lazyload"></p>
+<p><img alt="image-20260110002045090" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2933426/202601/2933426-20260111184155234-391327787.png" class="lazyload"></p>
+<hr>
+<h2 id="åä¸æ»ç»">åä¸ãæ»ç»</h2>
+<p>TensorRtSharp æ¯ä¸ä¸ªåè½å®æ´ãè®¾è®¡ç²¾è¯ç TensorRT C# å°è£åºï¼å®å¡«è¡¥äº .NET çæå¨é«æ§è½æ·±åº¦å­¦ä¹ æ¨çæ¹é¢çç©ºç½ãéè¿æä¾ç±»åå®å¨ç APIãèªå¨èµæºç®¡çåå®åçå¼å¸¸å¤çï¼TensorRtSharp è®© C# å¼åèè½å¤åååæ¥ GPU çè®¡ç®è½åï¼èæ éé¢å¯¹å¤æçåçä»£ç ã</p>
+<h3 id="æ ¸å¿ä¼å¿">æ ¸å¿ä¼å¿</h3>
+<p>â <strong>å®æ´ç API è¦ç</strong>ï¼æ¯æ TensorRT æ ¸å¿åè½<br>
+â <strong>ç±»åå®å¨</strong>ï¼å¼ºç±»åç³»ç»ï¼ç¼è¯æ¶éè¯¯æ£æ¥<br>
+â <strong>èªå¨èµæºç®¡ç</strong>ï¼RAII + Dispose æ¨¡å¼<br>
+â <strong>é«æ§è½</strong>ï¼å¼æ­¥æ§è¡ãå¤æµå¹¶è¡<br>
+â <strong>æç¨æ§</strong>ï¼ç´è§ç APIãè¯¦ç»æ³¨é<br>
+â <strong>è·¨å¹³å°</strong>ï¼æ¯æ Windows/Linux<br>
+â <strong>å¼ç®±å³ç¨</strong>ï¼NuGet åå«ææä¾èµ</p>
+<h3 id="éç¨åºæ¯">éç¨åºæ¯</h3>
+<p>æ è®ºæ¨æ¯æå»ºä»¥ä¸ç±»åçåºç¨ï¼TensorRtSharp é½æ¯æ¨ççæ³éæ©ï¼</p>
+<ul>
+<li>ð¯ <strong>å®æ¶è§è§åºç¨</strong>ï¼ç®æ æ£æµãå¾ååå²ãå§¿æä¼°è®¡</li>
+<li>ð¤ <strong>è¯­é³å¤ç</strong>ï¼è¯­é³è¯å«ãè¯­é³åæ</li>
+<li>ð <strong>è¾¹ç¼è®¡ç®</strong>ï¼åµå¥å¼è®¾å¤æ¨ç</li>
+</ul>
+<h3 id="ç«å³å¼å§">ç«å³å¼å§</h3>
+<p><strong>å®è£å½ä»¤ï¼</strong></p>
+<pre><code class="language-bash">dotnet add package JYPPX.TensorRT.CSharp.API
+dotnet add package JYPPX.TensorRT.CSharp.API.runtime.win-x64.cuda12
+</code></pre>
+<p><strong>GitHub ä»åºï¼</strong></p>
+<pre><code>https://github.com/guojin-yan/TensorRT-CSharp-API
+</code></pre>
+<p>ç«å³å®è£å¹¶ä½éª C# ä¸çä¸­ç GPU æ¨çæè´æ§è½å§ï¼</p>
+<hr>
+<h2 id="ææ¯æ¯æ">ææ¯æ¯æ</h2>
+<p>å¦æé®é¢æå»ºè®®ï¼æ¬¢è¿éè¿ä»¥ä¸æ¹å¼äº¤æµï¼</p>
+<ul>
+<li>ð§ <strong>GitHub Issues</strong>ï¼å¨é¡¹ç®ä»åºæ Issue æ Pull Request</li>
+<li>ð¬ <strong>QQ äº¤æµç¾¤</strong>ï¼å å¥ <strong>945057948</strong>ï¼åå¤æ´æ¹ä¾¿æ´å¿«å¦</li>
+</ul>
+<p><img alt="QQç¾¤äºç»´ç " loading="lazy" data-src="https://img2024.cnblogs.com/blog/2933426/202601/2933426-20260111184155210-319682739.png" class="lazyload"></p>
+<hr>
+<p><em>ä½èï¼Guojin Yan</em><br>
+<em>çæ¬ï¼0.0.5</em><br>
+<em>æåæ´æ°ï¼2026å¹´1æ</em></p>
+<hr>
+<p><strong>ãæç« å£°æã</strong></p>
+<p>æ¬æä¸»è¦åå®¹åºäºä½èçç ç©¶ä¸å®è·µï¼é¨åè¡¨è¿°åå©AIå·¥å·è¿è¡äºè¾å©ä¼åãç±äºææ¯å±éæ§ï¼æä¸­å¯è½å­å¨éè¯¯æçæ¼ä¹å¤ï¼æ³è¯·åä½è¯»èæ¹è¯ææ­£ãå¦æåå®¹æ æä¸­ä¾µç¯äºæ¨çæçï¼è¯·åæ¶éè¿å¬ä¼å·åå°ä¸æä»¬èç³»ï¼æä»¬å°ç¬¬ä¸æ¶é´æ ¸å®å¹¶å¦¥åå¤çãæè°¢æ¨ççè§£ä¸æ¯æï¼</p>
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-01-11 18:47">2026-01-11 18:47</span>&nbsp;
+<a href="https://www.cnblogs.com/guojin-blogs">æ¤é¢ç®ç®è¾</a>&nbsp;
+éè¯»(<span id="post_view_count">26</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19468745);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19468745', targetLink: 'https://www.cnblogs.com/guojin-blogs/p/19468745', title: 'TensorRtSharpï¼å¨ C# ä¸çä¸­éæ¾ GPU æ¨ççæè´æ§è½' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
     <title><![CDATA[ å½æä¸æ³åä¸ºãå°å³å®ãæ¶èæ³¨æåæ¶ï¼æåäºä¸ä¸ªå¾å°çå·¥å· ]]></title>
     <link>https://www.cnblogs.com/BigFunny/p/19468424</link>
     <guid>94e39ce024025173d8ebb445c2caf180</guid>
@@ -115,187 +2424,11 @@
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-01-11 15:33">2026-01-11 15:33</span>&nbsp;
 <a href="https://www.cnblogs.com/BigFunny">OnlyFunny</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">54</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19468424);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19468424', targetLink: 'https://www.cnblogs.com/BigFunny/p/19468424', title: 'å½æä¸æ³åä¸ºãå°å³å®ãæ¶èæ³¨æåæ¶ï¼æåäºä¸ä¸ªå¾å°çå·¥å·' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ PDF è½¬ Markdown ç¥å¨ï¼MinerU 2.5 (1.2B) é¨ç½²å¨æ»ç¥ ]]></title>
-    <link>https://www.cnblogs.com/ChenAI-TGF/p/19468388</link>
-    <guid>f1c0ee38193277fad81fe898e0e2c9fb</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/ChenAI-TGF/p/19468388" title="åå¸äº 2026-01-11 15:16">
-    <span role="heading" aria-level="2">PDF è½¬ Markdown ç¥å¨ï¼MinerU 2.5 (1.2B) é¨ç½²å¨æ»ç¥</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                    <div id="cnblogs_post_description" style="display: none">
-        
-        æè¦ï¼MinerU 2.5-2509-1.2B æ¯ç± OpenDataLab æ¨åºçå¼æº PDF æåå·¥å·ï¼æ¯æç²¾åçå¸å±åæãå¬å¼è¯å«åè¡¨æ ¼æåãæ¬æè¯¦ç»ä»ç»äºå¨ Linux ç³»ç»ä¸çé¨ç½²æµç¨ï¼é¦åç¡®ä¿æ»¡è¶³ç¡¬ä»¶è¦æ±ï¼8æ ¸CPUã8GBä»¥ä¸æ¾å­GPUï¼ï¼ç¶åéè¿ Conda åå»º Python 3.10 ç¯å¢å¹¶å®è£ magic-pdf æ ¸å¿åï¼æ¥çä» ModelScope ä¸è½½é¢è®­ç»æ¨¡åæéï¼éç½®å³é®è·¯å¾åï¼å³å¯éè¿å½ä»¤è¡æ Web UI è¿è¡ PDF è½¬æ¢ãæç« è¿æä¾äºå¸¸è§é®é¢çè§£å³æ¹æ¡ï¼å¦æ¾å­æº¢åºå¤çç­
-    </div>
-<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<hr>
-<h1 id="åè¨">åè¨</h1>
-<p>å¨ AI æ¶ä»£ï¼é«è´¨éçæ°æ®æ¯æ¨¡åè®­ç»çåºç³ãè PDF ææ¡£ç±äºå¶æçå¤æï¼å¤æ ãè¡¨æ ¼ãå¬å¼ãå¾çäº¤åï¼ï¼ä¸ç´æ¯æ°æ®æ¸æ´ä¸­çâç¡¬éª¨å¤´âã</p>
-<p><strong>MinerU</strong> æ¯ç± OpenDataLab æ¨åºçå¼æº PDF æåå·¥å·ï¼æ¯æç²¾åçå¸å±åæãå¬å¼è¯å«åè¡¨æ ¼æåãæè¿æ´æ°ç <strong>2.5-2509-1.2B</strong> çæ¬å¨æ§è½ååç¡®çä¸åæäºæ¾èæåãä»å¤©ï¼æä»¬å°±æ¥ææææè§£å¦ä½å¨ Linux ç¯å¢ä¸é¨ç½²è¿å¥å¼ºå¤§çç³»ç»ã</p>
-<hr>
-<h1 id="1-ç¡¬ä»¶è¦æ±">1. ç¡¬ä»¶è¦æ±</h1>
-<p>MinerU 2.5-1.2B åå«å¤ä¸ªæ·±åº¦å­¦ä¹ æ¨¡åï¼Layout, OCR, Formulaï¼ï¼å»ºè®®éç½®å¦ä¸ï¼</p>
-<ul>
-<li><strong>æä½ç³»ç»</strong>: Ubuntu 22.04 ææ´é«çæ¬</li>
-<li><strong>CPU</strong>: 8 æ ¸ä»¥ä¸</li>
-<li><strong>GPU</strong>: NVIDIA GPU (æ¾å­å»ºè®® <strong>8GB</strong> ä»¥ä¸ï¼12GB/16GB æä½³)</li>
-<li><strong>å­å¨</strong>: è³å° 20GB å©ä½ç©ºé´ï¼ç¨äºå­æ¾æ¨¡åæéï¼</li>
-</ul>
-<hr>
-<h1 id="2-ç¯å¢æ­å»º">2. ç¯å¢æ­å»º</h1>
-<h2 id="21-åå»ºèæç¯å¢">2.1 åå»ºèæç¯å¢</h2>
-<p>å»ºè®®ä½¿ç¨ Conda æ¥ç®¡ç Python ç¯å¢ï¼é¿åä¾èµå²çªã</p>
-<pre><code class="language-bash"># åå»º Python 3.10 ç¯å¢
-conda create -n mineru python=3.10 -y
-conda activate mineru
-</code></pre>
-<h2 id="22-å®è£-magic-pdf">2.2 å®è£ magic-pdf</h2>
-<p><code>magic-pdf</code> æ¯ MinerU çæ ¸å¿åãæä»¬éæ©å¸¦ GPU å éçå¨éå®è£åã</p>
-<pre><code class="language-bash"># å®è£ magic-pdf [full]
-pip install -U magic-pdf[full] --extra-index-url https://wheels.myhloli.com
-</code></pre>
-<p>è¿ä¸ªè¿ç¨ç¨å¾®èæ¶ä¼æä¸ç¹ä¹ï¼ä¸­é´å¯è½ä¼æè­¦åå¼¹åºï¼é»è²å­ä½ï¼ä¸ç¨ç®¡è®©ä»ä¸è½½å°±å¥½äº<br>
-<img alt="å¨è¿éæå¥å¾çæè¿°" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3724025/202601/3724025-20260111151627285-2020172737.png" class="lazyload"></p>
-<h3 id="23-å®è£ç³»ç»ä¾èµ">2.3 å®è£ç³»ç»ä¾èµ</h3>
-<p>PDF è§£ææ¶åå°å¾åå¤çï¼éè¦å®è£ç¸å³çç³»ç»å¨æåºï¼</p>
-<pre><code class="language-bash">sudo apt-get update
-sudo apt-get install -y libgl1-mesa-glx libglib2.0-0
-</code></pre>
-<p>å¦ææ¯å¨Autodlç­å¹³å°ä¸é¢ï¼å°±ä¸éè¦èµäºæéï¼å¯ä»¥æä»¥ä¸å½ä»¤ï¼</p>
-<pre><code class="language-bash">apt-get update
-apt-get install -y libgl1 libglx-mesa0 libglib2.0-0
-</code></pre>
-<p><img alt="å¨è¿éæå¥å¾çæè¿°" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3724025/202601/3724025-20260111151627232-1388662531.png" class="lazyload"><br>
-<img alt="å¨è¿éæå¥å¾çæè¿°" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3724025/202601/3724025-20260111151627304-271016748.png" class="lazyload"><br>
-è¿ä¸ªä¹éè¦ä¸è½½</p>
-<pre><code class="language-bash">pip install -U mineru
-</code></pre>
-<hr>
-<h2 id="3-æ¨¡åæéä¸è½½">3. æ¨¡åæéä¸è½½</h2>
-<p>MinerU 2.5 éè¦å è½½é¢è®­ç»æéãå½åç¨æ·æ¨èä½¿ç¨ <strong>ModelScopeï¼é­æ­ï¼</strong>ï¼éåº¦æå¿«ã</p>
-<h2 id="31-ä½¿ç¨èæ¬ä¸è½½">3.1 ä½¿ç¨èæ¬ä¸è½½</h2>
-<p>åå»ºä¸ä¸ª <code>download_models.py</code> æä»¶ï¼</p>
-<pre><code class="language-python">from modelscope import snapshot_download
-
-# æ³¨æï¼ä»åºåéåå«çæ¬å·ååæ°é
-model_dir = snapshot_download('OpenDataLab/MinerU2.5-2509-1.2B', local_dir='models')
-
-print(f"æ¨¡åä¸è½½æåï¼å­æ¾è·¯å¾ä¸º: {model_dir}")
-</code></pre>
-<p><img alt="å¨è¿éæå¥å¾çæè¿°" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3724025/202601/3724025-20260111151627253-547023549.png" class="lazyload"></p>
-<p>è¿è¡ä¸è½½ï¼</p>
-<pre><code class="language-bash">python download.py
-</code></pre>
-<p><img alt="å¨è¿éæå¥å¾çæè¿°" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3724025/202601/3724025-20260111151627287-584976958.png" class="lazyload"></p>
-<h2 id="32å¶ä»æéä¸è½½">3.2å¶ä»æéä¸è½½</h2>
-<p>è¿ä¸ªæ¯è¡¥åé¨åç¼ºå¤±çæéï¼ä¸»è¦ç¨äºOCRï¼å¦æä¸æ¯å¾æ¨¡ç³çæ«æä»¶çè¯å¯ä»¥è·³è¿è¿ä¸æ­¥<br>
-è¿è¡å½ä»¤</p>
-<pre><code class="language-bash">python -c "from modelscope import snapshot_download; snapshot_download('OpenDataLab/PDF-Extract-Kit-1.0', local_dir='/root/workspace/MinerU2.5', max_workers=16)"
-</code></pre>
-<p><img alt="å¨è¿éæå¥å¾çæè¿°" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3724025/202601/3724025-20260111151627327-1820976416.png" class="lazyload"><br>
-è¿ä¸ªè¿ç¨å¯è½ä¼æç¹ä¹ï¼ç¨å¾®ç­å¾ç­å¾</p>
-<hr>
-<h1 id="4-æ ¸å¿éç½®å³é®æ­¥éª¤">4. æ ¸å¿éç½®ï¼å³é®æ­¥éª¤ï¼</h1>
-<p>MinerU éè¦ä¸ä¸ªéç½®æä»¶æ¥æå®æ¨¡åè·¯å¾ã</p>
-<ol>
-<li><strong>è·åæ¨¡æ¿</strong>ï¼å¨ä½ çå®¶ç®å½ä¸åå»ºä¸ä¸ªåä¸º <code>magic-pdf.json</code> çæä»¶ãï¼æ³¨æä¸å®è¦å®¶ç®å½ï¼</li>
-<li><strong>å¡«åè·¯å¾</strong>ï¼</li>
-</ol>
-<pre><code class="language-json">{
-  "models-dir": "/root/workspace/MinerU2.5/models",
-  "device-mode": "cuda",
-  "layout-config": {
-    "model": "doclayout_yolo"
-  },
-  "ocr-config": {
-    "model": "native",
-    "enable": false
-  }
-}
-</code></pre>
-<blockquote>
-<p><strong>æ³¨æ</strong>ï¼<code>models-dir</code> å¿é¡»æ¯ç»å¯¹è·¯å¾ï¼ä¸æåä½ åæä¸è½½æ¨¡åæå¨çé£ä¸ªæä»¶å¤¹ã<br>
-<img alt="å¨è¿éæå¥å¾çæè¿°" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3724025/202601/3724025-20260111151627271-1191783773.png" class="lazyload"><br>
-<img alt="å¨è¿éæå¥å¾çæè¿°" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3724025/202601/3724025-20260111151627299-708917508.png" class="lazyload"></p>
-</blockquote>
-<hr>
-<h2 id="5-å¼å§å®æ">5. å¼å§å®æ</h2>
-<h3 id="51-å½ä»¤è¡æ¨¡å¼cli">5.1 å½ä»¤è¡æ¨¡å¼ï¼CLIï¼</h3>
-<p>è¿æ¯æå¿«æ·çæµè¯æ¹å¼ï¼ç´æ¥å°ä¸ä¸ª PDF è½¬æ¢ä¸º Markdownã</p>
-<pre><code class="language-bash">mineru -p test.pdf -o ./output --task doc
-</code></pre>
-<p><img alt="å¨è¿éæå¥å¾çæè¿°" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3724025/202601/3724025-20260111151627273-1492344318.png" class="lazyload"></p>
-<p><strong>è½¬æ¢å®æåï¼ä½ ä¼å¨ <code>output</code> æä»¶å¤¹ä¸­çå°ï¼</strong><br>
-<img alt="å¨è¿éæå¥å¾çæè¿°" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3724025/202601/3724025-20260111151627326-1706033502.png" class="lazyload"></p>
-<h3 id="52-å¯å¨-web-ui-çé¢">5.2 å¯å¨ Web UI çé¢</h3>
-<p>å¦æä½ æ´åæ¬¢å¯è§åæä½ï¼å¯ä»¥å¯å¨åç½®ç Gradio æ¼ç¤ºçé¢ï¼</p>
-<pre><code class="language-bash"># åå®è£ gradio
-pip install gradio
-
-# ä» GitHub åéæºç ä»¥è¿è¡ demo (æèç´æ¥è¿è¡ååç demo)
-git clone https://github.com/opendatalab/MinerU.git
-cd MinerU
-python web_demo.py
-</code></pre>
-<hr>
-<h2 id="6-å¸¸è§åç¹ä¸è§£å³">6. å¸¸è§åç¹ä¸è§£å³</h2>
-<ol>
-<li>
-<p><strong>æ¾å­æº¢åº (OOM)</strong>:</p>
-<ul>
-<li>å¦ææ¾å­å°äº 8Gï¼å»ºè®®å¨éç½®æä»¶ä¸­å° <code>device-mode</code> è®¾ç½®ä¸º <code>cpu</code>ï¼éåº¦ä¼åæ¢ï¼ã</li>
-<li>æèå¤ç PDF æ¶åå°å¹¶åã</li>
-</ul>
-</li>
-<li>
-<p><strong>PaddlePaddle æ¥é</strong>:</p>
-<ul>
-<li>MinerU ç OCR é»è®¤ä¾èµ Paddleãå¦ææ¥é <code>libpaddle.so</code> ç¸å³é®é¢ï¼è¯·æ£æ¥ CUDA çæ¬æ¯å¦ä¸ Paddle å¹éã</li>
-<li>å°è¯éæ°å®è£ï¼<code>pip install paddlepaddle-gpu -i https://pypi.tuna.tsinghua.edu.cn/simple</code></li>
-</ul>
-</li>
-<li>
-<p><strong>å¬å¼è¯å«ä¹±ç </strong>:</p>
-<ul>
-<li>ç¡®ä¿ <code>magic-pdf.json</code> ä¸­çè·¯å¾æ­£ç¡®ï¼ä¸å®æ´ä¸è½½äº <code>LaTeX_OCR</code> ç¸å³æ¨¡åã</li>
-</ul>
-</li>
-</ol>
-<hr>
-<h2 id="7-æ»ç»">7. æ»ç»</h2>
-<p>MinerU 2.5-1.2B æ¯ç®åå¼æºçå¤ç PDF æææåºè²çå·¥å·ä¹ä¸ãéè¿åççéç½®ï¼å®å¯ä»¥æå¤§å°æåæä»¬å¤çéç»æåææ¡£çæçã</p>
-<p><strong>å¦æä½ è§å¾æç¨ï¼è¯·ç¹ä¸ªèµå¹¶å³æ³¨å§ï¼æä»»ä½é¨ç½²é®é¢æ¬¢è¿å¨è¯è®ºåºçè¨è®¨è®ºã</strong></p>
-<hr>
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-01-11 15:17">2026-01-11 15:16</span>&nbsp;
-<a href="https://www.cnblogs.com/ChenAI-TGF">TTGF</a>&nbsp;
-éè¯»(<span id="post_view_count">8</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19468388);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19468388', targetLink: 'https://www.cnblogs.com/ChenAI-TGF/p/19468388', title: 'PDF è½¬ Markdown ç¥å¨ï¼MinerU 2.5 (1.2B) é¨ç½²å¨æ»ç¥' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -675,7 +2808,7 @@ EndSection
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-01-10 17:12">2026-01-10 17:11</span>&nbsp;
 <a href="https://www.cnblogs.com/chenyouyuan">ChenYY~</a>&nbsp;
-éè¯»(<span id="post_view_count">94</span>)&nbsp;
+éè¯»(<span id="post_view_count">114</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19465907);return false;">æ¶è</a>&nbsp;
@@ -1514,8 +3647,8 @@ t.start();
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-01-09 23:24">2026-01-09 23:24</span>&nbsp;
 <a href="https://www.cnblogs.com/-867259206">æ± æ</a>&nbsp;
-éè¯»(<span id="post_view_count">142</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">2</span>)&nbsp;
+éè¯»(<span id="post_view_count">183</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">3</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19463606);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19463606', targetLink: 'https://www.cnblogs.com/-867259206/p/19463606', title: 'åè¯Tauri' })">ä¸¾æ¥</a>
