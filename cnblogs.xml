@@ -3,12 +3,289 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-01-12T16:23:11.929Z</lastBuildDate>
+        <lastBuildDate>2026-01-12T20:20:16.662Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
+    <title><![CDATA[ ç¡¬æ ¸å®ç¨ï¼Windowsä¸ä½¿ç¨ PowerShell ç¼åå±åç½è®¾å¤æ«æå¨ ]]></title>
+    <link>https://www.cnblogs.com/zjw-blog/p/19474721</link>
+    <guid>1217ae8d20af4f4c953d08dac6d6f5a7</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/zjw-blog/p/19474721" title="åå¸äº 2026-01-13 03:29">
+    <span role="heading" aria-level="2">ç¡¬æ ¸å®ç¨ï¼Windowsä¸ä½¿ç¨ PowerShell ç¼åå±åç½è®¾å¤æ«æå¨</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h3 id="åè¨">åè¨</h3>
+<p>å¨è¿è¡ç½ç»è°è¯æè®¾å¤ç®¡çæ¶ï¼æä»¬ç»å¸¸éè¦ç¥éå±åç½åæåªäºè®¾å¤å¨çº¿ãä¼ ç»ç <code>ping</code> å½ä»¤éä¸ªæ«æå¤ªæ¢ï¼èä¸ä¸çæ«æå·¥å·åæ¾å¾å¤§æå°ç¨ãä»å¤©ï¼æä»¬éè¿ä¸æ®µ PowerShell èæ¬ï¼å©ç¨ç½ç»åè®®çåºå±ç¹æ§ï¼æé ä¸ä¸ªå±åç½æ«æå·¥å·ã</p>
+<hr>
+<h3 id="åçåæä¸ºä»ä¹è¿ä¸ªèæ¬æ¯æ®é-ping-æ´å¿«æ´å">åçåæï¼ä¸ºä»ä¹è¿ä¸ªèæ¬æ¯æ®é Ping æ´å¿«ãæ´åï¼</h3>
+<p>å¤§å¤æ°äººè®¤ä¸ºæ«æå±åç½å°±æ¯ç®åå°ç»æ¯ä¸ª IP åé Ping åãä½è¿ç§æ¹å¼æä¸¤å¤§å¼ç«¯ï¼</p>
+<ol>
+<li><strong>æçä½</strong>ï¼ç­å¾ä¸å¨çº¿çè®¾å¤è¶æ¶ä¼èè´¹å¤§éæ¶é´ã</li>
+<li><strong>ä¸åç¡®</strong>ï¼è®¸å¤è®¾å¤ï¼å¦å¼å¯é²ç«å¢ç Windows çµèï¼ä¼ç¦æ ICMP åæ¾ï¼å¯¼è´ææå¨çº¿å´æ¾ç¤ºâç¦»çº¿âã</li>
+</ol>
+<p>æ¬èæ¬éç¨äº <strong>âå¼æ­¥æ¢æµ + ARP è¡¨è§£æâ</strong> çåéæºå¶ï¼å¶å·¥ä½åçæµç¨å¾å¦ä¸ï¼</p>
+<h4 id="1-å¼æ­¥æ¢æµasynchronous-probing">1. å¼æ­¥æ¢æµï¼Asynchronous Probingï¼</h4>
+<p>èæ¬å¹¶æ²¡æç­å¾æ¯ä¸ä¸ª Ping çç»æãå®ä½¿ç¨ <code>SendPingAsync</code> åç½æ®µåçææ 254 ä¸ª IP å°åå¿«éæåºæ¢æµåã</p>
+<ul>
+<li><strong>ç®ç</strong>ï¼æä»¬å¹¶ä¸å¨ä¹è¿äºåæ¯å¦ççæ¶å°äºåå¤ï¼å¶çæ­£çç®çæ¯<strong>è§¦åæä½ç³»ç»ç ARP å¹¿æ­</strong>ã</li>
+</ul>
+<h4 id="2-arp-åè®®çå¦ç¨">2. ARP åè®®çå¦ç¨</h4>
+<p>å½ä½ ççµèå°è¯åå±åç½åæä¸ª IP åéæ°æ®æ¶ï¼å®é¦åéè¦ç¥éå¯¹æ¹ç MAC å°åï¼ç©çå°åï¼ãå³ä¾¿å¯¹æ¹é²ç«å¢æ¦æªäº Ping åï¼åªè¦è¯¥è®¾å¤å­å¨ï¼å®éå¸¸ä¹ä¼å¯¹ ARP è¯·æ±ååºååºã</p>
+<ul>
+<li><strong>ARP è¡¨</strong>ï¼ä¸æ¦è®¾å¤ååºï¼å®ç IP å MAC å°åå°±ä¼è¢«è®°å½å¨æä½ç³»ç»ç ARP ç¼å­è¡¨ä¸­ã</li>
+</ul>
+<h4 id="3-ç¶æå¤å®ç®æ³">3. ç¶æå¤å®ç®æ³</h4>
+<p>èæ¬éè¿ <code>Get-NetNeighbor</code> æ£æ¥ç³»ç»ç ARP è®°å½ï¼å°ç¶æåä¸ºä¸ç±»å¤å®ï¼</p>
+<ul>
+<li><strong>Ping å¨çº¿</strong>ï¼è®¾å¤ååºäº ICMPã</li>
+<li><strong>ARP å¨çº¿</strong>ï¼è®¾å¤è½ä¸ååº Pingï¼ä½å¨ ARP è¡¨ä¸­ç¶æä¸º <code>Reachable</code> æ <code>Stale</code>ã</li>
+<li><strong>ç¦»çº¿</strong>ï¼ARP è¡¨æ è®°å½ææ¾ç¤ºç¼å­å¤±æã</li>
+</ul>
+<hr>
+<h3 id="å®æ´ä»£ç ">å®æ´ä»£ç </h3>
+<details>
+<summary>ç¹å»æ¥ç PowerShell èæ¬ä»£ç </summary>
+<pre><code class="language-bash">Write-Host "==========================================" -ForegroundColor Green
+Write-Host "         å±åç½è®¾å¤æ«æå¨         " -ForegroundColor Green
+Write-Host "==========================================" -ForegroundColor Green
+
+# -----------------------------
+# å¨çº¿æ£æµå½æ°ï¼æ ¸å¿ï¼
+# -----------------------------
+function Test-DeviceOnline {
+    param([string]$IP)
+    $arp = Get-NetNeighbor -IPAddress $IP -ErrorAction SilentlyContinue
+    if (-not $arp) {
+        return @{ Online = $false; Reason = "æ ARP" }
+    }
+    if ($arp.State -in 'Reachable','Stale','Delay','Probe') {
+        if (Test-Connection $IP -Count 1 -Quiet -ErrorAction SilentlyContinue) {
+            return @{ Online = $true; Reason = "Ping" }
+        }
+        return @{ Online = $true; Reason = "ARPå¨çº¿" }
+    }
+    return @{ Online = $false; Reason = "ç¼å­å¤±æ" }
+}
+
+# -----------------------------
+# 1. è·å IPv4 ç½å¡
+# -----------------------------
+$adapters = Get-NetIPAddress -AddressFamily IPv4 |
+Where-Object {
+    $_.IPAddress -notmatch '^127\.|^169\.254\.' -and
+    $_.PrefixLength -eq 24
+}
+
+if (-not $adapters) {
+    Write-Host "æªåç°å¯ç¨ IPv4 ç½å¡" -ForegroundColor Red
+    Read-Host
+    exit
+}
+
+# -----------------------------
+# 2. çæç½æ®µ
+# -----------------------------
+$networks = $adapters.IPAddress |
+ForEach-Object {
+    if ($_ -match '^(\d+\.\d+\.\d+)\.\d+$') {
+        "$($Matches[1]).0/24"
+    }
+} | Select-Object -Unique
+
+# -----------------------------
+# 3. éæ©ç½æ®µ
+# -----------------------------
+if ($networks.Count -eq 1) {
+    $network = $networks[0]
+    Write-Host "`nä»æ£æµå°ä¸ä¸ªç½æ®µï¼èªå¨ä½¿ç¨ï¼$network" -ForegroundColor Yellow
+}
+else {
+    do {
+        Write-Host "`næ£æµå°å¤ä¸ªç½æ®µï¼è¯·éæ©è¦æ«æçç½æ®µï¼" -ForegroundColor Cyan
+        for ($i = 0; $i -lt $networks.Count; $i++) {
+            Write-Host "[$($i + 1)] $($networks[$i])"
+        }
+
+        $choice = Read-Host "è¯·è¾å¥ç¼å· (1-$($networks.Count))"
+        $valid  = [int]::TryParse($choice, [ref]$null) -and
+                  $choice -ge 1 -and
+                  $choice -le $networks.Count
+
+        if (-not $valid) {
+            Write-Host "è¾å¥æ æï¼è¯·éæ°éæ©ã" -ForegroundColor Red
+        }
+    } until ($valid)
+
+    $network = $networks[$choice - 1]
+}
+
+$prefix = $network -replace '\.0/24',''
+
+# -----------------------------
+# 4. å¿«éå»ºç« ARP è¡¨
+# -----------------------------
+Write-Host "`n[1/2] æ­£å¨åç½æ®µ $network åéæ¢æµå (Ping)..." -ForegroundColor Cyan
+foreach ($i in 1..254) {
+    $p = New-Object System.Net.NetworkInformation.Ping
+    [void]$p.SendPingAsync("$prefix.$i", 800)
+}
+Start-Sleep -Seconds 1
+
+# -----------------------------
+# 5. è·åæ¬æº IP â MAC
+# -----------------------------
+$localMapping = @{}
+Get-NetIPAddress -AddressFamily IPv4 |
+Where-Object { $_.IPAddress -notmatch '^127\.|^169\.254\.' } |
+ForEach-Object {
+    $adapter = Get-NetAdapter -InterfaceIndex $_.InterfaceIndex -ErrorAction SilentlyContinue
+    if ($adapter) {
+        $localMapping[$_.IPAddress] = $adapter.MacAddress.Replace("-", ":").ToUpper()
+    }
+}
+
+# -----------------------------
+# 6. è§£æ ARP è¡¨
+# -----------------------------
+$arpRegex = '(?&lt;IP&gt;\d{1,3}(\.\d{1,3}){3})\s+(?&lt;MAC&gt;([0-9a-f]{2}[:-]){5}[0-9a-f]{2})'
+$globalArp = arp -a
+
+$potentialIPs = @()
+foreach ($line in $globalArp) {
+    if ($line -match $arpRegex) {
+        $ip  = $Matches.IP
+        $mac = $Matches.MAC.ToUpper().Replace("-", ":")
+
+        if ($ip.StartsWith("$prefix.") -and
+            -not $localMapping.ContainsKey($ip) -and
+            $ip -notmatch '\.255$') {
+
+            $potentialIPs += [PSCustomObject]@{
+                IP  = $ip
+                MAC = $mac
+            }
+        }
+    }
+}
+
+# -----------------------------
+# 7. æå»ºç»æ
+# -----------------------------
+$finalList = @()
+
+# æ¬æº
+foreach ($ip in $localMapping.Keys) {
+    if ($ip.StartsWith("$prefix.")) {
+        $finalList += [PSCustomObject]@{
+            IP       = "$ip*"
+            MAC      = $localMapping[$ip]
+            IsOnline = $true
+            Reason   = "æ¬æº"
+            RawIP    = $ip
+        }
+    }
+}
+
+Write-Host "[2/2] æ­£å¨å¤æ­è®¾å¤å¨çº¿ç¶æ..." -ForegroundColor Cyan
+
+foreach ($dev in $potentialIPs | Select-Object -Unique IP, MAC) {
+    $result = Test-DeviceOnline $dev.IP
+    $finalList += [PSCustomObject]@{
+        IP       = $dev.IP
+        MAC      = $dev.MAC
+        IsOnline = $result.Online
+        Reason   = $result.Reason
+        RawIP    = $dev.IP
+    }
+}
+
+# -----------------------------
+# 8. è¾åº
+# -----------------------------
+Write-Host "`n============== æ«æç»æ ==============" -ForegroundColor Cyan
+
+$sorted = $finalList | Sort-Object {[version]$_.RawIP}
+
+foreach ($item in $sorted) {
+    $status = if ($item.IsOnline) {
+		switch ($item.Reason) {
+			"Ping"     { "å¨çº¿" }
+			"ARPå¨çº¿"  { "å¨çº¿ï¼æªååº Pingï¼" }
+			"æ¬æº"     { "æ¬æº" }
+			default    { "å¨çº¿" }
+		}
+	} else {
+		switch ($item.Reason) {
+			"ç¼å­å¤±æ" { "ç¦»çº¿ï¼ç¼å­å¤±æï¼" }
+			default    { "ç¦»çº¿" }
+		}
+	}
+
+
+    $line = "{0,-20} {1,-22} {2}" -f $item.IP, $item.MAC, $status
+
+    if ($item.IsOnline) {
+        Write-Host $line -ForegroundColor Green
+    } else {
+        Write-Host $line -ForegroundColor DarkGray
+    }
+}
+
+$online = ($finalList | Where-Object { $_.IsOnline }).Count
+$total  = $finalList.Count
+
+Write-Host "`næ«æå®æï¼$online / $total å°è®¾å¤å¨çº¿" -ForegroundColor Green
+Write-Host "`næä»»æé®éåº..."
+$null = [System.Console]::ReadKey()
+</code></pre>
+</details>
+<h3 id="æ ¸å¿ä»£ç äº®ç¹è¯´æ">æ ¸å¿ä»£ç äº®ç¹è¯´æ</h3>
+<h4 id="ç½æ®µèªå¨è¯å«">ç½æ®µèªå¨è¯å«</h4>
+<p>èæ¬ä¼èªå¨æé¤ <code>127.0.0.1</code>ï¼åç¯å°åï¼å <code>169.254.x.x</code>ï¼èªå¨ç§æ IPï¼ï¼å¹¶æºè½è¯å«å½åæ´»è·çç½æ®µï¼æ éç¨æ·æå¨è¾å¥ IP èå´ã</p>
+<h4 id="ç»æç¾åè¾åº">ç»æç¾åè¾åº</h4>
+<p>ä¸ºäºæåä½¿ç¨ä½éªï¼èæ¬ä½¿ç¨äºæ ¼å¼åæä½ç¬¦ <code>-f</code>ï¼</p>
+<pre><code class="language-bash">$line = "{0,-20} {1,-22} {2}" -f $item.IP, $item.MAC, $status
+</code></pre>
+<p>å®å¯ä»¥ç¡®ä¿è¾åºç IPãMAC å°ååç¶æå¨æ§å¶å°ä¸­å®ç¾å¯¹é½ï¼å¹¶ä½¿ç¨ç»¿è²ï¼å¨çº¿ï¼åç°è²ï¼ç¦»çº¿ï¼è¿è¡è§è§åºåã</p>
+<hr>
+<h3 id="å¦ä½ä½¿ç¨">å¦ä½ä½¿ç¨ï¼</h3>
+<ol>
+<li>å°èæ¬ä»£ç ç²è´´è¿ç¼è¾å¨ï¼æä¿å­ä¸º <code>.ps1</code> æä»¶ï¼,ç¼ç <code>UTF8 BOM</code>ãä¹å¯éè¿<a href="https://files.cnblogs.com/files/zjw-blog/LANScanner%E5%B1%80%E5%9F%9F%E7%BD%91%E6%89%AB%E6%8F%8F%E5%99%A8.zip" target="_blank">LANScannerå±åç½æ«æå¨.zip</a>é¾æ¥è¿è¡ä¸è½½</li>
+<li>ä½¿ç¨powershell.exeè¿è¡ï¼å»ºè®®ä½¿ç¨powershell<a href="https://www.cnblogs.com/zjw-blog/p/19449891" target="_blank">æä»¶å³è</a>åç´æ¥è¿è¡ã</li>
+</ol>
+<h3 id="è¿è¡æªå¾">è¿è¡æªå¾</h3>
+<p><img src="https://img2024.cnblogs.com/blog/1745057/202601/1745057-20260113032751492-35872645.png" alt="å¾ç" loading="lazy"></p>
+<h3 id="æ»ç»">æ»ç»</h3>
+<p>è¿ä¸ªèæ¬ä¸ä»æ¯ä¸ä¸ªå·¥å·ï¼æ´æ¯å¯¹ <strong>Layer 2ï¼æ°æ®é¾è·¯å±ï¼</strong> å <strong>Layer 3ï¼ç½ç»å±ï¼</strong> ååå·¥ä½çä¸æ¬¡å®è·µãéè¿å©ç¨ç³»ç»åºå±ç ARP ç¼å­ï¼æä»¬å®ç°äºæ¯ä¼ ç»æ«æå¨æ´é«æãæ´å·ç©¿éåçæ¢æµææã</p>
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0.006944444444444444" data-date-updated="2026-01-13 03:39">2026-01-13 03:29</span>&nbsp;
+<a href="https://www.cnblogs.com/zjw-blog">é¨ä¸­éæ³</a>&nbsp;
+éè¯»(<span id="post_view_count">6</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19474721);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19474721', targetLink: 'https://www.cnblogs.com/zjw-blog/p/19474721', title: 'ç¡¬æ ¸å®ç¨ï¼Windowsä¸ä½¿ç¨ PowerShell ç¼åå±åç½è®¾å¤æ«æå¨' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
     <title><![CDATA[ electron39-vue3aiçµèç«¯AIæ¨¡æ¿|electron39+deepseek+vite7èå¤©aiåºç¨ ]]></title>
     <link>https://www.cnblogs.com/xiaoyan2017/p/19474565</link>
     <guid>796d4d2c5cde93687b2d477b95e5fc57</guid>
@@ -3377,7 +3654,7 @@ def run_demo():
 	<div class="postDesc">posted on 
 <span id="post-date" data-last-update-days="0.07847222222222222" data-date-updated="2026-01-12 14:31">2026-01-12 12:38</span>&nbsp;
 <a href="https://www.cnblogs.com/cswuyg">-é¶å-</a>&nbsp;
-éè¯»(<span id="post_view_count">94</span>)&nbsp;
+éè¯»(<span id="post_view_count">181</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19471225);return false;">æ¶è</a>&nbsp;
@@ -3819,7 +4096,7 @@ mailboxExecutor.submit(() -&gt; tryProcessActionTaskForKey(key), "process action
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-01-12 20:54">2026-01-12 20:53</span>&nbsp;
 <a href="https://www.cnblogs.com/rossiXYZ">ç½è¥¿çæè</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">9</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19468837);return false;">æ¶è</a>&nbsp;
@@ -4257,866 +4534,6 @@ public void addCredit(int creditDeltas) {
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19474170);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19474170', targetLink: 'https://www.cnblogs.com/Jackeyzhe/p/19474170', title: 'Flinkæºç éè¯»ï¼Nettyéä¿¡' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ ä¸ä¸ªé«æ§è½ç .NET MQTT å®¢æ·ç«¯ä¸æå¡å¨åº ]]></title>
-    <link>https://www.cnblogs.com/dotnet-org-cn/p/19473369</link>
-    <guid>e9a6986562805d8ffd903be9417ec8a4</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/dotnet-org-cn/p/19473369" title="åå¸äº 2026-01-12 18:10">
-    <span role="heading" aria-level="2">ä¸ä¸ªé«æ§è½ç .NET MQTT å®¢æ·ç«¯ä¸æå¡å¨åº</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h2 id="åè¨">åè¨</h2>
-<p>å¨ç©èç½ï¼IoTï¼è¬ååå±çä»å¤©ï¼MQTT åè®®å·²ç»æä¸ºè®¾å¤éä¿¡çäºå®æ åãæ è®ºæ¯æºè½å®¶å±ãå·¥ä¸èªå¨åè¿æ¯è½¦èç½ï¼MQTT é½æ®æ¼çè³å³éè¦çè§è²ãä»å¤©ï¼æè¦ä¸ºå¤§å®¶ä»ç»ä¸ä¸ªå®å¨ä½¿ç¨ C# å®ç°çé«æ§è½ MQTT åº</p>
-<p>è¿ä¸ªåºä¸ä»æä¾äºå®æ´ç MQTT å®¢æ·ç«¯å®ç°ï¼è¿åå«äºä¸ä¸ªåè½é½å¨ç Broker æå¡å¨ï¼æ¯ææ¡¥æ¥ãéç¾¤ç­ä¼ä¸çº§ç¹æ§ã</p>
-<h2 id="æ ¸å¿ç¹æ§">æ ¸å¿ç¹æ§</h2>
-<h3 id="åè®®æ¯æ">åè®®æ¯æ</h3>
-<ul>
-<li><strong>MQTT 3.1.1</strong> - å®æ´æ¯æ</li>
-<li><strong>MQTT 5.0</strong> - å®æ´æ¯æï¼åæ¬ç¨æ·å±æ§ãæ¶æ¯è¿æãä¸»é¢å«åç­æ°ç¹æ§ï¼</li>
-<li><strong>MQTT-SN</strong> - åºäº UDP çè½»éçº§ MQTT åä½ï¼éååéè®¾å¤</li>
-<li><strong>CoAP</strong> - çº¦æåºç¨åè®®ç½å³æ¯æ</li>
-</ul>
-<h3 id="æ§è½ç¹æ§">æ§è½ç¹æ§</h3>
-<ul>
-<li>é«æ§è½å¼æ­¥å®ç°</li>
-<li>é¶ä¸å¿è¦çåå­åé</li>
-<li>ç¼å²åºæ± ææ¯</li>
-<li>æ¯æ 10000+ å¹¶åè¿æ¥</li>
-</ul>
-<h3 id="ä¼ä¸çº§åè½">ä¼ä¸çº§åè½</h3>
-<ul>
-<li>Broker æ¡¥æ¥ï¼å¤ Broker æ¶æ¯åæ­¥ï¼</li>
-<li>éç¾¤æ¯æï¼å»ä¸­å¿å P2P æ¶æï¼</li>
-<li>çµæ´»çè®¤è¯ä¸æææºå¶</li>
-<li>TLS/SSL å å¯ä¼ è¾</li>
-<li>æä¹ä¼è¯ä¸ç¦»çº¿æ¶æ¯å­å¨</li>
-</ul>
-<h3 id="æ¡æ¶æ¯æ">æ¡æ¶æ¯æ</h3>
-<ul>
-<li>.NET 6.0</li>
-<li>.NET 8.0</li>
-<li>.NET 10.0</li>
-</ul>
-<hr>
-<h2 id="ææ¯å®ç°">ææ¯å®ç°</h2>
-<p>æ¬é¡¹ç®éç¨äºå¤§éç°ä»£ .NET é«æ§è½ææ¯ï¼ä¸é¢è¯¦ç»ä»ç»æ ¸å¿ææ¯ç¹ã</p>
-<h3 id="åå­ç®¡çææ¯">åå­ç®¡çææ¯</h3>
-<h4 id="spant-å-memoryt---é¶æ·è´å¤ç">Span&lt;T&gt; å Memory&lt;T&gt; - é¶æ·è´å¤ç</h4>
-<p>é¡¹ç®ä½¿ç¨ <code>ref struct</code> å®ç°çäºè¿å¶è¯»åå¨ï¼å®å¨å¨æ ä¸åéï¼é¿åå åå­ååï¼</p>
-<pre><code class="language-csharp">// é¶æ·è´çäºè¿å¶è¯»åå¨
-public ref struct MqttBinaryReader
-{
-    private readonly ReadOnlySpan&lt;byte&gt; _buffer;
-    private int _position;
-
-    // é¶æ·è´åçæä½
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ReadOnlySpan&lt;byte&gt; ReadBytes(int count)
-    {
-        var span = _buffer.Slice(_position, count);
-        _position += count;
-        return span;
-    }
-}
-</code></pre>
-<p><strong>ææ¯ä¼å¿</strong>ï¼</p>
-<ul>
-<li><code>ref struct</code> åªè½å¨æ ä¸åéï¼æ  GC åå</li>
-<li><code>ReadOnlySpan&lt;byte&gt;</code> æ¯æé¶æ·è´åç</li>
-<li>é¿åå¤§éå­èæ°ç»å¤å¶æä½</li>
-</ul>
-<h4 id="arraypoolt---ç¼å²åºå¤ç¨">ArrayPool&lt;T&gt; - ç¼å²åºå¤ç¨</h4>
-<p>ä½¿ç¨å±äº«åå­æ± åå°é¢ç¹çåå­åéï¼</p>
-<pre><code class="language-csharp">// ä»å±äº«æ± ç§åç¼å²åº
-var buffer = ArrayPool&lt;byte&gt;.Shared.Rent(1024);
-try
-{
-    await stream.ReadAsync(buffer.AsMemory(0, length), cancellationToken);
-    // å¤çæ°æ®...
-}
-finally
-{
-    ArrayPool&lt;byte&gt;.Shared.Return(buffer);  // å½è¿ç¼å²åº
-}
-</code></pre>
-<h4 id="stackalloc---å°ç¼å²åºæ åé">stackalloc - å°ç¼å²åºæ åé</h4>
-<p>å¯¹äºå°åä¸´æ¶ç¼å²åºï¼ç´æ¥å¨æ ä¸åéï¼</p>
-<pre><code class="language-csharp">// 4 å­èçå¯åé¿åº¦ç¼ç ç¼å²åºï¼æ åé
-Span&lt;byte&gt; remainingLengthBytes = stackalloc byte[4];
-var size = EncodeRemainingLength(length, remainingLengthBytes);
-</code></pre>
-<h3 id="å¼æ­¥ç¼ç¨æ¨¡å">å¼æ­¥ç¼ç¨æ¨¡å</h3>
-<h4 id="asyncawait--configureawait">async/await + ConfigureAwait</h4>
-<p>ææ IO æä½åéç¨å¼æ­¥æ¨¡å¼ï¼å¹¶ä½¿ç¨ <code>ConfigureAwait(false)</code> ä¼åï¼</p>
-<pre><code class="language-csharp">public async Task&lt;MqttConnectResult&gt; ConnectAsync(CancellationToken cancellationToken = default)
-{
-    // å»ºç« TCP è¿æ¥
-    await _tcpClient.ConnectAsync(host, port, cancellationToken).ConfigureAwait(false);
-
-    // TLS æ¡æ
-    if (Options.UseTls)
-    {
-        await sslStream.AuthenticateAsClientAsync(sslOptions, cancellationToken).ConfigureAwait(false);
-    }
-
-    // åé CONNECT æ¥æ
-    await SendPacketAsync(connectPacket, cancellationToken).ConfigureAwait(false);
-}
-</code></pre>
-<h4 id="channelt---é«æ§è½äºä»¶éå">Channel&lt;T&gt; - é«æ§è½äºä»¶éå</h4>
-<p>Broker ä½¿ç¨æçééå®ç°éé»å¡çäºä»¶ååï¼</p>
-<pre><code class="language-csharp">public sealed class MqttBrokerEventDispatcher
-{
-    private readonly Channel&lt;BrokerEvent&gt; _eventChannel;
-
-    public MqttBrokerEventDispatcher(int capacity = 10000)
-    {
-        // æçééï¼éåæ»¡æ¶ä¸¢å¼ææ§äºä»¶
-        _eventChannel = Channel.CreateBounded&lt;BrokerEvent&gt;(new BoundedChannelOptions(capacity)
-        {
-            FullMode = BoundedChannelFullMode.DropOldest,
-            SingleReader = true,
-            SingleWriter = false
-        });
-    }
-
-    // éé»å¡äºä»¶åé
-    public void Dispatch&lt;TEventArgs&gt;(BrokerEventType type, TEventArgs args, EventHandler&lt;TEventArgs&gt;? handler)
-    {
-        _eventChannel.Writer.TryWrite(new BrokerEvent(type, args, handler));
-    }
-}
-</code></pre>
-<h4 id="taskcompletionsource---è¯·æ±ååºæ¨¡å¼">TaskCompletionSource - è¯·æ±/ååºæ¨¡å¼</h4>
-<p>å®ç° QoS 1/2 çç¡®è®¤ç­å¾æºå¶ï¼</p>
-<pre><code class="language-csharp">private readonly Dictionary&lt;ushort, TaskCompletionSource&lt;object?&gt;&gt; _pendingPackets = new();
-
-private async Task&lt;object?&gt; WaitForPacketAsync(ushort packetId, CancellationToken cancellationToken)
-{
-    var tcs = new TaskCompletionSource&lt;object?&gt;(TaskCreationOptions.RunContinuationsAsynchronously);
-    _pendingPackets[packetId] = tcs;
-
-    using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-    cts.CancelAfter(TimeSpan.FromSeconds(30));  // 30 ç§è¶æ¶
-
-    using var registration = cts.Token.Register(() =&gt; tcs.TrySetCanceled());
-    return await tcs.Task.ConfigureAwait(false);
-}
-</code></pre>
-<h4 id="semaphoreslim---åéåæ­¥">SemaphoreSlim - åéåæ­¥</h4>
-<p>ç¡®ä¿æ¥æåéçä¸²è¡åï¼</p>
-<pre><code class="language-csharp">private readonly SemaphoreSlim _sendLock = new(1, 1);
-
-private async Task SendPacketBytesAsync(byte[] packet, CancellationToken cancellationToken)
-{
-    await _sendLock.WaitAsync(cancellationToken).ConfigureAwait(false);
-    try
-    {
-        await _stream.WriteAsync(packet.AsMemory(), cancellationToken).ConfigureAwait(false);
-        await _stream.FlushAsync(cancellationToken).ConfigureAwait(false);
-    }
-    finally
-    {
-        _sendLock.Release();
-    }
-}
-</code></pre>
-<h3 id="ç¼è¯å¨ä¼å">ç¼è¯å¨ä¼å</h3>
-<h4 id="methodimpl-ç¹æ§">MethodImpl ç¹æ§</h4>
-<p>éå¯¹ä¸ååºæ¯ä½¿ç¨åéçç¼è¯å¨ä¼åæä»¤ï¼</p>
-<pre><code class="language-csharp">// å¼ºå¶åè - ç¨äºé¢ç¹è°ç¨çç­æ¹æ³
-[MethodImpl(MethodImplOptions.AggressiveInlining)]
-public ushort ReadUInt16()
-{
-    var value = (ushort)((_buffer[_position] &lt;&lt; 8) | _buffer[_position + 1]);
-    _position += 2;
-    return value;
-}
-
-// æç§¯æçä¼å - ç¨äºç­è·¯å¾
-[MethodImpl(MethodImplOptions.AggressiveOptimization)]
-private static async Task&lt;int&gt; DecodeRemainingLengthAsync(Stream stream, CancellationToken ct)
-{
-    // å¯åé¿åº¦è§£ç å®ç°...
-}
-
-// ç¦æ­¢åè - é¿åå¼å¸¸å¤çä»£ç è¨èç­è·¯å¾
-[MethodImpl(MethodImplOptions.NoInlining)]
-private void ThrowIfDisposed()
-{
-    if (_disposed) throw new ObjectDisposedException(nameof(MqttClient));
-}
-</code></pre>
-<h3 id="ç½ç»ç¼ç¨">ç½ç»ç¼ç¨</h3>
-<h4 id="å¤å±ä¼ è¾æ½è±¡">å¤å±ä¼ è¾æ½è±¡</h4>
-<p>æ¯æ TCPãUDP ç­å¤ç§ä¼ è¾æ¹å¼ï¼</p>
-<pre><code class="language-csharp">public interface ITransportConnection : IAsyncDisposable
-{
-    string ConnectionId { get; }
-    TransportType TransportType { get; }
-    EndPoint? RemoteEndPoint { get; }
-    bool IsConnected { get; }
-
-    ValueTask&lt;int&gt; ReadAsync(Memory&lt;byte&gt; buffer, CancellationToken cancellationToken = default);
-    ValueTask WriteAsync(ReadOnlyMemory&lt;byte&gt; buffer, CancellationToken cancellationToken = default);
-    ValueTask FlushAsync(CancellationToken cancellationToken = default);
-}
-</code></pre>
-<h4 id="tlsssl-æ¯æ">TLS/SSL æ¯æ</h4>
-<p>ä½¿ç¨ SslStream å®ç°å å¯ä¼ è¾ï¼æ¯æ TLS 1.2 å TLS 1.3ï¼</p>
-<pre><code class="language-csharp">var sslOptions = new SslClientAuthenticationOptions
-{
-    TargetHost = Options.Host,
-    EnabledSslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13,
-    ClientCertificates = Options.ClientCertificate != null
-        ? new X509CertificateCollection { Options.ClientCertificate }
-        : null
-};
-
-await sslStream.AuthenticateAsClientAsync(sslOptions, cancellationToken);
-</code></pre>
-<h3 id="åè®®åºåå">åè®®åºåå</h3>
-<h4 id="å·¥åæ¨¡å¼--å»¶è¿åå§å">å·¥åæ¨¡å¼ + å»¶è¿åå§å</h4>
-<p>åè®®å¤çå¨éç¨åä¾ + å»¶è¿åå§åæ¨¡å¼ï¼</p>
-<pre><code class="language-csharp">public static class MqttProtocolHandlerFactory
-{
-    private static readonly Lazy&lt;IMqttProtocolHandler&gt; _v311Handler =
-        new(() =&gt; new V311ProtocolHandler());
-    private static readonly Lazy&lt;IMqttProtocolHandler&gt; _v500Handler =
-        new(() =&gt; new V500ProtocolHandler());
-
-    public static IMqttProtocolHandler GetHandler(MqttProtocolVersion version)
-    {
-        return version switch
-        {
-            MqttProtocolVersion.V311 =&gt; _v311Handler.Value,
-            MqttProtocolVersion.V500 =&gt; _v500Handler.Value,
-            _ =&gt; throw new NotSupportedException()
-        };
-    }
-}
-</code></pre>
-<h4 id="å¯åé¿åº¦æ´æ°ç¼ç ">å¯åé¿åº¦æ´æ°ç¼ç </h4>
-<p>MQTT åè®®ç¹æçå¯åé¿åº¦ç¼ç ï¼1-4 å­èå¯è¡¨ç¤º 0 å° 268,435,455ï¼</p>
-<pre><code class="language-csharp">public uint ReadVariableByteInteger()
-{
-    uint value = 0;
-    int multiplier = 1;
-    byte encodedByte;
-
-    do
-    {
-        encodedByte = _buffer[_position++];
-        value += (uint)((encodedByte &amp; 0x7F) * multiplier);
-        multiplier *= 128;
-    } while ((encodedByte &amp; 0x80) != 0);
-
-    return value;
-}
-</code></pre>
-<h3 id="å¹¶åæ°æ®ç»æ">å¹¶åæ°æ®ç»æ</h3>
-<h4 id="concurrentdictionary---çº¿ç¨å®å¨éå">ConcurrentDictionary - çº¿ç¨å®å¨éå</h4>
-<p>ç¨äºç®¡çå®¢æ·ç«¯ä¼è¯åè®¢éï¼</p>
-<pre><code class="language-csharp">private readonly ConcurrentDictionary&lt;string, MqttClientSession&gt; _sessions = new();
-private readonly ConcurrentDictionary&lt;string, MqttApplicationMessage&gt; _retainedMessages = new();
-
-public int ConnectedClients =&gt; _sessions.Count;
-public IEnumerable&lt;MqttClientSession&gt; Sessions =&gt; _sessions.Values;
-</code></pre>
-<h3 id="è®¾è®¡æ¨¡å¼åºç¨">è®¾è®¡æ¨¡å¼åºç¨</h3>
-<table>
-<thead>
-<tr>
-<th>æ¨¡å¼</th>
-<th>åºç¨åºæ¯</th>
-<th>ç¤ºä¾</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>å·¥åæ¨¡å¼</strong></td>
-<td>åè®®å¤çå¨åå»º</td>
-<td><code>MqttProtocolHandlerFactory</code></td>
-</tr>
-<tr>
-<td><strong>ç­ç¥æ¨¡å¼</strong></td>
-<td>ä¸ååè®®çæ¬å®ç°</td>
-<td><code>V311ProtocolHandler</code> / <code>V500ProtocolHandler</code></td>
-</tr>
-<tr>
-<td><strong>å»ºé èæ¨¡å¼</strong></td>
-<td>æ¥ææå»º</td>
-<td><code>IPublishPacketBuilder</code> / <code>IConnectPacketBuilder</code></td>
-</tr>
-<tr>
-<td><strong>è§å¯èæ¨¡å¼</strong></td>
-<td>äºä»¶ç³»ç»</td>
-<td><code>MessageReceived</code> / <code>ClientConnected</code></td>
-</tr>
-<tr>
-<td><strong>è£é¥°å¨æ¨¡å¼</strong></td>
-<td>ä¼ è¾å± TLS</td>
-<td><code>SslStream</code> è£é¥° <code>NetworkStream</code></td>
-</tr>
-<tr>
-<td><strong>åä¾æ¨¡å¼</strong></td>
-<td>åè®®å¤çå¨ç¼å­</td>
-<td>å¨å±å±äº«çå¤çå¨å®ä¾</td>
-</tr>
-</tbody>
-</table>
-<h3 id="ææ¯æ æ»ç»">ææ¯æ æ»ç»</h3>
-<table>
-<thead>
-<tr>
-<th>ç±»å«</th>
-<th>ææ¯</th>
-<th>ä½ç¨</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>åå­ç®¡ç</strong></td>
-<td><code>Span&lt;T&gt;</code>, <code>Memory&lt;T&gt;</code>, <code>ref struct</code>, <code>ArrayPool&lt;T&gt;</code>, <code>stackalloc</code></td>
-<td>é¶æ·è´ãæ åéãç¼å²åºå¤ç¨</td>
-</tr>
-<tr>
-<td><strong>å¼æ­¥ç¼ç¨</strong></td>
-<td><code>async/await</code>, <code>Channel&lt;T&gt;</code>, <code>TaskCompletionSource</code>, <code>SemaphoreSlim</code></td>
-<td>é«æå¹¶åãéé»å¡äºä»¶å¤ç</td>
-</tr>
-<tr>
-<td><strong>ç¼è¯ä¼å</strong></td>
-<td><code>AggressiveInlining</code>, <code>AggressiveOptimization</code>, <code>NoInlining</code></td>
-<td>JIT ç¼è¯å¨ä¼åæç¤º</td>
-</tr>
-<tr>
-<td><strong>ç½ç»å±</strong></td>
-<td><code>TcpClient</code>, <code>TcpListener</code>, <code>SslStream</code>, ä¼ è¾æ½è±¡</td>
-<td>å¤åè®®æ¯æãå®å¨ä¼ è¾</td>
-</tr>
-<tr>
-<td><strong>å¹¶åéå</strong></td>
-<td><code>ConcurrentDictionary</code>, <code>ConcurrentQueue</code></td>
-<td>çº¿ç¨å®å¨çæ°æ®ç»æ</td>
-</tr>
-<tr>
-<td><strong>åºåå</strong></td>
-<td>èªå®ä¹äºè¿å¶è¯»åå¨ãå¯åé¿åº¦ç¼ç </td>
-<td>é«æçåè®®è§£æ</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="æ§è½ä¼åå»ºè®®">æ§è½ä¼åå»ºè®®</h2>
-<h3 id="å®¢æ·ç«¯ä¼å">å®¢æ·ç«¯ä¼å</h3>
-<ol>
-<li><strong>éæ©åéç QoS</strong>ï¼å¤§å¤æ°åºæ¯ QoS 1 å°±è¶³å¤äºï¼QoS 2 å¼éè¾å¤§</li>
-<li><strong>æ¹éåé</strong>ï¼å¦ææå¤§éæ¶æ¯ï¼èèåå¹¶ååé</li>
-<li><strong>åçè®¾ç½® KeepAlive</strong>ï¼æ ¹æ®ç½ç»ç¯å¢è°æ´ï¼ä¸è¬ 60 ç§å³å¯</li>
-<li><strong>ä½¿ç¨æä¹ä¼è¯</strong>ï¼å¦æéè¦æ¥æ¶ç¦»çº¿æ¶æ¯ï¼è®¾ç½® <code>CleanSession = false</code></li>
-</ol>
-<h3 id="broker-ä¼å">Broker ä¼å</h3>
-<ol>
-<li><strong>è°æ´æå¤§è¿æ¥æ°</strong>ï¼æ ¹æ®æå¡å¨æ§è½è®¾ç½® <code>MaxConnections</code></li>
-<li><strong>éå¶æ¶æ¯å¤§å°</strong>ï¼è®¾ç½® <code>MaxMessageSize</code> é²æ­¢æ¶æå¤§æ¶æ¯</li>
-<li><strong>ç¦»çº¿æ¶æ¯éå¶</strong>ï¼è®¾ç½® <code>MaxOfflineMessagesPerClient</code> é²æ­¢åå­æº¢åº</li>
-<li><strong>ä½¿ç¨éç¾¤</strong>ï¼é«å¯ç¨åºæ¯ä½¿ç¨éç¾¤é¨ç½²</li>
-</ol>
-<hr>
-<h2 id="å®¢æ·ç«¯ä½¿ç¨æå">å®¢æ·ç«¯ä½¿ç¨æå</h2>
-<h3 id="åºç¡è¿æ¥">åºç¡è¿æ¥</h3>
-<pre><code class="language-csharp">using System.Net.MQTT;
-
-// éç½®å®¢æ·ç«¯éé¡¹
-var options = new MqttClientOptions
-{
-    Host = "localhost",
-    Port = 1883,
-    ClientId = "my-iot-device",
-    CleanSession = true
-};
-
-// åå»ºå®¢æ·ç«¯
-using var client = new MqttClient(options);
-
-// è¿æ¥å° Broker
-var result = await client.ConnectAsync();
-
-if (result.IsSuccess)
-{
-    Console.WriteLine("è¿æ¥æåï¼");
-}
-</code></pre>
-<h3 id="è®¢éä¸»é¢">è®¢éä¸»é¢</h3>
-<pre><code class="language-csharp">// è®¢éåä¸ªä¸»é¢
-await client.SubscribeAsync("sensors/temperature", MqttQualityOfService.AtLeastOnce);
-
-// ä½¿ç¨ééç¬¦è®¢éå¤ä¸ªä¸»é¢
-await client.SubscribeAsync("sensors/#", MqttQualityOfService.AtLeastOnce);  // å¤çº§ééç¬¦
-await client.SubscribeAsync("sensors/+/status", MqttQualityOfService.AtMostOnce);  // åçº§ééç¬¦
-</code></pre>
-<h3 id="æ¥æ¶æ¶æ¯">æ¥æ¶æ¶æ¯</h3>
-<pre><code class="language-csharp">client.MessageReceived += (sender, e) =&gt;
-{
-    Console.WriteLine($"æ¶å°æ¶æ¯:");
-    Console.WriteLine($"  ä¸»é¢: {e.Message.Topic}");
-    Console.WriteLine($"  åå®¹: {e.Message.PayloadAsString}");
-    Console.WriteLine($"  QoS: {e.Message.QualityOfService}");
-};
-</code></pre>
-<h3 id="åå¸æ¶æ¯">åå¸æ¶æ¯</h3>
-<pre><code class="language-csharp">// ç®ååå¸
-await client.PublishAsync("sensors/temperature", "25.5");
-
-// æå® QoS åå¸
-await client.PublishAsync("sensors/humidity", "60%", MqttQualityOfService.AtLeastOnce);
-
-// åå¸ä¿çæ¶æ¯
-await client.PublishAsync("device/status", "online", MqttQualityOfService.AtLeastOnce, retain: true);
-
-// ä½¿ç¨å®æ´çæ¶æ¯å¯¹è±¡
-var message = MqttApplicationMessage.Create(
-    topic: "sensors/data",
-    payload: "{\"temp\": 25.5, \"humidity\": 60}",
-    qos: MqttQualityOfService.ExactlyOnce,
-    retain: false
-);
-await client.PublishAsync(message);
-</code></pre>
-<h3 id="éå±æ¶æ¯last-will">éå±æ¶æ¯ï¼Last Willï¼</h3>
-<p>éå±æ¶æ¯ä¼å¨å®¢æ·ç«¯å¼å¸¸æ­å¼æ¶èªå¨åå¸ï¼</p>
-<pre><code class="language-csharp">var options = new MqttClientOptions
-{
-    Host = "localhost",
-    ClientId = "my-device",
-    WillMessage = MqttApplicationMessage.Create(
-        topic: "devices/my-device/status",
-        payload: "offline",
-        qos: MqttQualityOfService.AtLeastOnce,
-        retain: true
-    )
-};
-</code></pre>
-<h3 id="tls-å å¯è¿æ¥">TLS å å¯è¿æ¥</h3>
-<pre><code class="language-csharp">var options = new MqttClientOptions
-{
-    Host = "secure-broker.example.com",
-    Port = 8883,
-    UseTls = true,
-    // å¯éï¼å®¢æ·ç«¯è¯ä¹¦
-    ClientCertificate = new X509Certificate2("client.pfx", "password")
-};
-</code></pre>
-<h3 id="èªå¨éè¿">èªå¨éè¿</h3>
-<pre><code class="language-csharp">var options = new MqttClientOptions
-{
-    Host = "localhost",
-    AutoReconnect = true,
-    ReconnectDelayMs = 5000  // 5ç§åéè¿
-};
-
-client.Connected += (s, e) =&gt; Console.WriteLine("å·²è¿æ¥");
-client.Disconnected += (s, e) =&gt; Console.WriteLine("è¿æ¥æ­å¼ï¼æ­£å¨éè¿...");
-</code></pre>
-<h3 id="å®æ´å®¢æ·ç«¯ç¤ºä¾">å®æ´å®¢æ·ç«¯ç¤ºä¾</h3>
-<pre><code class="language-csharp">using System.Net.MQTT;
-
-var options = new MqttClientOptions
-{
-    Host = "localhost",
-    Port = 1883,
-    ClientId = $"client-{Guid.NewGuid():N}",
-    Username = "user",
-    Password = "password",
-    CleanSession = true,
-    KeepAliveSeconds = 60,
-    AutoReconnect = true
-};
-
-using var client = new MqttClient(options);
-
-// è®¾ç½®äºä»¶å¤ç
-client.Connected += (s, e) =&gt; Console.WriteLine("[äºä»¶] å·²è¿æ¥å° Broker");
-client.Disconnected += (s, e) =&gt; Console.WriteLine("[äºä»¶] è¿æ¥å·²æ­å¼");
-client.MessageReceived += (s, e) =&gt;
-{
-    Console.WriteLine($"[æ¶æ¯] {e.Message.Topic}: {e.Message.PayloadAsString}");
-};
-
-// è¿æ¥
-var result = await client.ConnectAsync();
-if (!result.IsSuccess)
-{
-    Console.WriteLine($"è¿æ¥å¤±è´¥: {result.ReasonCode}");
-    return;
-}
-
-// è®¢é
-await client.SubscribeAsync("test/#", MqttQualityOfService.AtLeastOnce);
-
-// åå¸æµè¯æ¶æ¯
-for (int i = 0; i &lt; 10; i++)
-{
-    await client.PublishAsync("test/counter", i.ToString());
-    await Task.Delay(1000);
-}
-
-// æ­å¼è¿æ¥
-await client.DisconnectAsync();
-</code></pre>
-<hr>
-<h2 id="æå¡å¨brokerä½¿ç¨æå">æå¡å¨ï¼Brokerï¼ä½¿ç¨æå</h2>
-<h3 id="å¯å¨åºç¡-broker">å¯å¨åºç¡ Broker</h3>
-<pre><code class="language-csharp">using System.Net.MQTT.Broker;
-
-var options = new MqttBrokerOptions
-{
-    Port = 1883,
-    AllowAnonymous = true,
-    EnableRetainedMessages = true,
-    MaxConnections = 10000
-};
-
-using var broker = new MqttBroker(options);
-
-// å¯å¨æå¡å¨
-await broker.StartAsync();
-Console.WriteLine("MQTT Broker å·²å¯å¨ï¼çå¬ç«¯å£ 1883");
-
-// ä¿æè¿è¡
-await Task.Delay(Timeout.Infinite);
-
-// åæ­¢æå¡å¨
-await broker.StopAsync();
-</code></pre>
-<h3 id="éç½®è®¤è¯">éç½®è®¤è¯</h3>
-<pre><code class="language-csharp">// ä½¿ç¨ç®åè®¤è¯å¨
-broker.Authenticator = new SimpleAuthenticator()
-    .AddUser("admin", "admin123")
-    .AddUser("device1", "device1pass")
-    .AddUser("device2", "device2pass");
-
-var options = new MqttBrokerOptions
-{
-    Port = 1883,
-    AllowAnonymous = false  // ç¦ç¨å¿åè®¿é®
-};
-</code></pre>
-<h3 id="èªå®ä¹è®¤è¯å¨">èªå®ä¹è®¤è¯å¨</h3>
-<pre><code class="language-csharp">public class MyAuthenticator : IMqttAuthenticator
-{
-    public Task&lt;MqttAuthenticationResult&gt; AuthenticateAsync(
-        MqttAuthenticationContext context,
-        CancellationToken cancellationToken)
-    {
-        // ä»æ°æ®åºéªè¯ç¨æ·
-        if (ValidateFromDatabase(context.Username, context.Password))
-        {
-            return Task.FromResult(MqttAuthenticationResult.Success());
-        }
-
-        return Task.FromResult(MqttAuthenticationResult.Failure(
-            MqttConnectReasonCode.BadUserNameOrPassword));
-    }
-}
-
-broker.Authenticator = new MyAuthenticator();
-</code></pre>
-<h3 id="broker-äºä»¶å¤ç">Broker äºä»¶å¤ç</h3>
-<pre><code class="language-csharp">// å®¢æ·ç«¯è¿æ¥äºä»¶
-broker.ClientConnected += (s, e) =&gt;
-{
-    Console.WriteLine($"[è¿æ¥] å®¢æ·ç«¯ {e.Session.ClientId} å·²è¿æ¥");
-    Console.WriteLine($"  å°å: {e.Session.RemoteEndpoint}");
-    Console.WriteLine($"  å½åè¿æ¥æ°: {broker.ConnectedClients}");
-};
-
-// å®¢æ·ç«¯æ­å¼äºä»¶
-broker.ClientDisconnected += (s, e) =&gt;
-{
-    Console.WriteLine($"[æ­å¼] å®¢æ·ç«¯ {e.Session.ClientId} å·²æ­å¼");
-};
-
-// å®¢æ·ç«¯è®¢éäºä»¶
-broker.ClientSubscribed += (s, e) =&gt;
-{
-    Console.WriteLine($"[è®¢é] {e.Session.ClientId} è®¢éäº {e.TopicFilter}");
-};
-
-// æ¶æ¯åå¸äºä»¶
-broker.MessagePublished += (s, e) =&gt;
-{
-    Console.WriteLine($"[æ¶æ¯] {e.Message.Topic}: {e.Message.PayloadAsString}");
-    Console.WriteLine($"  æ¥èª: {e.SourceClientId}");
-};
-
-// æ¶æ¯åå¸åæ¦æªï¼å¯ä»¥é»æ­¢æ¶æ¯åå¸ï¼
-broker.MessagePublishing += (s, e) =&gt;
-{
-    // æ£æ¥ææä¸»é¢
-    if (e.Message.Topic.StartsWith("admin/") &amp;&amp; e.SourceClientId != "admin")
-    {
-        e.Cancel = true;  // é»æ­¢éç®¡çååå¸å° admin ä¸»é¢
-    }
-};
-</code></pre>
-<h3 id="tls-éç½®">TLS éç½®</h3>
-<pre><code class="language-csharp">var options = new MqttBrokerOptions
-{
-    // æ®éç«¯å£
-    Port = 1883,
-
-    // TLS ç«¯å£
-    UseTls = true,
-    TlsPort = 8883,
-    ServerCertificate = new X509Certificate2("server.pfx", "password"),
-    RequireClientCertificate = false
-};
-</code></pre>
-<hr>
-<h2 id="é«çº§åè½">é«çº§åè½</h2>
-<h3 id="broker-æ¡¥æ¥">Broker æ¡¥æ¥</h3>
-<p>æ¡¥æ¥åè½åè®¸å°å¤ä¸ª Broker è¿æ¥èµ·æ¥ï¼å®ç°æ¶æ¯çè·¨ Broker åæ­¥ã</p>
-<pre><code class="language-csharp">var broker = new MqttBroker(new MqttBrokerOptions { Port = 2883 });
-
-// æ·»å æ¡¥æ¥å°ç¶ Broker
-var bridge = broker.AddBridge(new MqttBridgeOptions
-{
-    Name = "parent-bridge",
-    RemoteHost = "parent-broker.example.com",
-    RemotePort = 1883,
-    ClientId = "bridge-client-1",
-
-    // ä¸è¡è§åï¼æ¬å°æ¶æ¯ -&gt; è¿ç¨ Broker
-    UpstreamRules =
-    {
-        new MqttBridgeRule { LocalTopicFilter = "sensor/#", Enabled = true },
-        new MqttBridgeRule { LocalTopicFilter = "device/+/data", Enabled = true }
-    },
-
-    // ä¸è¡è§åï¼è¿ç¨æ¶æ¯ -&gt; æ¬å°
-    DownstreamRules =
-    {
-        new MqttBridgeRule { LocalTopicFilter = "commands/#", Enabled = true },
-        new MqttBridgeRule { LocalTopicFilter = "config/#", Enabled = true }
-    }
-});
-
-// æ¡¥æ¥äºä»¶
-bridge.Connected += (s, e) =&gt; Console.WriteLine("æ¡¥æ¥å·²è¿æ¥");
-bridge.MessageForwarded += (s, e) =&gt;
-{
-    var direction = e.Direction == BridgeDirection.Upstream ? "ä¸è¡" : "ä¸è¡";
-    Console.WriteLine($"[æ¡¥æ¥-{direction}] {e.OriginalTopic}");
-};
-
-// è·åç»è®¡ä¿¡æ¯
-var stats = bridge.GetStatistics();
-Console.WriteLine($"ä¸è¡æ¶æ¯: {stats.UpstreamMessageCount}");
-Console.WriteLine($"ä¸è¡æ¶æ¯: {stats.DownstreamMessageCount}");
-</code></pre>
-<h3 id="éç¾¤é¨ç½²">éç¾¤é¨ç½²</h3>
-<p>éç¾¤åè½å®ç°äºå»ä¸­å¿åç P2P æ¶æï¼ä»»ä½èç¹é½å¯ä»¥ç¬ç«è¿è¡ï¼æ¯æèªå¨æéæ£æµåæ¢å¤ã</p>
-<pre><code class="language-csharp">var broker = new MqttBroker(new MqttBrokerOptions { Port = 1883 });
-
-// å¯ç¨éç¾¤
-broker.EnableCluster(new MqttClusterOptions
-{
-    NodeId = "node-1",
-    ClusterName = "my-cluster",
-    ClusterPort = 11883,
-    SeedNodes = new List&lt;string&gt;
-    {
-        "node2.example.com:11883",
-        "node3.example.com:11883"
-    },
-    HeartbeatIntervalMs = 5000,
-    NodeTimeoutMs = 15000,
-    EnableDeduplication = true  // é²æ­¢æ¶æ¯éå¤
-});
-
-// éç¾¤äºä»¶
-broker.Cluster!.PeerJoined += (s, e) =&gt;
-    Console.WriteLine($"èç¹å å¥: {e.Peer.NodeId}");
-
-broker.Cluster!.PeerLeft += (s, e) =&gt;
-    Console.WriteLine($"èç¹ç¦»å¼: {e.Peer.NodeId}");
-
-broker.Cluster!.MessageForwarded += (s, e) =&gt;
-    Console.WriteLine($"æ¶æ¯è½¬å: {e.Topic}");
-
-await broker.StartAsync();
-</code></pre>
-<h3 id="mqtt-sn-ç½å³">MQTT-SN ç½å³</h3>
-<p>MQTT-SN æ¯åºäº UDP çè½»éçº§åè®®ï¼éåèµæºåéçåµå¥å¼è®¾å¤ï¼</p>
-<pre><code class="language-csharp">var options = new MqttBrokerOptions
-{
-    Port = 1883,
-    EnableMqttSn = true,
-    MqttSnPort = 1885
-};
-</code></pre>
-<h3 id="coap-ç½å³">CoAP ç½å³</h3>
-<p>CoAP ç½å³åè®¸ CoAP è®¾å¤ä¸ MQTT çæç³»ç»äºéï¼</p>
-<pre><code class="language-csharp">var options = new MqttBrokerOptions
-{
-    Port = 1883,
-    EnableCoAP = true,
-    CoapPort = 5683,
-    CoapMqttPrefix = "mqtt"
-};
-
-// CoAP å®¢æ·ç«¯å¯ä»¥éè¿ä»¥ä¸æ¹å¼è®¿é® MQTT ä¸»é¢ï¼
-// GET coap://broker:5683/mqtt/sensors/temperature
-// PUT coap://broker:5683/mqtt/sensors/temperature (åå¸æ¶æ¯)
-</code></pre>
-<hr>
-<h2 id="qos-æå¡è´¨é">QoS æå¡è´¨é</h2>
-<p>MQTT å®ä¹äºä¸ç§æå¡è´¨éçº§å«ï¼</p>
-<table>
-<thead>
-<tr>
-<th>QoS</th>
-<th>åç§°</th>
-<th>è¯´æ</th>
-<th>éç¨åºæ¯</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>0</td>
-<td>At Most Once</td>
-<td>æå¤ä¸æ¬¡ï¼ä¸ä¿è¯éè¾¾</td>
-<td>ä¼ æå¨æ°æ®ï¼ä¸¢å¤±å¯æ¥å</td>
-</tr>
-<tr>
-<td>1</td>
-<td>At Least Once</td>
-<td>è³å°ä¸æ¬¡ï¼å¯è½éå¤</td>
-<td>éè¦æ°æ®ï¼å¯å¤çéå¤</td>
-</tr>
-<tr>
-<td>2</td>
-<td>Exactly Once</td>
-<td>æ°å¥½ä¸æ¬¡ï¼ä¿è¯éè¾¾ä¸ä¸éå¤</td>
-<td>è®¡è´¹ãè®¢åç­å³é®æ°æ®</td>
-</tr>
-</tbody>
-</table>
-<pre><code class="language-csharp">// QoS 0 - æå¤ä¸æ¬¡
-await client.PublishAsync("sensor/temp", "25", MqttQualityOfService.AtMostOnce);
-
-// QoS 1 - è³å°ä¸æ¬¡
-await client.PublishAsync("alert/fire", "detected", MqttQualityOfService.AtLeastOnce);
-
-// QoS 2 - æ°å¥½ä¸æ¬¡
-await client.PublishAsync("order/create", orderJson, MqttQualityOfService.ExactlyOnce);
-</code></pre>
-<hr>
-<h2 id="ä¸»é¢ééç¬¦">ä¸»é¢ééç¬¦</h2>
-<table>
-<thead>
-<tr>
-<th>ééç¬¦</th>
-<th>è¯´æ</th>
-<th>ç¤ºä¾</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>+</code></td>
-<td>å¹éåä¸ªå±çº§</td>
-<td><code>sensor/+/temp</code> å¹é <code>sensor/room1/temp</code></td>
-</tr>
-<tr>
-<td><code>#</code></td>
-<td>å¹éå¤ä¸ªå±çº§</td>
-<td><code>sensor/#</code> å¹é <code>sensor/room1/temp</code> å <code>sensor/room1/humidity</code></td>
-</tr>
-</tbody>
-</table>
-<pre><code class="language-csharp">// è®¢éæææ¿é´çæ¸©åº¦
-await client.SubscribeAsync("sensor/+/temperature", MqttQualityOfService.AtLeastOnce);
-
-// è®¢éææä¼ æå¨æ°æ®
-await client.SubscribeAsync("sensor/#", MqttQualityOfService.AtLeastOnce);
-</code></pre>
-<hr>
-<h2 id="mqtt-50-æ°ç¹æ§">MQTT 5.0 æ°ç¹æ§</h2>
-<p>å¦æä½ ä½¿ç¨ MQTT 5.0 åè®®ï¼å¯ä»¥å©ç¨ä»¥ä¸æ°ç¹æ§ï¼</p>
-<pre><code class="language-csharp">var options = new MqttClientOptions
-{
-    Host = "localhost",
-    ProtocolVersion = MqttProtocolVersion.V500  // ä½¿ç¨ MQTT 5.0
-};
-
-// åå»ºå¸¦æ MQTT 5.0 å±æ§çæ¶æ¯
-var message = MqttApplicationMessage.CreateWithProperties(
-    topic: "request/data",
-    payload: "{\"query\": \"temperature\"}",
-    qos: MqttQualityOfService.AtLeastOnce,
-    retain: false,
-
-    // MQTT 5.0 ç¹æå±æ§
-    responseTopic: "response/client1",           // ååºä¸»é¢
-    correlationData: Encoding.UTF8.GetBytes("req-123"),  // å³èæ°æ®
-    messageExpiryInterval: 60,                   // æ¶æ¯60ç§åè¿æ
-    contentType: "application/json",             // åå®¹ç±»å
-    userProperties: new List&lt;MqttUserProperty&gt;   // ç¨æ·èªå®ä¹å±æ§
-    {
-        new MqttUserProperty("version", "1.0"),
-        new MqttUserProperty("source", "sensor-hub")
-    }
-);
-
-await client.PublishAsync(message);
-</code></pre>
-<hr>
-<h2 id="æ»ç»">æ»ç»</h2>
-<p>æ¯ä¸ä¸ªåè½å®æ´ãæ§è½ä¼ç§ç .NET MQTT åºï¼å·æä»¥ä¸ä¼å¿ï¼</p>
-<ul>
-<li><strong>å®æ´çåè®®æ¯æ</strong>ï¼MQTT 3.1.1ãMQTT 5.0ãMQTT-SNãCoAP å¨è¦ç</li>
-<li><strong>é«æ§è½è®¾è®¡</strong>ï¼å¼æ­¥ IOãé¶åéãç¼å²åºæ± </li>
-<li><strong>ä¼ä¸çº§ç¹æ§</strong>ï¼æ¡¥æ¥ãéç¾¤ãè®¤è¯ææ</li>
-<li><strong>æäºä½¿ç¨</strong>ï¼ç®æ´ç API è®¾è®¡ï¼ä¸°å¯çç¤ºä¾ä»£ç </li>
-<li><strong>ç°ä»£å</strong>ï¼æ¯æææ°ç .NET çæ¬</li>
-</ul>
-<p>æ è®ºä½ æ¯æå»º IoT å¹³å°ãå®ç°è®¾å¤éä¿¡ï¼è¿æ¯æ­å»ºæ¶æ¯ä¸­é´ä»¶ï¼è¿ä¸ªåºé½è½æ»¡è¶³ä½ çéæ±ã</p>
-<h2 id="ç¸å³é¾æ¥">ç¸å³é¾æ¥</h2>
-<p>æºç å°åï¼<a href="https://github.com/hnlyf1688/mqtt" target="_blank" rel="noopener nofollow">https://github.com/hnlyf1688/mqtt</a></p>
-
-</div>
-<div id="MySignature" role="contentinfo">
-    ä¸­å½.NETåä¼ï¼<a href="http://www.dotnet.org.cn" target="_blank">http://www.dotnet.org.cn</a>ï¼<br>
-è¾è®¯ä¼é¹ç¾¤ï¼45132984<a target="_blank" href="http://wp.qq.com/wpa/qunwpa?idkey=70cd6c09355ad0beae9424fc818c26b5cdc2c57bd6ceac797a3fce483cddb069"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="ä¸­å½.NETåä¼" title="ä¸­å½.NETåä¼"></a><br>
-åå®¢å­å°åï¼<a href="http://http://www.cnblogs.com/dotnet-org-cn">http://http://www.cnblogs.com/dotnet-org-cn</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;å½åå¯ä¸ä¸ä¸ªä»¥éçå©ç.NETåä¼ï¼è´åæé å½åå·ææå¨æ§ãä»·å¼æ§ç.NETåä¼ã
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.002777777777777778" data-date-updated="2026-01-12 18:14">2026-01-12 18:10</span>&nbsp;
-<a href="https://www.cnblogs.com/dotnet-org-cn">ä¸­å½.NETç ç©¶åä¼</a>&nbsp;
-éè¯»(<span id="post_view_count">90</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19473369);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19473369', targetLink: 'https://www.cnblogs.com/dotnet-org-cn/p/19473369', title: 'ä¸ä¸ªé«æ§è½ç .NET MQTT å®¢æ·ç«¯ä¸æå¡å¨åº' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
