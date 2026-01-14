@@ -3,12 +3,458 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-01-14T01:20:35.861Z</lastBuildDate>
+        <lastBuildDate>2026-01-14T04:44:18.654Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
+    <title><![CDATA[ çå®¢å¤§åç¬è¯é¢ç¬è®°-SQL 40-44ï¼èªç¨ï¼ ]]></title>
+    <link>https://www.cnblogs.com/gloria0311/p/19481499</link>
+    <guid>49777cd015a7565117864a3f81be1e9c</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/gloria0311/p/19481499" title="åå¸äº 2026-01-14 12:42">
+    <span role="heading" aria-level="2">çå®¢å¤§åç¬è¯é¢ç¬è®°-SQL 40-44ï¼èªç¨ï¼</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p><strong>SQL40 æ¯ä¸ªæTop3çå¨æ°ä¼¦æ­æ²ï¼ä»å¬æ­æµæ°´ä¸­æ¾å°18-25å²ç¨æ·å¨2022å¹´æ¯ä¸ªææ­æ¾æ¬¡æ°top 3çå¨æ°ä¼¦çæ­æ²ã</strong><br>
+ç­æ¡ï¼<br>
+select sub.month, sub.ranking, sub.song_name, sub.play_pv<br>
+from (select MONTH(p.fdate) AS month,<br>
+ROW_NUMBER() OVER (<br>
+PARTITION BY month(p.fdate)<br>
+ORDER BY count(<em>) desc, p.song_id Asc<br>
+) AS ranking,<br>
+s.song_name,<br>
+count(</em>) as play_pv<br>
+from play_log p<br>
+join song_info s on p.song_id = s.song_id<br>
+join user_info u on p.user_id = u.user_id<br>
+where s.singer_name = 'å¨æ°ä¼¦' and year(fdate) = 2022 and u.age between 18 and 25<br>
+group by month(p.fdate), s.song_name, s.song_id) sub<br>
+where sub.ranking &lt;=3<br>
+order by sub.month asc, sub.play_pv desc</p>
+<p>è¿æ¯ä¸ä¸ªç»å¸çç¨å°å­æ¥è¯¢çé¢ç®ã<br>
+é¦åæé¨è¦æç¡®æä»¬ GROUP â RANK â FILTER è¿æ¡é¾æ¡ãè®©ä½ ä»¥åçå°ä»»ä½ Top-N åç»é¢é½ä¸ä¼ä¹±ã</p>
+<p>â  GROUP ââ ä½ å°åºå¨ç»ä»ä¹æåï¼</p>
+<p>ä½ ä¸æ¯å¨ç»âæ­æ¾è®°å½âæå<br>
+ä½ æ¯å¨ç»âæ¯ä¸ªæçæ¯ä¸é¦æ­âæå</p>
+<p>æä»¥ç¬¬ä¸ä»¶äºæ°¸è¿æ¯é®ï¼<br>
+ææ³æ¯è¾çå¯¹è±¡æ¯è°ï¼æ¬é¢æ¯ï¼(æä»½, æ­æ²)</p>
+<p>æä»¥ä½ å¿é¡»åææµæ°´åæè¿ç§è¡¨ï¼</p>
+<p>month	song	play_pv<br>
+1	ææå°±	4<br>
+1	è¯´å¥½çå¹¸ç¦å¢	4<br>
+1	å¤§ç¬¨é	2<br>
+2	ææå°±	2<br>
+2	è¯´å¥½çå¹¸ç¦å¢	1<br>
+2	å¤§ç¬¨é	1</p>
+<p>è¿ä¸æ­¥å°±æ¯ï¼</p>
+<p>GROUP BY month, song<br>
+COUNT(*) AS play_pv<br>
+æ²¡æè¿ä¸å±ï¼ä½ è¿âæåå¯¹è±¡âé½æ²¡å®ä¹æ¸æ¥ã</p>
+<p>â¡ RANK ââ å¨âæ¯ä¸ªç»éé¢âæ</p>
+<p>ç°å¨ä½ æäºï¼æ¯ä¸ªæ â å¤é¦æ­ â åèªçæ­æ¾é</p>
+<p>æ¥ä¸æ¥ä½ è¦çæ¯ï¼å¨æ¯ä¸ªæåé¨ï¼ææ­æ¾éä»å¤§å°å°æåº</p>
+<p>è¿å°±æ¯çªå£å½æ°ï¼</p>
+<p>ROW_NUMBER() OVER (<br>
+PARTITION BY month<br>
+ORDER BY play_pv DESC<br>
+)</p>
+<p>ä½ æ¯å¨åï¼ä¸æä¸å¼ æ¦ï¼äºæä¸å¼ æ¦ï¼ä¸æä¸å¼ æ¦ï¼ä¸æ¯å¨è¡¨ä¸å¼ æ¦ã</p>
+<p>â¢ FILTER ââ åªçä¸å N</p>
+<p>çªå£å½æ°ä¸ä¼å é¤æ°æ®ï¼å®åªæ¯å¨âæ å·âã</p>
+<p>æ¯å¦ï¼</p>
+<p>month	song	play_pv	ranking<br>
+1	ææå°±	4	1<br>
+1	è¯´å¥½çå¹¸ç¦å¢	4	2<br>
+1	å¤§ç¬¨é	2	3<br>
+1	â¦	â¦	4<br>
+2	ææå°±	2	1<br>
+2	è¯´å¥½çå¹¸ç¦å¢	1	2</p>
+<p>æåä¸æ­¥å°±æ¯ï¼</p>
+<p>WHERE ranking &lt;= 3</p>
+<p>ç¨ä¸å¥è¯æ»ç»è¿æ¡é¾</p>
+<p>GROUP å³å®âæ¯ä»ä¹â<br>
+RANK å³å®âæä¹æ¯â<br>
+FILTER å³å®âçä¸è°â</p>
+<p><strong>SQL41 æé¿è¿ç»­ç»å½å¤©æ°</strong><br>
+æè¿°ï¼ä½ æ­£å¨æ­å»ºä¸ä¸ªç¨æ·æ´»è·åº¦çç»åï¼å¶ä¸­ä¸ä¸ªä¸æ´»è·åº¦ç¸å³çç¹å¾æ¯âæé¿è¿ç»­ç»å½å¤©æ°âï¼ è¯·ç¨SQLå®ç°â2023å¹´1æ1æ¥-2023å¹´1æ31æ¥ç¨æ·æé¿çè¿ç»­ç»å½å¤©æ°â</p>
+<p>ç­æ¡ï¼<br>
+WITH ordered_logins AS (<br>
+SELECT<br>
+user_id,<br>
+fdate,<br>
+ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY fdate) AS rn<br>
+FROM<br>
+tb_dau<br>
+WHERE<br>
+fdate BETWEEN '2023-01-01' AND '2023-01-31'<br>
+),<br>
+grouped_logins AS (<br>
+SELECT<br>
+user_id,<br>
+fdate,<br>
+rn,<br>
+DATE_SUB(fdate, INTERVAL rn DAY) AS grp<br>
+FROM<br>
+ordered_logins<br>
+)<br>
+SELECT<br>
+user_id,<br>
+MAX(consec_days) AS max_consec_days<br>
+FROM (<br>
+SELECT<br>
+user_id,<br>
+grp,<br>
+COUNT(*) AS consec_days<br>
+FROM<br>
+grouped_logins<br>
+GROUP BY<br>
+user_id, grp<br>
+) AS consecutive<br>
+GROUP BY<br>
+user_id;</p>
+<p>è¿ä¸ªé¢åæç¬¬ä¸æ¬¡è§âæé¿è¿ç»­ç»å½å¤©æ°â</p>
+<p>é¦åï¼æä»¬éè¦å¯¹æ¯ä¸ªç¨æ·çç»å½æ¥æè¿è¡æåºï¼å¹¶ä¸ºæ¯ä¸ªæ¥æåéä¸ä¸ªåºå·ã<br>
+æä»¬ä½¿ç¨ROW_NUMBER()çªå£å½æ°ä¸ºæ¯ä¸ªç¨æ·çç»å½æ¥æåéä¸ä¸ªåºå·ï¼<br>
+ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY fdate) AS rn</p>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3710180/202601/3710180-20260114082136944-1708646280.png" class="lazyload"></p>
+<p>ç¬¬äºï¼éè¿è®¡ç®æ¯ä¸ªæ¥æåå»å¶åºå·çç»æï¼æä»¬å¯ä»¥å°è¿ç»­çæ¥æåç»ã<br>
+DATE_SUB(fdate, INTERVAL rn DAY)ï¼éè¿æfdateåå»rnå¤©ï¼è¿ç»­çæ¥æå°å·æç¸åçç»æï¼ä»èå¯ä»¥åç»ã</p>
+<table>
+<thead>
+<tr>
+<th>fdate</th>
+<th>rn</th>
+<th>fdate - rn</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>01-01</td>
+<td>1</td>
+<td>12-31</td>
+</tr>
+<tr>
+<td>01-02</td>
+<td>2</td>
+<td>12-31</td>
+</tr>
+<tr>
+<td>01-04</td>
+<td>3</td>
+<td>01-01</td>
+</tr>
+<tr>
+<td>01-05</td>
+<td>4</td>
+<td>01-01</td>
+</tr>
+<tr>
+<td>01-06</td>
+<td>5</td>
+<td>01-01</td>
+</tr>
+</tbody>
+</table>
+<p>æåï¼å¯¹æ¯ä¸ªåç»è®¡ç®è¿ç»­å¤©æ°ï¼å¹¶æ¾åºæé¿çè¿ç»­å¤©æ°ã</p>
+<table>
+<thead>
+<tr>
+<th>user_id</th>
+<th>grp</th>
+<th>consec_days</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>12-31</td>
+<td>2</td>
+</tr>
+<tr>
+<td>A</td>
+<td>01-01</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+<p>COUNT(*) AS consec_daysï¼è®¡ç®æ¯ä¸ªåç»çæ°éï¼å·æç¸åå¤©æ°çæ°éï¼ï¼å³å¯å¾å°è¿ç»­å¤©æ°ã<br>
+MAX(consec_days) AS max_consec_daysï¼æ¾åºæ¯ä¸ªç¨æ·çæé¿è¿ç»­å¤©æ°ã<br>
+è¿éç¨éäºå­æ¥è¯¢ã</p>
+<p>å¶ä¸­çtableåªæ¯ä¸¾ä¸ªä¾å­ä¸æ¯æ¬èº«é¢çtableã</p>
+<p><strong>SQL42 åæå®¢æ·é¾ææåµ</strong></p>
+<p>ç­æ¡ï¼<br>
+select c.pay_ability, CONCAT(ROUND(SUM(CASE WHEN l.overdue_days IS NOT NULL THEN 1 ELSE 0 END)/COUNT(<em>)</em>100,1),'%') AS overdue_ratio<br>
+from loan_tb l<br>
+join customer_tb c on l.customer_id = c. customer_id<br>
+group by c.pay_ability<br>
+order by overdue_ratio desc</p>
+<p>è¿éé¢çç¹å¨äº  CONCAT(ROUND(SUM(CASE WHEN lt.overdue_days IS NOT NULL THEN 1 ELSE 0 END)/COUNT(<em>)</em>100,1),'%') AS overdue_ratio<br>
+éé¢çè¯­æ³ï¼åºå®æ­éè¦è®°ç¢ã</p>
+<p>CASE WHEN lt.overdue_days IS NOT NULL THEN 1 ELSE 0 ENDï¼å¤æ­å®¢æ·æ¯å¦æé¾æè¡ä¸ºï¼overdue_dayså­æ®µä¸ä¸ºNULLå³è®°ä½1ï¼å¦åè®°ä½0ã<br>
+SUM(...)ï¼è®¡ç®æé¾æè¡ä¸ºçå®¢æ·æ°éï¼å³ä¸ä¸æ­¥è®°ä½1çå®¢æ·æ°éã<br>
+COUNT(*)ï¼è®¡ç®æ»å®¢æ·æ°éã<br>
+ROUND(...,1)ï¼å°ç»æåèäºå¥ä¿çä¸ä½å°æ°ã<br>
+CONCAT(...,'%')ï¼è¾åºæ ¼å¼ä¸ºâæ°å­â+â%âï¼æ­¤å¤ä½¿ç¨å­ç¬¦ä¸²æä½ï¼CONCAT(A,B)å³å°Aå­ç¬¦ä¸²åBå­ç¬¦ä¸²è¿æ¥æâABâå­ç¬¦ä¸²ã</p>
+<p><strong>SQL43 è·åæå®å®¢æ·æ¯æçæ¶è´¹é¢</strong><br>
+ç­æ¡:<br>
+SELECT<br>
+DATE_FORMAT(t.t_time, '%Y-%m') AS time,<br>
+ROUND(SUM(t.t_amount),1) AS total<br>
+FROM<br>
+trade t<br>
+JOIN<br>
+customer c ON t.t_cus = c.c_id<br>
+WHERE<br>
+t.t_type = 1<br>
+AND c.c_name = 'TOM'<br>
+AND YEAR(t.t_time) = 2023<br>
+GROUP BY<br>
+time<br>
+ORDER BY<br>
+time</p>
+<p>å¯¹äºææ¥è¯´è¿éé¢çç¹å¨äº DATE_FORMAT(t.t_time, '%Y-%m') AS timeï¼å°äº¤ææ¶é´æ ¼å¼åä¸ºå¹´æã</p>
+<p><strong>SQL44 æ¥è¯¢è¿ç»­å¥ä½å¤æçå®¢æ·ä¿¡æ¯ï¼</strong></p>
+<p>ç­æ¡ï¼<br>
+SELECT<br>
+c.user_id,<br>
+c.room_id,<br>
+g.room_type,<br>
+DATEDIFF(DATE(c.checkout_time), DATE(c.checkin_time)) AS days<br>
+FROM checkin_tb c<br>
+JOIN guestroom_tb g<br>
+ON c.room_id = g.room_id<br>
+WHERE DATE(c.checkin_time) = '2022-06-12'<br>
+AND DATEDIFF(DATE(c.checkout_time), DATE(c.checkin_time)) &gt;= 2<br>
+ORDER BY<br>
+days ASC,<br>
+c.room_id ASC,<br>
+c.user_id DESC;</p>
+<p>select *<br>
+from(<br>
+select c.user_id, c.room_id, g.room_type, DATEDIFF(DATE(c.checkout_time), DATE(c.checkin_time)) AS days<br>
+from checkin_tb c<br>
+join guestroom_tb g on c.room_id = g.room_id<br>
+WHERE DATE(c.checkin_time) = '2022-06-12'<br>
+) as t<br>
+where t.days &gt;=2<br>
+order by days asc, room_id asc, user_id desc</p>
+<p>è¿éé¢æ¯å¨èå¯¹âæ¶é´ + SQL æ§è¡é»è¾ + ä¸å¡è¯­ä¹âççè§£æ¯å¦åç¡®ã</p>
+<p>ç¬¬ä¸ï¼éåºè¡ä¸éï¼è¿ç»­å¥ä½å¤©æ° = ä½äºå æãä¹å°±æ¯ï¼éæ¿æ¥æ â å¥ä½æ¥æãä¸æ¯ 24 å°æ¶çæ´å¤©æ°ã</p>
+<p>ä½ å¦æç¨ï¼TIMESTAMPDIFF(DAY, checkin_time, checkout_time)å°±éäºãä½ ç®çæ¯ï¼è¿äºå ä¸ªå®æ´ç 24 å°æ¶ãèé¢ç®è¦çæ¯ï¼è·¨äºå ä¸ªæä¸ï¼æ¥åå¤©ï¼<br>
+æä»¥ä¸å®è¦ç¨ï¼DATEDIFF(DATE(checkout_time), DATE(checkin_time))</p>
+<p>ç¬¬äºï¼DATETIME ä¸å®è¦åè½¬æ DATEï¼å¨æäºæ°æ®åºä¸­ä¼éå¼æªæ­ãå¨æäºä¼æ¥éãå¨æäºä¼åæ 0ãå¡æ¯ç®âå¤© / æ / æ¥æå·®âï¼ä¸å®è¦ï¼å DATE() å DATEDIFF()ãè¿æ¯æ°æ®ä»åºå·¥ç¨çåºæ¬åã</p>
+<p>ç¬¬ä¸ï¼SQLçæ§è¡é¡ºåºæ¯<br>
+FROM<br>
+â JOIN<br>
+â WHERE<br>
+â SELECT<br>
+â ORDER BY<br>
+days å¨ WHERE æ¶è¿ä¸å­å¨ï¼åªè½å¨ ORDER BY ç¨ï¼æ³å¨ WHERE ç¨ â å¿é¡»ç¨å­æ¥è¯¢ / CTEï¼è¿å°±æ¯ä½ ä¸ºä»ä¹åå­æ¥è¯¢çåå ã<br>
+ä¸åå­æ¥è¯¢çè¯å°±ååä¸éWHERE DATE(c.checkin_time) = '2022-06-12'AND DATEDIFF(DATE(c.checkout_time), DATE(c.checkin_time)) &gt;= 2</p>
+<p>ç¬¬åï¼æä¸å¼å§åäº GROUP BYï¼è¿ä¹æ¯ä¸ä¸ªå¸åæ°æéè¯¯ã<br>
+ç°å¨åçæ¯ï¼ä¸æ¡å¥ä½è®°å½ â ç®è¿ä¸æ¬¡ä½äºå æï¼è¿æ¯ è¡çº§è®¡ç®ï¼row-levelï¼<br>
+ä¸æ¯ä¸ä¸ªç¨æ· â æ»å±ä½äºå æï¼aggregationï¼<br>
+æä»¥ï¼ä¸è¯¥ç¨ GROUP BYï¼ä¸è¯¥ç¨ HAVING</p>
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-01-14 12:42">2026-01-14 12:42</span>&nbsp;
+<a href="https://www.cnblogs.com/gloria0311">GloriaQi</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19481499);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19481499', targetLink: 'https://www.cnblogs.com/gloria0311/p/19481499', title: 'çå®¢å¤§åç¬è¯é¢ç¬è®°-SQL 40-44ï¼èªç¨ï¼' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ éç£ï¼Volcanoåå¸AgentCubeï¼æå»ºAI Agentæ¶ä»£çäºåçåºç¡è®¾æ½ ]]></title>
+    <link>https://www.cnblogs.com/huaweiyun/p/19481441</link>
+    <guid>ab3265cccd8ea2556074a24044213c4d</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/huaweiyun/p/19481441" title="åå¸äº 2026-01-14 12:23">
+    <span role="heading" aria-level="2">éç£ï¼Volcanoåå¸AgentCubeï¼æå»ºAI Agentæ¶ä»£çäºåçåºç¡è®¾æ½</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
+<h1><strong>éç£ï¼Volcanoåå¸AgentCubeï¼æå»ºAI Agentæ¶ä»£çäºåçåºç¡è®¾æ½</strong></h1>
+<p>äºåçæ¹éè®¡ç®å¼æ <a href="https://volcano.sh/" rel="noopener nofollow">Volcano ç¤¾åº</a>å¨æ°å­é¡¹ç® <a>AgentCube</a> ç°å·²æ­£å¼åå¸ãAgentCubeçè¯çåºäº Volcano å¨å¤§è§æ¨¡é«æ§è½è®¡ç®è°åº¦é¢åå¤å¹´ççäº§å®è·µç§¯ç´¯ï¼å®å°è¿ç§é«å¹¶åãé«ååçè°åº¦è½åå»¶ä¼¸è³ AI é¢åï¼æå»ºäºä¸å¥é¢åæºè½ä½ï¼Agentï¼å·¥ä½è´è½½ç Serverless ç¼æå±ï¼æ¨å¨ä¸ºé«å¹¶åãé¿ä¼è¯ãå¯¹å»¶è¿æåº¦ææçæºè½ä½ï¼Agentï¼å·¥ä½è´è½½æä¾ <strong>Serverless åçç¼æä¸æéè°åº¦è½å</strong>ã</p>
+<p>&nbsp;<img alt="" data-src="https://img2024.cnblogs.com/blog/2030258/202601/2030258-20260114122335610-1314246875.png" class="lazyload"></p>
+<h2><strong>ä» Kubernetes å° Agent Native</strong></h2>
+<p>éçå¤§è¯­è¨æ¨¡åï¼LLMï¼ææ¯çæçï¼ææ¯æ¶ææ­£ä»âæ ç¶ææ¨çâåâèªä¸»æºè½ä½ï¼Autonomous Agentsï¼âæ¼è¿ã</p>
+<p>å¨è¿ä¸è¿ç¨ä¸­ï¼<strong>Kubernetes å­åå¶æçççæåå¯¹å¼æç®åçæ ååç®¡çï¼å·²æä¸ºæå»º AI åºç¡è®¾æ½çäºå®æ å</strong>ãè½ç¶åç Kubernetes æä¾äºéç¨çå®¹å¨ç¼æåè¯­ä»¥åå¤æ ·åçå·¥ä½è´è½½æ½è±¡ï¼ä½å¨é¢å¯¹ AI Agent è¿ç§âé«å¹¶åãç­æ¶æãå¼ºç¶æä¾èµâçæ°åè´è½½æ¶ï¼ä»å­å¨çæ¾èç<strong>ç²åº¦éé</strong>ä¸<strong>æºå¶ç¼ºä½</strong>ï¼</p>
+<p><strong>1.å¯å¨å»¶è¿ä¸äº¤äºä½éªççç¾</strong></p>
+<p>Agent çäº¤äºéå¸¸è¦æ±æ¯«ç§çº§ååºãç¶èï¼åçç K8s Pod å¯å¨æµç¨ï¼è°åº¦ãIP åéãéåæåãå®¹å¨å¯å¨ï¼å¾å¾å¨ç§çº§çè³åéçº§ãå¯¹äºéè¦é¢ç¹æèµ· Code Interpreterï¼ä»£ç è§£éå¨ï¼æä¸´æ¶å­ Agent çåºæ¯ï¼è¿ç§å·å¯å¨å»¶è¿æ¯ç¨æ·æ æ³æ¥åçã</p>
+<p><strong>2.èµæºå©ç¨ççææï¼</strong>Agent æ¯å¸åç <strong>IO å¯éå</strong>è´è½½ãå¨ä¸æ¬¡ä¼è¯ä¸­ï¼90% çæ¶é´ Agent å¯è½é½å¨ç­å¾ LLM çæ Token æç­å¾å¤é¨å·¥å·ååºãå¦æå¨ K8s ä¸ä¸ºæ¯ä¸ª Agent ç¬å ä¸ä¸ª Podï¼ä¼å¯¼è´å¤§éç CPU/Memory èµæºå¨ç­å¾æé´è¢«é²ç½®æµªè´¹ï¼å´æ æ³è¢«å¶ä»ä»»å¡å¤ç¨ã</p>
+<p><strong>3.ä¼è¯ç¶æç®¡ççç¼ºå¤±ï¼</strong>K8s å¯¹âæ ç¶æï¼Statelessï¼âå·¥ä½è´è½½å¤©ç¶åå¥½ï¼ä½ Agent é«åº¦ä¾èµâä¸ä¸æï¼Context/Memoryï¼âãå¨åç K8s ä¸­ï¼Pod éå¯æå³çåå­æ°æ®ä¸¢å¤±ï¼å¼åèè¢«è¿«å¨åºç¨å±éè¿å¤é¨å­å¨éå»ºä¸ä¸æï¼è¿å¸¦æ¥äºå·¨å¤§çå¤ææ§åç½ç»å¼éã</p>
+<p><strong>4.å®å¨éç¦»é¾é¢ï¼</strong>é«çº§ Agentï¼å¦ Data Analystï¼éè¦è¿è¡ç± LLM çæçä¸å¯ä¿¡ä»£ç ãä½æ®éç runC å®¹å¨å¦æè¿è¡ rm -rf / å·ææé«é£é©ãä¼ä¸çº§ Agent å¹³å°è¿«åéè¦ä¸ç§æ¢è½å¿«éå¯å¨ï¼åè½æä¾å¼ºéç¦»ï¼å¦ MicroVMï¼çæ²ç®±ç¯å¢ã</p>
+<p><strong>ä¸ºäºå¨ Kubernetes åå®çç®ååºåº§ä¹ä¸ï¼å¡«è¡¥ä¸è¿°æºå¶ç©ºç½</strong>ï¼AgentCube åºè¿èçã</p>
+<p>&nbsp;</p>
+<h2><strong>AgentCube æ¯ä»ä¹ï¼</strong></h2>
+<p><strong>AgentCube</strong> æ¯ä¸ä¸ªæå»ºå¨ Volcano ä¹ä¸çé«æ§è½ AI Agent ç¼æå±ãå®éè¿æ©å± Kubernetes APIï¼å° <strong>Agents</strong> å Toolsï¼<strong>Code InterpretersãBrowserUseç­ï¼</strong> æåä¸ºéç¾¤çä¸ç­å¬æ°ã</p>
+<p>å®ä¸ä»ä»æ¯ä¸ä¸ª CRDï¼æ´æ¯ä¸å¥ <strong>é¢å Agent ç Serverless æä½ç³»ç»</strong>ã</p>
+<h3><strong>æ ¸å¿æ¶æä¸æ½è±¡</strong></h3>
+<p>AgentCube å¼å¥äºä¸¤ä¸ªæ ¸å¿ç CRD æ¥å®ä¹ Agent å·¥ä½è´è½½ï¼</p>
+<p><strong>1.AgentRuntime:</strong>&nbsp; é¢åé¿ä¼è¯ãå¤æçå¯¹è¯å¼ Agentã</p>
+<p>â æ¯æå®ä¹ä¼è¯ççå½å¨æãèµæºéé¢ä»¥åæä¹åç­ç¥ã</p>
+<p><em id="__mceDel"><strong>2.CodeInterpreter:</strong>&nbsp; é¢åç­ä»»å¡ãé«é¢çä»£ç æ§è¡ç¯å¢ã</em></p>
+<p>â å¼ºè°âç¨å®å³æ¯âåæè´çå®å¨éç¦»ï¼å¤©ç¶éé MicroVMï¼å¦ Kuasar, Kata Containers, Firecrackerï¼ã</p>
+<p>AgentCubeåç»­è¿å°æä¾BrowserUseãComputerUseãMobileUseç­å·¥ä½è´è½½æ½è±¡æ¯æã</p>
+<p>&nbsp;</p>
+<h2><strong>AgentCube å³é®ææ¯äº®ç¹</strong></h2>
+<p>ä¸ºäºè§£å³ä¸è¿°çç¹ï¼AgentCube å¨æ¶æè®¾è®¡ä¸å¼å¥äºå¤é¡¹åæ°ï¼</p>
+<h3><strong>1. æéå¯å¨</strong></h3>
+<p>ä¸ºäºæ¶é¤å·å¯å¨çææï¼AgentCube å®ç°äº <strong>Warm Poolï¼é¢ç­æ± ï¼</strong> æºå¶ãç³»ç»ä¼é¢åå¯å¨å¹¶æåä¸ç»ææåºç¡ç¯å¢ç MicroVM æ²ç®±ãå½ Agent è¯·æ±å°æ¥æ¶ï¼AgentCube è½å¤éè¿ <strong>"Claim-and-Go"</strong> çæ¹å¼ï¼å¨æ¯«ç§çº§å°é¢ç­çæ²ç®±åéç»ä¼è¯ï¼å®ç°è¿ä¹é¶å»¶è¿çå¯å¨ä½éªã</p>
+<h3><strong>2. æéè°åº¦</strong></h3>
+<p>åå© Volcano ç <strong>Agent Scheduler</strong>ï¼AgentCubeæ¾èæåäºAgentè°åº¦çåååæ¶å»¶ã</p>
+<ul>
+<li><strong>é«ååãä½æ¶å»¶ï¼</strong> éå¯¹ Agent çªåæµéï¼éç¨äºä¹è§å¹¶åæ§å¶åç²¾ç®çè°åº¦ç­ç¥ï¼å¤§å¹æåè°åº¦ TPSã</li>
+<li><strong>ç»ä¸è°åº¦æ¯æï¼</strong> Volcano ç Agent Scheduler å¯ä»¥ä¸åæç Batch Scheduler æ ç¼éåï¼å¨åè° Agent ä¸ä¼ ç»ç Batch ä½ä¸æ½å¨è°åº¦å²çªçåæ¶ï¼ç¡®ä¿æ´ä½éç¾¤çèµæºå©ç¨çåå³é®ä¸å¡ç SLAã</li>
+</ul>
+<h3><strong>3. åçä¼è¯ç®¡ç</strong></h3>
+<p>AgentCube å¼å¥äº <strong>Session ID</strong> ä½ä¸ºæ ¸å¿è·¯ç±æ è¯ï¼<strong>ä¾¿äºä¿è¯ä¸å¡ä¸ä¸æçè¿ç»­æ§ã</strong></p>
+<ul>
+<li><strong>è¯·æ±è·¯ç±ï¼</strong> AgentCube Router è½å¤è¯å«è¯·æ±ä¸­ç x-agentcube-session-idï¼èªå¨å°å¶è·¯ç±å°å¯¹åºçæ´»è·æ²ç®±ã</li>
+<li><strong>èªå¨çæ²ç®±æ¿æ´»ï¼</strong> å½åä¼è¯å¯¹åºçæ²ç®±å¤äºä¼ç ç¶ææ¶ï¼AgentCube Router&nbsp;è½å¤èªå¨æ¿æ´»æ²ç®±ã</li>
+<li><strong>åºäºä¼è¯çç«¯å°ç«¯éç¦»ï¼</strong>&nbsp;AgentCube ä¼èªå¨ä¸ºæ¯ä¸ªä¼è¯åéç¬ç«çæ²ç®±ç¯å¢ï¼ç¡®ä¿è®¡ç®ãåå­ä¸æä»¶ç³»ç»çå®å¨éç¦»ï¼é²æ­¢è·¨ç§æ·çæ°æ®æ³é²ã</li>
+</ul>
+<h3><strong>4. Serverless åçå¼¹æ§ä¼¸ç¼©</strong></h3>
+<p>AgentCube è½å¤æ ¹æ®ä¼è¯çæ´»è·åº¦èªå¨ç®¡çæ²ç®±çå½å¨æãé²ç½®çæ²ç®±ä¼è¢«èªå¨åæ¶æä¼ç ï¼éæ¾ç©çèµæºä¾å¶ä»é«ä¼åçº§ä»»å¡ä½¿ç¨ï¼çæ­£å®ç°<strong>èµæºæéåéä¸æè´å©ç¨</strong>ã</p>
+<p>&nbsp;</p>
+<h2><strong>AgentCube æ¶ææ¦è§</strong></h2>
+<p align="center"><img alt="" data-src="https://img2024.cnblogs.com/blog/2030258/202601/2030258-20260114122335598-1139082100.png" class="lazyload">&nbsp;</p>
+<p>&nbsp;</p>
+<p>AgentCube éç¨äºç»å¸ç<strong>æ§å¶é¢ä¸æ°æ®é¢åç¦»</strong>çæ¶æè®¾è®¡ï¼ç¡®ä¿äºç³»ç»çé«å¯ç¨æ§ä¸æ©å±æ§ï¼</p>
+<ul>
+<li><strong>æ°æ®é¢ :</strong> ç± <strong>AgentCube Router</strong> æ¿è½½ãå®ä½ä¸ºæµéå¥å£ï¼è´è´£é´æãéæµä»¥ååºäº Session ID çæºè½è·¯ç±ãå¯¹äºæ°ä¼è¯ï¼å®åæ§å¶é¢ç³è¯·èµæºï¼å¯¹äºæ´»è·ä¼è¯ï¼å®ç´æ¥å°è¯·æ±è½¬åè³å¯¹åºç <strong>Sandbox (MicroVM)</strong>ã</li>
+<li><strong>æ§å¶é¢ :</strong> æ ¸å¿ç»ä»¶ <strong>Workload Manager</strong> è´è´£æ²ç®±çå¨çå½å¨æç®¡çãå®çæ§é¢ç­æ±  (Warm Pool) çæ°´ä½ï¼èªå¨è¡¥å MicroVM å®ä¾ï¼å¹¶æ ¹æ®ä¼è¯æ´»è·åº¦ç­ç¥ï¼å¦ TTLï¼æ§è¡æ²ç®±çåæ¶ä¸åå¾æ¸çã</li>
+<li><strong>è°åº¦å±:</strong> éæ <strong>Volcano Agent Scheduler</strong>ï¼éè¿å¼æ­¥å¹¶è¡è°åº¦åä¹è§éæºå¶ï¼å®ç°é«å¹¶åä¸çæ¯«ç§çº§èµæºåéã</li>
+</ul>
+<p>&nbsp;</p>
+<h2><strong>çæåä½ï¼å±å»ºæ ååç Agent åºç¡è®¾æ½</strong></h2>
+<p>ä½ä¸ºå¼æºä¸­ç«çåºç¡è®¾æ½é¡¹ç®ï¼AgentCube æ¨å¨éè¿æ åæ¥å£è¿æ¥ä¸ä¸æ¸¸çæï¼åä½è§£å³ä»å®¹å¨ç¼æå°æºè½ä½åºç¨è½å°çâæåä¸å¬éâé¾é¢ã</p>
+<h3><strong>1. ååå¼å®¹ï¼åºäºæ åæ¥å£çè¿è¡æ¶éé</strong></h3>
+<p>AgentCube åæå¼æ¾æ¶æè®¾è®¡ï¼éè¿æ·±åº¦éæ kubernetes-sigs/agent-sandbox æ¥å£å OCI æ åï¼å®ç°å¯¹åºå±å¼æè¿è¡æ¶çç»ä¸æ½è±¡ä¸æ æééã</p>
+<ul>
+<li><strong>è¿è¡æ¶è§£è¦ï¼</strong> æ¯æéè¿ RuntimeClass æºå¶æ¥å¥ KuasarãKata ContainersãFirecracker ç­å®å¨å®¹å¨ææ¯ï¼åè®¸ç¨æ·æ ¹æ®å®å¨ä¸æ§è½éæ±çµæ´»éæ©åºå±éç¦»æ¹æ¡ã</li>
+<li><strong>åæ²¿æ¢ç´¢ï¼</strong> ç¤¾åºæ­£å¨è¯ä¼° Wasm (WebAssembly) ææ¯ï¼è®¡åå¨æªæ¥çæ¬ä¸­æ¢ç´¢å¶å¨æè½»éçº§ Agent ä»»å¡ä¸­çåºç¨ï¼ä»¥æä¾æ´å¤æ ·åçç®åä¾ç»ã</li>
+</ul>
+<h3><strong>2. ååéæï¼æå¡ä¸»æµAgentæ¡æ¶</strong></h3>
+<p>å¨åºç¨å±ï¼AgentCube è´åäºæä¸º DifyãLangChainãCrewAIãLlamaIndex ç­Agentæ¡æ¶çæ ååºç¡è®¾æ½åºåº§ï¼ç¸å³ééå·¥ä½æ­£å¨å¿«éè¿­ä»£ä¸­ã</p>
+<ul>
+<li><strong>å£°æå¼ç®¡çï¼</strong> å°éè¿ Operator æ¨¡å¼æä¾å£°æå¼èµæºæ¥å£ï¼å¸®å©ä¸å±æ¡æ¶å¥ç¦»åºå±çæ²ç®±é¢ç­æ± ç®¡çä¸ç½ç»éç½®ç­é»è¾ã</li>
+<li><strong>ç»ä¸åºåº§ï¼</strong> ç®æ æ¯å®ç°ä¸å¡ç¼æä¸èµæºè°åº¦çè§£è¦ï¼ä½¿ä¸åæ¡æ¶å¼åçåºç¨è½å¤ç¨åä¸å¥äºåçè¿ç»´ä½ç³»ï¼éä½åºç¡è®¾æ½çç»´æ¤ææ¬ä¸ç¢çåç¨åº¦ã</li>
+</ul>
+<p>&nbsp;</p>
+<h2><strong>çµæ´»æ¥å¥ï¼å¼é¡¾å¼åä¸è¿ç»´ä½éª</strong></h2>
+<p>AgentCube è®¾è®¡äºåå±çæ¥å¥æ¥å£ï¼æ¨å¨åæ¶æ»¡è¶³ä¸å±ä¸å¡å¼åèä¸åºå±å¹³å°å·¥ç¨å¸çè¯æ±ï¼è®©åºç¡è®¾æ½ä¸åæä¸ºé»çã</p>
+<p><strong>1. é¢å Agent å¼åèï¼æ å API æ¥å¥</strong></p>
+<p>ä¸ºäºè¿ä¸æ­¥éä½æ¥å¥é¨æ§ï¼AgentCube æä¾äºå¼ç®±å³ç¨ç<a href="https://github.com/volcano-sh/agentcube/tree/main/sdk-python" rel="noopener nofollow"><strong>Python SDK</strong></a>ãå¼åèæ éæ·±å¥çè§£ Kubernetes çå¤ææ¦å¿µï¼å³å¯åè°ç¨æ¬å°å½æ°ä¸æ ·ç³è¯·ãæ§è¡åéæ¾æ²ç®±ãè¿ä½¿å¾ AgentCube è½å¤è½»æ¾éæå° DifyãLangChainãCrewAIãLlamaIndex ç­ä¸»æµæ¡æ¶ä¸­ã</p>
+<p>ç¤ºä¾1ï¼å¨agentä»£ç ä¸­å¨ææèµ·ä¸ä¸ªCodeInterpreterå¹¶è¿è¡ä¸´æ¶ä»£ç </p>
+<div align="center">
+<div class="cnblogs_Highlighter" style="text-align: left">
+<p># python</p>
+<p>from agentcube import CodeInterpreterClient</p>
+<p>&nbsp;</p>
+<p># Initialize client (uses env vars for configuration)</p>
+<p>with CodeInterpreterClient() as client:</p>
+<p>&nbsp;&nbsp;&nbsp; # 1. Run a simple shell command</p>
+<p>&nbsp;&nbsp;&nbsp; print("User: whoami")</p>
+<p>&nbsp;&nbsp;&nbsp; print(client.execute_command("whoami"))</p>
+<p>&nbsp;</p>
+<p>&nbsp;&nbsp;&nbsp; # 2. Execute Python code</p>
+<p>&nbsp;&nbsp;&nbsp; code = """</p>
+<p>&nbsp;&nbsp;&nbsp; import math</p>
+<p>&nbsp;&nbsp;&nbsp; print(f"Pi is approximately {math.pi:.4f}")</p>
+<p>&nbsp;&nbsp;&nbsp; """</p>
+<p>&nbsp;&nbsp;&nbsp; output = client.run_code("python", code)</p>
+<pre class="brush:csharp;gutter:true;">&nbsp;&nbsp;&nbsp; print(f"Result: {output}")ã</pre>
+</div>
+</div>
+<p>ç¤ºä¾2ï¼éè¿kubectl agentcubeå½ä»¤è¡å·¥å·åå»ºä¸ä¸ªAgent</p>
+<div class="cnblogs_Highlighter">
+<p><strong># 1. Package an existing agent:</strong></p>
+<p>kubectl agentcube pack -f examples/hello-agent --agent-name "my-agent"</p>
+<p><strong># 2. Build the container image:</strong></p>
+<p>kubectl agentcube build -f examples/hello-agent</p>
+<p><strong># 3. Publish to AgentCube:</strong></p>
+<p>kubectl agentcube publish \</p>
+<p>&nbsp;&nbsp; -f examples/hello-agent \</p>
+<p>&nbsp;&nbsp; --image-url "docker.io/username/my-agent" \</p>
+<p><strong># 4. Invoke your agent:</strong></p>
+<p>kubectl agentcube invoke -f examples/hello-agent --payload '{"prompt": "Hello World!"}'</p>
+<p><strong># 5. Check status:</strong></p>
+<pre class="brush:csharp;gutter:true;">kubectl agentcube status -f examples/hello-agent</pre>
+</div>
+<p><strong>2. é¢åå¹³å°å·¥ç¨å¸ï¼å£°æå¼ CRD ç®¡ç</strong></p>
+<p>AgentCube å»¶ç»­äºäºåççå£°æå¼ç®¡çæ¨¡å¼ãè¿ç»´å¢éå¯ä»¥éè¿ CRD (AgentRuntime, CodeInterpreter) ç²¾ç»åå®ä¹èµæºæ± ç­ç¥ï¼ç´æ¥å¤ç¨ç°æç Kubernetes è¿ç»´ä½ç³»ä¸å·¥å·é¾è¿è¡ç»ä¸ç®¡çã</p>
+<p>ç¤ºä¾ï¼å®ä¹ä¸ä¸ªCodeInterpreterï¼å§ç»ä¿æ 10 ä¸ªç­å¤æ²ç®±</p>
+<div class="cnblogs_Highlighter">
+<p># YAML</p>
+<p>apiVersion: runtime.agentcube.volcano.sh/v1alpha1</p>
+<p>kind: CodeInterpreter</p>
+<p>metadata:</p>
+<p>&nbsp; name: simple-codeinterpreter</p>
+<p>&nbsp; namespace: default</p>
+<p>spec:</p>
+<p>&nbsp; template:</p>
+<p>&nbsp;&nbsp;&nbsp; image: ghcr.io/volcano-sh/picod:latest</p>
+<p>&nbsp; sessionTimeout: "15m"</p>
+<p>&nbsp; maxSessionDuration: "8h"</p>
+<pre class="brush:csharp;gutter:true;">&nbsp; warmPoolSize: 10 &nbsp;&nbsp;# é¢ç­æ°´ä½</pre>
+</div>
+<p><strong>æ³äº²èªä½éªï¼</strong> å®æ´çå®è£é¨ç½²ææ¡£ä¸ Demo ç¤ºä¾ï¼è¯·è®¿é® GitHub ä»åºï¼<a href="https://www.google.com/search?q=https://github.com/volcano-sh/agentcube&amp;authuser=5" rel="noopener nofollow">https://github.com/volcano-sh/agentcube</a></p>
+<p>&nbsp;</p>
+<h2><strong>å å¥ç¤¾åº</strong></h2>
+<p>AgentCube æ¯ Volcano ç¤¾åºçä¸é¨åï¼éµå¾ªå¼æºå¼æ¾çååãæä»¬è¯æéè¯·å¯¹ <strong>AI InfraãKubernetes è°åº¦ãServerless æ¶æ</strong> æå´è¶£çå¼åèå å¥æä»¬ï¼</p>
+<ul>
+<li><strong>AgentCube GitHub:</strong> <a href="https://www.google.com/search?q=https://github.com/volcano-sh/agentcube" rel="noopener nofollow">github.com/volcano-sh/agentcube</a> (æ¬¢è¿ Star )</li>
+<li><strong>Slack:</strong> CNCF Slack #volcano é¢é</li>
+<li><strong>Community Meeting:</strong> <a href="https://zoom.us/j/91804791393" rel="noopener nofollow">https://zoom.us/j/91804791393</a></li>
+</ul>
+<p>è®©æä»¬ä¸èµ·ï¼ä¸º AI Agent æ¶ä»£æå»ºæ´å¼ºå¤§çåºç¡è®¾æ½ï¼</p>
+<div align="center"><hr align="center" size="2" width="100%"></div>
+<p>Volcano ï¼<a href="https://volcano.sh/" rel="noopener nofollow">https://volcano.sh</a>ï¼æ¯ä¸çé¦ä¸ªäºåçæ¹éè®¡ç®å¼æï¼ä¹æ¯ CNCF é¦ä¸ªåå¯ä¸çæ¹éè®¡ç®é¡¹ç®ãé¡¹ç®ä¸»è¦ç¨äº AIãå¤§æ°æ®ãåºå ãæ¸²æç­è¯¸å¤é«æ§è½è®¡ç®åºæ¯ï¼å¯¹ä¸»æµéç¨è®¡ç®æ¡æ¶åæå¾å¥½çæ¯æãç®åï¼Volcanoå¨äººå·¥æºè½ãå¤§æ°æ®ãåºå æµåºç­æµ·éæ°æ®è®¡ç®ååæåºæ¯å·²å¾å°å¿«éåºç¨ï¼å·²å®æå¯¹ SparkãFlinkãRayã TensorflowãPyTorchãArgoãMindSporeãPaddlepaddle ãKubeflowãMPIãHorovodãMxnetãKubeGene ç­ä¼å¤ä¸»æµè®¡ç®æ¡æ¶çæ¯æï¼å¹¶æå»ºèµ·å®åçä¸ä¸æ¸¸çæã</p>
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-01-14 12:24">2026-01-14 12:23</span>&nbsp;
+<a href="https://www.cnblogs.com/huaweiyun">åä¸ºäºå¼åèèç</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19481441);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19481441', targetLink: 'https://www.cnblogs.com/huaweiyun/p/19481441', title: 'éç£ï¼Volcanoåå¸AgentCubeï¼æå»ºAI Agentæ¶ä»£çäºåçåºç¡è®¾æ½' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
     <title><![CDATA[ PHP 8.5 åçº§çå­æåï¼é¿ååæ¨ä¸¤ç¹åæ»çæ£æ¥æ¸å ]]></title>
     <link>https://www.cnblogs.com/catchadmin/p/19479967</link>
     <guid>d088b37c914c481da8416f6e7c9f37ca</guid>
@@ -458,7 +904,7 @@ composer install --no-interaction --prefer-dist
     <small>
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-01-13 23:25">2026-01-13 23:25</span>&nbsp;
 <a href="https://www.cnblogs.com/jyzhao">AlfredZhao</a>&nbsp;
-éè¯»(<span id="post_view_count">43</span>)&nbsp;
+éè¯»(<span id="post_view_count">163</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19479470);return false;">æ¶è</a>&nbsp;
@@ -909,7 +1355,7 @@ int main()
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-01-13 23:13">2026-01-13 23:13</span>&nbsp;
 <a href="https://www.cnblogs.com/GroundhogKing">GroundhogKing</a>&nbsp;
-éè¯»(<span id="post_view_count">1</span>)&nbsp;
+éè¯»(<span id="post_view_count">51</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19479345);return false;">æ¶è</a>&nbsp;
@@ -1067,7 +1513,7 @@ plt.show()
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-01-13 23:10">2026-01-13 23:10</span>&nbsp;
 <a href="https://www.cnblogs.com/wang_yb">wang_yb</a>&nbsp;
-éè¯»(<span id="post_view_count">3</span>)&nbsp;
+éè¯»(<span id="post_view_count">47</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19479454);return false;">æ¶è</a>&nbsp;
@@ -1276,7 +1722,7 @@ public class ReportService {
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-01-13 22:47">2026-01-13 22:46</span>&nbsp;
 <a href="https://www.cnblogs.com/xzqcsj">ä¸æäºº</a>&nbsp;
-éè¯»(<span id="post_view_count">38</span>)&nbsp;
+éè¯»(<span id="post_view_count">77</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19479429);return false;">æ¶è</a>&nbsp;
@@ -1915,7 +2361,6 @@ public ClassPathXmlApplicationContext(
 <h2 id="refresh-æ¹æ³">refresh() æ¹æ³</h2>
 <p>è¿ä¸ªæ¯éç¹æ¹æ³,  å ä¹æ´ä¸ªçå½å¨æçä»£ç , é½å¯ä»¥å¨è¿ä¸ªæ¹æ³åæ¾å°, æä»¥ä»£ç æ­ç¹ ä¹¦ç­¾ è°è¯, é½ç»å®å¹²ä¸..</p>
 <p><code>org.springframework.context.support.AbstractApplicationContext#refresh</code></p>
-<p><code>org.springframework.context.support.AbstractApplicationContext#refresh</code></p>
 <pre><code class="language-java">
 	@Override
 	public void refresh() throws BeansException, IllegalStateException {
@@ -2242,10 +2687,12 @@ public ClassPathXmlApplicationContext(
 <p>ç¬¬ä¸æ­¥å½ç¶æ¯åå»ºå­å¨Beançå®¹å¨å¦..<br>
 <code>org.springframework.context.support.AbstractApplicationContext#obtainFreshBeanFactory</code><br>
 <code>org.springframework.context.support.AbstractRefreshableApplicationContext#refreshBeanFactory</code></p>
-<pre><code class="language-java">/**
+<pre><code class="language-java">
+	/**
 	 * This implementation performs an actual refresh of this context's underlying
 	 * bean factory, shutting down the previous bean factory (if any) and
 	 * initializing a fresh bean factory for the next phase of the context's lifecycle.
+	 *  {@link org.springframework.context.support.AbstractRefreshableApplicationContext#refreshBeanFactory}
 	 */
 	@Override
 	protected final void refreshBeanFactory() throws BeansException {
@@ -2255,16 +2702,25 @@ public ClassPathXmlApplicationContext(
 			closeBeanFactory();
 		}
 		try {
-			// &lt;!&gt; åå»º DefaultListableBeanFactory
+			/**
+			 * &lt;!&gt; åå»º DefaultListableBeanFactory {@link org.springframework.context.support.AbstractRefreshableApplicationContext#createBeanFactory}
+			 *  è®¾ç½® beanFactory å¿½ç¥  BeanNameAware, BeanClassLoaderAware, BeanFactoryAwareè¿ä¸ä¸ªAwareçæ¥å£ {@link AbstractAutowireCapableBeanFactory#AbstractAutowireCapableBeanFactory()}
+			 *  å ä¸ºå¨åå§åBeanæ¶, ä¼ç´æ¥è°ç¨å®ä»¬(èä¸æ¯éè¿éè¿ BeanPostProcessoræ©å±çAwareæºå¶è°ç¨) {@link org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#initializeBean(java.lang.String, java.lang.Object, org.springframework.beans.factory.support.RootBeanDefinition)}
+			 */
 			DefaultListableBeanFactory beanFactory = createBeanFactory();
 			// è®¾ç½® beanFactory åºååID
 			beanFactory.setSerializationId(getId());
-			// å®å¶å BeanFactory &lt;!&gt; å¯æ©å±ç¹
+			/**
+			 *  å®å¶å BeanFactory &lt;!&gt; å¯æ©å±ç¹
+			 *  {@link org.springframework.context.support.AbstractRefreshableApplicationContext#customizeBeanFactory(org.springframework.beans.factory.support.DefaultListableBeanFactory)}
+			 *  1. æ¯å¦åè®¸ BeanDefinition è¦ç; å¦æä¸æ¯null,åè¦çé»è®¤å¼, å¯ä»¥çç»å­ç±»æ©å±ç
+			 *  2. æ¯å¦èªå¨å¤çå¾ªç¯ä¾èµ; å¯ä»¥çç»å­ç±»æ©å±ç
+			 */
 			customizeBeanFactory(beanFactory);
 			/**
-			 * å è½½ BeanDefinitions &lt;!&gt;éç¹
+			 * å è½½ BeanDefinitions &lt;!&gt;éç¹ {@link AbstractRefreshableApplicationContext#loadBeanDefinitions(DefaultListableBeanFactory)}
 			 * 1. åå»º(XMLè§£æå¨/è¯»åå¨) XmlBeanDefinitionReader, å¹¶åå§å; çä¸æ©å±ç¹, æ©å±Reader ä¾å¦ æ¯å¦éªè¯xmlç­
-			 * 2. åå»ºç¸å³å¯¹è±¡DocumentLoader, BeanDefinitionDocumentReader,BeanDefinitionParserDelegate
+			 * 2. åå»ºç¸å³å¯¹è±¡ DocumentLoader, BeanDefinitionDocumentReader, BeanDefinitionParserDelegate
 			 *    å è½½è§£æ XMLçæ ç­¾/åç´ /å±æ§ ç­å¹¶ä¸å°å¶å°è£ä¸º ä¸ä¸ªä¸ª BeanDefinition å¯¹è±¡
 			 * 3. å° BeanDefinitions æ³¨åå° registry
 			 */
@@ -2276,6 +2732,26 @@ public ClassPathXmlApplicationContext(
 		}
 	}
 </code></pre>
+<p><code>org.springframework.context.support.AbstractRefreshableApplicationContext#createBeanFactory</code></p>
+<pre><code class="language-java">/**
+	 * Create an internal bean factory for this context.
+	 * Called for each {@link #refresh()} attempt.
+	 * &lt;p&gt;The default implementation creates a
+	 * {@link org.springframework.beans.factory.support.DefaultListableBeanFactory}
+	 * with the {@linkplain #getInternalParentBeanFactory() internal bean factory} of this
+	 * context's parent as parent bean factory. Can be overridden in subclasses,
+	 * for example to customize DefaultListableBeanFactory's settings.
+	 * @return the bean factory for this context
+	 * @see org.springframework.beans.factory.support.DefaultListableBeanFactory#setAllowBeanDefinitionOverriding
+	 * @see org.springframework.beans.factory.support.DefaultListableBeanFactory#setAllowEagerClassLoading
+	 * @see org.springframework.beans.factory.support.DefaultListableBeanFactory#setAllowCircularReferences
+	 * @see org.springframework.beans.factory.support.DefaultListableBeanFactory#setAllowRawInjectionDespiteWrapping
+	 */
+	protected DefaultListableBeanFactory createBeanFactory() {
+		return new DefaultListableBeanFactory(getInternalParentBeanFactory());
+	}
+</code></pre>
+<p>åå»ºçå®ä¾æ¯ <code>DefaultListableBeanFactory</code></p>
 <h3 id="åå»º-xmlbeandefinitionreader">åå»º XmlBeanDefinitionReader</h3>
 <p><code>XmlBeanDefinitionReader</code> è¿ä¸ªå¯¹è±¡æ¯ç¨æ¥è¯»å xml éç½®ç</p>
 <p><code>org.springframework.context.support.AbstractXmlApplicationContext#loadBeanDefinitions(org.springframework.beans.factory.support.DefaultListableBeanFactory)</code></p>
@@ -4707,502 +5183,15 @@ public class WebConfigBeans {
 
             </div>
             <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.004861111111111111" data-date-updated="2026-01-13 22:16">2026-01-13 22:09</span>&nbsp;
+<span id="post-date" data-last-update-days="0.5236111111111111" data-date-updated="2026-01-14 10:43">2026-01-13 22:09</span>&nbsp;
 <a href="https://www.cnblogs.com/dddy">daidaidaiyu</a>&nbsp;
-éè¯»(<span id="post_view_count">23</span>)&nbsp;
+éè¯»(<span id="post_view_count">47</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19479364);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19479364', targetLink: 'https://www.cnblogs.com/dddy/p/19479364', title: 'Spring IOC æºç å­¦ä¹  ä¸æå­¦ä¹ å®æ´çå è½½æµç¨' })">ä¸¾æ¥</a>
 </div>
          ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ ä»Shapefileå°GeoJSONï¼ç¨GDALå®ç°GISç¢éæ°æ®è¯»åä¸ç©ºé´åæ ]]></title>
-    <link>https://www.cnblogs.com/charlee44/p/19479143</link>
-    <guid>6bcd8da550301ab8407175bad2c0797b</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/charlee44/p/19479143" title="åå¸äº 2026-01-13 20:25">
-    <span role="heading" aria-level="2">ä»Shapefileå°GeoJSONï¼ç¨GDALå®ç°GISç¢éæ°æ®è¯»åä¸ç©ºé´åæ</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                    <div id="cnblogs_post_description" style="display: none">
-        <img src="https://img2024.cnblogs.com/blog/1000410/202601/1000410-20260113202625252-636759511.png" alt="ä»Shapefileå°GeoJSONï¼ç¨GDALå®ç°GISç¢éæ°æ®è¯»åä¸ç©ºé´åæ" class="desc_img">
-        éè¿ GDAL/OGR å®ç°äº GIS ç¢éæ°æ®çå®æ´å¤çæµç¨ââä» Shapefile è¯»åãWGS84 å° Web å¢¨å¡æåæ è½¬æ¢ï¼å° GeoJSON åå¥ï¼å¹¶æ¼ç¤ºäºç¹ä¸å¤è¾¹å½¢ææå³ç³»ï¼å¦ Containsï¼çå¤æ­æ¹æ³ã
-    </div>
-<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<blockquote>
-<p>æ¬æèéèªä½èæ°ä¹¦<a href="https://item.jd.com/14603137.html" target="_blank" rel="noopener nofollow">ãGISåºç¡åçä¸ææ¯å®è·µã</a>ç¬¬4ç« ï¼ç³»ç»è®²è§£ç¢éæ°æ®å¼ååºç¡ï¼æ¶µç OGR/GDAL ä½¿ç¨ãåæ è½¬æ¢ãææå¤æ­ç­å®æåå®¹ã</p>
-</blockquote>
-<p><img alt="GISåºç¡åçä¸ææ¯å®è·µ" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1000410/202601/1000410-20260109210341528-489326821.png" class="lazyload"></p>
-<h2 id="44-ç¢éæ°æ®å¼ååºç¡">4.4 ç¢éæ°æ®å¼ååºç¡</h2>
-<p>éè¿ä¹åçä»ç»ï¼ç¸ä¿¡è¯»èå·²ç»å¯¹äºGISçç¢éæ°æ®æäºä¸ä¸ªå¨é¢çè®¤è¯ï¼å°½ç®¡å¯è½ä¸æ¯é£ä¹æ·±å¥ãä½æ¯æ²¡æå³ç³»ï¼æä»¬å¯ä»¥å¨å®éçå¼åè¿ç¨ä¸­å æ·±å¯¹å¶çè®¤è¯ã</p>
-<h3 id="441-ç¬¬ä¸æ¹å¼æºåºogrgdal">4.4.1 ç¬¬ä¸æ¹å¼æºåºOGR/GDAL</h3>
-<p>å¨ç¬¬3ç« çæ¶åï¼æä»¬å°è¯çåï¼éè¿ç¬¬ä¸æ¹å¼æºåºPROJ/GDALå¾ç®åçå°±å®ç°äºå°çç©ºé´åèç³»ç»çç¸äºè½¬æ¢ãå¨è¿éåæ ·å¦æ­¤ï¼æä»¬å¯ä»¥éè¿GDALçOGRç»ä»¶ï¼è½»æ¾å®ç°GISç¢éæ°æ®çåºç¡å¼åã</p>
-<p>OGRæ¾ç»æ¯ä¸ä¸ªç¬ç«çç¢éIOåºï¼è¡¨ç¤ºOpenGIS Simple Features Reference Implementationçææï¼ä½å¶å®OGRä¸å®å¨ç¬¦åOGCçSimple Featureæ åè§èï¼å æ­¤æªè¢«æ¹åä½ä¸ºè¯¥è§èçåèå®ç°ï¼å½ç¶ä¹éå¸¸æ¥è¿è§èäºï¼ãä»GDAL2.0å¼å§ï¼GDALåOGRç»ä»¶è¢«éæå¨ä¸èµ·ã</p>
-<p>OGR/GDALæä¾äºéå¸¸å¼ºå¤§çç¢éè¯»åè½åï¼æ¯æå¸é¢ä¸ç»å¤§å¤æ°ç¢éæ°æ®æ ¼å¼ãå¨ç¬¬3ç« æä»¬ä»ç»GDALçæ¶åå°±æå°è¿ï¼GDALæ¯ä¸ä¸ªGISæ°æ®æ½è±¡åºãæè°æ°æ®æ½è±¡ï¼æ¯ææ è®ºæ¯åªä¸ç§å·ä½çç¢éæ°æ®æ ¼å¼ï¼GDALé½ä¼å°å¶æ½è±¡ææ°æ®éå¯¹è±¡ï¼Datasetï¼ï¼ä»èå¯ä»¥æ¯æè¯»åãååºåå¤çæä½ãå¸¸ç¨çç¢éæ°æ®æ ¼å¼å¦ä¸ï¼</p>
-<ul>
-<li>DXF/DWGï¼åºç¨æå¹¿æ³çå ä½å¾å½¢æ°æ®æ ¼å¼ï¼å¨CADé¢ååç¨çéå¸¸å¤ï¼ä½æ¯ç¼ºç¹æ¯ç¼ºå°å°çä¿¡æ¯ã</li>
-<li>ESRI Shapefileï¼GISä¸­æå¸¸è§çç¢éæ°æ®æ ¼å¼ï¼å ä¹ææçåä¸åå¼æºGISè½¯ä»¶é½æ¯æãé¤äºå ä½ä¿¡æ¯ä¹å¤ï¼è¿åå«ç©ºé´ä¿¡æ¯åå±æ§ä¿¡æ¯ã</li>
-<li>GeoJSONï¼ä¸ç§éè¿JSONæ¥è¡¨è¿°è¦ç´ çç¢éæ°æ®æ ¼å¼ï¼å èå¾å®¹æè¢«JavaScriptè§£æåå¤çï¼éç¨äºWebç«¯çè½»éååºç¨ã</li>
-<li>KMLï¼Googleæåºçä¸ç§åºäºXMLæ åæ¥æè¿°å°çç©ºé´ä¿¡æ¯çæ°æ®æ ¼å¼ï¼åæ¬ç¹ãçº¿ãé¢ãå¤è¾¹å½¢åæ¨¡åç­ï¼ï¼å¹¶ä¸å·²ç»è¢«OGCè®¤å®ä¸ºå¼æ¾å°çä¿¡æ¯ç¼ç æ åã</li>
-</ul>
-<p>å¨GDALä¸­ï¼å¯¹æ°æ®æ ¼å¼çæ¯æè¢«å°è£æé©±å¨ï¼dirverï¼ï¼åæ¬ä¸è¿°æ ¼å¼å¨åçæ°æ®é©±å¨è¦ä¹ååµå¨GDALä¸­ï¼è¦ä¹éè¿å¦å¤çç¬¬ä¸æ¹åºæ¥æ¯æãå½ç¶è¿äºæä»¬å¯ä»¥ææ¶ä¸ç¨å³å¿ï¼ç´æ¥ä½¿ç¨æ¬ä¹¦Githubä¸»é¡µä»£ç ä»åºä¸­çGDALå³å¯ã</p>
-<h3 id="442-ç¢éæ°æ®çè¯»åå¤çååå¥">4.4.2 ç¢éæ°æ®çè¯»åãå¤çååå¥</h3>
-<p>äºè§£äºç¬¬ä¸æ¹åºOGR/GDALï¼æ¥ä¸æ¥æä»¬å°±éè¿å¶å®ç°å³äºGISç¢éæ°æ®çåºç¡å¼åãä¸ä¸ªå¾å®¹æçè§£çå¸¸è¯æ¯ï¼åå«GISç¢éæ°æ®å¨åçä»»ä½æ°æ®çæä½é½ç¦»ä¸å¼ä¸ä¸ªè¿ç¨ï¼è¯»åãå¤çååå¥ãå æ­¤ï¼è¿éæä»¬ç»ååé¢ç©ºé´åæ åèè½¬æ¢çå®è·µï¼å®ç°ä¸ä¸ªç®åçå®ä¾ï¼è¯»åä¸ä¸ªé¢çç¢éï¼ç¶åå¯¹å¶è¿è¡ç©ºé´åèçè½¬æ¢ï¼æåéæ°ååºä¸ä¸ªç¢éãå·ä½çå®ç°ä»£ç å¦ä¸ï¼</p>
-<pre><code class="language-cpp">#include &lt;ogrsf_frmts.h&gt;
-
-#include &lt;Eigen/Eigen&gt;
-#include &lt;iostream&gt;
-#include &lt;vector&gt;
-
-using namespace std;
-using namespace Eigen;
-
-using Point = Vector3d;
-using Line = vector&lt;Point&gt;;
-using Polygon = vector&lt;Line&gt;;
-
-vector&lt;Polygon&gt; polygonData;
-
-OGRSpatialReference srcFileSpatialReference;
-OGRSpatialReference dstFileSpatialReference;
-
-void OgrRing2Line(OGRLinearRing *ogrLinearRing, Line &amp;line) {
-  for (int i = 0; i &lt; ogrLinearRing-&gt;getNumPoints(); i++) {
-    line.emplace_back(ogrLinearRing-&gt;getX(i), ogrLinearRing-&gt;getY(i),
-                      ogrLinearRing-&gt;getZ(i));
-  }
-}
-
-void OgrPolygon2Polygon(OGRPolygon *ogrPolygon, Polygon &amp;polygon) {
-  //å¤ç¯
-  Line line;
-  OgrRing2Line(ogrPolygon-&gt;getExteriorRing(), line);
-  polygon.push_back(line);
-
-  //åç¯
-  for (int ri = 0; ri &lt; ogrPolygon-&gt;getNumInteriorRings(); ri++) {
-    Line line;
-    OgrRing2Line(ogrPolygon-&gt;getInteriorRing(ri), line);
-    polygon.push_back(line);
-  }
-}
-
-bool ReadShp() {
-  string srcFile = getenv("GISBasic");
-  srcFile = srcFile + "/../Data/Vector/multipolygons.shp";
-
-  GDALDataset *poDS = (GDALDataset *)GDALOpenEx(srcFile.c_str(), GDAL_OF_VECTOR,
-                                                NULL, NULL, NULL);
-  if (!poDS) {
-    printf("æ æ³è¯»åè¯¥æä»¶ï¼è¯·æ£æ¥æ°æ®æ¯å¦å­å¨é®é¢ï¼");
-    return false;
-  }
-
-  if (poDS-&gt;GetLayerCount() &lt; 1) {
-    printf("è¯¥æä»¶çå±æ°å°äº1ï¼è¯·æ£æ¥æ°æ®æ¯å¦å­å¨é®é¢ï¼");
-    return false;
-  }
-
-  //åå§æ°æ®ç©ºé´åè
-  char *pszWKT = nullptr;
-  poDS-&gt;GetLayer(0)-&gt;GetSpatialRef()-&gt;exportToWkt(&amp;pszWKT);
-  srcFileSpatialReference.importFromWkt(pszWKT);
-  CPLFree(pszWKT);
-  pszWKT = nullptr;
-
-  for (int li = 0; li &lt; poDS-&gt;GetLayerCount(); li++) {
-    OGRLayer *poLayer = poDS-&gt;GetLayer(li);  //è¯»åå±
-    poLayer-&gt;ResetReading();
-
-    //è¾åºå­æ®µå
-    OGRFeatureDefn *poFDefn = poLayer-&gt;GetLayerDefn();
-    int n = poFDefn-&gt;GetFieldCount();
-    for (int iField = 0; iField &lt; n; iField++) {
-      OGRFieldDefn *OGRFieldDefn = poFDefn-&gt;GetFieldDefn(iField);
-      cout &lt;&lt; OGRFieldDefn-&gt;GetNameRef() &lt;&lt; endl;
-    }
-
-    //éåç¹å¾
-    OGRFeature *poFeature = nullptr;
-    while ((poFeature = poLayer-&gt;GetNextFeature()) != nullptr) {
-      OGRGeometry *geometry = poFeature-&gt;GetGeometryRef();
-      OGRwkbGeometryType geometryType = geometry-&gt;getGeometryType();
-
-      switch (geometryType) {
-        case wkbPolygon:
-        case wkbPolygonM:
-        case wkbPolygonZM: {
-          OGRPolygon *ogrPolygon = dynamic_cast&lt;OGRPolygon *&gt;(geometry);
-          if (!ogrPolygon) {
-            continue;
-          }
-
-          Polygon polygon;
-          OgrPolygon2Polygon(ogrPolygon, polygon);
-          polygonData.push_back(polygon);
-
-          break;
-        }
-        case wkbMultiPolygon:
-        case wkbMultiPolygonM:
-        case wkbMultiPolygonZM: {
-          OGRMultiPolygon *ogrMultiPolygon =
-              dynamic_cast&lt;OGRMultiPolygon *&gt;(geometry);
-          if (!ogrMultiPolygon) {
-            continue;
-          }
-
-          for (int gi = 0; gi &lt; ogrMultiPolygon-&gt;getNumGeometries(); gi++) {
-            OGRPolygon *ogrPolygon =
-                dynamic_cast&lt;OGRPolygon *&gt;(ogrMultiPolygon-&gt;getGeometryRef(gi));
-            if (!ogrPolygon) {
-              continue;
-            }
-
-            Polygon polygon;
-            OgrPolygon2Polygon(ogrPolygon, polygon);
-            polygonData.push_back(polygon);
-          }
-
-          break;
-        }
-        default: {
-          printf("æªå¤ççç¹å¾ç±»å\n");
-          break;
-        }
-      }
-
-      //è¾åºæ¯ä¸ªå­æ®µçå¼
-      for (int iField = 0; iField &lt; n; iField++) {
-        cout &lt;&lt; poFeature-&gt;GetFieldAsString(iField) &lt;&lt; "    ";
-      }
-      cout &lt;&lt; endl;
-
-      OGRFeature::DestroyFeature(poFeature);
-    }
-  }
-
-  GDALClose(poDS);
-  poDS = nullptr;
-
-  return true;
-}
-
-void Convert() {
-  dstFileSpatialReference.importFromEPSG(3857);
-  dstFileSpatialReference.SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
-  srcFileSpatialReference.SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
-
-  OGRCoordinateTransformation *src2DstTransformation =
-      OGRCreateCoordinateTransformation(&amp;srcFileSpatialReference,
-                                        &amp;dstFileSpatialReference);
-
-  if (!src2DstTransformation) {
-    return;
-  }
-
-  for (auto &amp;polygon : polygonData) {
-    for (auto &amp;line : polygon) {
-      for (auto &amp;point : line) {
-        src2DstTransformation-&gt;Transform(1, point.data(), point.data() + 1,
-                                         point.data() + 2);
-      }
-    }
-  }
-}
-
-bool CreateField(OGRLayer *poLayer) {
-  // å­ç¬¦ä¸²
-  OGRFieldDefn oField1("Type", OFTString);
-  oField1.SetWidth(8);
-  if (poLayer-&gt;CreateField(&amp;oField1) != OGRERR_NONE) {
-    printf("Creating Name field failed.\n");
-    return false;
-  }
-
-  // æµ®ç¹æ°
-  OGRFieldDefn oField2("Area", OFTReal);
-  oField2.SetPrecision(3);
-  if (poLayer-&gt;CreateField(&amp;oField2) != OGRERR_NONE) {
-    printf("Creating Name field failed.\n");
-    return false;
-  }
-
-  // æ´å
-  OGRFieldDefn oField3("VertexCount", OFTInteger);
-  if (poLayer-&gt;CreateField(&amp;oField3) != OGRERR_NONE) {
-    printf("Creating Name field failed.\n");
-    return false;
-  }
-
-  return true;
-}
-
-bool WriteGeoJson() {
-  string dstFile = getenv("GISBasic");
-  dstFile = dstFile + "/../Data/Out.geoJson";
-
-  //åå»º
-  GDALDriver *driver = GetGDALDriverManager()-&gt;GetDriverByName("GeoJSON");
-  if (!driver) {
-    printf("Get Driver GeoJSON Errorï¼\n");
-    return false;
-  }
-
-  GDALDataset *dataset =
-      driver-&gt;Create(dstFile.c_str(), 0, 0, 0, GDT_Unknown, NULL);
-  OGRLayer *poLayer = dataset-&gt;CreateLayer(
-      "FirstLayer", &amp;dstFileSpatialReference, wkbPolygon, NULL);
-
-  if (!CreateField(poLayer)) {
-    return false;
-  }
-
-  //åå»ºç¹å¾
-  for (const auto &amp;polygon : polygonData) {
-    OGRFeature ogrFeature(poLayer-&gt;GetLayerDefn());
-
-    OGRPolygon ogrPolygon;
-
-    int vertexNum = 0;
-    for (const auto &amp;line : polygon) {
-      OGRLinearRing ogrRing;
-      for (const auto &amp;point : line) {
-        ogrRing.addPoint(point.x(), point.y(), point.z());
-        vertexNum++;
-      }
-      ogrPolygon.addRing(&amp;ogrRing);
-    }
-    ogrFeature.SetGeometry(&amp;ogrPolygon);
-
-    ogrFeature.SetField("Type", "Polygon");
-    ogrFeature.SetField("Area", ogrPolygon.get_Area());
-    ogrFeature.SetField("VertexCount", vertexNum);
-
-    if (poLayer-&gt;CreateFeature(&amp;ogrFeature) != OGRERR_NONE) {
-      printf("Failed to create feature.\n");
-      return false;
-    }
-  }
-
-  //éæ¾
-  GDALClose(dataset);
-  dataset = nullptr;
-
-  return true;
-}
-
-int main() {
-  GDALAllRegister();
-  CPLSetConfigOption("GDAL_FILENAME_IS_UTF8", "NO");  //æ¯æä¸­æè·¯å¾
-  CPLSetConfigOption("SHAPE_ENCODING", "");           //è§£å³ä¸­æä¹±ç é®é¢
-
-  if (!ReadShp()) {
-    return 1;
-  }
-
-  Convert();
-
-  WriteGeoJson();
-}
-</code></pre>
-<p>å¨è¿éï¼è¯»åçç¢éæ¯ä¸ä¸ªShapefileæä»¶ï¼åå«çé½æ¯å¤è¾¹å½¢çè¦ç´ ï¼ç©ºé´åèä¸ºWGS84å°çåæ ç³»ï¼EPSGï¼4326ï¼ï¼æ¾ç¤ºå¦ä¸å¾4.14æç¤ºï¼</p>
-<p><img alt="å¾4.14 å¤çåå¤è¾¹å½¢ç¢éè¦ç´ " loading="lazy" data-src="https://img2024.cnblogs.com/blog/1000410/202601/1000410-20260113202314711-1548077459.jpg" class="lazyload"></p>
-<p>ç»è¿ç©ºé´åèè½¬æ¢åï¼ç©ºé´åèä¸ºWebå¢¨å¡ææå½±åæ ç³»ï¼EPSGï¼3857ï¼ï¼ä¸çæçæ¯ä¸ä¸ªGeoJsonæä»¶ãå¦ä¸å¾4.15æç¤ºï¼å¯ä»¥çå°å¨ç©ºé´åæ åèè½¬æ¢ä¹åå½¢ç¶ä¼¼ä¹âåçªâäºä¸ç¹ï¼è¿æ¯å°å¾æå½±åæ¢çç¹æ§å³å®çï¼åèç¬¬2ç« ä»ç»çç¥è¯ï¼ã</p>
-<p><img alt="å¾4.15 å¤çåå¤è¾¹å½¢ç¢éè¦ç´ " loading="lazy" data-src="https://img2024.cnblogs.com/blog/1000410/202601/1000410-20260113202328946-325091388.jpg" class="lazyload"></p>
-<p>è¿æ®µä»£ç çå³é®å¨äºå¦ä¸å ç¹ï¼</p>
-<ul>
-<li>
-<p>è¯»åç¢éæ¶ï¼ç¢éæ°æ®è¢«è¯»åææ°æ®éå¯¹è±¡GDALDatasetï¼GDALDatasetç®¡çå¾å±å¯¹è±¡OGRLayerï¼OGRLayerç®¡çç¹å¾ç±»å¯¹è±¡OGRFeatureï¼OGRFeatureååå«å ä½å¯¹è±¡ç±»OGRGeometryãOGRGeometryæ¯ä¸ä¸ªæ½è±¡ç¶ç±»ï¼ææä¹çæ¯å¶è¡¨è¾¾å·ä½çå ä½å¯¹è±¡çå­ç±»ï¼æ¯å¦OGRPolygonä»£è¡¨å¤è¾¹å½¢å ä½å¯¹è±¡ãOGRPolygonåæ¯ç±1ä¸ªå¤ç¯åå¤ä¸ªåç¯ï¼ç¯çº¿ï¼OGRLinearRingï¼ç»æãç¢éå°±æ¯è¿æ ·ä¸å±å±æ½è±¡ç»åè¡¨è¾¾åºæ¥çã</p>
-</li>
-<li>
-<p>å¨è¿è¡æ°æ®å¤çä¹å°±æ¯ç©ºé´åèè½¬æ¢ä¹åï¼æä»¬æè¯»åçæ°æ®æ¾å°æä»¬èªå·±çæ°æ®å®¹å¨ä¸­ï¼</p>
-<pre><code class="language-cpp">using Point = Vector3d;
-using Line = vector&lt;Point&gt;;
-using Polygon = vector&lt;Line&gt;;
-
-vector&lt;Polygon&gt; polygonData;
-</code></pre>
-<p>çå®çGISæ°æ®å¤çå¼åè¦æ±æ¯ååä¸åçï¼æä½çå¾å¾ä¸æ¯è¯»åç»ä»¶ï¼è¿éæOGRï¼å®ä¹çæ°æ®ç»æå¯¹è±¡ãæä»¬å¯ä»¥å°å¶è¯»åå¨æèªå®ä¹çæ°æ®ç»æä¸­ï¼ä»¥æ¹ä¾¿æä»¬è¿è¡æ´å éç¨çæä½ï¼æèè¿è¡å¹¶è¡ä¼åãå¨è¿éæä»¬éåäºèªå®ä¹çæ°æ®ç»æå¯¹è±¡ä¸­çé¡¶ç¹ï¼éç¹è¿è¡ç©ºé´åæ åèçè½¬æ¢ãè¿è¡å¶ä»çæ°æ®å¤çä¹æ¯å¦æ­¤ï¼æ ¹æ®èªå·±çéè¦æä½èªå·±çæ°æ®ç»æå®¹å¨ã</p>
-</li>
-<li>
-<p>ååºç¢éæ¶ï¼å°å¤çç»æçèªå®ä¹æ°æ®ç»æå¯¹è±¡æ¢å¤ææ°æ®éå¯¹è±¡GDALDatasetï¼è¯»åç¢éçéæä½ï¼ãå¦å¤ï¼éè¦å³æ³¨çæ¯GDALçæ°æ®é©±å¨GDALDriverï¼å¶æ¯éè¿åç§°æ¥åå»ºå¯¹åºæ ¼å¼çç¢éæä»¶ï¼ä¾å¦è¿éä¼ å¥å°åç§°æ¯GeoJson:</p>
-<pre><code class="language-cpp">GDALDriver *driver = GetGDALDriverManager()-&gt;GetDriverByName("GeoJSON");
-if (!driver) {
-  printf("Get Driver GeoJSON Errorï¼\n");
-  return false;
-}
-</code></pre>
-</li>
-<li>
-<p>ç¢éæ°æ®çå±æ§è¡¨æ°æ®ä¸æ°æ®åºä¸­çè¡¨ç»ææ¯è¾ç±»ä¼¼ï¼æ¯ä¸ªå­æ®µå·æèªå·±çå®ä¹å±æ§ï¼ä¾å¦æ°æ®ç±»åãé¿åº¦ãç²¾åº¦ç­ãå¹¶ä¸ï¼æ¯ä¸ä¸ªç¹å¾é½å¯¹åºäºä¸è¡è®°å½ãå èå±æ§è¡¨çæä½è¿æ¯æºå¤æçï¼å¾å¾ä¸ä¸å¡æä½ç¸å³èãè¿éä»ä»åªæ¯è¾åºæ¾ç¤ºäºè¯»åçå±æ§è¡¨ä¿¡æ¯ï¼åå¥äºèªå·±åå»ºçå­æ®µä¸å¼ãè¯»åååå¥çå±æ§è¡¨æ°æ®å¦ä¸å¾4.16ãå¾4.17æç¤ºï¼</p>
-</li>
-</ul>
-<p><img alt="å¾4.16 è¯»åçå±æ§è¡¨ä¿¡æ¯" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1000410/202601/1000410-20260113202342130-737019255.jpg" class="lazyload"><br>
-<img alt="å¾4.17 åå¥çå±æ§è¡¨ä¿¡æ¯" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1000410/202601/1000410-20260113202352772-344125405.jpg" class="lazyload"></p>
-<h3 id="443-ç©ºé´ææå³ç³»çå¤æ­">4.4.3 ç©ºé´ææå³ç³»çå¤æ­</h3>
-<p>å¯¹ç¢éè¦ç´ è¿è¡ç©ºé´ææå³ç³»çå¤æ­ä¹æ¯GISå¼åä¸­å¸¸ç¨çåè½ãå¨4.3.3èä¸­ä»ç»äºOGCçSimple Featureæ åè§èä¸­ææå³ç³»ï¼OGR/GDALå¯¹å¶åäºå·ä½çå®ç°ãä»»ä½ç»§æ¿äºOGRGeometryçå ä½å¯¹è±¡ç±»ï¼å¦OGRPointãOGRPolygonï¼é½å¯ä»¥è°ç¨æ åä¸­å®ä¹çæ¥å£ï¼äºåè°è¯ï¼ï¼å¤æ­è¯¥å ä½å¯¹è±¡ä¸å¦å¤ä¸ä¸ªå ä½å¯¹è±¡çææå³ç³»ãå¨å¦ä¸å®ä¾ä¸­ï¼å¤æ­äºç©ºé´ä¸­æç¹ä¸æå¤è¾¹å½¢æ¯å¦å­å¨åå«ï¼Containsï¼å³ç³»ï¼</p>
-<pre><code class="language-cpp">#include &lt;ogrsf_frmts.h&gt;
-
-#include &lt;iostream&gt;
-
-using namespace std;
-
-int main() {
-  OGRLinearRing linearRing;
-  linearRing.addPoint(268.28, 784.75);
-  linearRing.addPoint(153.98, 600.60);
-  linearRing.addPoint(274.63, 336.02);
-  linearRing.addPoint(623.88, 401.64);
-  linearRing.addPoint(676.80, 634.47);
-  linearRing.addPoint(530.75, 822.85);
-  linearRing.closeRings();
-
-  OGRPolygon polygon;
-  polygon.addRing(&amp;linearRing);
-
-  cout &lt;&lt; "ç¹Aæ¯å¦å¨å¤è¾¹å½¢åï¼";
-  OGRPoint pointA(407.98, 579.43);  
-  cout &lt;&lt; polygon.Contains(&amp;pointA) &lt;&lt; endl;
-
-  cout &lt;&lt; "ç¹Bæ¯å¦å¨å¤è¾¹å½¢åï¼";
-  OGRPoint pointB(678.92, 482.07);  
-  cout &lt;&lt; polygon.Contains(&amp;pointB) &lt;&lt; endl;
-}
-</code></pre>
-<p>è¿è¡çç»æå¦ä¸æç¤ºï¼</p>
-<pre><code class="language-text">ç¹Aæ¯å¦å¨å¤è¾¹å½¢åï¼1
-ç¹Bæ¯å¦å¨å¤è¾¹å½¢åï¼0
-</code></pre>
-<p>å¨4.3.3èä¸­ä»ç»è¿ï¼åå«(Contains)ä¸åå«(Within)æ¯ä¸å¯¹ç¸åçå³ç³»ãå¨è¿éæä»¬å½ç¶ä¹å¯ä»¥è°ç¨OGRPointçåå«(Within)æ¥å£ï¼ä¼è¿åä¸ä¸è¿°åæ ·çç»æãä¸æ­¢å¦æ­¤ï¼å¶ä»ç©ºé´ææå³ç³»çæ¥å£ä¹æ¯è¿æ ·è°ç¨ï¼è¯»èå¯ä»¥æ ¹æ®èªå·±çéæ±å°è¯ä¸äºï¼è¿éåªæ¯æç å¼çã</p>
-<hr>
-<p>æ¬æèéèªä½èæ°ä¹¦ãGISåºç¡åçä¸ææ¯å®è·µãç¬¬4ç« ãä¹¦ä¸­ç³»ç»è®²è§£ GIS æ ¸å¿çè®ºä¸å¤è¯­è¨å®æï¼éåå¼åèä¸é«æ ¡å¸çã</p>
-<p>ð <strong>éå¥èµæºå¼æº</strong>ï¼<a href="https://github.com/fafa1899/GISBasic" target="_blank" rel="noopener nofollow">GitHub</a> | <a href="https://gitcode.com/charlee44/GISBasic" target="_blank" rel="noopener nofollow">GitCode</a></p>
-<p>ð <strong>æ¯ææ­£ç</strong>ï¼<a href="https://item.jd.com/14603137.html" target="_blank" rel="noopener nofollow">äº¬ä¸</a>ï½<a href="https://product.dangdang.com/29988568.html" target="_blank" rel="noopener nofollow">å½å½</a></p>
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.001388888888888889" data-date-updated="2026-01-13 20:27">2026-01-13 20:25</span>&nbsp;
-<a href="https://www.cnblogs.com/charlee44">charlee44</a>&nbsp;
-éè¯»(<span id="post_view_count">27</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19479143);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19479143', targetLink: 'https://www.cnblogs.com/charlee44/p/19479143', title: 'ä»Shapefileå°GeoJSONï¼ç¨GDALå®ç°GISç¢éæ°æ®è¯»åä¸ç©ºé´åæ' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ çµä½å¨å®ç°çµæºç»å¯¹ä½ç½®æµé-PART-çµä½è®¡-ç»å¯¹ä½ç½® ]]></title>
-    <link>https://www.cnblogs.com/SimLab/p/19479117</link>
-    <guid>091277d09a043129886cb629c71f75c0</guid>
-    <description>
-    <![CDATA[ 
-        <h2>
-            <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/SimLab/p/19479117" title="åå¸äº 2026-01-13 20:11">
-    <span role="heading" aria-level="2">çµä½å¨å®ç°çµæºç»å¯¹ä½ç½®æµé-PART-çµä½è®¡-ç»å¯¹ä½ç½®</span>
-    
-
-</a>
-
-        </h2>
-        <div class="postbody">
-            <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h1 id="çµä½å¨å®ç°çµæºç»å¯¹ä½ç½®æµé-part-çµä½è®¡-ç»å¯¹ä½ç½®">çµä½å¨å®ç°çµæºç»å¯¹ä½ç½®æµé-PART-çµä½è®¡-ç»å¯¹ä½ç½®</h1>
-<blockquote>
-<p><strong>å³é®å­</strong>ï¼ç»å¯¹ä½ç½®, çµä½å¨, Vishay Spectrol, 132</p>
-</blockquote>
-<hr>
-<h2 id="ä¸é®é¢åæ">ä¸ãé®é¢åæ</h2>
-<p>å¨è¿å¨æ§å¶å®éªä¸­ï¼æä»¬éè¦æµéæè½¬çµæºå¨æéè§åº¦èå´ï¼å¦ 0â90Â°ï¼åæ¥åæå¨ç<strong>ç»å¯¹ä½ç½®</strong>ã</p>
-<p>å¸¸è§æ¹æ³ï¼</p>
-<ul>
-<li>ç»å¯¹ç¼ç å¨æå¢éç¼ç å¨è¾åºæ°å­ä¿¡å·ï¼ç²¾åº¦é«ã</li>
-</ul>
-<p>ç°åºé®é¢ï¼</p>
-<ul>
-<li><strong>å®éªç¡¬ä»¶æ¬èº«ä¸æ¯æç»å¯¹ç¼ç å¨éé</strong>ï¼æ æ³ç´æ¥ä½¿ç¨</li>
-<li>æå¨è§åº¦æéï¼ä¸éè¦å¨å 360Â°ï¼</li>
-<li>ç³»ç»éè¦ç¨³å®ãå¯å®æ¶è·åç»å¯¹ä½ç½®çæ¹æ¡</li>
-</ul>
-<blockquote>
-<p>æ ¸å¿é®é¢ï¼å¦ä½å¨ç¡¬ä»¶ä¸æ¯æç»å¯¹ç¼ç å¨ééçæåµä¸ï¼å®ç°å¯é çç»å¯¹ä½ç½®æµéï¼</p>
-</blockquote>
-<hr>
-<h2 id="äºè§£å³æ¹æ³--å®æ½æ¹æ¡">äºãè§£å³æ¹æ³ / å®æ½æ¹æ¡</h2>
-<h3 id="1ï¸â£-ç¡¬ä»¶æ¹æ¡">1ï¸â£ ç¡¬ä»¶æ¹æ¡</h3>
-<ul>
-<li><strong>çµä½å¨éå</strong>ï¼Vishay Spectrol Model 132ï¼æè½¬è§ 352Â°ï¼</li>
-<li><strong>é½¿è½®ä¼ å¨</strong>ï¼çµæºè½´ â é½¿è½® â çµä½å¨æ»å¨è½´
-<ul>
-<li>çµæºæè½¬è§ â é½¿è½®æ¯ â çµä½å¨æ»å¨è§</li>
-<li>ä¿è¯çµä½å¨æ»¡éç¨è¦çå®éªæå¨è§åº¦</li>
-</ul>
-</li>
-<li><strong>ä¾çµä¸çµè·¯è®¾è®¡</strong>ï¼
-<ul>
-<li>çµä½å¨ä¸¤ç«¯åèªä¸²7.5â¯kÎ© çµé»åå«æ¥å¥ Â±12â¯V ä¾çµ</li>
-<li>è¾åºçµåä¸æå¨è§åº¦çº¿æ§æ å°</li>
-</ul>
-</li>
-</ul>
-<h3 id="2ï¸â£-ç¤ºæå¾">2ï¸â£ ç¤ºæå¾</h3>
-<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3496115/202601/3496115-20260113201046016-1937574723.png" class="lazyload"></p>
-<hr>
-<h2 id="ä¸ä½¿ç¨æç¤º">ä¸ãä½¿ç¨æç¤º</h2>
-<ul>
-<li>å®éªç¡¬ä»¶ä¸æ¯æç»å¯¹ç¼ç å¨ééæ¶ï¼å¯ä½¿ç¨çµä½å¨æ¹æ¡</li>
-<li>æå¨è§åº¦æéï¼éå¸¸ 0â90Â°ï¼æ¶ï¼132 åçµä½å¨éé½¿è½®å¯è¦çå¨èå´</li>
-<li>çµä½å¨æ«ç«¯é¢çæ­»åºï¼é¿åæºæ¢°ç£¨æ</li>
-<li>é½¿è½®æ¯åçè®¾è®¡ï¼ä¿è¯çµä½å¨æ»¡éç¨å¯¹åºå®éªæå¨è§åº¦</li>
-<li>è¾åºçµåå¯ç´æ¥ç¨äºééç³»ç»ææ¨¡ææ§å¶å¨</li>
-<li>è¥å®éªéè¦æ´å¤§è§åº¦æå¨åæµéï¼å¯èèåçº§çµä½å¨æä½¿ç¨ç»å¯¹ç¼ç å¨</li>
-</ul>
-<blockquote>
-<p>æ»ç»ï¼å¨ç¡¬ä»¶ä¸æ¯æç»å¯¹ç¼ç å¨ééçå®éªç¯å¢ä¸ï¼<strong>132 åçµä½å¨ + é½¿è½®ä¼ å¨ + ä¸²èçµé»ä¾çµ</strong>æ¯ä¸ç§ç¨³å®ãå¯è¡çç»å¯¹ä½ç½®æµéæ¹æ¡ï¼æä½ç®åï¼å®éªéªè¯ç¨³å®ã</p>
-</blockquote>
-<hr>
-<h2 id="åè¯´æ">åãè¯´æ</h2>
-<ul>
-<li>
-<blockquote>
-<p>æ¬æé¦åäºãGitHub/Giteeãï¼ä½èï¼KANICï¼ç ç©¶æ¹åä¸º èªå¨åå®éªå¹³å°ãæ§å¶ç®æ³éªè¯ååå®ç©ä»¿çç³»ç»ã</p>
-</blockquote>
-<p>ç¸å³å®éªæç¨åºå·²æ´çè³ GitHubï¼å¯å¨ GitHub å¹³å°æç´¢ KANIC-lab/KANIC æ¥çã</p>
-<p>å¦éè¿ä¸æ­¥è®¨è®ºï¼å¯ç§ä¿¡èç³»ï¼å¹¶æ³¨ææç« ç¼å·ãæç« ç¼å·ä½äºæ é¢æ«å°¾ï¼ä»¥å­æ¯å¼å¤´å¦âEXP-XXXX-XXXâ</p>
-</li>
-</ul>
-
-</div>
-<div class="clear"></div>
-
-        </div>
-        <p class="postfoot">
-            posted on 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-01-13 20:12">2026-01-13 20:11</span>&nbsp;
-<a href="https://www.cnblogs.com/SimLab">æ§å¶è¿·æ</a>&nbsp;
-éè¯»(<span id="post_view_count">24</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19479117);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19479117', targetLink: 'https://www.cnblogs.com/SimLab/p/19479117', title: 'çµä½å¨å®ç°çµæºç»å¯¹ä½ç½®æµé-PART-çµä½è®¡-ç»å¯¹ä½ç½®' })">ä¸¾æ¥</a>
-
-        </p>
-     ]]>
     </description>
     </item>
         </channel>
