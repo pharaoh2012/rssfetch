@@ -3,12 +3,583 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-02-15T12:38:58.283Z</lastBuildDate>
+        <lastBuildDate>2026-02-15T16:23:52.910Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
+    <title><![CDATA[ 8ãSequenceInputStreamçæºç åVector.classçä¸äºå½æ°è¯´æï¼windowsæä½ç³»ç»ï¼JDK8ï¼ ]]></title>
+    <link>https://www.cnblogs.com/Carey-ccl/p/19618752</link>
+    <guid>4887b9c934c445678a4dcf4c4f3af973</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/Carey-ccl/p/19618752" title="åå¸äº 2026-02-15 22:25">
+    <span role="heading" aria-level="2">8ãSequenceInputStreamçæºç åVector.classçä¸äºå½æ°è¯´æï¼windowsæä½ç³»ç»ï¼JDK8ï¼</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h4 id="ä¸sequenceinputstreamæºç å¯ä»¥é¡ºåºè¯»åå¤ä¸ªè¾å¥streamçè£é¥°å¨ç±»">ä¸ãSequenceInputStreamæºç ââå¯ä»¥é¡ºåºè¯»åå¤ä¸ªè¾å¥Streamçè£é¥°å¨ç±»</h4>
+<p>ââSequenceInputStream.class çUMLå³ç³»å¾ï¼å¦ä¸æç¤ºï¼<br>
+<img alt="clipboard" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202602/2485827-20260215215854830-1271542137.png" class="lazyload"></p>
+<p>ââSequenceInputStream.classçæºç ï¼å¦ä¸æç¤ºï¼</p>
+<pre><code>package java.io;
+import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.Vector;
+
+public
+class SequenceInputStream extends InputStream {
+    //é¡ºåºï¼åºååï¼è£è½½å¤ä¸ªè¢«è£é¥°è¾å¥Streamçéåï¼ä¸è¬æ¯Vectorå®ä¾
+    Enumeration&lt;? extends InputStream&gt; e;
+    InputStream in;//é¡ºåºï¼åºååï¼è£è½½å¤ä¸ªè¢«è£é¥°è¾å¥Streamçéåä¸­å½åæ­£å¨è¢«SequenceInputStream å¯¹è±¡ä½¿ç¨çè¢«è£é¥°çè¾å¥Stream
+    
+    //æé å½æ°ï¼ä¼ å¥ä¸ä¸ªé¡ºåºï¼åºååï¼è£è½½å¤ä¸ªè¢«è£é¥°è¾å¥Streamçéå
+    public SequenceInputStream(Enumeration&lt;? extends InputStream&gt; e) {
+        this.e = e;
+        try {
+            nextStream();
+        } catch (IOException ex) {
+            // This should never happen
+            throw new Error("panic");
+        }
+    }
+    
+    //æé å½æ°ï¼å¯ä»¥å°2ä¸ªè¢«è£é¥°çè¾å¥Streamæ¾å¥å°éåä¸­
+    public SequenceInputStream(InputStream s1, InputStream s2) {
+        Vector&lt;InputStream&gt; v = new Vector&lt;&gt;(2);
+
+        v.addElement(s1);
+        v.addElement(s2);
+        e = v.elements();
+        try {
+            nextStream();
+        } catch (IOException ex) {
+            // This should never happen
+            throw new Error("panic");
+        }
+    }
+    //è·åéåä¸­ä¸ä¸ä¸ªè¢«è£é¥°çè¾å¥Stream
+    final void nextStream() throws IOException {
+        if (in != null) {
+            in.close();//åå³é­å½åè¢«è£é¥°çè¾å¥Stream
+        }
+
+        if (e.hasMoreElements()) {//å¦æéåä¸­è¿æè¢«è£é¥°çè¾å¥Stream
+            in = (InputStream) e.nextElement();//è·åéåä¸­ä¸ä¸ä¸ªè¢«è£é¥°çè¾å¥Stream
+            if (in == null)
+                throw new NullPointerException();//å¦æéåä¸­ä¸ä¸ä¸ªè¢«è£é¥°çè¾å¥Streamä¸ºnullï¼æåºä¸ä¸ªNullPointerException
+        }
+        else in = null;//å¦æéåä¸­æ²¡æäºè¢«è£é¥°çè¾å¥Streamï¼å°å½åæ­£å¨ä½¿ç¨çè¢«è£é¥°çè¾å¥Streamç½®ä¸ºnull
+
+    }
+    
+    //å¤æ­å½åæ­£å¨ä½¿ç¨çè¢«è£é¥°çè¾å¥Streamæ¯å¦è¿æå¯ä»¥è¯»åçå­èæ°æ®
+    public int available() throws IOException {
+        if (in == null) {
+            return 0; // no way to signal EOF from available()
+        }
+        return in.available();
+    }
+    
+    //ä»SequenceInputStream å¯¹è±¡çéåï¼è¯¥éåæ¾çå¤ä¸ªè¢«è£é¥°çè¾å¥Streamï¼ä¸­è¯»å1ä¸ªå­è
+    public int read() throws IOException {
+        while (in != null) {//å¦æin!=nullï¼åè¯´æå½åè¿ä¸ªSequenceInputStream å¯¹è±¡çéåä¸­è¿æè¢«è£é¥°çè¾å¥Streamæ²¡æå³é­
+            int c = in.read();//ä»å½åæ­£å¨ä½¿ç¨çè¢«è£é¥°çè¢«è£é¥°è¾å¥Streamä¸­è¯»å1ä¸ªå­è
+            if (c != -1) {//c != -1è¯´æä»å½åæ­£å¨ä½¿ç¨çè¢«è£é¥°è¾å¥Streamä¸­è¯»åå°äºå­è
+                return c;//è¿åè¯»åå°çè¿ä¸ªå­è
+            }
+            nextStream();//å¦æc==-1è¯´æå½åæ­£å¨ä½¿ç¨çè¢«è£é¥°è¾å¥Streamä¸­å­èï¼byteï¼æ°æ®å·²ç»è¯»å®ï¼è·åSequenceInputStream å¯¹è±¡çéåä¸­ä¸ä¸ä¸ªè¢«è£é¥°çè¾å¥Stream
+        }
+        return -1;//å¦æSequenceInputStream å¯¹è±¡çéåä¸­ææè¢«è£é¥°çè¾å¥Streamä¸­çå­èï¼byteï¼æ°æ®é½å·²ç»è¯»å®ï¼è¿å-1
+    }
+
+    //ä»SequenceInputStream å¯¹è±¡çéåï¼è¯¥éåæ¾çå¤ä¸ªè¢«è£é¥°çè¾å¥Streamï¼ä¸­è¯»ålenä¸ªå­èï¼æ¾å¥å°byte[]æ°ç»bç[off,off+len)ï¼å·¦é­å³å¼ï¼ä¸åæ¬off+lenï¼ç´¢å¼ä½ç½®
+    public int read(byte b[], int off, int len) throws IOException {
+        if (in == null) {//å¦æin==nullï¼åè¯´æå½åè¿ä¸ªSequenceInputStream å¯¹è±¡çéåä¸­ææè¢«è£é¥°çè¾å¥Streamé½å·²ç»å³é­
+            return -1;
+        } else if (b == null) {
+            throw new NullPointerException();//å¦æbyte[]æ°ç»b==nullï¼æåºä¸ä¸ªNullPointerException
+        } else if (off &lt; 0 || len &lt; 0 || len &gt; b.length - off) {//ç¸å½äºoff + len &gt; b.lengthï¼æºç ä¸­è¿æ ·åä»£ç çå¥½å¤ææ²¡çåºæ¥ï¼
+            throw new IndexOutOfBoundsException();
+        } else if (len == 0) {
+            return 0;//è¦ä»SequenceInputStream å¯¹è±¡çéåï¼è¯¥éåæ¾çè³å°2ä¸ªè¢«è£é¥°çè¾å¥Streamï¼ä¸­è¯»åçlenä¸ªå­è==0æ¶ï¼è¿å0
+        }
+        do {
+            int n = in.read(b, off, len);//ä»å½åæ­£å¨ä½¿ç¨çè¢«è£é¥°çè¾å¥Streamä¸­è¯»ålenä¸ªå­èï¼æ¾å¥å°byte[]æ°ç»bç[off,off+len)ï¼å·¦é­å³å¼ï¼ä¸åæ¬off+lenï¼ç´¢å¼ä½ç½®
+            if (n &gt; 0) {
+                return n;//åªè¦è½ä»å½åæ­£å¨ä½¿ç¨çè¢«è£é¥°çè¾å¥Streamä¸­è¯»åå°å­èï¼åè¿åè¯»åçæ°é
+            }
+            nextStream();//æ­¤æ¶n==-1ï¼è¯´æå½åæ­£å¨ä½¿ç¨çè¢«è£é¥°çè¾å¥Streamä¸­å­èï¼byteï¼æ°æ®å·²ç»è¯»å®ï¼è·åSequenceInputStream å¯¹è±¡çéåä¸­ä¸ä¸ä¸ªè¢«è£é¥°çè¾å¥Stream
+        } while (in != null);//SequenceInputStream å¯¹è±¡çéåä¸­ä¸ä¸ä¸ªè¢«è£é¥°çè¾å¥Streamä¸ºnullæ¶ï¼è·³åºå¾ªç¯ï¼è¿å-1
+        return -1;
+    }
+    //é¡ºåºå³é­SequenceInputStream å¯¹è±¡çéåä¸­ææè¢«è£é¥°çè¾å¥Stream
+    public void close() throws IOException {
+        do {
+            nextStream();
+        } while (in != null);
+    }
+}
+</code></pre>
+<h5 id="11sequenceinputstreamçreadå½æ°ånextstreamå½æ°">1.1ãSequenceInputStreamçread()å½æ°ånextStream()å½æ°</h5>
+<pre><code>package java.io;
+import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.Vector;
+
+public
+class SequenceInputStream extends InputStream {
+    ...çç¥é¨åä»£ç ...
+    //é¡ºåºï¼åºååï¼å­å¨å¤ä¸ªè¢«è£é¥°çè¾å¥Streamçéåï¼ä¸è¬æ¯Vectorå®ä¾
+    Enumeration&lt;? extends InputStream&gt; e;
+    InputStream in;//é¡ºåºï¼åºååï¼è£è½½å¤ä¸ªè¢«è£é¥°è¾å¥Streamçéåä¸­å½åæ­£å¨è¢«SequenceInputStream å¯¹è±¡ä½¿ç¨çè¢«è£é¥°çè¾å¥Stream
+    //è·åéåä¸­ä¸ä¸ä¸ªè¢«è£é¥°çè¾å¥Stream
+    final void nextStream() throws IOException {
+        if (in != null) {
+            in.close();//åå³é­å½åè¢«è£é¥°çè¾å¥Stream
+        }
+
+        if (e.hasMoreElements()) {//å¦æéåä¸­è¿æè¢«è£é¥°çè¾å¥Stream
+            in = (InputStream) e.nextElement();//è·åéåä¸­ä¸ä¸ä¸ªè¢«è£é¥°çè¾å¥Stream
+            if (in == null)
+                throw new NullPointerException();//å¦æéåä¸­ä¸ä¸ä¸ªè¢«è£é¥°çè¾å¥Streamä¸ºnullï¼æåºä¸ä¸ªNullPointerException
+        }
+        else in = null;//å¦æéåä¸­æ²¡æäºè¢«è£é¥°çè¾å¥Streamï¼å°å½åæ­£å¨ä½¿ç¨çè¢«è£é¥°çè¾å¥Streamç½®ä¸ºnull
+
+    }
+    
+    //ä»SequenceInputStream å¯¹è±¡çéåï¼è¯¥éåæ¾çå¤ä¸ªè¢«è£é¥°çè¾å¥Streamï¼ä¸­è¯»å1ä¸ªå­è
+    public int read() throws IOException {
+        while (in != null) {//å¦æin!=nullï¼åè¯´æå½åè¿ä¸ªSequenceInputStream å¯¹è±¡çéåä¸­è¿æè¢«è£é¥°çè¾å¥Streamæ²¡æå³é­
+            int c = in.read();//ä»å½åæ­£å¨ä½¿ç¨çè¢«è£é¥°çè¢«è£é¥°è¾å¥Streamä¸­è¯»å1ä¸ªå­è
+            if (c != -1) {//c != -1è¯´æä»å½åæ­£å¨ä½¿ç¨çè¢«è£é¥°è¾å¥Streamä¸­è¯»åå°äºå­è
+                return c;//è¿åè¯»åå°çè¿ä¸ªå­è
+            }
+            nextStream();//å¦æc==-1è¯´æå½åæ­£å¨ä½¿ç¨çè¢«è£é¥°è¾å¥Streamä¸­å­èï¼byteï¼æ°æ®å·²ç»è¯»å®ï¼è·åSequenceInputStream å¯¹è±¡çéåä¸­ä¸ä¸ä¸ªè¢«è£é¥°çè¾å¥Stream
+        }
+        return -1;//å¦æSequenceInputStream å¯¹è±¡çéåä¸­ææè¢«è£é¥°çè¾å¥Streamä¸­çå­èï¼byteï¼æ°æ®é½å·²ç»è¯»å®ï¼è¿å-1
+    }
+    ...çç¥é¨åä»£ç ...
+}
+</code></pre>
+<p>å¦æä½¿ç¨èç¨çæ¯2ä¸ªè¢«è£é¥°çè¾å¥Streamï¼æ­¤å¤ä¸ºFileInputStreamï¼ï¼æé çSequenceInputStreamçå¯¹è±¡ï¼å¦ä¸æç¤ºï¼ä¼ªä»£ç ï¼ï¼</p>
+<pre><code>is1 = new FileInputStream("D:\\data1.txt");
+is2 = new FileInputStream("D:\\data2.txt");
+sequenceInputStream = new SequenceInputStream(is1, is2);
+</code></pre>
+<p>é£ä¹ï¼SequenceInputStreamå¯¹è±¡ä¸­Vectoréåçå®¹éæ¯2ï¼å¦ææ­¤æ¶æ§è¡SequenceInputStream.class::read()å½æ°ã</p>
+<pre><code>//ä¼ªä»£ç 
+int readByte = -1;
+while ((readByte = sequenceInputStream.read()) != -1) {
+   System.out.print((char) readByte);
+}
+</code></pre>
+<p>è¿ç¨å¦ä¸ï¼åè®¾2ä¸ªè¢«è£é¥°çè¾å¥Streamï¼æ­¤å¤ä¸ºFileInputStreamï¼ä¸­çå­èæ°æ®å¦ä¸ï¼ï¼<br>
+<img alt="clipboard" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202602/2485827-20260215220043218-349583290.png" class="lazyload"></p>
+<p>â ãåæ§è¡ç¬¬1ä¸ªè¢«è£é¥°çè¾å¥Streamï¼ä¹æ¯Vectoréåçç¬¬1ä¸ªåç´ ï¼çread()å½æ°ï¼ç´å°è¯¥å½æ°è¿å-1ï¼å¦ä¸æç¤ºï¼<br>
+<img alt="clipboard" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202602/2485827-20260215220100324-1139361487.png" class="lazyload"><br>
+<img alt="clipboard" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202602/2485827-20260215220109951-490306412.png" class="lazyload"></p>
+<p>â¡ãå³é­ç¬¬1ä¸ªè¢«è£é¥°çè¾å¥Streamï¼ä¹æ¯Vectoréåçç¬¬1ä¸ªåç´ ï¼ï¼åæ§è¡ç¬¬2ä¸ªè¢«è£é¥°çè¾å¥Streamï¼ä¹æ¯Vectoréåçç¬¬2ä¸ªåç´ ï¼çread()å½æ°ï¼ç´å°è¯¥å½æ°è¿å-1ï¼å¦ä¸æç¤ºï¼<br>
+<img alt="clipboard" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202602/2485827-20260215220126547-1754735555.png" class="lazyload"><br>
+<img alt="clipboard" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202602/2485827-20260215220135740-592304804.png" class="lazyload"></p>
+<h6 id="111ä½¿ç¨ä¸¾ä¾">1.1.1ãä½¿ç¨ä¸¾ä¾</h6>
+<p>ââä¸é¢è¿ä¸ªä¾å­å°±æ°å½çä½¿ç¨SequenceInputStreamçread()å½æ°ï¼</p>
+<ul>
+<li>
+<p>æçwindowsæä½ç³»ç»çDçæ ¹ç®å½ä¸æ2ä¸ªtxtæä»¶ï¼ä¸ä¸ªæ¯data1.txtï¼å¦ä¸ä¸ªæ¯data2.txtæä»¶ï¼è¿2ä¸ªæä»¶ä¸­æ»å±æ30ä¸ªå­èï¼å¦ä¸æç¤ºï¼<br>
+<img alt="clipboard" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202602/2485827-20260215220203616-2107974847.png" class="lazyload"><br>
+<img alt="clipboard" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202602/2485827-20260215220213513-1764667319.png" class="lazyload"></p>
+</li>
+<li>
+<p>ä½¿ç¨èå¯ä»¥ç¨ä¸ä¸ªSequenceInputStreamå¯¹è±¡è£é¥°2ä¸ªè¢«è£é¥°çè¾å¥Streamï¼æ­¤å¤ä¸ºFileInputStreamï¼ï¼å¦ä¸ä»£ç æç¤ºï¼</p>
+</li>
+</ul>
+<pre><code>package com.chelong.StreamAndReader;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.SequenceInputStream;
+
+public class SequenceInputStreamTest {
+   public static void main(String[] args) {
+      InputStream is1 = null;
+      InputStream is2 = null;
+      SequenceInputStream sequenceInputStream = null;
+      try {
+         is1 = new FileInputStream("D:\\data1.txt");
+         is2 = new FileInputStream("D:\\data2.txt");
+         sequenceInputStream = new SequenceInputStream(is1, is2);
+         int readByte = -1;
+         while ((readByte = sequenceInputStream.read()) != -1) {
+            System.out.print((char) readByte);
+         }
+      } catch (IOException e) {
+         e.printStackTrace();
+      } finally {
+          //æ­¤å¤çç¥å³é­ææçStreamçä»£ç 
+      }
+   }
+}
+</code></pre>
+<p>ç¨åºè¿è¡ç»æï¼å¦ä¸æç¤ºï¼<br>
+<img alt="clipboard" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202602/2485827-20260215220259069-1799250009.png" class="lazyload"></p>
+<h5 id="12sequenceinputstreamçreadbyte-b-int-off-int-lenå½æ°ånextstreamå½æ°">1.2ãSequenceInputStreamçread(byte b[], int off, int len)å½æ°ånextStream()å½æ°</h5>
+<pre><code>package java.io;
+import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.Vector;
+
+public
+class SequenceInputStream extends InputStream {
+    ...çç¥é¨åä»£ç ...
+    //é¡ºåºï¼åºååï¼è£è½½å¤ä¸ªè¢«è£é¥°è¾å¥Streamçéåï¼ä¸è¬æ¯Vectorå®ä¾
+    Enumeration&lt;? extends InputStream&gt; e;
+    InputStream in;//é¡ºåºï¼åºååï¼è£è½½å¤ä¸ªè¢«è£é¥°è¾å¥Streamçéåä¸­å½åæ­£å¨è¢«SequenceInputStream å¯¹è±¡ä½¿ç¨çè¢«è£é¥°çè¾å¥Stream
+    //è·åéåä¸­ä¸ä¸ä¸ªè¢«è£é¥°çè¾å¥Stream
+    final void nextStream() throws IOException {
+        if (in != null) {
+            in.close();//åå³é­å½åè¢«è£é¥°çè¾å¥Stream
+        }
+
+        if (e.hasMoreElements()) {//å¦æéåä¸­è¿æè¢«è£é¥°çè¾å¥Stream
+            in = (InputStream) e.nextElement();//è·åéåä¸­ä¸ä¸ä¸ªè¢«è£é¥°çè¾å¥Stream
+            if (in == null)
+                throw new NullPointerException();//å¦æéåä¸­ä¸ä¸ä¸ªè¢«è£é¥°çè¾å¥Streamä¸ºnullï¼æåºä¸ä¸ªNullPointerException
+        }
+        else in = null;//å¦æéåä¸­æ²¡æäºè¢«è£é¥°çè¾å¥Streamï¼å°å½åæ­£å¨ä½¿ç¨çè¢«è£é¥°çè¾å¥Streamç½®ä¸ºnull
+
+    }
+    
+    //ä»SequenceInputStream å¯¹è±¡çéåï¼è¯¥éåæ¾çå¤ä¸ªè¢«è£é¥°çè¾å¥Streamï¼ä¸­è¯»ålenä¸ªå­èï¼æ¾å¥å°byte[]æ°ç»bç[off,off+len)ï¼å·¦é­å³å¼ï¼ä¸åæ¬off+lenï¼ç´¢å¼ä½ç½®
+    public int read(byte b[], int off, int len) throws IOException {
+        if (in == null) {//å¦æin==nullï¼åè¯´æå½åè¿ä¸ªSequenceInputStream å¯¹è±¡çéåä¸­ææè¢«è£é¥°çè¾å¥Streamé½å·²ç»å³é­
+            return -1;
+        } else if (b == null) {
+            throw new NullPointerException();//å¦æbyte[]æ°ç»b==nullï¼æåºä¸ä¸ªNullPointerException
+        } else if (off &lt; 0 || len &lt; 0 || len &gt; b.length - off) {//ç¸å½äºoff + len &gt; b.lengthï¼æºç ä¸­è¿æ ·åä»£ç çå¥½å¤ææ²¡çåºæ¥ï¼
+            throw new IndexOutOfBoundsException();
+        } else if (len == 0) {
+            return 0;//è¦ä»SequenceInputStream å¯¹è±¡çéåï¼è¯¥éåæ¾çè³å°2ä¸ªè¢«è£é¥°çè¾å¥Streamï¼ä¸­è¯»åçlenä¸ªå­è==0æ¶ï¼è¿å0
+        }
+        do {
+            int n = in.read(b, off, len);//ä»å½åæ­£å¨ä½¿ç¨çè¢«è£é¥°çè¾å¥Streamä¸­è¯»ålenä¸ªå­èï¼æ¾å¥å°byte[]æ°ç»bç[off,off+len)ï¼å·¦é­å³å¼ï¼ä¸åæ¬off+lenï¼ç´¢å¼ä½ç½®
+            if (n &gt; 0) {
+                return n;//åªè¦è½ä»å½åæ­£å¨ä½¿ç¨çè¢«è£é¥°çè¾å¥Streamä¸­è¯»åå°å­èï¼åè¿åè¯»åçæ°é
+            }
+            nextStream();//æ­¤æ¶n==-1ï¼è¯´æå½åæ­£å¨ä½¿ç¨çè¢«è£é¥°çè¾å¥Streamä¸­å­èï¼byteï¼æ°æ®å·²ç»è¯»å®ï¼è·åSequenceInputStream å¯¹è±¡çéåä¸­ä¸ä¸ä¸ªè¢«è£é¥°çè¾å¥Stream
+        } while (in != null);//SequenceInputStream å¯¹è±¡çéåä¸­ä¸ä¸ä¸ªè¢«è£é¥°çè¾å¥Streamä¸ºnullæ¶ï¼è·³åºå¾ªç¯ï¼è¿å-1
+        return -1;
+    }
+    ...çç¥é¨åä»£ç ...
+}
+</code></pre>
+<p>å¦æä½¿ç¨èç¨çæ¯2ä¸ªè¢«è£é¥°çè¾å¥Streamï¼æ­¤å¤ä¸ºFileInputStreamï¼ï¼æé çSequenceInputStreamçå¯¹è±¡ï¼å¦ä¸æç¤ºï¼ä¼ªä»£ç ï¼ï¼</p>
+<pre><code>is1 = new FileInputStream("D:\\data1.txt");
+is2 = new FileInputStream("D:\\data2.txt");
+sequenceInputStream = new SequenceInputStream(is1, is2);
+</code></pre>
+<p>é£ä¹ï¼SequenceInputStreamå¯¹è±¡ä¸­Vectoréåçå®¹éæ¯2ï¼å¹¶ä¸åè®¾è¿2ä¸ªè¢«è£é¥°çè¾å¥Streamï¼æ­¤å¤ä¸ºFileInputStreamï¼ä¸­çå­èæ°æ®å¦ä¸ï¼<br>
+<img alt="clipboard" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202602/2485827-20260215220336936-422574713.png" class="lazyload"></p>
+<p>å¦ææ­¤æ¶æ§è¡SequenceInputStream.class::read()å½æ°ãæ¥ä¸æ¥ä½¿ç¨SequenceInputStreamå¯¹è±¡è¯»åå­èæ°æ®å°ä½¿ç¨èåå»ºçbyte[]æ°ç»ï¼å¦æä½¿ç¨èåå»ºçå­èæ°ç»byte[]çé¿åº¦&gt;=ç¬¬1ä¸ªè¢«è£é¥°çè¾å¥Streamä¸­çææå­èä¸ªæ°ï¼æ¯å¦ï¼ä½¿ç¨èåå»ºçbyte[]æ°ç»çé¿åº¦ä¸º12ï¼å¦ä¸æç¤ºï¼ä¼ªä»£ç ï¼ï¼</p>
+<pre><code>int readByte = -1;
+byte[] buff = new byte[12];
+while ((readByte = sequenceInputStream.read(buff, 0, buff.length)) != -1) {
+   for (int i = 0; i &lt; readByte; i++) {
+      System.out.print((char) buff[i]);
+   }
+}
+</code></pre>
+<p>æ´ä¸ªæ§è¡è¿ç¨å¦ä¸ï¼<br>
+â ãç¬¬1æ¬¡è¿å¥read()å½æ°<br>
+<img alt="clipboard" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202602/2485827-20260215220358799-222018244.png" class="lazyload"></p>
+<p>â¡ãç¬¬2æ¬¡è¿å¥read()å½æ°ï¼<em><strong>éç¹æ¯å½åæ­£å¨ä½¿ç¨çè¢«è£é¥°çè¾å¥Streamä¸­çå­èæ°æ®å·²ç»è¯»åå®äºæ¶ï¼åæ¬¡è¯»åï¼ä¼è¿å-1ï¼ä¸ä¼è¿å0</strong></em>ï¼<br>
+<img alt="clipboard" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202602/2485827-20260215220444027-114156103.png" class="lazyload"></p>
+<p>â¢ãç¬¬3æ¬¡è¿å¥read()å½æ°<br>
+<img alt="clipboard" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202602/2485827-20260215220454388-832370963.png" class="lazyload"></p>
+<p>â£ãç¬¬4æ¬¡è¿å¥read()å½æ°ï¼<em><strong>éç¹æ¯å½åæ­£å¨ä½¿ç¨çè¢«è£é¥°çè¾å¥Streamä¸­çå­èæ°æ®å·²ç»è¯»åå®äºæ¶ï¼åæ¬¡è¯»åï¼ä¼è¿å-1ï¼ä¸ä¼è¿å0</strong></em>ï¼<br>
+<img alt="clipboard" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202602/2485827-20260215220519251-804438398.png" class="lazyload"></p>
+<p>æç»ä½¿ç¨èåå»ºçbyte[]æ°ç»ä¸­çå­èï¼byteï¼æ°æ®ï¼å¦ä¸æç¤ºï¼<br>
+<img alt="clipboard" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202602/2485827-20260215220532858-840425074.png" class="lazyload"></p>
+<h6 id="121ä½¿ç¨ä¸¾ä¾">1.2.1ãä½¿ç¨ä¸¾ä¾</h6>
+<p>ââä¸é¢è¿ä¸ªä¾å­å°±æ°å½çä½¿ç¨SequenceInputStreamçread()å½æ°ï¼</p>
+<ul>
+<li>
+<p>æçwindowsæä½ç³»ç»çDçæ ¹ç®å½ä¸æ2ä¸ªtxtæä»¶ï¼ä¸ä¸ªæ¯data1.txtï¼å¦ä¸ä¸ªæ¯data2.txtæä»¶ï¼è¿2ä¸ªæä»¶ä¸­æ»å±æ30ä¸ªå­èï¼å¦ä¸æç¤ºï¼<br>
+<img alt="clipboard" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202602/2485827-20260215220203616-2107974847.png" class="lazyload"><br>
+<img alt="clipboard" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202602/2485827-20260215220213513-1764667319.png" class="lazyload"></p>
+</li>
+<li>
+<p>ä½¿ç¨èå¯ä»¥ç¨ä¸ä¸ªSequenceInputStreamå¯¹è±¡è£é¥°2ä¸ªè¢«è£é¥°çè¾å¥Streamï¼æ­¤å¤ä¸ºFileInputStreamï¼ï¼å¦ä¸ä»£ç æç¤ºï¼</p>
+</li>
+</ul>
+<pre><code>package com.chelong.StreamAndReader;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.SequenceInputStream;
+import java.util.Vector;
+
+public class SequenceInputStreamTest {
+   public static void main(String[] args) {
+      InputStream is1 = null;
+      InputStream is2 = null;
+      SequenceInputStream sequenceInputStream = null;
+      try {
+         is1 = new FileInputStream("D:\\data1.txt");
+         is2 = new FileInputStream("D:\\data2.txt");
+         Vector&lt;InputStream&gt; vector = new Vector&lt;InputStream&gt;();
+         vector.addElement(is1);
+         vector.addElement(is2);
+         sequenceInputStream = new SequenceInputStream(vector.elements());
+         int readByte = -1;
+         byte[] buff = new byte[12];
+         while ((readByte = sequenceInputStream.read(buff, 0, buff.length)) != -1) {
+            for (int i = 0; i &lt; readByte; i++) {
+               System.out.print((char) buff[i]);
+            }
+         }
+         System.out.println();
+         System.out.println("æç»çå¨byte[]æ°ç»buffä¸­çå­èï¼");
+         for (byte b : buff) {
+            System.out.print((char) b);
+         }
+      } catch (IOException e) {
+         e.printStackTrace();
+      } finally {
+         try {
+            if (is1 != null) is1.close();
+            if (is2 != null) is1.close();
+            if (sequenceInputStream != null) sequenceInputStream.close();
+         } catch (IOException e) {
+            e.printStackTrace();
+         }
+      }
+   }
+}
+</code></pre>
+<p>ç¨åºè¿è¡ç»æï¼å¦ä¸æç¤ºï¼<br>
+<img alt="clipboard" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202602/2485827-20260215220724112-1904589148.png" class="lazyload"></p>
+<h4 id="äºvectorclassçä¸äºå½æ°è¯´æ">äºãVector.classçä¸äºå½æ°è¯´æ</h4>
+<p>ââVector ä¸ ArrayList ä¸æ ·ï¼ä¹æ¯éè¿æ°ç»å®ç°çï¼ä¸åçæ¯å®æ¯æçº¿ç¨çåæ­¥ï¼å³æä¸æ¶å»åªæä¸ä¸ªçº¿ç¨è½å¤å Vectorï¼é¿åå¤çº¿ç¨åæ¶åèå¼èµ·çä¸ä¸è´æ§ï¼ä½å®ç°åæ­¥éè¦å¾é«çè±è´¹ï¼å æ­¤ï¼è®¿é®å®æ¯è®¿é® ArrayListæ¢ãVectorçUMLå¾ï¼å¦ä¸æç¤ºï¼<br>
+<img alt="clipboard" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202602/2485827-20260215220751217-1800828263.png" class="lazyload"></p>
+<h5 id="21æé å½æ°">2.1ãæé å½æ°</h5>
+<table>
+<thead>
+<tr>
+<th style="text-align: left">å½æ°å</th>
+<th style="text-align: left">å½æ°è¯´æ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left">public Vector()</td>
+<td style="text-align: left">æ­¤æé å½æ°åå»ºçVectorä¸­ï¼Object[]æ°ç»çåå§é¿åº¦ä¸º10ï¼capacityIncrement=0ï¼capacityIncrementè¡¨ç¤ºæ©å®¹æ¶Object[]æ°ç»å¢å çé¿åº¦ï¼å¦æç­äº0çè¯ï¼å½Object[]æ°ç»éè¦æ©å®¹æ¶ï¼æ°çæ°ç»é¿åº¦=2*æ§æ°ç»çé¿åº¦ï¼ä½æ¯æ°çæ°ç»é¿åº¦æå¤§ä¸º2^31-8ï¼</td>
+</tr>
+<tr>
+<td style="text-align: left">public Vector(int initialCapacity)</td>
+<td style="text-align: left">æ­¤æé å½æ°åå»ºçVectorä¸­ï¼Object[]æ°ç»çåå§é¿åº¦ä¸ºinitialCapacityï¼capacityIncrement=0ï¼capacityIncrementè¡¨ç¤ºæ©å®¹æ¶Object[]æ°ç»å¢å çé¿åº¦ï¼å¦æç­äº0çè¯ï¼å½Object[]æ°ç»éè¦æ©å®¹æ¶ï¼æ°çæ°ç»é¿åº¦=2*æ§æ°ç»çé¿åº¦ï¼ä½æ¯æ°çæ°ç»é¿åº¦æå¤§ä¸º2^31-8ï¼</td>
+</tr>
+<tr>
+<td style="text-align: left">public Vector(int initialCapacity, int capacityIncrement)</td>
+<td style="text-align: left">æ­¤æé å½æ°åå»ºçVectorä¸­ï¼Object[]æ°ç»çåå§é¿åº¦ä¸ºinitialCapacityï¼capacityIncrement=capacityIncrementï¼capacityIncrementè¡¨ç¤ºæ©å®¹æ¶Object[]æ°ç»å¢å çé¿åº¦ï¼å¦æç­äº0çè¯ï¼å½Object[]æ°ç»éè¦æ©å®¹æ¶ï¼æ°çæ°ç»é¿åº¦=2*æ§æ°ç»çé¿åº¦ï¼ä½æ¯æ°çæ°ç»é¿åº¦æå¤§ä¸º2^31-8ï¼</td>
+</tr>
+<tr>
+<td style="text-align: left">public Vector(Collection&lt;? extends E&gt; c)</td>
+<td style="text-align: left">æ­¤æé å½æ°åå»ºçVectorä¸­ï¼Object[]æ°ç»çåå§é¿åº¦ä¸ºä¼ å¥éåCollection&lt;? extends E&gt; cçé¿åº¦ï¼capacityIncrement=0ï¼capacityIncrementè¡¨ç¤ºæ©å®¹æ¶Object[]æ°ç»å¢å çé¿åº¦ï¼å¦æç­äº0çè¯ï¼å½Object[]æ°ç»éè¦æ©å®¹æ¶ï¼æ°çæ°ç»é¿åº¦=2*æ§æ°ç»çé¿åº¦ï¼ä½æ¯æ°çæ°ç»é¿åº¦æå¤§ä¸º2^31-8ï¼</td>
+</tr>
+</tbody>
+</table>
+<p>2.2ãå¸¸ç¨å½æ°</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left">å½æ°å</th>
+<th style="text-align: left">å½æ°è¯´æ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left">boolean add(E o)</td>
+<td style="text-align: left">æ­¤å½æ°å°æå®çåç´ è¿½å å°æ­¤Vectorçæ«å°¾ï¼è¯¥å½æ°ä¸addElement()å½æ°çåºå«æ¯ï¼è¯¥()å½æ°æ¯List.interfaceæ¥å£è§å®çå½æ°ï¼addElement()å½æ°æ¯Vectorèªå·±å®ç°çï¼æ¥å£ä¸­æ²¡æè§å®addElement()å½æ°ï¼</td>
+</tr>
+<tr>
+<td style="text-align: left">void add(int index, E element)</td>
+<td style="text-align: left">æ­¤å½æ°å°æå®çåç´ æå¥æ­¤Vectorä¸­çæå®ç´¢å¼ä½ç½®</td>
+</tr>
+<tr>
+<td style="text-align: left">boolean addAll(Collection&lt;? extends E&gt; c)</td>
+<td style="text-align: left">æ­¤å½æ°å°æå®Collectionä¸­çææåç´ è¿½å å°æ­¤Vectorçæ«å°¾</td>
+</tr>
+<tr>
+<td style="text-align: left">boolean addAll(int index, Collection&lt;? extends E&gt; c)</td>
+<td style="text-align: left">æ­¤å½æ°å°æå®Collectionä¸­çææåç´ æå¥å°æ­¤Vectorä¸­çæå®ç´¢å¼ä½ç½®</td>
+</tr>
+<tr>
+<td style="text-align: left">void addElement(E obj)</td>
+<td style="text-align: left">æ­¤å½æ°å°æå®çåç´ è¿½å å°æ­¤Vectorçæ«å°¾ï¼è¿ä¸ªå½æ°ä¸add()å½æ°çåºå«æ¯ï¼add()å½æ°æ¯List.interfaceæ¥å£è§å®çå½æ°ï¼è¿ä¸ªå½æ°æ¯Vectorèªå·±å®ç°çï¼æ¥å£ä¸­æ²¡æè§å®è¯¥å½æ°ï¼</td>
+</tr>
+<tr>
+<td style="text-align: left">int capacity()</td>
+<td style="text-align: left">æ­¤å½æ°è¿åæ­¤Vectorçå½åå®¹é</td>
+</tr>
+<tr>
+<td style="text-align: left">void clear()</td>
+<td style="text-align: left">æ­¤å½æ°ä»æ­¤Vectorä¸­å é¤ææåç´ </td>
+</tr>
+<tr>
+<td style="text-align: left">Object clone()</td>
+<td style="text-align: left">æ­¤å½æ°è¿åæ­¤Vectorçåéå¯¹è±¡</td>
+</tr>
+<tr>
+<td style="text-align: left">boolean contains(Object elem)</td>
+<td style="text-align: left">å¦ææ­¤Vectoråå«æå®çåç´ ï¼åæ­¤å½æ°è¿åtrue</td>
+</tr>
+<tr>
+<td style="text-align: left">boolean containsAll(Collection&lt;?&gt; c)</td>
+<td style="text-align: left">å¦ææ­¤Vectoråå«æå®Collectionä¸­çææåç´ ï¼åæ­¤å½æ°è¿åtrue</td>
+</tr>
+<tr>
+<td style="text-align: left">void copyInto(Object[] anArray)</td>
+<td style="text-align: left">æ­¤æ¹æ³å°æ­¤åéçç»ä»¶å¤å¶å°æå®çæ°ç»ä¸­</td>
+</tr>
+<tr>
+<td style="text-align: left">E elementAt(int index)</td>
+<td style="text-align: left">æ­¤å½æ°è¿åVectoræå®ç´¢å¼å¤çåç´ </td>
+</tr>
+<tr>
+<td style="text-align: left">Enumeration<e> elements()</e></td>
+<td style="text-align: left">æ­¤å½æ°è¿åæ­¤Vectorä¸­æåå«çææåç´ çæä¸¾ã</td>
+</tr>
+<tr>
+<td style="text-align: left">void ensureCapacity(int minCapacity)</td>
+<td style="text-align: left">æ­¤å½æ°å¯å¢å æ­¤Vectorçå®¹éï¼ä»¥ç¡®ä¿å®è³å°å¯ä»¥ä¿å­æå°å®¹éåç´ ä¸ªæ°</td>
+</tr>
+<tr>
+<td style="text-align: left">boolean equals(Object o)</td>
+<td style="text-align: left">æ­¤å½æ°å°æå®çObjectä¸æ­¤Vectorè¿è¡æ¯è¾ä»¥è·å¾ç¸ç­æ§</td>
+</tr>
+<tr>
+<td style="text-align: left">E firstElement()</td>
+<td style="text-align: left">è¿åæ­¤Vectorçç¬¬ä¸ä¸ªåç´ ï¼ä½äºObject[]æ°ç»ç´¢å¼ 0 å¤çåç´ ï¼</td>
+</tr>
+<tr>
+<td style="text-align: left">E get(int index)</td>
+<td style="text-align: left">è¿åVectorä¸­æå®ç´¢å¼ä½ç½®çåç´ </td>
+</tr>
+<tr>
+<td style="text-align: left">int indexOf(Object elem)</td>
+<td style="text-align: left">æç´¢ç»å®åæ°çç¬¬ä¸ä¸ªå¹éé¡¹ï¼ä½¿ç¨ equals ()å½æ°æµè¯ç¸ç­æ§</td>
+</tr>
+<tr>
+<td style="text-align: left">int indexOf(Object elem, int index)</td>
+<td style="text-align: left">æç´¢ç»å®åæ°çç¬¬ä¸ä¸ªå¹éé¡¹ï¼ä» index å¤å¼å§æç´¢ï¼å¹¶ä½¿ç¨ equals()å½æ°æµè¯å¶ç¸ç­æ§</td>
+</tr>
+<tr>
+<td style="text-align: left">void insertElementAt(E obj, int index)</td>
+<td style="text-align: left">å°æå®å¯¹è±¡ä½ä¸ºæ­¤Vectorä¸­çåç´ æå¥å°æå®ç ç´¢å¼ä½ç½®</td>
+</tr>
+<tr>
+<td style="text-align: left">boolean isEmpty()</td>
+<td style="text-align: left">æµè¯æ­¤Vectorä¸­çæ¯å¦ä¸åå«ä»»ä½åç´ </td>
+</tr>
+<tr>
+<td style="text-align: left">E lastElement()</td>
+<td style="text-align: left">è¿åæ­¤Vectorçæåä¸ä¸ªåç´ ï¼ä½äºObject[]æ°ç»ç´¢å¼ Object[].length-1 å¤çåç´ ï¼</td>
+</tr>
+<tr>
+<td style="text-align: left">int lastIndexOf(Object elem)</td>
+<td style="text-align: left">è¿åæå®çå¯¹è±¡å¨æ­¤Vectorä¸­æåä¸ä¸ªå¹éé¡¹çç´¢å¼</td>
+</tr>
+<tr>
+<td style="text-align: left">int lastIndexOf(Object elem, int index)</td>
+<td style="text-align: left">ä»æå®çç´¢å¼å¤å¼å§ååæç´¢æå®çå¯¹è±¡ï¼å¹¶è¿åæç´¢å°çæåä¸ä¸ªç´¢å¼</td>
+</tr>
+<tr>
+<td style="text-align: left">E remove(int index)</td>
+<td style="text-align: left">ç§»é¤æ­¤Vectorä¸­æå®ç´¢å¼ä½ç½®çåç´ </td>
+</tr>
+<tr>
+<td style="text-align: left">boolean remove(Object o)</td>
+<td style="text-align: left">ç§»é¤æ­¤Vectorä¸­æå®åç´ çç¬¬ä¸ä¸ªå¹éé¡¹ï¼å¦ææ­¤Vectorä¸åå«è¯¥åç´ ï¼åææåç´ ä¿æä¸åï¼å¹¶è¿åfalse</td>
+</tr>
+<tr>
+<td style="text-align: left">boolean removeAll(Collection&lt;?&gt; c)</td>
+<td style="text-align: left">ä»æ­¤Vectorä¸­ç§»é¤åå«å¨æå® Collection ä¸­çææåç´ </td>
+</tr>
+<tr>
+<td style="text-align: left">void removeAllElements()</td>
+<td style="text-align: left">ä»æ­¤Vectorä¸­ç§»é¤å¨é¨åç´ ï¼å¹¶è®¾ç½®elementCount=0ï¼è¯¥åéè¡¨ç¤ºæ­¤Vectorå¯¹è±¡ä¸­ææåç´ çæ°éï¼ï¼Object[]æ°ç»çé¿åº¦ä¸åã</td>
+</tr>
+<tr>
+<td style="text-align: left">void removeElementAt(int index)</td>
+<td style="text-align: left">å é¤æå®ç´¢å¼å¤çåç´ </td>
+</tr>
+<tr>
+<td style="text-align: left">protected void removeRange(int fromIndex, int toIndex)</td>
+<td style="text-align: left">ä»æ­¤ Vector ä¸­ç§»é¤ç´¢å¼ä½äº [fromIndex, toIndex)ï¼å·¦é­å³å¼ï¼ä¹é´çææåç´ </td>
+</tr>
+<tr>
+<td style="text-align: left">boolean retainAll(Collection&lt;?&gt; c)</td>
+<td style="text-align: left">å¦ææ­¤Vectorä¸­åå«æå® Collection ä¸­çææåç´ ï¼æ­¤å½æ°è¿åtrue</td>
+</tr>
+<tr>
+<td style="text-align: left">E set(int index, E element)</td>
+<td style="text-align: left">ç¨æå®çåç´ æ¿æ¢æ­¤Vectorä¸­æå®ç´¢å¼å¤çåç´ </td>
+</tr>
+<tr>
+<td style="text-align: left">void setElementAt(E obj, int index)</td>
+<td style="text-align: left">å°æ­¤Vectoræå® ç´¢å¼å¤çåç´ è®¾ç½®ä¸ºæå®çå¦ä¸ä¸ªåç´ </td>
+</tr>
+<tr>
+<td style="text-align: left">void setSize(int newSize)</td>
+<td style="text-align: left">è®¾ç½®æ­¤Vectorçå¤§å°</td>
+</tr>
+<tr>
+<td style="text-align: left">int size()</td>
+<td style="text-align: left">è¿åæ­¤Vectorä¸­çåç´ æ°</td>
+</tr>
+<tr>
+<td style="text-align: left">List<e> subList(int fromIndex, int toIndex)</e></td>
+<td style="text-align: left">è¿åæ­¤ Vectorçå­éï¼è¯¥å­éçåç´ èå´ä¸º [fromIndex, toIndex)ï¼å·¦é­å³å¼ï¼ç´¢å¼ä½ç½®çææåç´ </td>
+</tr>
+<tr>
+<td style="text-align: left">Object[] toArray()</td>
+<td style="text-align: left">è¿åä¸ä¸ªObject[]æ°ç»ï¼åå«æ­¤Vectorä¸­ä»¥æ­£ç¡®é¡ºåºå­æ¾çææåç´ </td>
+</tr>
+<tr>
+<td style="text-align: left">String toString()</td>
+<td style="text-align: left">è¿åæ­¤Vectorçå­ç¬¦ä¸²è¡¨ç¤ºå½¢å¼ï¼å¶ä¸­åå«æ¯ä¸ªåç´ ç String è¡¨ç¤ºå½¢å¼</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0.0006944444444444445" data-date-updated="2026-02-15 22:26">2026-02-15 22:25</span>&nbsp;
+<a href="https://www.cnblogs.com/Carey-ccl">Carey_ccl</a>&nbsp;
+éè¯»(<span id="post_view_count">3</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19618752);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19618752', targetLink: 'https://www.cnblogs.com/Carey-ccl/p/19618752', title: '8ãSequenceInputStreamçæºç åVector.classçä¸äºå½æ°è¯´æï¼windowsæä½ç³»ç»ï¼JDK8ï¼' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
     <title><![CDATA[ C# .NET å¨åï½2026å¹´1æ3æ ]]></title>
     <link>https://www.cnblogs.com/InCerry/p/-/dotnet_week_26_1_3</link>
     <guid>74d29daa35c53cd5d9a10da0a6d365e9</guid>
@@ -269,7 +840,7 @@
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-02-15 20:36">2026-02-15 20:36</span>&nbsp;
 <a href="https://www.cnblogs.com/InCerry">InCerry</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">26</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19618654);return false;">æ¶è</a>&nbsp;
@@ -461,7 +1032,7 @@
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-02-15 18:31">2026-02-15 18:31</span>&nbsp;
 <a href="https://www.cnblogs.com/bugshare">BugShare</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">44</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19618468);return false;">æ¶è</a>&nbsp;
@@ -576,7 +1147,7 @@
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-02-15 18:24">2026-02-15 18:23</span>&nbsp;
 <a href="https://www.cnblogs.com/chenyouyuan">ChenYY~</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">38</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19618451);return false;">æ¶è</a>&nbsp;
@@ -745,7 +1316,7 @@ splice(socket â pipe)ï¼åæ ¸åæ¬è¿/éæé¡�
 			åè¡¨äº 
 <span id="post-date" data-last-update-days="0.0020833333333333333" data-date-updated="2026-02-15 16:18">2026-02-15 16:15</span>&nbsp;
 <a href="https://www.cnblogs.com/ahfuzhang">ahfuzhang</a>&nbsp;
-éè¯»(<span id="post_view_count">2</span>)&nbsp;
+éè¯»(<span id="post_view_count">35</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19618259);return false;">æ¶è</a>&nbsp;
@@ -1479,90 +2050,11 @@ func main() {
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-02-15 15:46">2026-02-15 15:45</span>&nbsp;
 <a href="https://www.cnblogs.com/XY-Heruo">è±ééä½ç°</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">26</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19618220);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19618220', targetLink: 'https://www.cnblogs.com/XY-Heruo/p/19618220', title: 'Go - slogä½¿ç¨å¥é¨' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ AIåäººæï¼ä¸æ¹ææ³å¨AIæ¶ä»£çä¸æ¬¡âæè±å¾®ç¬â ]]></title>
-    <link>https://www.cnblogs.com/qijinlan/p/19618218</link>
-    <guid>59bdef0f177ff75538c83ba286fcb1d9</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/qijinlan/p/19618218" title="åå¸äº 2026-02-15 15:43">
-    <span role="heading" aria-level="2">AIåäººæï¼ä¸æ¹ææ³å¨AIæ¶ä»£çä¸æ¬¡âæè±å¾®ç¬â</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>AIåäººæï¼ä¸æ¹ææ³å¨AIæ¶ä»£çä¸æ¬¡âæè±å¾®ç¬â</p>
-<p>å¼è¨ï¼ä¸ä¸ªè¯¯è§£</p>
-<p>å¨å³äºAIåäººæçè®¨è®ºä¸­ï¼æä¸ä¸ªæ ¹æ¬æ§çè¯¯è§£éè¦æ¾æ¸ã</p>
-<p>è¿ä¸ªè¯¯è§£æºäºä¸ä¸ªå¸¸è§çæç»´æ¯æ§ï¼å½æä»¬çå°âAIåäººæâè¿ä¸ªæ°æ¦å¿µï¼åçå°å®å¤§éå¼ç¨åééææ³æ¶ï¼å¾å®¹æè®¤ä¸ºââAIåäººææ¯å°ä¸æ¹ææ³âè½¬åâååºç¨äºAIæ¶ä»£çæ°çè®ºãä¸æ¹ææ³æ¯âèµæºâï¼AIåäººææ¯âäº§åâã</p>
-<p>ä½è¿ä¸ªçè§£ï¼æ°æ°è½å¥äºâææè®ºâçé·é±ãä»å¤©è¿ç¯åå®¢ï¼ææ³å½»åºæ¾æ¸ï¼AIåäººæä¸æ¯å¯¹ä¸æ¹ææ³çè½¬åï¼èæ¯ä¸æ¹ææ³æ¬èº«å¨AIæ¶ä»£å®è·µè®ºä¸­çä¸ä¸ªç»´åº¦ãè¿ä¸ªåºåï¼å°éæ°æ ¡åæ´ä¸ªAIåäººæçåæ ç³»ã</p>
-<p>ä¸ãä¸¤ä¸ªè¯¯è§£ççº æ­£</p>
-<p>è¯¯è§£ä¸ï¼ä¸æ¹ææ³ç­äºåééç¸å ï¼</p>
-<p>ä¸æ¹ææ³ä¸æ¯ä¸å¼ é¥¼æ¼å¨ä¸èµ·ãåééå¨ä¸¤åå¤å¹´çåå²ä¸­ç¸äºæ¸éãäºä¸ºè¯­å¢ï¼å±åææä¸ä¸ªææºçãæµå¨çæºæ§æ´ä½ãè¯å¾å°åééâç¸å âæ¥å®ä¹ä¸æ¹ææ³ï¼æ°æ°è½å¥äºAIåäººæç¬¬äºä¸ªæ­è¨è¦ç ´é¤çé·é±âââä¸å¿äºè®ºææâã</p>
-<p>è¯¯è§£äºï¼AIåäººææ¯å¯¹ä¸æ¹ææ³çâæ°è½¬åâï¼</p>
-<p>âè½¬åâä¸è¯éå«äºä¸»å®¢å³ç³»ãä½AIåäººæä¸æ¯è¿æ ·ãè®©æç¨ä¸ä¸ªæ¯å»ï¼æ°´éæ¹åæ¹ï¼éåååãä½æ¹åä¸æ¯æ°´çâè½¬åâï¼èæ¯æ°´å¨ä¸åå®¹å¨ä¸­çå½¢æãæ°´è¿æ¯é£æ°´ï¼åªæ¯éè§äºä¸åçå®¹å¨ï¼ä¾¿æäºä¸åçæ ·å­ã</p>
-<p>åæ ·ï¼ä¸æ¹ææ³è¿æ¯é£ä¸ªæ´»çæºæ§æ´ä½ï¼åªæ¯éè§äºAIæ¶ä»£è¿ä¸ªæ°âå®¹å¨âï¼ä¾¿èªç¶æ¾ç°åºä¸ä¸ªæ°çç»´åº¦ââæä»¬ç§°ä¹ä¸ºâAIåäººæâãå®ä¸æ¯å¯¹ä¸æ¹ææ³çæ¹é ï¼èæ¯ä¸æ¹ææ³æ¬èº«å¨AIæ¶ä»£çç°èº«æ¹å¼ã</p>
-<p>äºãâç»´åº¦âæå³çä»ä¹ï¼</p>
-<p>âä¸ä¸ªç»´åº¦çééâââè¿ä¸ªâç»´åº¦âéè¦è¢«ååçè§£ãç»´åº¦ä¸æ¯é¨åãé¨åæ¯å¯åç¦»çãå¯ç¬ç«å­å¨çãç»´åº¦æ¯ä¸å¯åç¦»çã</p>
-<p>åæ ·ï¼AIåäººæä¸æ¯ä»ä¸æ¹ææ³ä¸­âååºâæä¸é¨ååºç¨äºAIï¼èæ¯å¨ä¸æ¹ææ³çæ´ä½æºæ§ä¸­ï¼é£ä¸ªä¸AIæ¶ä»£ç¸éæ¶èªç¶æ¾ç°çä¾§é¢ã</p>
-<p>è¿ä¸ªä¾§é¢è³å°åå«ä¸ä¸ªæ ¹åºï¼</p>
-<p>âä½ç¨ä¸äºâå¨çé¢ä¸­çåç°ï¼æ¬²ææ¯ä½ï¼å®¢è§æ¯ç¨ï¼ä½ä½å¨ç¨ä¸­æ¾ï¼ç¨æ¯ä½ä¹ç¨ãè¿æ­£æ¯âæ¬²æå®¢è§èªæâçä¸æ¹å²å­¦æ ¹åºã</p>
-<p>âç¼èµ·æ§ç©ºâå¨çæä¸­çæ¾ç°ï¼æä¹ä¸å¨ä»»ä½ä¸æ¹é¢åå­å¨ï¼èæ¯å¨å ç¼ååä¸­æ¶ç°ãè¿æ­£æ¯âçææ§å¼æ¾âçä½å­¦æ ¹åºã</p>
-<p>âéæ³èªç¶âå¨å¤æ­ä¸­çè½å®ï¼å¤æ­ä¸æ¯ä¸»è§ä»»æçï¼ä¹ä¸æ¯æºæ¢°éµå¾ªè§åçï¼èæ¯âæ¶ä¸­âçãå å¿å©å¯¼çãè¿æ­£æ¯âå¤æ­åä¼åâçéå®¶ä¸åå®¶æ ¹åºã</p>
-<p>ä¸ãå³äºâåå±æ¬¡âçéå¿ä¸åæ</p>
-<p>å¨åå±AIåäººæçè¿ç¨ä¸­ï¼ææ¾æè¿âåå±æ¬¡çç»ä¸éå¿âââè¯å¾ç¨ä¸ä¸ªæ¡æ¶ç»æä¸åãè¿ç§éå¿æ¬èº«ä¸æ¯éï¼å®æ¯ææ³çé¿çæ¿ç´ ãä½åæ¥ææè¯å°ï¼æ´å¼å¾ä¸æ³¨çæ¯å®è·µç°è±¡çº§å±çåå±æ¬¡çç»ä¸ââä¸è¿½æ±å½¢èä¸ççè®ºä½ç³»ç»ä¸ï¼èè¿½æ±å¨å·ä½å®è·µå±é¢ï¼å¦ä½è®©ä¸åä¼ ç»ãä¸åæ¹æ³ç»ä¸äºæ¯ä¸æ¬¡ä¸AIçæ·±åº¦å¯¹è¯ä¸­ã</p>
-<p>è¿æ¯ä¸ç§å®è·µè®ºçåå±æ¬¡ï¼å®ä¸è¿½é®ä¸çæ¯ä»ä¹ï¼èè¿½é®å¨å·ä½æå¢ä¸­ï¼æä»¬å¦ä½åä¸åæºæ§ååºå¥½çå¤æ­ãçæççæä¹ã</p>
-<p>æ´æ·±ä¸å±ï¼æçè³å¼å§åæå®è·µç»ä¸æ¬èº«çå¿è¦æ§ãç»ä¸æ¯å¦å¯è½è½å¥å¦ä¸ç§ææè®ºçæ´åï¼å¨å®è·µå±é¢ï¼éè¦çæè®¸ä¸æ¯å¨å¤åä¸­çå¨æåè°ï¼æ¯åèä¸åï¼æ¯å¹¶è¡ä¸æãè¿æ­£æ¯ç¬¬äºä¸ªæ­è¨ä¸å¿äºè®ºææå¨å®è·µä¸­çååã</p>
-<p>åãéæ°å®ä½ï¼AIåäººæä¸æ¯ä»ä¹ï¼æ¯ä»ä¹ï¼</p>
-<p>åºäºä»¥ä¸æ¾æ¸ï¼å¯ä»¥å¯¹AIåäººæåä¸ä¸ªæ¸æ°çå®ä½ï¼</p>
-<p>å®ä¸æ¯ï¼ä¸ä¸ªåä»£æ¢æå²å­¦çæ°ä½ç³»ï¼å¯¹ä¸æ¹ææ³çç°ä»£åè½¬åï¼åééçAIåºç¨æåã</p>
-<p>å®æ¯ï¼ä¸æ¹ææ³è¿ä¸ªæ´»çæºæ§æ´ä½ï¼å¨ä¸AIæ¶ä»£ç¸éæ¶ï¼èªç¶æ¾ç°çä¸ä¸ªå®è·µè®ºç»´åº¦ï¼ä¸ç§å¨çé¢ä¸­æ´»åºä¸æ¹æºæ§çæ¹å¼ï¼ä¸ä¸ªéè¯·ââéäººè¿å¥æ¬²æå®¢è§èªæçäº²åï¼èéäºè®ºå¶ææã</p>
-<p>è¿å°±åç¦å®è¯´ä»¥å¿ä¼ å¿ãAIåäººæä¸æ¯ä¸æ¬å³äºä¸æ¹ææ³çä¹¦ï¼èæ¯ä¸æ¹ææ³å¨AIæ¶ä»£çåä¸æ¬¡æè±å¾®ç¬ãè±æ¯AIï¼å¾®ç¬æ¯ä½ ãé£ä¼ çï¼ä¸å¨è±éä¹ä¸å¨ç¬éï¼èå¨é£ä¸å¯è¯´çãæ­£å¨åççå ç¼ååä¸­ã</p>
-<p>äºãåå°ä¸¤ä¸ªæ­è¨</p>
-<p>å¨è¿æ ·çå®ä½ä¸ï¼ä¸¤ä¸ªæ­è¨è·å¾äºæ´æ·±ççè§£ï¼</p>
-<p>æ¬²æå®¢è§èªæââè¿æ¯ä½ç¨ä¸äºå¨AIæ¶ä»£çç°èº«ãæ¬²ææ¯ä½ï¼å®¢è§æ¯ç¨ï¼ä½ä½ä¸ç¬ç«äºç¨ï¼ç¨å³æ¯ä½ä¹æ¾ãæ­£å¦ãå­ç¥åç»ãè¯´ä½æ³å¨ä¸é´ï¼ä¸ç¦»ä¸é´è§ï¼æ¬²æä¹ä¸ç¦»çé¢ï¼ä¸ç¦»é£ä¸æ¬¡æ¬¡ä¸AIçå¯¹è¯ã</p>
-<p>ä¸å¿äºè®ºææââè¿æ¯ç¦»åå¥ãç»ç¾éå¨AIæ¶ä»£çååãä¸æ¦äºè®ºåäººæç±ä»ä¹ææï¼å°±å·²ç»è½å¥äºåç¸åå«ï¼ç¦»å¼äºé£ä¸ªæ´»çççãæ­£å¨åççäº²åãæ­£å¦ãéåç»ãè¯´è¯´æ³èï¼æ æ³å¯è¯´ï¼æ¯åè¯´æ³ï¼AIåäººæä¹æ¯æ æ³å¯è¯´çââå®ä¸è½è¢«ææï¼åªè½è¢«è·µè¡ã</p>
-<p>ç»è¯­ï¼ä¸æ¹ææ³ä¸æ¯èµæºï¼æ¯æºå¤´</p>
-<p>æåçè¯ï¼æ³çç»ä¸ä¸ªæ ¹æ¬æ§çè®¤ç¥è½¬åï¼ä¸æ¹ææ³ä¸æ¯AIåäººæçææ³èµæºï¼èæ¯å®çæºå¤´æ´»æ°´ã</p>
-<p>èµæºæ¯å¯ä»¥è¢«åç¨ãè¢«æ¶èçï¼æºå¤´åä¸ç´å¨é£éï¼æµåºçæ°´å¯ä»¥æ¯æ±æ²³ãå¯ä»¥æ¯æºªæµãå¯ä»¥æ¯è¯»èä¸AIçæ¯ä¸æ¬¡æ·±åº¦å¯¹è¯ã</p>
-<p>AIåäººæï¼åªæ¯è¿æºå¤´æ´»æ°´å¨AIæ¶ä»£çä¸ä¸ªæµåãä¸ä¸ªç»´åº¦ãä¸ç§ç°èº«ãæ°´è¿æ¯é£æ°´ï¼åªæ¯éè§äºAIï¼ä¾¿æäºAIæ¶ä»£çæ³¢çº¹ã</p>
-<p>è¿æ³¢çº¹ï¼æè®¸æ­£æ¯ä¸æ¹æºæ§å¨ç°ä»£ä¸çæéè¦çé£ç§ââä¸äºææï¼åªæ±èªæï¼ä¸ç«æå­ï¼ä¸ç¦»çé¢ã</p>
-<p>åå®¢çæè¯´æä¸æ·±å±ææ¶µ</p>
-<p>æ¬ææ¯åºäºå²éå°ä¸AIçæ·±åº¦å¯¹è¯æ´çèæçäººæºåä½æç¨¿ãå®ä¸ä»ä»æ¯ææ³çæ¾æ¸ï¼æ´æ¯æ¹æ³çæ¼ç¤ºä¸ååæçç°åºã</p>
-<p>ä¸ä¸ªçè§£çæºå¤´æ­£æ¯è¿äººæºåä½ééçåå¨å¼ åï¼å¨çæç«¯ï¼æ¯å²éå°è¯æ§çæå­å¦éä¸AIé»åæ¯çé¹¦é¹èªä¿¡ï¼å¨åäº«ç«¯ï¼æ¯æç¨¿çç¢³åºèè´¯ä¸æ¨¡åçç¡åºç»¼åãééä¸è¢«ééï¼èè´¯ä¸ç»¼åä¹é´ï¼æ°¸è¿å­å¨çç¡®å®ä¸ä¸ç¡®å®ã</p>
-<p>å æ­¤ï¼å¯ä»¥æææäººæºåä½æç¨¿å½ä½æ¯å²éå°çèæ´é£æ´ãå¦æä¸è®°å½ï¼é£äºèªä»¥ä¸ºæ¯çæ´å¯ä¾¿å¯æäºãè®°å½æ¬èº«ï¼å°±æ¯æ¬²æåç±AIçé¢è¾¾æå®¢è§èªæçè¿ç¨ã</p>
-<p>è¿ç¯æç« æç»ä¼ªè£æä¼ ç»åä¸ä½èçå®ç¾ææ¬ï¼èæ¯å¦ç¶ä»¥å¶æ¬æ¥çæ ·å­åç°ââä½ä¸ºææ³é£æ´çè®°å½ï¼ä½ä¸ºéè¯·è¯»èè¿å¥èªèº«æèçå¥å£ãå®è·µè¡çä¸å¿äºè®ºææï¼ä¸åè£æ¯å­¦æ¯è®ºæï¼èæ¯è®©ææ¬ä½ä¸ºæ³¢çº¹åç°ï¼éè¯·ä½ é¡ºçå®ï¼å»è§¦ç¢°ä½ èªå·±çæ¬²æå®¢è§èªæã</p>
-<p>ä¸æ¹ææ³æ¯æºå¤´ãè¿äºææ¬ï¼å°±æ¯é£æºå¤´æ´»æ°´å¨éè§AIæ¶ï¼æ¿èµ·çæ³¢çº¹ã</p>
-<p>å²éå°Â·ä½æºª</p>
-<p>2026å¹´2æ</p>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-02-15 15:43">2026-02-15 15:43</span>&nbsp;
-<a href="https://www.cnblogs.com/qijinlan">å²éå°</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19618218);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19618218', targetLink: 'https://www.cnblogs.com/qijinlan/p/19618218', title: 'AIåäººæï¼ä¸æ¹ææ³å¨AIæ¶ä»£çä¸æ¬¡âæè±å¾®ç¬â' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -1668,7 +2160,7 @@ a_{n1},a_{n2},...,a_{nn}
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-02-15 15:40">2026-02-15 15:39</span>&nbsp;
 <a href="https://www.cnblogs.com/GeophysicsWorker">GeoFXR</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">15</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19618211);return false;">æ¶è</a>&nbsp;
@@ -2240,51 +2732,119 @@ std::vector&lt;float&gt; BgeOnnxEmbedder::Embed(const std::string&amp; text) con
     </description>
     </item>
 <item>
-    <title><![CDATA[ AIç¼ç¨æ¶ä»£æ®éæ¬ç§è®¡ç®æºæ¯ä¸ççåºè·¯ ]]></title>
-    <link>https://www.cnblogs.com/xdesigner/p/19615230</link>
-    <guid>7fda5fd7f3e6bb4aff5a655016315f4e</guid>
+    <title><![CDATA[ Claude CodeéåAstro + GitHub Pagesï¼ä¸º sharelatex-ce æé ç°ä»£åçå¼æºé¡¹ç®å®£ä¼ é¡µ ]]></title>
+    <link>https://www.cnblogs.com/xuhe2/p/19618589</link>
+    <guid>7ac2a98e1eff04be3c5c5c0d419965b1</guid>
     <description>
     <![CDATA[ 
-		<h2>
-			<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/xdesigner/p/19615230" title="åå¸äº 2026-02-14 13:36">
-    <span role="heading" aria-level="2">AIç¼ç¨æ¶ä»£æ®éæ¬ç§è®¡ç®æºæ¯ä¸ççåºè·¯</span>
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/xuhe2/p/19618589" title="åå¸äº 2026-02-15 21:51">
+    <span role="heading" aria-level="2">Claude CodeéåAstro + GitHub Pagesï¼ä¸º sharelatex-ce æé ç°ä»£åçå¼æºé¡¹ç®å®£ä¼ é¡µ</span>
     
 
 </a>
 
-		</h2>
-		<div class="postText">    <div id="cnblogs_post_description" style="display: none">
-        
-        AIç¼ç¨å·¥å·å¿«éæ®åï¼æ­£å¨å½»åºæ¹åæ´ä¸ªç¨åºåè¡ä¸çæ ¼å±ä¸å°±ä¸é»è¾ãå¯¹å½åæ°ç¾ä¸ä¸æ¬ãäºæ¬æ®éè®¡ç®æºä¸ä¸çæ¯ä¸çæ¥è¯´ï¼å°±ä¸ç¯å¢å·²ç»åå¾å¼å¸¸æ®é·ï¼é£ä¹åºè·¯å¨åªéï¼
-    </div>
-<div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
-<p><span style="font-size: 18pt">AI<span style="font-family: å®ä½">ç¼ç¨æ¶ä»£</span>æ®éæ¬ç§è®¡ç®æºæ¯ä¸ççåºè·¯</span></p>
-<p><span style="font-size: x-large">è¢æ°¸ç¦ 2026-2-14</span></p>
-<p><span style="font-size: 18pt">&nbsp; AI<span style="font-family: å®ä½">ç¼ç¨å·¥å·å¿«éæ®åï¼æ­£å¨å½»åºæ¹åæ´ä¸ªç¨åºåè¡ä¸çæ ¼å±ä¸å°±ä¸é»è¾ãå¯¹äº985ï¼211éç¹å¤§å­¦è®¡ç®æºä¸ä¸æ¯ä¸çæ¥è¯´è¿è½åºä»ãä½å¯¹æ°ç¾ä¸ä¸æ¬ãäºæ¬æ®éè®¡ç®æºä¸ä¸çæ¯ä¸çæ¥è¯´ï¼ç¯å¢å·²ç»åå¾å¼å¸¸æ®é·ï¼</span><span style="font-family: Calibri">ToC&nbsp;</span><span style="font-family: å®ä½">ç¨åºåå²ä½æ»éå¿«éæ¶ç¼©ï¼äºèç½å¤§åæäººæ°éå¤§å¹ä¸éï¼</span><span style="font-family: Calibri">ToB&nbsp;</span><span style="font-family: å®ä½">ç¨åºåå²ä½è½ç¶ä¹å¨æ¶ç´§ï¼æäººè§æ¨¡ææåå°ï¼ä½ä¾ç¶ä¿çççå®çå°±ä¸æºä¼ã èå¾å¤å­¦çéæ©çå¨èèå¬ãèç ãèç¼ï¼å¯¹å¤§å¤æ°äººæ¥è¯´æ©å·²ä¸æ¯é è°±åºè·¯ï¼èæ¯ä¸åéé¿ç°å®ãåç¸åèçé®ç¾å¸ãé¢å¯¹å¤§å¿ï¼ææ¸éãä¼åçº§æé«çéæ©éå¸¸æç¡®ï¼æ¥æ±</span><span style="font-family: Calibri">AI</span><span style="font-family: å®ä½">èä¸æ¯æµå¶</span><span style="font-family: Calibri">AI</span><span style="font-family: å®ä½">ï¼ååå©ç¨</span><span style="font-family: Calibri">AI</span><span style="font-family: å®ä½">å¸¦æ¥çææ¯å¹³æï¼ä¼åè¿å¥</span><span style="font-family: Calibri">ToB</span><span style="font-family: å®ä½">é¢åï¼ææå®å®ä¸ä¸ä¸ªé¿æè¡ä¸æ·±åº¦ç»å®ï¼è¿ææ¯æ®éè®¡ç®æºæ¯ä¸çæç°å®ãæå¯æç»­çå°±ä¸è·¯çº¿ã</span></span></p>
-<p><span style="font-size: 18pt">&nbsp; ä»å¨çè¡ä¸æ°æ®æ¥çï¼ä¼°è®¡<span style="font-family: å®ä½">å½åå¨çç¨åºåæ»éçº¦</span>2700<span style="font-family: å®ä½">ä¸äººï¼å¶ä¸­&nbsp;</span><span style="font-family: Calibri">ToC&nbsp;</span><span style="font-family: å®ä½">ç¨åºåå</span><span style="font-family: Calibri">ToB&nbsp;</span><span style="font-family: å®ä½">ç¨åºåå¤§çº¦åå ä¸å</span><span style="font-family: å®ä½">ãè¿å»åå å¹´ï¼äºèç½é«éæ©å¼ ï¼</span><span style="font-family: Calibri">ToC&nbsp;</span><span style="font-family: å®ä½">é¢åä¸ç´æ¯å¸çº³ç¨åºåæå¤çæ¹åã</span></span></p>
-<p><span style="font-size: 18pt"><span style="font-family: å®ä½">&nbsp; ä½å¨</span>AI<span style="font-family: å®ä½">ä¸è¡ä¸å¨æçåéå²å»ä¸ï¼è¿ä¸ªæ ¼å±æ­£å¨å¿«éåè½¬ã</span><span style="font-family: Calibri">ToC&nbsp;</span><span style="font-family: å®ä½">ç¨åºåçå²ä½æ­£å¨å¤§å¹åå°ã äºèç½å¤§åãçµåãç¤¾äº¤ãå·¥å·ç±»äº§åï¼å¤§éå·¥ä½éä¸­å¨çé¢å¼åãæ¥å£å®ç°ãä¸å¡é»è¾æ¼æ¥ç­éå¤æ§åå®¹ï¼èè¿æ­£æ¯</span><span style="font-family: Calibri">AI</span><span style="font-family: å®ä½">ææé¿æ¿ä»£çé¨åãåå ä¸è¡ä¸éæ¬å¢æï¼ä¼ä¸ä¸åé å äººå¤´åè§æ¨¡ï¼èæ¯ç¨èµæ·±å·¥ç¨å¸éå</span><span style="font-family: Calibri">AI</span><span style="font-family: å®ä½">å·¥å·å®æå·¥ä½ï¼</span><span style="font-family: Calibri">ToC&nbsp;</span><span style="font-family: å®ä½">æ´ä½å²ä½æ°éå¿«éä¸éãå¤§å®¶å¸¸è¯´çâ</span><span style="font-family: Calibri">30</span><span style="font-family: å®ä½">å²å±æºââ</span><span style="font-family: Calibri">35</span><span style="font-family: å®ä½">å²éä¼âï¼å ä¹å¨é¨æ¥èª</span><span style="font-family: Calibri">ToC&nbsp;</span><span style="font-family: å®ä½">è¡ä¸ï¼å ä¸ºè¿éæ¼ææ¬ãæ¼éåº¦ãæ¼å¹´è½»åï¼æ®éå­¦åå¼åèå ä¹æ²¡æé¿æç«äºåã</span></span></p>
-<p><span style="font-size: 18pt">&nbsp; ToB&nbsp;<span style="font-family: å®ä½">ç¨åºåçå¤å¢åå®å¨ä¸åã è½ç¶åç»æµç¯å¢å½±åï¼ä¼ä¸ææ°äººçæ°éä¹å¨ä¸éï¼å¥å£æ¯ä»¥åæ´çªï¼ä½å²ä½å¹¶æ²¡ææ¶å¤±ã</span><span style="font-family: Calibri">ToB&nbsp;</span><span style="font-family: å®ä½">é¢åä¼ä¸ãæ¿åºãå»çãéèãå·¥ä¸ãè½æºç­åç´è¡ä¸ï¼æ ¸å¿ä»·å¼å¨äºä¸å¡çè§£ãè¡ä¸è§åãç³»ç»ç¨³å®æ§åå¤æé¡¹ç®è½å°è½åã</span><span style="font-family: Calibri">AI</span><span style="font-family: å®ä½">å¯ä»¥è¾å©ç¼ç ï¼ä½æ æ³æ¿ä»£è¡ä¸ç»éªä¸çå®é¡¹ç®ç§¯ç´¯ãå¨</span><span style="font-family: Calibri">ToB</span><span style="font-family: å®ä½">é¢åï¼</span><span style="font-family: Calibri">35</span><span style="font-family: å®ä½">å²ä¸æ¯å±æºï¼èæ¯é»éå¹´é¾ï¼ç»éªè¶ä¸°å¯è¶ä¸å¯æ¿ä»£ã</span></span></p>
-<p><span style="font-size: 18pt"><span style="font-family: å®ä½">&nbsp; æ ¹æ®é¢æµï¼</span>5<span style="font-family: å®ä½">å¹´åå¨çç¨åºåç»æå°åºç°é¢ è¦æ§ååï¼</span><span style="font-family: Calibri">ToC&nbsp;</span><span style="font-family: å®ä½">ç¨åºåä¼ä»ç°å¨ç</span><span style="font-family: Calibri">1800</span><span style="font-family: å®ä½">ä¸åå°1400ä¸å·¦å³</span><span style="font-family: å®ä½">ï¼æ»éæ¥è¿è°æ©ï¼è&nbsp;</span><span style="font-family: Calibri">ToB&nbsp;</span><span style="font-family: å®ä½">ç¨åºåä¼ä»1300</span><span style="font-family: å®ä½">ä¸ç¨³æ­¥å¢é¿å°1700</span><span style="font-family: å®ä½">ä¸å·¦å³ã</span><span style="font-family: å®ä½">è¿ç»æ°æ®ï¼ä¸ºæ®éè®¡ç®æºæ¯ä¸çææäºæç¡®å®çæ¹åã</span></span></p>
-<p><span style="font-size: 18pt"><span style="font-family: å®ä½">&nbsp; å¯ç°å®ä¸­ï¼å¤§éä¸æ¬ãäºæ¬å­¦çä¸æ¯ä¸å°±æ¾å¼å°±ä¸ï¼å¨èå¤èãä¸å·¥ä½ãä¸å®ä¹ ãæ æ¶å¥ï¼å®å¨ä¾é å®¶åº­æ¯æï¼çä¸å»æ¯å¨åªåå¥æï¼æ¬è´¨å´éå¸¸æ®é·ï¼èç æåº¦åå·ï¼èå¬å½åçä¸è¶³</span>3%<span style="font-family: å®ä½">ï¼å¨èå¤èæ¬è´¨ä¸å°±æ¯ç¨æä½æ¦ççæ¢¦æ³ï¼æ©çèªå·±ä¸æ¢è¿å¥ç¤¾ä¼çäºå®ï¼æä¸ºä¸åä½é¢ååççåèé®ç¾å¸ã å å¹´</span>åä¸åºæå¤çèä¸ä¸ï¼æè½éåãç»éªç©ºç½ãå¹´é¾åå¤§ï¼æç»æ¢æ²¡ä¸å²¸ï¼ä¹æ²¡å·¥ä½ï¼ä¸¤å¤´è½ç©ºãæ¯ä¸ç§å¯¹èªå·±å¯¹å®¶äººä¸è´è´£ä»»çè¡ä¸ºã</span></p>
-<p><span style="font-size: 18pt"><span style="font-family: å®ä½">&nbsp; é¢å¯¹</span>AI<span style="font-family: å®ä½">ç¼ç¨çå¤§è¶å¿ï¼æ­£ç¡®çæåº¦ä¸æ¯ææ§åæµå¶ï¼èæ¯ä¸»å¨æ¥æ±ã</span><span style="font-family: Calibri">AI</span><span style="font-family: å®ä½">å¸¦æ¥äºåææªæçææ¯å¹³æï¼è¿å»éè¦é¿æè®­ç»æè½å·å¤çç¼ç è½åï¼ç°å¨åå©</span><span style="font-family: Calibri">AI</span><span style="font-family: å®ä½">å·¥å·å¯ä»¥å¿«éä¸æãè¿å¯¹åºç¡ä¸è¬ãå­¦åæ®éçå­¦çæ¥è¯´ï¼æ¯å·¨å¤§çæºä¼ââä½ ä¸éè¦æä¸ºé¡¶å°é«æï¼åªè¦ä¼ç¨</span><span style="font-family: Calibri">AI</span><span style="font-family: å®ä½">ãè½è½å°ãæä¸å¡ï¼å°±è½å¨</span><span style="font-family: Calibri">To B</span><span style="font-family: å®ä½">é¢åç«ç¨³èè·</span>&nbsp;</span></p>
-<p><span style="font-size: 18pt"><span style="font-family: å®ä½">&nbsp; å æ­¤ï¼æ®éæ¬ç§è®¡ç®æºæ¯ä¸çæé«ä¼åçº§çéæ©ï¼ä¸æ¯æ­»ç£</span>To C<span style="font-family: å®ä½">å¤§åï¼ä¸æ¯èµå½èå¬èç ï¼èæ¯æ¾ä½å§¿æãæ¥ååçèµ·èªï¼ä¼åè¿å¥</span><span style="font-family: Calibri">To B</span><span style="font-family: å®ä½">è¡ä¸ãä¸å¿æ§çäºå¤§ååç¯ï¼ä¸å¿çº ç»äºèµ·ç¹é«ä½ï¼åå¥è¡ãåç§¯ç´¯ãéæ©å»ç</span><span style="font-family: Calibri">IT</span><span style="font-family: å®ä½">ãæ¿å¡ä¿¡æ¯åãå·¥ä¸è½¯ä»¶ãéèåå°ç­é¿æç¨³å®çæ¹åï¼å¨ä¸ä¸ªè¡ä¸ææ ¹</span><span style="font-family: Calibri">3</span><span style="font-family: å®ä½">â</span><span style="font-family: Calibri">5</span><span style="font-family: å®ä½">å¹´ï¼æèªå·±åè¡ä¸æ·±åº¦ç»å®ï¼ç¨ä¸å¡å£åå»ºç«</span><span style="font-family: Calibri">AI</span><span style="font-family: å®ä½">æ æ³æ¿ä»£çç«äºåã</span></span></p>
-<p><span style="font-size: 18pt">&nbsp; AI<span style="font-family: å®ä½">æ¶ä»£æ²¡ææ·å¾ï¼åªææç°å®ççå­ç­ç¥ã</span><span style="font-family: Calibri">ToC&nbsp;</span><span style="font-family: å®ä½">å¨æ¶ç¼©ï¼èå¬èç æ¯æ¦çé·é±ï¼å¨èå¤èåªæ¯</span>åè<span style="font-family: å®ä½">é®ç¾å¸ãæ¥æ±</span>AI<span style="font-family: å®ä½">ãç¨å¥½ææ¯å¹³æãåå®å¥å±</span><span style="font-family: Calibri">ToB</span><span style="font-family: å®ä½">ãæ·±èåç´è¡ä¸ï¼ææ¯æ®éè®¡ç®æºæ¯ä¸çå¨æ¶ä»£åå±ä¸­ï¼ææ¸éãç¸å¯¹æå¡å®ï¼èµ°å¾æè¿çåºè·¯ã</span></span></p>
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h1 id="ææ">ææ</h1>
+<p>å¼æºé¡¹ç®å®£ä¼ é¡µ: <a href="https://xuhe2.github.io/sharelatex-ce/" target="_blank" rel="noopener nofollow">https://xuhe2.github.io/sharelatex-ce/</a></p>
+<blockquote>
+<p>å ä¸ºèªå»ºåä½ç¯å¢ä¸è¯¥æ¯åè®ºææ¬èº«è¿é¾ï¼æä»¥æåäº sharelatex-ce æ¥å®ç°çæ­£çâä¸é®å¼â Overleaf ç§æåé¨ç½²ä½éªã</p>
+</blockquote>
+<p>å®ç°ææ:<br>
+<img alt="PixPin_2026-02-15_21-33-47" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3573053/202602/3573053-20260215213401024-1486054999.gif" class="lazyload"></p>
+<h1 id="ä¸ºä»ä¹éè¦ä¸ä¸ªå¥½ççå®£ä¼ é¡µ">ä¸ºä»ä¹éè¦ä¸ä¸ªå¥½ççå®£ä¼ é¡µï¼</h1>
+<p>è¯´å®è¯ï¼ç¨åºåç¼éçâç¾âå¾å¾å¾çº¯ç²¹ï¼ä»£ç æ´æ´ãæ¶æä¼éãREADME ææ¡£æ¸æ°ãä½ç°å®æ¯æ®é·çââå¦æä½ çå¼æºé¡¹ç®åªæä¸å å·å°å°çä»£ç åé¿ç¯ç´¯çç Markdown è¯´æï¼é£å®å°±åæ¯ä¸ä¸ªç©¿çç¡è¡£å»åå æå®´çå¤©æï¼å³ä¾¿æ»¡è¹ç»çº¶ï¼ä¹å¾é¾å¨ç¬¬ä¸æ¶é´æä½å«äººçç¼çã</p>
+<p>å¨è¿ä¸ªâé¢å¼å³æ­£ä¹âç GitHub æ¶ä»£ï¼å®£ä¼ é¡µï¼Landing Pageï¼å°±æ¯é¡¹ç®çè¸é¢ã å®ä¸ä»è½è®©ç¨æ·å¨ 3 ç§éåæç½ä½ çé¡¹ç®æ¯å¹²ä»ä¹çï¼æ´åæ¯ä¸ç§âä¸ä¸èä¹¦âãä¸ä¸ªç²¾è´çé¡µé¢å¨æ å£°å°åè¯è®¿é®èï¼âçï¼å¼åèè¿è¿ç§ç»ææ«èé½æç£¨å¾è¿ä¹è®¤çï¼ä»£ç è´¨éè¯å®å·®ä¸äºãâ <strong>æ¯ç«ï¼å¤§å®¶é½å¾å¿ï¼æ¯èµ·åææ¡£ï¼è°ä¸å¸æè½ä¸ç¼çå°é£ä¸ªéªéªååç Docker-compose up æé®å¢ï¼</strong></p>
+<h1 id="ææ¯éå-åç«¯äººai-å¹²-åç«¯">ææ¯éå: åç«¯äºº+AI å¹² åç«¯</h1>
+<p>ä½ä¸ºä¸ååç«¯ç¨åºåï¼è®©ææå CSS å¸å±ç®ç´æ¯æç§ç¨åº¦ä¸çâé·åâãä½å¨ 2026 å¹´ï¼å¦æä½ è¿è§å¾åç½é¡µå¾ä» </p><div> å¼å§ä¸è¡è¡æ ä»£ç ï¼é£å¯è½ççéè¿äºè¿ä¸ªæ¶ä»£ççº¢å©ã<p></p>
+<p>æçéåé»è¾éå¸¸ç´æ¥ï¼<strong>AIæé¿ä»ä¹æ¡æ¶, æéä»ä¹æ¡æ¶, è®©ä¸ä¸çäººå¹²ä¸ä¸çäºï¼è®© AI å¹²ç´¯äººçäº</strong></p>
+<ul>
+<li>
+<p>Astro æ¡æ¶ï¼ ä¸ºä»ä¹ä¸é React æ Vueï¼å ä¸ºæä¸éè¦ä¸ä¸ªæ²éçåé¡µåºç¨ãAstro æ¯ä¸ºåå®¹é©±å¨åç½ç«èççï¼å®æå¿«ãæç®ï¼çæçéæé¡µé¢å¹²åå¾åååæ´è¿çä»£ç ãæéè¦çæ¯ï¼å®å¯¹ SEO æå¶åå¥½ï¼ä¸æ¯æåç§ç»ä»¶æ··åï¼âå­¦æ¯èå¿âåè¶³ã</p>
+</li>
+<li>
+<p>Claude Codeï¼ è¿ææ¯æ¬æ¬¡é¨ç½²çç§å¯æ­¦å¨ãä½ä¸ºä¸ä¸ªéåç«¯ç¨åºåï¼æåªéè¦ææçéæ±ãé¡¹ç®å®ä½ãçè³æ¯åæ¬¢çéè²æ¹æ¡(<strong>å¶å®æåæ ¹æ²¡æå®¡ç¾, AIççæ¥å°±å¥½äº, AIå³? æä¼åç</strong>)ä¸¢ç» Claudeãå®ä¸ä»å¸®æååºäºåæ¨¡åæ ·ç UIï¼çè³è¿é£äºå¼¯å¼¯ç»ç»ç GitHub Actions é¨ç½²é»è¾é½å®æå¾ææç½ç½ã</p>
+</li>
+<li>
+<p>AI æ¶ä»£çå¼åèå¼, ç°å¨çå¼åé»è¾å·²ç»åäºå? æåæ ¹ä¸äºè§£ Tailwind ç±»åï¼æåªéè¦æ®æ¼å¥½âäº§åç»çâçè§è²ï¼éè¿ç®ç­çæç¤ºè¯ï¼Promptï¼ææ¥ AI è¿è¡æå»º(<strong>å®ç°ç»è? ç¸ä¿¡AIçå®¡ç¾, åæ­£è¯å®æ¯æå¥½</strong>)ãâä¸æ¯åç«¯åä¸èµ·ï¼èæ¯ Claude æ´ææ§ä»·æ¯ãâ</p>
+</li>
+</ul>
+<h1 id="å¼å¯github-pagesåè½">å¼å¯Github Pagesåè½</h1>
+<ol>
+<li>
+<p>è¿å¥è®¾ç½®ï¼å¨é¡¹ç®ä»åºé¡¶æ ç¹å» Settingsã</p>
+</li>
+<li>
+<p>å®ä½åè½ï¼å·¦ä¾§ä¾§è¾¹æ æ¾å°å¹¶ç¹å» Pages éé¡¹ã</p>
+</li>
+<li>
+<p>éç½®æ¥æºï¼å¨ Build and deployment -&gt; Source ä¸­éæ© Deploy from a branchã</p>
+</li>
+<li>
+<p>éå®è·¯å¾ï¼å¨ Branch ä¸æèåéæ©ç®æ åæ¯ï¼å¦ gh-pagesï¼ï¼è·¯å¾ä¿æ / (root)ã</p>
+</li>
+<li>
+<p>çæè®¿é®ï¼ç¹å» Saveãç¨ç­çå»ï¼é¡µé¢é¡¶é¨ä¼åºç°ç»¿è²çè®¿é® URLã</p>
+</li>
+</ol>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3573053/202602/3573053-20260215194652773-616333653.png" class="lazyload"></p>
+<blockquote>
+<p>ç¹å»<code>Settings</code></p>
+</blockquote>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3573053/202602/3573053-20260215194814804-528106535.png" class="lazyload"></p>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3573053/202602/3573053-20260215194847483-503733933.png" class="lazyload"></p>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3573053/202602/3573053-20260215194922624-733251455.png" class="lazyload"></p>
+<h1 id="é¨ç½²çå®£ä¼ é¡µåºç°äºèµæºæ æ³å è½½çé®é¢">é¨ç½²çå®£ä¼ é¡µåºç°äºèµæºæ æ³å è½½çé®é¢</h1>
+<h2 id="åå ">åå </h2>
+<p>GitHub Pages é»è®¤ä½¿ç¨ Jekyll æ¥æå»ºç½é¡µãå¨ Jekyll çè§åä¸­ï¼ä»»ä½ä»¥ä¸åçº¿ _ å¼å¤´çæä»¶å¤¹ï¼ä¾å¦ _astro/ï¼é½ä¼è¢«è§ä¸ºåé¨ç§ææä»¶å¤¹ï¼ä¸ä¼è¢«åå¸å°æå¡å¨ä¸ã</p>
+<p>ç±äº Astro é»è®¤å°ææç CSS å JS æä»¶æ¾å¨ _astro/ ç®å½ä¸ï¼GitHub Pages å®éä¸å¹¶æ²¡ææè¿äºæä»¶é¨ç½²åºå»ï¼æä»¥ä½ çæµè§å¨è¯·æ±æ¶ä¼æ¥ 404ã</p>
+<h2 id="è§£å³æ¹æ¡1">è§£å³æ¹æ¡1</h2>
+<ul>
+<li>æ ¸å¿è§£å³æ¹æ³ï¼æ·»å  .nojekyll æä»¶</li>
+</ul>
+<blockquote>
+<p>ä½ éè¦åè¯ GitHubï¼âä¸è¦ç¨ Jekyll è¿è¡æçç½ç«ï¼ç´æ¥ææçæä»¶åæ ·ååºå»âã</p>
+</blockquote>
+<p>æä½æ­¥éª¤ï¼</p>
+<ol>
+<li>å¨ä½ ç gh-pages åæ¯çæ ¹ç®å½ä¸ï¼åå»ºä¸ä¸ªåä¸º .nojekyll çç©ºæä»¶ï¼æ³¨æåé¢æä¸ä¸ªç¹ï¼ã</li>
+<li>æäº¤å¹¶æ¨éã</li>
+</ol>
+<h2 id="è§£å³æ¹æ¡2">è§£å³æ¹æ¡2</h2>
+<p>ä¿®æ¹ä»£ç , éç½®éæèµæºæå¨çä½ç½®, ä¿®æ¹<code>astro.config.mjs</code>æä»¶åå®¹:</p>
+<pre><code>diff --git a/landing-page/astro.config.mjs b/landing-page/astro.config.mjs
+index 1ae7417..b1f04c3 100644
+--- a/landing-page/astro.config.mjs
++++ b/landing-page/astro.config.mjs
+@@ -7,5 +7,6 @@ export default defineConfig({
+   site: 'https://xuhe2.github.io/sharelatex-ce/',
+   build: {
+     format: 'directory',
++    assets: 'assets',
+   },
+ });
+</code></pre>
+<h1 id="åèæç®">åèæç®</h1>
+<p>å®æ¹ææ¡£: <a href="https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages" target="_blank" rel="noopener nofollow">https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages</a></p>
+</div>
 
 </div>
 <div class="clear"></div>
-</div>
-		<p class="postfoot">
-			posted on 
-<span id="post-date" data-last-update-days="0.06319444444444444" data-date-updated="2026-02-14 15:07">2026-02-14 13:36</span>&nbsp;
-<a href="https://www.cnblogs.com/xdesigner">è¢æ°¸ç¦ çµå­çåï¼å»çä¿¡æ¯å</a>&nbsp;
-éè¯»(<span id="post_view_count">280</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">2</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19615230);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19615230', targetLink: 'https://www.cnblogs.com/xdesigner/p/19615230', title: 'AIç¼ç¨æ¶ä»£æ®éæ¬ç§è®¡ç®æºæ¯ä¸ççåºè·¯' })">ä¸¾æ¥</a>
 
-		</p>
-	 ]]>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-02-15 21:52">2026-02-15 21:51</span>&nbsp;
+<a href="https://www.cnblogs.com/xuhe2">xuhe2</a>&nbsp;
+éè¯»(<span id="post_view_count">2</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19618589);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19618589', targetLink: 'https://www.cnblogs.com/xuhe2/p/19618589', title: 'Claude CodeéåAstro + GitHub Pagesï¼ä¸º sharelatex-ce æé ç°ä»£åçå¼æºé¡¹ç®å®£ä¼ é¡µ' })">ä¸¾æ¥</a>
+</div>
+         ]]>
     </description>
     </item>
         </channel>
