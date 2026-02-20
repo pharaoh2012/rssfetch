@@ -3,12 +3,163 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-02-19T20:27:33.093Z</lastBuildDate>
+        <lastBuildDate>2026-02-20T01:30:07.434Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
+    <title><![CDATA[ [æè§£LangChainæ§è¡å¼æ]éå¸¸è§Pending Writeçæä¹å ]]></title>
+    <link>https://www.cnblogs.com/jaydenai/p/19625923/non-regular-pending-writes</link>
+    <guid>fc98387085725e992681708a6e1dd471</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/jaydenai/p/19625923/non-regular-pending-writes" title="åå¸äº 2026-02-20 09:11">
+    <span role="heading" aria-level="2">[æè§£LangChainæ§è¡å¼æ]éå¸¸è§Pending Writeçæä¹å</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                    <div id="cnblogs_post_description" style="display: none">
+        
+        PendingWriteä¸åç»çç¬¬äºé¨åè¡¨ç¤ºåå¥çChannelï¼ä½æ¯å¯¹äºä¸äºç¹æ®çåºæ¯ï¼æ¯å¦åºéãæ åå¥ãä¸­æ­åæ¢å¤ï¼å®ä»¬çå¼ä¸åæ¯ä¸ä¸ªæ®éçChannelåç§°
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>PendingWriteä¸åç»çç¬¬äºé¨åè¡¨ç¤ºåå¥çChannelï¼ä½æ¯å¯¹äºä¸äºç¹æ®çåºæ¯ï¼æ¯å¦åºéãæ åå¥ãä¸­æ­åæ¢å¤ï¼å®ä»¬çå¼ä¸åæ¯ä¸ä¸ªæ®éçChannelåç§°ï¼èæ¯ä½¿ç¨å¦ä¸çå¼ï¼</p>
+<ul>
+<li><code>__error__</code>ï¼æ§è¡Nodeå¯¹åºçä»»å¡åºç°å¼å¸¸ï¼</li>
+<li><code>__no_writes__</code>ï¼Nodeä»»å¡æåæ§è¡ï¼ä½æ¯æ²¡ææ§è¡éå¯¹Channelçè¾åºï¼</li>
+<li><code>__interrupt__</code>ï¼ä»»å¡ä¸­æ­ï¼</li>
+<li><code>__resume__</code>ï¼è¡¨ç¤ºæ¢å¤æ§è¡æä¾çæ°æ®ï¼</li>
+</ul>
+<p>æ¥ä¸æ¥æä»¬ä¸¤ä¸ªä¾å­æ¥äº§çä¸è¿°è¿å ç§ç¹æ®çPending Writeãæä»¬åæ¥æ¨¡æåºéçåºæ¯ï¼å¦ä¸é¢çä»£ç çæ®µæç¤ºï¼æä»¬æ§è¡çPregelå¯¹è±¡å·æä¸ä¸ªå¯ä¸çNodeï¼å®çå¤çå½æ°ç´æ¥æåºä¸ä¸ªå¼å¸¸ã</p>
+<pre><code class="language-python">from langgraph.pregel import Pregel, NodeBuilder
+from langgraph.channels import LastValue
+from langgraph.checkpoint.memory import InMemorySaver
+from typing import Any
+
+def handle(args: dict[str, Any])-&gt;None:
+    raise Exception("manllually raised exception")
+
+node = NodeBuilder().subscribe_to("start").do(handle)
+app = Pregel(
+    nodes={"body": node},
+    channels={"start": LastValue(str)},
+    checkpointer=InMemorySaver(),
+    input_channels=["start"],
+    output_channels=[],
+)
+config = {"configurable": {"thread_id": "123"}}
+try:
+    result = app.invoke({"start": "begin"}, config=config)
+except Exception as ex:
+    print(f"Caught exception:{ex}" )
+
+(_, _, _, _, pending_writes) = app.checkpointer.get_tuple(config)
+print(pending_writes)
+</code></pre>
+<p>æä»¬å¨try/exceptåä¸­å®æéå¯¹Pregelçè°ç¨ï¼å¹¶ææåè¾åºå¾å°çå¼å¸¸ä¿¡æ¯ãæ¥ä¸æ¥æä»¬è°ç¨Checkpointerï¼ä¸ä¸ªInMemorySaverå¯¹è±¡ï¼ç<code>get_tuple</code>æ¹æ³å¾å°å¯¹åºç<code>CheckpointTuple</code>åç»ï¼ç¶åå°<code>pending_writes</code>é¨åè¾åºåºæ¥ãä»å¦ä¸æç¤ºçè¾åºç»æå¯ä»¥çåºï¼è¿ä¸ªPending Writeä¸åç»çChannelåç§°è¢«è®¾ç½®ä¸º <code>__error__</code> ï¼æ´ä¸ªExceptionå¯¹è±¡æä¸ºäºåå¥çåå®¹ã</p>
+<pre><code>Caught exception:manllually raised exception
+[('f9ff1e88-4d82-f417-ad11-8fd870bfe647', '__error__', "Exception('manllually raised exception')")]
+</code></pre>
+<p>ç±äºå¹¶ä¸æ¯ææçNodeé½æåChannelåå¥æ§è¡ç»æçéæ±ï¼æä»¥åªè¦å¤çå½æ°æåæ§è¡ï¼å³ä½¿æ²¡æChannelè¾åºçè¡ä¸ºï¼è¯¥ä»»å¡çç¶æä¹ä¼è¢«è§ä¸º<code>æå</code>ï¼Checkpointeråªæ¯éç¨ä¸åçå½¢å¼æ¥è®°å½è¿ç§ä¸éè¦åå¥çPending Writeãå¦ä¸çè¿ä¸ªç¨åºä¸ä»ä»æ¼ç¤ºäºè¿ç§<code>æ è¾åºåå¥</code>çåºæ¯ï¼è¿åæ¶æ¨¡æäºä¸­æ­åæ¢å¤ã</p>
+<pre><code class="language-python">from langgraph.pregel import Pregel, NodeBuilder
+from langgraph.channels import LastValue
+from langgraph.checkpoint.memory import InMemorySaver
+from typing import Any
+from langgraph.types import Command, interrupt
+
+def foo(args: dict[str, Any]) -&gt; list[str]:
+    resume1 = interrupt("1st interrupt")
+    assert resume1 == "1st resume"
+
+    resume2 = interrupt("2nd interrupt")
+    assert resume2 == "2nd resume"
+
+    resume3 = interrupt("3rd interrupt")
+    assert resume3 == "3rd resume"
+
+    return [resume1, resume2, resume3]
+
+def bar(args: dict[str, Any]) -&gt; None:
+    pass
+
+app = Pregel(
+    nodes={
+        "foo": NodeBuilder().subscribe_only("start").do(foo).write_to("output"),
+        "bar": NodeBuilder().subscribe_only("start").do(bar),
+    },
+    channels={
+        "start": LastValue(str),
+        "output": LastValue(list[str]),
+    },
+    input_channels=["start"],
+    output_channels=["output"],
+    checkpointer=InMemorySaver(),
+)
+
+config = {"configurable": {"thread_id": "123"}}
+result = app.invoke(input={"start": "begin"}, config=config, stream_mode="tasks")
+(_, _, _, _, pending_writes) = app.checkpointer.get_tuple(config)
+print(f"After invoke:\n{pending_writes}")
+
+app.invoke(input=Command(resume="1st resume"), config=config)
+(_, _, _, _, pending_writes) = app.checkpointer.get_tuple(config)
+print(f"\nAfter resume 1:\n{pending_writes}")
+
+app.invoke(input=Command(resume="2nd resume"), config=config)
+(_, _, _, _, pending_writes) = app.checkpointer.get_tuple(config)
+print(f"\nAfter resume 2:\n{pending_writes}")
+
+result = app.invoke(input=Command(resume="3rd resume"), config=config)
+assert result == {"output": ["1st resume", "2nd resume", "3rd resume"]}
+(_, _, _, _, pending_writes) = app.checkpointer.get_tuple(config)
+print(f"\nAfter resume 3:\n{pending_writes}")
+</code></pre>
+<p>å¦ä¸é¢çä»£ç çæ®µæç¤ºï¼æä»¬ä¸ºPregelæä¾äºä¸¤ä¸ªå¹¶è¡æ§è¡çèç¹fooåbarï¼å¶ä¸­barå¯¹åºçå½æ°å¹¶æªæ§è¡ä»»ä½æææä½ï¼ä¹æ²¡æä»»ä½çè¾åºãæä»¬ä¸ºèç¹fooå¯¹åºçå¤çå½æ°å¶é äºä¸æ¬¡äººä¸ºä¸­æ­ï¼æä»¥éè¦è³å°åæ¬¡è°ç¨æè½ç»æã</p>
+<p>æä»¬å¨åå»ºçRunnableConfigå¯¹è±¡ä¸­æä¾äºç»ä¸çThread IDï¼å¹¶å°å®ä½ä¸ºåç»­æ¹æ³è°ç¨çåæ°ãéå¯¹Pregelçä¸æ¬¡è°ç¨ï¼ç¬¬ä¸æ¬¡æ¯ä¸ºå¸¸è§è°ç¨ï¼åé¢ä¸¤æ¬¡åå«æ¯éå¯¹ä¸¤æ¬¡ä¸­æ­çæ¢å¤è°ç¨ãæä»¬å¨æ¯æ¬¡è°ç¨åï¼å¾å°å¹¶è¾åºCheckpointerè®°å½ä¸æ¥çPending Writeã</p>
+<p>ä»å¦ä¸çè¾åºç»æå¯ä»¥çåºï¼ç¬¬ä¸æ¬¡å¸¸è§è°ç¨åï¼ èç¹fooåå¨ç¬¬ä¸ä¸ªä¸­æ­å¤ï¼èç¹baræåæ§è¡ä½æ²¡æè¾åºï¼æä»¥Checkpointerå°å®ä»¬ä½ä¸ºPending Writeè®°å½ä¸æ¥ï¼Channelåç§°åå«æ¯<code>__interrupt__</code>å<code>__no_writes__</code>ï¼åèçåå¥åå®¹æ¯ä¸ä¸ª<code>Interrupt</code>å¯¹è±¡ï¼å®å·ææä»¬æå®çå¼â1st interruptâãæä»¬ä¹çå°äºInterruptå¯¹è±¡å·æä¸ä¸ªå¯ä¸æ è¯ï¼å¨æ¢å¤è°ç¨æ¶æä»¬å¯ä»¥å©ç¨æ­¤æ è¯ä¸ºå¶æå®éå¯¹æ§çæ¢å¤æ°æ®ï¼Command(resume={"id":"resume value")ï¼ã</p>
+<pre><code>After invoke:
+[('8d407c25-02f6-9101-d1b8-5a99c247edde', '__interrupt__', [Interrupt(value='1st interrupt', id='5603cdf275d8b8ba0633d272fa176fd3')]), ('22507855-e257-1b5b-eb1a-3c3fb0a071e9', '__no_writes__', None)]
+
+After resume 1:
+[('8d407c25-02f6-9101-d1b8-5a99c247edde', '__interrupt__', [Interrupt(value='2nd interrupt', id='5603cdf275d8b8ba0633d272fa176fd3')]), ('22507855-e257-1b5b-eb1a-3c3fb0a071e9', '__no_writes__', None), ('00000000-0000-0000-0000-000000000000', '__resume__', '1st resume'), ('8d407c25-02f6-9101-d1b8-5a99c247edde', '__resume__', ['1st resume'])]
+
+After resume 2:
+[('8d407c25-02f6-9101-d1b8-5a99c247edde', '__interrupt__', [Interrupt(value='3rd interrupt', id='5603cdf275d8b8ba0633d272fa176fd3')]), ('22507855-e257-1b5b-eb1a-3c3fb0a071e9', '__no_writes__', None), ('00000000-0000-0000-0000-000000000000', '__resume__', '2nd resume'), ('8d407c25-02f6-9101-d1b8-5a99c247edde', '__resume__', ['1st resume', '2nd resume'])]
+
+After resume 3:
+[]
+</code></pre>
+<p>éå¯¹ç¬¬ä¸ä¸ªä¸­æ­çæ¢å¤è°ç¨åï¼èç¹fooåå¨ç¬¬äºä¸ªä¸­æ­å¤ï¼æ­¤æ¶Checkpointerä¼åå»ºä¸¤ä¸ªæ°çPending Writeæä¹åæä»¬æä¾çResume Valueï¼â1st resumeâï¼ï¼å®çChannelåç§°å°±æ¯<code>__resume__</code>ï¼ä½ä¸ºä»ä¹æ¯ä¸¤ä¸ªå¢ï¼</p>
+<p>è¿å®éä¸åæ äº Pregel å¤ç<code>å¤é¨æä»¤æ³¨å¥</code>ä¸<code>Nodeåé¨æ¶è´¹</code>çåæ­¥æºå¶ãç¬¬ä¸ä¸ªè¢«ç§°ä¸ºå¨å±Resume Valueï¼Global Resume Valueï¼, å®ä»£è¡¨ä»å¤é¨ï¼éè¿Command(resume=...)ï¼æ³¨å¥å°å¾ä¸­çåå§æä»¤ãç±äºå®ä¸æ¯ç±å¾åNodeäº§ççï¼å æ­¤ Task ID ä¸ºç©ºï¼å®æ¯å¤éæ´ä¸ªæåç¶æçâæ»å¼å³âãç¬¬äºä¸ªèç¹fooå¯¹å¨å±Resume Valueçæ¶è´¹è®°å½ï¼æä»¥å·æä¸ä¸ªæç¡®çTaks IDãå½èç¹fooè¢«å¤éå¹¶æ§è¡å°interruptè¡æ¶ï¼å®ä¼ä»å¨å±Resume Valueè¯»åæ°æ®ãä¸ºäºä¿è¯å¹ç­æ§åå¯åæº¯æ§ï¼ç³»ç»ä¼å°<code>æ¿èµ°äºåªä¸ªResume Value</code>è®°å½å¨å®çä»»å¡è·¯å¾ä¸ã</p>
+<p>éå¯¹Resumeçåä½è®¾ç½®æ¯ä¸ºäºè§£å³<code>éå¥ä¸åæº¯</code>é®é¢ãå¨å±è®°å½è¯æäº<code>ç¨æ·ç¡®å®æä¾äºè¿ä¸ªå¼</code>ãNodeè®°å½è¯æäº<code>è¿ä¸ªå¼ç¡®å®è¢«è¿ä¸ªç¹å®çinterruptå½æ°è°ç¨æ¶è´¹äº</code>ãä¸ä¸ªNodeåé¨å¯ä»¥è¿ç»­è°ç¨å¤æ¬¡interruptå½æ°ï¼ç³»ç»éè¦æé¡ºåºè®°å½è¯¥Nodeæ¶è´¹è¿çææResume Valueï¼ä»¥ä¾¿å¨âæ¶é´æè¡âæéè¯æ¶è½å¤ç²¾ç¡®å¯¹é½ã</p>
+<p>å½æä»¬è°ç¨interruptå½æ°å®æ½äººä¸ºä¸­æ­æ¶ï¼åºå±å®éä¸ä¼æåºä¸ä¸ª<code>GraphInterrupt</code>å¼å¸¸ï¼Pregeléè¿æè·è¿ä¸ªå¼å¸¸è¿èçæéå¯¹æ§çPendingWriteï¼æä»¥éå¯¹åä¸ä¸ªä»»å¡æå¯è½æä¸ä¸ªå¯ä¸çä¸­æ­ç±»åçPendingWriteãç±äºæ¢å¤æ§è¡æ»æ¯ä¼<code>ä»å¤´æ§è¡Nodeå½æ°</code>ï¼æä»¥åºäºä¸­æ­çPendingWriteå¹¶ä¸ä¼æ¢å¤æ§è¡é æä»»ä½å½±åãæä»¥å½æä»¬å®æç¬¬äºæ¬¡æ¢å¤è°ç¨åï¼æä¹åçä¸­æ­PendingWriteåæ çæ¯éå¯¹ç¬¬äºæ¬¡interruptå½æ°çè°ç¨ï¼å¯¹åºInterruptå¯¹è±¡çå¼ä¸º<code>2nd interrupt</code>ã</p>
+<p>Resume Valueå¿é¡»æç§é¡ºåºæä¾ï¼å ä¸ºæ¯éå°ä¸ä¸ªinterrptå½æ°çè°ç¨ï¼é½ä¼å©ç¨åé¢ä»ç»è¿çè®¡ç®å¨æä¾çç´¢å¼ï¼ä»Resume Valueåè¡¨ä¸­è¯»åResume Valueä½ä¸ºè¯¥è°ç¨çè¿åå¼ï¼æä»¥æä¹åçç¬¬äºä¸ªåºäºæ¢å¤çPendingWriteå¯¹åºçå¼åæäºåå«ä¸¤ä¸ªResume Valueçåè¡¨ï¼['1st resume', '2nd resume']ï¼ã</p>
+<p>å¨éå¯¹ç¬¬ä¸ä¸ªä¸­æ­çæ¢å¤æ§è¡ç»æåï¼fooNodeå®æäºå®çæ§è¡ä»»å¡ï¼èbarå¯¹åºçä»»å¡æ¬èº«å°±æ¯æåç¶æï¼æä»¥æ´ä¸ªSuperstepé¡ºå©ç»æï¼èªç¶ä¹å°±ä¸å­å¨Pending Writeäºã</p>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-02-20 09:12">2026-02-20 09:11</span>&nbsp;
+<a href="https://www.cnblogs.com/jaydenai">JaydenAI</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19625923);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19625923', targetLink: 'https://www.cnblogs.com/jaydenai/p/19625923/non-regular-pending-writes', title: '[æè§£LangChainæ§è¡å¼æ]éå¸¸è§Pending Writeçæä¹å' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
     <title><![CDATA[ ãæ¸éæµè¯ãHTB Season10 WingData å¨è¿ç¨wp ]]></title>
     <link>https://www.cnblogs.com/DSchenzi/p/19625276</link>
     <guid>7c7087de627cf6a2a01a9d74085b7941</guid>
@@ -258,250 +409,6 @@ if __name__ == "__main__":
     </description>
     </item>
 <item>
-    <title><![CDATA[ FastAPIå®æï¼WebSocketé¿è¿æ¥ä¿æä¸å¿è·³æºå¶ï¼ä»å¥é¨å°å¡«å ]]></title>
-    <link>https://www.cnblogs.com/ymtianyu/p/19625144</link>
-    <guid>dcd447542c742ad2b9f12ead8a57503f</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/ymtianyu/p/19625144" title="åå¸äº 2026-02-19 17:05">
-    <span role="heading" aria-level="2">FastAPIå®æï¼WebSocketé¿è¿æ¥ä¿æä¸å¿è·³æºå¶ï¼ä»å¥é¨å°å¡«å</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                    <div id="cnblogs_post_description" style="display: none">
-        
-        æ¬æéè¿å®ææ¡ä¾ï¼è¯¦ç»è®²è§£FastAPIä¸JavaScriptå®ç°WebSocketé¿è¿æ¥ä¿æçå¿è·³æºå¶ï¼åæ¬ååç«¯ä»£ç ãåæ°è°ä¼åå¸¸è§é·é±ï¼å¸®å©ä½ æé ç¨³å®å¯é çååéä¿¡ã
-    </div>
-<div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
-<div style="max-width: 100%; margin: 0 auto">
-<p style="font-size: 16px; color: rgba(93, 109, 126, 1); background-color: rgba(248, 249, 250, 1); padding: 12px 16px; border-radius: 8px; margin: 20px 0">ð æè¦ï¼æ¬æéè¿ä¸ä¸ªçå®çä¸çº¿æ¡ä¾ï¼è¯¦ç»è®²è§£FastAPIä¸JavaScriptå®ç°WebSocketé¿è¿æ¥ä¿æçå¿è·³æºå¶ãä½ ä¼äºè§£ä¸ºä»ä¹è¿æ¥ä¼æ­ãå¿è·³åçæ¯ä»ä¹ãååç«¯ä»£ç æä¹åï¼ä»¥åé£äºææ¡£éæ²¡åçè°ä¼é·é±ãç§çåï¼è®©ä½ çå®æ¶éä¿¡ç¨³å¦èçã</p>
-
-<p style="font-size: 16px; margin: 20px 0">ä½ æ¯ä¸æ¯ä¹éå°è¿ââWebSocketè¿æ¥å¨ä¸å¨å°±æ­å¼ï¼å°¤å¶æ¯å¨ç§»å¨ç«¯ï¼ç¨æ·åæ¢ä¸ªWi-Fiæèçµæ¢¯éä¿¡å·æä¸ä¸ï¼æ¶æ¯å°±æ¶ä¸å°äºï¼ð± ç¨æ·æè¯è¯´âAPPæ¶æ¯å»¶è¿âï¼ä½ ä¸æ¥æ¥å¿ï¼æ»¡å±é½æ¯<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">WebSocket disconnected</code>ï¼ç¶åç¯çéè¿ï¼æå¡å¨ååå±±å¤§ï¼ç¨æ·ä½éªç¨ç¢ã</p>
-<p style="font-size: 16px; margin: 20px 0">æäºé¡¹ç®å¾çäºï¼è§å¾WebSocketè¿ä¸å°±è¡äºï¼ç»æçº¿ä¸è·äºåå¤©ï¼è¿ç»´å°å¥å°±åæ¥æ¥è­¦ï¼è¿æ¥æ°å¿½é«å¿½ä½ï¼å¾å¤è¿æ¥å­æ´»ä¸å°2åéãæ¥æ¥å¿ï¼å¥½å®¶ä¼ï¼Nginxé»è®¤<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">proxy_read_timeout</code> 60ç§ï¼å ä¸ç§»å¨ç½ç»è¿è¥åä¼ææé¿æ¶é´æ æµéçè¿æ¥ï¼ååå¤¹å»ï¼è¿æ¥å¨æ­äºãð­</p>
-<p style="font-size: 16px; margin: 20px 0"><strong style="color: rgba(186, 55, 42, 1)">æ ¸å¿ç»è®ºï¼</strong>WebSocketé¿è¿æ¥ä¿æï¼ä¸è½é âè¿ä¸å°±ä¸ç®¡âï¼å¿é¡»å¼å¥å¿è·³æºå¶ââå°±åä¸¤ä¸ªäººæçµè¯ï¼æ¯éä¸ä¼å¿é®ä¸å¥âåï¼è¿å¨åï¼âãä»å¤©æå°±æFastAPIåç«¯ + JavaScriptåç«¯çå®æ´å¿è·³å®ç°ï¼æ°å¼äºæç¢äºè®²ç»ä½ å¬ï¼é¡ºä¾¿ææè¸©è¿çåæ çº¢ã</p>
-
-<div style="background-color: rgba(240, 247, 255, 1); padding: 16px; border-radius: 8px; margin: 25px 0">
-<p style="font-size: 18px; font-weight: 600; margin: 0 0 10px">ð¦ æ¬æè·¯çº¿å¾</p>
-<div style="margin-left: 8px">
-<p style="margin: 6px 0">ð¹ ä¸ºä»ä¹WebSocketä¼æ­ï¼ââ ä¸­é´ä»¶è¶æ¶ãç½ç»ç¶æåå</p>
-<p style="margin: 6px 0">ð¹ å¿è·³åçï¼ping-pong è¿æ¯ pong-pingï¼</p>
-<p style="margin: 6px 0">ð¹ FastAPIåç«¯ï¼æ¥æ¶å¿è·³æ¶æ¯ + è¶æ¶ç®¡ç</p>
-<p style="margin: 6px 0">ð¹ JavaScriptåç«¯ï¼å®æ¶åéå¿è·³ + æ­çº¿éè¿</p>
-<p style="margin: 6px 0">ð¹ å®æ´å¯è¿è¡ä»£ç ç¤ºä¾</p>
-<p style="margin: 6px 0">ð¹ é£äºå¹´æè¸©è¿çåï¼é´éè®¾ç½®ãéå¤å®æ¶å¨ãæå¡ç«¯ä¸»å¨æ­å¼ï¼</p>
-</div>
-</div>
-<h2 style="font-size: 22px; font-weight: 600; margin: 30px 0 15px; border-bottom: 2px solid rgba(186, 55, 42, 1); padding-bottom: 6px">ð§  ç¬¬ä¸é¨åï¼è¿æ¥ä¸ºä»ä¹ä¼æ­ï¼</h2>
-<p style="font-size: 16px; margin: 20px 0">æWebSocketæ³è±¡æä¸æ¡æ°´ç®¡ï¼æ°æ®å°±æ¯æ°´ãå¦ææ°´ç®¡ä¸ç´æµæ°´ï¼å®å°±ä¸ä¼å µãä½è¦æ¯ä½ åå¤©ä¸æ¾æ°´ï¼ä¸­é´çè·¯ç±å¨ãé²ç«å¢å°±è§å¾âå¿ï¼è¿ç®¡å­æ¯ä¸æ¯åºå¼äºï¼âââ<strong style="color: rgba(186, 55, 42, 1)">ååä¸åç»ä½ æäº</strong>ãå°¤å¶æ¯å¨ç§»å¨ç½ç»ä¸ï¼è¿è¥åçNATç½å³ç©ºé²è¶æ¶å¯è½åªæ30ç§å°å åéãè¿ææä»¬å¸¸ç¨çNginxï¼é»è®¤<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">proxy_read_timeout</code>æ¯60ç§ï¼ä¸æ¦60ç§åæ²¡ææ°æ®ä»åç«¯åå°å®¢æ·ç«¯ï¼Nginxå°±ä¼èªä½ä¸»å¼ æ­å¼è¿æ¥ã</p>
-<p style="font-size: 16px; margin: 20px 0">æä»¥ï¼è¦æ³è®©è¿æ¥é¿å­ï¼å¯ä¸çæ¹æ³å°±æ¯<strong style="color: rgba(186, 55, 42, 1)">å®æåéä¸äºâæ ç¨âçæ°æ®</strong>ï¼åè¯ä¸­é´ä»¶ï¼âæè¿æ´»çï¼å«ç æï¼âââè¿å°±æ¯å¿è·³ã</p>
-<h2 style="font-size: 22px; font-weight: 600; margin: 30px 0 15px; border-bottom: 2px solid rgba(186, 55, 42, 1); padding-bottom: 6px">ð ç¬¬äºé¨åï¼å¿è·³æºå¶çä¸¤ç§å§¿å¿</h2>
-<p style="font-size: 16px; margin: 20px 0">å¿è·³æ¬è´¨æ¯ä¸ç§<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">ping/pong</code>æ¨¡å¼ãWebSocketåè®®æ¬èº«ææ§å¶å¸§<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">Ping</code>å<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">Pong</code>ï¼ä½æµè§å¨åçJSçWebSocket APIå¹¶æ²¡æç´æ¥æ´é²åéPingå¸§çæ¹æ³ï¼æä»¥æä»¬ä¸è¬ç¨æ®éæ¶æ¯æ¨¡æï¼</p>
-<div style="margin-left: 8px">
-<p style="margin: 6px 0">â¨ æ¹æ¡Aï¼å®¢æ·ç«¯å®æ¶åé<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">ping</code>æ¶æ¯ï¼æå¡å¨æ¶å°åç«å³åå¤<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">pong</code>ã</p>
-<p style="margin: 6px 0">â¨ æ¹æ¡Bï¼æå¡å¨å®æ¶åé<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">ping</code>ï¼å®¢æ·ç«¯åå¤<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">pong</code>ãä½åæ ·ï¼å®¢æ·ç«¯éè¦è½è§£æå¹¶åå¤ã</p>
-</div>
-<p style="font-size: 16px; margin: 20px 0">æ´å¸¸è§çåæ³æ¯<strong style="color: rgba(186, 55, 42, 1)">å®¢æ·ç«¯ä¸»å¨åå¿è·³ï¼æå¡å¨åªéååºæè®°å½</strong>ãä¸ºå¥ï¼å ä¸ºå®¢æ·ç«¯æ´è½æç¥ç½ç»ååï¼ä¸æ­å¼åè½ç«å³éè¿ãä¸é¢æå°±ä»¥å®¢æ·ç«¯åå¿è·³ä¸ºä¾ï¼ä¸ä»£ç ã</p>
-<h2 style="font-size: 22px; font-weight: 600; margin: 30px 0 15px; border-bottom: 2px solid rgba(186, 55, 42, 1); padding-bottom: 6px">âï¸ ç¬¬ä¸é¨åï¼FastAPIåç«¯å®æ</h2>
-<p style="font-size: 16px; margin: 20px 0">åæ­ä¸ä¸ªæç®åçFastAPI WebSocketç«¯ç¹ãè¿éæç¨äº<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">/ws</code>è·¯å¾ï¼æ¥æ¶å¿è·³æ¶æ¯ï¼çº¦å®JSONæ ¼å¼<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">{"type": "ping"}</code>ï¼ï¼å¹¶åå¤<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">{"type": "pong"}</code>ãåæ¶ï¼ä¸ºäºåæ¶æ¸çæ­»è¿æ¥ï¼æä¼è®°å½æ¯ä¸ªè¿æ¥çæåå¿è·³æ¶é´ï¼å¯å¨ä¸ä¸ªåå°ä»»å¡æ£æ¥è¶æ¶ï¼æ¯å¦60ç§æ²¡æ¶å°å¿è·³å°±ä¸»å¨closeï¼ã</p>
-<pre class="language-python highlighter-hljs"><code>from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-import asyncio
-import json
-from datetime import datetime, timedelta
-
-app = FastAPI()
-
-class ConnectionManager:
-    def __init__(self):
-        self.active_connections: dict[WebSocket, datetime] = {}
-        self._heartbeat_check_interval = 30   # æ¯30ç§æ£æ¥ä¸æ¬¡
-        asyncio.create_task(self.heartbeat_checker())
-
-    async def connect(self, websocket: WebSocket):
-        await websocket.accept()
-        self.active_connections[websocket] = datetime.utcnow()
-        print(f"æ°è¿æ¥å å¥ï¼å½åè¿æ¥æ°ï¼{len(self.active_connections)}")
-
-    def disconnect(self, websocket: WebSocket):
-        if websocket in self.active_connections:
-            del self.active_connections[websocket]
-            print(f"è¿æ¥æ­å¼ï¼å½åè¿æ¥æ°ï¼{len(self.active_connections)}")
-
-    async def handle_messages(self, websocket: WebSocket):
-        try:
-            while True:
-                data = await websocket.receive_text()
-                try:
-                    msg = json.loads(data)
-                except:
-                    continue
-                # å¦ææ¯å¿è·³pingï¼æ´æ°æåå¿è·³æ¶é´å¹¶åå¤pong
-                if msg.get("type") == "ping":
-                    self.active_connections[websocket] = datetime.utcnow()
-                    await websocket.send_text(json.dumps({"type": "pong"}))
-                else:
-                    # å¶ä»ä¸å¡æ¶æ¯ï¼æéå¤ç
-                    await websocket.send_text(json.dumps({"type": "echo", "data": msg}))
-        except WebSocketDisconnect:
-            self.disconnect(websocket)
-
-    async def heartbeat_checker(self):
-        while True:
-            await asyncio.sleep(self._heartbeat_check_interval)
-            now = datetime.utcnow()
-            timeout = timedelta(seconds=70)  # è¶è¿70ç§æ²¡å¿è·³å°±æ­å¼
-            dead_conns = []
-            for ws, last_ping in self.active_connections.items():
-                if now - last_ping &gt; timeout:
-                    dead_conns.append(ws)
-            for ws in dead_conns:
-                try:
-                    await ws.close(code=1000, reason="heartbeat timeout")
-                except:
-                    pass
-                self.disconnect(ws)
-
-manager = ConnectionManager()
-
-@app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    await manager.connect(websocket)
-    await manager.handle_messages(websocket)</code></pre>
-<p style="font-size: 16px; margin: 20px 0"><strong style="color: rgba(186, 55, 42, 1)">ð éç¹è¯´æï¼</strong> <span style="display: block; margin-left: 16px; margin-top: 6px">- <code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">handle_messages</code>éåªå¤çå¿è·³ï¼å¶ä»ä¸å¡æ¶æ¯å¯ä»¥èªå®ä¹ã</span> <span style="display: block; margin-left: 16px">- åå°å¿è·³æ£æ¥çº¿ç¨æ¯30ç§è·ä¸æ¬¡ï¼å¦ææè¿æ¥è¶è¿70ç§æ²¡æ¶å°å¿è·³ï¼å°±ä¸»å¨å³é­ãè¿ä¸ª70ç§ä¸å®è¦å¤§äºå®¢æ·ç«¯çå¿è·³é´éï¼æ¯å¦å®¢æ·ç«¯30ç§åä¸æ¬¡ï¼é£70ç§å¤§æ¦æ¼æ2æ¬¡é½æ²¡åå¤ææ­ï¼é²æ­¢ç½ç»æå¨è¯¯æï¼ã</span> <span style="display: block; margin-left: 16px">- æ³¨æ<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">WebSocketDisconnect</code>çæè·ï¼åæ¶æ¸çå­å¸ï¼é¿ååå­æ³æ¼ã</span></p>
-<h2 style="font-size: 22px; font-weight: 600; margin: 30px 0 15px; border-bottom: 2px solid rgba(186, 55, 42, 1); padding-bottom: 6px">ð» ç¬¬åé¨åï¼JavaScriptåç«¯å®ç°</h2>
-<p style="font-size: 16px; margin: 20px 0">åç«¯ä¸»è¦åä¸ä»¶äºï¼å»ºç«è¿æ¥ãå®æ¶åå¿è·³ãçå¬æ­å¼èªå¨éè¿ãæä¹ æ¯æWebSocketå°è£æä¸ä¸ªç±»ï¼æ¹ä¾¿å¤ç¨ãç´æ¥ä¸ä»£ç ï¼</p>
-<pre class="language-javascript highlighter-hljs"><code>class WebSocketClient {
-    constructor(url) {
-        this.url = url;
-        this.ws = null;
-        this.heartbeatInterval = 30000; // 30ç§ä¸æ¬¡å¿è·³
-        this.reconnectInterval = 3000;   // æ­çº¿å3ç§éè¿
-        this.heartbeatTimer = null;
-        this.reconnectTimer = null;
-        this.connect();
-    }
-
-    connect() {
-        this.ws = new WebSocket(this.url);
-        this.ws.onopen = () =&gt; {
-            console.log('WebSocket å·²è¿æ¥');
-            // è¿æ¥æååï¼å¯å¨å¿è·³
-            this.startHeartbeat();
-            // å¦æä¹åæéè¿å®æ¶å¨ï¼æ¸æ
-            if (this.reconnectTimer) {
-                clearTimeout(this.reconnectTimer);
-                this.reconnectTimer = null;
-            }
-        };
-
-        this.ws.onmessage = (event) =&gt; {
-            const data = JSON.parse(event.data);
-            if (data.type === 'pong') {
-                console.log('æ¶å°å¿è·³pongï¼è¿æ¥æ­£å¸¸');
-                // å¯ä»¥å¨è¿éæ´æ°UIæ¾ç¤ºæåå¿è·³æ¶é´ï¼ä½ä¸å¿é¡»
-            } else {
-                // å¤çå¶ä»ä¸å¡æ¶æ¯
-                console.log('ä¸å¡æ¶æ¯', data);
-            }
-        };
-
-        this.ws.onclose = (e) =&gt; {
-            console.log('WebSocket å³é­', e.reason);
-            // åæ­¢å¿è·³
-            this.stopHeartbeat();
-            // å°è¯éè¿
-            this.reconnect();
-        };
-
-        this.ws.onerror = (err) =&gt; {
-            console.error('WebSocket éè¯¯', err);
-            this.ws.close();
-        };
-    }
-
-    startHeartbeat() {
-        this.heartbeatTimer = setInterval(() =&gt; {
-            if (this.ws &amp;&amp; this.ws.readyState === WebSocket.OPEN) {
-                this.ws.send(JSON.stringify({ type: 'ping' }));
-                console.log('åéå¿è·³ping');
-            } else {
-                console.warn('è¿æ¥æªå¼å¯ï¼åæ­¢åéå¿è·³');
-                this.stopHeartbeat();
-            }
-        }, this.heartbeatInterval);
-    }
-
-    stopHeartbeat() {
-        if (this.heartbeatTimer) {
-            clearInterval(this.heartbeatTimer);
-            this.heartbeatTimer = null;
-        }
-    }
-
-    reconnect() {
-        this.stopHeartbeat();
-        if (!this.reconnectTimer) {
-            this.reconnectTimer = setTimeout(() =&gt; {
-                console.log('å°è¯éè¿...');
-                this.connect();
-            }, this.reconnectInterval);
-        }
-    }
-
-    // ä¸»å¨å³é­è¿æ¥ï¼æ¯å¦é¡µé¢å¸è½½æ¶ï¼
-    close() {
-        this.stopHeartbeat();
-        if (this.ws) {
-            this.ws.close();
-        }
-    }
-}
-
-// ä½¿ç¨ç¤ºä¾
-const client = new WebSocketClient('ws://ä½ çåå/ws');
-// é¡µé¢å³é­åä¸»å¨æ¸ç
-window.addEventListener('beforeunload', () =&gt; client.close());</code></pre>
-<p style="font-size: 16px; margin: 20px 0"><strong style="color: rgba(186, 55, 42, 1)">â ï¸ å³é®ç»èï¼</strong> <span style="display: block; margin-left: 16px; margin-top: 6px">- å¿è·³é´éä¸è¦è¶è¿Nginxç<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">proxy_read_timeout</code>ï¼ä¸è¬è®¾30ç§æ¯è¾å®å¨ã</span> <span style="display: block; margin-left: 16px">- æ­çº¿éè¿è¦é²æï¼éè¿<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">reconnectTimer</code>é¿åéå¤éè¿ã</span> <span style="display: block; margin-left: 16px">- é¡µé¢å³é­æ¶ä¸å®è¦<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">close</code>è¿æ¥ï¼å¦åæå¡ç«¯å¯è½ä¿çå­¤å¿è¿æ¥ç´å°è¶æ¶ã</span></p>
-<h2 style="font-size: 22px; font-weight: 600; margin: 30px 0 15px; border-bottom: 2px solid rgba(186, 55, 42, 1); padding-bottom: 6px">ð§ª ç¬¬äºé¨åï¼è·èµ·æ¥ççææ</h2>
-<p style="font-size: 16px; margin: 20px 0">å¯å¨FastAPIï¼<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">uvicorn main:app --reload</code>ï¼ï¼æå¼æµè§å¨æ§å¶å°ï¼ä½ ä¼çå°æ¯é30ç§åéä¸æ¬¡pingï¼æå¡å¨ç«å³åå¤pongãå³ä½¿ä½ æ­å¼Wi-Fiåæå¼ï¼å®¢æ·ç«¯ä¹ä¼èªå¨éè¿ï¼å¹¶ä¸éè¿åå¿è·³ç»§ç»­ãð¯</p>
-<h2 style="font-size: 22px; font-weight: 600; margin: 30px 0 15px; border-bottom: 2px solid rgba(186, 55, 42, 1); padding-bottom: 6px">ð£ ç¬¬å­é¨åï¼é£äºå¹´æè¸©è¿çåï¼å¿çï¼</h2>
-<div style="margin-left: 8px">
-<p style="margin: 6px 0"><strong style="color: rgba(186, 55, 42, 1)">å1ï¼å¿è·³é´éå¤ªç­ï¼æå¡å¨ååå¤§</strong> ââ 1ç§ä¸æ¬¡çº¯å±èªæ®ï¼30ç§ä¸æ¬¡è¶³å¤ï¼æ¢ä¿æ´»åçèµæºã</p>
-<p style="margin: 6px 0"><strong style="color: rgba(186, 55, 42, 1)">å2ï¼æå¡ç«¯æ²¡åè¶æ¶ä¸»å¨æ­å¼</strong> ââ å®¢æ·ç«¯çªç¶æçº¿ï¼æ¯å¦ç¨æ·å¼ºå¶æè¿ç¨ï¼ï¼æå¡ç«¯ä¸ç¥éï¼è¿æ¥ä¸ç´å çåå­ãæä»¥åå°å¿è·³æ£æ¥ä¸å®è¦æï¼è¶æ¶å°±closeã</p>
-<p style="margin: 6px 0"><strong style="color: rgba(186, 55, 42, 1)">å3ï¼éè¿æ¶å¿è®°æ¸çæ§å®æ¶å¨</strong> ââ æ¯æ¬¡éè¿é½æ°å»ºä¸ä¸ª<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">setInterval</code>ï¼å¯¼è´å¤ä¸ªå¿è·³çº¿ç¨å¹¶åï¼æ¶æ¯çç¸ãè§£å³æ¹æ¡ï¼éè¿åå<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">stopHeartbeat()</code>ã</p>
-<p style="margin: 6px 0"><strong style="color: rgba(186, 55, 42, 1)">å4ï¼ååç«¯å¿è·³æ ¼å¼çº¦å®ä¸ä¸è´</strong> ââ æç¨çæ¯<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">{"type":"ping"}</code>ï¼å¦æä½ åç«¯ç¨å­æ®µ<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">heartbeat</code>ï¼ä¸å®è®°å¾å¯¹é½ï¼å¦åæå¡å¨ä¸è®¤ï¼ç¸å½äºæ²¡å¿è·³ã</p>
-<p style="margin: 6px 0"><strong style="color: rgba(186, 55, 42, 1)">å5ï¼æ²¡èèSSL/å å¯è¿æ¥</strong> ââ çäº§ç¯å¢ç¨<span style="color: rgba(186, 55, 42, 1)"><code>wss://</code></span>ï¼è¯ä¹¦éç½®è¦æ­£ç¡®ï¼å¦åè¿æ¥ç´æ¥è¢«æç»ã</p>
-</div>
-<p style="font-size: 16px; margin: 20px 0">å¦å¤ï¼å¦æä½ æ³æ´ä¼éä¸ç¹ï¼å¯ä»¥ç»å<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">asyncio.timeout</code>æè<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">websocket.receive()</code>çè¶æ¶åæ°ï¼ä¸è¿æè§å¾ä¸é¢è¿ç§âè®°å½æåå¿è·³+åå°æ£æ¥âçæ¨¡å¼ææ¸æ°ã</p>
-<h2 style="font-size: 22px; font-weight: 600; margin: 30px 0 15px; border-bottom: 2px solid rgba(186, 55, 42, 1); padding-bottom: 6px">ð æåå°å¦ä¸å¥</h2>
-<p style="font-size: 16px; margin: 20px 0">å¿è·³æºå¶ä¸æ¯é¶å¼¹ï¼ä½å®ç¡®å®æ¯WebSocketé¿è¿æ¥ä¿ææç®åææçåæ³ãç»åæ­çº¿éè¿ï¼è½è®©ä½ çå®æ¶åºç¨å¨æ¶å£ç½ç»ç¯å¢ä¸ä¾ç¶åæºãå¦æä½ å¨çäº§ç¯å¢è¿ææ´é«è¦æ±ï¼æ¯å¦éç¾¤ä¸çè¿æ¥ç¶æåæ­¥ãå¿è·³ä¸ä¸å¡æ¶æ¯ä¼åçº§ï¼æ¬¢è¿çè¨äº¤æµã</p>
-<hr style="border: none; height: 1px; background: linear-gradient(90deg, rgba(0, 0, 0, 0), rgba(52, 152, 219, 1), rgba(0, 0, 0, 0)); margin: 40px 0">
-<p style="font-size: 18px; font-weight: 500; color: rgba(44, 62, 80, 1); margin-bottom: 10px">èæåæé ð</p>
-<p style="font-size: 16px; margin: 10px 0">è¿ç¯æç« éçä»£ç æé½æ¯ç¨è¡æ³ªæè®­æ¢æ¥çï¼ç°å¨ç´æ¥æå°±è½è·ãä½ä½ çä¸å¡åºæ¯å¯è½ä¸ä¸æ ·ï¼æ¯å¦å¿è·³é´éæ¯å¦éè¦å¨æè°æ´ï¼æå¡ç«¯è¦ä¸è¦ä¸»å¨pingï¼æ¬¢è¿å¨è¯è®ºåºåäº«ä½ çâå¥è©âè¸©åç»åï¼æèæ¶èèµ·æ¥ï¼ä¸æ¬¡ä¸çº¿åç¿»åºæ¥çä¸ç¼ï¼ä¹è®¸è½å¸®ä½ çä¸ä¸ä¸ªéå®µã</p>
-<p style="font-size: 16px; margin: 30px 0 10px"><strong style="color: rgba(186, 55, 42, 1)">å¦æä½ è§å¾æç¨ï¼ç¹èµæåäº«ç»å¢éï¼ä¸æ¬¡éå°WebSocketæ­è¿é®é¢ï¼å±ä»¬å°±ä¸åæäºãð</strong></p>
-</div>
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-02-19 17:05">2026-02-19 17:05</span>&nbsp;
-<a href="https://www.cnblogs.com/ymtianyu">ä¸åç¨åºåªå</a>&nbsp;
-éè¯»(<span id="post_view_count">60</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19625144);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19625144', targetLink: 'https://www.cnblogs.com/ymtianyu/p/19625144', title: 'FastAPIå®æï¼WebSocketé¿è¿æ¥ä¿æä¸å¿è·³æºå¶ï¼ä»å¥é¨å°å¡«å' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
     <title><![CDATA[ ä»æ¥ææºå¨äººï¼çä¸­å½æªæ¥ç¾å¹´çå»èä¹è·¯ ]]></title>
     <link>https://www.cnblogs.com/xdesigner/p/19621864</link>
     <guid>24efd1fb4993450849ff2cf974b5db81</guid>
@@ -565,7 +472,7 @@ window.addEventListener('beforeunload', () =&gt; client.close());</code></pre>
 			posted on 
 <span id="post-date" data-last-update-days="0.7659722222222223" data-date-updated="2026-02-18 13:26">2026-02-17 19:03</span>&nbsp;
 <a href="https://www.cnblogs.com/xdesigner">è¢æ°¸ç¦ çµå­çåï¼å»çä¿¡æ¯å</a>&nbsp;
-éè¯»(<span id="post_view_count">288</span>)&nbsp;
+éè¯»(<span id="post_view_count">301</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19621864);return false;">æ¶è</a>&nbsp;
@@ -1388,6 +1295,250 @@ f(\mathbf{X})=f(\mathbf{X}^{*})+\nabla{f(\mathbf{X}^{*})^{T}}(\mathbf{X}-\mathbf
     </description>
     </item>
 <item>
+    <title><![CDATA[ FastAPIå®æï¼WebSocketé¿è¿æ¥ä¿æä¸å¿è·³æºå¶ï¼ä»å¥é¨å°å¡«å ]]></title>
+    <link>https://www.cnblogs.com/ymtianyu/p/19625144</link>
+    <guid>dcd447542c742ad2b9f12ead8a57503f</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/ymtianyu/p/19625144" title="åå¸äº 2026-02-19 17:05">
+    <span role="heading" aria-level="2">FastAPIå®æï¼WebSocketé¿è¿æ¥ä¿æä¸å¿è·³æºå¶ï¼ä»å¥é¨å°å¡«å</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                    <div id="cnblogs_post_description" style="display: none">
+        
+        æ¬æéè¿å®ææ¡ä¾ï¼è¯¦ç»è®²è§£FastAPIä¸JavaScriptå®ç°WebSocketé¿è¿æ¥ä¿æçå¿è·³æºå¶ï¼åæ¬ååç«¯ä»£ç ãåæ°è°ä¼åå¸¸è§é·é±ï¼å¸®å©ä½ æé ç¨³å®å¯é çååéä¿¡ã
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
+<div style="max-width: 100%; margin: 0 auto">
+<p style="font-size: 16px; color: rgba(93, 109, 126, 1); background-color: rgba(248, 249, 250, 1); padding: 12px 16px; border-radius: 8px; margin: 20px 0">ð æè¦ï¼æ¬æéè¿ä¸ä¸ªçå®çä¸çº¿æ¡ä¾ï¼è¯¦ç»è®²è§£FastAPIä¸JavaScriptå®ç°WebSocketé¿è¿æ¥ä¿æçå¿è·³æºå¶ãä½ ä¼äºè§£ä¸ºä»ä¹è¿æ¥ä¼æ­ãå¿è·³åçæ¯ä»ä¹ãååç«¯ä»£ç æä¹åï¼ä»¥åé£äºææ¡£éæ²¡åçè°ä¼é·é±ãç§çåï¼è®©ä½ çå®æ¶éä¿¡ç¨³å¦èçã</p>
+
+<p style="font-size: 16px; margin: 20px 0">ä½ æ¯ä¸æ¯ä¹éå°è¿ââWebSocketè¿æ¥å¨ä¸å¨å°±æ­å¼ï¼å°¤å¶æ¯å¨ç§»å¨ç«¯ï¼ç¨æ·åæ¢ä¸ªWi-Fiæèçµæ¢¯éä¿¡å·æä¸ä¸ï¼æ¶æ¯å°±æ¶ä¸å°äºï¼ð± ç¨æ·æè¯è¯´âAPPæ¶æ¯å»¶è¿âï¼ä½ ä¸æ¥æ¥å¿ï¼æ»¡å±é½æ¯<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">WebSocket disconnected</code>ï¼ç¶åç¯çéè¿ï¼æå¡å¨ååå±±å¤§ï¼ç¨æ·ä½éªç¨ç¢ã</p>
+<p style="font-size: 16px; margin: 20px 0">æäºé¡¹ç®å¾çäºï¼è§å¾WebSocketè¿ä¸å°±è¡äºï¼ç»æçº¿ä¸è·äºåå¤©ï¼è¿ç»´å°å¥å°±åæ¥æ¥è­¦ï¼è¿æ¥æ°å¿½é«å¿½ä½ï¼å¾å¤è¿æ¥å­æ´»ä¸å°2åéãæ¥æ¥å¿ï¼å¥½å®¶ä¼ï¼Nginxé»è®¤<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">proxy_read_timeout</code> 60ç§ï¼å ä¸ç§»å¨ç½ç»è¿è¥åä¼ææé¿æ¶é´æ æµéçè¿æ¥ï¼ååå¤¹å»ï¼è¿æ¥å¨æ­äºãð­</p>
+<p style="font-size: 16px; margin: 20px 0"><strong style="color: rgba(186, 55, 42, 1)">æ ¸å¿ç»è®ºï¼</strong>WebSocketé¿è¿æ¥ä¿æï¼ä¸è½é âè¿ä¸å°±ä¸ç®¡âï¼å¿é¡»å¼å¥å¿è·³æºå¶ââå°±åä¸¤ä¸ªäººæçµè¯ï¼æ¯éä¸ä¼å¿é®ä¸å¥âåï¼è¿å¨åï¼âãä»å¤©æå°±æFastAPIåç«¯ + JavaScriptåç«¯çå®æ´å¿è·³å®ç°ï¼æ°å¼äºæç¢äºè®²ç»ä½ å¬ï¼é¡ºä¾¿ææè¸©è¿çåæ çº¢ã</p>
+
+<div style="background-color: rgba(240, 247, 255, 1); padding: 16px; border-radius: 8px; margin: 25px 0">
+<p style="font-size: 18px; font-weight: 600; margin: 0 0 10px">ð¦ æ¬æè·¯çº¿å¾</p>
+<div style="margin-left: 8px">
+<p style="margin: 6px 0">ð¹ ä¸ºä»ä¹WebSocketä¼æ­ï¼ââ ä¸­é´ä»¶è¶æ¶ãç½ç»ç¶æåå</p>
+<p style="margin: 6px 0">ð¹ å¿è·³åçï¼ping-pong è¿æ¯ pong-pingï¼</p>
+<p style="margin: 6px 0">ð¹ FastAPIåç«¯ï¼æ¥æ¶å¿è·³æ¶æ¯ + è¶æ¶ç®¡ç</p>
+<p style="margin: 6px 0">ð¹ JavaScriptåç«¯ï¼å®æ¶åéå¿è·³ + æ­çº¿éè¿</p>
+<p style="margin: 6px 0">ð¹ å®æ´å¯è¿è¡ä»£ç ç¤ºä¾</p>
+<p style="margin: 6px 0">ð¹ é£äºå¹´æè¸©è¿çåï¼é´éè®¾ç½®ãéå¤å®æ¶å¨ãæå¡ç«¯ä¸»å¨æ­å¼ï¼</p>
+</div>
+</div>
+<h2 style="font-size: 22px; font-weight: 600; margin: 30px 0 15px; border-bottom: 2px solid rgba(186, 55, 42, 1); padding-bottom: 6px">ð§  ç¬¬ä¸é¨åï¼è¿æ¥ä¸ºä»ä¹ä¼æ­ï¼</h2>
+<p style="font-size: 16px; margin: 20px 0">æWebSocketæ³è±¡æä¸æ¡æ°´ç®¡ï¼æ°æ®å°±æ¯æ°´ãå¦ææ°´ç®¡ä¸ç´æµæ°´ï¼å®å°±ä¸ä¼å µãä½è¦æ¯ä½ åå¤©ä¸æ¾æ°´ï¼ä¸­é´çè·¯ç±å¨ãé²ç«å¢å°±è§å¾âå¿ï¼è¿ç®¡å­æ¯ä¸æ¯åºå¼äºï¼âââ<strong style="color: rgba(186, 55, 42, 1)">ååä¸åç»ä½ æäº</strong>ãå°¤å¶æ¯å¨ç§»å¨ç½ç»ä¸ï¼è¿è¥åçNATç½å³ç©ºé²è¶æ¶å¯è½åªæ30ç§å°å åéãè¿ææä»¬å¸¸ç¨çNginxï¼é»è®¤<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">proxy_read_timeout</code>æ¯60ç§ï¼ä¸æ¦60ç§åæ²¡ææ°æ®ä»åç«¯åå°å®¢æ·ç«¯ï¼Nginxå°±ä¼èªä½ä¸»å¼ æ­å¼è¿æ¥ã</p>
+<p style="font-size: 16px; margin: 20px 0">æä»¥ï¼è¦æ³è®©è¿æ¥é¿å­ï¼å¯ä¸çæ¹æ³å°±æ¯<strong style="color: rgba(186, 55, 42, 1)">å®æåéä¸äºâæ ç¨âçæ°æ®</strong>ï¼åè¯ä¸­é´ä»¶ï¼âæè¿æ´»çï¼å«ç æï¼âââè¿å°±æ¯å¿è·³ã</p>
+<h2 style="font-size: 22px; font-weight: 600; margin: 30px 0 15px; border-bottom: 2px solid rgba(186, 55, 42, 1); padding-bottom: 6px">ð ç¬¬äºé¨åï¼å¿è·³æºå¶çä¸¤ç§å§¿å¿</h2>
+<p style="font-size: 16px; margin: 20px 0">å¿è·³æ¬è´¨æ¯ä¸ç§<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">ping/pong</code>æ¨¡å¼ãWebSocketåè®®æ¬èº«ææ§å¶å¸§<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">Ping</code>å<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">Pong</code>ï¼ä½æµè§å¨åçJSçWebSocket APIå¹¶æ²¡æç´æ¥æ´é²åéPingå¸§çæ¹æ³ï¼æä»¥æä»¬ä¸è¬ç¨æ®éæ¶æ¯æ¨¡æï¼</p>
+<div style="margin-left: 8px">
+<p style="margin: 6px 0">â¨ æ¹æ¡Aï¼å®¢æ·ç«¯å®æ¶åé<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">ping</code>æ¶æ¯ï¼æå¡å¨æ¶å°åç«å³åå¤<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">pong</code>ã</p>
+<p style="margin: 6px 0">â¨ æ¹æ¡Bï¼æå¡å¨å®æ¶åé<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">ping</code>ï¼å®¢æ·ç«¯åå¤<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">pong</code>ãä½åæ ·ï¼å®¢æ·ç«¯éè¦è½è§£æå¹¶åå¤ã</p>
+</div>
+<p style="font-size: 16px; margin: 20px 0">æ´å¸¸è§çåæ³æ¯<strong style="color: rgba(186, 55, 42, 1)">å®¢æ·ç«¯ä¸»å¨åå¿è·³ï¼æå¡å¨åªéååºæè®°å½</strong>ãä¸ºå¥ï¼å ä¸ºå®¢æ·ç«¯æ´è½æç¥ç½ç»ååï¼ä¸æ­å¼åè½ç«å³éè¿ãä¸é¢æå°±ä»¥å®¢æ·ç«¯åå¿è·³ä¸ºä¾ï¼ä¸ä»£ç ã</p>
+<h2 style="font-size: 22px; font-weight: 600; margin: 30px 0 15px; border-bottom: 2px solid rgba(186, 55, 42, 1); padding-bottom: 6px">âï¸ ç¬¬ä¸é¨åï¼FastAPIåç«¯å®æ</h2>
+<p style="font-size: 16px; margin: 20px 0">åæ­ä¸ä¸ªæç®åçFastAPI WebSocketç«¯ç¹ãè¿éæç¨äº<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">/ws</code>è·¯å¾ï¼æ¥æ¶å¿è·³æ¶æ¯ï¼çº¦å®JSONæ ¼å¼<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">{"type": "ping"}</code>ï¼ï¼å¹¶åå¤<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">{"type": "pong"}</code>ãåæ¶ï¼ä¸ºäºåæ¶æ¸çæ­»è¿æ¥ï¼æä¼è®°å½æ¯ä¸ªè¿æ¥çæåå¿è·³æ¶é´ï¼å¯å¨ä¸ä¸ªåå°ä»»å¡æ£æ¥è¶æ¶ï¼æ¯å¦60ç§æ²¡æ¶å°å¿è·³å°±ä¸»å¨closeï¼ã</p>
+<pre class="language-python highlighter-hljs"><code>from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+import asyncio
+import json
+from datetime import datetime, timedelta
+
+app = FastAPI()
+
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: dict[WebSocket, datetime] = {}
+        self._heartbeat_check_interval = 30   # æ¯30ç§æ£æ¥ä¸æ¬¡
+        asyncio.create_task(self.heartbeat_checker())
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections[websocket] = datetime.utcnow()
+        print(f"æ°è¿æ¥å å¥ï¼å½åè¿æ¥æ°ï¼{len(self.active_connections)}")
+
+    def disconnect(self, websocket: WebSocket):
+        if websocket in self.active_connections:
+            del self.active_connections[websocket]
+            print(f"è¿æ¥æ­å¼ï¼å½åè¿æ¥æ°ï¼{len(self.active_connections)}")
+
+    async def handle_messages(self, websocket: WebSocket):
+        try:
+            while True:
+                data = await websocket.receive_text()
+                try:
+                    msg = json.loads(data)
+                except:
+                    continue
+                # å¦ææ¯å¿è·³pingï¼æ´æ°æåå¿è·³æ¶é´å¹¶åå¤pong
+                if msg.get("type") == "ping":
+                    self.active_connections[websocket] = datetime.utcnow()
+                    await websocket.send_text(json.dumps({"type": "pong"}))
+                else:
+                    # å¶ä»ä¸å¡æ¶æ¯ï¼æéå¤ç
+                    await websocket.send_text(json.dumps({"type": "echo", "data": msg}))
+        except WebSocketDisconnect:
+            self.disconnect(websocket)
+
+    async def heartbeat_checker(self):
+        while True:
+            await asyncio.sleep(self._heartbeat_check_interval)
+            now = datetime.utcnow()
+            timeout = timedelta(seconds=70)  # è¶è¿70ç§æ²¡å¿è·³å°±æ­å¼
+            dead_conns = []
+            for ws, last_ping in self.active_connections.items():
+                if now - last_ping &gt; timeout:
+                    dead_conns.append(ws)
+            for ws in dead_conns:
+                try:
+                    await ws.close(code=1000, reason="heartbeat timeout")
+                except:
+                    pass
+                self.disconnect(ws)
+
+manager = ConnectionManager()
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await manager.connect(websocket)
+    await manager.handle_messages(websocket)</code></pre>
+<p style="font-size: 16px; margin: 20px 0"><strong style="color: rgba(186, 55, 42, 1)">ð éç¹è¯´æï¼</strong> <span style="display: block; margin-left: 16px; margin-top: 6px">- <code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">handle_messages</code>éåªå¤çå¿è·³ï¼å¶ä»ä¸å¡æ¶æ¯å¯ä»¥èªå®ä¹ã</span> <span style="display: block; margin-left: 16px">- åå°å¿è·³æ£æ¥çº¿ç¨æ¯30ç§è·ä¸æ¬¡ï¼å¦ææè¿æ¥è¶è¿70ç§æ²¡æ¶å°å¿è·³ï¼å°±ä¸»å¨å³é­ãè¿ä¸ª70ç§ä¸å®è¦å¤§äºå®¢æ·ç«¯çå¿è·³é´éï¼æ¯å¦å®¢æ·ç«¯30ç§åä¸æ¬¡ï¼é£70ç§å¤§æ¦æ¼æ2æ¬¡é½æ²¡åå¤ææ­ï¼é²æ­¢ç½ç»æå¨è¯¯æï¼ã</span> <span style="display: block; margin-left: 16px">- æ³¨æ<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">WebSocketDisconnect</code>çæè·ï¼åæ¶æ¸çå­å¸ï¼é¿ååå­æ³æ¼ã</span></p>
+<h2 style="font-size: 22px; font-weight: 600; margin: 30px 0 15px; border-bottom: 2px solid rgba(186, 55, 42, 1); padding-bottom: 6px">ð» ç¬¬åé¨åï¼JavaScriptåç«¯å®ç°</h2>
+<p style="font-size: 16px; margin: 20px 0">åç«¯ä¸»è¦åä¸ä»¶äºï¼å»ºç«è¿æ¥ãå®æ¶åå¿è·³ãçå¬æ­å¼èªå¨éè¿ãæä¹ æ¯æWebSocketå°è£æä¸ä¸ªç±»ï¼æ¹ä¾¿å¤ç¨ãç´æ¥ä¸ä»£ç ï¼</p>
+<pre class="language-javascript highlighter-hljs"><code>class WebSocketClient {
+    constructor(url) {
+        this.url = url;
+        this.ws = null;
+        this.heartbeatInterval = 30000; // 30ç§ä¸æ¬¡å¿è·³
+        this.reconnectInterval = 3000;   // æ­çº¿å3ç§éè¿
+        this.heartbeatTimer = null;
+        this.reconnectTimer = null;
+        this.connect();
+    }
+
+    connect() {
+        this.ws = new WebSocket(this.url);
+        this.ws.onopen = () =&gt; {
+            console.log('WebSocket å·²è¿æ¥');
+            // è¿æ¥æååï¼å¯å¨å¿è·³
+            this.startHeartbeat();
+            // å¦æä¹åæéè¿å®æ¶å¨ï¼æ¸æ
+            if (this.reconnectTimer) {
+                clearTimeout(this.reconnectTimer);
+                this.reconnectTimer = null;
+            }
+        };
+
+        this.ws.onmessage = (event) =&gt; {
+            const data = JSON.parse(event.data);
+            if (data.type === 'pong') {
+                console.log('æ¶å°å¿è·³pongï¼è¿æ¥æ­£å¸¸');
+                // å¯ä»¥å¨è¿éæ´æ°UIæ¾ç¤ºæåå¿è·³æ¶é´ï¼ä½ä¸å¿é¡»
+            } else {
+                // å¤çå¶ä»ä¸å¡æ¶æ¯
+                console.log('ä¸å¡æ¶æ¯', data);
+            }
+        };
+
+        this.ws.onclose = (e) =&gt; {
+            console.log('WebSocket å³é­', e.reason);
+            // åæ­¢å¿è·³
+            this.stopHeartbeat();
+            // å°è¯éè¿
+            this.reconnect();
+        };
+
+        this.ws.onerror = (err) =&gt; {
+            console.error('WebSocket éè¯¯', err);
+            this.ws.close();
+        };
+    }
+
+    startHeartbeat() {
+        this.heartbeatTimer = setInterval(() =&gt; {
+            if (this.ws &amp;&amp; this.ws.readyState === WebSocket.OPEN) {
+                this.ws.send(JSON.stringify({ type: 'ping' }));
+                console.log('åéå¿è·³ping');
+            } else {
+                console.warn('è¿æ¥æªå¼å¯ï¼åæ­¢åéå¿è·³');
+                this.stopHeartbeat();
+            }
+        }, this.heartbeatInterval);
+    }
+
+    stopHeartbeat() {
+        if (this.heartbeatTimer) {
+            clearInterval(this.heartbeatTimer);
+            this.heartbeatTimer = null;
+        }
+    }
+
+    reconnect() {
+        this.stopHeartbeat();
+        if (!this.reconnectTimer) {
+            this.reconnectTimer = setTimeout(() =&gt; {
+                console.log('å°è¯éè¿...');
+                this.connect();
+            }, this.reconnectInterval);
+        }
+    }
+
+    // ä¸»å¨å³é­è¿æ¥ï¼æ¯å¦é¡µé¢å¸è½½æ¶ï¼
+    close() {
+        this.stopHeartbeat();
+        if (this.ws) {
+            this.ws.close();
+        }
+    }
+}
+
+// ä½¿ç¨ç¤ºä¾
+const client = new WebSocketClient('ws://ä½ çåå/ws');
+// é¡µé¢å³é­åä¸»å¨æ¸ç
+window.addEventListener('beforeunload', () =&gt; client.close());</code></pre>
+<p style="font-size: 16px; margin: 20px 0"><strong style="color: rgba(186, 55, 42, 1)">â ï¸ å³é®ç»èï¼</strong> <span style="display: block; margin-left: 16px; margin-top: 6px">- å¿è·³é´éä¸è¦è¶è¿Nginxç<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">proxy_read_timeout</code>ï¼ä¸è¬è®¾30ç§æ¯è¾å®å¨ã</span> <span style="display: block; margin-left: 16px">- æ­çº¿éè¿è¦é²æï¼éè¿<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">reconnectTimer</code>é¿åéå¤éè¿ã</span> <span style="display: block; margin-left: 16px">- é¡µé¢å³é­æ¶ä¸å®è¦<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">close</code>è¿æ¥ï¼å¦åæå¡ç«¯å¯è½ä¿çå­¤å¿è¿æ¥ç´å°è¶æ¶ã</span></p>
+<h2 style="font-size: 22px; font-weight: 600; margin: 30px 0 15px; border-bottom: 2px solid rgba(186, 55, 42, 1); padding-bottom: 6px">ð§ª ç¬¬äºé¨åï¼è·èµ·æ¥ççææ</h2>
+<p style="font-size: 16px; margin: 20px 0">å¯å¨FastAPIï¼<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">uvicorn main:app --reload</code>ï¼ï¼æå¼æµè§å¨æ§å¶å°ï¼ä½ ä¼çå°æ¯é30ç§åéä¸æ¬¡pingï¼æå¡å¨ç«å³åå¤pongãå³ä½¿ä½ æ­å¼Wi-Fiåæå¼ï¼å®¢æ·ç«¯ä¹ä¼èªå¨éè¿ï¼å¹¶ä¸éè¿åå¿è·³ç»§ç»­ãð¯</p>
+<h2 style="font-size: 22px; font-weight: 600; margin: 30px 0 15px; border-bottom: 2px solid rgba(186, 55, 42, 1); padding-bottom: 6px">ð£ ç¬¬å­é¨åï¼é£äºå¹´æè¸©è¿çåï¼å¿çï¼</h2>
+<div style="margin-left: 8px">
+<p style="margin: 6px 0"><strong style="color: rgba(186, 55, 42, 1)">å1ï¼å¿è·³é´éå¤ªç­ï¼æå¡å¨ååå¤§</strong> ââ 1ç§ä¸æ¬¡çº¯å±èªæ®ï¼30ç§ä¸æ¬¡è¶³å¤ï¼æ¢ä¿æ´»åçèµæºã</p>
+<p style="margin: 6px 0"><strong style="color: rgba(186, 55, 42, 1)">å2ï¼æå¡ç«¯æ²¡åè¶æ¶ä¸»å¨æ­å¼</strong> ââ å®¢æ·ç«¯çªç¶æçº¿ï¼æ¯å¦ç¨æ·å¼ºå¶æè¿ç¨ï¼ï¼æå¡ç«¯ä¸ç¥éï¼è¿æ¥ä¸ç´å çåå­ãæä»¥åå°å¿è·³æ£æ¥ä¸å®è¦æï¼è¶æ¶å°±closeã</p>
+<p style="margin: 6px 0"><strong style="color: rgba(186, 55, 42, 1)">å3ï¼éè¿æ¶å¿è®°æ¸çæ§å®æ¶å¨</strong> ââ æ¯æ¬¡éè¿é½æ°å»ºä¸ä¸ª<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">setInterval</code>ï¼å¯¼è´å¤ä¸ªå¿è·³çº¿ç¨å¹¶åï¼æ¶æ¯çç¸ãè§£å³æ¹æ¡ï¼éè¿åå<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">stopHeartbeat()</code>ã</p>
+<p style="margin: 6px 0"><strong style="color: rgba(186, 55, 42, 1)">å4ï¼ååç«¯å¿è·³æ ¼å¼çº¦å®ä¸ä¸è´</strong> ââ æç¨çæ¯<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">{"type":"ping"}</code>ï¼å¦æä½ åç«¯ç¨å­æ®µ<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">heartbeat</code>ï¼ä¸å®è®°å¾å¯¹é½ï¼å¦åæå¡å¨ä¸è®¤ï¼ç¸å½äºæ²¡å¿è·³ã</p>
+<p style="margin: 6px 0"><strong style="color: rgba(186, 55, 42, 1)">å5ï¼æ²¡èèSSL/å å¯è¿æ¥</strong> ââ çäº§ç¯å¢ç¨<span style="color: rgba(186, 55, 42, 1)"><code>wss://</code></span>ï¼è¯ä¹¦éç½®è¦æ­£ç¡®ï¼å¦åè¿æ¥ç´æ¥è¢«æç»ã</p>
+</div>
+<p style="font-size: 16px; margin: 20px 0">å¦å¤ï¼å¦æä½ æ³æ´ä¼éä¸ç¹ï¼å¯ä»¥ç»å<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">asyncio.timeout</code>æè<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">websocket.receive()</code>çè¶æ¶åæ°ï¼ä¸è¿æè§å¾ä¸é¢è¿ç§âè®°å½æåå¿è·³+åå°æ£æ¥âçæ¨¡å¼ææ¸æ°ã</p>
+<h2 style="font-size: 22px; font-weight: 600; margin: 30px 0 15px; border-bottom: 2px solid rgba(186, 55, 42, 1); padding-bottom: 6px">ð æåå°å¦ä¸å¥</h2>
+<p style="font-size: 16px; margin: 20px 0">å¿è·³æºå¶ä¸æ¯é¶å¼¹ï¼ä½å®ç¡®å®æ¯WebSocketé¿è¿æ¥ä¿ææç®åææçåæ³ãç»åæ­çº¿éè¿ï¼è½è®©ä½ çå®æ¶åºç¨å¨æ¶å£ç½ç»ç¯å¢ä¸ä¾ç¶åæºãå¦æä½ å¨çäº§ç¯å¢è¿ææ´é«è¦æ±ï¼æ¯å¦éç¾¤ä¸çè¿æ¥ç¶æåæ­¥ãå¿è·³ä¸ä¸å¡æ¶æ¯ä¼åçº§ï¼æ¬¢è¿çè¨äº¤æµã</p>
+<hr style="border: none; height: 1px; background: linear-gradient(90deg, rgba(0, 0, 0, 0), rgba(52, 152, 219, 1), rgba(0, 0, 0, 0)); margin: 40px 0">
+<p style="font-size: 18px; font-weight: 500; color: rgba(44, 62, 80, 1); margin-bottom: 10px">èæåæé ð</p>
+<p style="font-size: 16px; margin: 10px 0">è¿ç¯æç« éçä»£ç æé½æ¯ç¨è¡æ³ªæè®­æ¢æ¥çï¼ç°å¨ç´æ¥æå°±è½è·ãä½ä½ çä¸å¡åºæ¯å¯è½ä¸ä¸æ ·ï¼æ¯å¦å¿è·³é´éæ¯å¦éè¦å¨æè°æ´ï¼æå¡ç«¯è¦ä¸è¦ä¸»å¨pingï¼æ¬¢è¿å¨è¯è®ºåºåäº«ä½ çâå¥è©âè¸©åç»åï¼æèæ¶èèµ·æ¥ï¼ä¸æ¬¡ä¸çº¿åç¿»åºæ¥çä¸ç¼ï¼ä¹è®¸è½å¸®ä½ çä¸ä¸ä¸ªéå®µã</p>
+<p style="font-size: 16px; margin: 30px 0 10px"><strong style="color: rgba(186, 55, 42, 1)">å¦æä½ è§å¾æç¨ï¼ç¹èµæåäº«ç»å¢éï¼ä¸æ¬¡éå°WebSocketæ­è¿é®é¢ï¼å±ä»¬å°±ä¸åæäºãð</strong></p>
+</div>
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-02-19 17:05">2026-02-19 17:05</span>&nbsp;
+<a href="https://www.cnblogs.com/ymtianyu">ä¸åç¨åºåªå</a>&nbsp;
+éè¯»(<span id="post_view_count">60</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19625144);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19625144', targetLink: 'https://www.cnblogs.com/ymtianyu/p/19625144', title: 'FastAPIå®æï¼WebSocketé¿è¿æ¥ä¿æä¸å¿è·³æºå¶ï¼ä»å¥é¨å°å¡«å' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
     <title><![CDATA[ 2023å¹´çµèµå½èµç»å ]]></title>
     <link>https://www.cnblogs.com/badboy02/p/19623709</link>
     <guid>a21e9f8d7b8393aa8d45fdd62c943c13</guid>
@@ -2201,469 +2352,6 @@ ReActAgent agent = ReActAgent.of(chatModel)
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19624189);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19624189', targetLink: 'https://www.cnblogs.com/GeophysicsWorker/p/19624189', title: 'å¸ä¼åæ°å­¦åºç¡ç¬è®°ï¼åï¼ï¼Hessian ç©éµå Taylor å±å¼' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ [æè§£LangChainæ§è¡å¼æ]æä¹åç¶æçæå ]]></title>
-    <link>https://www.cnblogs.com/jaydenai/p/19623976/read-state</link>
-    <guid>6b8626fc8800928767c63ff7e2d3671c</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/jaydenai/p/19623976/read-state" title="åå¸äº 2026-02-19 07:58">
-    <span role="heading" aria-level="2">[æè§£LangChainæ§è¡å¼æ]æä¹åç¶æçæå</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                    <div id="cnblogs_post_description" style="display: none">
-        
-        åé¢ä»¥`åå¥`çè§åº¦ä»ç»äºBaseCheckpointSaverç`put/aput`å`put_writes/aput_writes`æ¹æ³,å®ä»¬åå«å®ç°äºåºäºCheckpointåPending Writeçæä¹åãå¯¹äºä¸ä¸ªå·²ç»å®æçSuperstepæ¥è¯´ï¼å¯¹åº Checkpointå°±ä»£è¡¨äºå®çç¶æï¼ä½æ¯å¯¹äºä¸ä¸ªå ä¸­æ­å°æªå®æçSuperstepï¼æä¸ªæ¶å»çç¶æç±ä¸ä¸SuperstepçCheckpointåå½åSuperstepçææPending Writeæ¥æè¿°ãå¦æççéè¦æ¢å¤å°ä¸­æ­æ¶çç¶æï¼éè¦å¨Checkpointåºåç¶æåºç¡ä¸æåºéæ¾ææçPending Writeï¼å®éä¸åªéè¦éæ¾ä»£è¡¨æåæ§è¡ä»»å¡çPending Writeï¼å°±å¯ä»¥äºã
-    </div>
-<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>åé¢ä»¥<code>åå¥</code>çè§åº¦ä»ç»äºBaseCheckpointSaverç<code>put/aput</code>å<code>put_writes/aput_writes</code>æ¹æ³,å®ä»¬åå«å®ç°äºåºäºCheckpointåPending Writeçæä¹åãå¯¹äºä¸ä¸ªå·²ç»å®æçSuperstepæ¥è¯´ï¼å¯¹åº Checkpointå°±ä»£è¡¨äºå®çç¶æï¼ä½æ¯å¯¹äºä¸ä¸ªå ä¸­æ­å°æªå®æçSuperstepï¼æä¸ªæ¶å»çç¶æç±ä¸ä¸SuperstepçCheckpointåå½åSuperstepçææPending Writeæ¥æè¿°ãå¦æççéè¦æ¢å¤å°ä¸­æ­æ¶çç¶æï¼éè¦å¨Checkpointåºåç¶æåºç¡ä¸æåºéæ¾ææçPending Writeï¼å®éä¸åªéè¦éæ¾ä»£è¡¨æåæ§è¡ä»»å¡çPending Writeï¼å°±å¯ä»¥äºã</p>
-<h2 id="1-è¯»åcheckpointåpinding-write">1. è¯»åCheckpointåPinding Write</h2>
-<p>å¦ä¸è¿ä¸ª<code>CheckpointTuple</code>ç¨æ¥è¡¨ç¤ºCheckpointåPending Writeçç»åä½ãé¤äºè¿ä¸¤ä¸ªæ ¸å¿æåï¼å®è¿åæ¬å½åçæ§è¡éç½®ï¼configåparent_configï¼ååæ°æ®ãå·ä½çPending Writeç±Task IDãChannelåç§°ååå¥æ°ç»ç»æçä¸åç»PendingWriteè¡¨ç¤ºã</p>
-<pre><code class="language-python">class CheckpointTuple(NamedTuple):
-    config: RunnableConfig
-    checkpoint: Checkpoint
-    metadata: CheckpointMetadata
-    parent_config: RunnableConfig | None = None
-    pending_writes: list[PendingWrite] | None = None
-PendingWrite = tuple[str, str, Any]
-</code></pre>
-<p>BaseCheckpointSaveræä¾äºç¨äºè¯»åCheckpointTupleç<code>get_tuple/aget_tuple</code>æ¹æ³ãä½ä¸ºåæ°çRunnableConfigå¯¹è±¡éè¦æä¾Thread IDï¼å¿éï¼åCheckpoint å½åç©ºé´ï¼å¯éï¼ãå¦ææ²¡ææä¾Checkpoint IDï¼æ¹æ³ä¼è¿åæç»çç¶æï¼å¦æå°æªå®æï¼å¾å°çCheckpointTupleåç»å¯è½åå«Pending Writeãå¦ææä¾äºCheckpoint ID, åªæå¨æ­¤IDå¯¹åºææ°çCheckpointä¸åä¸Superstepå°æªå®æï¼è¿åçCheckpointTupleåç»ææå¯è½åå«Pending Writeãå¯¹äºå®ç°å¨BaseCheckpointSaverä¸­çå¦ä¸ç»æ¹æ³<code>get/aget</code>ï¼ä¼å¨åé¨è°ç¨<code>get_tuple/aget_tuple</code>æ¹æ³ï¼å¹¶è¿åCheckpointTupleåç»å°è£çCheckpointå¯¹è±¡ã</p>
-<pre><code class="language-python">class BaseCheckpointSaver(Generic[V]):    
-    def get(self, config: RunnableConfig) -&gt; Checkpoint | None
-    async def aget(self, config: RunnableConfig) -&gt; Checkpoint | None
-
-    def get_tuple(self, config: RunnableConfig) -&gt; CheckpointTuple | None
-    async def aget_tuple(self, config: RunnableConfig) -&gt; CheckpointTuple | None
-
-    def list(
-        self,
-        config: RunnableConfig | None,
-        *,
-        filter: dict[str, Any] | None = None,
-        before: RunnableConfig | None = None,
-        limit: int | None = None,
-    ) -&gt; Iterator[CheckpointTuple]:
-    async def alist(
-        self,
-        config: RunnableConfig | None,
-        *,
-        filter: dict[str, Any] | None = None,
-        before: RunnableConfig | None = None,
-        limit: int | None = None,
-    ) -&gt; AsyncIterator[CheckpointTuple]
-</code></pre>
-<p>å¯¹äºInMemorySaveræ¥è¯´ï¼å®çget_tuple/aget_tupleæ¹æ³ä¼ä»RunnableConfigéç½®ä¸­æåThread IDåCheckpointå½åç©ºé´ï¼å¦ææå®äºCheckpoint IDï¼å®ä»¬ä¼å©ç¨è¿ä¸ä¸ªå¼ä»storageåblobså­å¸ä¸­æåç¸åºæ°æ®ç»æè¿åçCheckpointTupleå¯¹è±¡ãå¦ææ²¡ææå®Checkpoint IDï¼å°±éæ©æè¿çé£ä¸ä¸ªCheckpointçIDã</p>
-<p>BaseCheckpointSaverçalistæ¹æ³ä¼ååºå¹¶æ£ç´¢ä¸æå®æ¡ä»¶å¹éçææCheckpointTupleï¼è¿äºåç»ææäºä¸æ®µ âåå²â ãè¯¥æ¹æ³ä¸»è¦ç¨äºä¼è¯ç®¡çãå®¡è®¡åå²è½¨è¿¹ä»¥åç¶æåæº¯ï¼å®å·æå¦ä¸çåæ°ï¼</p>
-<ul>
-<li>configï¼å¦æRunnableConfigå¦ææä¾äºThread IDï¼è¯¥æ¹æ³å°ä»è¿åè¯¥ç¹å®çº¿ç¨ä¸çCheckpointãå¦æä¸æä¾ï¼å¨æäºå®ç°ä¸­ä¼ååºææçº¿ç¨çææ°Checkpointï¼åå³äºå·ä½çå®ç°é»è¾ï¼ã</li>
-<li>filterï¼æä¾åºäºåæ°æ®çè¿æ»¤åè½ï¼ä¾å¦ {"status": "completedâ} ï¼è¿å¨éè¦ç­éç¹å®ä¸å¡ç¶æçCheckpointæ¶éå¸¸æç¨ã</li>
-<li>beforeï¼ä»¥RunnableConfigå¯¹è±¡çå½¢å¼æä¾Checkpoint IDï¼è¿åå¨æ­¤ ä¹ååå»ºçè®°å½ãè¿å¯¹äºå®ç° âæ¶é´æè¡â åè½è³å³éè¦ï¼åè®¸ä½ æ¥çå¾æ§è¡åå²ä¸­çæ§çæ¬ã</li>
-<li>limitï¼ç¨äºéå¶è¿åæ°æ®çæ°éã</li>
-</ul>
-<p>æä»¬éè¿å¦ä¸çå®ä¾æ¼ç¤ºæ¥è¿ä¸æ­¥äºè§£æä¹åãæä»¬æå»ºäºä¸ä¸ªç±fooãbar1åbar2è¿ä¸ä¸ªNodeç»æçPregelï¼å¯å¨çæ¶åå©ç¨è¾å¥éå¯¹ééfooçåå¥é©±å¨æ§è¡èç¹fooï¼åèå®æååå¥éébaré©±å¨èç¹bar1åbar2å¹¶è¡æ§è¡ãä¸ä¸ªNodeçå¤çå½æ°é½æ¯handleï¼å®ä¼å°ä¼ å¥çNodeåç§°åå¥ä¸ä¸ªBinaryOperatorAggregateç±»åChannelï¼nodesï¼ï¼ç±æ­¤ç¡®å®æåæ§è¡çNodeãå¦æè°ç¨handleå½æ°å°interruptåæ°æå®ä¸ºTrueï¼å®ä¼éè¿æåºä¸ä¸ªGraphInterruptå¼å¸¸æ¨¡æä¸ä¸ªä¸­æ­ãå¨æä»¬çæ¼ç¤ºå®ä¾ä¸­ï¼èç¹fooåbar2ä¼æ§è¡æåï¼ä¸­æ­ä¼åçå¨èç¹bar1ä¸ã</p>
-<pre><code class="language-python">from langgraph.pregel import Pregel, NodeBuilder
-from langgraph.channels import LastValue, BinaryOperatorAggregate
-from langgraph.checkpoint.memory import InMemorySaver
-from langgraph.errors import GraphInterrupt
-import operator, json
-
-def handle(node_name: str, interrupt: bool = False) -&gt; list[str]:
-    if interrupt:
-        raise GraphInterrupt("manual interrupt")
-    return [node_name]
-
-foo = (
-    NodeBuilder()
-    .subscribe_to("foo")
-    .do(lambda _: handle("foo"))
-    .write_to(nodes=lambda x: x, bar=lambda _: "triggered by foo")
-)
-
-bar1 = (
-    NodeBuilder()
-    .subscribe_to("bar")
-    .do(lambda _: handle("bar1", interrupt=True))
-    .write_to("nodes")
-)
-
-bar2 = (
-    NodeBuilder()
-    .subscribe_to("bar")
-    .do(lambda _: handle("bar2", interrupt=False))
-    .write_to("nodes")
-)
-
-app = Pregel(
-    nodes={"foo": foo, "bar1": bar1, "bar2": bar2},
-    channels={
-        "foo": LastValue(str),
-        "bar": LastValue(str),
-        "nodes": BinaryOperatorAggregate(list, operator.add),
-    },
-    checkpointer=InMemorySaver(),
-    input_channels=["foo"],
-    output_channels=["nodes"],
-)
-config = {"configurable": {"thread_id": "123"}}
-result = app.invoke({"foo": "triggered by user"}, config=config)
-assert result["nodes"] == ["foo", "bar2"]
-
-(config, checkpoint, metadata, parent_config, pending_writes) = (
-    app.checkpointer.get_tuple(config)
-)
-print(f"config:\n{json.dumps(config, indent=4)}")
-print(f"checkpoint:\n{json.dumps(checkpoint, indent=4)}")
-print(f"metadata:\n{json.dumps(metadata, indent=4)}")
-print(f"parent_config:\n{json.dumps(parent_config, indent=4)}")
-print(f"pending_writes:\n{json.dumps(pending_writes, indent=4)}")
-</code></pre>
-<p>æä»¬ä¸ºåå»ºçPregelå¯¹è±¡æä¾äºä¸ä¸ªInMemorySaverä½ä¸ºå®çCheckpointerï¼å¹¶å¨è°ç¨æ¶å©ç¨æä¾çRunnableConfigè®¾ç½®äºThread IDãç±äºæä»¬å°éénodesä½ä¸ºè¾åºï¼æä»¥è°ç¨ç»æä¼åæ ä¸ä¸ªNodeçæ§è¡ç¶æï¼åªæèç¹fooåbar2æåæ§è¡ï¼ãæä»¬éåä¼ å¥ç¸åçéç½®è°ç¨Checkpointerçget_tupleæ¹æ³ï¼å¹¶å°å¾å°çCheckpointTupleåç»è¿è¡æåè¾åºã</p>
-<pre><code class="language-json">config:
-{
-    "configurable": {
-        "thread_id": "123",
-        "checkpoint_ns": "",
-        "checkpoint_id": "1f0f5200-24f1-6382-8000-bde4e02ab92b"
-    }
-}
-checkpoint:
-{
-    "v": 4,
-    "ts": "2026-01-19T10:17:07.498064+00:00",
-    "id": "1f0f5200-24f1-6382-8000-bde4e02ab92b",
-    "channel_versions": {
-        "foo": "00000000000000000000000000000001.0.06769883673554666",
-        "nodes": "00000000000000000000000000000002.0.3174924500871408",
-        "bar": "00000000000000000000000000000002.0.3174924500871408"
-    },
-    "versions_seen": {
-        "__input__": {},
-        "foo": {
-            "foo": "00000000000000000000000000000001.0.06769883673554666"
-        }
-    },
-    "updated_channels": [
-        "bar",
-        "nodes"
-    ],
-    "channel_values": {
-        "foo": "triggered by user",
-        "nodes": [
-            "foo"
-        ],
-        "bar": "triggered by foo"
-    }
-}
-metadata:
-{
-    "source": "loop",
-    "step": 0,
-    "parents": {}
-}
-parent_config:
-{
-    "configurable": {
-        "thread_id": "123",
-        "checkpoint_ns": "",
-        "checkpoint_id": "1f0f5200-24ee-671f-bfff-2e9f3ca91778"
-    }
-}
-pending_writes:
-[
-    [
-        "30b17cb1-76f1-3c5a-0d32-33f544fcabdf",
-        "nodes",
-        [
-            "bar2"
-        ]
-    ],
-    [
-        "e126d089-c354-0ac8-bb9e-b12bbe3f20b8",
-        "__interrupt__",
-        "manual interrupt"
-    ]
-]
-</code></pre>
-<p>æ´ä¸ªæ§è¡è¿ç¨æ¶åä¸ä¸ªSuperstepï¼ä¼åå»ºä¸¤ä¸ªCheckpointãç¬¬ä¸ä¸ªCheckpointçåå»ºåçå¨è°ç¨invokeæ¹æ³çæ¶åï¼æ­¤æ¶æä¾çè¾å¥è¢«åå¥Channelï¼é¦æ¹å¾æ§è¡çNodeï¼fooï¼åå¤å°±ç»ªï¼æ­¤æ¶åå»ºçCheckpoint è®°å½äº <code>æ¥æ¶å°äºåå§ä»»å¡ï¼ä½å°æªå¼å§æ§è¡ä»»ä½Node</code> çç¶æãæ­¤æ¶å¯¹åºçSuperstepåºå·ä¸º-1ï¼è¾åºç»æçparent_configé¨åæä¾äºæ­¤CheckpointçIDã</p>
-<p>ç¬¬äºä¸ªCheckpointæ¯ä¸ºåºå·ä¸º0çSuperstepåå»ºçï¼æ­¤æ¶èç¹fooæåæ§è¡ï¼æ§è¡ç»ææç»è¢«è¾å¥ç®æ Channelï¼åå»ºçCheckpointåæ çå°±æ¯çç¶æï¼configé¨åæä¾äºæ­¤CheckpointçIDãä¸é¢çè¾åºè¿æä¾äºè¿ä¸ªCheckpointçæ¶é´æ³ãChannelççæ¬åå¼ãæ¶åNodeçå¯è§Channelï¼fåçæ¬ï¼ä»¥åæ¶åæ´æ°çChannelåè¡¨ã</p>
-<p>ç±äºæåä¸ä¸ªSuperstepï¼åºå·ä¸º1ï¼æ²¡æå®å¨ç»æï¼å®ä»¬ä¼å©ç¨å¯¹åºçPending Writeæ¥æè¿°ãä¸é¢è¾åºçç¬¬ä¸ä¸ªPending Writeè¡¨ç¤ºæåæ§è¡çèç¹baréå¯¹éénodesçåå¥ï¼ç¬¬äºä¸ªéå¯¹ç¹æ®ç³»ç»Channel <code>__interrupt__</code>çåå¥å¾ææ¾å°±æ¯å ä¸ºèç¹bar1çä¸­æ­å¯¼è´ã</p>
-<h2 id="2-è¯»åç¶æå¿«ç§">2. è¯»åç¶æå¿«ç§</h2>
-<p>BaseCheckpointSaveræä¾äºget_tuple/aget_tupleæ¹æ³ä»¥Checkpoint_Tupleçå½¢å¼è¿åææ°æèåºäºè¿å»æ¶é´ç¹çç¶æãå¯¹äºCheckpointTupleè¿ä¸ªäºåç»ï¼é¤äºCheckpointåPendingWriteåè¡¨ï¼è¿åæ¬Checkpointçåæ°æ®åç¸å³éç½®ãè¿ä¸ªåç»ä¸»è¦ç±æ§è¡å¼æåé¨ä½¿ç¨çï¼éå¯¹æç»å¼åèæ¥è¯´å¯è¯»æ§å·®ç¹ï¼æä»¥Pregelç±»å®ä¹äºå¦ä¸æç¤ºç<code>get_state/aget_state</code>æ¹æ³ï¼å®ä»¬æä¾çStateSnapshotç±»åæ´å·å¯è¯»æ§ã</p>
-<pre><code class="language-python">class Pregel(
-    PregelProtocol[StateT, ContextT, InputT, OutputT],
-    Generic[StateT, ContextT, InputT, OutputT]): 
-
-    def get_state(
-        self, config: RunnableConfig, *, subgraphs: bool = False
-    ) -&gt; StateSnapshot
-    async def aget_state(
-        self, config: RunnableConfig, *, subgraphs: bool = False
-    ) -&gt; StateSnapshot
-
-    def get_state_history(
-        self,
-        config: RunnableConfig,
-        *,
-        filter: dict[str, Any] | None = None,
-        before: RunnableConfig | None = None,
-        limit: int | None = None,
-    ) -&gt; Iterator[StateSnapshot]
-    async def aget_state_history(
-        self,
-        config: RunnableConfig,
-        *,
-        filter: dict[str, Any] | None = None,
-        before: RunnableConfig | None = None,
-        limit: int | None = None,
-    ) -&gt; AsyncIterator[StateSnapshot]
-</code></pre>
-<p>å½æä»¬è°ç¨Pregelå¯¹è±¡ç<code>get_state/aget_state</code>æ¹æ³çæ¶åï¼å®ä¼å°æå®çRunnableConfigå¯¹è±¡ä½ä¸ºåæ°è°ç¨Checkpointerç<code>get_tuple/aget_tuple</code>æ¹æ³ï¼å¹¶å©ç¨è¿åçCheckpoint_Tupleåç»çæStateSnapshotå¯¹è±¡ãStateSnapshotç<code>values</code>å­æ®µæä¾çå¼æ¥æºäºCheckpointå¯¹è±¡çchannel_valueså­æ®µï¼å®ç<code>metadata</code>å­æ®µè¡¨ç¤ºçCheckpointMetadata ç´æ¥æ¥æºäºCheckpoint_Tupleçååå­æ®µï¼è<code>config</code>å<code>parent_config</code>è¿åçRunnableConfigåæ¯ç±Checkpoint_Tupleååå­æ®µäºåæ°æ®åå¹¶èæãè¡¨ç¤ºå¿«ç§åå»ºæ¶é´ç<code>created_at</code>å¯¹åºäºCheckpoint_Tupleè¡¨ç¤ºæ¶é´æ³çtså­æ®µï¼èinterruptsè¿åçInterruptåè¡¨æ¯æ ¹æ®ä¸­æ­ç±»åçPendingWriteæå»ºçã</p>
-<pre><code class="language-python">class StateSnapshot(NamedTuple):
-    values: dict[str, Any] | Any
-    next: tuple[str, ...]
-    config: RunnableConfig
-    metadata: CheckpointMetadata | None
-    created_at: str | None
-    parent_config: RunnableConfig | None
-    tasks: tuple[PregelTask, ...]
-    interrupts: tuple[Interrupt, ...]
-
-class PregelTask(NamedTuple):
-    id: str
-    name: str
-    path: tuple[str | int | tuple, ...]
-    error: Exception | None = None
-    interrupts: tuple[Interrupt, ...] = ()
-    state: None | RunnableConfig | StateSnapshot = None
-    result: Any | None = None
-</code></pre>
-<p>StateSnapshotç<code>tasks</code>å­æ®µè¿åä¸ç»PregelTaskå¯¹è±¡ï¼å®ä»¬è¡¨ç¤ºæ ¹æ®Checkpointåå»ºçå¾æ§è¡ä»»å¡ï¼<code>next</code>å­æ®µä»¥åç»çå½¢å¼è¿åè¿äºä»»å¡çNodeåç§°ãå¯¹äºææ°çCheckpointï¼è¥ä¸ä¸ä¸ªSuperstepå°æªå®æï¼PregelTaskçä¿¡æ¯è¿ä¼å©ç¨å¯¹åºçPending Writeè¿ä¸æ­¥å®åãæä»¬å¯ä»¥å©ç¨PregelTaskå¯¹è±¡å¾å°æ¯ä¸ªä»»å¡çIDãNodeåç§°ãæ§è¡è·¯å¾ãæåºçå¼å¸¸åä¸­æ­ï¼æ ¹æ®å¼å¸¸åä¸­æ­ç±»åçPendingWriteåå»ºï¼ï¼è<code>state</code>å<code>result</code>åå«æ¿è½½è¿ä»»å¡çç¶æåè¾åºç»æãå¦ææ´ä¸ªæ§è¡æµç¨ç»æï¼èªç¶å°±æ²¡ææè°åç»­ä»»å¡çè¯´æ³ï¼æ­¤æ¶StateSnapshotçtaskså­æ®µä¸ºç©ºã</p>
-<p>é¤äºè¿åä¸ä¸ªå·ä½çç¶æå¿«ç§ï¼Pregelç±»è¿å®ä¹äº<code>get_state_history/aget_state_history</code>ï¼å®ä»¬çåæ°åè¡¨ä¸BaseCheckpointSaverç<code>list/alist</code>æ¹æ³å®å¨ä¸è´ãå½è¿ä¸¤ä¸ªæ¹æ³è¢«è°ç¨çæ¶åï¼Pregelä¼è°ç¨Checkpointerç<code>list/alist</code>æ¹æ³ï¼å¹¶å°å¾å°Checkpoint_Tupleåç»è½¬æ¢æStateSnapshotå¯¹è±¡ã<code>get_state_history/aget_state_history</code>æ¹æ³è¿åçè¿­ä»£å¨ä»¥æ¶é´éåºçæ¹å¼è¿åå¯¹åºçç¶æå¿«ç§ã</p>
-<p>å¦ä¸è¿ä¸ªç¨åºæ¼ç¤ºäºä¸ä¸ªå·ä½çPregelå¯¹è±¡çåå²ç±åªäºå¿«ç§ç»æï¼æ¯ä¸ªå¿«ç§ååæ å½æ¶çç¶æãæä»¬æå»ºçPregelå¯¹è±¡ç±åä¸ªNodeç»æï¼è°ç¨æ¶æå®ééfooä¼é©±å¨æ§è¡èç¹fooï¼å®æ§è¡ç»æååå¥éébaré©±å¨bar1ãbar2åbar3å¹¶è¡æ§è¡ãé¤äºbar1è½å¤é¡ºå©æ§è¡å¤ï¼æä»¬ä¸ºbar2è®¾ç½®äºä¸ä¸ªä¸­æ­ï¼è®©bar3æåºå¼å¸¸ã</p>
-<pre><code class="language-python">from langgraph.channels import LastValue
-from langgraph.pregel import Pregel, NodeBuilder
-from langgraph.checkpoint.memory import  InMemorySaver
-from langgraph.types import interrupt
-    
-def handle(node_name: str, halt : bool, raise_error: bool) -&gt; None:
-    if halt:
-        _ = interrupt(f"Manually be interrupted at {node_name}")
-    if raise_error:
-        raise Exception(f"Manually raised error at {node_name}")
-
-foo = (NodeBuilder()
-       .subscribe_to("foo", read=False)
-       .do(lambda _: handle("foo", halt=False, raise_error=False))
-       .write_to(bar = lambda _:None))
-bar1 = (NodeBuilder()
-        .subscribe_to("bar", read=False)
-        .do(lambda _: handle("bar1", halt=False, raise_error=False)))
-bar2 = (NodeBuilder()
-        .subscribe_to("bar", read=False)
-        .do(lambda _: handle("bar2", halt=True, raise_error=False)))
-bar3 = (NodeBuilder()
-        .subscribe_to("bar", read=False)
-        .do(lambda _: handle("bar3", halt=False, raise_error=True)))
-app = Pregel(
-    nodes={
-        "foo": foo,
-        "bar1": bar1,
-        "bar2": bar2,
-        "bar3": bar3
-    },
-    channels={
-        "foo": LastValue(str),
-        "bar": LastValue(str),
-    },
-    input_channels=["foo"],
-    output_channels=[],
-    checkpointer= InMemorySaver())
-config = {"configurable": {"thread_id": "123"}}
-
-try:
-    app.invoke(input={"foo": "begin"},config=config)
-except Exception as e:
-    pass
-
-for snapshot in app.get_state_history(config):
-    print(f"""
-values: {snapshot.values}
-next: {snapshot.next}
-interrupts: {snapshot.interrupts}   
-tasks:""")
-    for task in snapshot.tasks:
-        print(f"""  id: {task.id}
-    name: {task.name}
-    path: {task.path}
-    error: {task.error} 
-    interrupts: {task.interrupts}
-    state: {task.state}
-    result: {task.result}""")
-</code></pre>
-<p>å¨å®æäºéå¯¹Pregelå¯¹è±¡çè°ç¨åï¼æä»¬éç¨ç¸åçéç½®è°ç¨å®ç<code>get_state_history</code>æ¹æ³å¾å°å®æ´çåå²ï¼å¹¶å°æ¿è½½åå²çæ®µçStateSnapshotä¿¡æ¯æå°åºæ¥ãæ´ä¸ªè¿ç¨æ¶åä¸ä¸ªSuperstepï¼åä¸¤ä¸ªæåå®æçSuperstepä¼æä¾ä¸¤ä¸ªCheckpointï¼ç¬¬ä¸ä¸ªå°æªå®æçSuperstepåªæä¾éå¯¹ä¸ä¸ªNodeä»»å¡çPending Writeã</p>
-<pre><code class="language-json">values: {'start': 'begin', 'bar': None}
-next: ('bar1', 'bar2', 'bar3')
-interrupts: (Interrupt(value='Manually be interrupted at bar2', 
-    id='26f309d618c42ff31d2b3404369232e4'),)
-tasks:
-  id: dbb24ec5-f1ba-f845-7351-54e88f34db0f
-    name: bar1
-    path: ('__pregel_pull', 'bar1')
-    error: None
-    interrupts: ()
-    state: None
-    result: {}
-  id: 794fffda-2e6c-0685-0d44-3ed6c57ca366
-    name: bar2
-    path: ('__pregel_pull', 'bar2')
-    error: None
-    interrupts: (Interrupt(value='Manually be interrupted at bar2', 
-        id='26f309d618c42ff31d2b3404369232e4'),)
-    state: None
-    result: None
-  id: 1055ec55-49dc-0629-86b5-661a2614f349
-    name: bar3
-    path: ('__pregel_pull', 'bar3')
-    error: Exception('Manually raised error at bar3')
-    interrupts: ()
-    state: None
-    result: None
-
-values: {'start': 'begin'}
-next: ('foo',)
-interrupts: ()
-tasks:
-  id: 88904475-3edc-733a-d84d-98aa6d3f5e80
-    name: foo
-    path: ('__pregel_pull', 'foo')
-    error: None
-    interrupts: ()
-    state: None
-    result: {'bar': None}
-</code></pre>
-<h2 id="3ä»»å¡è·¯å¾">3.ä»»å¡è·¯å¾</h2>
-<p>è¿è®°å¾æä»¬åé¢è¯´ä¸ªä»»å¡çä¸¤ç§åå»ºæ¹å¼ï¼ä¸ç§æ¯ç«å¨Nodeçè§åº¦ï¼éè¿æ¥çè®¢éChannelçæ´æ°ç¶æç¡®å®æ¯å¦åºè¯¥æ§è¡ï¼æä»¬ç§°è¿ç§ä»»å¡åå»ºæ¨¡å¼ä¸º<code>Pullæ¨¡å¼</code>ãä¸ä¹ç¸å¯¹çåæ¯<code>Pushæ¨¡å¼</code>ï¼Nodeå©ç¨åå¥<code>__pregel_tasks</code>è¿ä¸ªç¹æ®ChannelçSendå¯¹è±¡å³å®åç»­æ§è¡çNodeï¼æ§è¡å¼æä¼ä»æ­¤Channelè¯»åSendå¯¹è±¡çæ¥åå»ºå¯¹åºçä»»å¡ãä»»å¡è·¯å¾çç¬¬ä¸é¨åéå¸¸å°±åæ äºä»»å¡çé©±å¨æ¨¡å¼ï¼å¯¹åºçå¼ä¸º<code>__pregel_pull</code>å<code>__pregel_push</code>ã</p>
-<p>ç±äºåé¢æ¼ç¤ºçé½æ¯åºäºChannelè®¢éé©±å¨çä»»å¡ï¼æä»¥è·¯å¾éç¨(â__pregel_pullâ,{node})çå½¢å¼ãå¦ä¸çç¨åºæ¼ç¤ºâPushä»»å¡âçè·¯å¾ï¼æä»¬æå»ºçPregelç±åä¸ªNodeï¼fooãbar1ãbar2åbar3ï¼ç»æï¼èç¹fooçå¤çå½æ°æç»ä¼çæä¸ä¸ªéå¯¹å¶ä»NodeçSendå¯¹è±¡ï¼å¹¶åå¥â__pregel_tasksâChannelä»¥é©±å¨å®ä»¬å¹¶è¡æ§è¡ã</p>
-<pre><code class="language-python">from langgraph.pregel import Pregel, NodeBuilder
-from langgraph.channels import LastValue
-from langgraph.pregel._read import PregelNode
-from langgraph.pregel._write import ChannelWrite, ChannelWriteTupleEntry
-from langgraph.types import Send
-from langgraph.checkpoint.memory import InMemorySaver
-
-entry = ChannelWriteTupleEntry(lambda args: [("__pregel_tasks", args)])
-writer = ChannelWrite(writes=[entry])
-foo: PregelNode = (
-    NodeBuilder()
-    .subscribe_to("foo")
-    .do(lambda _: [Send(node=node, arg="foo") for node in ["bar1", "bar2", "bar3"]])
-).build()
-foo.writers.append(writer)
-
-bars = {name: NodeBuilder() for name in ["bar1", "bar2", "bar3"]}
-
-app = Pregel(
-    nodes={"foo": foo, **bars},
-    channels={
-        "foo": LastValue(None),
-    },
-    input_channels=["foo"],
-    output_channels=[],
-    checkpointer=InMemorySaver(),
-)
-
-config = {"configurable": {"thread_id": "123"}}
-result = app.invoke(input={"foo": None}, config=config, interrupt_before="bar2")
-snapshot = app.get_state(config)
-for task in snapshot.tasks:
-    print(f"{task.name}:{task.path}")
-</code></pre>
-<p>ä¸ºäºè½çå°ä¸ä¸ªä»»å¡ï¼æä»¬å¨å¨æåä¸ä¸ªSuperstepä¸­äº§çä¸ä¸ªä¸­æ­ï¼ä¸ºæ­¤æä»¬å¨è°ç¨çæ¶åéè¿æå®<code>interrupt_before</code>åæ°å¨æ§è¡èç¹bar2åä¸­æ­ãæä»¬éåè°ç¨Pregelçget_stateæ¹æ³å¾å°æè¿°æç»ç¶æçStateSnapshotï¼å¹¶è¾åºææä»»å¡çæ§è¡è·¯å¾ãä»å¦ä¸çè¾åºå¯ä»¥çåºï¼ç±äºæ¯ä¸ä¸ªåºäºPushæ¨¡å¼çä»»å¡ï¼æä»¥ç»æè·¯å¾çç¬¬ä¸ä¸ªé¨ååå®¹ä¸º <code>__pregel_push</code> ãæ¯ä¸ªä»»å¡ç± <code>__pregel_tasks</code> ChannelçSendå¯¹è±¡æå»ºèæï¼ç¬¬äºé¨åçæ°ç»ä»£è¡¨å¯¹åºçSendå¯¹è±¡å¨Channelä¸­çç´¢å¼ãç±äºæ´ä¸ªç¨åºåªæå¯ä¸çPregelå¯¹è±¡ï¼ä¸è®¾ç½®å­å¾è°ç¨ï¼æä»¥ç¬¬ä¸é¨åè¿åFalseã</p>
-<pre><code>bar1:('__pregel_push', 0, False)
-bar2:('__pregel_push', 1, False)
-bar3:('__pregel_push', 2, False)
-</code></pre>
-<h2 id="4ç¶æåµå¥">4.ç¶æåµå¥</h2>
-<p>è¿éæä»¬æå¿è¦æä¸ä¸PregelTaskç±»ç<code>state</code>å­æ®µãä»ç»åºçå®ä¹å¯ä»¥çåºï¼å®å¯ä»¥è¿åä¸ä¸ªRunnableConfigéç½®ï¼ä¹å¯ä»¥è¿åä¸ä¸ªStateSnapshotå¯¹è±¡ãå¦æä»»å¡æ¶åå­å¾çè°ç¨ï¼å¹¶ä¸å¨è°ç¨get_state/aget_stateæ¹æ³æ¶å°subgraphsåæ°è®¾ç½®ä¸ºTrueï¼å®çstateå­æ®µå°±ä¼è¿åä¸ä¸ªæè¿°å­å¾å½åç¶æç<code>StateSnapshot</code>å¯¹è±¡ãåå©äºåæ æ§è¡é¾è·¯åè°ç¨é¡ºåºçCheckpointå½åç©ºé´ï¼å°±å¯ä»¥å½¢æçåµå¥å±æ¬¡ç»æï¼state =&gt;task=&gt;stateï¼ä½¿æä»¬å¯ä»¥å¯ä»¥çå°ä¸ä¸ªä»»å¡å®æ´çè°ç¨é¾æ¡ã</p>
-<p><img alt="Alternative Text" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3765958/202602/3765958-20260219075836401-630441833.png" class="lazyload"></p>
-<p>ä»¥å¦ä¸è¿ä¸ªéªè¯ç¨åºä¸ºä¾ãæä»¬æå»ºäºä¸¤ä¸ªå·æåä¸NodeçPregelå¯¹è±¡appåsub_graphï¼åèçèç¹main_nodeä»¥å­å¾è°ç¨çæ¹å¼è°ç¨sub_graphï¼åèçNodeå½åä¸º âsub_nodeâãä¸ºäºå¨StateSnapshotä¸­å°ä»»å¡ä¿çä¸æ¥ï¼æä»¬å¨ä¸¤ä¸ªNodeä¸­å¼å¥äºä¸­æ­ã</p>
-<pre><code class="language-python">from langgraph.pregel import Pregel, NodeBuilder
-from langgraph.channels import LastValue
-from langgraph.checkpoint.memory import InMemorySaver
-from langgraph.types import interrupt
-from typing import Any
-from langgraph.types import StateSnapshot
-
-sub_node = (NodeBuilder()
-    .subscribe_to("start")
-    .do(lambda _: interrupt("manual interrupt"))
-)
-sub_graph = Pregel(
-    nodes={"sub_node": sub_node},
-    channels={"start": LastValue(str)},
-    input_channels=["start"],
-    output_channels=[],
-)
-
-def handle(args: dict[str, Any]) -&gt; None:
-    sub_graph.invoke(input={"start": "begin"})
-    interrupt("main graph interrupt")
-
-main_node = NodeBuilder().subscribe_to("start").do(handle)
-app = Pregel(
-    nodes={"main_node": main_node},
-    channels={"start": LastValue(str)},
-    input_channels=["start"],
-    output_channels=[],
-    checkpointer=InMemorySaver())
-
-config = {"configurable": {"thread_id": "123"}}
-app.invoke(input={"start": "begin"}, config=config)
-snapshot = app.get_state(config, subgraphs=True)
-
-indent = -1
-def print_snapshot(snapshot: StateSnapshot) -&gt; None:
-    global indent
-    indent += 1
-    config = snapshot.config["configurable"]
-    print(f"{'  ' * indent}checkpoint_ns: {config.get('checkpoint_ns', None)}")
-    for task in snapshot.tasks:
-        print(f"{'  ' * indent}task: {task.name}:{task.id}")
-        if sub_snapshot := task.state:
-            print_snapshot(sub_snapshot)
-
-print_snapshot(snapshot)
-</code></pre>
-<p>å¨å®æè°ç¨åï¼æä»¬è°ç¨ä½ä¸ºä¸»å¾çPregelå¯¹è±¡ç<code>get_state</code>æ¹æ³ï¼å¹¶å°åæ°subgraphsè®¾ç½®ä¸ºTrueãæä»¬è°ç¨print_snapshotå½æ°è¾åºStateSnapshotæä¾çCheckpointå½åç©ºé´åä»»å¡çåç§°ä¸IDãå¦ææè¿°ä»»å¡çPregelTaskå¯¹è±¡çstateå­æ®µä¹æ¯ä¸ä¸ªStateSnapshotå¯¹è±¡ï¼é£ä¹ç»§ç»­éå½è°ç¨æ­¤å½æ°ãä»å¦ä¸çè¾åºå¯ä»¥çåºï¼ä½ä¸ºå­å¾çPregelå°å½åä»»å¡çåç§°åIDçç»åä½ä¸ºCheckpointå½åç©ºé´ï¼è¿æ ·çç»æç¡®ä¿äº âä¸»å¾â æ¢å¤çæ¶åè½å¤ç²¾åå°å è½½ âå­å¾â çç¶æã</p>
-<pre><code>checkpoint_ns: 
-task: main_node:9f7c900b-0d56-927c-17fb-5d519cc85678
-    checkpoint_ns: main_node:9f7c900b-0d56-927c-17fb-5d519cc85678
-    task: sub_node:a483bfb8-bcc6-92b3-2f64-9f9e9f4fe158
-</code></pre>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-02-19 07:59">2026-02-19 07:58</span>&nbsp;
-<a href="https://www.cnblogs.com/jaydenai">JaydenAI</a>&nbsp;
-éè¯»(<span id="post_view_count">30</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19623976);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19623976', targetLink: 'https://www.cnblogs.com/jaydenai/p/19623976/read-state', title: '[æè§£LangChainæ§è¡å¼æ]æä¹åç¶æçæå' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
