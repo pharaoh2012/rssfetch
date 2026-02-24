@@ -3,12 +3,1963 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-02-24T08:41:29.723Z</lastBuildDate>
+        <lastBuildDate>2026-02-24T13:15:29.594Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
+    <title><![CDATA[ ä¸æå­¦ä¹  Spring AOP æºç å¨è¿ç¨ ]]></title>
+    <link>https://www.cnblogs.com/dddy/p/19634953</link>
+    <guid>11a8539a2b034d53e6c9ca3b622aec33</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/dddy/p/19634953" title="åå¸äº 2026-02-24 19:13">
+    <span role="heading" aria-level="2">ä¸æå­¦ä¹  Spring AOP æºç å¨è¿ç¨</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h1 id="spring-aop-åé¶æ®µçæµç¨å¾">Spring AOP åé¶æ®µçæµç¨å¾</h1>
+<p>ç®èè¨ä¹, å¯ä»¥åä¸ºä¸æ­¥èµ°<br>
+ä¸æ¯ spring å¦ä½è§£æéç½®, å¦ä½å°è£å³äºAOPæ¦å¿µéç½®å¯¹è±¡ç?<br>
+äºæ¯ spring å¦ä½æ ¹æ®éç½®å¯¹è±¡åå»ºä»£çå¯¹è±¡?<br>
+ä¸æ¯ è°ç¨ä»£çå¯¹è±¡æ¹æ³çè¿ç¨, spring æ¯å¦ä½æ¦æªç?</p>
+<h2 id="ä¸aop-ç¸å³éç½®-çè§£æè¿ç¨-xml">ä¸ãAOP ç¸å³éç½® çè§£æè¿ç¨ (XML)</h2>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3723410/202602/3723410-20260224190954232-1382162872.png" class="lazyload"></p>
+<p><a href="https://img2024.cnblogs.com/blog/3723410/202602/3723410-20260224190954232-1382162872.png" target="_blank">https://img2024.cnblogs.com/blog/3723410/202602/3723410-20260224190954232-1382162872.png</a></p>
+<h3 id="aopéç½®å¥å£ç¹-xml">AOPéç½®å¥å£ç¹ (XML)</h3>
+<p>å¨XMLä¸­éç½® <code>&lt;aop: ../&gt; </code>å¯ç¨Aopæ ç­¾, å¨è§£æXMLèªå®ä¹æ ç­¾æ¶, ä¼æ¿å°&nbsp; AopNamespaceHandler å½åç©ºé´å¤çå¨:</p>
+<pre><code class="language-java">public class AopNamespaceHandler extends NamespaceHandlerSupport {
+	@Override
+	public void init() {
+		// In 2.0 XSD as well as in 2.5+ XSDs
+		registerBeanDefinitionParser("config", new ConfigBeanDefinitionParser());
+		registerBeanDefinitionParser("aspectj-autoproxy", new AspectJAutoProxyBeanDefinitionParser());
+		registerBeanDefinitionDecorator("scoped-proxy", new ScopedProxyBeanDefinitionDecorator());
+
+		// Only in 2.0 XSD: moved to context namespace in 2.5+
+		registerBeanDefinitionParser("spring-configured", new SpringConfiguredBeanDefinitionParser());
+	}
+
+</code></pre>
+<p>å¶åé¨çæ³¨åç <code>ConfigBeanDefinitionParser</code> åäºä¸¤ä»¶äº</p>
+<ol>
+<li>æ³¨åä¸ä¸ªåç§°ä¸º<code>org.springframework.aop.config.internalAutoProxyCreator</code> çBean Definition(å¯¹AOPå¤ç);<br>
+å¯¹åºçç±», æ ¹æ®æåµæä»¥ä¸ä¸ä¸ªå¯è½: org.springframework.aop.config.AopConfigUtils#APC_PRIORITY_LIST, ç³»ç»ä¼æä¼åçº§æ³¨åä»¥ä¸ä¸ä¸ªèªå¨ä»£çåå»ºå¨ä¹ä¸ï¼
+<ol>
+<li>AnnotationAwareAspectJAutoProxyCreator (æé«ä¼åçº§)</li>
+</ol>
+<ul>
+<li>å½é¡¹ç®ä¸­å­å¨AspectJä¾èµæ¶å¯ç¨</li>
+<li>æ¯æ@Aspectæ³¨è§£çåé¢ã@Beforeã@Afterç­éç¥æ³¨è§£</li>
+<li>ç»§æ¿èª AspectJAwareAdvisorAutoProxyCreator</li>
+<li>è½å¤è¯å«å¹¶å¤çåºäºæ³¨è§£çåé¢å®ä¹</li>
+</ul>
+<ol start="2">
+<li>AspectJAwareAdvisorAutoProxyCreator (ç¬¬äºä¼åçº§)</li>
+</ol>
+<ul>
+<li>å½é¡¹ç®ä¸­å­å¨AspectJä¾èµä½ä¸éè¦æ³¨è§£æ¯ææ¶å¯ç¨</li>
+<li>ä¸»è¦å¤çXMLéç½®çåé¢å®ä¹</li>
+<li>ç»§æ¿èª InfrastructureAdvisorAutoProxyCreator</li>
+<li>æä¾å¯¹AspectJåç¹è¡¨è¾¾å¼çè§£æè½å</li>
+</ul>
+<ol start="3">
+<li>InfrastructureAdvisorAutoProxyCreator (æä½ä¼åçº§)</li>
+</ol>
+<ul>
+<li>å½é¡¹ç®ä¸­ä¸å­å¨AspectJä¾èµæ¶å¯ç¨</li>
+<li>åªå¤çåºç¡çadvisorï¼ä¸æ¯æåé¢ç¼ç¨</li>
+<li>æ¯æåºç¡çèªå¨ä»£çåå»ºå¨</li>
+<li>éç¨äºç®åçæ¦æªå¨åºæ¯<br>
+æ³¨åè¿ç¨éè¿AopConfigUtils.registerAutoProxyCreatorIfNecessaryæ¹æ³å®ç°ï¼è¯¥æ¹æ³ä¼æ ¹æ®classpathä¸­æ¯å¦å­å¨AspectJç¸å³ç±»æ¥å³å®æ³¨ååªä¸ªå·ä½çå®ç°ç±»ã</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>è¿éå¯¹åºçæ¯ AspectJAwareAdvisorAutoProxyCreator</p>
+</blockquote>
+<ol start="2">
+<li>è§£æ <a target="_blank">aop:config</a> æ ç­¾çå­åç´  (pointcut, advisor, aspect)</li>
+</ol>
+<p>æ¯ä¸ä¸ªéç¥(Advice) é½ä¼å°è£ä¸ºä¸ä¸ª <code>AspectJPointcutAdvisor</code> çBeanDefinition å°å¶æ³¨åå° BeanFactory<br>
+<code>org.springframework.aop.config.ConfigBeanDefinitionParser#parse(org.w3c.dom.Element, org.springframework.beans.factory.xml.ParserContext)</code></p>
+<pre><code class="language-java">@Override
+	@Nullable
+	public BeanDefinition parse(Element element, ParserContext parserContext) {
+		CompositeComponentDefinition compositeDef =
+				new CompositeComponentDefinition(element.getTagName(), parserContext.extractSource(element));
+		parserContext.pushContainingComponent(compositeDef);
+
+		/**
+		 * 1. æ³¨åä¸ä¸ªåç§°ä¸º`org.springframework.aop.config.internalAutoProxyCreator` å¯¹AOPå¤ççBean Definition; å®æ¯å®ç° InstantiationAwareBeanPostProcessor æ¥å£ç
+		 * åç§°æ¯: org.springframework.aop.config.internalAutoProxyCreator
+		 * å¯¹åºçç±», æ ¹æ®æåµæä»¥ä¸ä¸ä¸ªå¯è½: org.springframework.aop.config.AopConfigUtils#APC_PRIORITY_LIST
+		 *	    InfrastructureAdvisorAutoProxyCreator.class
+		 * 		AspectJAwareAdvisorAutoProxyCreator.class
+		 * 		AnnotationAwareAspectJAutoProxyCreator.class
+		 *
+		 */
+		configureAutoProxyCreator(parserContext, element);
+
+		/**
+		* 2. è§£æ &lt;aop:config&gt; æ ç­¾çå­åç´  (pointcut, advisor, aspect)
+		* è§£æ &lt;aspect ...&gt;:  
+		* æ¯ä¸ä¸ªéç¥(Advice) é½ä¼å°è£ä¸ºä¸ä¸ª AspectJPointcutAdvisor çBeanDefinition ç¶åå°å¶æ³¨åå° BeanFactory  
+		*  
+		*  AspectJPointcutAdvisor çåå«æåµ  
+		*   AspectJPointcutAdvisor åæ¬: AspectJXXXAdvice(æäºç§éç¥)  
+		*   è AspectJXXXAdvice ååæ¬: ä¸ä¸ªå³é®å±æ§  
+		*  1. java.lang.reflect.Method(éç¥åé¢çæ¹æ³)  
+		*  2. org.springframework.aop.aspectj.AspectJExpressionPointcut(åå¥ç¹è¡¨è¾¾å¼)  
+		*  3. org.springframework.aop.aspectj.AspectInstanceFactory (åé¢å®ä¾å·¥å)
+		 */
+		List&lt;Element&gt; childElts = DomUtils.getChildElements(element);
+		for (Element elt: childElts) {
+			String localName = parserContext.getDelegate().getLocalName(elt);
+			switch (localName) {
+				/**
+				 * è§£æ pointcut/åå¥ç¹  //ç­éè¿æ¥ç¹, å³: åªäºæ¹æ³éè¦è¢«ä»£ç
+				 */
+				case POINTCUT -&gt; parsePointcut(elt, parserContext);
+				/**
+				 *  è§£æ advisor/éç¥/å»ºè®®/å¢å¼ºå¤ç  //å³: å¢å¼ºåè½è¿ä¸é¨åä»£ç 
+				 */
+				case ADVISOR -&gt; parseAdvisor(elt, parserContext);
+				/**
+				 *  è§£æ aspect/åé¢ //åé¢æ¯**éç¥(åæ¥å¿)** å**åå¥ç¹(è¦è¢«ä»£ççæ¹æ³)**  çç»å,  å³:**ä¿®æ¹åçæ´ä¸ªæ¹æ³, (ææ­£å¸¸éè¦è°ç¨çä»£ç ,åæåæ¥å¿ç)**
+				 *
+				 */
+				case ASPECT -&gt; parseAspect(elt, parserContext);
+			}
+		}
+
+		parserContext.popAndRegisterContainingComponent();
+		return null;
+	}
+
+</code></pre>
+<h2 id="äºaop-ä»£çå¯¹è±¡-çåå»ºè¿ç¨">äºãAOP ä»£çå¯¹è±¡ çåå»ºè¿ç¨</h2>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3723410/202602/3723410-20260224191037862-476999408.png" class="lazyload"></p>
+<p><a href="https://img2024.cnblogs.com/blog/3723410/202602/3723410-20260224191037862-476999408.png" target="_blank">https://img2024.cnblogs.com/blog/3723410/202602/3723410-20260224191037862-476999408.png</a></p>
+<h3 id="aop-å¤çå¥å£ç¹-bpp">AOP å¤çå¥å£ç¹ (BPP)</h3>
+<p>ApplicationContext&nbsp;å¨å®¹å¨åå»ºbeanæµç¨ä¸­ <code>{@link org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#createBean(java.lang.String, RootBeanDefinition, Object[])} </code>&nbsp;ä¼è°ç¨æ¥å£æ¹æ³</p>
+<p><code>InstantiationAwareBeanPostProcessor#postProcessBeforeInstantiation</code><br>
+å¦æå¶è¯¥è¿åä¸ä¸ºnull, åç´æ¥ä½¿ç¨è¿ä¸ªbeanå®ä¾è¿å, ä¸èµ°æ­£å¸¸å®ä¾beanæµç¨.<br>
+<code>org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#resolveBeforeInstantiation(java.lang.String, org.springframework.beans.factory.support.RootBeanDefinition)</code></p>
+<pre><code class="language-java">protected Object resolveBeforeInstantiation(String beanName, RootBeanDefinition mbd) {
+		Object bean = null;
+		if (!Boolean.FALSE.equals(mbd.beforeInstantiationResolved)) {
+			// å¦ææ¯åæç(mbdæ¯AOPçæ¶åä¸ºtrue) å¹¶ä¸å®ç° InstantiationAwareBeanPostProcessor æ¥å£
+			if (!mbd.isSynthetic() &amp;&amp; hasInstantiationAwareBeanPostProcessors()) {
+				Class&lt;?&gt; targetType = determineTargetType(beanName, mbd);
+				if (targetType != null) {
+					/**
+					 * è°ç¨ InstantiationAwareBeanPostProcessor
+					 * #postProcessBeforeInstantiation
+					 * #postProcessAfterInitialization
+					 */
+					bean = applyBeanPostProcessorsBeforeInstantiation(targetType, beanName);
+					if (bean != null) {
+						bean = applyBeanPostProcessorsAfterInitialization(bean, beanName);
+					}
+				}
+			}
+			mbd.beforeInstantiationResolved = (bean != null);
+		}
+		return bean;
+	}
+</code></pre>
+<h3 id="aspectjawareadvisorautoproxycreator-åå»ºä»£çå¯¹è±¡">AspectJAwareAdvisorAutoProxyCreator åå»ºä»£çå¯¹è±¡</h3>
+<p><code>org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator#wrapIfNecessary</code></p>
+<pre><code class="language-java">/**
+	 * Wrap the given bean if necessary, i.e. if it is eligible for being proxied.
+	 * @param bean the raw bean instance
+	 * @param beanName the name of the bean
+	 * @param cacheKey the cache key for metadata access
+	 * @return a proxy wrapping the bean, or the raw bean instance as-is
+	 */
+	protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {
+		if (StringUtils.hasLength(beanName) &amp;&amp; this.targetSourcedBeans.contains(beanName)) {
+			return bean;
+		}
+		if (Boolean.FALSE.equals(this.advisedBeans.get(cacheKey))) {
+			return bean;
+		}
+		if (isInfrastructureClass(bean.getClass()) || shouldSkip(bean.getClass(), beanName)) {
+			this.advisedBeans.put(cacheKey, Boolean.FALSE);
+			return bean;
+		}
+		/**
+		 * æ¿å°ææå¹éç»å¥å½åbeanç ææéç¥å¨(Advisor)
+		 * åäºä¸ä»¶äº, è§: {@link org.springframework.aop.framework.autoproxy.AbstractAdvisorAutoProxyCreator#getAdvicesAndAdvisorsForBean(java.lang.Class, java.lang.String, org.springframework.aop.TargetSource)}
+		 * 1. å¾è¿å `AspectJXXXAdvice`åè¡¨æ°ç»`0`ç´¢å¼ æå¥ä¸ä¸ª{@link org.springframework.aop.interceptor.ExposeInvocationInterceptor} å®ä¾
+		 * æ¹ä¾¿ä¼ éåæ°ç¨ç
+		 *
+		 * 2. æä¹å¹é(Advisor)?
+		 * Advisorä¸­ç `AspectJExpressionPointcut` æ¯å®ç° {@link ClassFilter} å {@link org.springframework.aop.MethodMatcher} æ¥å£
+		 * ä¸ä¸ªè¿è¡ç±»å¹é, ä¸ä¸ªè¿è¡æ¹æ³å¹é.
+		 *
+		 * 3.  æåº, åºäº `æåæ ç¯` å¾è¿è¡æåº; å¯è½å¹éå°å¤ä¸ªåé¢(aspect)
+		 *
+		 */
+		// Create proxy if we have advice.
+		Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
+		if (specificInterceptors != DO_NOT_PROXY) {
+			/**
+			 *{@link org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator#advisedBeans}
+			 * è¿ä¸ªåéç¼å­ææå¤çè¿ç beanåç§°, value ä¸º booleanå¼, å¦æä¸ºfalse åä¸å¤ç
+			 */
+			this.advisedBeans.put(cacheKey, Boolean.TRUE);//ç¼å­, è¡¨ç¤ºå·²å¤ç
+			/**
+			 * åå»ºä»£ç
+			 *
+			 */
+			Object proxy = createProxy(
+					bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));
+			this.proxyTypes.put(cacheKey, proxy.getClass());
+			return proxy;
+		}
+
+		this.advisedBeans.put(cacheKey, Boolean.FALSE);
+		return bean;
+	}
+</code></pre>
+<p><code>org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator#buildProxy</code></p>
+<pre><code class="language-java">private Object buildProxy(Class&lt;?&gt; beanClass, @Nullable String beanName,
+			@Nullable Object[] specificInterceptors, TargetSource targetSource, boolean classOnly) {
+
+		if (this.beanFactory instanceof ConfigurableListableBeanFactory clbf) {
+			AutoProxyUtils.exposeTargetClass(clbf, beanName, beanClass);
+		}
+		/**
+		 *
+		 * 1. åå»º ä»£çå·¥å
+		 * {@link org.springframework.aop.framework.ProxyFactory}
+		 */
+		ProxyFactory proxyFactory = new ProxyFactory();
+		proxyFactory.copyFrom(this);
+
+		if (proxyFactory.isProxyTargetClass()) {
+			// Explicit handling of JDK proxy targets and lambdas (for introduction advice scenarios)
+			if (Proxy.isProxyClass(beanClass) || ClassUtils.isLambdaClass(beanClass)) {
+				// Must allow for introductions; can't just set interfaces to the proxy's interfaces only.
+				for (Class&lt;?&gt; ifc : beanClass.getInterfaces()) {
+					proxyFactory.addInterface(ifc);
+				}
+			}
+		}
+		else {
+			// No proxyTargetClass flag enforced, let's apply our default checks...
+			if (shouldProxyTargetClass(beanClass, beanName)) {
+				proxyFactory.setProxyTargetClass(true);
+			}
+			else {
+				// å°è¯è·åæææ¥å£
+				evaluateProxyInterfaces(beanClass, proxyFactory);
+			}
+		}
+		/**
+		 * ææå¹éç Advisor
+		 */
+		Advisor[] advisors = buildAdvisors(beanName, specificInterceptors);
+		proxyFactory.addAdvisors(advisors);
+		/**
+		 * è¢«ä»£ççå¯¹è±¡
+		 */
+		proxyFactory.setTargetSource(targetSource);
+		/**
+		 * 2.å®å¶å ProxyFactory (é¢çæ©å±ç)
+		 */
+		customizeProxyFactory(proxyFactory);
+
+		proxyFactory.setFrozen(this.freezeProxy);
+		if (advisorsPreFiltered()) {
+			proxyFactory.setPreFiltered(true);
+		}
+
+		// Use original ClassLoader if bean class not locally loaded in overriding class loader
+		ClassLoader classLoader = getProxyClassLoader();
+		if (classLoader instanceof SmartClassLoader smartClassLoader &amp;&amp; classLoader != beanClass.getClassLoader()) {
+			classLoader = smartClassLoader.getOriginalClassLoader();
+		}
+		/**
+		 * 3.æ ¹æ® classOnly å³å®è¿åçæ¯: ä»£çå¯¹è±¡çclass, è¿æ¯ ä»£çå¯¹è±¡çå®ä¾
+		 */
+		return (classOnly ? proxyFactory.getProxyClass(classLoader) : proxyFactory.getProxy(classLoader));
+	}
+</code></pre>
+<h3 id="aop-çä¸¤ç§ç»å¥åç">AOP çä¸¤ç§ç»å¥åç</h3>
+<h4 id="1éæaop-aspectj">1.éæAOP (AspectJ)</h4>
+<p>éæAOPï¼å¨ç¼è¯æï¼åé¢ç´æ¥ä»¥å­èç çå½¢å¼ç¼è¯å°ç®æ å­èç æä»¶ä¸­ã<br>
+AspectJ å±äºéæAOPï¼æ¯å¨ç¼è¯æ¶è¿è¡å¢å¼ºï¼ä¼å¨ç¼è¯çæ¶åå°AOPé»è¾ç»å¥å°ä»£ç ä¸­ï¼éè¦ä¸æçç¼è¯å¨åç»å¥å¨ã</p>
+<p>ä¼ç¹ï¼è¢«ç»å¥çç±»æ§è½ä¸åå½±åã<br>
+ç¼ºç¹ï¼ä¸å¤çµæ´»</p>
+<p><strong>javassist</strong><br>
+[[Java å­èç æä»¤]]</p>
+<h4 id="2å¨æaop">2.å¨æAOP</h4>
+<h5 id="jdk-å¨æä»£ç"><strong>JDK å¨æä»£ç</strong></h5>
+<p>[[10.ç»æå - ä»£çæ¨¡å¼ (Proxy Pattern)]]</p>
+<p>å¨æ­£å¸¸å¼åä¸­, åºäº ä¾èµåç½®ååï¼Dependence Inversion Principleï¼, éå¸¸éè¦æ¥å£è§£å³ ä¸å±ä¸ç±»çè¦åé®é¢;<br>
+å³Aç±»è°ç¨Bç±», ä¸ºäºè§£å³Aä¾èµä¸B, æ½åBåæCæ¥å£. åæAä¾èµä»¥Cæ¥å£;</p>
+<p>å¨è¿è¡æï¼ç®æ ç±»å è½½åï¼ä¸ºæ¥å£å¨æçæä»£çç±»ï¼å°åé¢æ¤å¥å°ä»£çç±»ä¸­ã<br>
+Javaä»1.3å¼å¥å¨æä»£çãå®ç°åçæ¯ä¸ºè¢«ä»£ççä¸å¡æ¥å£çæä»£çç±»ï¼å°AOPé»è¾åå¥å°ä»£çç±»ä¸­ï¼å¨è¿è¡æ¶å¨æç»å¥AOPï¼ä½¿ç¨åå°æ§è¡ç»å¥çé»è¾ã&nbsp;<br>
+ä¸»è¦å®ç°æ¹å¼ä¾èµ java.lang.reflect åä¸çInvocationHandleråProxyç±»ã</p>
+<p>ä¼ç¹ï¼Javaæ ååºåçæ¯æï¼ä½¿ç¨ç®åï¼æ éå¼ç¨é¢å¤çåãç¸å¯¹äºéæAOPæ´çµæ´»ã<br>
+ç¼ºç¹ï¼å¸¦ä»£ççç±»å¿é¡»æ¯æ¥å£ï¼çµæ´»æ§åå°ä¸äºéå¶ï¼ä½¿ç¨åå°ä¼å½±åä¸äºæ§è½ã</p>
+<p><strong>JDK å¨æä»£çå¿é¡»éè¦æ¥å£, å®çåçæ¯å¨æççæclass, ç±»ä¼¼å®ç°åå§ç±»çæ¥å£</strong></p>
+<pre><code class="language-java">/**
+ * JDK å¨æä»£çå®ç°
+ */
+public static final void JDK_PROXY(){
+	/**
+	 * ç®æ ç±»
+	 */
+	ProductServiceInter carService  = new CarService();
+	// æ¦æªåè°å¤çå¨
+	InvocationHandler handler = new InvocationHandler() {
+		@Override
+		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+			Object result ;
+			System.out.println("å¢å¼ºå¤ç å");
+			//è°ç¨æ¹æ³
+			result = method.invoke(carService, args);
+			System.out.println("å¢å¼ºå¤ç å");
+			return result;
+		}
+	};
+	ProductServiceInter proxyInstance = (ProductServiceInter) Proxy.newProxyInstance(CarService.class.getClassLoader()
+			, CarService.class.getInterfaces(), handler);
+	proxyInstance.doProduct("ç½è²");
+
+}
+</code></pre>
+<h5 id="cglib-å¨æä»£ç">CGLIB å¨æä»£ç</h5>
+<p>CGLIB(Code Generation Library)æ¯ä¸ä¸ªå¼æºé¡¹ç®,æ¯ä¸ä¸ªå¼ºå¤§ç, é«æ§è½, é«è´¨éçCodeçæç±»åº, å®å¯ä»¥å¨è¿è¡ææ©å±Javaç±»ä¸å®ç°Javaæ¥å£, å¶å®å°±æ¯<strong>cglibå¯ä»¥å¨è¿è¡æ¶å¨æçæå­èç </strong>;</p>
+<p>ä½¿ç¨CGLibå®ç°å¨æä»£ç, å®å¨ä¸åä»£çç±»å¿é¡»å®ç°æ¥å£çéå¶, èä¸CGLibåºå±éç¨ASMå­èç çææ¡æ¶, ä½¿ç¨å­èç ææ¯çæä»£çç±», æ¯ä½¿ç¨Javaåå°æçè¦é«; å¯ä¸éè¦æ³¨æçæ¯, CGLibä¸è½å¯¹å£°æä¸ºfinalçæ¹æ³è¿è¡ä»£ç, å ä¸º<strong>CGLibåçæ¯å¨æçæè¢«ä»£çç±»çå­ç±»;</strong></p>
+<p><strong>å®çåçæ¯: å¨æçåå»ºä¸ä»½class(ä»£çç±») ç»§æ¿/å®ç°è¢«ä»£çç ç±»/æ¥å£</strong></p>
+<ul>
+<li>
+<p><code>net.sf.cglib.proxy.Enhancer</code> â ä¸»è¦çå¢å¼ºç±»</p>
+</li>
+<li>
+<p><code>net.sf.cglib.proxy.MethodInterceptor</code> â ä¸»è¦çæ¹æ³æ¦æªç±»<br>
+å®æ¯Callbackæ¥å£çå­æ¥å£, éè¦ç¨æ·å®ç°</p>
+</li>
+<li>
+<p><code>net.sf.cglib.proxy.MethodProxy</code>JDKç<code>java.lang.reflect.Method</code>ç±»çä»£çç±»<br>
+å¯ä»¥æ¹ä¾¿çå®ç°å¯¹æºå¯¹è±¡æ¹æ³çè°ç¨,å¦ä½¿ç¨: <code>Object o = methodProxy.invokeSuper(proxy, args);</code>//è½ç¶ç¬¬ä¸ä¸ªåæ°æ¯è¢«ä»£çå¯¹è±¡, ä¹ä¸ä¼åºç°æ­»å¾ªç¯çé®é¢;</p>
+</li>
+<li>
+<p><code>net.sf.cglib.proxy.MethodInterceptor</code> æ¥å£æ¯æéç¨çåè°ï¼callbackï¼ç±»å<br>
+å®ç»å¸¸è¢«åºäºä»£ççAOPç¨æ¥å®ç°æ¦æªï¼interceptï¼æ¹æ³çè°ç¨; è¿ä¸ªæ¥å£åªå®ä¹äºä¸ä¸ªæ¹æ³,<code>public Object intercept(Object object, java.lang.reflect.Method method,Object[] args, MethodProxy proxy) throws Throwable;</code><br>
+ç¬¬ä¸ä¸ªåæ°æ¯ä»£çå¯¹å, ç¬¬äºåç¬¬ä¸ä¸ªåæ°åå«æ¯æ¦æªçæ¹æ³åæ¹æ³çåæ°; åæ¥çæ¹æ³å¯è½éè¿ä½¿ç¨java.lang.reflect.Methodå¯¹è±¡çä¸è¬åå°è°ç¨, æèä½¿ç¨ <code>net.sf.cglib.proxy.MethodProxy</code>å¯¹è±¡è°ç¨;</p>
+</li>
+<li>
+<p><code>sf.cglib.proxy.MethodProxy</code>éå¸¸è¢«é¦éä½¿ç¨, å ä¸ºå®æ´å¿«;</p>
+</li>
+<li>
+<p>ä¸ä¸ªå¨æä»£çä¾å­</p>
+</li>
+</ul>
+<pre><code class="language-java">/**
+ * CGLIB å¨æä»£çå®ç°
+ */
+public static final void CJLIB_PROXY(){
+	Enhancer enhancer = new Enhancer();
+	/**
+	 * è®¾ç½®ç¶ç±»
+	 */
+	enhancer.setSuperclass(CarService.class);
+	// æ¦æªåè°å¤çå¨
+	MethodInterceptor handler = new MethodInterceptor() {
+		@Override
+		public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
+			Object result ;
+			System.out.println("å¢å¼ºå¤ç å");
+			//è°ç¨ç¶å¯¹è±¡ æ¹æ³
+			result = proxy.invokeSuper(obj, args);
+			System.out.println("å¢å¼ºå¤ç å");
+			return result;
+		}
+	};
+	// è®¾ç½® æ¦æªåè°å¤çå¨; å®å¯ä»¥æ¯: * @see MethodInterceptor * @see NoOp * @see LazyLoader * @see Dispatcher * @see org.springframework.cglib.proxy.InvocationHandler * @see FixedValue
+	enhancer.setCallback(handler);
+	CarService proxyInstance = (CarService) enhancer.create();
+	proxyInstance.doProduct("ç²è²");
+}
+</code></pre>
+<h2 id="ä¸aop-ä»£çå¯¹è±¡çæ¹æ³è°ç¨è¿ç¨">ä¸ãAOP ä»£çå¯¹è±¡çæ¹æ³è°ç¨è¿ç¨</h2>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3723410/202602/3723410-20260224191135364-2132190076.png" class="lazyload"></p>
+<p><a href="https://img2024.cnblogs.com/blog/3723410/202602/3723410-20260224191135364-2132190076.png" target="_blank">https://img2024.cnblogs.com/blog/3723410/202602/3723410-20260224191135364-2132190076.png</a></p>
+<h3 id="æºç è°è¯ä¸»å¥å£">æºç è°è¯ä¸»å¥å£</h3>
+<p>ä¸»å¥å£ææä¸ä¸ªè´£ä»»é¾çå½¢å¼<br>
+<code>org.springframework.aop.framework.CglibAopProxy.DynamicAdvisedInterceptor#intercept</code></p>
+<pre><code class="language-java">@Override
+	@Nullable
+	public Object proceed() throws Throwable {
+		/**
+		 * è¿é å¾ªç¯è´£ä»»é¾ çè°ç¨
+		 */
+		// We start with an index of -1 and increment early.
+		if (this.currentInterceptorIndex == this.interceptorsAndDynamicMethodMatchers.size() - 1) {
+			return invokeJoinpoint();
+		}
+		/**
+		 * è¿ä¸ª`this.interceptorsAndDynamicMethodMatchers` æ°ç» å°±æ¯éç¥(advised)åè¡¨ AspectJXXXAdvice (è¿éåå°è£ä¸º XXXAdviceInterceptor)
+		 * ç¬¬0ä¸ªæ¯æ­¤åæå¥ç `ExposeInvocationInterceptor` å®åé½æ²¡å¹², ç´æ¥ proceed(); åè°åæ¥;
+		 * 
+		 * è¿éç´¯å  ++this.currentInterceptorIndex, æ¯æ¬¡åè°åæ¥, æ¿å°ä¸ä¸ä¸ª `XXXAdviceInterceptor` è°ç¨
+		 */
+		Object interceptorOrInterceptionAdvice =
+				this.interceptorsAndDynamicMethodMatchers.get(++this.currentInterceptorIndex);
+		if (interceptorOrInterceptionAdvice instanceof InterceptorAndDynamicMethodMatcher dm) {
+			// Evaluate dynamic method matcher here: static part will already have
+			// been evaluated and found to match.
+			Class&lt;?&gt; targetClass = (this.targetClass != null ? this.targetClass : this.method.getDeclaringClass());
+			if (dm.matcher().matches(this.method, targetClass, this.arguments)) {
+				return dm.interceptor().invoke(this);
+			}
+			else {
+				// Dynamic matching failed.
+				// Skip this interceptor and invoke the next in the chain.
+				return proceed();
+			}
+		}
+		else {
+			/**
+			 * å° `this` ä¼ éè¿å», å XXXAdviceInterceptor å°ä½¿ç¨è¿ä¸ªåæ°, åè°åæ¥
+			 */
+			// It's an interceptor, so we just invoke it: The pointcut will have
+			// been evaluated statically before this object was constructed.
+			return ((MethodInterceptor) interceptorOrInterceptionAdvice).invoke(this);
+		}
+	}
+</code></pre>
+<h4 id="around-éç¥">Around éç¥</h4>
+<p><code>org.springframework.aop.aspectj.AspectJAroundAdvice#invoke</code></p>
+<pre><code class="language-java">
+@Override
+@Nullable
+public Object invoke(MethodInvocation mi) throws Throwable {
+	if (!(mi instanceof ProxyMethodInvocation pmi)) {
+		throw new IllegalStateException("MethodInvocation is not a Spring ProxyMethodInvocation: " + mi);
+	}
+	/**
+	 * å°è£ä¸ä¸ª ProceedingJoinPoint åæ°, è¿ä¸ªå°±æ¯ç» ç¯ç»éç¥æ¹æ³ æ¥åçåæ°
+	 */
+	ProceedingJoinPoint pjp = lazyGetProceedingJoinPoint(pmi);
+	JoinPointMatch jpm = getJoinPointMatch(pmi);
+	// ç¯ç»éç¥åé¨, è°ç¨ `joinPoint.proceed();` å¶å®è¿æ¯ä¼åå»è´£ä»»é¾é£éç, å¹¶ä¸æ¯çæ­£çè°ç¨åå§æ¹æ³
+	return invokeAdviceMethod(pjp, jpm, null, null);
+}
+
+</code></pre>
+<h4 id="after-éç¥">After éç¥</h4>
+<p>æ²¡å¥éç¹<br>
+<code>org.springframework.aop.aspectj.AspectJAfterReturningAdvice#afterReturning</code></p>
+<pre><code class="language-java">	@Override
+	public void afterReturning(@Nullable Object returnValue, Method method, Object[] args, @Nullable Object target) throws Throwable {
+		if (shouldInvokeOnReturnValueOf(method, returnValue)) {
+			invokeAdviceMethod(getJoinPointMatch(), returnValue, null);
+		}
+	}
+</code></pre>
+<h4 id="throwing-éç¥">Throwing éç¥</h4>
+<p><code>org.springframework.aop.aspectj.AspectJAfterThrowingAdvice#invoke</code></p>
+<pre><code class="language-java">@Override
+	@Nullable
+	public Object invoke(MethodInvocation mi) throws Throwable {
+		try {
+			return mi.proceed();
+		}
+		catch (Throwable ex) {
+			if (shouldInvokeOnThrowing(ex)) {
+				invokeAdviceMethod(getJoinPointMatch(), null, ex);
+			}
+			throw ex;
+		}
+	}
+</code></pre>
+<h1 id="åspringaop-çä½¿ç¨">åãSpring&nbsp;AOP çä½¿ç¨</h1>
+<h2 id="ä¸ä¸ªæ¡ä¾">ä¸ä¸ªæ¡ä¾</h2>
+<p>An AOP Example - <a href="https://docs.spring.io/spring-framework/reference/core/aop/ataspectj/example.html" target="_blank" rel="noopener nofollow">https://docs.spring.io/spring-framework/reference/core/aop/ataspectj/example.html</a></p>
+<ol>
+<li>ä¾ æä¸ä¸ª ProductServiceInter æ¥å£</li>
+</ol>
+<pre><code class="language-java">public interface ProductServiceInter {  
+   void doProduct(String color);  
+}
+</code></pre>
+<ol start="2">
+<li>æä¸¤ä¸ªå®ç°</li>
+</ol>
+<pre><code class="language-java">public class CarService implements ProductServiceInter {  
+   public void doProduct(String color){  
+      System.out.println("çäº§ä¸è¾ " + color + " é¢è²çæ±½è½¦");  
+   }  
+}
+
+</code></pre>
+<pre><code class="language-java">public class BicycleService implements ProductServiceInter {  
+   public void doProduct(String color){  
+      System.out.println("çäº§ä¸è¾ " + color + " é¢è²çèªè¡è½¦");  
+   }  
+}
+</code></pre>
+<h3 id="ä¸å¡éæ±">ä¸å¡éæ±</h3>
+<ol>
+<li>è°ç¨ <code>BicycleService#doProduct </code> æ¹æ³å, éè¦è®°å½æ¥å¿</li>
+<li>è°ç¨ <code>CarService#doProduct</code>  æ¹æ³å, åæ ·ä¹éè¦è®°å½æ¥å¿</li>
+</ol>
+<h3 id="è§£å³æ¹å¼è¿ç¨å¼">è§£å³æ¹å¼(è¿ç¨å¼)</h3>
+<pre><code class="language-java">ProductServiceInter carService  = new CarService();
+ProductServiceInter bicycleService = new BicycleService();
+//....åæ¥å¿
+carService.doProduct("çº¢è²");  
+//....åæ¥å¿
+bicycleService.doProduct("é»è²");
+</code></pre>
+<h4 id="é®é¢">é®é¢</h4>
+<p>æå ç¹ä¸åççå°æ¹:</p>
+<ol>
+<li>åæ¥å¿é¨åä»£ç éå¤</li>
+<li>å¤§éç service é½ææ­¤éè¦,åæå°éç service æ²¡è¿ä¸ªéè¦, ä¸å¥½ä¿®æ¹</li>
+</ol>
+<h2 id="aop-æ¦å¿µæ¯è¯­">AOP æ¦å¿µæ¯è¯­</h2>
+<p>AOP Concepts - <a href="https://docs.spring.io/spring-framework/reference/core/aop/introduction-defn.html" target="_blank" rel="noopener nofollow">https://docs.spring.io/spring-framework/reference/core/aop/introduction-defn.html</a></p>
+<ul>
+<li>
+<p>Advice<br>
+/éç¥/å»ºè®®/å¢å¼ºå¤ç/...  //å³: å¢å¼ºåè½è¿ä¸é¨åä»£ç </p>
+</li>
+<li>
+<p>joinpoint<br>
+/è¿æ¥ç¹ //åæ¹æ³æå³çååååï¼æåºå¼å¸¸ï¼, é½æ¯è¿æ¥ç¹;</p>
+</li>
+<li>
+<p>Pointcut<br>
+/åå¥ç¹  //ç­éè¿æ¥ç¹, å³: åªäºæ¹æ³éè¦è¢«ä»£ç</p>
+</li>
+<li>
+<p>Aspect<br>
+/åé¢ //åé¢æ¯<strong>éç¥(åæ¥å¿)</strong> å<strong>åå¥ç¹(è¦è¢«ä»£ççæ¹æ³)</strong>  çç»å,  å³:<strong>ä¿®æ¹åçæ´ä¸ªæ¹æ³ //(ææ­£å¸¸éè¦è°ç¨ç(doProduct)ä»£ç ,åæåæ¥å¿ç)</strong></p>
+</li>
+<li>
+<p>target<br>
+/ç®æ /ç®æ å¯¹è±¡  //å³: Service å®ä»¬é½æ²¡æ åæ¥å¿çåè½</p>
+</li>
+<li>
+<p>weaving<br>
+/ç»å¥	//æåé¢åºç¨å°ç®æ å¯¹è±¡æ¥åå»ºæ°çä»£çå¯¹è±¡çè¿ç¨;</p>
+</li>
+<li>
+<p>AOPä»£çç±»<br>
+/AOPä¿®æ¹åçç±»</p>
+</li>
+</ul>
+<h3 id="åºäºxml-çéç½®æ¹å¼">åºäºXML çéç½®æ¹å¼</h3>
+<p><a href="https://docs.spring.io/spring-framework/reference/core/aop/schema.html" target="_blank" rel="noopener nofollow">Schema-based AOP Support</a></p>
+<pre><code class="language-java">public class AdviceService {
+	public void before(){
+		System.out.println("åç½®éç¥ï¼Before),å®å¨æ§è¡æ¹æ³ä¹åè°ç¨");
+	}
+	public void after(){
+		System.out.println("åç½®éç¥ï¼After returning adviceï¼,å®å¨æ§è¡å¹épointcutçæ¹æ³ä¹åè°ç¨");
+	}
+	public void after_throwing(Exception ex){
+		System.out.println("å¼å¸¸éç¥ï¼After throwing adviceï¼,å®å¨æ§è¡å¹épointcutçæ¹æ³æ¶åºç°å¼å¸¸è°ç¨");
+		System.out.println("å¼å¸¸ä¿¡æ¯:"+ ex.getMessage() );
+	}
+	
+	public Object around(ProceedingJoinPoint mi){
+		System.out.println("ç¯ç»éç¥ï¼Around adviceï¼ä¹å");
+		Object result = null;
+		try {
+			result =  mi.proceed();
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		System.out.println("ç¯ç»éç¥ï¼Around adviceï¼ä¹å");
+		return result;
+	}
+
+}
+</code></pre>
+<pre><code class="language-xml">&lt;!-- ä¸ä¸ªæ®éçbean --&gt;
+&lt;bean id="bicycleService" class="org.yang.learn.spring.aop.service.BicycleService"&gt;&lt;/bean&gt;
+&lt;bean id="carService" class="org.yang.learn.spring.aop.service.CarService"&gt;&lt;/bean&gt;
+&lt;bean id="adviceService" class="org.yang.learn.spring.aop.aspect.AdviceService"&gt;&lt;/bean&gt;
+
+&lt;!-- éè¦å¼å¥aop å½åç©ºé´
+ xmlns:aop="http://www.springframework.org/schema/aop"
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+--&gt;
+&lt;aop:config&gt;
+	&lt;!-- æå®¹å¨ä¸­çæ®ébean åæä¸ä¸ªåé¢bean --&gt;
+	&lt;!-- æ¹å¼ä¸: åç¹, åé¢ æ£è£å½¢å¼çå®ä¹
+	ä¸ºäºæ¹ä¾¿ä½¿ç¨å¯ä»¥åå®ä¹ pointcut (åå¥ç¹)
+		&lt;aop:pointcut expression="execution(* com.yang.service.Test*_Service.*(..))" id="bbb"/&gt;
+		&lt;aop:aspect ref="myAdvice"&gt;
+			&lt;aop:before method="log" pointcut-ref="bbb" /&gt;
+		&lt;/aop:aspect&gt;
+	--&gt;
+	&lt;!-- æå®¹å¨ä¸­çæ®ébean åæä¸ä¸ªåé¢bean --&gt;
+	&lt;!-- æ¹å¼äº: åç¹, åé¢ éæå½¢å¼çå®ä¹--&gt;
+	&lt;aop:aspect ref="adviceService" id="beforeExample"&gt;
+
+	&lt;!--
+	Before Advice: https://docs.spring.io/spring-framework/reference/core/aop/schema.html#aop-schema-advice-before
+	è°ç¨ pointcut ä¹åä¼ è°ç¨ aspect bean ç before æ¹æ³
+	--&gt;
+		&lt;aop:before method="before"
+					pointcut="execution(* org.yang.learn.spring.aop.service.*.*(..))" /&gt;
+	&lt;!--
+	After Returning Advice: https://docs.spring.io/spring-framework/reference/core/aop/schema.html#aop-schema-advice-after-returning
+	è°ç¨ pointcut ä¹åä¼ è°ç¨ aspect bean ç after æ¹æ³
+	--&gt;
+		&lt;aop:after-returning method="after"
+					pointcut="execution(* org.yang.learn.spring.aop.service.*.*(..))" /&gt;
+					
+	&lt;aop:around method="around"  
+					 pointcut="execution(* org.yang.learn.spring.aop.service.*.*(..))" /&gt;
+
+	&lt;/aop:aspect&gt;
+&lt;/aop:config&gt;
+</code></pre>
+<pre><code class="language-java">
+public static void main(String[] args) {
+	System.out.println("==========================================================");  
+	System.out.println("");  
+	ApplicationContext context = new ClassPathXmlApplicationContext("application-aop.xml");  
+	/**  
+	* å¦æç®æ beanææ¥å£çè¯, ä¼ä½¿ç¨JDKå¨æä»£çå®ç°;  
+	* è·åçä¹æ¯æ¥å£ (ProductServiceInter)  
+	*/
+	ProductServiceInter carService = (ProductServiceInter) context.getBean("carService");  
+	carService.doProduct("äºé¢å­è²");  
+	System.out.println("");  
+	System.out.println("==========================================================");
+}
+</code></pre>
+<h4 id="è¡¨è¾¾å¼-execution">è¡¨è¾¾å¼ (execution)</h4>
+<p>ä½¿ç¨ execution è¡¨è¾¾å¼, éè¦å¼å¥aopé¡¹ç®ç optional("org.aspectj:aspectjweaver") ä¾èµ</p>
+<p><code>execution</code> è¡¨è¾¾å¼çæ ¼å¼, æ¬å·ä¸­åä¸ªpatternåå«è¡¨ç¤º:</p>
+<p>ä¿®é¥°ç¬¦å¹éï¼modifier-pattern?ï¼<br>
+è¿åå¼å¹éï¼ret-type-patternï¼<br>
+ç±»è·¯å¾å¹éï¼declaring-type-pattern?ï¼<br>
+æ¹æ³åå¹éï¼name-patternï¼<br>
+åæ°å¹é      (param-pattern)<br>
+å¼å¸¸ç±»åå¹éï¼throws-pattern?ï¼<br>
+å¶ä¸­åé¢è·ç"?"çæ¯å¯éé¡¹ å®ä¹æ¶, è¿å¯ä»¥ä½¿ç¨<code>&amp;&amp;, ||, !</code></p>
+<h4 id="å¶ä»éç¥-advice">å¶ä»éç¥ (Advice)</h4>
+<p>springæå¦ä¸å ç§ Advice (éç¥)</p>
+<ul>
+<li>
+<p>åç½®éç¥ï¼Before adviceï¼<br>
+å¨æè¿æ¥ç¹ä¹åæ§è¡çéç¥.<br>
+<a href="https://docs.spring.io/spring-framework/reference/core/aop/schema.html#aop-schema-advice-before" target="_blank" rel="noopener nofollow">https://docs.spring.io/spring-framework/reference/core/aop/schema.html#aop-schema-advice-before</a></p>
+</li>
+<li>
+<p>åç½®éç¥ï¼After returning adviceï¼<br>
+å¨æè¿æ¥ç¹æ­£å¸¸å®æåæ§è¡çéç¥.<br>
+<a href="https://docs.spring.io/spring-framework/reference/core/aop/schema.html#aop-schema-advice-after-returning" target="_blank" rel="noopener nofollow">https://docs.spring.io/spring-framework/reference/core/aop/schema.html#aop-schema-advice-after-returning</a></p>
+</li>
+<li>
+<p>å¼å¸¸éç¥ï¼After throwing adviceï¼:<br>
+å¨æ¹æ³æåºå¼å¸¸éåºæ¶æ§è¡çéç¥;</p>
+</li>
+<li>
+<p>æç»éç¥ï¼After (finally) adviceï¼:<br>
+å½æè¿æ¥ç¹éåºçæ¶åæ§è¡çéç¥ï¼ä¸è®ºæ¯æ­£å¸¸è¿åè¿æ¯å¼å¸¸éåºï¼;</p>
+</li>
+<li>
+<p>ç¯ç»éç¥ï¼Around Adviceï¼:<br>
+åå´ä¸ä¸ªè¿æ¥ç¹çéç¥, å¦æ¹æ³è°ç¨; è¿æ¯æå¼ºå¤§çä¸ç§éç¥ç±»å; ç¯ç»éç¥å¯ä»¥å¨æ¹æ³è°ç¨ååå®æèªå®ä¹çè¡ä¸º;  å®ä¹ä¼éæ©æ¯å¦ç»§ç»­æ§è¡è¿æ¥ç¹æç´æ¥è¿åå®èªå·±çè¿åå¼ææåºå¼å¸¸æ¥ç»ææ§è¡;</p>
+</li>
+</ul>
+<pre><code class="language-xml">&lt;!-- éç½®æ­£å¸¸ä¸å¡ bean --&gt;
+&lt;bean id="bicycleService" class="org.yang.learn.spring.aop.service.BicycleService"&gt;&lt;/bean&gt;
+&lt;bean id="carService" class="org.yang.learn.spring.aop.service.CarService"&gt;&lt;/bean&gt;
+
+&lt;!-- éç½®ä¹ä¸ä¸ªåé¢bean--&gt;
+&lt;bean id="myAdvice" class="org.yang.learn.spring.aop.aspect.AdviceService"&gt;&lt;/bean&gt;
+
+&lt;!-- éè¦å¼å¥aop xsd --&gt;
+&lt;aop:config&gt;
+
+&lt;!-- æå®¹å¨ä¸­çæ®ébean åæä¸ä¸ªåé¢bean --&gt;
+	&lt;aop:aspect ref="myAdvice"&gt;
+		&lt;!-- 
+			åç½®éç¥ï¼Before)
+			åç½®éç¥ï¼After returning adviceï¼
+			å¼å¸¸éç¥ï¼After throwing adviceï¼
+			æç»éç¥ï¼After (finally) adviceï¼
+			ç¯ç»éç¥ï¼Around Adviceï¼
+			method æå®ç»å¥ 
+			pointcut æå®å¹éç®æ ç±»,æ¹æ³ * å·ä¸ºééç¬¦ (..)ä¸éå®åæ°
+			--&gt;
+			
+		&lt;!--åç½®éç¥ï¼Before) åªè¦ Before Adviceæ§è¡å®æ,
+			// ç®æ æ¹æ³æ»ä¼è¢«è°ç¨
+			// å¯ä»¥éè¿æåºå¼å¸¸æ¥é»æ­¢ç®æ æ¹æ³çè°ç¨
+		&lt;aop:before method="before" pointcut="execution(* com.yang.service.Test*_Service.before(..))" /&gt;
+		--&gt;
+		
+		&lt;!--åç½®éç¥ï¼After returning adviceï¼
+			// å¨ç®æ æ¹æ³è°ç¨ä¹å,æ è®ºæ¯å¦æåç»æç»å¥å¢å å¤ç
+			// ä¸è½é»æ­¢ç®æ æ¹æ³çè°ç¨
+			// å®æç¹ç±»ä¼¼ finlly å
+		&lt;aop:after method="after" pointcut="execution(* com.yang.service.Test*_Service.*(..))" /&gt;	
+		--&gt;
+		
+		&lt;!--å¿é¡»æ­£å¸¸return, returningåèå¼å¸¸éç¥ex,
+			// å³ä½¿æ²¡æè¿åå¼ ä¹ä¼æ§è¡,
+			// ä¸åçæ¯å®å¯ä»¥è®¿é®è¿åå¼
+		&lt;aop:after-returning method="" returning="ret"/&gt; 
+		--&gt;
+		
+		&lt;!--å¼å¸¸éç¥ï¼After throwing adviceï¼,å®å¨æ§è¡å¹épointcutçæ¹æ³æ¶åºç°å¼å¸¸è°ç¨
+			// throwing="ex" æå³çafter_throwingæ¹æ³å¯ä»¥,public void after_throwing(ArithmeticException ex)
+			// å®ä¹ ex åæ°æ¥åè¯¥å¼å¸¸,æ³¨æ è¿ä¸ªexç±»å,åªæåçArithmeticExceptionå¼å¸¸,ç±»åç¸å,å®æä¼è°ç¨
+		&lt;aop:after-throwing method="after_throwing" pointcut="execution(* com.yang.service.Test1_Service.*(..))" 
+			throwing="ex"/&gt;	
+		--&gt;
+		
+		&lt;!-- æç»éç¥ï¼After (finally) adviceï¼ èªå·±çææ¡£--&gt;
+
+		
+		&lt;!-- ç¯ç»éç¥ï¼Around Advice,å¨ç®æ æ¹æ³ä¹åè°ç¨,å®çå¤çæ¹æ³å¿é¡»åå«ProceedingJoinPointçå½¢å
+			// æå¼ºå¤§éç¥,
+			// å¯ä»¥é»æ­¢ç®æ æ¹æ³çè°ç¨
+			// å¯ä»¥æ¹æ³,åæ°,è¿åå¼
+			// çè³å¯ä»¥ä¿®æ¹,åæ°,è¿åå¼
+		&lt;aop:around method="around" pointcut="execution(* com.yang.service.Test1_Service.*(..))" /&gt;
+			--&gt;
+	&lt;/aop:aspect&gt;
+
+&lt;/aop:config&gt; 
+</code></pre>
+<h3 id="åºäºæ³¨è§£-çéç½®æ¹å¼">åºäºæ³¨è§£ çéç½®æ¹å¼</h3>
+<p>@AspectJ support - <a href="https://docs.spring.io/spring-framework/reference/core/aop/ataspectj.html" target="_blank" rel="noopener nofollow">https://docs.spring.io/spring-framework/reference/core/aop/ataspectj.html</a></p>
+<h4 id="å¯ç¨æ³¨è§£æ¯æ">å¯ç¨æ³¨è§£æ¯æ</h4>
+<pre><code class="language-java">@Configuration
+@EnableAspectJAutoProxy
+public class AppConfig {
+}
+</code></pre>
+<h4 id="éç½®åé¢-aspect">éç½®åé¢ Aspect</h4>
+<pre><code class="language-java">@Aspect
+@Component
+public class MyAdvice {
+}
+</code></pre>
+<h4 id="éç½®åç¹-pointcut">éç½®åç¹ Pointcut</h4>
+<pre><code class="language-java">@Aspect
+@Component
+public class MyAdvice {
+   /**
+     * å®ä¹ pointcut (åå¥ç¹)
+     */
+    // @Pointcut("@annotation(net.jk.cloud.log.aop.log.Log)") //æç§æ³¨è§£çæ¹å¼, åªè¦å¨æ¹æ³ä¸å `net.jk.cloud.log.aop.log.Log`æ³¨è§£, å³ä¼è¢«ç»å¥
+	@Pointcut("execution(* com.yang.service.Test*_Service.*(..))")//æç§è¡¨è¾¾å¼
+    public void logPointcut() {
+        // è¯¥æ¹æ³æ æ¹æ³ä½,ä¸»è¦ä¸ºäºä½¿ç¨æ­¤åå¥ç¹
+    }
+
+	/**
+	@Around("logPointcut()") ç¯ç»éç¥ä½¿ç¨ logPointcut() åç¹; ç¸å½äºXMLç
+	&lt;aop:aspect ref="myAdvice"&gt;
+		&lt;aop:around method="logAround" 
+			pointcut="execution(* com.yang.service.Test*_Service.*(..))" /&gt;
+	&lt;/aop:aspect&gt;
+
+	ä¾å¦ ç¸å¯¹åºçå¼å¸¸éç¥
+	 @AfterThrowing(pointcut = "logPointcut()", throwing = "e") = &lt;aop:after-throwing method="logAround" ...
+	**/
+	@Around("logPointcut()")
+    public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
+        Object result = null;
+        currentTime = System.currentTimeMillis();
+        result = joinPoint.proceed();
+        Log log = new Log(Log.TYRPE_INFO,System.currentTimeMillis() - currentTime);
+        logService.save(getUsername(), StringUtils.getIP(RequestHolder.getHttpServletRequest()),joinPoint, log);
+        return result;
+    }
+}
+</code></pre>
+<h4 id="éç½®éç¥-advice">éç½®éç¥ Advice</h4>
+<pre><code class="language-java">@Aspect
+@Component
+public class MyAdvice {
+   /**
+     * å®ä¹ pointcut (åå¥ç¹)
+     */
+    // @Pointcut("@annotation(net.jk.cloud.log.aop.log.Log)") //æç§æ³¨è§£çæ¹å¼, åªè¦å¨æ¹æ³ä¸å `net.jk.cloud.log.aop.log.Log`æ³¨è§£, å³ä¼è¢«ç»å¥
+	@Pointcut("execution(* com.yang.service.Test*_Service.*(..))")//æç§è¡¨è¾¾å¼
+    public void logPointcut() {
+        // è¯¥æ¹æ³æ æ¹æ³ä½,ä¸»è¦ä¸ºäºä½¿ç¨æ­¤åå¥ç¹
+    }
+
+	/**
+	@Around("logPointcut()") ç¯ç»éç¥ä½¿ç¨ logPointcut() åç¹; ç¸å½äºXMLç
+	&lt;aop:aspect ref="myAdvice"&gt;
+		&lt;aop:around method="logAround" 
+			pointcut="execution(* com.yang.service.Test*_Service.*(..))" /&gt;
+	&lt;/aop:aspect&gt;
+	
+	ä¾å¦, ç¸å¯¹åºçå¼å¸¸éç¥
+	 @AfterThrowing(pointcut = "logPointcut()", throwing = "e") = &lt;aop:after-throwing method="logAround" ...
+	**/
+	@Around("logPointcut()")
+    public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
+        Object result = null;
+        currentTime = System.currentTimeMillis();
+        result = joinPoint.proceed();
+        Log log = new Log(Log.TYRPE_INFO,System.currentTimeMillis() - currentTime);
+        logService.save(getUsername(), StringUtils.getIP(RequestHolder.getHttpServletRequest()),joinPoint, log);
+        return result;
+    }
+}
+
+</code></pre>
+<h3 id="è¸©åæå">è¸©åæå</h3>
+<p>spring boot é¡¹ç®ä½¿ç¨äºAOPä»£ççBean <code>CglibAopProxy</code> æ¹æ³æ¯å­å¨ç¼å­ç, æ³¨æç¼å­ æ³¨æç¼å­ æ³¨æç¼å­!<br>
+å¦å¤:<br>
+Spring éè¿CGLIB åå»ºçä»£çç±», ä¸ä¼åå§åä»£çç±»èªèº«ç»§æ¿çä»»ä½æååé, åæ¬finalç±»åçæååé!<br>
+æ­£ç¡®ä½¿ç¨AOP éè¦é¿å:</p>
+<ol>
+<li>è®¿é®è¢«æ³¨å¥ç Bean æ¶, æ»æ¯è°ç¨æ¹æ³èéç´æ¥è®¿é®å­æ®µ;</li>
+<li>ç¼åBeanæ¶, å¦æå¯è½ä¼è¢«ä»£ç, å°±ä¸è¦ç¼å <code>public final</code>æ¹æ³;</li>
+</ol>
+
+
+</div>
+<div id="MySignature" role="contentinfo">
+    é¢é²èå¹´ç´åï¼ä¿æç»èº«å­¦ä¹ !    ââ <a href="https://www.cnblogs.com/dddy/" target="_blank">daidaidaiyu</a>
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0.001388888888888889" data-date-updated="2026-02-24 19:15">2026-02-24 19:13</span>&nbsp;
+<a href="https://www.cnblogs.com/dddy">daidaidaiyu</a>&nbsp;
+éè¯»(<span id="post_view_count">27</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19634953);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19634953', targetLink: 'https://www.cnblogs.com/dddy/p/19634953', title: 'ä¸æå­¦ä¹  Spring AOP æºç å¨è¿ç¨' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ 26å¹´æ¥èAIåå±å¤§äºè®° ]]></title>
+    <link>https://www.cnblogs.com/deep-sky/p/19634923</link>
+    <guid>f34597504aee85e97c19b7a4b90f3e2a</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/deep-sky/p/19634923" title="åå¸äº 2026-02-24 18:59">
+    <span role="heading" aria-level="2">26å¹´æ¥èAIåå±å¤§äºè®°</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h3 id="å¼è¨">å¼è¨</h3>
+<p>2026å¹´çæ¥èï¼æè®¸ä¼è¢«æ¥åçäºèç½å²è®°ä¸ºä¸ä¸ªéç¨ç¢ââ<strong>ä¸­å½äºèç½å²ä¸æå¤§è§æ¨¡çAIç¨æ·å¯èï¼å¨ä¸å°ä¸¤å¨åå®æäºã</strong></p>
+<p>æ°æ®æ¯æç´æ¥çè¯æ®ã11å¤©åï¼ç¨æ·å¯¹é¿éåé®Appè¯´äº50äº¿æ¬¡âåé®å¸®æâï¼é¤å¤å½å¤©ï¼å­èè±åçAIäºå¨æ»æ°è¾¾å°19äº¿æ¬¡ï¼è¾è®¯åå®åå¨å10äº¿çº¢åçè¿ç¨ä¸­ï¼å¨ç½ç´¯è®¡æ½å¥36äº¿æ¬¡ï¼ä¿æç¨æ·å®æAIåä½ä»»å¡è¶10äº¿æ¬¡ãå¨æ¢çº¢åãååä¼æ ãæ¥æäº¤äºç­ç©æ³çé©±å¨ä¸ï¼ä¸å®¶äº§åçæ¥æ´»åææ´»ååäºæ°é«ï¼åå®çMAUçªç ´1.14äº¿ï¼è±åãåå®ãåé®å ä¸DeepSeekï¼é½é½è·»èº«âAIåçåºç¨äº¿çº§ä¿±ä¹é¨âã</p>
+<p>è¿äºæ°å­æå³çä»ä¹ï¼<strong>AIå·²ç»ä»å°æ°äººæä¸­çå·¥å·ï¼åæäºæ®éäººæ¥å¸¸çæ´»çä¸é¨åã</strong> å¯¹äºæä»¬è¿äºäºèç½ä»ä¸èæ¥è¯´ï¼å³ä½¿å¨éå·¥ä½æ¶é´ï¼ä¹å¾é¾ä¸å»å³æ³¨ï¼å¨è¿æ ·ä¸ä¸ªç¹æ®çæ¶é´çªå£éï¼AIååå¾äºææ ·çè¿æ­¥ã</p>
+<p>æç§æ³å®èåæ¥ï¼26å¹´æ¥èåææ¯2æ15æ¥è³23æ¥ï¼ä½é¨åå¬å¸å®éæ¾åæ´é¿ãæä»¥æä»¬å°ç®åèç¦å¨<strong>2æ10æ¥å°2æ24æ¥</strong>è¿ä¸¤å¨ï¼ççè¿æ®µæ¶é´éï¼AIé¢åå°åºåçäºä»ä¹ã</p>
+<h3 id="å¤§äºè®°æ»è§">å¤§äºè®°æ»è§</h3>
+<p>å¦ä¸å¾ï¼</p>
+<p><img alt="AIå¤§äºè®°_timeline" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2567902/202602/2567902-20260224185651337-798747508.png" class="lazyload"></p>
+<p>ç­ç­ä¸¤å¨ï¼13èµ·éå¤§äºä»¶å¯éè½å°ï¼è¦çæ¨¡ååå¸ãèèµãäº§åè¿­ä»£ç­å¤ä¸ªç»´åº¦ãå¶å¯åº¦ä¹é«ï¼æ¾å¨ä»¥å¾ä»»ä½ä¸ä¸ªææ¥çé½ç®å¾ä¸å£®è§ââèè¿ä»ä»æ¯ä¸ä¸ªæ¥èåæã</p>
+<p>è¯¦ç»äºä»¶å¦ä¸ï¼</p>
+<table>
+<thead>
+<tr>
+<th>æ¥æ</th>
+<th>äºä»¶</th>
+<th>å¬å¸/ç»ç»</th>
+<th>ä¸»è¦æ¹å¨ç¹</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2/11</td>
+<td>GLM-5 æè°æ¨¡ååå¸</td>
+<td>æºè°± AI</td>
+<td>åæ°ä» 355Bâ744Bï¼å¨ç¨åä¸ºæè¾è¯çè®­ç»ï¼æ  NVIDIA GPUï¼ç¼ç¨ä¸ Agent è½åè¾¾å¼æº SOTAï¼HLE è¯æµ 50.4% å¨çç¬¬ä¸ï¼å¹»è§çä» 1.2%</td>
+</tr>
+<tr>
+<td>2/12</td>
+<td>Gemini 3 Deep Think éå¤§åçº§</td>
+<td>Google</td>
+<td>èç¦"ç³»ç»2"æ·±åº¦æ¨çï¼ARC-AGI-2 è¾¾ 84.6%ï¼è¿è¶ GPT-5.2 ç 52.9%ï¼ï¼IMO éçæ°´å¹³ï¼Codeforces Elo 3455ï¼å¯å°æç»èå¾è½¬ä¸º 3D æå°æä»¶</td>
+</tr>
+<tr>
+<td>2/12</td>
+<td>M2.5 æ¨¡ååå¸</td>
+<td>MiniMax</td>
+<td>SWE-Bench Verified 80.2%ï¼è¦ç 10+ è¯­è¨çå¨æ å¼åï¼Web/Android/iOS/Windowsï¼ï¼éåº¦æ¯ M2.1 å¿« 37%ï¼å®ä»· $1/å°æ¶ï¼100 tok/sï¼ï¼æè´æ§ä»·æ¯</td>
+</tr>
+<tr>
+<td>2/12</td>
+<td>Seedance 2.0 è§é¢æ¨¡ååå¸</td>
+<td>å­èè·³å¨</td>
+<td>å¤æ¨¡ææ··åè¾å¥ï¼åæ¬¡æå¤12ä¸ªç´ æï¼ï¼2K åè¾¨çè¾åºï¼å¯ç¨ç 90%+ï¼15ç§å¤éå¤´åäº+åçé³ç»åæ­¥ï¼åå£°éç«ä½å£°+åå½¢åæ­¥</td>
+</tr>
+<tr>
+<td>2/13</td>
+<td>GPT-5.3-Codex-Sparkï¼Cerebras åä½ï¼</td>
+<td>OpenAI</td>
+<td>åºäº Cerebras WSE-3 è¯çï¼æ¨çéåº¦ 1000+ tok/sï¼æ¯æ åçå¿« 15 åï¼128K ä¸ä¸æï¼è½»éåå®æ¶ç¼ç¨ä¼åï¼é¢å ChatGPT Pro ç¨æ·</td>
+</tr>
+<tr>
+<td>2/13</td>
+<td>300 äº¿ç¾å G è½®èèµ</td>
+<td>Anthropic</td>
+<td>ä¼°å¼è¾¾ 3800 äº¿ç¾åï¼è¾åå¹´åç¿»åï¼GICãCoatue é¢æï¼å¹´åæ¶å¥ 140 äº¿ï¼åæ¯ 10 åå¢é¿ï¼Claude Code è´¡ç® 25 äº¿+å¹´åæ¶å¥</td>
+</tr>
+<tr>
+<td>2/13</td>
+<td>GPT-4o ç­æ§æ¨¡åæ­£å¼ä¸çº¿</td>
+<td>OpenAI</td>
+<td>GPT-4oãGPT-4.1ãGPT-4.1 minião4-mini ä» ChatGPT ä¸çº¿ï¼GPT-5 (Instant/Thinking) åæ­¥éå½¹ï¼ç¨æ·èªå¨è¿ç§»è³ GPT-5.2ï¼API ä¾§æä¸åå½±å</td>
+</tr>
+<tr>
+<td>2/14</td>
+<td>è±åå¤§æ¨¡å 2.0 åå¸</td>
+<td>å­èè·³å¨</td>
+<td>å« Pro/Lite/Mini/Code åçæ¬ï¼Pro ç IMOãICPC éçæ°´å¹³ï¼è¶è¶ Gemini 3 Pro å GPT-5.2ï¼å¤æ¨¡æçè§£è¾¾ SOTAï¼æ¨çææ¬éçº¦ä¸ä¸ªæ°éçº§</td>
+</tr>
+<tr>
+<td>2/16</td>
+<td>Qwen 3.5 å¼æºåå¸</td>
+<td>é¿éå·´å·´</td>
+<td>MoE æ¶æ 397B æ»å/17B æ¿æ´»ï¼Apache 2.0 åè®®å®å¨å¼æºï¼256K ä¸ä¸æï¼Plus ç 1Mï¼ï¼æ¯æ 201 ç§è¯­è¨ï¼å¯å¤ç 2 å°æ¶è§é¢ï¼ååéæå 8-19 å</td>
+</tr>
+<tr>
+<td>2/17</td>
+<td>Claude Sonnet 4.6 åå¸</td>
+<td>Anthropic</td>
+<td>1M ä¸ä¸æçªå£ï¼betaï¼ï¼æå¤§è¾åº 64K tokensï¼SWE-Bench å OSWorld åæ°çºªå½ï¼ç²æµä¸­ 59% åå¥½èè¿ Opus 4.5ï¼å®ä»·ä¸å $3/$15 per M tokensï¼æä¸ºåè´¹/Pro é»è®¤æ¨¡å</td>
+</tr>
+<tr>
+<td>2/17</td>
+<td>Grok 4.2 å¬æµçåå¸</td>
+<td>xAI</td>
+<td>ä»åæ¨¡åè½¬ä¸ºå¤ Agent æ¡æ¶ï¼åè°å¨+ç ç©¶+åæ+é»è¾ åä¸ªå¹¶è¡ Agentï¼ï¼æ¯æ"å¿«éå­¦ä¹ "æ¯å¨è¿­ä»£æ´æ°ï¼æ¾èéä½å¹»è§ç</td>
+</tr>
+<tr>
+<td>2/19</td>
+<td>Gemini 3.1 Pro é¢è§çåå¸</td>
+<td>Google</td>
+<td>1M ä¸ä¸æçªå£ï¼æå¤§è¾åº 65K tokensï¼ARC-AGI-2 è¾¾ 77.1%ï¼æ¨çæ§è½æ¯ Gemini 3 Pro ç¿»åï¼æ¯æææ¬/å¾å/è§é¢/é³é¢/PDF å¤æ¨¡æè¾å¥ï¼å·²ä¸çº¿ GitHub Copilot</td>
+</tr>
+</tbody>
+</table>
+<h3 id="å ä¸ªå¼å¾æ·±å¥èèçäºä»¶">å ä¸ªå¼å¾æ·±å¥èèçäºä»¶</h3>
+<p>å¨è¿åå èµ·äºä»¶ä¸­ï¼æä¸ªäººæä¸ºå³æ³¨çæ¯ä¸ä¸ªï¼<strong>Gemini 3.1 Pro previewåå¸</strong>ã<strong>Claude Sonnet 4.6åå¸</strong>ï¼ä»¥å<strong>Seedance 2.0è§é¢æ¨¡ååå¸</strong>ã</p>
+<h4 id="gemini-31-pro-preview--claude-sonnet-46">Gemini 3.1 Pro preview &amp; Claude Sonnet 4.6</h4>
+<p>æè¿ä¸¤ä¸ªæ¾å¨ä¸èµ·è¯´ï¼æ¯å ä¸ºå®ä»¬å¯¹æèè¨æçç¸åçå®éæä¹ââæç®åè´è´£çä¸ä¸ªæ¢ç´¢æ§å·¥ä½ï¼æ­£æ¯åºäºClaude SonnetåGeminiç³»åæ¥å®æçï¼ç®åå·²ç»åå¾äºä¸éçææãè¿ä¸¤ä¸ªæ°æ¨¡åçåå¸ï¼è®©æå¯¹è¿ä¸æ­¥æåæææäºæ´å¤æå¾ã</p>
+<p>ä»è½åä¸çï¼ä¸¤èé½å¨æ¨çè½åä¸åå¾äºæ¾èçªç ´ãGemini 3.1 ProçARC-AGI-2ä»åä»£ç¿»åè¾¾å°77.1%ï¼æ¯æ1Mä¸ä¸æçªå£åå¤æ¨¡æè¾å¥ï¼å¹¶ä¸å·²ç»ä¸çº¿GitHub Copilotï¼è¯´æGoogleå¯¹è¿ä¸ªçæ¬çå·¥ç¨åä¿¡å¿å¾è¶³ãClaude Sonnet 4.6åå¨SWE-BenchåOSWorldä¸åäºæ°çºªå½ï¼ç²æµä¸­59%çåå¥½çèè¿èªå®¶æè°Opus 4.5ââè¿å¨Anthropicçäº§åçº¿ä¸­æ¯å¾å°è§çï¼ä¸ä¸ªSonnetçº§å«çæ¨¡åå¨ç¨æ·åå¥½ä¸åè¿Opusï¼æå³ç** å¤ç¨ä¸å¿« æ­£å¨åä»£ æå¼ºä½æ¢ æä¸ºå®éå·¥ä½ä¸­çæä¼éæ©**ã</p>
+<p>æ´å¼å¾æ³¨æçæ¯å®ä»·ç­ç¥ãSonnet 4.6ä¿æ3ç¾å input token/15ç¾å output token per M tokensä¸åï¼åæ¶æä¸ºåè´¹åProç¨æ·çé»è®¤æ¨¡åãè¿ä¸ªä¿¡å·å¾æç¡®ï¼Anthropicå¸æè®©æå¥½çæ¨¡åè§¦è¾¾æå¹¿çç¨æ·ç¾¤ï¼èä¸æ¯æå®èå¨é«ä»·ä»è´¹å¢åé¢ã</p>
+<h4 id="seedance-20-è§é¢æ¨¡å">Seedance 2.0 è§é¢æ¨¡å</h4>
+<p>Seedance 2.0å¨æ­£å¼åå¸åå°±å·²ç»å¼åäºå¹¿æ³å³æ³¨ãå¤æ¨¡ææ··åè¾å¥ï¼åæ¬¡æå¤12ä¸ªç´ æï¼ã2Kåè¾¨çã90%ä»¥ä¸çå¯ç¨çã15ç§å¤éå¤´åäºå åçé³ç»åæ­¥ââè¿äºç¹æ§æ¾å¨ä¸èµ·ï¼å ä¹å¯ä»¥è¯´æ¯<strong>AIè§é¢çæé¢åçä¸æ¬¡åæ¶ä»£è¿æ­¥</strong>ã</p>
+<p>è¿å»AIçæè§é¢æå¤§çé®é¢æ¯"çèµ·æ¥åAIçæç"ï¼ç»é¢éªçãç©ä½åå½¢ãå¨ä½ä¸è¿è´¯ãSeedance 2.0å¨å¯ç¨çä¸çªç ´90%ï¼åå£°éç«ä½å£°éååå½¢åæ­¥ï¼æå³çå®ç¦»"å¯ç´æ¥ç¨äºåå®¹åå¸"çæ ååè¿äºä¸å¤§æ­¥ã</p>
+<p>å¯¹äºä¸ªäººåä½èæ¥è¯´ï¼è¿æ çæ¯ä¸ä¸ªå·¨å¤§çæºä¼ãè¿å»éè¦ä¸æ´æ¯å¢éåæè´µè®¾å¤æè½å®æçè§é¢å¶ä½å·¥ä½ï¼å¦ä»ä¸ä¸ªäººå ä¸ä¸ä¸ªå¥½çåæï¼å°±å¯è½äº§åºæç«äºåçåå®¹ã<strong>å·¥å·çé¨æ§éä½ï¼ä»æ¥é½æ¯åæç¹è£çåå¥ã</strong></p>
+<h3 id="å¶ä»å¼å¾å³æ³¨çè¶å¿">å¶ä»å¼å¾å³æ³¨çè¶å¿</h3>
+<p>é¤äºä¸è¿°ä¸ä¸ªäºä»¶ï¼è¿ä¸¤å¨çå¯éåå¸ä¸­è¿æå ä¸ªè¶å¿å¼å¾çæï¼</p>
+<p><strong>å½äº§å¤§æ¨¡åçç¬ç«è·¯å¾æ­£å¨æå½¢ã</strong> æºè°±GLM-5å¨ç¨ä½¿ç¨åä¸ºæè¾è¯çè®­ç»ï¼å®å¨ç»å¼äºNVIDIA GPUï¼è¿å¨å½åçå½éå½¢å¿ä¸å·æéè¦çæç¥æä¹ãHLEè¯æµ50.4%å¨çç¬¬ä¸ãå¹»è§çä»1.2%ï¼è¯æè¿æ¡è·¯ä¸ä»èµ°å¾éï¼èä¸èµ°å¾å¥½ã</p>
+<p><strong>å¼æºçææç»­å£®å¤§ã</strong> é¿éQwen 3.5ä»¥Apache 2.0åè®®å®å¨å¼æºï¼397Bæ»åæ°ã256Kä¸ä¸æã201ç§è¯­è¨æ¯æââè¿æ ·çº§å«çæ¨¡åå¼æºï¼æ¾å¨ä¸¤å¹´åæ¯ä¸å¯æ³è±¡çãå¼æºæ­£å¨ä»¥ä¸ç§ä¸å¯éçæ¹å¼éå¡æ´ä¸ªAIçæã</p>
+<p><strong>æ§æ¶ä»£çå¤§é¨æ­£å¨å³é­ã</strong> OpenAIå¨æ¥èæé´ä¸çº¿äºGPT-4oç­ä¸ç³»åæ§æ¨¡åï¼ç¨æ·èªå¨è¿ç§»è³GPT-5.2ãä¸ä¸ªä»¥GPT-4ä¸ºä»£è¡¨çæ¶ä»£æ­£å¼è½å¹ãæ¨¡åè¿­ä»£çéåº¦ä¹å¿«ï¼è®©äººä¸ç¦ææ¨ï¼å¨AIé¢åï¼åå¹´å°±æ¯ä¸ä¸ªä¸ä»£ã</p>
+<p><strong>Anthropicçåä¸åé£è½®å éæè½¬ã</strong> 300äº¿ç¾åGè½®èèµï¼3800äº¿ç¾åä¼°å¼ï¼å¹´åæ¶å¥140äº¿ä¸åæ¯å¢é¿10åââå¶ä¸­Claude Codeè´¡ç®äº25äº¿ä»¥ä¸çå¹´åæ¶å¥ãè¿è¯´æAIç¼ç¨å©æä¸ååªæ¯ä¸ä¸ª"æªæ¥çæäº"ï¼å®å·²ç»æ¯ä¸é¨å®å®å¨å¨ççæã</p>
+<h3 id="ç»è¯­">ç»è¯­</h3>
+<p>åé¡¾è¿ä¸¤å¨ï¼13èµ·äºä»¶ï¼æ¶åä¸­ç¾ä¸¤å½è¿10å®¶å¬å¸åç»ç»ï¼æ¨ªè·¨æ¨¡åè½åãè§é¢çæãå¼æºçæãåä¸èèµç­å¤ä¸ªé¢åãæ¯ä¸ä»¶åç¬æ¿åºæ¥é½å¼å¾åä¸ç¯æ·±åº¦åæï¼èå®ä»¬ååæ¤å¨åä¸ä¸ªæ¥èåæééä¸­çåã</p>
+<p>è¿ç§å¯åº¦æ¬èº«å°±æ¯ä¸ç§ä¿¡å·ï¼<strong>AIçç«èµå·²ç»è¿å¥äºä¸ä¸ªæ°çå éé¶æ®µã</strong></p>
+<p>å¯¹äºä»ä¸èèè¨ï¼ä¿æå³æ³¨åå­¦ä¹ å·²ç»ä¸åæ¯"å åé¡¹"ï¼èæ¯"å¿éé¡¹"ãè¿ä¸ªæ¥èåæï¼æäººå¨æ¢çº¢åä¸­ç¬¬ä¸æ¬¡æ¥è§¦äºAIï¼æäººå¨èµ°äº²è®¿åé´éå·å°äºSeedance 2.0çæè³demoï¼ä¹æäººï¼æ¯å¦æï¼ä¸è¾¹åçå¹´å¤é¥­ä¸è¾¹çç®çæ°æ¨¡åè½ç»æå¤´çé¡¹ç®å¸¦æ¥å¤å¤§çæåã</p>
+<blockquote>
+<p>æ¶ä»£çæµªæ½®ä¸ç­äººãå¥½å¨è¿ä¸æ¬¡ï¼æä»¬ä¸åªæ¯æè§èã</p>
+</blockquote>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-02-24 18:59">2026-02-24 18:59</span>&nbsp;
+<a href="https://www.cnblogs.com/deep-sky">DeepSkyä¸¶</a>&nbsp;
+éè¯»(<span id="post_view_count">60</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">2</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19634923);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19634923', targetLink: 'https://www.cnblogs.com/deep-sky/p/19634923', title: '26å¹´æ¥èAIåå±å¤§äºè®°' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ æ·±åº¦å­¦ä¹ å¥é¨ ]]></title>
+    <link>https://www.cnblogs.com/Plane0799/p/19629835</link>
+    <guid>34be81bd1d3952a3e7686bfb7c825794</guid>
+    <description>
+    <![CDATA[ 
+		<h2>
+			<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/Plane0799/p/19629835" title="åå¸äº 2026-02-24 17:45">
+    <span role="heading" aria-level="2">æ·±åº¦å­¦ä¹ å¥é¨</span>
+    
+
+</a>
+
+		</h2>
+		<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h2 id="ä»æ¢¯åº¦ä¸éå°ç¥ç»ç½ç»å­¦ä¹ ">ä»æ¢¯åº¦ä¸éå°ç¥ç»ç½ç»å­¦ä¹ </h2>
+<p>æ¬æ¬¡å­¦ä¹ éè¿å¯¹ãæ·±åº¦å­¦ä¹ å¥é¨ï¼åºäºPythonççè®ºä¸å®è·µãè¯¥ä¹¦ååç« è¿è¡çè®ºç ç©¶ï¼åå¨aiå¤§æ¨¡ååå©ä¸è¿è¡å¯è®­ç»ç¥ç»ç½ç»æ¡æ¶çä¹¦åï¼æ·±å»çè§£æ·±åº¦å­¦ä¹ ãä»¥ä¸æ¯ç¸å³çå­¦ä¹ ææï¼</p>
+<h2 id="1çè®ºé®é¢åç­">1.çè®ºé®é¢åç­</h2>
+<h3 id="ä¸å­¦ä¹ ä¸æ¨¡åç¬¬-1-ç« ">ä¸ãå­¦ä¹ ä¸æ¨¡å(ç¬¬ 1 ç« )</h3>
+<p><strong>Q1. ç¥ç»ç½ç»è®­ç»è¿ç¨ä¸­ï¼åªäºéæ¯å·²ç¥çï¼åªäºéæ¯æªç¥ç?</strong></p>
+<p>å·²ç¥éï¼<br>
+1.è®­ç»æ°æ®åæµè¯æ°æ®ï¼æçç£æ°æ®åæµè¯æ°æ®ï¼ï¼<br>
+2.ç½ç»ç»æï¼ç¥ç»åçå±æ°ãåå±ç¥ç»åæ°éï¼äººä¸ºè®¾å®çç»æåæ°ã<br>
+æªç¥éï¼<br>
+æéåæ°Wååç½®åæ°bã</p>
+<p><strong>å­¦ä¹ çç®æ å°åºæ¯ä»ä¹?</strong></p>
+<p>éè¿è°æ´æªç¥çæéåæ°ååç½®åæ°ï¼æå°åæå¤±å½æ°çå¼ï¼è®©æ¨¡åå·å¤å¯¹æµè¯æ°æ®çæ³åè¯å«è½åï¼å®ç°æ¨¡åå¯¹æªç¥æ°æ®çç¨³å®é¢æµã</p>
+<h3 id="äºçº¿æ§æ¨¡åä¸éçº¿æ§ç¬¬-2-ç« ">äºãçº¿æ§æ¨¡åä¸éçº¿æ§(ç¬¬ 2 ç« )</h3>
+<p><strong>Q2. ä¸ºä»ä¹åå±æç¥æºåªè½è§£å³çº¿æ§å¯åé®é¢?</strong></p>
+<p>å ä¸ºåå±æç¥æºåªè½è¡¨ç¤ºç±ç´çº¿åå²ççº¿æ§ç©ºé´ï¼å¯¹äºå¼æé¨è¿ç±»éçº¿æ§å¯åé®é¢æ æ³ç¨ä¸æ¡ç´çº¿ååä¸¤ç±»æ ·æ¬ã</p>
+<p>**Q3. ä¸ºä»ä¹å¿é¡»å¼å¥éçº¿æ§æ¿æ´»å½æ°? **</p>
+<p>å ä¸ºçº¿æ§æ¿æ´»å½æ°æå±éæ§ï¼åªè½ç­ä»·äºåå±çº¿æ§æ¨¡åï¼æ æ³å­¦ä¹ å¤æçéçº¿æ§å³ç³»ãä¸ºäºåæ¥å å å±æå¸¦æ¥çä¼å¿ï¼æ¿æ´»å½æ°å¿é¡»ä½¿ç¨éçº¿æ§å½æ°ã</p>
+<p><strong>å¦ææç¥ç»ç½ç»ä¸­æææ¿æ´»å½æ°é½å»æï¼ä¼åçä»ä¹?</strong></p>
+<p>æ æ³å­¦ä¹ éçº¿æ§æ¨¡å¼ï¼ä»è½å¤ççº¿æ§å¯åé®é¢ã</p>
+<h3 id="ä¸ç¥ç»ç½ç»çååè®¡ç®ç¬¬-3-ç« ">ä¸ãç¥ç»ç½ç»çååè®¡ç®(ç¬¬ 3 ç« )</h3>
+<p><strong>Q4. ç¥ç»ç½ç»çååä¼ æ­ï¼æ¬è´¨ä¸å¨åä»ä¹æ°å­¦è¿ç®?</strong></p>
+<p>æ¬è´¨ä¸æ¯ç©éµä¹æ³åæ¿æ´»å½æ°è¿ç®çäº¤æ¿æ§è¡ã<br>
+åéè¿ç©éµä¹æ³è®¡ç®è¾å¥ä¿¡å·ä¸æéçå æåï¼å¹¶å å åç½®ï¼åéè¿æ¿æ´»å½æ°å¯¹ç»æè¿è¡éçº¿æ§è½¬æ¢ï¼éå±ä¼ éè³è¾åºå±ã</p>
+<p><strong>Q5. ä¸ºä»ä¹åç±»é®é¢ä¸­ï¼è¾åºå±éå¸¸ä½¿ç¨ Softmax? Softmax å¨æ¦çæä¹ä¸åäºä»ä¹?</strong></p>
+<p>æ ¸å¿åå ï¼å°ç¥ç»ç½ç»è¾åºçâå¾åâï¼æªå½ä¸åå¼ï¼è½¬æ¢ä¸ºæ¦çåå¸ï¼ä½¿è¾åºå¼æ»åä¸º1ï¼ä¾¿äºç´è§è§£è¯»ç±»å«æ¦çï¼ä¸è½ä¸äº¤åçµè¯¯å·®éåï¼ä½¿ååä¼ æ­æ¶æ¢¯åº¦è®¡ç®æ´ç®æ´ï¼ç´æ¥å¾å°è¾åºä¸æ ç­¾çå·®åï¼ã</p>
+<p>å¨æ¦çä¸ï¼å®å¯¹äºæ¯ä¸ªç±»å«iï¼é½è®¡ç®å¶ç¸å¯¹æ¦çï¼æ¢ä¿çäºåå¾åçç¸å¯¹å¤§å°å³ç³»ï¼åå°è¾åºå½ä¸åå°[0,1]åºé´ï¼æ»¡è¶³æ¦ççåºæ¬æ§è´¨ï¼éè´æ§ãæ»åä¸º1ï¼ã</p>
+<h3 id="åæå¤±å½æ°ä¸æ¢¯åº¦ç¬¬-4-ç« --æ ¸å¿">åãæå¤±å½æ°ä¸æ¢¯åº¦(ç¬¬ 4 ç«  Â· æ ¸å¿)</h3>
+<p>**Q6. ä¸ºä»ä¹âåç¡®çâä¸è½ä½ä¸ºè®­ç»æ¶çä¼åç®æ ? **</p>
+<p>å ä¸ºåç¡®çæ¯ç¦»æ£ææ ï¼å¤æ°æåµä¸æ¢¯åº¦ä¸º0ï¼æ æ³å¼å¯¼åæ°æ´æ°ãä¾å¦ï¼å¾®å°è°æ´æéå¯è½ä¸ä¼æ¹ååç±»ç»æï¼å¯¼è´åç¡®çä¸åï¼åæ°æ´æ°åæ»ï¼ä¸åç¡®ççååä¸è¿ç»­ï¼æ æ³åæ åæ°ååå¯¹æ¨¡åæ§è½çè¿ç»­å½±åã</p>
+<p><strong>ä¸ºä»ä¹å¿é¡»å¼å¥æå¤±å½æ°?</strong></p>
+<hr>
+<p>å ä¸ºå®æ¯è¿ç»­å¯å¾®çå½æ°ï¼è½éåæ¨¡åé¢æµä¸çå®æ ç­¾çå·®å¼ï¼å¶æ¢¯åº¦å¯æå¯¼åæ°æ²¿âåå°è¯¯å·®âçæ¹åæ´æ°ï¼åæ¶ï¼æå¤±å½æ°çè¿ç»­ååè½åæ åæ°è°æ´çææï¼ç¡®ä¿å­¦ä¹ è¿ç¨æç»­æ¨è¿ã</p>
+<h3 id="äºæ¢¯åº¦ä¸éçæ¬è´¨ç¬¬-4-ç« --çµé­">äºãæ¢¯åº¦ä¸éçæ¬è´¨(ç¬¬ 4 ç«  Â· çµé­)</h3>
+<p><strong>Q7. æ¢¯åº¦å¨å ä½æä¹ä¸ä»£è¡¨ä»ä¹?</strong></p>
+<p>å¨å ä½æä¹ä¸ï¼æ¢¯åº¦æ¯æå¤±å½æ°å¨å½ååæ°ç¹å¤çæ¹åå¯¼æ°æå¤§å¼æ¹åï¼å³å½æ°å¼å¢é¿æå¿«çæ¹åï¼å¶æ¨¡é¿è¡¨ç¤ºå¢é¿çéçã</p>
+<p><strong>ä¸ºä»ä¹æ²¿çè´æ¢¯åº¦æ¹åæ´æ°åæ°?</strong></p>
+<p>å ä¸ºç¥ç»ç½ç»å­¦ä¹ çç®æ æ¯æå°åæå¤±å½æ°ï¼è´æ¢¯åº¦æ¹åæ¯æå¤±å½æ°å¼åå°æå¿«çæ¹åï¼æ²¿è¯¥æ¹åæ´æ°åæ°è½é«æé¼è¿æå¤±å½æ°çæå°å¼ï¼æå±é¨æå°å¼ï¼ã</p>
+<p>**Q8. å­¦ä¹ çå¨æ¢¯åº¦ä¸éä¸­èµ·ä»ä¹ä½ç¨? **</p>
+<p>ä½ç¨ï¼æ§å¶åæ°æ´æ°çæ­¥é¿ï¼å³å®æ¯æ¬¡è¿­ä»£ä¸­åæ°æ²¿è´æ¢¯åº¦æ¹åè°æ´çå¹åº¦ï¼æ¯å¹³è¡¡å­¦ä¹ éåº¦ä¸æ¶æææçå³é®è¶åæ°ã</p>
+<p><strong>å­¦ä¹ çè¿å¤§ä¼ææ ·?è¿å°åä¼ææ ·?</strong></p>
+<p>å­¦ä¹ çè¿å¤§ï¼åæ°æ´æ°æ­¥é¿è¿å¤§ï¼å¯è½å¯¼è´æå¤±å½æ°å¼éè¡ä¸æ¶æï¼çè³åæ£ï¼å¦åæ°å¼è¶åºæä¼èå´ï¼æå¤±å½æ°å¼æç»­å¢å¤§ï¼ã</p>
+<p>å­¦ä¹ çè¿å°ï¼åæ°æ´æ°æ­¥é¿è¿å°ï¼å­¦ä¹ éåº¦ææ¢ï¼éè¦å¤§éè¿­ä»£æè½é¼è¿æä¼è§£ï¼ä¸å¯è½é·å¥å±é¨æå°å¼æéç¹ï¼æ æ³æµè¾¾å¨å±æä¼ã</p>
+<h2 id="2-å®æ´å¯è¿è¡ä»£ç ">2. å®æ´å¯è¿è¡ä»£ç </h2>
+<h3 id="1æ¿æ´»å½æ°--æå¤±å½æ°"><strong>1.æ¿æ´»å½æ° &amp; æå¤±å½æ°ï¼</strong></h3>
+<p><strong>ä½¿ç¨ numpy å®ç°ï¼Sigmoidï¼ReLUï¼Softmax</strong><br>
+<strong>å®ç°ï¼äº¤åçµæå¤±ï¼æ¯æ batch è¾å¥ï¼</strong></p>
+<pre><code>import numpy as np
+
+def sigmoid(x):
+"""
+Sigmoid æ¿æ´»å½æ°ï¼
+å¬å¼: h(x) = 1 / (1 + exp(-x))
+åæ°:
+x: è¾å¥æ°æ®
+è¿å:
+Sigmoid è¾åº
+"""
+return 1 / (1 + np.exp(-x))
+
+def relu(x):
+"""
+ReLU æ¿æ´»å½æ°ï¼
+å¬å¼: h(x) = max(0, x)
+åæ°:
+x: è¾å¥æ°æ® (numpy array)
+è¿å:
+ReLU è¾åº
+"""
+return np.maximum(0, x)
+
+def softmax(x):
+"""
+Softmax æ¿æ´»å½æ°ï¼
+å¬å¼: y_k = exp(a_k) / sum(exp(a_i))
+åæ°:
+x: è¾å¥æ°æ® (numpy array)
+   å¦ææ¯ 1D æ°ç»ï¼è§ä¸ºåä¸ªæ ·æ¬ã
+   å¦ææ¯ 2D æ°ç»ï¼è§ä¸º batch æ ·æ¬ã
+è¿å:
+Softmax è¾åº
+"""
+if x.ndim == 2:
+    # Batch å¤ç
+    x = x.T
+    x = x - np.max(x, axis=0) # ç¨³å®æ§ä¼åï¼åå»æå¤§å¼ï¼é²æ­¢ exp æº¢åºï¼
+    y = np.exp(x) / np.sum(np.exp(x), axis=0)
+    return y.T 
+
+# åä¸ªæ ·æ¬å¤ç
+x = x - np.max(x) 
+return np.exp(x) / np.sum(np.exp(x))
+
+def cross_entropy_error(y, t):
+"""
+äº¤åçµæå¤±å½æ°ï¼
+å¬å¼: E = -sum(t_k * log(y_k))
+
+åæ°:
+y: ç¥ç»ç½ç»çè¾åº (æ¦çåå¸)ï¼ç»è¿ Softmax
+t: çç£æ°æ® (æ ç­¾)
+   å¯ä»¥æ¯ one-hot åé (ä¾å¦ [0, 1, 0, 0, ...])
+   ä¹å¯ä»¥æ¯æ ç­¾ç´¢å¼ (ä¾å¦ 1)
+è¿å:
+æå¤±å¼ (æ é)
+"""
+if y.ndim == 1:
+    t = t.reshape(1, t.size)
+    y = y.reshape(1, y.size)
+    
+# å¦æ t æ¯ one-hot åéï¼è½¬æ¢ä¸ºæ ç­¾ç´¢å¼
+if t.size == y.size:
+    t = t.argmax(axis=1)
+    
+batch_size = y.shape[0]
+
+# æ·»å ä¸ä¸ªå¾®å°å¼ delta é²æ­¢ log(0)
+delta = 1e-7
+return -np.sum(np.log(y[np.arange(batch_size), t] + delta)) / batch_size
+</code></pre>
+<h3 id="2æ°å¼æ¢¯åº¦"><strong>2.æ°å¼æ¢¯åº¦</strong></h3>
+<pre><code>import numpy as np
+
+def numerical_gradient(f, x):
+"""
+æ°å¼æ¢¯åº¦è®¡ç®å½æ°
+ä½¿ç¨ä¸­å¿å·®åæ³è¿ä¼¼è®¡ç®æ¢¯åº¦: (f(x+h) - f(x-h)) / 2h
+åæ°:
+f: ç®æ å½æ°
+x: è¾å¥åé (numpy array)
+è¿å:
+æ¢¯åº¦ (ä¸ x å½¢ç¶ç¸å)
+"""
+h = 1e-4 #è®¾ç½®ä¸ä¸ªå¾å°çæ°
+grad = np.zeros_like(x) # çæå x å½¢ç¶ç¸åçæ°ç»ï¼ç¨äºå­æ¾æ¢¯åº¦
+#éåxçæ¯ä¸ä¸ªåç´ 
+it = np.nditer(x, flags=['multi_index'], op_flags=['readwrite'])
+
+while not it.finished:
+    idx = it.multi_index
+    tmp_val = x[idx]
+    
+    # è®¡ç® f(x+h)
+    x[idx] = float(tmp_val) + h
+    fxh1 = f(x)
+    
+    # è®¡ç® f(x-h)
+    x[idx] = float(tmp_val) - h
+    fxh2 = f(x)
+    
+    # è®¡ç®æ¢¯åº¦
+    grad[idx] = (fxh1 - fxh2) / (2*h)
+    
+    # è¿åå¼
+    x[idx] = tmp_val 
+    it.iternext()
+    
+return grad
+</code></pre>
+<h3 id="3æ­å»ºç½ç»"><strong>3.æ­å»ºç½ç»</strong></h3>
+<p><strong>å±ä¸ååä¼ æ­</strong></p>
+<pre><code>import numpy as np
+from src.functions import softmax, 
+cross_entropy_error
+
+class Relu:
+"""
+ReLU å±
+ååä¼ æ­: out = x (x &gt; 0), 0 (x &lt;= 0)
+ååä¼ æ­: dx = dout (x &gt; 0), 0 (x &lt;= 0)
+"""
+def __init__(self):
+    self.mask = None # ç¨äºè®°å½ x ä¸­å°äºç­äº 0 çä½ç½®
+
+def forward(self, x):
+    """
+    ååä¼ æ­
+    """
+    self.mask = (x &lt;= 0)
+    out = x.copy()
+    out[self.mask] = 0
+    return out
+
+def backward(self, dout):
+    """
+    ååä¼ æ­
+    dout: ä¸ä¸å±ä¼ ä¸æ¥çæ¢¯åº¦
+    """
+    dout[self.mask] = 0
+    dx = dout
+    return dx
+
+class Affine:
+"""
+Affine å± (å¨è¿æ¥å±)
+ååä¼ æ­: out = np.dot(x, W) + b
+"""
+def __init__(self, W, b):
+    self.W = W # æé
+    self.b = b # åç½®
+    self.x = None # ä¿å­è¾å¥ï¼ç¨äºååä¼ æ­
+    self.dW = None # æéçæ¢¯åº¦
+    self.db = None # åç½®çæ¢¯åº¦
+
+def forward(self, x):
+    # å¦æè¾å¥æ¯å¼ é (N, C, H, W)ï¼éè¦å±å¹³ä¸º (N, D)
+    self.original_x_shape = x.shape
+    x = x.reshape(x.shape[0], -1)
+    self.x = x
+    
+    out = np.dot(self.x, self.W) + self.b
+    return out
+
+def backward(self, dout):
+    dx = np.dot(dout, self.W.T)
+    self.dW = np.dot(self.x.T, dout)
+    self.db = np.sum(dout, axis=0)
+    
+    dx = dx.reshape(*self.original_x_shape) # è¿åè¾å¥å½¢ç¶
+    return dx
+
+class SoftmaxWithLoss:
+"""
+SoftmaxWithLoss å±
+ç»åäº Softmax æ¿æ´»å½æ°å Cross Entropy Loss
+"""
+def __init__(self):
+    self.loss = None
+    self.y = None # Softmax çè¾åº
+    self.t = None # çç£æ°æ® (One-hot æ æ ç­¾ç´¢å¼)
+
+def forward(self, x, t):
+    self.t = t
+    self.y = softmax(x)
+    self.loss = cross_entropy_error(self.y, self.t)
+    return self.loss
+
+def backward(self, dout=1):
+    batch_size = self.t.shape[0]
+    
+    # å¤ç one-hot ç¼ç åæ ç­¾ç´¢å¼ä¸¤ç§æåµ
+    if self.t.size == self.y.size: # one-hot
+        dx = (self.y - self.t) / batch_size
+    else:
+        dx = self.y.copy()
+        dx[np.arange(batch_size), self.t] -= 1
+        dx = dx / batch_size
+        
+    return dx
+</code></pre>
+<p><strong>ç»è£ç½ç»</strong></p>
+<pre><code>import numpy as np
+from collections import OrderedDict
+from src.layers import *
+from src.gradient import numerical_gradient
+
+class TwoLayerNet:
+"""
+ä¸¤å±ç¥ç»ç½ç»
+ç»æ: Input -&gt; Affine -&gt; ReLU -&gt; Affine -&gt; SoftmaxWithLoss
+"""
+
+def __init__(self, input_size, hidden_size, output_size, weight_init_std=0.01):
+    """
+    åå§åç½ç»æé
+    åæ°:
+    input_size: è¾å¥å±ç¥ç»åæ°é 
+    hidden_size: éèå±ç¥ç»åæ°é
+    output_size: è¾åºå±ç¥ç»åæ°é 
+    weight_init_std: æéåå§åæ åå·®
+    """
+    # åå§åæé
+    self.params = {}
+    self.params['W1'] = weight_init_std * np.random.randn(input_size, hidden_size)
+    self.params['b1'] = np.zeros(hidden_size)
+    self.params['W2'] = weight_init_std * np.random.randn(hidden_size, output_size)
+    self.params['b2'] = np.zeros(output_size)
+
+    # çæå±
+    self.layers = OrderedDict()
+    self.layers['Affine1'] = Affine(self.params['W1'], self.params['b1'])
+    self.layers['Relu1'] = Relu()
+    self.layers['Affine2'] = Affine(self.params['W2'], self.params['b2'])
+
+    self.lastLayer = SoftmaxWithLoss()
+    
+def predict(self, x):
+    """
+    ååä¼ æ­ (é¢æµ)
+    """
+    for layer in self.layers.values():
+        x = layer.forward(x)
+    return x
+    
+def loss(self, x, t):
+    """
+    è®¡ç®æå¤±å½æ°å¼
+    
+    åæ°:
+    x: è¾å¥æ°æ®
+    t: çç£æ°æ® (æ ç­¾)
+    """
+    y = self.predict(x)
+    return self.lastLayer.forward(y, t)
+
+def accuracy(self, x, t):
+    """
+    è®¡ç®ç²¾åº¦
+    """
+    y = self.predict(x)
+    y = np.argmax(y, axis=1)
+    if t.ndim != 1 : t = np.argmax(t, axis=1)
+    
+    accuracy = np.sum(y == t) / float(x.shape[0])
+    return accuracy
+    
+def numerical_gradient(self, x, t):
+    """
+    ä½¿ç¨æ°å¼å¾®åè®¡ç®æ¢¯åº¦ (éåº¦è¾æ¢ï¼ç¨äºéªè¯)
+    """
+    loss_W = lambda W: self.loss(x, t)
+    
+    grads = {}
+    grads['W1'] = numerical_gradient(loss_W, self.params['W1'])
+    grads['b1'] = numerical_gradient(loss_W, self.params['b1'])
+    grads['W2'] = numerical_gradient(loss_W, self.params['W2'])
+    grads['b2'] = numerical_gradient(loss_W, self.params['b2'])
+    
+    return grads
+    
+def gradient(self, x, t):
+    """
+    ä½¿ç¨è¯¯å·®ååä¼ æ­æ³è®¡ç®æ¢¯åº¦ (éåº¦å¿«)
+    """
+    # 1. ååä¼ æ­
+    self.loss(x, t)
+
+    # 2. ååä¼ æ­
+    dout = 1
+    dout = self.lastLayer.backward(dout)
+    
+    layers = list(self.layers.values())
+    layers.reverse()
+    for layer in layers:
+        dout = layer.backward(dout)
+
+    # 3. æ¶éæ¢¯åº¦
+    grads = {}
+    grads['W1'] = self.layers['Affine1'].dW
+    grads['b1'] = self.layers['Affine1'].db
+    grads['W2'] = self.layers['Affine2'].dW
+    grads['b2'] = self.layers['Affine2'].db
+
+    return grads
+</code></pre>
+<h3 id="4æ°æ®å è½½åä¸»è®­ç»å¾ªç¯"><strong>4.æ°æ®å è½½åä¸»è®­ç»å¾ªç¯</strong></h3>
+<p><strong>æ°æ®å è½½</strong></p>
+<pre><code>import os
+import gzip
+import numpy as np
+import urllib.request
+
+# MNIST æ°æ®éä¸è½½é¾æ¥
+url_base = 'https://ossci-        datasets.s3.amazonaws.com/mnist/'
+key_file = {
+'train_img': 'train-images-idx3-ubyte.gz',
+'train_label': 'train-labels-idx1-ubyte.gz',
+'test_img': 't10k-images-idx3-ubyte.gz',
+'test_label': 't10k-labels-idx1-ubyte.gz'
+</code></pre>
+<p>}</p>
+<pre><code>dataset_dir = os.path.dirname(os.path.abspath(__file__))
+save_file = dataset_dir + "/mnist.pkl"
+
+train_num = 60000
+test_num = 10000
+img_dim = (1, 28, 28)
+img_size = 784
+
+def _download(file_name):
+file_path = dataset_dir + "/" + file_name
+
+if os.path.exists(file_path):
+    return
+
+print("Downloading " + file_name + " ... ")
+# ä½¿ç¨ header æ¨¡ææµè§å¨ï¼é²æ­¢æäºæå¡å¨æç»
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
+req = urllib.request.Request(url_base + file_name, headers=headers)
+
+try:
+    with urllib.request.urlopen(req) as response, open(file_path, 'wb') as out_file:
+        data = response.read()
+        out_file.write(data)
+    print("Done")
+except Exception as e:
+    print(f"Failed to download {file_name}: {e}")
+    # å¦æä¸è½½å¤±è´¥ï¼å°è¯å¤ç¨éåææç¤ºç¨æ·
+    print("Please try to download manually and place in: ", dataset_dir)
+
+def download_mnist():
+for v in key_file.values():
+    _download(v)
+
+def _load_label(file_name):
+file_path = dataset_dir + "/" + file_name
+
+print("Converting " + file_name + " to NumPy Array ...")
+with gzip.open(file_path, 'rb') as f:
+    labels = np.frombuffer(f.read(), np.uint8, offset=8)
+print("Done")
+
+return labels
+
+def _load_img(file_name):
+file_path = dataset_dir + "/" + file_name
+
+print("Converting " + file_name + " to NumPy Array ...")
+with gzip.open(file_path, 'rb') as f:
+    data = np.frombuffer(f.read(), np.uint8, offset=16)
+data = data.reshape(-1, img_size)
+print("Done")
+
+return data
+
+def _convert_numpy():
+dataset = {}
+dataset['train_img'] =  _load_img(key_file['train_img'])
+dataset['train_label'] = _load_label(key_file['train_label'])    
+dataset['test_img'] = _load_img(key_file['test_img'])
+dataset['test_label'] = _load_label(key_file['test_label'])
+
+return dataset
+
+def init_mnist():
+download_mnist()
+dataset = _convert_numpy()
+print("Creating pickle file ...")
+import pickle
+with open(save_file, 'wb') as f:
+    pickle.dump(dataset, f, -1)
+print("Done!")
+
+def load_mnist(normalize=True, flatten=True, one_hot_label=False):
+"""
+è¯»å¥ MNIST æ°æ®é
+Parameters
+normalize : å°å¾åçåç´ å¼æ­£è§åä¸º 0.0~1.0
+one_hot_label : 
+    False -&gt; 7, 2, ...
+    True -&gt; [0,0,0,0,0,0,0,1,0,0], [0,0,1,0,0,0,0,0,0,0], ...
+flatten : æ¯å¦å°å¾åå±å¼ä¸ºä¸ç»´æ°ç»
+
+Returns
+(è®­ç»å¾å, è®­ç»æ ç­¾), (æµè¯å¾å, æµè¯æ ç­¾)
+"""
+if not os.path.exists(save_file):
+    init_mnist()
+    
+import pickle
+with open(save_file, 'rb') as f:
+    dataset = pickle.load(f)
+
+if normalize:
+    for key in ('train_img', 'test_img'):
+        dataset[key] = dataset[key].astype(np.float32)
+        dataset[key] /= 255.0
+        
+if one_hot_label:
+    dataset['train_label'] = _change_one_hot_label(dataset['train_label'])
+    dataset['test_label'] = _change_one_hot_label(dataset['test_label'])
+
+if not flatten:
+    for key in ('train_img', 'test_img'):
+        dataset[key] = dataset[key].reshape(-1, 1, 28, 28)
+
+return (dataset['train_img'], dataset['train_label']), (dataset['test_img'], dataset['test_label']) 
+
+def _change_one_hot_label(X):
+T = np.zeros((X.size, 10))
+for idx, row in enumerate(T):
+    row[X[idx]] = 1
+    
+return T
+</code></pre>
+<p><strong>ä¸»è®­ç»å¾ªç¯</strong></p>
+<pre><code>import numpy as np
+import matplotlib.pyplot as plt
+from src.dataset import load_mnist
+from src.network import TwoLayerNet
+# 1. è¯»å¥æ°æ®
+print("æ­£å¨å è½½ MNIST æ°æ®é...")
+(x_train, t_train), (x_test, t_test) = load_mnist(normalize=True, one_hot_label=True)
+print(f"è®­ç»æ°æ®å½¢ç¶: {x_train.shape}")
+print(f"æµè¯æ°æ®å½¢ç¶: {x_test.shape}")
+
+# 2. è¶åæ°è®¾ç½®
+iters_num = 10000  # éå½è®¾å®å¾ªç¯çæ¬¡æ°
+train_size = x_train.shape[0]
+batch_size = 100
+learning_rate = 0.1
+
+train_loss_list = []
+train_acc_list = []
+test_acc_list = []
+
+# å¹³åæ¯ä¸ª epoch çéå¤æ¬¡æ°
+iter_per_epoch = max(train_size / batch_size, 1)
+
+# 3. åå§åç½ç»
+# è¾å¥å± 784 (28x28), éèå± 50, è¾åºå± 10 (0-9)
+network = TwoLayerNet(input_size=784, hidden_size=50, output_size=10)
+
+print("å¼å§è®­ç»...")
+
+for i in range(iters_num):
+    # è·å mini-batch
+    batch_mask = np.random.choice(train_size, batch_size)
+    x_batch = x_train[batch_mask]
+    t_batch = t_train[batch_mask]
+    
+# è®¡ç®æ¢¯åº¦
+# æ¨è: ä½¿ç¨ååä¼ æ­ (Task 4 å®ç°)
+grad = network.gradient(x_batch, t_batch)
+
+# ä¹å¯ä»¥ä½¿ç¨æ°å¼æ¢¯åº¦ (Task 3 å®ç°)ï¼ä½éåº¦éå¸¸æ¢ï¼ä¸å»ºè®®å¨å®éè®­ç»ä¸­ä½¿ç¨
+# grad = network.numerical_gradient(x_batch, t_batch)
+
+# æ´æ°åæ° (SGD - Task 5)
+for key in ('W1', 'b1', 'W2', 'b2'):
+    network.params[key] -= learning_rate * grad[key]
+
+# è®°å½å­¦ä¹ è¿ç¨
+loss = network.loss(x_batch, t_batch)
+train_loss_list.append(loss)
+
+# è®¡ç®æ¯ä¸ª epoch çè¯å«ç²¾åº¦
+if i % iter_per_epoch == 0:
+    train_acc = network.accuracy(x_train, t_train)
+    test_acc = network.accuracy(x_test, t_test)
+    train_acc_list.append(train_acc)
+    test_acc_list.append(test_acc)
+    print(f"epoch: {int(i/iter_per_epoch)}, loss: {loss:.4f}, train acc: {train_acc:.4f}, test acc: {test_acc:.4f}")
+
+print("è®­ç»ç»æ!")
+
+# 4. ç»å¾ (Task 6)
+# ç»å¶æå¤±å½æ°åå
+plt.figure(figsize=(12, 5))
+plt.subplot(1, 2, 1)
+plt.plot(train_loss_list)
+plt.title("Loss Function History")
+plt.xlabel("Iterations")
+plt.ylabel("Loss")
+
+# ç»å¶ç²¾åº¦åå
+plt.subplot(1, 2, 2)
+markers = {'train': 'o', 'test': 's'}
+x = np.arange(len(train_acc_list))
+plt.plot(x, train_acc_list, label='train acc')
+plt.plot(x, test_acc_list, label='test acc', linestyle='--')
+plt.xlabel("Epochs")
+plt.ylabel("Accuracy")
+plt.ylim(0, 1.0)
+plt.legend(loc='lower right')
+plt.title("Accuracy History")
+
+plt.tight_layout()
+plt.savefig("training_result.png")
+print("ç»æå·²ä¿å­è³ training_result.png")
+# plt.show() 
+</code></pre>
+<p>æ³¨ï¼å³äºMNISTæ°æ®éå¨ä»£ç ä¸­ä½¿ç¨ï¼</p>
+<pre><code>from src.dataset import load_mnist
+    # ç¬¬ä¸æ¬¡è¿è¡æ¶ä¼èªå¨ä¸è½½å¹¶çæ mnist.pkl ç¼å­æä»¶
+    (x_train, t_train), (x_test, t_test) = load_mnist(normalize=True, flatten=True, one_hot_label=True)
+
+print(x_train.shape) # (60000, 784)
+print(t_train.shape) # (60000, 10)
+</code></pre>
+<p>è¿è¡ï¼1.å®è£ä¾èµ</p>
+<pre><code>pip install -r requirements.txt
+</code></pre>
+<p>2.è¿è¡è®­ç»</p>
+<pre><code>python main.py
+</code></pre>
+<h2 id="3-ç®åå®éªè®°å½loss-æ²çº¿ææ¥å¿">3. ç®åå®éªè®°å½ï¼loss æ²çº¿ææ¥å¿ï¼</h2>
+<p><img alt="training_result" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3725282/202602/3725282-20260222205721544-1133370305.png" class="lazyload"><br>
+ä»¥ä¸æ¯è¯¥æ¬¡å­¦ä¹ çåºæ¬åå®¹ã</p>
+
+
+</div>
+<div class="clear"></div>
+
+		<p class="postfoot">
+			posted on 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-02-24 17:46">2026-02-24 17:45</span>&nbsp;
+<a href="https://www.cnblogs.com/Plane0799">Plane_0799</a>&nbsp;
+éè¯»(<span id="post_view_count">23</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19629835);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19629835', targetLink: 'https://www.cnblogs.com/Plane0799/p/19629835', title: 'æ·±åº¦å­¦ä¹ å¥é¨' })">ä¸¾æ¥</a>
+
+		</p>
+	 ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ OpenClawå¤§é¾è¾æºå¨äººå®æ´å®è£æç¨ ]]></title>
+    <link>https://www.cnblogs.com/seozimt/p/19634519</link>
+    <guid>8f0e35012bf62f8028b35c5d6a39cabe</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/seozimt/p/19634519" title="åå¸äº 2026-02-24 17:16">
+    <span role="heading" aria-level="2">OpenClawå¤§é¾è¾æºå¨äººå®æ´å®è£æç¨</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>OpenClawï¼å¤§é¾è¾æºå¨äººï¼æ¯ä¸æ¬¾æ¬å°é¨ç½²çå¨è½AIå©æï¼å¯éè¿WhatsAppãTelegramãé£ä¹¦ç­èå¤©è½¯ä»¶å®ç°é®ä»¶å¤çãæ¥åç®¡çãç³»ç»æä½ç­åè½ï¼æ°æ®æ¬å°å­å¨æ´éç§ãæ¬æç¨éé<strong>macOS/Linux/Windows</strong>ç³»ç»ï¼åå«åºç¡å®è£ãåå§åéç½®ãèå¤©è½¯ä»¶å¯¹æ¥åå¸¸è§é®é¢è§£å³ï¼æ°æä¹è½å¿«éä¸æã</p>
+<h2 id="ä¸å®è£ååå¤">ä¸ãå®è£ååå¤</h2>
+<h3 id="1-ç³»ç»ä¸ç¡¬ä»¶è¦æ±">1. ç³»ç»ä¸ç¡¬ä»¶è¦æ±</h3>
+<table>
+<thead>
+<tr>
+<th>éç½®é¡¹</th>
+<th>æä½è¦æ±</th>
+<th>æ¨èéç½®</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>æä½ç³»ç»</td>
+<td>macOS 12+/Ubuntu 20.04+/Windows 10ï¼éWSL2ï¼</td>
+<td>macOS 14+/Ubuntu 22.04+/Windows 11</td>
+</tr>
+<tr>
+<td>åå­</td>
+<td>4GB</td>
+<td>8GB+</td>
+</tr>
+<tr>
+<td>ç£çç©ºé´</td>
+<td>2GBå¯ç¨</td>
+<td>10GB+ SSD</td>
+</tr>
+<tr>
+<td>æ ¸å¿ä¾èµ</td>
+<td>Node.js 18.0+</td>
+<td>Node.js v22 LTSææ°ç</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-å¿å¤åç½®èµæº">2. å¿å¤åç½®èµæº</h3>
+<ul>
+<li>AIæ¨¡åAPI Keyï¼ClaudeãGPT-4/5ãé¿éäºç¾ç¼ãKimiç­å¼å®¹OpenAI APIçæ¨¡åå¯é¥ï¼éåå¾å¯¹åºå¹³å°å®ç½æ³¨åè·åï¼ï¼</li>
+<li>ç½ç»ç¯å¢ï¼å»ºè®®éç½®å½ånpméåï¼å éä¾èµä¸è½½ï¼ï¼Windowsç¨æ·éæåå®è£<strong>Git</strong>ï¼è§£å³ä¾èµæåé®é¢ï¼ã</li>
+</ul>
+<h2 id="äºåç³»ç»å¿«éå®è£">äºãåç³»ç»å¿«éå®è£</h2>
+<h3 id="æ¹æ¡1macoslinuxç³»ç»å®æ¹æ¨èä¸é®å®è£">æ¹æ¡1ï¼macOS/Linuxç³»ç»ï¼å®æ¹æ¨èï¼ä¸é®å®è£ï¼</h3>
+<ol>
+<li>æå¼ç»ç«¯ï¼æ§è¡<strong>å®æ¹ä¸é®å®è£èæ¬</strong>ï¼èªå¨å®è£Node.jsåææä¾èµï¼ï¼<pre><code class="language-bash">curl -fsSL https://openclaw.ai/install.sh | bash
+</code></pre>
+</li>
+<li>ä¹å¯éè¿npmå¨å±å®è£ï¼å¤ç¨æ¹å¼ï¼ï¼<pre><code class="language-bash"># éç½®å½ånpméåï¼å¯éï¼å éä¸è½½ï¼
+npm config set registry https://registry.npmmirror.com
+# å¨å±å®è£OpenClaw
+npm install -g openclaw@latest
+</code></pre>
+</li>
+<li>éªè¯å®è£æåï¼<pre><code class="language-bash">openclaw --version
+</code></pre>
+æ¾ç¤ºçæ¬å·å³å®è£å®æã</li>
+</ol>
+<h3 id="æ¹æ¡2windowsç³»ç»åçééé¿åç">æ¹æ¡2ï¼Windowsç³»ç»ï¼åçééï¼é¿åçï¼</h3>
+<p>Windowsåçå¯¹OpenClawæ¯æè¾å¼±ï¼éåéç½®Node.jsç¯å¢ï¼<strong>å¨ç¨ç¨ç®¡çåæéæå¼PowerShell</strong>æä½ï¼</p>
+<ol>
+<li>å®è£Node.js v22ï¼<pre><code class="language-powershell"># å®è£nvmï¼Nodeçæ¬ç®¡çå·¥å·ï¼æ¨èï¼
+iwr -useb https://raw.githubusercontent.com/coreybutler/nvm-windows/master/nvm-setup.exe | iex
+# å®è£å¹¶ä½¿ç¨Node.js 22
+nvm install 22
+nvm use 22.22.0
+</code></pre>
+</li>
+<li>æ§è¡Windowsä¸å±å®è£èæ¬ï¼<pre><code class="language-powershell">iwr -useb https://openclaw.ai/install.ps1 | iex
+</code></pre>
+</li>
+<li>è¥é<strong>æ§è¡ç­ç¥æ¥é</strong>ï¼åæ§è¡ä»¥ä¸å½ä»¤åéæ°å®è£ï¼<pre><code class="language-powershell">Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+</code></pre>
+</li>
+<li>éªè¯å®è£ï¼<pre><code class="language-powershell">openclaw --version
+</code></pre>
+</li>
+</ol>
+<h3 id="æ¹æ¡3å¼åèè¿é¶å®è£gitåéæºç ">æ¹æ¡3ï¼å¼åèè¿é¶å®è£ï¼Gitåéæºç ï¼</h3>
+<p>éåéè¦èªå®ä¹å¼åãä¿®æ¹æºç çç¨æ·ï¼macOS/Linux/Windowsï¼WSL2ï¼åå¯ä½¿ç¨ï¼</p>
+<pre><code class="language-bash"># åéä»åº
+git clone https://github.com/openclaw/openclaw.git
+# è¿å¥ç®å½å¹¶å®è£ä¾èµ
+cd openclaw &amp;&amp; pnpm install &amp;&amp; pnpm run build
+# åå§å
+pnpm run openclaw onboard
+</code></pre>
+<h2 id="ä¸åå§åéç½®æ ¸å¿æ­¥éª¤">ä¸ãåå§åéç½®ï¼æ ¸å¿æ­¥éª¤ï¼</h2>
+<p>å®è£å®æåï¼æ§è¡åå§åå½ä»¤è¿å¥äº¤äºå¼éç½®åå¯¼ï¼éç½®AIæ¨¡åååºç¡åæ°ï¼</p>
+<pre><code class="language-bash"># éç¨åå§åå½ä»¤
+openclaw onboard
+# Windowsæ°ææ¨èå¿«ééç½®
+openclaw onboard --flow quickstart
+</code></pre>
+<h3 id="1-é£é©ç¡®è®¤">1. é£é©ç¡®è®¤</h3>
+<p>é¦æ¬¡éç½®ä¼åºç°é£é©æç¤ºï¼<code>I understand this is powerful and inherently risky. Continue?</code>ï¼éæ©<strong>Yes</strong>ç»§ç»­ã</p>
+<h3 id="2-éæ©aiæ¨¡åå¹¶éç½®api-key">2. éæ©AIæ¨¡åå¹¶éç½®API Key</h3>
+<ol>
+<li>ææ¹åé®éæ©å¸¸ç¨AIæ¨¡åï¼æ¨èClaude/GPT-4/é¿éäºç¾ç¼ï¼å½åç¨æ·ä¼åéé¿éäºç¾ç¼/Kimiï¼è®¿é®æ´ç¨³å®ï¼ï¼</li>
+<li>ç²è´´æåè·åç<strong>API Key</strong>ï¼æ ¼å¼ä¸º<code>sk-xxxxxxxx</code>ï¼ï¼åè½¦ç¡®è®¤ï¼</li>
+<li>é¨åæ¨¡åéæµè§å¨æå¼é¾æ¥å®æè´¦å·ææï¼ææç¤ºæä½å³å¯ã</li>
+</ol>
+<h3 id="3-åºç¡åè½éç½®">3. åºç¡åè½éç½®</h3>
+<ul>
+<li><strong>æè½åï¼Skillï¼</strong>ï¼æ°æç´æ¥é<strong>No</strong>è·³è¿ï¼åç»­æéå®è£ï¼</li>
+<li><strong>è®°å¿åè½ï¼Hooksï¼</strong>ï¼éä¸­<code>session-memory</code>ï¼å¯ç¨å¤è½®å¯¹è¯è®°å¿ï¼é¿åéå¤è¯´æéæ±ï¼ï¼å¶ä»é»è®¤ï¼</li>
+<li>éç½®å®æåï¼ç³»ç»ä¼èªå¨å¯å¨<strong>Gatewayç½å³æå¡</strong>ï¼é»è®¤ç«¯å£<code>18789</code>ã</li>
+</ul>
+<h3 id="4-æå¼ç®¡çæ§å¶å°">4. æå¼ç®¡çæ§å¶å°</h3>
+<p>éç½®å®æåï¼æµè§å¨ä¼èªå¨æå¼æ¬å°æ§å¶å°ï¼æå¨è®¿é®å°åï¼</p>
+<pre><code>http://127.0.0.1:18789
+</code></pre>
+<p>é¦æ¬¡è¿å¥éè¾å¥åå§åçæç<strong>éç½®Token</strong>ï¼å¦¥åä¿å­ï¼ä¸¢å¤±ééæ°åå§åï¼ã</p>
+<h2 id="åå¯¹æ¥èå¤©è½¯ä»¶ä»¥é£ä¹¦ä¸ºä¾å½åå¸¸ç¨">åãå¯¹æ¥èå¤©è½¯ä»¶ï¼ä»¥é£ä¹¦ä¸ºä¾ï¼å½åå¸¸ç¨ï¼</h2>
+<p>OpenClawæ¯æWhatsAppãTelegramãé£ä¹¦ãééãå¾®ä¿¡ç­å¹³å°ï¼<strong>é£ä¹¦éç½®é¾åº¦ä½ãç¨³å®æ§é«</strong>ï¼ä»¥ä¸ä¸ºè¯¦ç»å¯¹æ¥æ­¥éª¤ï¼å¶ä»å¹³å°æä½é»è¾ç±»ä¼¼ã</p>
+<h3 id="1-å®è£é£ä¹¦æä»¶">1. å®è£é£ä¹¦æä»¶</h3>
+<p>å¨ç»ç«¯/PowerShellæ§è¡æä»¶å®è£å½ä»¤ï¼</p>
+<pre><code class="language-bash">openclaw plugins install @m1heng-clawd/feishu
+# è¿å¥æä»¶ç®å½å®æä¾èµå®è£
+cd /root/.openclaw/extensions/feishu/ &amp;&amp; npm install --verbose
+</code></pre>
+<h3 id="2-é£ä¹¦å¼æ¾å¹³å°åå»ºåºç¨">2. é£ä¹¦å¼æ¾å¹³å°åå»ºåºç¨</h3>
+<ol>
+<li>è®¿é®é£ä¹¦å¼æ¾å¹³å°ï¼<a href="https://open.feishu.cn/app/%EF%BC%8C%E7%99%BB%E5%BD%95%E5%90%8E%E7%82%B9%E5%87%BB" target="_blank" rel="noopener nofollow">https://open.feishu.cn/app/ï¼ç»å½åç¹å»</a><strong>åå»ºä¼ä¸èªå»ºåºç¨</strong>ï¼</li>
+<li>å¡«ååºç¨åç§°ï¼å¦ãå¤§é¾è¾AIå©æãï¼ï¼éæ©å¾æ ï¼ç¹å»<strong>åå»º</strong>ï¼</li>
+<li>è¿å¥åºç¨ç®¡çé¡µï¼ç¹å»<strong>æ·»å åºç¨è½å</strong> â éæ©<strong>æºå¨äºº</strong> â ç¹å»<strong>æ·»å </strong>ã</li>
+</ol>
+<h3 id="3-éç½®é£ä¹¦åºç¨æéä¸äºä»¶">3. éç½®é£ä¹¦åºç¨æéä¸äºä»¶</h3>
+<h4 id="1æ¹éå¯¼å¥æé">ï¼1ï¼æ¹éå¯¼å¥æé</h4>
+<ol>
+<li>è¿å¥åºç¨ç®¡çé¡µ<strong>æéç®¡ç</strong> â ç¹å»<strong>æ¹éå¯¼å¥æé</strong>ï¼</li>
+<li>ç²è´´ä»¥ä¸JSONä»£ç ï¼ç¹å»<strong>å¯¼å¥</strong>ï¼æ ¸å¿æéï¼ç¡®ä¿æºå¨äººè½æ¶åæ¶æ¯ï¼ï¼<pre><code class="language-json">{
+ "scopes": {
+  "tenant": [
+   "contact:user.base:readonly",
+   "im:chat",
+   "im:message",
+   "im:message:send_as_bot",
+   "im:resource"
+  ],
+  "user": []
+ }
+}
+</code></pre>
+</li>
+</ol>
+<h4 id="2äºä»¶è®¢ééç½®">ï¼2ï¼äºä»¶è®¢ééç½®</h4>
+<ol>
+<li>è¿å¥<strong>äºä»¶ä¸åè°</strong> â äºä»¶éç½®éæ©<strong>é¿è¿æ¥</strong>ï¼ç¹å»<strong>ä¿å­</strong>ï¼</li>
+<li>ç¹å»<strong>æ·»å äºä»¶</strong> â éæ©<strong>æ¶æ¯ä¸ç¾¤ç»</strong> â å¾é<strong>im.message.receive_v1</strong>ï¼æ¥æ¶æ¶æ¯äºä»¶ï¼å¿éï¼ï¼</li>
+<li>è®¢éæ¹å¼éæ©<strong>ä½¿ç¨é¿è¿æ¥</strong>ï¼æ éå¡«ååè°å°åï¼èªå¨çæã</li>
+</ol>
+<h4 id="3åå¸åºç¨">ï¼3ï¼åå¸åºç¨</h4>
+<ol>
+<li>è¿å¥<strong>çæ¬ç®¡çä¸åå¸</strong> â ç¹å»<strong>æ°å»ºçæ¬</strong>ï¼å¡«åçæ¬å·åæè¿°ï¼</li>
+<li>ç¹å»<strong>ä¿å­å¹¶åå¸</strong>ï¼é£ä¹¦åºç¨éç½®å®æï¼æªåå¸åéç½®ä¸çæï¼ã</li>
+</ol>
+<h3 id="4-openclawç»å®é£ä¹¦åºç¨">4. OpenClawç»å®é£ä¹¦åºç¨</h3>
+<ol>
+<li>å¨ç»ç«¯æ§è¡å½ä»¤ï¼æ·»å é£ä¹¦éä¿¡æ¸ éï¼<pre><code class="language-bash">openclaw channels add
+</code></pre>
+</li>
+<li>ææç¤ºè¾å¥é£ä¹¦åºç¨ç<strong>App ID</strong>å<strong>App Secret</strong>ï¼å¨é£ä¹¦å¼æ¾å¹³å°ãå­è¯åºç¡ä¿¡æ¯ãä¸­å¤å¶ï¼ï¼</li>
+<li>éå¯ç½å³æå¡ï¼ä½¿éç½®çæï¼<pre><code class="language-bash">openclaw gateway restart
+</code></pre>
+</li>
+<li>éªè¯ç¶æï¼<pre><code class="language-bash">openclaw status
+</code></pre>
+æ¾ç¤º<strong>Gateway running</strong>å³ç»å®æåã</li>
+</ol>
+<h3 id="5-é£ä¹¦ç«¯æµè¯ä½¿ç¨">5. é£ä¹¦ç«¯æµè¯ä½¿ç¨</h3>
+<ol>
+<li>æå¼é£ä¹¦APPï¼è¿å¥<strong>å·¥ä½å°</strong> â æ¾å°åå»ºçãå¤§é¾è¾AIå©æãï¼ç¹å»è¿å¥ç§èçªå£ï¼</li>
+<li>åéä»»ææ¶æ¯ï¼å¦ãä½ å¥½ããæ´çæçä»æ¥æ¥ç¨ãï¼ï¼æ¶å°æºå¨äººåå¤å³å¯¹æ¥å®æã</li>
+</ol>
+<h2 id="äºåºç¡ä½¿ç¨ä¸å¸¸ç¨å½ä»¤">äºãåºç¡ä½¿ç¨ä¸å¸¸ç¨å½ä»¤</h2>
+<h3 id="1-æ ¸å¿ä½¿ç¨æ¹å¼">1. æ ¸å¿ä½¿ç¨æ¹å¼</h3>
+<p>å¨ç»å®çèå¤©è½¯ä»¶ä¸­ç´æ¥åéèªç¶è¯­è¨æä»¤ï¼æºå¨äººå³å¯æ§è¡æä½ï¼ä¾å¦ï¼</p>
+<ul>
+<li>é®ä»¶å¤çï¼ãå¸®ææ´çä¸å¨çæªè¯»é®ä»¶ï¼æåä¼è®®çºªè¦ãï¼</li>
+<li>æä»¶ç®¡çï¼ãå°æ¡é¢PDFæä»¶ææ¥æå½æ¡£å°ææ¡£æä»¶å¤¹ãï¼</li>
+<li>ç³»ç»æä½ï¼ãæ§è¡shellå½ä»¤æ¥ççµèCPUä½¿ç¨çãï¼</li>
+<li>å®æ¶ä»»å¡ï¼ãæ¯å¤©æ©ä¸9ç¹ç»æåéä»æ¥å¾åäºé¡¹ãã</li>
+</ul>
+<h3 id="2-å¸¸ç¨ç»ç«¯å½ä»¤æ±æ»">2. å¸¸ç¨ç»ç«¯å½ä»¤æ±æ»</h3>
+<table>
+<thead>
+<tr>
+<th>åè½</th>
+<th>å½ä»¤</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>æ¥ççæ¬</td>
+<td>openclaw --version</td>
+</tr>
+<tr>
+<td>æ¥çè¿è¡ç¶æ</td>
+<td>openclaw status</td>
+</tr>
+<tr>
+<td>å¯å¨/åæ­¢/éå¯æºå¨äºº</td>
+<td>openclaw start/stop/restart</td>
+</tr>
+<tr>
+<td>éæ°åå§åéç½®</td>
+<td>openclaw onboard</td>
+</tr>
+<tr>
+<td>éå¯ç½å³æå¡</td>
+<td>openclaw gateway restart</td>
+</tr>
+<tr>
+<td>æ¥çå·²å®è£æä»¶</td>
+<td>openclaw plugins list</td>
+</tr>
+<tr>
+<td>å®è£æä»¶</td>
+<td>openclaw plugins install æä»¶å</td>
+</tr>
+<tr>
+<td>å¸è½½æä»¶</td>
+<td>openclaw plugins uninstall æä»¶å</td>
+</tr>
+<tr>
+<td>æ¥çå¸®å©</td>
+<td>openclaw --help</td>
+</tr>
+</tbody>
+</table>
+<h2 id="å­å¸¸è§é®é¢ä¸é¿åæå">å­ãå¸¸è§é®é¢ä¸é¿åæå</h2>
+<h3 id="1-å®è£æ¶å¡å¨node-gyp-rebuild">1. å®è£æ¶å¡å¨<code>node-gyp rebuild</code></h3>
+<p><strong>åå </strong>ï¼ç¼ºå°PythonåC++ç¼è¯å·¥å·ï¼<br>
+<strong>è§£å³</strong>ï¼</p>
+<ul>
+<li>Windowsï¼å®è£Visual Studio Build ToolsåCMakeï¼</li>
+<li>macOSï¼æ§è¡<code>xcode-select --install</code>å®è£Xcodeå½ä»¤è¡å·¥å·ï¼</li>
+<li>Linuxï¼æ§è¡<code>sudo apt install build-essential python3</code>ã</li>
+</ul>
+<h3 id="2-windowsæç¤ºç³»ç»æ¾ä¸å°æå®çè·¯å¾">2. Windowsæç¤ºãç³»ç»æ¾ä¸å°æå®çè·¯å¾ã</h3>
+<p><strong>åå </strong>ï¼ç³»ç»ç»ä»¶è¢«ç²¾ç®ãWSLæªå¯ç¨æGitç¯å¢æªéç½®ï¼<br>
+<strong>è§£å³</strong>ï¼</p>
+<ol>
+<li>å®è£Gitï¼å®ç½ï¼<a href="https://git-scm.com/download/win%EF%BC%89%EF%BC%8C%E5%AE%89%E8%A3%85%E5%90%8E" target="_blank" rel="noopener nofollow">https://git-scm.com/download/winï¼ï¼å®è£å</a><strong>éå¯çµè</strong>ï¼</li>
+<li>å¯ç¨WSL2ï¼å¨PowerShellæ§è¡<code>wsl --install</code>ï¼</li>
+<li>æ¸çnpmç¼å­å¹¶éè£ï¼<pre><code class="language-powershell">npm cache clean --force
+npm install -g openclaw@latest
+</code></pre>
+</li>
+</ol>
+<h3 id="3-é£ä¹¦éç½®æç¤ºæªå»ºç«é¿è¿æ¥">3. é£ä¹¦éç½®æç¤ºãæªå»ºç«é¿è¿æ¥ã</h3>
+<p><strong>è§£å³</strong>ï¼</p>
+<ol>
+<li>æ£æ¥App IDåApp Secretæ¯å¦è¾å¥æ­£ç¡®ï¼</li>
+<li>ç­å¾1-2åéåéæ°ä¿å­é¿è¿æ¥éç½®ï¼ç½ç»å»¶è¿å¯¼è´ï¼ï¼</li>
+<li>æ§è¡<code>openclaw gateway restart</code>éå¯ç½å³ï¼åéæ°éç½®ã</li>
+</ol>
+<h3 id="4-èå¤©è½¯ä»¶åéæ¶æ¯æ åå¤">4. èå¤©è½¯ä»¶åéæ¶æ¯æ åå¤</h3>
+<p><strong>ææ¥æ­¥éª¤</strong>ï¼</p>
+<ol>
+<li>æ§è¡<code>openclaw status</code>ç¡®è®¤ç½å³æå¡æ­£å¸¸è¿è¡ï¼</li>
+<li>æ£æ¥èå¤©è½¯ä»¶åºç¨ç<strong>äºä»¶è®¢é</strong>æ¯å¦æ·»å <code>im.message.receive_v1</code>ï¼</li>
+<li>ç¡®è®¤åºç¨å·²å¨é£ä¹¦å¼æ¾å¹³å°<strong>åå¸</strong>ï¼æªåå¸æ æ³æ¶åæ¶æ¯ï¼ï¼</li>
+<li>æ¥çç½å³æ¥å¿ï¼<code>openclaw gateway --verbose</code>ï¼å®ä½éè¯¯åå ã</li>
+</ol>
+<h3 id="5-å½åç½ç»ä¸è½½ä¾èµå¡é¡¿å¤±è´¥">5. å½åç½ç»ä¸è½½ä¾èµå¡é¡¿/å¤±è´¥</h3>
+<p><strong>è§£å³</strong>ï¼</p>
+<ol>
+<li>éç½®å½ånpméåï¼<code>npm config set registry https://registry.npmmirror.com</code>ï¼</li>
+<li>ä½¿ç¨ä»£çå·¥å·ï¼ææå¨ä¸è½½ç¦»çº¿å®è£åè¿è¡å®è£ã</li>
+</ol>
+<h2 id="ä¸è¿é¶ä¼åå¯é">ä¸ãè¿é¶ä¼åï¼å¯éï¼</h2>
+<ol>
+<li><strong>æ±åéé</strong>ï¼å½åç¨æ·å»ºè®®å®è£ç¤¾åºæ±åçï¼ä¼åå¾®ä¿¡/ä¼ä¸å¾®ä¿¡æ¯æï¼<pre><code class="language-bash">npm install -g openclaw-cn@latest
+</code></pre>
+</li>
+<li><strong>Dockeré¨ç½²</strong>ï¼éåéè¦7Ã24å°æ¶è¿è¡çç¨æ·ï¼å®¹å¨åé¨ç½²æ´ç¨³å®ï¼<pre><code class="language-bash">git clone https://github.com/openclaw/openclaw.git
+cd openclaw
+docker compose up -d openclaw-gateway
+</code></pre>
+</li>
+<li><strong>æ¬å°æ¨¡åé¨ç½²</strong>ï¼ä¿®æ¹<code>.env</code>æä»¶ä¸­ç<code>MODEL_PROVIDER</code>å<code>API_KEY</code>ï¼æ¯ææ¬å°è¿è¡LlamaãQwenç­æ¨¡åï¼å®å¨è±ç¦»å¤ç½ã</li>
+<li><strong>æééå¶</strong>ï¼å¨<code>config.json</code>ä¸­è®¾ç½®<code>allowed_commands</code>å<code>denied_commands</code>ï¼ç¦æ­¢æºå¨äººæ§è¡å±é©shellå½ä»¤ï¼æåå®å¨æ§ã</li>
+</ol>
+<h2 id="å«æ³¨æäºé¡¹">å«ãæ³¨æäºé¡¹</h2>
+<ol>
+<li><strong>éç§å®å¨</strong>ï¼OpenClawé»è®¤æ¬å°é¨ç½²ï¼æ°æ®ä¸ä¸ä¼ ï¼ä½å»ºè®®<strong>ä¸è¦å¨è£æéè¦åä¸/éç§æ°æ®ççµèä¸è¿è¡</strong>ï¼å¯ä½¿ç¨é²ç½®è®¾å¤æäºç«¯èææºï¼VPSï¼ï¼</li>
+<li><strong>çæ¬å¼å®¹</strong>ï¼é¿åä½¿ç¨ææ°çï¼å®æ¹é¢ç¹æ´æ°æåºé®é¢ï¼ï¼æ°æå»ºè®®å®è£ç¨³å®çï¼<code>npm install -g openclaw@1.0.0</code>ï¼æ¿æ¢ä¸ºå®éç¨³å®çæ¬å·ï¼ï¼</li>
+<li><strong>æå¡ä¿æ´»</strong>ï¼æ¬å°é¨ç½²æ¶ï¼å³é­ç»ç«¯/PowerShellä¼å¯¼è´ç½å³æå¡åæ­¢ï¼å¯ä½¿ç¨<code>pm2</code>ç­å·¥å·å®ç°åå°ä¿æ´»ã</li>
+</ol>
+
+
+</div>
+<div id="MySignature" role="contentinfo">
+    <p>æ¬ææ¥èªåå®¢å­ï¼ä½èï¼<a href="https://www.cnblogs.com/seozimt/" target="_blank">å®¶å´ç½ç»ææ¯å·¥ä½å®¤</a>ï¼è½¬è½½è¯·æ³¨æåæé¾æ¥ï¼<a href="https://www.cnblogs.com/seozimt/p/19634519" target="_blank">https://www.cnblogs.com/seozimt/p/19634519</a></p>
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-02-24 17:17">2026-02-24 17:16</span>&nbsp;
+<a href="https://www.cnblogs.com/seozimt">å®¶å´ç½ç»ææ¯å·¥ä½å®¤</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19634519);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19634519', targetLink: 'https://www.cnblogs.com/seozimt/p/19634519', title: 'OpenClawå¤§é¾è¾æºå¨äººå®æ´å®è£æç¨' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
     <title><![CDATA[ æä½ ä¸æè§£å³ç¾åº¦ç»è®¡è¢«æ¶æå·éåå³é®å­çåæ³ ]]></title>
     <link>https://www.cnblogs.com/KK3228911/p/19634183</link>
     <guid>4d5801ad3710b5cdcc6d91c32e97be21</guid>
@@ -82,7 +2033,7 @@
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-02-24 16:35">2026-02-24 16:34</span>&nbsp;
 <a href="https://www.cnblogs.com/KK3228911">KK.Yip</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">102</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19634183);return false;">æ¶è</a>&nbsp;
@@ -130,8 +2081,8 @@
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-02-24 16:08">2026-02-24 16:07</span>&nbsp;
 <a href="https://www.cnblogs.com/xcywt">xcywt</a>&nbsp;
-éè¯»(<span id="post_view_count">154</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">684</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">10</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19633970);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19633970', targetLink: 'https://www.cnblogs.com/xcywt/p/19633970', title: 'ä¸ä¸ªå¤§é¾ç¨åºåçåä¹¡è®°' })">ä¸¾æ¥</a>
@@ -341,125 +2292,11 @@ cp -r claude-bmad-skills/.claude/skills/* ~/.claude/skills/
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-02-24 16:07">2026-02-24 16:07</span>&nbsp;
 <a href="https://www.cnblogs.com/NickYao">åç¼èé¢ä¾ </a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">31</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19633968);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19633968', targetLink: 'https://www.cnblogs.com/NickYao/p/19633968', title: 'BMADå¼åæçç¿»å: ä¸æ¡å½ä»¤äº¤ä»æ´ä¸ªEpic' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ ä¸å¤©ä¸ä¸ªPythonåºï¼scipy - ç§å­¦è®¡ç®ä¸ææ¯è®¡ç®çæ ¸å¿åº ]]></title>
-    <link>https://www.cnblogs.com/min2k/p/19633870</link>
-    <guid>4c575a5b1ef7a27f1474ed7e47e80a12</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/min2k/p/19633870" title="åå¸äº 2026-02-24 15:51">
-    <span role="heading" aria-level="2">ä¸å¤©ä¸ä¸ªPythonåºï¼scipy - ç§å­¦è®¡ç®ä¸ææ¯è®¡ç®çæ ¸å¿åº</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h1 id="scipy---ç§å­¦è®¡ç®ä¸ææ¯è®¡ç®çæ ¸å¿åº">scipy - ç§å­¦è®¡ç®ä¸ææ¯è®¡ç®çæ ¸å¿åº</h1>
-<h2 id="ä¸ä»ä¹æ¯scipy">ä¸ãä»ä¹æ¯scipyï¼</h2>
-<p><strong>scipy</strong> æ¯ä¸ä¸ªç¨äºç§å­¦è®¡ç®ãææ¯è®¡ç®åæ°æ®åæç Python åºã<br>
-å®å¯ä»¥å¸®å©ä½ ï¼</p>
-<ul>
-<li>è¿è¡ä¼åãçº¿æ§ä»£æ°ãç§¯åãæå¼ãç¹æ®å½æ°è®¡ç®ç­</li>
-<li>å¤çä¿¡å·åå¾åæ°æ®</li>
-<li>çæéæºæ°åè¿è¡ç»è®¡åæ</li>
-<li>è§£å³ç§å­¦åå·¥ç¨ä¸­çå¤ææ°å­¦é®é¢</li>
-</ul>
-<h2 id="äºåºç¨åºæ¯">äºãåºç¨åºæ¯</h2>
-<p><strong>scipy</strong> å¹¿æ³åºç¨äºä»¥ä¸å®éåºæ¯ï¼</p>
-<ul>
-<li><strong>å­¦æ¯ç ç©¶</strong>: å¨ç©çãåå­¦ãçç©å­¦ãå·¥ç¨å­¦ç­é¢åè¿è¡æ°æ®åæåæ¨¡åæå»ºã</li>
-<li><strong>æ°æ®ç§å­¦</strong>: å¤çå®éªæ°æ®ãè¿è¡æ°å¼æ¨¡æåæºå¨å­¦ä¹ ç®æ³çåºå±è®¡ç®ã</li>
-<li><strong>éèå»ºæ¨¡</strong>: æå»ºå¤æçéèæ¨¡åï¼ä¾å¦ææå®ä»·ãé£é©ç®¡çç­ã</li>
-<li><strong>ä¿¡å·å¤ç</strong>: å¯¹é³é¢ãå¾åç­ä¿¡å·è¿è¡æ»¤æ³¢ãåæ¢ååæã</li>
-</ul>
-<h2 id="ä¸å¦ä½å®è£">ä¸ãå¦ä½å®è£</h2>
-<ol>
-<li>ä½¿ç¨ pip å®è£</li>
-</ol>
-<pre><code class="language-bash">pip install scipy
-
-# å¦æå®è£æ¢çè¯ï¼æ¨èä½¿ç¨å½åéåæº
-pip install scipy -i https://www.python64.cn/pypi/simple/
-</code></pre>
-<ol start="2">
-<li>ä½¿ç¨ <a href="https://www.min2k.com/tools/python-run/" target="_blank" rel="noopener nofollow">PythonRun</a> å¨çº¿è¿è¡ä»£ç ï¼æ éæ¬å°å®è£ï¼</li>
-</ol>
-<h2 id="åç¤ºä¾ä»£ç ">åãç¤ºä¾ä»£ç </h2>
-<p>è®¡ç®å¹¶æå°ä¸ä¸ªæ°ç»çåå¼åæ åå·®ï¼å¦æåå¼å¤§äºæä¸ªéå¼åè¿è¡æç¤ºã</p>
-<pre><code class="language-python">import numpy as np
-from scipy import stats
-
-# åå»ºä¸ä¸ªNumPyæ°ç»
-data = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-
-# ä½¿ç¨scipy.statsè®¡ç®åå¼
-mean_value = stats.tmean(data) # ä½¿ç¨æªæ­åå¼ï¼è¿éç­åäºæ®éåå¼
-print(f"æ°ç»çåå¼æ¯: {mean_value}")
-
-# ä½¿ç¨scipy.statsè®¡ç®æ åå·®
-std_dev = stats.tstd(data) # ä½¿ç¨æªæ­æ åå·®ï¼è¿éç­åäºæ®éæ åå·®
-print(f"æ°ç»çæ åå·®æ¯: {std_dev}")
-
-# è®¾ç½®ä¸ä¸ªéå¼
-threshold = 5.0
-
-# ä½¿ç¨æ¡ä»¶è¯­å¥è¿è¡å¤æ­
-if mean_value &gt; threshold:
-    print("åå¼é«äºè®¾å®çéå¼ï¼æ°æ®å¯è½åé«ï¼")
-else:
-    print("åå¼ä½äºæç­äºè®¾å®çéå¼ï¼æ°æ®å¨æ­£å¸¸èå´åã")
-
-# å¦ä¸ä¸ªæ¡ä»¶ï¼å¤æ­æ åå·®æ¯å¦è¿å¤§
-if std_dev &gt; 2.0:
-    print("æ³¨æï¼æ åå·®è¾å¤§ï¼æ°æ®æ³¢å¨æ§å¯è½å¾é«ï¼")
-else:
-    print("æ åå·®éä¸­ï¼æ°æ®æ³¢å¨æ§æ­£å¸¸ã")
-</code></pre>
-<p>ä½¿ç¨ <a href="https://www.min2k.com/tools/python-run/?code=import%20numpy%20as%20np%0Afrom%20scipy%20import%20stats%0A%0A%23%20%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AANumPy%E6%95%B0%E7%BB%84%0Adata%20%3D%20np.array%28%5B1%2C%202%2C%203%2C%204%2C%205%2C%206%2C%207%2C%208%2C%209%2C%2010%5D%29%0A%0A%23%20%E4%BD%BF%E7%94%A8scipy.stats%E8%AE%A1%E7%AE%97%E5%9D%87%E5%80%BC%0Amean_value%20%3D%20stats.tmean%28data%29%20%23%20%E4%BD%BF%E7%94%A8%E6%88%AA%E6%96%AD%E5%9D%87%E5%80%BC%EF%BC%8C%E8%BF%99%E9%87%8C%E7%AD%89%E5%90%8C%E4%BA%8E%E6%99%AE%E9%80%9A%E5%9D%87%E5%80%BC%0Aprint%28f%22%E6%95%B0%E7%BB%84%E7%9A%84%E5%9D%87%E5%80%BC%E6%98%AF%3A%20%7Bmean_value%7D%22%29%0A%0A%23%20%E4%BD%BF%E7%94%A8scipy.stats%E8%AE%A1%E7%AE%97%E6%A0%87%E5%87%86%E5%B7%AE%0Astd_dev%20%3D%20stats.tstd%28data%29%20%23%20%E4%BD%BF%E7%94%A8%E6%88%AA%E6%96%AD%E6%A0%87%E5%87%86%E5%B7%AE%EF%BC%8C%E8%BF%99%E9%87%8C%E7%AD%89%E5%90%8C%E4%BA%8E%E6%99%AE%E9%80%9A%E6%A0%87%E5%87%86%E5%B7%AE%0Aprint%28f%22%E6%95%B0%E7%BB%84%E7%9A%84%E6%A0%87%E5%87%86%E5%B7%AE%E6%98%AF%3A%20%7Bstd_dev%7D%22%29%0A%0A%23%20%E8%AE%BE%E7%BD%AE%E4%B8%80%E4%B8%AA%E9%98%88%E5%80%BC%0Athreshold%20%3D%205.0%0A%0A%23%20%E4%BD%BF%E7%94%A8%E6%9D%A1%E4%BB%B6%E8%AF%AD%E5%8F%A5%E8%BF%9B%E8%A1%8C%E5%88%A4%E6%96%AD%0Aif%20mean_value%20%3E%20threshold%3A%0A%20%20%20%20print%28%22%E5%9D%87%E5%80%BC%E9%AB%98%E4%BA%8E%E8%AE%BE%E5%AE%9A%E7%9A%84%E9%98%88%E5%80%BC%EF%BC%8C%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%83%BD%E5%81%8F%E9%AB%98%EF%BC%81%22%29%0Aelse%3A%0A%20%20%20%20print%28%22%E5%9D%87%E5%80%BC%E4%BD%8E%E4%BA%8E%E6%88%96%E7%AD%89%E4%BA%8E%E8%AE%BE%E5%AE%9A%E7%9A%84%E9%98%88%E5%80%BC%EF%BC%8C%E6%95%B0%E6%8D%AE%E5%9C%A8%E6%AD%A3%E5%B8%B8%E8%8C%83%E5%9B%B4%E5%86%85%E3%80%82%22%29%0A%0A%23%20%E5%8F%A6%E4%B8%80%E4%B8%AA%E6%9D%A1%E4%BB%B6%EF%BC%8C%E5%88%A4%E6%96%AD%E6%A0%87%E5%87%86%E5%B7%AE%E6%98%AF%E5%90%A6%E8%BF%87%E5%A4%A7%0Aif%20std_dev%20%3E%202.0%3A%0A%20%20%20%20print%28%22%E6%B3%A8%E6%84%8F%EF%BC%9A%E6%A0%87%E5%87%86%E5%B7%AE%E8%BE%83%E5%A4%A7%EF%BC%8C%E6%95%B0%E6%8D%AE%E6%B3%A2%E5%8A%A8%E6%80%A7%E5%8F%AF%E8%83%BD%E5%BE%88%E9%AB%98%EF%BC%81%22%29%0Aelse%3A%0A%20%20%20%20print%28%22%E6%A0%87%E5%87%86%E5%B7%AE%E9%80%82%E4%B8%AD%EF%BC%8C%E6%95%B0%E6%8D%AE%E6%B3%A2%E5%8A%A8%E6%80%A7%E6%AD%A3%E5%B8%B8%E3%80%82%22%29" target="_blank" rel="noopener nofollow">PythonRun</a> å¨çº¿è¿è¡è¿æ®µä»£ç ï¼ç»æå¦ä¸ï¼</p>
-<pre><code class="language-text">æ°ç»çåå¼æ¯: 5.5
-æ°ç»çæ åå·®æ¯: 3.0276503540974917
-åå¼é«äºè®¾å®çéå¼ï¼æ°æ®å¯è½åé«ï¼
-æ³¨æï¼æ åå·®è¾å¤§ï¼æ°æ®æ³¢å¨æ§å¯è½å¾é«ï¼
-</code></pre>
-<p>ä½¿ç¨ <a href="https://www.min2k.com/tools/mermaid/?code=flowchart%20TB%0A%20%20A%5B%E5%BC%80%E5%A7%8B%5D%20--%3E%20B%7B%E5%88%9B%E5%BB%BANumPy%E6%95%B0%E7%BB%84%7D%3B%0A%20%20B%20--%3E%20C%5B%E8%AE%A1%E7%AE%97%E5%9D%87%E5%80%BC%3A%20stats.tmean%28data%29%5D%3B%0A%20%20C%20--%3E%20D%5B%E6%89%93%E5%8D%B0%E5%9D%87%E5%80%BC%5D%3B%0A%20%20D%20--%3E%20E%5B%E8%AE%A1%E7%AE%97%E6%A0%87%E5%87%86%E5%B7%AE%3A%20stats.tstd%28data%29%5D%3B%0A%20%20E%20--%3E%20F%5B%E6%89%93%E5%8D%B0%E6%A0%87%E5%87%86%E5%B7%AE%5D%3B%0A%20%20F%20--%3E%20G%7B%E5%9D%87%E5%80%BC%20%3E%20%E9%98%88%E5%80%BC%3F%7D%3B%0A%20%20G%20--%20%E6%98%AF%20--%3E%20H%5B%E6%89%93%E5%8D%B0%22%E5%9D%87%E5%80%BC%E9%AB%98%E4%BA%8E%E9%98%88%E5%80%BC%22%5D%3B%0A%20%20G%20--%20%E5%90%A6%20--%3E%20I%5B%E6%89%93%E5%8D%B0%22%E5%9D%87%E5%80%BC%E6%AD%A3%E5%B8%B8%22%5D%3B%0A%20%20H%20--%3E%20J%7B%E6%A0%87%E5%87%86%E5%B7%AE%20%3E%202.0%3F%7D%3B%0A%20%20I%20--%3E%20J%3B%0A%20%20J%20--%20%E6%98%AF%20--%3E%20K%5B%E6%89%93%E5%8D%B0%22%E6%A0%87%E5%87%86%E5%B7%AE%E8%BE%83%E5%A4%A7%22%5D%3B%0A%20%20J%20--%20%E5%90%A6%20--%3E%20L%5B%E6%89%93%E5%8D%B0%22%E6%A0%87%E5%87%86%E5%B7%AE%E6%AD%A3%E5%B8%B8%22%5D%3B%0A%20%20K%20--%3E%20M%5B%E7%BB%93%E6%9D%9F%5D%3B%0A%20%20L%20--%3E%20M%3B" target="_blank" rel="noopener nofollow">MermaidGo</a> ç»å¶ç¤ºä¾ä»£ç çæµç¨å¾ï¼ç»æå¦ä¸ï¼<br>
-<img alt="MermerGoçscipyæµç¨å¾" loading="lazy" data-src="https://img2024.cnblogs.com/blog/70894/202602/70894-20260224155035316-1201717048.jpg" class="lazyload"></p>
-<h2 id="äºå­¦ä¹ èµæº">äºãå­¦ä¹ èµæº</h2>
-<ol>
-<li>å¼æºé¡¹ç®ï¼<a href="https://github.com/scipy/scipy" target="_blank" rel="noopener nofollow">scipy</a></li>
-<li>ä¸­æèªè¿°ï¼<a href="https://www.python64.cn/readme/scipy/" target="_blank" rel="noopener nofollow">REMDME</a></li>
-<li>å¨çº¿è¿è¡ï¼<a href="https://www.min2k.com/tools/python-run/" target="_blank" rel="noopener nofollow">PythonRun</a></li>
-</ol>
-<blockquote>
-<p>å¦æè¿ç¯æç« å¯¹ä½ æå¸®å©ï¼æ¬¢è¿ç¹èµãæ¶èãè½¬åï¼<br>
-å­¦ä¹ è¿ç¨ä¸­æä»»ä½é®é¢ï¼æ¬¢è¿å¨è¯è®ºåºçè¨äº¤æµï½</p>
-</blockquote>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-02-24 15:52">2026-02-24 15:51</span>&nbsp;
-<a href="https://www.cnblogs.com/min2k">æç¼ç¨</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19633870);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19633870', targetLink: 'https://www.cnblogs.com/min2k/p/19633870', title: 'ä¸å¤©ä¸ä¸ªPythonåºï¼scipy - ç§å­¦è®¡ç®ä¸ææ¯è®¡ç®çæ ¸å¿åº' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -785,7 +2622,7 @@ public String testLogin(){
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0.0006944444444444445" data-date-updated="2026-02-24 15:49">2026-02-24 15:48</span>&nbsp;
 <a href="https://www.cnblogs.com/alineverstop">NE_STOP</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">30</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19633847);return false;">æ¶è</a>&nbsp;
@@ -1673,1191 +3510,13 @@ pool.RunInference(
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-02-24 14:55">2026-02-24 14:54</span>&nbsp;
 <a href="https://www.cnblogs.com/guojin-blogs">æ¤é¢ç®ç®è¾</a>&nbsp;
-éè¯»(<span id="post_view_count">9</span>)&nbsp;
+éè¯»(<span id="post_view_count">144</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19633562);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19633562', targetLink: 'https://www.cnblogs.com/guojin-blogs/p/19633562', title: 'OpenVINOâ¢ C# API 3.2 å¨æ°åå¸ï¼åºäº AI å¤§æ¨¡åçå¨æ éæï¼å¨é¢è¿åï¼' })">ä¸¾æ¥</a>
 </div>
          ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ æºé¡¶çæè¾åå¿å½ï¼1ï¼ ]]></title>
-    <link>https://www.cnblogs.com/teto/p/19633050</link>
-    <guid>e8bc25c4cc904b01489c7ad4252b822e</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/teto/p/19633050" title="åå¸äº 2026-02-24 12:03">
-    <span role="heading" aria-level="2">æºé¡¶çæè¾åå¿å½ï¼1ï¼</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h1 id="æºé¡¶çæè¾åå¿å½1">æºé¡¶çæè¾åå¿å½ï¼1ï¼</h1>
-<p>å¦ä½ æè§ï¼è¿åªæ¯ç¬¬1ç¯ï¼ä¸»è¦æ¯æåçåçæå¾åäºï¼ç¬¬2ç¯é©¬ä¸ç«¯ä¸æ¥ãå¥½æ­¹ä¹æ¯æè¾äº3ã4å¤©â¦â¦ï¼ç¢ç¢å¿µï¼</p>
-<h1 id="èµ·å å¨æ¯åºè¯ä¸æ³ççç´æ¥è·³è¿">èµ·å ï¼å¨æ¯åºè¯ï¼ä¸æ³ççç´æ¥è·³è¿ï¼</h1>
-<p>ä¹åææ³æ­å»ºä¸ä¸ªå±äºèªå·±çåå®¢ï¼è¾è½¬ä¹ä¸åç°äºåå®¢å­è¿ä¸ªå¹³å°ï¼ç»è¿äºä¸æ®µæ¶é´åæåç°ç½ä¸æä¸äºå¯¹åå®¢å­çè®¨è®ºï¼è¯´ä»ä¹åå®¢å­ä¸ªäººåå®¢æå¡å¿«ç»æå¦ï¼åå®¹æ¥èªç½ç»ï¼ä¸ä¿è¯çå®æ§ï¼å¦æä¾µæè¯·èç³»ï¼ãæå¯¹è¿ä»¶äºä¸ç´æ¯æå¦å®æåº¦çãç¶åæä¸å¤©æåç°æå¡å¨å°±è½æ­å»ºä¸ªäººåå®¢ï¼å¯æåäºè§£äºä¸ä¸ï¼åç°æè¦èµ°æå¡å¨æ­å»ºä¸ªäººåå®¢è¿æ¡è·¯å­æä¸¤ç§å»åï¼</p>
-<ul>
-<li>è´­ä¹°äºæå¡å¨ï¼åä¸è¯´åªå®¶äºæå¡å¨æ´å¥½æ´ä¾¿å®ï¼ä¸»è¦æ¯æä¸åé±é½æ¿ä¸åºæ¥ï¼ã</li>
-<li>èªå·±æ­å»ºæå¡å¨ã</li>
-</ul>
-<p>å¾æ¾ç¶ï¼æéçåèãå½æ¶ææ³çæ¯ï¼æå®¶æ¢ç¶æè¿ä¹å¤æ§å°å¼çµèï¼æä¸ºä»ä¹ä¸è¿è¡åºç©å©ç¨å¢ï¼äºæ¯ææèµ·æè¾¹æ çhp 32G USB3.0ï¼å¶å®ä¼ è¾éçåªæå¯æç30å mb/sï¼é¡¶çå åmb/sçä¸è½½éåº¦åä¼ è¾éåº¦æLinux seversï¼ä¸ç¥éæ¯ä¸æ¯è¿ä¸ªåå­ï¼éåæ¾å°peä¼çåï¼æèç¶çä¸å¥è¯ç´æ¥è®©æéå¿ç ´ç¢äºï¼åçå åVï¼è°ä¼æ´å¤©å¼çï¼ä¸è¡ãç¶åæå°±æä¼çæ ¼å¼åäºâ¦â¦ä¸è¿æå¹¶æ²¡ææ­»å¿ï¼åç°æºé¡¶çççåçæºéåçï¼å¼çä¹å°±å Vçåèï¼äºæ¯æå°±ç¯ä¸äºææºé¡¶çåæåå®¢æå¡å¨çè¿ä¸ªå°ä¼èµéï¼å¯è½å¹¶ä¸å°ä¼ï¼å ä¸ºè¿æäººææºé¡¶çåæmcæå¡å¨çï¼ã</p>
-<h1 id="è¿ç¨">è¿ç¨</h1>
-<h2 id="éå">éå</h2>
-<p>ä¸å¼å§ï¼æçç®æ æ¯ææèå®¶çåèéå®½å¸¦éçèéæºé¡¶çåæå°æå¡å¨ï¼å®å¨ä»¥åçµè§å¥½çæ¶åå ä¹æ¯ 7*24 å°æ¶è¿è¡ï¼æçèç¶ä¹å¹¶æ²¡ææ±æ¨ä»ä¹ï¼æä»¥æå°±æå®å½æäºæçç¬¬ä¸ä¸ªæè¾å¯¹è±¡ãå°±å¨è¿å¹´åå å¤©ï¼æå°±ä¸ºçåå°äºèå®¶ï¼æ¿èµ°äºé£å°èéçå­ï¼åä¸ºQ21Aï¼è¿æä¸å°âåäºçâæçæºé¡¶çï¼æ³¨æè¿ä¸ªçå­ï¼ä»¥åè¦èï¼ãé¦åæä»¬ç°åä¸ä¸æ­¥éª¤ï¼æ ¹æ®æå¨å°ç ´ç«æ¾çæç¨ï¼å¯ä»¥åä¸ºï¼</p>
-<ol>
-<li>ç±äºè¿ç§è¿è¥åççå­åºæ¬é½æ¯å®å¶çå®åç³»ç»ï¼æä»¥è¦åå·ææ®éçå®åçµè§ç³»ç»æè½ä»ä¼çå¯å¨</li>
-<li>å¨ä¼çä¸­åå¤å¥½Githubä¸armbiançç³»ç»åºä»¶ï¼è®©çå­ä»ä¼çå¯å¨æå¼ç³»ç»ï¼ç¶åå¯ä»¥è¾å¥ armbian-install å°armbianåå¥å°emmcéªå­ä¸­ã</li>
-</ol>
-<p>è³äºå·ä½æç¨æä¸ºä»ä¹ä¸ç»å¢ï¼é£å½ç¶æ¯æçåä¸ºQ21Açå­å¹¶æ²¡æå¯¹åºçarmbianåºä»¶ï¼å³ä½¿ææ³æå®å·å¥æ®éçå®åç³»ç»ä¹æ¾ä¸å°ç­æ¥ç¹è¿è¡å¡å·ï¼å®éä¸æ¯æ è®ºæä¹ç­æ¥é½æ æ³å·æºï¼ï¼çº¿å·å§è¿éè¦èªå·±çæ¥ç¶åéè¿TTlè½¬æ¥çº¿è¿è¡çº¿å·ãæä»¥æå°±æç®åè½¬ç§»å°äºé£ä¸ªè¢«å¤å¤äºâæ­»åâçæçæºé¡¶çãææºåç°æ¯çè¯å¾®çrk3128ï¼æçªç¶æ³èµ·armbiançè¯¦æé¡µä¸åçæ¯æé¨åçè¯å¾®è¯çï¼å¯æ¯å ä¸ºè¿ä¸ªè¯çå¤ªèäºæä»¥å¹¶æ²¡æåéçåºä»¶ï¼ä½æè¿æ¯æå®å·å¥äºå®åç³»ç»è®©å®è½å¤æ­£å¸¸çççµè§ãæåï¼æç¯ä¸äºå°é»é±¼ä¸çarmbiançå­ï¼åªé50å¤§æ´ä¹æ¯éå¸¸ä¹ä¾¿å®ï¼æ¥ä¸ä¸åºç¡éç½®ï¼</p>
-<ul>
-<li>åå·ï¼ç½ç«680-j</li>
-<li>è¯çï¼hi3798mv-100</li>
-<li>å¨å­ï¼1+8Gï¼å«çå°ï¼ä½åä¸ªå°åå®¢ç»°ç»°æä½ï¼</li>
-<li>ç³»ç»ï¼åºäºDebianç³»ç»ç32ä½ï¼å¯¹ï¼æ32ä½ï¼armbianç³»ç»</li>
-</ul>
-<p>è¿å¥éç½®ä¸æ¯å¾åé¦ï¼ç±äºæå¯¹liunxç³»ç»çäºè§£å°ä¹åå°ï¼æä»¥ææ¥ä¸æ¥ä¼ææåaiè®¨è®º3ã4å¤©çå¯¹è¯æ»ç»ä¸æ¥ï¼å¸æè½å¸®å°äººã</p>
-<h2 id="æ­£å¼å¼å§æ£é¼">æ­£å¼å¼å§æ£é¼</h2>
-<p>ä¸å¼å§ï¼ææ¬æ¥æ³åæ ¹æ®âå¨ä¸è«èå¸âç<a href="https://www.bilibili.com/video/BV1nMDnYdEJd/?spm_id_from=333.1007.top_right_bar_window_custom_collection.content.click" target="_blank" rel="noopener nofollow">è¿æè§é¢</a>ä¸æ ·å¨è¿å°å°æºé¡¶çä¸å®è£ <strong>1panel</strong> ä½æ¯æå¨è¾å¥å®ç½ä¸ç»åºçæä»¤åç°å®æç¤ºæé£ä¸ª ââ è¦æ¢æ ââ ï¼ä½ææ²¡çæäºæ¯æ $ ç»å äºï¼ç»æå°±æ¯å®åæ ·è¾åºäºé¾æ¥çæä»¶ãä½æ¯æåªçå°äº"æä¸æ¯æçç³»ç»æ¶æï¼è¯·åéå®æ¹ææ¡£ï¼éæ©åæ¯æçç³»ç»ã"è¿å¥è¯ï¼äºæ¯æå°±æ¾å¼å®è£1paneläºãè½¬æèçç½é¡µåå°âå®å¡âï¼ä½æ¯ææ°çå®è£ä¸ä¸æç¤ºè¦æå®è£ 5.9 çæ¬ãå®è£ä»¥ååç°è¿æ¯æ¥é,æ¥ä¸æ¥å°±å¼å§äºæåaiçè®¨è®ºã</p>
-<p>æ¥éåå®¹ï¼</p>
-<pre><code>â bt.service
-   Loaded: loaded (/etc/init.d/bt; generated)
-   Active: failed (Result: exit-code) since Sat 2026-02-21 08:26:50 CST; 31s ago
-     Docs: man:systemd-sysv-generator(8)
-  Process: 3727 ExecStart=/etc/init.d/bt start (code=exited, status=203/EXEC)
-
-Feb 21 08:26:50 armbian systemd[1]: Starting bt.service...
-Feb 21 08:26:50 armbian systemd[3727]: bt.service: Failed to execute command: Exec format error
-Feb 21 08:26:50 armbian systemd[3727]: bt.service: Failed at step EXEC spawning /etc/init.d/bt: Exec format error
-Feb 21 08:26:50 armbian systemd[1]: bt.service: Control process exited, code=exited, status=203/EXEC
-Feb 21 08:26:50 armbian systemd[1]: bt.service: Failed with result 'exit-code'.
-Feb 21 08:26:50 armbian systemd[1]: Failed to start bt.service.
-</code></pre>
-<p>è¿æ¯Exec format error éè¯¯ï¼åå æ¯ç³»ç»æ¶æä¸å¼å®¹ï¼å®å¡é¢æ¿ä»æ¯æ64ä½çx86_64æ¶æï¼æä»¥å¯å¨æå¡å¤±è´¥ãæ¥ä¸æ¥æä¸¤æ¡è·¯å¯èµ°ï¼</p>
-<h3 id="ç»çå­å·å¥64ä½linuxç³»ç»æªå®è·µ">ç»çå­å·å¥64ä½Linuxç³»ç»ï¼æªå®è·µï¼</h3>
-<p>æ¥ä¸æ¥çæç¨åªéç¨äºé¨åæµ·çº³æè¯çï¼ç­æ¥ç¹ä»¥èªå·±çæºåä¸ºåã</p>
-<p><strong>éè¦æéï¼å·æºæé£é©ï¼æä½éè°¨æã</strong></p>
-<p>åç¡®å®ä½ çæºé¡¶çè¯çæ¯å¦ä¸ºé«å®çï¼å¨æºé¡¶çä¸æ¥çè¿ä¸äºä½ç½®ï¼</p>
-<ol>
-<li>
-<p>ä¸»æ¿ä¸ç´æ¥å°å·</p>
-<ul>
-<li>
-<p>å¸¸è§ä½ç½®ï¼éå¸¸å¨ä¸»æ¿çæ­£é¢ï¼é è¿CPUï¼è¯çï¼éè¿ï¼æèä¸»æ¿è¾¹ç¼ç©ºç½å¤</p>
-</li>
-<li>
-<p>å­æ ·å½¢å¼ï¼å¯è½ä¼çå°å°å·ç "CA" ä¸¤ä¸ªå­æ¯ï¼æè "HIGH SECURITY"ã"é«å®" ç­å­æ ·</p>
-</li>
-<li>
-<p>ç¹å«æ è®°ï¼ææ¶ä¸æ¯ç´æ¥åCAï¼èæ¯ç¨é»è²åç¹è´´çº¸æç½è²æ¹åè´´çº¸æ è®°ï¼ä¸é¢å¯è½æç¼å·</p>
-</li>
-</ul>
-</li>
-<li>
-<p>è¯çéè¿å¯»æ¾</p>
-<ul>
-<li>
-<p>æ¥ç CPUï¼Hi3798è¯çï¼ å¨å´çç©ºç½åºå</p>
-</li>
-<li>
-<p>æ£æ¥ éªå­è¯ç éè¿çPCBæ¿å°å·</p>
-</li>
-<li>
-<p>çæ ä¸»æ¿è¾¹ç¼ ççæ¬å·æè¾¹ï¼æ¯å¦ä¸»æ¿åå·åé¢å¯è½æ -CA åç¼</p>
-</li>
-</ul>
-</li>
-<li>
-<p>æ æ è®°æåµ<br>
-å¦ææ¾ä¸å°æç¡®çCAå­æ ·ï¼ä¹ä¸ç¨ç°å¿ï¼å ä¸ºï¼</p>
-<ul>
-<li>
-<p>æäºé«å®çå¹¶æ²¡æç´æ¥å°CAï¼èæ¯éè¿å å¯è¯çä½ç°</p>
-</li>
-<li>
-<p>å¯ä»¥å¨ä¸»æ¿ä¸æ¾æ¯å¦æé¢å¤çå å¯è¯çï¼éå¸¸æ¯8èçå°è¯çï¼ä¸é¢å°çç±»ä¼¼"905L"ã"RTL"ç­å­æ ·ï¼<br>
-ä¹å¯ä»¥å¨ç³»ç»åè¾å¥è¿äºæä»¤ï¼</p>
-</li>
-</ul>
-</li>
-</ol>
-<pre><code class="language-bash"># æ¥çååºä¿¡æ¯ï¼é«å®çéå¸¸æç¹æ®ååºï¼
-cat /proc/mtd
-# çå°ç±»ä¼¼ "fastboot"ã"recovery"ã"system" ä¹å¤è¿æ "secure"ã"trusted" ç­ååºï¼å¯è½æ¯é«å®ç
-</code></pre>
-<p>å¦æç¡®è®¤æ¯é«å®çï¼</p>
-<ul>
-<li>
-<p>ä¸è¦å°è¯å¸¸è§USBå·æºï¼å¤§æ¦çä¼åç </p>
-</li>
-<li>
-<p>éè¦åå¨å®åç³»ç»ä¸è¿è¡éçº§æä½</p>
-</li>
-<li>
-<p>æèéè¦TTLçº¿å·ç¹æ®åºä»¶</p>
-</li>
-<li>
-<p>å»ºè®®å»æ©å±±è®ºåãå¼å¿çµè§è®ºåæç´¢"âæºé¡¶çåå·â é«å® ç ´è§£"æ¾å¯¹åºæç¨</p>
-</li>
-</ul>
-<p>å¦æä¸æ¯é«å®çï¼æå¼<a href="https://ecoo.top/" target="_blank" rel="noopener nofollow">æµ·çº³æç³»ç»</a>ç½ç«å¯»æ¾éåèªå·±æºåçåºä»¶ä¸è½½ï¼ä¸å®è¦æ¾å¥½äºï¼åç äºåªè½çº¿å·ï¼åå¤ä¸ä¸ªä¼çæ ¼å¼åä¸º <strong>FAT32</strong> æ ¼å¼ï¼å°ä¸è½½ä¸æ¥çåºä»¶è§£åææææä»¶å¤å¶å°Uçæ ¹ç®å½ï¼ä¸è¦æ¾å¨æä»¶å¤¹éï¼ï¼å°Uçæå¥çå­é è¿ç½å£çUSBæ¥å£ï¼ç­æ¥å¼æºï¼åç­æ¥ï¼åæçµï¼ä¸ç¨æå¼æºé®ï¼ï¼å¦ææåï¼çå­çæç¤ºç¯ä¼éªçï¼çµè§å±å¹ï¼å¦æè¿æ¥äºï¼å¯è½ä¼æ¾ç¤ºå·æºè¿åº¦ãç¶åå°±æ¯ç­å¾ãæåï¼ææä¼çï¼éå¯çå­ï¼å¨è·¯ç±å¨åå°æ¾å°åä¸ºarmbiançè®¾å¤ï¼ç¨ä¸æ¬¾sshè½¯ä»¶ï¼æ¨èPuTTYï¼å°±ä¸ä¸ª.exeæä»¶ï¼ç¹å¼å³ç¨ï¼æWindTermï¼WindTermæå¾å½¢åçé¢ï¼å¯ä»¥çå°æä»¶ç®¡çåè¡¨ï¼æ¯æå¾å½¢åä¸ä¼ ä¸è½½æä»¶ï¼ï¼è¾å¥IPå°åå°±å¯ä»¥ä¸è½½ç½é¡µåå°è½¯ä»¶äºã</p>
-<h3 id="å®è£32ä½ç½ç«ç®¡çè½¯ä»¶">å®è£32ä½ç½ç«ç®¡çè½¯ä»¶</h3>
-<p>æè¿å ç§éæ©ï¼çº¯aiè­¦åï¼ä¸ä¿è¯å¨32ä½ç³»ç»ä¸è½å¤ä½¿ç¨ï¼æ¯å¦<strong>aapanel</strong>ï¼ï¼ï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: center">æ¹æ¡ç±»å</th>
-<th style="text-align: center">æ¨èè½¯ä»¶</th>
-<th style="text-align: center">æ ¸å¿ç¹ç¹</th>
-<th style="text-align: center">éåäººç¾¤</th>
-<th style="text-align: center">å¯¹32ä½ç³»ç»æ¯æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center">è½»éæå¨æ­å»º</td>
-<td style="text-align: center">Lighttpd + PHP + WordPress</td>
-<td style="text-align: center">èµæºå ç¨æä½ï¼æå¨éç½®ï¼å¯¹ç³»ç»æåå¥½ãWordPressæ¯å¨çææµè¡çåå®¢ç³»ç»ï¼ä¸»é¢åæä»¶æå¶ä¸°å¯ã</td>
-<td style="text-align: center">åæ¬¢æè¾ãè¿½æ±æè´æ§è½ãå¸æå®å¨ææ§æå¡å¨çäººã</td>
-<td style="text-align: center">æä½³ï¼Debianæºä¸­ç´æ¥æä¾ï¼</td>
-</tr>
-<tr>
-<td style="text-align: center">é¢æ¿ä¸é®é¨ç½²</td>
-<td style="text-align: center">aaPanel (å®å¡å½éç)</td>
-<td style="text-align: center">æç½é¡µå¾å½¢çé¢ï¼å¯ä»¥ä¸é®å®è£WordPressç­åå®¢ç¨åºï¼ç®¡çæ¹ä¾¿ã</td>
-<td style="text-align: center">å¸ææå¾å½¢çé¢ãæå¾æ²å½ä»¤ãæ³è¦å¿«éå»ºç«çäººã</td>
-<td style="text-align: center">æç¡®æ¯æï¼å®æ¹æ¯æDebianï¼ä½æ32ä½éå¶ï¼</td>
-</tr>
-<tr>
-<td style="text-align: center">é¢æ¿ä¸é®é¨ç½²</td>
-<td style="text-align: center">LuManager (LUM)</td>
-<td style="text-align: center">å½äº§èçé¢æ¿ï¼åè½å¨é¢ï¼éæNginx/Apacheï¼æç¡®æ¯æ32ä½ç³»ç»ã</td>
-<td style="text-align: center">åå¥½å½äº§é¢æ¿ãéè¦FTP/æ°æ®åºå¯è§åç®¡ççç¨æ·ã</td>
-<td style="text-align: center">æç¡®æ¯æï¼å®æ¹æç¡®æ¯æDebianï¼</td>
-</tr>
-<tr>
-<td style="text-align: center">éæåå®¢çæ</td>
-<td style="text-align: center">Hugo / Pelican</td>
-<td style="text-align: center">çæçº¯éæHTMLæä»¶ï¼æ éæ°æ®åºï¼å®å¨æ§é«ï¼éåº¦æå¿«ï¼é¨ç½²ç®åã</td>
-<td style="text-align: center">ææ¯ç±å¥½èãåMarkdownæç« ãå¯¹æ§è½ææè´è¿½æ±ãä¸å¨ææ²¡æåå°ç¼è¾å¨çäººã</td>
-<td style="text-align: center">æ¯æï¼Hugoæ¯Goè¯­è¨äºè¿å¶ï¼åªè¦æ¾å°32çï¼Pelicanæ¯Pythonç¨åºï¼å¼å®¹æ§å¥½ï¼</td>
-</tr>
-</tbody>
-</table>
-<p>æ­£å¸¸æä»¬ååå®¢åªéè¦ç¬¬4ç§å°±å¤äºï¼ä½æ¯ææ²¡çæ¸ï¼åæå¾æ²å½ä»¤ï¼äºæ¯ä¸å¼å§å°±éç <strong>aapanel</strong> ãå®è£å½ä»¤å¦ä¸ï¼æ³¨æåå¨å½ä»¤è¡ä¸­è¾å¥<strong>bash</strong>ï¼ä¸ç¶ä¼æ¥éï¼ï¼</p>
-<pre><code class="language-bash">URL=https://www.aapanel.com/script/install_7.0_en.sh &amp;&amp; if [ -f /usr/bin/curl ];then curl -ksSO "$URL" ;else wget --no-check-certificate -O install_7.0_en.sh "$URL";fi;bash install_7.0_en.sh forum
-</code></pre>
-<p>ç¶åå¢ï¼ä½ ä¸ä¼è®¤ä¸ºå°±è¿ä¹ç»æäºå§ï¼<strong>ç¥ç§é²¸é±¼</strong>ï¼deepseekï¼è¿å°ç ´ä¸è¥¿é´æãä»å¨è¡¨æ ¼ä¸­è¯´aapanelæç¡®æ¯æDebianç³»ç»ï¼ä½æ32ä½éå¶ï¼è°ç¥éè¿ä¸ªéå¶æ¯æ æ³å®è£ï¼æåï¼æ å¥éæ©äº <strong>Lighttpd + PHP + WordPress</strong></p>
-<p>æªå®å¾ç»­â¦â¦</p>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-02-24 12:04">2026-02-24 12:03</span>&nbsp;
-<a href="https://www.cnblogs.com/teto">teto_cai</a>&nbsp;
-éè¯»(<span id="post_view_count">76</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19633050);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19633050', targetLink: 'https://www.cnblogs.com/teto/p/19633050', title: 'æºé¡¶çæè¾åå¿å½ï¼1ï¼' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ Nightingaleï¼å¤èºï¼å®æ¹ MCP Serverï¼Cursor/AI å©æç¨èªç¶è¯­è¨æä½çæ§ä¸åè­¦ ]]></title>
-    <link>https://www.cnblogs.com/ulricqin/p/19632794</link>
-    <guid>3551ecabaa0dd35d73c62021277cb148</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/ulricqin/p/19632794" title="åå¸äº 2026-02-24 11:00">
-    <span role="heading" aria-level="2">Nightingaleï¼å¤èºï¼å®æ¹ MCP Serverï¼Cursor/AI å©æç¨èªç¶è¯­è¨æä½çæ§ä¸åè­¦</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p><a href="https://github.com/ccfos/nightingale" target="_blank" rel="noopener nofollow">Nightingale</a> ç MCP Serveræ­£å¼åå¸ï¼<a href="https://github.com/n9e/n9e-mcp-server" target="_blank" rel="noopener nofollow">https://github.com/n9e/n9e-mcp-server</a> ãæ­¤ MCP Server åè®¸ AI å©æéè¿èªç¶è¯­è¨ä¸å¤èº API äº¤äºï¼å®ç°åè­¦ç®¡çãçæ§åå¯è§æµæ§ä»»å¡ã</p>
-<h2 id="å¼å®¹æ§">å¼å®¹æ§</h2>
-<ul>
-<li><strong>Nightingale</strong>ï¼v8.0.0+</li>
-</ul>
-<h2 id="ä¸»è¦ç¨é">ä¸»è¦ç¨é</h2>
-<ul>
-<li><strong>åè­¦ç®¡ç</strong>ï¼æ¥è¯¢æ´»è·åè­¦ååå²åè­¦ï¼æ¥çåè­¦è§ååè®¢é</li>
-<li><strong>ç®æ çæ§</strong>ï¼æµè§åæç´¢è¢«çæ§çä¸»æºï¼åæç®æ ç¶æ</li>
-<li><strong>äºä»¶ååº</strong>ï¼åå»ºåç®¡çåè­¦å±è½è§åãéç¥è§ååäºä»¶æµæ°´çº¿</li>
-<li><strong>å¢éåä½</strong>ï¼æ¥è¯¢ç¨æ·ãå¢éåä¸å¡ç»</li>
-</ul>
-<h2 id="å¿«éå¼å§">å¿«éå¼å§</h2>
-<h3 id="1è·å-api-token">1.è·å API Token</h3>
-<ol>
-<li>ç¡®ä¿å¨ config.toml ä¸­ï¼å¯ç¨äº HTTP.TokenAuth</li>
-</ol>
-<pre><code class="language-toml">  [HTTP.TokenAuth]
-  Enable = true
-</code></pre>
-<ol start="2">
-<li>ç»å½å¤èº Web çé¢</li>
-<li>è¿å¥ <strong>ä¸ªäººè®¾ç½®</strong> &gt; <strong>ä¸ªäººä¿¡æ¯</strong> &gt; <strong>Token ç®¡ç</strong></li>
-<li>åå»ºä¸ä¸ªå·æéå½æéçæ° Token</li>
-</ol>
-<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2036615/202602/2036615-20260224105915453-834625723.png" class="lazyload"></p>
-<blockquote>
-<p><strong>å®å¨æç¤º</strong>ï¼è¯·å¦¥åä¿ç®¡ API Tokenãåå¿å° Token æäº¤å°çæ¬æ§å¶ç³»ç»ãè¯·ä½¿ç¨ç¯å¢åéæå®å¨çå¯é¥ç®¡çç³»ç»ã</p>
-</blockquote>
-<h3 id="2ä¸-mcp-å®¢æ·ç«¯éåä½¿ç¨">2.ä¸ MCP å®¢æ·ç«¯éåä½¿ç¨</h3>
-<h4 id="cursor">Cursor</h4>
-<p>å¨ <code>~/.cursor/mcp.json</code> ä¸­æ·»å ï¼</p>
-<pre><code class="language-json">{
-  "mcpServers": {
-    "nightingale": {
-      "command": "npx",
-      "args": ["-y", "@n9e/n9e-mcp-server", "stdio"],
-      "env": {
-        "N9E_TOKEN": "your-api-token",
-        "N9E_BASE_URL": "http://your-n9e-server:17000"
-      }
-    }
-  }
-}
-</code></pre>
-<h3 id="3éå¯-opencode-ç­è¿ç¨å³å¯ä½¿ç¨">3.éå¯ OpenCode ç­è¿ç¨ï¼å³å¯ä½¿ç¨</h3>
-<h2 id="å¯ç¨å·¥å·">å¯ç¨å·¥å·</h2>
-<table>
-<thead>
-<tr>
-<th>å·¥å·é</th>
-<th>å·¥å·</th>
-<th>è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>alerts</td>
-<td><code>list_active_alerts</code></td>
-<td>ååºå½åæ´»è·åè­¦ï¼æ¯æè¿æ»¤æ¡ä»¶</td>
-</tr>
-<tr>
-<td>alerts</td>
-<td><code>get_active_alert</code></td>
-<td>æ ¹æ®äºä»¶ ID è·åæ´»è·åè­¦è¯¦æ</td>
-</tr>
-<tr>
-<td>alerts</td>
-<td><code>list_history_alerts</code></td>
-<td>ååºåå²åè­¦ï¼æ¯æè¿æ»¤æ¡ä»¶</td>
-</tr>
-<tr>
-<td>alerts</td>
-<td><code>get_history_alert</code></td>
-<td>è·ååå²åè­¦è¯¦æ</td>
-</tr>
-<tr>
-<td>alerts</td>
-<td><code>list_alert_rules</code></td>
-<td>ååºä¸å¡ç»çåè­¦è§å</td>
-</tr>
-<tr>
-<td>alerts</td>
-<td><code>get_alert_rule</code></td>
-<td>è·ååè­¦è§åè¯¦æ</td>
-</tr>
-<tr>
-<td>targets</td>
-<td><code>list_targets</code></td>
-<td>ååºè¢«çæ§ä¸»æº/ç®æ ï¼æ¯æè¿æ»¤æ¡ä»¶</td>
-</tr>
-<tr>
-<td>datasource</td>
-<td><code>list_datasources</code></td>
-<td>ååºææå¯ç¨æ°æ®æº</td>
-</tr>
-<tr>
-<td>mutes</td>
-<td><code>list_mutes</code></td>
-<td>ååºä¸å¡ç»çåè­¦å±è½è§å</td>
-</tr>
-<tr>
-<td>mutes</td>
-<td><code>get_mute</code></td>
-<td>è·ååè­¦å±è½è§åè¯¦æ</td>
-</tr>
-<tr>
-<td>mutes</td>
-<td><code>create_mute</code></td>
-<td>åå»ºåè­¦å±è½è§å</td>
-</tr>
-<tr>
-<td>mutes</td>
-<td><code>update_mute</code></td>
-<td>æ´æ°åè­¦å±è½è§å</td>
-</tr>
-<tr>
-<td>notify_rules</td>
-<td><code>list_notify_rules</code></td>
-<td>ååºææéç¥è§å</td>
-</tr>
-<tr>
-<td>notify_rules</td>
-<td><code>get_notify_rule</code></td>
-<td>è·åéç¥è§åè¯¦æ</td>
-</tr>
-<tr>
-<td>alert_subscribes</td>
-<td><code>list_alert_subscribes</code></td>
-<td>ååºä¸å¡ç»çåè­¦è®¢é</td>
-</tr>
-<tr>
-<td>alert_subscribes</td>
-<td><code>list_alert_subscribes_by_gids</code></td>
-<td>ååºå¤ä¸ªä¸å¡ç»çè®¢é</td>
-</tr>
-<tr>
-<td>alert_subscribes</td>
-<td><code>get_alert_subscribe</code></td>
-<td>è·åè®¢éè¯¦æ</td>
-</tr>
-<tr>
-<td>event_pipelines</td>
-<td><code>list_event_pipelines</code></td>
-<td>ååºææäºä»¶æµæ°´çº¿</td>
-</tr>
-<tr>
-<td>event_pipelines</td>
-<td><code>get_event_pipeline</code></td>
-<td>è·åäºä»¶æµæ°´çº¿è¯¦æ</td>
-</tr>
-<tr>
-<td>event_pipelines</td>
-<td><code>list_event_pipeline_executions</code></td>
-<td>ååºæå®æµæ°´çº¿çæ§è¡è®°å½</td>
-</tr>
-<tr>
-<td>event_pipelines</td>
-<td><code>list_all_event_pipeline_executions</code></td>
-<td>ååºæææµæ°´çº¿çæ§è¡è®°å½</td>
-</tr>
-<tr>
-<td>event_pipelines</td>
-<td><code>get_event_pipeline_execution</code></td>
-<td>è·åæ§è¡è®°å½è¯¦æ</td>
-</tr>
-<tr>
-<td>users</td>
-<td><code>list_users</code></td>
-<td>ååºç¨æ·ï¼æ¯æè¿æ»¤æ¡ä»¶</td>
-</tr>
-<tr>
-<td>users</td>
-<td><code>get_user</code></td>
-<td>è·åç¨æ·è¯¦æ</td>
-</tr>
-<tr>
-<td>users</td>
-<td><code>list_user_groups</code></td>
-<td>ååºç¨æ·ç»/å¢é</td>
-</tr>
-<tr>
-<td>users</td>
-<td><code>get_user_group</code></td>
-<td>è·åç¨æ·ç»è¯¦æï¼åå«æåï¼</td>
-</tr>
-<tr>
-<td>busi_groups</td>
-<td><code>list_busi_groups</code></td>
-<td>ååºå½åç¨æ·å¯è®¿é®çä¸å¡ç»</td>
-</tr>
-</tbody>
-</table>
-<h2 id="ç¤ºä¾æç¤ºè¯">ç¤ºä¾æç¤ºè¯</h2>
-<p>éç½®å®æåï¼æ¨å¯ä»¥ä½¿ç¨èªç¶è¯­è¨ä¸å¤èºäº¤äºï¼</p>
-<ul>
-<li>"æ¾ç¤ºè¿å» 24 å°æ¶åææç´§æ¥åè­¦"</li>
-<li>"å½åæåªäºåè­¦æ­£å¨è§¦åï¼"</li>
-<li>"ååºææç¦»çº¿è¶è¿ 5 åéççæ§ç®æ "</li>
-<li>"ä¸å¡ç» 1 éç½®äºåªäºåè­¦è§åï¼"</li>
-<li>"ç±äºç»´æ¤åå ï¼ä¸º service=api çåè­¦åå»ºä¸ä¸ª 2 å°æ¶çå±è½è§å"</li>
-<li>"æ¥çäºä»¶æµæ°´çº¿çæ§è¡åå²"</li>
-<li>"è¿ç»´å¢éæåªäºæåï¼"</li>
-</ul>
-<h2 id="éç½®">éç½®</h2>
-<h3 id="ç¯å¢åé">ç¯å¢åé</h3>
-<table>
-<thead>
-<tr>
-<th>åé</th>
-<th>å½ä»¤è¡åæ°</th>
-<th>è¯´æ</th>
-<th>é»è®¤å¼</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>N9E_TOKEN</code></td>
-<td><code>--token</code></td>
-<td>å¤èº API Tokenï¼å¿éï¼</td>
-<td>-</td>
-</tr>
-<tr>
-<td><code>N9E_BASE_URL</code></td>
-<td><code>--base-url</code></td>
-<td>å¤èº API å°å</td>
-<td><code>http://localhost:17000</code></td>
-</tr>
-<tr>
-<td><code>N9E_READ_ONLY</code></td>
-<td><code>--read-only</code></td>
-<td>ç¦ç¨åæä½</td>
-<td><code>false</code></td>
-</tr>
-<tr>
-<td><code>N9E_TOOLSETS</code></td>
-<td><code>--toolsets</code></td>
-<td>å¯ç¨çå·¥å·éï¼éå·åéï¼</td>
-<td><code>all</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="å·¥å·ééæ©">å·¥å·ééæ©</h3>
-<p>é»è®¤å¯ç¨ææå·¥å·éãå¯ä»¥éè¿ <code>--toolsets</code> åæ°æ <code>N9E_TOOLSETS</code> ç¯å¢åéåªå¯ç¨éè¦çå·¥å·éï¼åå°æ´é²ç» AI å©æçå·¥å·æ°éï¼èçä¸ä¸æçªå£ç token æ¶èã</p>
-<p>å¯ç¨å·¥å·éï¼<code>alerts</code>ã<code>targets</code>ã<code>datasource</code>ã<code>mutes</code>ã<code>busi_groups</code>ã<code>notify_rules</code>ã<code>alert_subscribes</code>ã<code>event_pipelines</code>ã<code>users</code></p>
-<p>ä¾å¦ï¼åªå¯ç¨åè­¦åçæ§ç®æ ç¸å³å·¥å·ï¼</p>
-<pre><code class="language-json">{
-  "mcpServers": {
-    "nightingale": {
-      "command": "npx",
-      "args": ["-y", "@n9e/n9e-mcp-server", "stdio"],
-      "env": {
-        "N9E_TOKEN": "your-api-token",
-        "N9E_BASE_URL": "http://your-n9e-server:17000",
-        "N9E_TOOLSETS": "alerts,targets"
-      }
-    }
-  }
-}
-</code></pre>
-<h2 id="å¼æºåè®®">å¼æºåè®®</h2>
-<p>Apache License 2.0</p>
-<h2 id="ç¸å³é¡¹ç®">ç¸å³é¡¹ç®</h2>
-<ul>
-<li><a href="https://github.com/ccfos/nightingale" target="_blank" rel="noopener nofollow">Nightingale</a> - ä¼ä¸çº§äºåççæ§ç³»ç»</li>
-<li><a href="https://github.com/modelcontextprotocol/go-sdk" target="_blank" rel="noopener nofollow">MCP Go SDK</a> - å®æ¹ MCP Go SDK</li>
-<li><a href="https://modelcontextprotocol.io/" target="_blank" rel="noopener nofollow">MCP è§è</a> - Model Context Protocol è§è</li>
-</ul>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.0006944444444444445" data-date-updated="2026-02-24 11:01">2026-02-24 11:00</span>&nbsp;
-<a href="https://www.cnblogs.com/ulricqin">ITè¿ç»´çæ§</a>&nbsp;
-éè¯»(<span id="post_view_count">86</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19632794);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19632794', targetLink: 'https://www.cnblogs.com/ulricqin/p/19632794', title: 'Nightingaleï¼å¤èºï¼å®æ¹ MCP Serverï¼Cursor/AI å©æç¨èªç¶è¯­è¨æä½çæ§ä¸åè­¦' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ OpenClaw å½ä»¤éæ¥æå ]]></title>
-    <link>https://www.cnblogs.com/liuziyi1/p/19632738</link>
-    <guid>16f184d2984443be29d58455d659f9cf</guid>
-    <description>
-    <![CDATA[ 
-		<h2>
-			<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/liuziyi1/p/19632738" title="åå¸äº 2026-02-24 10:45">
-    <span role="heading" aria-level="2">OpenClaw å½ä»¤éæ¥æå</span>
-    
-
-</a>
-
-		</h2>
-		<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>è¿å¨ä¸ºè®°ä¸ä½ OpenClaw å½ä»¤ç¦æ¼ï¼è¿ä»½<strong>CLI å½ä»¤ + èå¤©ææ å½ä»¤ + å³é®è·¯å¾ + æ¥ææµç¨</strong>ä¸ç«å¼æåï¼å¸®ä½ å¿«éä¸æãé«ææéï¼è½»æ¾é©¾é©­å¨åè½ã</p>
-<hr>
-<h2 id="ä¸ç»ç«¯-cli-å½ä»¤">ä¸ãç»ç«¯ CLI å½ä»¤</h2>
-<p>æ ¼å¼ï¼<code>openclaw &lt;å½ä»¤&gt;</code></p>
-<h3 id="1-åºç¡æä½é«é¢å¿å¤">1. åºç¡æä½ï¼é«é¢å¿å¤ï¼</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">å½ä»¤</th>
-<th style="text-align: left">è¯´æ</th>
-<th style="text-align: left">ä½¿ç¨åºæ¯</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><code>openclaw --version</code></td>
-<td style="text-align: left">æ¥ççæ¬å·</td>
-<td style="text-align: left">éªè¯å®è£æ¯å¦æå</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw --help</code></td>
-<td style="text-align: left">æ¥çå¨é¨å½ä»¤</td>
-<td style="text-align: left">å¿è®°æä»¤æ¶æ¥è¯¢</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw tui</code></td>
-<td style="text-align: left">ç»ç«¯å¯¹è¯çé¢</td>
-<td style="text-align: left">æ°æå¿«éèå¤©</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw dashboard</code></td>
-<td style="text-align: left">ç½é¡µæ§å¶å°</td>
-<td style="text-align: left">æµè§å¨å¯è§åç®¡ç</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw restart</code></td>
-<td style="text-align: left">éå¯æå¡</td>
-<td style="text-align: left">ä¿®æ¹éç½®åå¿æ§è¡</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw stop</code></td>
-<td style="text-align: left">åæ­¢æå¡</td>
-<td style="text-align: left">ä¸´æ¶æåç¨åº</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw update</code></td>
-<td style="text-align: left">æ´æ°è³ææ°ç</td>
-<td style="text-align: left">çæ¬åçº§</td>
-</tr>
-</tbody>
-</table>
-<h3 id="2-å®è£ä¸åå§å">2. å®è£ä¸åå§å</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">å½ä»¤</th>
-<th style="text-align: left">è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><code>openclaw onboard</code></td>
-<td style="text-align: left">å¯å¨äº¤äºå¼éç½®åå¯¼</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw onboard --install-daemon</code></td>
-<td style="text-align: left">éç½® + å®è£ç³»ç»åå°æå¡ï¼å¼æºèªå¯ï¼</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw configure</code></td>
-<td style="text-align: left">éæ°è¿å¥éç½®åå¯¼</td>
-</tr>
-</tbody>
-</table>
-<h3 id="3-è¯æ­ä¸æé">3. è¯æ­ä¸æé</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">å½ä»¤</th>
-<th style="text-align: left">è¯´æ</th>
-<th style="text-align: left">ä½¿ç¨åºæ¯</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><code>openclaw doctor</code></td>
-<td style="text-align: left">å¨é¢å¥åº·æ£æ¥ï¼éç½®ãç«¯å£ãä¾èµï¼</td>
-<td style="text-align: left">åºç°é®é¢é¦éå½ä»¤</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw doctor --fix</code></td>
-<td style="text-align: left">å¥åº·æ£æ¥ + èªå¨ä¿®å¤</td>
-<td style="text-align: left">å°è¯èªå¨è§£å³æé</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw status</code></td>
-<td style="text-align: left">æ¥çè¿è¡ç¶æï¼ç½å³ãç«¯å£ï¼</td>
-<td style="text-align: left">ç¡®è®¤æå¡æ¯å¦æ­£å¸¸</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw status --deep</code></td>
-<td style="text-align: left">æ·±åº¦ç¶ææ£æµ</td>
-<td style="text-align: left">è¿é¶é®é¢ææ¥</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw logs</code></td>
-<td style="text-align: left">æ¥çæè¿æ¥å¿</td>
-<td style="text-align: left">å®ä½éè¯¯ä¿¡æ¯</td>
-</tr>
-</tbody>
-</table>
-<h3 id="4-æ¨¡åç®¡ç">4. æ¨¡åç®¡ç</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">å½ä»¤</th>
-<th style="text-align: left">è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><code>openclaw models list</code></td>
-<td style="text-align: left">ååºå·²éç½®æ¨¡å</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw models set &lt;æä¾å/æ¨¡åå&gt;</code></td>
-<td style="text-align: left">åæ¢é»è®¤æ¨¡å</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw models auth login --provider &lt;æä¾å&gt;</code></td>
-<td style="text-align: left">OAuth ç»å½æ¨¡åæä¾å</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw models auth paste-token --provider &lt;æä¾å&gt;</code></td>
-<td style="text-align: left">ç²è´´ API Token è®¤è¯</td>
-</tr>
-</tbody>
-</table>
-<p><strong>åæ¢ç¤ºä¾</strong></p>
-<pre><code class="language-bash">openclaw models set bailian/qwen3-max-2026-01-23
-openclaw models set minimax/MiniMax-M2.1
-</code></pre>
-<h3 id="5-ç½å³gatewayç®¡ç">5. ç½å³ï¼Gatewayï¼ç®¡ç</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">å½ä»¤</th>
-<th style="text-align: left">è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><code>openclaw gateway</code></td>
-<td style="text-align: left">å¯å¨ç½å³</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw gateway --port 18789</code></td>
-<td style="text-align: left">æå®ç«¯å£å¯å¨</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw gateway --verbose</code></td>
-<td style="text-align: left">å¯å¨å¹¶è¾åºè¯¦ç»æ¥å¿</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw gateway restart</code></td>
-<td style="text-align: left">éå¯ç½å³</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw gateway --token &lt;token&gt;</code></td>
-<td style="text-align: left">å¸¦ Token å¯å¨</td>
-</tr>
-</tbody>
-</table>
-<h3 id="6-èå¤©ééchannelç®¡ç">6. èå¤©ééï¼Channelï¼ç®¡ç</h3>
-<p>æ¯æééï¼whatsappãtelegramãdiscordãslackãgooglechatãsignalãimessageãmsteamsãmattermostãfeishuï¼éæä»¶ï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">å½ä»¤</th>
-<th style="text-align: left">è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><code>openclaw channels status</code></td>
-<td style="text-align: left">æ¥çææééç¶æ</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw channels list</code></td>
-<td style="text-align: left">ååºå·²éç½®éé</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw channels add</code></td>
-<td style="text-align: left">äº¤äºå¼æ·»å éé</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw channels add --channel telegram --token &lt;TOKEN&gt;</code></td>
-<td style="text-align: left">éäº¤äºå¼æ·»å  Telegram</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw channels add --channel feishu</code></td>
-<td style="text-align: left">æ·»å é£ä¹¦éé</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw channels remove --channel &lt;åç§°&gt;</code></td>
-<td style="text-align: left">ç§»é¤éé</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw channels logs</code></td>
-<td style="text-align: left">æ¥çééæ¥å¿</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw channels login</code></td>
-<td style="text-align: left">ç»å½éé</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw channels logout</code></td>
-<td style="text-align: left">ç»åºéé</td>
-</tr>
-</tbody>
-</table>
-<h3 id="7-æä»¶pluginç®¡ç">7. æä»¶ï¼Pluginï¼ç®¡ç</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">å½ä»¤</th>
-<th style="text-align: left">è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><code>openclaw plugins list</code></td>
-<td style="text-align: left">ååºæä»¶</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw plugins enable &lt;æä»¶å&gt;</code></td>
-<td style="text-align: left">å¯ç¨æä»¶</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw plugins disable &lt;æä»¶å&gt;</code></td>
-<td style="text-align: left">ç¦ç¨æä»¶</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw plugins install &lt;æä»¶å&gt;</code></td>
-<td style="text-align: left">å®è£æä»¶</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw plugins doctor</code></td>
-<td style="text-align: left">æ£æ¥æä»¶éè¯¯</td>
-</tr>
-</tbody>
-</table>
-<p><strong>å¸¸ç¨ç¤ºä¾</strong></p>
-<pre><code class="language-bash">openclaw plugins enable feishu
-openclaw plugins enable qwen-portal-auth
-openclaw models auth login --provider qwen-portal --set-default
-</code></pre>
-<h3 id="8-æè½skillç®¡ç">8. æè½ï¼Skillï¼ç®¡ç</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">å½ä»¤</th>
-<th style="text-align: left">è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><code>openclaw skills list</code></td>
-<td style="text-align: left">ååºå·²å®è£æè½</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw skills install &lt;æè½å&gt;</code></td>
-<td style="text-align: left">å®è£æè½</td>
-</tr>
-</tbody>
-</table>
-<p><strong>ClawHub æè½ååº</strong></p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">å½ä»¤</th>
-<th style="text-align: left">è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><code>clawhub search &lt;å³é®è¯&gt;</code></td>
-<td style="text-align: left">æç´¢æè½</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>clawhub install &lt;æè½å&gt;</code></td>
-<td style="text-align: left">å®è£æè½</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>clawhub list</code></td>
-<td style="text-align: left">æ¥çå·²å®è£æè½</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>clawhub sync --all</code></td>
-<td style="text-align: left">æ´æ°æææè½</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>clawhub update &lt;æè½å&gt;</code></td>
-<td style="text-align: left">æ´æ°æå®æè½</td>
-</tr>
-</tbody>
-</table>
-<h3 id="9-æ¶æ¯ä¸éå¯¹">9. æ¶æ¯ä¸éå¯¹</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">å½ä»¤</th>
-<th style="text-align: left">è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><code>openclaw message send --to &lt;å·ç &gt; --message "åå®¹"</code></td>
-<td style="text-align: left">åéæ¶æ¯</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw agent --message "ä»»å¡åå®¹"</code></td>
-<td style="text-align: left">ä¸å Agent ä»»å¡</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw agent --message "ä»»å¡" --thinking high</code></td>
-<td style="text-align: left">é«æèæ·±åº¦ä»»å¡</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw pairing approve &lt;éé&gt; &lt;éå¯¹ç &gt;</code></td>
-<td style="text-align: left">æ¹åè®¾å¤éå¯¹</td>
-</tr>
-</tbody>
-</table>
-<h3 id="10-æ²ç®±sandboxç®¡ç">10. æ²ç®±ï¼Sandboxï¼ç®¡ç</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">å½ä»¤</th>
-<th style="text-align: left">è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><code>openclaw sandbox explain</code></td>
-<td style="text-align: left">æ¥çæ²ç®±éç½®</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw sandbox explain --json</code></td>
-<td style="text-align: left">JSON æ ¼å¼æ¥çéç½®</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw sandbox list</code></td>
-<td style="text-align: left">ååºæ²ç®±å®¹å¨</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw sandbox list --browser</code></td>
-<td style="text-align: left">ä»æ¥çæµè§å¨å®¹å¨</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw sandbox recreate --all</code></td>
-<td style="text-align: left">éå»ºææå®¹å¨</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw sandbox recreate --all --force</code></td>
-<td style="text-align: left">å¼ºå¶éå»ºï¼æ ç¡®è®¤ï¼</td>
-</tr>
-</tbody>
-</table>
-<h3 id="11-æµè§å¨æ§å¶">11. æµè§å¨æ§å¶</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">å½ä»¤</th>
-<th style="text-align: left">è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><code>openclaw browser open &lt;URL&gt;</code></td>
-<td style="text-align: left">æå¼ç½é¡µ</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw browser snapshot</code></td>
-<td style="text-align: left">é¡µé¢å¿«ç§</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw browser click &lt;åç´ &gt;</code></td>
-<td style="text-align: left">ç¹å»é¡µé¢åç´ </td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw browser type &lt;åç´ &gt; &lt;æå­&gt;</code></td>
-<td style="text-align: left">è¾å¥æ¡å¡«ååå®¹</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw browser screenshot</code></td>
-<td style="text-align: left">æªå¾</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw browser close</code></td>
-<td style="text-align: left">å³é­æµè§å¨</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw browser console</code></td>
-<td style="text-align: left">æ¥çæµè§å¨æ§å¶å°</td>
-</tr>
-</tbody>
-</table>
-<h3 id="12-éç½®æä»¶æä½">12. éç½®æä»¶æä½</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">å½ä»¤</th>
-<th style="text-align: left">è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><code>openclaw config</code></td>
-<td style="text-align: left">æ¥çå½åéç½®</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw config edit</code></td>
-<td style="text-align: left">ç¼è¾éç½®æä»¶</td>
-</tr>
-</tbody>
-</table>
-<p><strong>æå¨ç¼è¾éç½®</strong></p>
-<pre><code class="language-bash"># Windows
-notepad %USERPROFILE%\.openclaw\openclaw.json
-
-# macOS / Linux
-nano ~/.openclaw/openclaw.json
-cat ~/.openclaw/openclaw.json
-</code></pre>
-<h3 id="13-æ´æ°ä¸ç»´æ¤">13. æ´æ°ä¸ç»´æ¤</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">å½ä»¤</th>
-<th style="text-align: left">è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><code>openclaw update</code></td>
-<td style="text-align: left">æ´æ°è³ç¨³å®ç</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw update --channel stable</code></td>
-<td style="text-align: left">åæ¢ç¨³å®çéé</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>openclaw update --channel beta</code></td>
-<td style="text-align: left">åæ¢æµè¯çéé</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>npm install -g openclaw@latest</code></td>
-<td style="text-align: left">npm å¼ºå¶æ´æ°</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="äºèå¤©ææ å½ä»¤webé£ä¹¦telegram-éç¨">äºãèå¤©ææ å½ä»¤ï¼Web/é£ä¹¦/Telegram éç¨ï¼</h2>
-<h3 id="1-ä¼è¯ç®¡ç">1. ä¼è¯ç®¡ç</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">å½ä»¤</th>
-<th style="text-align: left">è¯´æ</th>
-<th style="text-align: left">éè¦åº¦</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><code>/new</code></td>
-<td style="text-align: left">æ°å»ºä¼è¯ï¼æ¸ç©ºä¸ä¸æï¼</td>
-<td style="text-align: left">æé«</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>/new ä»»å¡æè¿°</code></td>
-<td style="text-align: left">æ°å»ºä¼è¯å¹¶éå¸¦ä»»å¡</td>
-<td style="text-align: left">æé«</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>/compact</code></td>
-<td style="text-align: left">åç¼©ä¸ä¸æï¼èç Tokenï¼</td>
-<td style="text-align: left">æé«</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>/status</code></td>
-<td style="text-align: left">æ¥çä¼è¯ç¶æï¼æ¨¡åãTokenï¼</td>
-<td style="text-align: left">å¸¸ç¨</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>/help</code> / <code>/commands</code></td>
-<td style="text-align: left">æ¥çææ å½ä»¤</td>
-<td style="text-align: left">å¸¸ç¨</td>
-</tr>
-</tbody>
-</table>
-<h3 id="2-æ¨¡ååæ¢">2. æ¨¡ååæ¢</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">å½ä»¤</th>
-<th style="text-align: left">è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><code>/model</code></td>
-<td style="text-align: left">æ¥çå½åæ¨¡å</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>/model &lt;æ¨¡åå&gt;</code></td>
-<td style="text-align: left">åæ¢æ¨¡å</td>
-</tr>
-</tbody>
-</table>
-<h3 id="3-ä¼è¯åå²">3. ä¼è¯åå²</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">å½ä»¤</th>
-<th style="text-align: left">è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><code>/sessions list</code></td>
-<td style="text-align: left">ååºææä¼è¯</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>/sessions history</code></td>
-<td style="text-align: left">æ¥çåå²è®°å½</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>/sessions send &lt;ä¼è¯ID&gt; &lt;æ¶æ¯&gt;</code></td>
-<td style="text-align: left">åæå®ä¼è¯åæ¶æ¯</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>/sessions spawn &lt;ä»»å¡&gt;</code></td>
-<td style="text-align: left">åå»ºå­ä¼è¯æ§è¡ä»»å¡</td>
-</tr>
-</tbody>
-</table>
-<h3 id="4-å·¥å·ä¸æ§è¡">4. å·¥å·ä¸æ§è¡</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">å½ä»¤</th>
-<th style="text-align: left">è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><code>/approve</code></td>
-<td style="text-align: left">æ¹åå¾ç¡®è®¤æä½</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>/deny</code></td>
-<td style="text-align: left">æç»å¾ç¡®è®¤æä½</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>/cancel</code></td>
-<td style="text-align: left">åæ¶å½åä»»å¡</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>/undo</code></td>
-<td style="text-align: left">æ¤éä¸ä¸æ­¥</td>
-</tr>
-</tbody>
-</table>
-<h3 id="5-æè½ä¸è®°å¿">5. æè½ä¸è®°å¿</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">å½ä»¤</th>
-<th style="text-align: left">è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><code>/skills</code></td>
-<td style="text-align: left">æ¥çå·²å è½½æè½</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>/memory</code></td>
-<td style="text-align: left">æ¥çè®°å¿åå®¹</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>/forget &lt;åå®¹&gt;</code></td>
-<td style="text-align: left">å é¤æå®è®°å¿</td>
-</tr>
-</tbody>
-</table>
-<h3 id="6-ä¿¡æ¯æ¥è¯¢">6. ä¿¡æ¯æ¥è¯¢</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">å½ä»¤</th>
-<th style="text-align: left">è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><code>/cost</code></td>
-<td style="text-align: left">æ¥ç Token æ¶èä¸è´¹ç¨</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>/version</code></td>
-<td style="text-align: left">æ¥ççæ¬</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>/ping</code></td>
-<td style="text-align: left">æµè¯è¿æ¥</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="ä¸å³é®æä»¶è·¯å¾éæ¥">ä¸ãå³é®æä»¶è·¯å¾éæ¥</h2>
-<p><code>~</code> å¨ Windows ä¸ä¸º <code>%USERPROFILE%</code></p>
-<ul>
-<li><code>~/.openclaw/openclaw.json</code>ï¼ä¸»éç½®æä»¶</li>
-<li><code>~/.openclaw/workspace/</code>ï¼é»è®¤å·¥ä½åº</li>
-<li><code>~/.openclaw/skills/</code>ï¼å¨å±æè½ç®å½</li>
-<li><code>~/.openclaw/agents/</code>ï¼Agent æ°æ®ç®å½</li>
-<li><code>~/.openclaw/agents/&lt;ID&gt;/USER.md</code>ï¼ç¨æ·åå¥½</li>
-<li><code>~/.openclaw/agents/&lt;ID&gt;/memory/</code>ï¼è®°å¿å­å¨</li>
-<li><code>~/.openclaw/agents/&lt;ID&gt;/cron/jobs.json</code>ï¼å®æ¶ä»»å¡</li>
-<li><code>~/.openclaw/agents/&lt;ID&gt;/sessions/</code>ï¼ä¼è¯è®°å½</li>
-<li><code>~/.openclaw/workspace/AGENTS.md</code>ï¼æ ¸å¿æç¤ºè¯</li>
-</ul>
-<hr>
-<h2 id="åæ°ææ åæ¥ææµç¨">åãæ°ææ åæ¥ææµç¨</h2>
-<p>éå°å¼å¸¸ï¼æä»¥ä¸é¡ºåºæ§è¡ï¼</p>
-<ol>
-<li><code>openclaw doctor</code></li>
-<li><code>openclaw logs</code></li>
-<li><code>openclaw status</code></li>
-<li><code>openclaw restart</code></li>
-<li><code>openclaw doctor --fix</code></li>
-</ol>
-<p><strong>éç½®ä¿®æ¹åºå®æµç¨</strong><br>
-ç¼è¾ <code>~/.openclaw/openclaw.json</code> â ä¿å­ â æ§è¡ <code>openclaw restart</code></p>
-<p><strong>å®å¨éç½®éç½®</strong><br>
-<code>openclaw configure</code></p>
-<hr>
-<p>ç¨å¥½å·¥å·ï¼æçç¿»åãè¿ä»½ OpenClaw å®æ´å½ä»¤æåï¼è¦çå®è£ãè¿è¡ãç®¡çãæéå¨æµç¨ï¼æ è®ºæ¯æ¥å¸¸ä½¿ç¨è¿æ¯æéå¤çï¼é½è½å¿«éå®ä½æä»¤ãè§£å³é®é¢ï¼è®© AI å·¥å·çæ­£ä¸ºä½ æç¨ã</p>
-
-
-</div>
-<div class="clear"></div>
-
-		<p class="postfoot">
-			posted on 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-02-24 10:46">2026-02-24 10:45</span>&nbsp;
-<a href="https://www.cnblogs.com/liuziyi1">åå­æ¯</a>&nbsp;
-éè¯»(<span id="post_view_count">186</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19632738);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19632738', targetLink: 'https://www.cnblogs.com/liuziyi1/p/19632738', title: 'OpenClaw å½ä»¤éæ¥æå' })">ä¸¾æ¥</a>
-
-		</p>
-	 ]]>
     </description>
     </item>
         </channel>
