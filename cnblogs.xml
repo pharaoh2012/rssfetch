@@ -3,20 +3,20 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-03-23T04:24:36.364Z</lastBuildDate>
+        <lastBuildDate>2026-03-23T08:50:31.854Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
-    <title><![CDATA[ JAVAæ¾åºåªä¸ªç±»importäºä¸å­å¨çç±» ]]></title>
-    <link>https://www.cnblogs.com/yfrs/p/19756907/classnotfound</link>
-    <guid>e32728409f55bd52c2823edf84f7245e</guid>
+    <title><![CDATA[ é£äºä½ ä¸ç¥éèªå·±éè¦çæ§ç Linux æå ]]></title>
+    <link>https://www.cnblogs.com/ulricqin/p/19758439</link>
+    <guid>840cf0f3310f4e568342e7c417d5b773</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/yfrs/p/19756907/classnotfound" title="åå¸äº 2026-03-23 12:12">
-    <span role="heading" aria-level="2">JAVAæ¾åºåªä¸ªç±»importäºä¸å­å¨çç±»</span>
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/ulricqin/p/19758439" title="åå¸äº 2026-03-23 15:53">
+    <span role="heading" aria-level="2">é£äºä½ ä¸ç¥éèªå·±éè¦çæ§ç Linux æå</span>
     
 
 </a>
@@ -25,221 +25,409 @@
             <div class="clear"></div>
             <div class="postBody">
                 <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h2 id="javaæ¾åºåªä¸ªç±»importäºä¸å­å¨çç±»">JAVAæ¾åºåªä¸ªç±»importäºä¸å­å¨çç±»</h2>
-<h3 id="1-èæ¯">1. èæ¯</h3>
-<p>å¨JAVAä¸­ä¸ä¸ªç±»A,import å¦å¤çä¸ä¸ªç±»B.ç¶åå¨å®¹å¨å¯å¨æ¶,åªä¼æç¤ºBç±»ä¸å­å¨,ä¸ä¼åºç°ä»»ä½Aç±»ç¸å³çä¿¡æ¯<br>
-Tomcatä¸­éè¯¯ä¿¡æ¯å¦ä¸,æµè¯ä»£ç ä½¿ç¨<code>org.slf4j.Logger</code>è¯´æ ,é¨åéè¯¯ä¿¡æ¯å¦ä¸</p>
-<pre><code>at java.lang.Thread.run(Thread.java:748)
-Caused by: java.lang.NoClassDefFoundError: Lorg/slf4j/Logger;
-at java.lang.Class.getDeclaredFields0(Native Method)
-at java.lang.Class.privateGetDeclaredFields(Class.java:2583)
-... 10 more
-Caused by: java.lang.ClassNotFoundException: org.slf4j.Logger
-at org.apache.catalina.loader.WebappClassLoaderBase.loadClass(WebappClassLoaderBase.java:1360)
-at org.apache.catalina.loader.WebappClassLoaderBase.loadClass(WebappClassLoaderBase.java:1182)
-... 23 more
+<blockquote>
+<p><strong>TL;DR</strong>ï¼conntrack è¡¨æ»¡äºãARP é»å±è¡¨æº¢åºãåæ ¸åæ°è¢«éé»éç½®ãlisten éåä¸¢åâ¦â¦è¿äº Linux åæ ¸å±ç"æ²é»ææ"ä¸ä¼åºç°å¨ä½ ç Grafana å¤§çä¸ï¼ä½è½è®©ä½ ççº¿ä¸æå¡å¨å ç§åå´©æºãæ¬ææè§£ 8 ä¸ªçå®æåï¼æ¯ä¸ªé½éå¸¦æéåçåçæ§æ¹æ¡ã</p>
+</blockquote>
+<h2 id="æäºk8s-éç¾¤ä¸¢åä¸¤å¤©æåæ¯-conntrack-çé">æäºï¼K8s éç¾¤ä¸¢åä¸¤å¤©ï¼æåæ¯ conntrack çé</h2>
+<p>æå¤©åæ¨ï¼å¼ç­æ¶å°åè­¦ï¼é¨å Pod é´æ­æ§è¶æ¶ã</p>
+<p>æå¼ GrafanaââCPU æ­£å¸¸ï¼åå­æ­£å¸¸ï¼ç½ç»å¸¦å®½æ­£å¸¸ï¼ç£ç IO æ­£å¸¸ãåå¤§éææ ä¸çç»¿è²ã</p>
+<p>å¼å§ææ¥ï¼æååç° SYN ååºå»äºï¼ä½å¯¹ç«¯æ²¡å SYN-ACKãæ¢ä¸ª Pod è¯è¯ï¼å¥½äºãåè¯ä¸æ¬¡ï¼åè¶æ¶äºãåæ¯æç§éæºæéã</p>
+<p>ææ¥äºä¸¤å¤©ãæåå¨ <code>dmesg</code> éæ¾å°äºä¸è¡ä¸èµ·ç¼çæ¥å¿ï¼</p>
+<pre><code>nf_conntrack: table full, dropping packet.
 </code></pre>
-<h3 id="2-æ¥å¿è½è§£å³å">2. æ¥å¿è½è§£å³å</h3>
-<p>å¨å®¹å¨TOMCATä¸ºç±»WebappClassLoaderBaseå¼å¯è¯¦ç»æ¥å¿,å¨/conf/logging.properties æ·»å å¦ä¸æ¥å¿</p>
-<pre><code>org.apache.catalina.loader.WebappClassLoaderBase.level = FINE
+<p><strong>conntrack è¡¨æ»¡äºã</strong> æ°è¿æ¥è¢«åæ ¸å¨ç½ç»æ åºå±éé»ä¸¢å¼ï¼SYN åæ ¹æ¬æ²¡å°è¾¾ç®æ è¿ç¨ã</p>
+<p>è¿æ¡ä¿¡æ¯ä¸å¨ Prometheus çä»»ä½ exporter éï¼ä¸å¨ Grafana çä»»ä½ dashboard éï¼ä¸å¨ä»»ä½åè­¦è§åéãå®å®éå°èººå¨ <code>dmesg</code> çæ¥å¿æ´ªæµä¸­ï¼ç­çæä¸ªèè¿ç»´ç¢°å·§æ³å°å»çä¸ç¼ã</p>
+<p><strong>è¿å°±æ¯"æ²é»ææ"ââåæ ¸å±çæéï¼æ²¡äººçæ§ï¼åºäºäºä¹æ²¡äººè½ä¸ç¼çåºæ¥ã</strong></p>
+<h2 id="ä½ ççæ§æ æä¸å¤§çç²åº">ä½ ççæ§æ æä¸å¤§çç²åº</h2>
+<p>å¤§å¤æ°å¢éççæ§æ¶æé¿è¿æ ·ï¼</p>
+<pre><code class="language-text">Prometheus + Node-Exporter  â  Grafana Dashboard  â  AlertManager  â  éç¥
 </code></pre>
-<p>å ä¸æ¥å¿ä»¥å,è¾åºåå®¹å¦ä¸</p>
-<pre><code>org.apache.catalina.loader.WebappClassLoaderBase.loadClass   Loading class from local repository
-org.apache.catalina.loader.WebappClassLoaderBase.loadClass loadClass(dxxs.BTestClass, false)
-org.apache.catalina.loader.WebappClassLoaderBase.loadClass   Searching local repositories
-org.apache.catalina.loader.WebappClassLoaderBase.findClass     findClass(dxxs.BTestClass)
-org.apache.catalina.loader.WebappClassLoaderBase.loadClass   Loading class from local repository
-org.apache.catalina.loader.WebappClassLoaderBase.loadClass loadClass(org.slf4j.Logger, false)
-org.apache.catalina.loader.WebappClassLoaderBase.loadClass   Searching local repositories
-org.apache.catalina.loader.WebappClassLoaderBase.findClass     findClass(org.slf4j.Logger)
-org.apache.catalina.loader.WebappClassLoaderBase.findClass     --&gt; Returning ClassNotFoundException
+<p>è¿å¥ä½ç³»éå¸¸ä¼ç§ââç¨æ¥å<strong>ææ ééåè¶å¿å±ç¤º</strong>ã</p>
+<p>ä½å®æä¸ä¸ªæ ¹æ¬æ§çç²åºï¼<strong>Node-Exporter éçæ¯ææ ï¼metricsï¼ï¼ä¸æ¯å¼å¸¸å¤å®ï¼checksï¼ã</strong></p>
+<p>ä»ä¹ææï¼ä¸¾ä¸ªä¾å­ï¼</p>
+<ul>
+<li>Node-Exporter ä¼åè¯ä½  <code>node_nf_conntrack_entries = 131072</code>ï¼ä½å®ä¸ç¥é <code>nf_conntrack_max</code> ä¹æ¯ <code>131072</code>ââè¡¨å·²ç»æ»¡äº</li>
+<li>å®ä¼åè¯ä½  <code>node_network_receive_errs_total = 15847</code>ï¼ä½è¿æ¯ä¸ä¸ªç´¯è®¡å¼ï¼ä½ éè¦èªå·±ç®å¢éãè®¾éå¼ãå PromQL åè­¦è§å</li>
+<li>å®éäº <code>node_sockstat_TCP_tw</code> åè¯ä½  TIME_WAIT æ°éï¼ä½ä½ éè¦èªå·±å¤æ­"å¤å°ç®å¤"</li>
+</ul>
+<p><strong>ææ å¨é£éï¼ä½æ²¡äººæå®ä»¬åæåè­¦ã</strong></p>
+<p>ä¸æ¯ Node-Exporter çé®é¢ï¼èæ¯"ææ éé"å"å¼å¸¸æ£æµ"æ¯ä¸¤ä»¶ä¸åçäºãå¤§å¤æ°å¢éåå®äºåèï¼è·³è¿äºåèââå°¤å¶æ¯å¨åæ ¸å±é¢ã</p>
+<p>æ¥ä¸æ¥æä»¬æè§£ 8 ä¸ªæå¸¸è§ç Linux "æ²é»ææ"ã</p>
+<h2 id="æå-1conntrack-è¡¨æº¢åºææè¿æ¥éé»å¤±è´¥">æå 1ï¼conntrack è¡¨æº¢åºââææè¿æ¥éé»å¤±è´¥</h2>
+<h3 id="æäº">æäº</h3>
+<p>NAT ç½å³ãK8s Nodeãé«å¹¶åè´è½½åè¡¡å¨ââåªè¦å¯ç¨äº iptables/nftables NAT æ connection trackingï¼åæ ¸å°±ä¼ä¸ºæ¯æ¡è¿æ¥ç»´æ¤ä¸ä¸ª conntrack æ¡ç®ãé»è®¤ä¸ééå¸¸æ¯ 65536 æ 131072ã</p>
+<p>è¡¨æ»¡ä¹åçè¡ä¸ºä¸æ¯æ¥éï¼ä¸æ¯æç»è¿æ¥ï¼èæ¯<strong>éé»ä¸¢å</strong>ãSYN ååºå»äºï¼æ²¡æä»»ä½ååºãå®¢æ·ç«¯çå°çæ¯è¿æ¥è¶æ¶ï¼èæå¡ç«¯çè¿ç¨å¯¹æ­¤å®å¨æ æââåæ ¹æ¬æ²¡å°è¾¾åºç¨å±ã</p>
+<h3 id="åç">åç</h3>
+<pre><code class="language-text">æ°è¿æ¥ â åæ ¸ç½ç»æ  â nf_conntrack å°è¯åå»ºæ¡ç®
+         â
+  è¡¨æ»¡ â ç´æ¥ DROP â æ²¡æ RSTï¼æ²¡æ ICMP unreachable
+         â
+  å®¢æ·ç«¯ç­å°è¶æ¶ â æ¥ connection timeout
 </code></pre>
-<p>ä»æ¥å¿è¾åºä¸æ¥ç,åªæ¯ç¥é <code>dxxs.BTestClass</code> åå°±å è½½ <code>org.slf4j.Logger</code>,ä½å¹¶ä¸è½ç¡®å®å°±æ¯ <code>dxxs.BTestClass</code> å¯¼è´ç</p>
-<h3 id="3-åæå­èç è½è§£å³å">3. åæå­èç è½è§£å³å</h3>
-<p>éè¿æ¥å¿åæ,æè§ä¸æ¯å¯ä»¥,ä½æ¯ä¸è½ç¡®å®.æä»¥ä¸ºäºç¡®å®,éç¨ Java Agent æ¹å¼åæ,å½åå è½½ç<code>class</code>æ¯å¦å¼ç¨äºå½åç¯å¢ä¸å­å¨çclass</p>
-<p>å¨TOMCATå¯å¨æ¶,éç½®åæ°,å¨å¯å¨æ¶,æ³¨å¥ç¼åjar</p>
-<pre><code>set JAVA_OPTS=%JAVA_OPTS% -javaagent:"%CATALINA_HOME%\lib\class-load-monitor-agent.jar"="%CATALINA_HOME%\conf\agent-config.properties"
+<p>å¯ä¸çè¯æ®æ¯ <code>dmesg</code> ä¸­ç <code>nf_conntrack: table full, dropping packet</code>ï¼ä»¥å <code>/proc/net/stat/nf_conntrack</code> ä¸­ <code>drop</code> è®¡æ°å¨çå¢é¿ã</p>
+<h3 id="çæ§æ¹æ¡">çæ§æ¹æ¡</h3>
+<p>catpaw ç <code>conntrack</code> æä»¶è¯»å <code>/proc/sys/net/netfilter/nf_conntrack_count</code>ï¼å½åæ¡ç®æ°ï¼å <code>nf_conntrack_max</code>ï¼ä¸éï¼ï¼è®¡ç®ä½¿ç¨çç¾åæ¯ï¼</p>
+<pre><code class="language-toml"># conf.d/p.conntrack/conntrack.toml
+[[instances]]
+[instances.conntrack_usage]
+warn_ge = 75.0
+critical_ge = 90.0
 </code></pre>
-<p>åæ¬¡å¯å¨å,å¯¹åºè¾åºåå®¹å¦ä¸</p>
-<pre><code>[ClassLoadMonitor] ==========================================
-[ClassLoadMonitor] FOUND REFERENCE TO MISSING CLASS:
-[ClassLoadMonitor] Source class: dxxs.BTestClass
-[ClassLoadMonitor] Missing class: org.slf4j.Logger
-[ClassLoadMonitor] ClassLoader: ParallelWebappClassLoader
-  context: test
-  delegate: false
-----------&gt; Parent Classloader:
-java.net.URLClassLoader@87aac27
-
-[ClassLoadMonitor] Thread: localhost-startStop-1
+<p>nf_conntrack æ¨¡åæªå è½½æ¶èªå¨è·³è¿ï¼ä¸ä¼è¯¯æ¥ã</p>
+<h2 id="æå-2arp-é»å±è¡¨æ»¡æ°-ip-æ æ³éä¿¡æ§-ip-æ­£å¸¸">æå 2ï¼ARP é»å±è¡¨æ»¡ââæ° IP æ æ³éä¿¡ï¼æ§ IP æ­£å¸¸</h2>
+<h3 id="æäº-1">æäº</h3>
+<p>å¤§è§æ¨¡ K8s éç¾¤ï¼ä¸åä¸ª Pod åå¸å¨åä¸ä¸ªå¤§äºå±ç½ç»ãè¿è¡å å¤©åï¼æ°åå»ºç Pod æ æ³åæäºèç¹éä¿¡ï¼ä½å·²ç»å¨è¿è¡ç Pod ä¹é´éä¿¡æ­£å¸¸ã</p>
+<p>éå¯ Podï¼å¥½äºãè¿å åéåä¸è¡äºã</p>
+<p>æååç°ï¼<strong>ARP é»å±è¡¨ç <code>gc_thresh3</code> ç¡¬ä¸éè¢«ææ»¡äºã</strong> åæ ¸é»è®¤å¼æ¯ 1024ââä¸åä¸ª IP å°±å°å¤´äºãå·²ç¼å­ç ARP æ¡ç®æ­£å¸¸å·¥ä½ï¼ä½æ° IP ç ARP è§£æè¢«æç»ã</p>
+<h3 id="åç-1">åç</h3>
+<p>Linux é»å±è¡¨æä¸ä¸ªéå¼ï¼</p>
+<ul>
+<li><code>gc_thresh1</code>ï¼æ­£å¸¸åæ¶çè½¯ä¸é</li>
+<li><code>gc_thresh2</code>ï¼è¶è¿å 5 ç§åå¿é¡»åæ¶</li>
+<li><code>gc_thresh3</code>ï¼<strong>ç¡¬ä¸é</strong>ï¼è¶è¿ååæ ¸ç´æ¥æç»æ°æ¡ç®</li>
+</ul>
+<p>é»è®¤ <code>gc_thresh3 = 1024</code>ãå¨å®¹å¨å¯éåç¯å¢ï¼æ¯ä¸ª Pod è³å°ä¸ä¸ª IPï¼ï¼å¾å®¹æçªç ´ã</p>
+<p>çç¶æå·è¿·ææ§ï¼<strong>é¨åéä¿¡æ­£å¸¸ï¼é¨åå¤±è´¥ï¼éå¯ææ¶è½ä¿®å¤</strong>ââå ä¸ºéå¯ä¼æ¸çæ§æ¡ç®ãæ·»å æ°æ¡ç®ï¼ä½æ»éä¸åã</p>
+<h3 id="çæ§æ¹æ¡-1">çæ§æ¹æ¡</h3>
+<pre><code class="language-toml"># conf.d/p.neigh/neigh.toml
+[[instances]]
+[instances.neigh_usage]
+warn_ge = 75.0
+critical_ge = 90.0
 </code></pre>
-<p>è¿æ¬¡ä»æ¥å¿ä¸­,å¯ä»¥æç¡®ç¥é <code>dxxs.BTestClass</code> å¼ç¨äºç±»<code>org.slf4j.Logger</code>,èå½åç¯å¢ä¸­å´ä¸å­å¨ <code>org.slf4j.Logger</code>.ç±æ­¤é®é¢è§£å³</p>
-<h3 id="4-å¦ä½å®ç°">4. å¦ä½å®ç°</h3>
-<p>æå»ºéç½®,å®ç°javaagent,éè¦å¨MANIFEST.MFæä»¶ä¸­éç½®<code>Premain-Class</code>å<code>Agent-Class</code>,ææå½åpom.xmlæå»ºéç½®ä¿¡æ¯å¦ä¸</p>
-<pre><code class="language-xml">&lt;plugin&gt;
-    &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-    &lt;artifactId&gt;maven-jar-plugin&lt;/artifactId&gt;
-    &lt;version&gt;3.2.0&lt;/version&gt;
-    &lt;configuration&gt;
-        &lt;archive&gt;
-            &lt;manifestEntries&gt;
-                &lt;Premain-Class&gt;com.example.ClassLoadMonitorAgent&lt;/Premain-Class&gt;
-                &lt;Agent-Class&gt;com.example.ClassLoadMonitorAgent&lt;/Agent-Class&gt;
-                &lt;Can-Redefine-Classes&gt;true&lt;/Can-Redefine-Classes&gt;
-                &lt;Can-Retransform-Classes&gt;true&lt;/Can-Retransform-Classes&gt;
-            &lt;/manifestEntries&gt;
-        &lt;/archive&gt;
-    &lt;/configuration&gt;
-&lt;/plugin&gt;
+<p>æä»¶è¯»å <code>/proc/net/arp</code> ç»è®¡æ¡ç®æ°ï¼é¤ä»¥ <code>/proc/sys/net/ipv4/neigh/default/gc_thresh3</code> å¾å°ä½¿ç¨çãåè­¦è§¦ååï¼ä½ éè¦åçå°±æ¯è°å¤§ <code>gc_thresh3</code>ï¼éå¸¸å»ºè®®æ¹å° 4096 æ 8192ï¼ã</p>
+<h2 id="æå-3sysctl-åæ°éé»æ¼ç§»ä½ ä»¥ä¸ºè°å¥½äºå¶å®æ©å°±ååå»äº">æå 3ï¼sysctl åæ°éé»æ¼ç§»ââä½ ä»¥ä¸ºè°å¥½äºï¼å¶å®æ©å°±ååå»äº</h2>
+<h3 id="æäº-2">æäº</h3>
+<p>çäº§ç¯å¢ç²¾å¿è°ä¼è¿ä¸æ¹åæ ¸åæ°ï¼<code>somaxconn</code> æ¹å° 65535ï¼<code>tcp_tw_reuse</code> æå¼ï¼<code>swappiness</code> è®¾ä¸º 1ã</p>
+<p>ä¸ä¸ªæååçº§äºåæ ¸ï¼ç¶å"å¶å"è¿æ¥æç»ãææ¥åå¤©ââ<code>somaxconn</code> ååå 128 äºã</p>
+<h3 id="åç-2">åç</h3>
+<p><code>sysctl</code> åæ°ççæé¾æ¡ï¼</p>
+<pre><code class="language-text">sysctl.conf / sysctl.d/*.conf â systemd-sysctl.service â /proc/sys/
 </code></pre>
-<p>è¿ä¸ªä»£ç ä¸­å®ç°ä¸¤ä¸ªæ¹æ³</p>
-<pre><code>public static void premain(String agentArgs, Instrumentation inst);
-public static void agentmain(String agentArgs, Instrumentation inst)
-</code></pre>
-<p>æ·»å ç±»å è½½è½¬æ¢å¨</p>
-<pre><code>inst.addTransformer(new ClassFileTransformer() {
- @Override
-  public byte[] transform(ClassLoader loader, String className, Class&lt;?&gt; classBeingRedefined,
-  ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
-      if (className != null &amp;&amp; classfileBuffer != null) {
-          String fullClassName = className.replace('/', '.');
-          if (!checkedClasses.contains(fullClassName)) {
-              checkedClasses.add(fullClassName);             
-              analyzeBytecode(fullClassName, classfileBuffer, loader);
-          }
-      }
-      return classfileBuffer;
-  }
-}, true);
-
-</code></pre>
-<p>æ ¸å¿åæç±»åæä»£ç <code> analyzeBytecode</code><br>
-å³äºå¸¸éæ± ä¿¡æ¯åè,å¯ä»¥æ¥çå°å<a href="https://docs.oracle.com/javase/specs/jvms/se21/html/jvms-4.html#jvms-4.4" target="_blank" rel="noopener nofollow">https://docs.oracle.com/javase/specs/jvms/se21/html/jvms-4.html#jvms-4.4</a></p>
-<pre><code>private static void analyzeBytecode(String className, byte[] bytecode, ClassLoader loader) {
-    try {
-        DataInputStream dis = new DataInputStream(new ByteArrayInputStream(bytecode));
-        int magic = dis.readInt();
-        if (magic != 0xCAFEBABE) {
-            return; 
-        }
-        dis.readShort(); 
-        dis.readShort(); 
-        int constantPoolCount = dis.readShort();
-        String[] utf8Pool = new String[constantPoolCount];
-        int[] classRefIndices = new int[constantPoolCount]; 
-        int classRefCount = 0;
-        for (int i = 1; i &lt; constantPoolCount; i++) {
-            byte tag = dis.readByte();
-            switch (tag) {
-                case 1: // UTF8
-                    utf8Pool[i] = dis.readUTF();
-                    break;
-                case 7: // Class
-                    int nameIndex = dis.readShort();
-                    classRefIndices[classRefCount++] = nameIndex;
-                    break;
-                case 8: // String
-                    dis.readShort();
-                    break;
-                case 9:  // Fieldref
-                case 10: // Methodref
-                case 11: // InterfaceMethodref
-                case 12: // NameAndType
-                    dis.readShort();
-                    dis.readShort();
-                    break;
-                case 3: // Integer
-                case 4: // Float
-                    dis.readInt();
-                    break;
-                case 5: // Long
-                case 6: // Double
-                    dis.readLong();
-                    i++;
-                    break;
-                case 15: // MethodHandle
-                    dis.readByte();
-                    dis.readShort();
-                    break;
-                case 16: // MethodType
-                    dis.readShort();
-                    break;
-                case 18: // InvokeDynamic
-                    dis.readShort();
-                    dis.readShort();
-                    break;
-                default:
-                    break;
-            }
-        }
-        for (int i = 0; i &lt; classRefCount; i++) {
-            int utf8Index = classRefIndices[i];
-            if (utf8Index &gt; 0 &amp;&amp; utf8Index &lt; constantPoolCount &amp;&amp; utf8Pool[utf8Index] != null) {
-                // å°æ¸¸æ å°å¿ä¾ å£«
-                // è·åå°å½åclassæä»¶ä¸­å¼ç¨ç±»å
-                String referencedClass = utf8Pool[utf8Index].replace('/', '.');
-                // className éç½®æ¯è¦æ£æ¥ççç±»å
-                checkReference(className, referencedClass, loader);
-            }
-        }
-        // å°æ¸¸æ å°å¿ä¾ å£«
-        // æ£æ¥classæä»¶,å¶ä»å°æ¹æ¯å¦åå«ä¸¢å¤±çclass
-        scanForClassReferences(className, bytecode, loader);
-    } catch (Exception e) {
-        
-    }
-}
-
-private static void scanForClassReferences(String className, byte[] bytecode, ClassLoader loader) {
-    // å¬ä¼å·: å°æ»¡å°æ¢
-    for (String missingClass : missingClasses) {
-        String internalName = missingClass.replace('.', '/');
-        String descriptorFormat = "L" + internalName + ";";
-        if (containsClassReference(bytecode, internalName) || 
-            containsClassReference(bytecode, descriptorFormat)) {
-            logClassReference(className, missingClass, loader);
-        }
-    }
-}
-</code></pre>
-<h2 id="å¦ä½ä½¿ç¨">å¦ä½ä½¿ç¨?</h2>
+<p>ä»¥ä¸åºæ¯é½ä¼å¯¼è´åæ°"åå½é»è®¤"ï¼</p>
 <ol>
-<li>çæéç½®æä»¶ <code>agent-config.properties</code><br>
-éç½®åå®¹å¦ä¸:<pre><code># å°æ¸¸æ å°å¿ä¾ å£«
-# å¬ä¼å· å°æ»¡å°æ¼« ç²¾å¿å¶ä½
-# éç½®éè¦çæ§çä¸å­å¨çç±»ï¼å¤ä¸ªç±»ç¨éå·æåå·åé
-missingClasses=org.slf4j.Logger
-</code></pre>
-</li>
-<li>ä¿®æ¹å¯å¨åæ°<br>
-å¨catalina.batæä»¶ä¸­æ·»å ,agentéç½®ä¿¡æ¯,ä¿®æ¹åå®¹å¦ä¸<pre><code class="language-bash">set JAVA_OPTS=%JAVA_OPTS% -javaagent:"%CATALINA_HOME%\lib\class-load-monitor-agent-1.0-SNAPSHOT.jar"="%CATALINA_HOME%\lib\agent-config.properties"
-</code></pre>
-</li>
+<li><strong>åæ ¸åçº§éå¯</strong>ï¼ä½ sysctl.conf ééæ¼äºæä¸ªåæ°</li>
+<li><strong>æ¨¡åéæ°å è½½</strong>ï¼å¦ <code>nf_conntrack</code> æ¨¡åéå è½½åï¼ç¸å³åæ°éç½®ï¼</li>
+<li><strong>éç½®ç®¡çå·¥å·è¦ç</strong>ï¼Ansible/Puppet æ¨éäºä¸åçéç½®çæ¬ï¼</li>
+<li><strong>å®¹å¨è¿è¡æ¶ä¿®æ¹äºå®¿ä¸»æºåæ°</strong></li>
 </ol>
-<h2 id="æ»ç»">æ»ç»</h2>
-<p>éè¦æ¾ç¼ºå¤±ç±»æé£ä¸ªç±»å¯¼è´çæåµä¸å¤è§.ä½æ¯è¦æ¥æ¾,ç¡®å®å¾è´¹æ¶é´.å¨åå¤å¹´<code>JAVA</code>ææºæåçè¿ç¨ä¸­,è¿ä¹æ¯å¤´ä¸æ¬¡éå°.ä»¥å¾æç¤ºæ¾ä¸å°æä¸ªclass,æ¾å°è¿ä¸ªclasså¯¹åºjarå¾å¯¹åºçç¯å¢ä¸æ¾å°±å¯ä»¥.ä¸»è¦è¿æ¬¡æ¯ææ¥ä¸ä¸ªåå²é¡¹ç®ä»£ç ,å½æ¶æ¥å¿æä»¶ç´æ¥ä½¿ç¨log4j.åæ¥é¡¹ç®åçº§äº,èå®¢æ·ç¯å¢classæ²¡æåçº§.å¯¼è´å¨å®¢æ·å®¢å¼ä»£ç å¨å¼åç¯å¢å®å¨æ²¡é®é¢,åæ¢å®¢æ·ç¯å¢å°±æ¥éå¥æªçç°è±¡,<code>class-load-monitor-agent-1.0-SNAPSHOT.jar</code>,å¦æéè¦,è¯·å³æ³¨å¬ä¼å·[å°æ»¡å°æ¢]åå¤<code>javanotfound</code>è·åä¸è½½å°å</p>
-<p>åæå°å: <a href="https://mp.weixin.qq.com/s/YCbyaj4tPzjc22JJ5317VQ" target="_blank" rel="noopener nofollow">https://mp.weixin.qq.com/s/YCbyaj4tPzjc22JJ5317VQ</a></p>
+<p>èä¸è¿ç±»é®é¢ä¸ä¼ç«å»æ´é²ââåªæå¨è´è½½ä¸æ¥æç¹å®æ¡ä»¶è§¦åæ¶ï¼ä½ æä¼åç°"åæ°ä¸å¯¹"ã</p>
+<h3 id="çæ§æ¹æ¡-2">çæ§æ¹æ¡</h3>
+<p>catpaw ç <code>sysctl</code> æä»¶æ¯ä¸ä¸ªéç¨çåæ°åºçº¿æ£æ¥å¨ãä½ å®ä¹"ææå¼"ï¼å®å®ææ¯å¯¹ï¼</p>
+<pre><code class="language-toml"># conf.d/p.sysctl/sysctl.toml
+[[instances]]
+[instances.param_check]
+params = [
+  { key = "net.core.somaxconn", op = "ge", value = "65535" },
+  { key = "vm.swappiness", op = "le", value = "10" },
+  { key = "net.ipv4.tcp_tw_reuse", value = "1" },
+  { key = "fs.file-max", op = "ge", value = "1000000" },
+]
+</code></pre>
+<p>æ¯æ 6 ç§æ¯è¾æä½ç¬¦ï¼<code>eq</code>ã<code>ne</code>ã<code>ge</code>ã<code>le</code>ã<code>gt</code>ã<code>lt</code>ï¼ï¼æ¯ä¸ªåæ°å¯ç¬ç«è®¾ç½®åè­¦çº§å«ãä¸æ¦åæ°åç¦»åºçº¿ï¼ç«å»åè­¦ã</p>
+<p>åè­¦è§¦ååï¼AI è¯æ­å¼æè¿æä¸ä¸ª <code>sysctl_snapshot</code> å·¥å·ï¼ä¸æ¬¡æ§å¿«ç§ 24 ä¸ªå³é®åæ ¸åæ°ï¼<code>vm.swappiness</code>ã<code>fs.file-max</code>ã<code>net.core.somaxconn</code>ã<code>net.ipv4.tcp_syncookies</code> ç­ï¼ï¼å¸®ä½ å¿«éå®ä½å¨å±åæ°ç¶æã</p>
+<h2 id="æå-4tcp-listen-éåæº¢åºæå¡å¨çº¿ä½è¿ä¸ä¸">æå 4ï¼TCP listen éåæº¢åºââæå¡å¨çº¿ä½è¿ä¸ä¸</h2>
+<h3 id="æäº-3">æäº</h3>
+<p>æµéé«å³°æï¼ç¨æ·æ¥å"ç½ç«æ¶å¥½æ¶å"ãæå¡è¿ç¨æ­£å¸¸è¿è¡ï¼ç«¯å£æ­£å¸¸çå¬ï¼healthcheck ä¹æ¯ç»¿è²ãä½é¨åç¨æ·æç»­æ¥è¿æ¥è¶æ¶ã</p>
+<h3 id="åç-3">åç</h3>
+<p>æ¯ä¸ªçå¬ç«¯å£æä¸ä¸ª accept queueï¼backlogï¼ï¼å¤§å°ç± <code>min(somaxconn, application_backlog)</code> å³å®ãå½åºç¨å¤çè¿æ¥çéåº¦è·ä¸ä¸æ°è¿æ¥å°è¾¾çéåº¦æ¶ï¼éåæ»¡äºï¼æ°ç SYN è¢«ä¸¢å¼ï¼</p>
+<pre><code class="language-text">å®¢æ·ç«¯ SYN â åæ ¸æ¶å° â accept queue æ»¡ â éé»ä¸¢å¼
+                                         â
+                              å®¢æ·ç«¯éè¯ SYNï¼ææ°éé¿ï¼
+                                         â
+                              æç»è¶æ¶ï¼æ¥ connection timeout
+</code></pre>
+<p>ä¸ conntrack æ»¡ççç¶<strong>å ä¹ä¸æ ·</strong>ï¼é½æ¯è¿æ¥è¶æ¶ï¼ï¼ä½æ ¹å å®å¨ä¸åââä¸ä¸ªæ¯åæ ¸å±çå¨å±é®é¢ï¼ä¸ä¸ªæ¯åºç¨å±çåæå¡é®é¢ã</p>
+<p>è¯æ®èå¨ <code>/proc/net/netstat</code> ç <code>TcpExt</code> æ®µéï¼<code>ListenOverflows</code> å <code>ListenDrops</code> ä¸¤ä¸ªç´¯è®¡è®¡æ°å¨ã</p>
+<h3 id="çæ§æ¹æ¡-3">çæ§æ¹æ¡</h3>
+<p>catpaw ç <code>sockstat</code> æä»¶çæ§ä¸¤æ¬¡ééä¹é´ <code>ListenOverflows</code> ç<strong>å¢é</strong>ââä¸æ¯ç´¯è®¡å¼ï¼èæ¯"æè¿è¿ 30 ç§åæº¢åºäºå æ¬¡"ï¼</p>
+<pre><code class="language-toml"># conf.d/p.sockstat/sockstat.toml
+[[instances]]
+[instances.listen_overflow]
+warn_ge = 1
+critical_ge = 100
+
+[instances.alerting]
+for_duration = "1m"
+</code></pre>
+<p><code>warn_ge = 1</code> æå³çï¼<strong>ä»»ä½ä¸æ¬¡æº¢åºé½å¼å¾ç¥éã</strong> <code>for_duration = "1m"</code> è¿æ»¤æç¬é´å°å³°ï¼æç»­æº¢åºæåè­¦ã</p>
+<p>åè­¦è§¦ååï¼AI ä¼èªå¨è°ç¨ <code>listen_overflow</code> è¯æ­å·¥å·ï¼æ¥çå listen socket ç backlog éç½®åéåä½¿ç¨æåµï¼å <code>tcp_tuning_check</code>ï¼æ£æ¥ TCP åæ ¸åæ°æ¯å¦åçï¼ï¼ç»åºå·ä½çä¼åå»ºè®®ã</p>
+<h2 id="æå-5close_wait-å ç§¯è¿æ¥æ³æ¼çæ¢æ§ç">æå 5ï¼CLOSE_WAIT å ç§¯ââè¿æ¥æ³æ¼çæ¢æ§ç</h2>
+<h3 id="æäº-4">æäº</h3>
+<p>ä¸ä¸ª Java æå¡è¿è¡äºå å¨åï¼çªç¶æ¥ <code>Too many open files</code>ãæ¥ç fd æ°éââå ä¸ä¸ªãå¤§é¨åæ¯ TCP socketï¼ç¶æå¨æ¯ CLOSE_WAITã</p>
+<h3 id="åç-4">åç</h3>
+<p>TCP åæ¬¡æ¥æä¸­ï¼å½è¿ç«¯åäº FINï¼æè¦å³äºï¼ï¼æ¬ç«¯åäº ACKï¼è¿æ¥è¿å¥ CLOSE_WAIT ç¶æï¼ç­å¾æ¬ç«¯åºç¨è°ç¨ <code>close()</code>ã</p>
+<p>å¦æåºç¨ä»£ç æ bugââè¿æ¥ç¨å®äºæ²¡ closeï¼æè error path ä¸éæ¼äº <code>defer conn.Close()</code>ââè¿æ¡è¿æ¥å°±ä¼<strong>æ°¸è¿</strong>åå¨ CLOSE_WAITãæ²¡æè¶æ¶ï¼æ²¡æåæ¶ï¼å°±è¿ä¹ééå°å çä¸ä¸ª fdï¼ç´å°è¿ç¨ fd èå°½ã</p>
+<p>æ­£å¸¸çæå¡ï¼CLOSE_WAIT æ°éåºè¯¥æ¥è¿ 0ãå¦æçå°ä¸ç¾ä¸ªï¼åºæ¬å°±æ¯è¿æ¥æ³æ¼ã</p>
+<h3 id="çæ§æ¹æ¡-4">çæ§æ¹æ¡</h3>
+<pre><code class="language-toml"># conf.d/p.tcpstate/tcpstate.toml
+[[instances]]
+[instances.close_wait]
+warn_ge = 100
+critical_ge = 1000
+
+[instances.time_wait]
+warn_ge = 5000
+critical_ge = 20000
+</code></pre>
+<p>catpaw ç <code>tcpstate</code> æä»¶éè¿ Linux <strong>Netlink SOCK_DIAG</strong> æ¥å£ç´æ¥æ¥è¯¢åæ ¸ç TCP socket ç¶æââä¸æ¯éå <code>/proc/net/tcp</code>ï¼æ¢ï¼ï¼èæ¯éè¿ netlink åªè¯·æ±ç®æ ç¶æç socketï¼æçé«å¾å¤ãåæ¶æ¯æ IPv4 å IPv6ã</p>
+<p>åä¸ä¸ªæä»¶ä¹çæ§ TIME_WAITãé«å¹¶åç­è¿æ¥åºæ¯ä¸ TIME_WAIT å¤§éç§¯ç´¯ä¼èå°½æ¬å°ç«¯å£èå´ï¼é»è®¤çº¦ 28000 ä¸ªç«¯å£ï¼ï¼å¯¼è´ <code>Cannot assign requested address</code>ã</p>
+<p>åè­¦è§¦ååï¼AI ä¼è°ç¨ <code>tcp_state_distribution</code>ï¼æ¥çè¿æ¥ç¶æåå¸ï¼å <code>top_connections_by_port</code>ï¼æç«¯å£åç» Top 20 è¿æ¥æ°ï¼ï¼ç²¾åå®ä½æ¯åªä¸ªæå¡ãè¿åªä¸ªè¿ç«¯åºäºé®é¢ã</p>
+<h2 id="æå-6ç³»ç»çº§-fd-èå°½æææå¡åæ¶å´©æº">æå 6ï¼ç³»ç»çº§ fd èå°½ââæææå¡åæ¶å´©æº</h2>
+<h3 id="æäº-5">æäº</h3>
+<p>åæ¨ 3 ç¹ï¼æææå¡åæ¶æ¥éãNginx æ¥ <code>accept() failed (24: Too many open files)</code>ï¼MySQL æ¥ <code>Can't open file</code>ï¼cron æ¥ <code>fork: Resource temporarily unavailable</code>ã</p>
+<p>çèµ·æ¥åæ¯"ç³»ç»å´©äº"ï¼ä½ CPU/åå­/ç£çé½æ­£å¸¸ã</p>
+<h3 id="åç-5">åç</h3>
+<p>Linux æä¸¤å± fd éå¶ï¼</p>
+<pre><code class="language-text">è¿ç¨çº§ï¼ulimit -nï¼é»è®¤ 1024 æ 65535ï¼â æ¥é EMFILE
+ç³»ç»çº§ï¼/proc/sys/fs/file-maxï¼æ´ä¸ªç³»ç»ç fd æ»éï¼â æ¥é ENFILE
+</code></pre>
+<p>å¤§å¤æ°äººåªå³æ³¨è¿ç¨çº§ç <code>ulimit</code>ï¼å¿äºç³»ç»è¿æä¸ä¸ªå¨å±ä¸éãå½ç³»ç»çº§ fd èå°½æ¶ï¼<strong>ææè¿ç¨ç open()ãsocket()ãaccept()</strong> åæ¶å¤±è´¥ï¼æ¥éä¿¡æ¯åå·®ä¸å«ââå ä¸ºæ¯ä¸ªç¨åºå¯¹éè¯¯çåè£æ¹å¼ä¸åã</p>
+<p>è¿æ¯ä¸ä¸ªå¸åç"çç¶ä¸æ ¹å è±è"é®é¢ï¼çèµ·æ¥æ¯ Nginx çé®é¢ãMySQL çé®é¢ãcron çé®é¢ï¼å¶å®æ¯ä¸ä¸ªç³»ç»çº§çé®é¢ã</p>
+<h3 id="çæ§æ¹æ¡-5">çæ§æ¹æ¡</h3>
+<pre><code class="language-toml"># conf.d/p.filefd/filefd.toml
+[[instances]]
+[instances.filefd_usage]
+warn_ge = 80.0
+critical_ge = 90.0
+</code></pre>
+<p>æä»¶è¯»å <code>/proc/sys/fs/file-nr</code>ï¼ä¸ä¸ªå­æ®µï¼å·²åéæ° / ç©ºé²æ° / ä¸éï¼ï¼è®¡ç® <code>å·²åé / ä¸é * 100%</code>ã</p>
+<p>AI è¯æ­è§¦åæ¶ï¼è¿æä¸ä¸ª <code>filefd_top_procs</code> å·¥å·ï¼éå <code>/proc/&lt;pid&gt;/fd</code> ç®å½ç»è®¡æ¯ä¸ªè¿ç¨ç fd æ°éï¼è¾åº Top N æè¡ââå¸®ä½ ä¸ç¼çåºæ¯åªä¸ªè¿ç¨å¨"å"fdã</p>
+<h2 id="æå-7ç½å¡éè¯¯åä¸¢åæç»­å¢é¿æ¢æ§åºè¡">æå 7ï¼ç½å¡éè¯¯åä¸¢åæç»­å¢é¿ââæ¢æ§åºè¡</h2>
+<h3 id="æäº-6">æäº</h3>
+<p>å¶å°æç¨æ·æ¥å"ç½é¡µå è½½æ¢"ï¼ä½çæ§ä¸çä¸åºå¼å¸¸ãå¸¦å®½å©ç¨çä¸é«ï¼å»¶è¿ææ ä¹æ­£å¸¸ã</p>
+<p>ç´å°æä¸å¤©æ¥ç <code>ethtool -S eth0</code>ï¼åç° <code>rx_crc_errors</code> å·²ç»ç´¯ç§¯å°å åä¸ââç½çº¿å¨æ¢æ¢åï¼æ¯éå ç§ä¸¢å ä¸ªåï¼TCP éä¼ æ©çäºé®é¢ï¼ä½ç¨æ·ä½éªå¨æç»­å£åã</p>
+<h3 id="åç-6">åç</h3>
+<p>ç½å¡ç error å drop è®¡æ°å¨æ¯ç´¯è®¡å¼ï¼è®°å½å¨ <code>/sys/class/net/&lt;iface&gt;/statistics/</code> ä¸ãå¢é¿åå åæ¬ï¼</p>
+<ul>
+<li><strong>rx_errors</strong>ï¼CRC éè¯¯ï¼çº¿ç¼/åæ¨¡åæéï¼ãå¸§éè¯¯ãover-run</li>
+<li><strong>tx_errors</strong>ï¼é©±å¨ bugãç¡¬ä»¶æé</li>
+<li><strong>rx_dropped</strong>ï¼ring buffer æ»¡ï¼<code>ethtool -g</code> æ¥çï¼ãåæ ¸åè®®æ æ¥ä¸åå¤ç</li>
+<li><strong>tx_dropped</strong>ï¼åééåæ»¡ãQoS ç­ç¥ä¸¢å¼</li>
+</ul>
+<p>å°éç error/drop å¨é«æµéç¯å¢ä¸å¯ä»¥æ¥åï¼ä½<strong>æç»­å¢é¿</strong>å°±æ¯ä¿¡å·ã</p>
+<h3 id="çæ§æ¹æ¡-6">çæ§æ¹æ¡</h3>
+<pre><code class="language-toml"># conf.d/p.netif/netif.toml
+[[instances]]
+exclude = ["lo", "docker*", "veth*", "br-*"]
+
+[instances.errors]
+warn_ge = 1
+critical_ge = 100
+
+[instances.drops]
+warn_ge = 1
+critical_ge = 100
+</code></pre>
+<p><code>warn_ge = 1</code> è¡¨ç¤ºä»»ä½éé¶å¢éé½æ¥åã<code>exclude</code> è¿æ»¤æå®¹å¨èæç½å¡çåªé³ã</p>
+<p>æä»¶è¿æ¯æ <strong>link_up æ£æ¥</strong>ââæå®ææå¤äº up ç¶æçæ¥å£ï¼å¦ <code>eth0</code>ã<code>bond0</code>ï¼ï¼é¾è·¯æ­å¼æ¶ç«å»åè­¦ï¼</p>
+<pre><code class="language-toml">[[instances.link_up]]
+interface = "eth0"
+severity = "Critical"
+</code></pre>
+<p>è¿å¨ bond åºæ¯ä¸å°¤å¶æç¨ââbond çæåç½å¡æäºä¸åï¼bond æ¥å£æ¬èº«è¿æ¯ up çï¼ä½ä½ å·²ç»æå¤±äºä¸åå¸¦å®½ååä½ã</p>
+<h2 id="æå-8æè½½ç¹æ¼ç§»æ°æ®åéå°æ¹äº">æå 8ï¼æè½½ç¹æ¼ç§»ââæ°æ®åéå°æ¹äº</h2>
+<h3 id="æäº-7">æäº</h3>
+<p>ææ¬¡éå¯åï¼æ°æ®åºæå¡æ¢å¤äºï¼healthcheck ä¹éè¿äºãä½è¿äºå å°æ¶ï¼æ ¹ååºç£çæ»¡äºã</p>
+<p>åå ï¼æ°æ®ç <code>/data</code> ç NFS æè½½å¨éå¯åæ²¡ææåæ¢å¤ï¼NFS server å½æ¶ä¹å¨éå¯ï¼ï¼æ°æ®åºè¿ç¨åå°äºç©ºç <code>/data</code> ç®å½ââå®éä¸æ¯æ ¹ååºã</p>
+<h3 id="åç-7">åç</h3>
+<p>Linux çæè½½ç¹æ¯"è¦ç"è¯­ä¹ââå¦æ <code>/data</code> æ²¡ææè½½ä»»ä½è®¾å¤ï¼å®å°±æ¯æ ¹ååºä¸çä¸ä¸ªæ®éç®å½ãå¾éé¢åæ°æ®ä¸ä¼æ¥éï¼åªæ¯åå°äºéè¯¯çä½ç½®ã</p>
+<p>ç±»ä¼¼çé®é¢è¿æï¼</p>
+<ul>
+<li>fstab æ¡ç®åéäºï¼éå¯åéé»å¤±è´¥</li>
+<li>NFS server ä¸å¯è¾¾ï¼æè½½è¶æ¶ä½æå¡å·²ç»å¯å¨</li>
+<li>CIS å®å¨åºçº¿è¦æ± <code>/tmp</code> å¸¦ <code>noexec</code> éé¡¹ï¼ä½å®éæè½½æ¶éæ¼äº</li>
+</ul>
+<h3 id="çæ§æ¹æ¡-7">çæ§æ¹æ¡</h3>
+<pre><code class="language-toml"># conf.d/p.mount/mount.toml
+[[instances]]
+
+[[instances.mounts]]
+path = "/data"
+fstype = "ext4"
+severity = "Critical"
+
+[[instances.mounts]]
+path = "/backup"
+fstype = "nfs"
+severity = "Critical"
+
+[[instances.mounts]]
+path = "/tmp"
+options = ["noexec", "nosuid", "nodev"]
+severity = "Warning"
+</code></pre>
+<p>è¿å¯ä»¥å¼å¯ fstab èªå¨æ£æ¥ââæä»¶è¯»å <code>/etc/fstab</code>ï¼éæ¡éªè¯æ¯å¦å·²æè½½ãæä»¶ç³»ç»ç±»åæ¯å¦å¹éï¼</p>
+<pre><code class="language-toml">[instances.fstab]
+enabled = true
+severity = "Critical"
+</code></pre>
+<p>èªå¨è·³è¿ swapã<code>noauto</code>ãä»¥å <code>tmpfs</code>/<code>devtmpfs</code>/<code>squashfs</code>/<code>overlay</code> ç­èææä»¶ç³»ç»ã</p>
+<h2 id="ä¸ºä»ä¹ä¼ ç»-metrics-çæ§å®¹ææ¼æè¿äº">ä¸ºä»ä¹ä¼ ç» metrics çæ§å®¹ææ¼æè¿äºï¼</h2>
+<p>åå¤´çè¿ 8 ä¸ªæåï¼å®ä»¬æå ä¸ªå±åç¹å¾ï¼</p>
+<p><strong>1. ä¸æ¯ææ è¶å¿é®é¢ï¼èæ¯éå¼å¤å®é®é¢</strong></p>
+<p>conntrack ä½¿ç¨ç 80% å 90% å¨ Grafana æ²çº¿ä¸å·®å«ä¸å¤§ï¼ä½ 100% å°±æ¯ç¾é¾ãä½ éè¦çä¸æ¯ä¸æ¡æ²çº¿ï¼èæ¯ä¸ä¸ªæç¡®ç"å°äºæ²¡æ"çå¤å®ã</p>
+<p><strong>2. éè¦å³èä¸¤ä¸ªå¼æè½å¤æ­</strong></p>
+<p>conntrack éè¦ <code>count / max</code>ï¼ARP éè¦ <code>entries / gc_thresh3</code>ï¼fd éè¦ <code>allocated / file-max</code>ãNode-Exporter éäºè¿äºåå§å¼ï¼ä½éè¦ä½ èªå·±å PromQL åé¤æ³ãè®¾éå¼ãéåè­¦ãå¤§å¤æ°å¢éå¨é Grafana dashboard çæ¶ååäºååæªï¼ä½åè­¦è§åé£ä¸æ­¥è·³è¿äºã</p>
+<p><strong>3. å¢éæ¯ç»å¯¹å¼éè¦</strong></p>
+<p>ç½å¡éè¯¯å listen æº¢åºæ¯ç´¯è®¡è®¡æ°å¨ï¼éè¦çæ¯"æè¿ææ²¡æå¢é¿"ï¼èä¸æ¯ç»å¯¹å¼æ¯å¤å°ãè¿éè¦æç¶æçæ£æ¥ââè®°ä½ä¸æ¬¡çå¼ï¼ç®å¢éã</p>
+<p><strong>4. çç¶åæ ¹å ä¸¥éè±è</strong></p>
+<p>fd èå°½è¡¨ç°ä¸ºæææå¡åæ¶æ¥ä¸åçéï¼ARP æ»¡è¡¨ç°ä¸º"é¨å Pod éä¿¡å¤±è´¥"ï¼sysctl æ¼ç§»è¡¨ç°ä¸º"å¶åè¿æ¥æç»"ãå¦ææ²¡æéå¯¹æ§çæ£æ¥ï¼ä½ å¯è½è¦ææ¥å¾ä¹æè½å®ä½å°çæ­£çæ ¹å ã</p>
+<h2 id="catpaw-çæ¹å¼check--ai-åå±é²æ¤">catpaw çæ¹å¼ï¼check + AI åå±é²æ¤</h2>
+<p>catpaw åè¿ä»¶äºçæ¹å¼å Prometheus ä½ç³»äºè¡¥ï¼èä¸æ¯éå ï¼</p>
+<pre><code class="language-text">Prometheus + Node-Exporterï¼   éææ  â å­æ¶åº â ç»å¾ â (æå¨éåè­¦)
+catpawï¼                       åæ£æ¥ â å¤å¼å¸¸ â ååè­¦ â AI èªå¨è¯æ­æ ¹å 
+</code></pre>
+<p><strong>ç¬¬ä¸å±ï¼æä»¶åå¼å¸¸å¤å®ã</strong> ä¸æ¯éææ ç¶åç­äººå PromQLï¼èæ¯æä»¶æ¬èº«å°±åå«äºå¤å®é»è¾ââè¯»ååæ ¸æ°æ®ï¼è®¡ç®æ¯å¦è¶è¿éå¼ï¼æç¶æå°è¿½è¸ªå¢éï¼è¾åºæç¡®ç"æé®é¢/æ²¡é®é¢"ç»è®ºã</p>
+<p><strong>ç¬¬äºå±ï¼AI åæ ¹å åæã</strong> å½åè­¦è§¦åæ¶ï¼AI èªå¨è°ç¨å¯¹åºé¢åçè¯æ­å·¥å·ï¼</p>
+<table>
+<thead>
+<tr>
+<th>åè­¦</th>
+<th>AI ä¼è°ç¨çå·¥å·</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>conntrack è¡¨ 90%</td>
+<td><code>conntrack_stat</code> æ¥çè¡¨ä½¿ç¨ååæ ¸ç»è®¡</td>
+</tr>
+<tr>
+<td>ARP é»å±è¡¨æº¢åº</td>
+<td><code>arp_neigh</code> æ¥çé»å±è¡¨æè¦ï¼ä¸ gc_thresh3 å¯¹æ¯</td>
+</tr>
+<tr>
+<td>sysctl åæ°åç¦»</td>
+<td><code>sysctl_snapshot</code> å¿«ç§ 24 ä¸ªå³é®åæ°</td>
+</tr>
+<tr>
+<td>listen éåæº¢åº</td>
+<td><code>listen_overflow</code> æ¥éå + <code>tcp_tuning_check</code> æ¥åæ°</td>
+</tr>
+<tr>
+<td>CLOSE_WAIT å ç§¯</td>
+<td><code>tcp_state_distribution</code> + <code>top_connections_by_port</code></td>
+</tr>
+<tr>
+<td>ç³»ç» fd èå°½</td>
+<td><code>filefd_usage</code> + <code>filefd_top_procs</code> æ¥ Top è¿ç¨</td>
+</tr>
+<tr>
+<td>ç½å¡éè¯¯å¢é¿</td>
+<td><code>net_interface</code> æ¥æ¯æ¥å£ç»è®¡</td>
+</tr>
+<tr>
+<td>æè½½ç¹å¼å¸¸</td>
+<td><code>mount_info</code> æ¥å½åæè½½ç¶æ</td>
+</tr>
+</tbody>
+</table>
+<p>ä½ æ¶å°çä¸æ¯ä¸æ¡"conntrack usage 92%"çå¹²å·´å·´åè­¦ï¼èæ¯ä¸ä»½åææ¥åï¼å½åä½¿ç¨éå¤å°ãåªäºè¿æ¥å¨å ç¨ãåªä¸ªæå¡çè¿æ¥æ°æå¤ãå»ºè®®æä¹æ©å®¹ã</p>
+<h2 id="èªæ¥æ¸åä½ çæå¡å¨ä¸è¿äºé½å¨çæ§å">èªæ¥æ¸åï¼ä½ çæå¡å¨ä¸è¿äºé½å¨çæ§åï¼</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>æ£æ¥é¡¹</th>
+<th>é£é©</th>
+<th>ä½ å¨çæ§åï¼</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>conntrack è¡¨ä½¿ç¨ç</td>
+<td>è¡¨æ»¡åæææ°è¿æ¥éé»å¤±è´¥</td>
+<td>â</td>
+</tr>
+<tr>
+<td>2</td>
+<td>ARP é»å±è¡¨ä½¿ç¨ç</td>
+<td>è¡¨æ»¡åæ° IP æ æ³éä¿¡</td>
+<td>â</td>
+</tr>
+<tr>
+<td>3</td>
+<td>åæ ¸åæ°åºçº¿</td>
+<td>åçº§/éå¯ååæ°éé»åæ»</td>
+<td>â</td>
+</tr>
+<tr>
+<td>4</td>
+<td>TCP listen éåæº¢åº</td>
+<td>æå¡å¨çº¿ä½è¿ä¸ä¸</td>
+<td>â</td>
+</tr>
+<tr>
+<td>5</td>
+<td>CLOSE_WAIT / TIME_WAIT æ°é</td>
+<td>è¿æ¥æ³æ¼ / ç«¯å£èå°½</td>
+<td>â</td>
+</tr>
+<tr>
+<td>6</td>
+<td>ç³»ç»çº§ fd ä½¿ç¨ç</td>
+<td>æææå¡åæ¶å´©æº</td>
+<td>â</td>
+</tr>
+<tr>
+<td>7</td>
+<td>ç½å¡ error/drop å¢é</td>
+<td>ç½ç»è´¨éæ¢æ§å£å</td>
+<td>â</td>
+</tr>
+<tr>
+<td>8</td>
+<td>æè½½ç¹åè§æ§</td>
+<td>æ°æ®åéä½ç½®</td>
+<td>â</td>
+</tr>
+<tr>
+<td>9</td>
+<td>NTP æ¶éåæ­¥</td>
+<td>è¯ä¹¦å¤±æ/æ¥å¿ä¹±åº/è®¤è¯å¤±è´¥</td>
+<td>â</td>
+</tr>
+</tbody>
+</table>
+<p>å¦æä½ åç°æå é¡¹æ²¡æè¦çå°ââè¿å¾æ­£å¸¸ï¼å¤§å¤æ°å¢éé½æ¯è¿æ ·ã</p>
+<p>å¥½æ¶æ¯æ¯ï¼catpaw çé»è®¤éç½®å·²ç»è¦çäºä¸é¢æææ£æ¥é¡¹ãä¸è½½ãè§£åã<code>./catpaw run</code>ï¼å¼ç®±å³ç¨ï¼</p>
+<pre><code class="language-bash"># ä¸è½½
+wget https://github.com/cprobe/catpaw/releases/latest/download/catpaw-linux-amd64.tar.gz
+tar xzf catpaw-linux-amd64.tar.gz
+cd catpaw
+
+# å¯å¨ï¼åè­¦ç´æ¥æå°å°ç»ç«¯
+./catpaw run
+
+# åªè¿è¡åæ ¸ç¸å³æä»¶éªè¯
+./catpaw run --plugins conntrack:neigh:sysctl:sockstat:tcpstate:netif:filefd:mount:ntp
+</code></pre>
+<p>æ²¡æ¶æ¯å°±æ¯å¥½æ¶æ¯ââåªææ£æµå°å¼å¸¸æ¶æä¼è¾åºã</p>
+<p>å¦æä½ æ³è®©åè­¦æ¨éå° On-call å¹³å°ï¼FlashdutyãPagerDutyï¼ï¼æèå¼å¯ AI èªå¨è¯æ­ï¼åè<a href="catpaw-intro.md" target="_blank" rel="noopener nofollow">ç¬¬ä¸ç¯åå®¢</a>çéç½®æåã</p>
+<h2 id="åå¨æå">åå¨æå</h2>
+<p>è¿ 8 ä¸ªæåæä¸ä¸ªå±åç¹ï¼<strong>ä½ ä¸ç¥éèªå·±éè¦çæ§å®ä»¬ï¼ç´å°å®ä»¬æä½ å«éã</strong></p>
+<p>conntrack è¡¨æ»¡ãARP é»å±è¡¨æº¢åºãlisten éåä¸¢åââè¿äºæéçææ¥è¿ç¨å¾å¾æ¯ä¸æ ·çï¼ä»åºç¨å±ä¸è·¯å¾ä¸æï¼æå°åæ ¸å±ï¼ææç¶å¤§æãç¶åä½ ä¼è¯´ï¼"æ©è¯¥çæ§ä¸çã"</p>
+<p>catpaw å°±æ¯é£ä¸ªå¸®ä½ "æ©è¯¥çæ§ä¸"çå·¥å·ã</p>
+<p>å®ä¸æ¿ä»£ PrometheusââPrometheus åææ ééåè¶å¿åææ å¯æ¿ä»£ãcatpaw è¡¥çæ¯é£åè¢«å¿½è§çæ¼å¾ï¼<strong>åæ ¸å±çå¼å¸¸æ£æµ + AI è¾å©çæ ¹å åæã</strong></p>
+<p>é¨ç½²ä¸ä¸ªè½»é Agentï¼ç¯ä½è¿äºæ²é»çææï¼è®©ä½ çåæ¨ 3 ç¹å°ä¸äºä¸å¿è¦çæå¤ã</p>
+<hr>
+<p><strong>GitHub</strong>ï¼<a href="https://github.com/cprobe/catpaw" target="_blank" rel="noopener nofollow">https://github.com/cprobe/catpaw</a></p>
+<p><strong>å¾®ä¿¡äº¤æµç¾¤</strong>ï¼å  <code>picobyte</code>ï¼å¤æ³¨ <code>catpaw</code></p>
 
 
-</div>
-<div id="MySignature" role="contentinfo">
-    <dl style="float: right; font-size: 16px;">
-<dt>è½¬è½½è¯·æ³¨ææ¥æº</dt>
-  <dd> ä½è:<a href="http://home.cnblogs.com/u/yfrs/">æ¨çå</a></dd>
-  <dd> QQ:464884492</dd>
-</dl>
 </div>
 <div class="clear"></div>
 
             </div>
             <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-03-23 12:12">2026-03-23 12:12</span>&nbsp;
-<a href="https://www.cnblogs.com/yfrs">_herbert</a>&nbsp;
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-03-23 15:54">2026-03-23 15:53</span>&nbsp;
+<a href="https://www.cnblogs.com/ulricqin">ITè¿ç»´çæ§</a>&nbsp;
 éè¯»(<span id="post_view_count">0</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19756907);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19756907', targetLink: 'https://www.cnblogs.com/yfrs/p/19756907/classnotfound', title: 'JAVAæ¾åºåªä¸ªç±»importäºä¸å­å¨çç±»' })">ä¸¾æ¥</a>
+<a href="javascript:void(0)" onclick="AddToWz(19758439);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19758439', targetLink: 'https://www.cnblogs.com/ulricqin/p/19758439', title: 'é£äºä½ ä¸ç¥éèªå·±éè¦çæ§ç Linux æå' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -291,8 +479,8 @@ missingClasses=org.slf4j.Logger
             posted on 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-03-23 12:04">2026-03-23 12:04</span>&nbsp;
 <a href="https://www.cnblogs.com/tsingroo">é¿æ©ç½è¯</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">227</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19756874);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19756874', targetLink: 'https://www.cnblogs.com/tsingroo/p/19756874', title: 'AIç¼ç¨æ¶ä»£ï¼äººç±»ç¨åºåè¿å©ä¸ä»ä¹ï¼' })">ä¸¾æ¥</a>
@@ -911,596 +1099,6 @@ proxy_pass <a href="http://nacos-server" target="_blank" rel="noopener nofollow"
     </description>
     </item>
 <item>
-    <title><![CDATA[ ä»é¶å®ç°å¯ææ¬ç¼è¾å¨#12-Reactå¯ç¼è¾èç¹çç»ä»¶é¢è®¾ ]]></title>
-    <link>https://www.cnblogs.com/WindrunnerMax/p/19756263</link>
-    <guid>9a7cf02ba2dea30c46d1f512096af98d</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/WindrunnerMax/p/19756263" title="åå¸äº 2026-03-23 10:46">
-    <span role="heading" aria-level="2">ä»é¶å®ç°å¯ææ¬ç¼è¾å¨#12-Reactå¯ç¼è¾èç¹çç»ä»¶é¢è®¾</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>ååæä»¬å®ç°äºåå®¹æ´æ°æ¶æ§è½çä¼åï¼èèäºæå°å<code>Op</code>æä½<code>DOM</code>åæ´ã<code>key</code>å¼çç»´æ¤ãä»¥åå¨<code>React</code>ä¸­å®ç°å¢éæ¸²æçæ¹å¼ãé£ä¹æ¥ä¸æ¥æä»¬éè¦è®¨è®ºçæ¯ç¼è¾èç¹çç»ä»¶é¢è®¾ï¼ä¾å¦é¶å®½å­ç¬¦ã<code>Embed</code>èç¹ã<code>Void</code>èç¹ç­ï¼ä¸ºç¼è¾å¨çæä»¶æ©å±æä¾é¢è®¾é»è®¤è¡ä¸ºçç»ä»¶ã</p>
-<ul>
-<li>å¼æºå°å: <a href="https://github.com/WindRunnerMax/BlockKit" target="_blank" rel="noopener nofollow">https://github.com/WindRunnerMax/BlockKit</a></li>
-<li>å¨çº¿ç¼è¾: <a href="https://windrunnermax.github.io/BlockKit/" target="_blank" rel="noopener nofollow">https://windrunnermax.github.io/BlockKit/</a></li>
-<li>é¡¹ç®ç¬è®°: <a href="https://github.com/WindRunnerMax/BlockKit/blob/master/NOTE.md" target="_blank" rel="noopener nofollow">https://github.com/WindRunnerMax/BlockKit/blob/master/NOTE.md</a></li>
-</ul>
-<details>
-<summary><strong>ä»é¶å®ç°å¯ææ¬ç¼è¾å¨ç³»åæç« </strong></summary>
-<ul>
-<li><a href="https://www.cnblogs.com/WindrunnerMax/p/18816107" target="_blank">æ·±æä¸æ æé¿ï¼åå¤è¯çä»é¶å¼å§åä¸ªå¯ææ¬ç¼è¾å¨</a></li>
-<li><a href="https://www.cnblogs.com/WindrunnerMax/p/18826249" target="_blank">ä»é¶å®ç°å¯ææ¬ç¼è¾å¨#2-åºäºMVCæ¨¡å¼çç¼è¾å¨æ¶æè®¾è®¡</a></li>
-<li><a href="https://www.cnblogs.com/WindrunnerMax/p/18840221" target="_blank">ä»é¶å®ç°å¯ææ¬ç¼è¾å¨#3-åºäºDeltaççº¿æ§æ°æ®ç»ææ¨¡å</a></li>
-<li><a href="https://www.cnblogs.com/WindrunnerMax/p/18899981" target="_blank">ä»é¶å®ç°å¯ææ¬ç¼è¾å¨#4-æµè§å¨éåºæ¨¡åçæ ¸å¿äº¤äºç­ç¥</a></li>
-<li><a href="https://www.cnblogs.com/WindrunnerMax/p/18921725" target="_blank">ä»é¶å®ç°å¯ææ¬ç¼è¾å¨#5-ç¼è¾å¨éåºæ¨¡åçç¶æç»æè¡¨è¾¾</a></li>
-<li><a href="https://www.cnblogs.com/WindrunnerMax/p/19022750" target="_blank">ä»é¶å®ç°å¯ææ¬ç¼è¾å¨#6-æµè§å¨éåºä¸ç¼è¾å¨éåºæ¨¡ååæ­¥</a></li>
-<li><a href="https://www.cnblogs.com/WindrunnerMax/p/19069539" target="_blank">ä»é¶å®ç°å¯ææ¬ç¼è¾å¨#7-åºäºç»åäºä»¶çååæ§è¾å¥æ¨¡å¼</a></li>
-<li><a href="https://www.cnblogs.com/WindrunnerMax/p/19152103" target="_blank">ä»é¶å®ç°å¯ææ¬ç¼è¾å¨#8-æµè§å¨è¾å¥æ¨¡å¼çéåæ§DOMè¡ä¸º</a></li>
-<li><a href="https://www.cnblogs.com/WindrunnerMax/p/19381254" target="_blank">ä»é¶å®ç°å¯ææ¬ç¼è¾å¨#9-ç¼è¾å¨ææ¬ç»æåæ´çåæ§å¤ç</a></li>
-<li><a href="https://www.cnblogs.com/WindrunnerMax/p/19470679" target="_blank">ä»é¶å®ç°å¯ææ¬ç¼è¾å¨#10-Reactè§å¾å±ééå¨çæ¨¡å¼æ©å±</a></li>
-<li><a href="https://www.cnblogs.com/WindrunnerMax/p/19594114" target="_blank">ä»é¶å®ç°å¯ææ¬ç¼è¾å¨#11-Immutableç¶æç»´æ¤ä¸å¢éæ¸²æ</a></li>
-<li><a href="" rel="noopener nofollow">ä»é¶å®ç°å¯ææ¬ç¼è¾å¨#12-Reactå¯ç¼è¾èç¹çç»ä»¶é¢è®¾</a></li>
-</ul>
-</details>
-<h2 id="æ¦è¿°">æ¦è¿°</h2>
-<p>å¯ææ¬ç¼è¾å¨ä¹æä»¥è¢«ç§°ä¸ºå¯ææ¬ï¼é¤äºå¶è½å¤æ¯æææ¬çæ ¼å¼åä¹å¤ï¼è¿è½å¤æ¯ææå¥å¾çãè§é¢ã<code>Mention</code>ç­åå®¹ãèæå¼å§æä»¬å°±æå°äºï¼å®ç°åæ§çç¼è¾å¨æ¯éè¦ä¸¥æ ¼è®¾è®¡<code>DOM</code>ç»æçï¼ä»¥ä¾¿äºè½å¤æ­£ç¡®æ¥æ¾åæä½è¿äºèç¹ï¼å æ­¤æ¯æè¿äºèç¹ä»ç¶éè¦éè¦é¢è®¾<code>DOM</code>ç»æã</p>
-<p>ç¶èè¯¸å¦å¾çç­èç¹æ¯éè¦äº¤ç±å¼åèèªå®ä¹å®ç°çï¼å æ­¤è¿éç<code>DOM</code>ç»æå¨ç¼è¾å¨æ¡æ¶å±é¢ä¸æ¯å®å¨ä¸å¯æ§çï¼å æ­¤æä»¬éè¦çº¦å®å¥½éå¯¹ä¸åç±»åçç»ä»¶åµå¥ä¸åç<code>HOC</code>ç»ä»¶ï¼ä»¥æ­¤æ¥å¤çé»è®¤ç<code>DOM</code>ç»æä»¥åè¡ä¸ºãä¾å¦ä¸é¢è¿ä¸ªç»ä»¶å°±åºå®äºæå¤å±çç»æï¼å¼åèåªéè¦ä½¿ç¨å³å¯ã</p>
-<pre><code class="language-js">export const HOC: FC = () =&gt; {
-  return (
-    &lt;div onMouseDown={defaultBehavior}&gt;
-      &lt;span&gt;{"\u200B"}&lt;/span&gt;
-      &lt;div contentEditable={false}&gt;
-        &lt;img src={src} alt={alt} /&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-  );
-}
-</code></pre>
-<p>æ­¤å¤è¿æéææ¬èç¹éåºé®é¢ï¼éå¸¸æåµä¸éåºé½æ¯å¨ææ¬èç¹ä¸çï¼ä¹å°±æ¯è¯´éè¿<code>Selection</code>å¯¹è±¡åå¾çèç¹æ¯<code>text</code>ç±»åèç¹ãç¶èå¨æäºæåµä¸ï¼ä¼å­å¨éææ¬èç¹çéåºï¼ä¾å¦å¨ä¸å»ææ¬è¡çæ¶åï¼ä¼åºç°æ´è¡çéåºï¼æ­¤æ¶ä¼åºç°<code>anchor</code>èç¹æ¯è¡é¦<code>text</code>èç¹ï¼è<code>focus</code>èç¹æ¯ä¸ä¸è¡çè¡èç¹ã</p>
-<pre><code class="language-js">{
-  anchorNode: text,
-  anchorOffset: 0,
-  focusNode: div, // &lt;div data-node="true"&gt;...&lt;/div&gt;
-  focusOffset: 0,
-}
-</code></pre>
-<p>ç±»ä¼¼è¿ç§æåµå°±éè¦è¿è¡æ ¡æ­£ï¼å°éåºæ ¡æ­£å°ææ¬ç±»åèç¹ä¸ãç¹å«éè¦æ³¨ææ­¤æ¶ç<code>focus</code>èç¹æ¯ä¸ä¸è¡çèç¹ï¼å æ­¤æä»¬éè¦æ ¡æ­£çç®æ æ¯ä¸ä¸è¡è¡é¦ææ¬èç¹<code>offset: 0</code>çä½ç½®ï¼å æ­¤è¿æ ·ç<code>Model</code>éåºå°±å¯ä»¥å¯¹åºä¸ºéåºä¸¤è¡ç<code>0 offset</code>ä½ç½®ï¼åæ¶éè¦åæ­¥å°<code>DOM</code>éåºä¸ã</p>
-<p>ç¼è¾å¨å®ç°çæ¥æ¾é»è¾åºæ¬ä¸åèäº<code>slate</code>çå®ç°ï¼å¤§æ¦ç®æ æ¯å°è¯æ¾å°å¯ç¼è¾å­èç¹ï¼é¦åä¼è°ç¨<code>getEditableChildAndIndex</code>æ¥æ¾ä¸çº§å­èç¹ï¼ç¸å½äºåæ¥æ¾ä¸çº§æ¥å¤æ­åç»­è¿­ä»£æ¹åãä¹åç»§ç»­æ¥æ¾ï¼è¿éæ¯éåç<code>DFS</code>æç´¢å½¢å¼ï¼æ¥æ¾æ¯ä¸çº§é½ä¼å°è¯æ¾å°å¯ç¼è¾èç¹ã</p>
-<p>è¿éæå¿è¦æä¸ä¸ï¼å¶å®å¨ä¸ä¸ç¯æç« ä¸­å¤çå®å¢éåæ´ä¹åï¼æ¥ä¸æ¥éè¦èèè¾å¥åå®¹æ¶é¿åé¢è®¾<code>DOM</code>çç»æè¢«ç ´åçé®é¢ï¼åæ¬æ¬æé¢è®¾çç»ä»¶ä¹éè¦å¤ï¼ä¸»è¦æ¶åè<code>DOM</code>æ£æ¥ãéåºæ´æ°ãæ¸²æ<code>Hook</code>ç­ãä½è¿é¨ååå®¹å¨<code>#8</code>å<code>#9</code>çè¾å¥æ³å¤çä¸­å·²ç»æäºè¯¦ç»çè®¨è®ºï¼å æ­¤è¿éå°±ä¸åæ¬¡å±å¼äºã</p>
-<h2 id="é¶å®½å­ç¬¦">é¶å®½å­ç¬¦</h2>
-<p>é¶å®½å­ç¬¦é¡¾åæä¹æ¯æ²¡æå®½åº¦çå­ç¬¦ï¼å æ­¤å°±å¾å®¹ææ¨æ­åºè¿äºå­ç¬¦å¨è§è§ä¸æ¯ä¸æ¾ç¤ºçãå æ­¤è¿äºå­ç¬¦å°±å¯ä»¥ä½ä¸ºä¸å¯è§çå ä½åå®¹ï¼å®ç°ç¹æ®çææãä¾å¦å¯ä»¥å®ç°ä¿¡æ¯éèï¼ä»¥æ­¤æ¥å®ç°æ°´å°çåè½ï¼ä»¥åå å¯çä¿¡æ¯åäº«ç­ç­ï¼æäºå°è¯´ç«ç¹ä¼éè¿è¿ç§æ¹å¼ä»¥åå­å½¢æ¿æ¢æ¥è¿½æº¯ççã</p>
-<h3 id="ææ¬éåºæ¨¡å¼">ææ¬éåºæ¨¡å¼</h3>
-<p>è¿ä¸ªé¶å®½å­ç¬¦å¨è§è§ä¸æ¯ä¸æ¾ç¤ºçï¼å ä¸ºå¶æ¯é¶å®½åº¦ï¼ä½æ¯å¨ç¼è¾å¨ä¸­ï¼è¿ä¸ªå­ç¬¦å´æ¯å¾éè¦çãç®åæ¥è¯´ï¼æä»¬éè¦è¿ä¸ªå­ç¬¦æ¥æ¾ç½®åæ ï¼ä»¥ååé¢å¤çæ¾ç¤ºææãéè¦æ³¨æçæ¯æä»¬å¨è¿éæçæ¯<code>ContentEditable</code>å®ç°çç¼è¾å¨ï¼å¦ææ¯èªç»éåºçç¼è¾å¨åä¸ä¸å®éè¦è¿é¨åè®¾è®¡ã</p>
-<p>å¶å®è¿ä¸ªä¹ä¸ç¼è¾å¨çè®¾è®¡å¼ºå³èï¼åè®¾æä»¬å¼å¥åçº§ç»æï¼ä¹å°±æ¯å°è¿äºå¾çç­èç¹çéä¸­ææèªè¡å®ç°ï¼èéä¾èµæµè§å¨ææ¬éåºæ¨¡åçè¯ï¼çè®ºä¸æ¯ä¸éè¦é¶å®½å­ç¬¦çãä¾å¦é£ä¹¦ææ¡£çå¾çåç»æå°±æ²¡æååµçé¶å®½å­ç¬¦ï¼å¯ä»¥å¯¹æ¯æä»¬çå®ç°æºå¸¦é¶å®½å­ç¬¦éåºææã</p>
-<pre><code class="language-html">&lt;!-- é£ä¹¦ææ¡£ --&gt;
-&lt;div class="image-block-width-wrapper flash-block-content"&gt;
-  &lt;div class="resizable-wrapper" contenteditable="false"&gt;
-    &lt;img /&gt;
-  &lt;div&gt;
-&lt;/div&gt;
-
-&lt;!-- æºå¸¦é¶å®½å­ç¬¦éåº --&gt;
-&lt;span data-leaf="true"&gt;
-  &lt;span data-zero-space="true" data-zero-void="true"&gt;&amp;ZeroWidthSpace;&lt;/span&gt;
-  &lt;div class="block-kit-image-container" contenteditable="false" data-void="true"&gt;
-    &lt;img /&gt;
-  &lt;/div&gt;
-&lt;/span&gt;
-</code></pre>
-<p>ç¶èå®éæåµä¹å¹¶æ²¡æé£ä¹çæ³ï¼è¿æ¯ä»¥é£ä¹¦ææ¡£ä¸¾ä¾ï¼å³ä½¿èªè¡å®ç°äºåçº§çéåºï¼ä½ä»ç¶ä¼åä¸äºæ··åéåºçæåµãä¹å°±æ¯è¯´å¨æµè§å¨ä¸­å¯ä»¥åæ¶éä¸­å¾çåææ¬ï¼è¿ç§æåµä¸ä¸è½é»æ­¢ç¨æ·æ··éï¼å æ­¤è¿æ¯å¾ä¾é é¶å®½å­ç¬¦æ¥ä½ä¸ºéåºè½ç¹ï¼é£ä¹¦ææ¡£æ¯å¨åçº§èç¹ä¸ä¸åå«æ¾äºé¶å®½å­ç¬¦ã</p>
-<pre><code class="language-js">&lt;div class="block docx-image-block" data-block-type="image" data-block-id="65"&gt;
-  &lt;div class="docx-block-zero-space"&gt;&lt;span data-zero-space="true"&gt;&amp;ZeroWidthSpace;&lt;/span&gt;&lt;/div&gt;
-  &lt;div contenteditable="false"&gt;&lt;img /&gt;&lt;/div&gt;
-  &lt;div class="docx-block-zero-space"&gt;&lt;span data-zero-space="true"&gt;&amp;ZeroWidthSpace;&lt;/span&gt;&lt;/div&gt;
-&lt;/div&gt;
-</code></pre>
-<p>åå°æä»¬ç¼è¾å¨çè®¾è®¡ä¸ï¼è¿éæä»¬åªéè¦æä¾ä¸ä¸ªå¬å±ç»ä»¶ï¼ä»¥æ­¤æ¥æä¾ç»<code>Void</code>èç¹å<code>Embed</code>èç¹ä½¿ç¨ãå½ç¶å¨å®ç°çæ¶åæä»¬éè¦æ æ³¨ç¸å³ç±»åï¼ä»¥å¤æ­å¯¹åºçæ ·å¼ï¼ä¾å¦<code>Void</code>ç±»åçé¶å®½å­ç¬¦ä¸è½åºç°åæ ï¼è<code>Embed</code>ç±»åçé¶å®½å­ç¬¦å¯ä»¥éè¦ä¿æåæ ã</p>
-<pre><code class="language-js">/**
- * é¶å®½å­ç¬¦ç»ä»¶
- * - void hide =&gt; ç¬å ä¸è¡çç©ºèç¹, ä¾å¦ Image
- * - embed =&gt; åµå¥èç¹, ä¾å¦ Mention
- * - enter =&gt; è¡æ«å°¾å ä½, ä¿çäº EOLView
- * - len =&gt; ç©ºèç¹å ä½é¿åº¦, éå Void/Embed
- * @param props
- */
-export const ZeroSpace: FC&lt;ZeroSpaceProps&gt; = props =&gt; {
-  return &lt;span&gt;{ZERO_SYMBOL}&lt;/span&gt;
-}
-</code></pre>
-<h3 id="è¾å¥æ³å¤ç">è¾å¥æ³å¤ç</h3>
-<p>éå¸¸å®ç°<code>Void/Embed</code>èç¹æ¶ï¼æä»¬é½éè¦å¨<code>Void</code>èç¹ä¸­å®ç°ä¸ä¸ªé¶å®½å­ç¬¦ï¼ç¨æ¥å¤çéåºçæ å°é®é¢ãéå¸¸æä»¬é½éè¦éèå¶æ¬èº«æ¾ç¤ºçä½ç½®ä»¥éèåæ ï¼ç¶èå¨ç¹å®æ¡ä»¶ä¸è¿éä¼å­å¨å<code>IME</code>è¾å¥çé®é¢ï¼ä¸é¢è¿ä¸ªä¾å­ä¸­å¨<code>!</code>åæ¯æ æ³æ­£å¸¸å¤é<code>IME</code>è¾å¥å¤ä¸ªå­ç¬¦çã</p>
-<pre><code class="language-html">&lt;div contenteditable="true"&gt;&lt;span contenteditable="false" style="background:#eee;"&gt;Void&lt;span style="height: 0px; color: transparent; position: absolute;"&gt;&amp;#xFEFF;&lt;/span&gt;&lt;/span&gt;&lt;span&gt;!&lt;/span&gt;&lt;/div&gt;
-</code></pre>
-<p>å¤çè¿ä¸ªé®é¢çæ¹å¼æ¯è¾ç®åï¼æä»¬åªéè¦å°é¶å®½å­ç¬¦çæ è¯æ¾å¨<code>EmbedNode</code>ä¹åå³å¯ï¼è¿æ ·ä¹ä¸ä¼å½±åå°éåºçæ¥æ¾ï¼<code>https://github.com/ianstormtaylor/slate/pull/5685</code>ãæ­¤å¤é£ä¹¦ææ¡£çå®ç°æ¹å¼ä¹æ¯è¿æ ·çï¼<code>ZeroNode</code>æ°¸è¿å¨<code>FakeNode</code>åã</p>
-<pre><code class="language-html">&lt;div contenteditable="true"&gt;&lt;span contenteditable="false" style="background:#eee;"&gt;&lt;span style="height: 0px; color: transparent; position: absolute;"&gt;&amp;#xFEFF;&lt;/span&gt;Void&lt;/span&gt;&lt;span&gt;!&lt;/span&gt;&lt;/div&gt;
-</code></pre>
-<h3 id="è¡æ«é¶å®½å­ç¬¦">è¡æ«é¶å®½å­ç¬¦</h3>
-<p>åè¾¹å·²ç»æç¡®ä½¿ç¨é¶å®½å­ç¬¦çä¸»è¦ç®çæ¯ä¸ºäºæ¾ç½®åæ ï¼èç®åæä»¬çè§å¾æ¸²ææ¯å®å¨å¯¹ç­äºæ°æ®ç»æçãä¹å°±æ¯è¯´æä»¬çè¡æ«å¿ç¶å­å¨ä¸ä¸ªé¶å®½å­ç¬¦ï¼ç¨æ¥å¯¹ç­æ°æ®ç»æä¸­æ«å°¾ç<code>\n</code>å¯¹åºç<code>Leaf</code>èç¹ï¼å®ç°è¿ä¸ªèç¹çç®çä¸»è¦æå ä¸ªæ¹é¢:</p>
-<ol>
-<li>å®å¨å¯¹ç­æ°æ®ç»æï¼ä¸æä»¬è®¾è®¡ç<code>LineState</code>æ°æ®å¯¹é½ï¼æ¯ä¸ª<code>LeafState</code>é½å¿ç¶æ¸²æä¸ä¸ª<code>DOM</code>èç¹ï¼æ°æ®æ¨¡ååå¥½ï¼ä¸è¿æ ·å°±å¯ä»¥å¨ç©ºè¡æ¶å¿ç¶ä¼çå­æææ¬èç¹ï¼èä¸å¿è¦ç¹æ®å¤çã</li>
-<li><code>Mention</code>èç¹çæ¸²æï¼å¦æè¡çæåä¸ä¸ªèç¹æ¯<code>Void</code>èç¹ï¼åä¼å¯¼è´åæ æ æ³æ¾ç½®äºæ«å°¾ï¼è¿ä¸ªé®é¢çå¤çæä»¬åæéæ¸²æä¸ä¸ªé¶å®½å­ç¬¦èç¹å³å¯ï¼<code>slate</code>å³å¦æ­¤å¤ççæ«å°¾<code>Mention</code>èç¹ã</li>
-<li>å¨ç ç©¶é£ä¹¦ææ¡£çç¼è¾å¨æ¶åç°æ¯ä¸ªææ¬è¡æ«å°¾å¿ç¶ä¼å­å¨é¶å®½å­ç¬¦ï¼é¢è®¡æ¯ä¸ºäºè§£å³<code>Blocks</code>çç¸å³é®é¢ï¼åæè¿å¾ç¥æ©æç<code>Etherpad</code>æ¯è¡ä¹æ¯å®ç°äºé¶å®½å­ç¬¦ï¼ç¨æ¥å¤ç<code>DOM</code>ä¸éåºçç¸å³é®é¢ã</li>
-</ol>
-<p>å¨è¿éæä»¬å®ç°äºå¤ªå¤çå¼å®¹æ¹æ¡æ¥å¤çè¿ä¸ªé®é¢ï¼ä¾å¦ä¹åæç« çéåºæ ¡æ­£é¨åä»¥ååé¢ç<code>Void</code>éåºåæ¢é¨ååå®¹ï¼èå¦æå®éä¸æä»¬ä¸æ¸²æè¿ä¸ªèç¹çè¯å°±ä¸éè¦å¤çè¿ä¸¤å¤ç¸å³é®é¢ï¼ä½æ¯è¿æ ·çè¯æä»¬å°±éè¦å¤çå¶ä»ç<code>case</code>æ¥ä¿è¯<code>DOM</code>ä¸<code>Model</code>çå¯¹ç­æ§ã</p>
-<p>ç°å¨æä»¬éè¦è§£å³ç©ºè¡çéåºé®é¢ï¼æ­¤æ¶å¦æç´æ¥ä½¿ç¨ç©ºèç¹å³<code>&lt;span&gt;&lt;/span&gt;</code>è®¾ç½®ä¸ºå­èç¹çè¯ï¼åä¼å¯¼è´æ­¤æ¶å¹¶æ²¡æå®éçææ¬åå®¹ãç±æ­¤è¿éçé«åº¦å¹¶æ²¡ææèµ·æ¥å¹¶ä¸éåºæ¯æ æ³èç¦å°æ­¤å¤çï¼æä»¥è¿éæä»¬è¿æ¯éè¦ç©ºèç¹çåå®¹ä¸ºé¶å®½å­ç¬¦ï¼è¿æ ·çè¯æå¯ä»¥å®ç°éåºçèç¦ã</p>
-<pre><code class="language-js">const nodes: JSX.Element[] = [];
-leaves.forEach((leaf, index) =&gt; {
-  if (leaf.eol) {
-    // ç©ºè¡åä»å­å¨ä¸ä¸ª Leaf, æ­¤æ¶éè¦æ¸²æç©ºçå ä½èç¹
-    !index &amp;&amp; nodes.push(&lt;EOLModel key={EOL} editor={editor} leafState={leaf} /&gt;);
-    return void 0;
-  }
-  nodes.push(&lt;LeafModel key={index} editor={editor} index={index} leafState={leaf} /&gt;);
-});
-return nodes;
-</code></pre>
-<p>å®éä¸æ«å°¾çèç¹å¦ææ¯<code>&lt;br /&gt;</code>èç¹çè¯ï¼æ¯å¯ä»¥ä¸éè¦é¶å®½å­ç¬¦æ¥è§£å³è¿ä¸ªé®é¢çãéåºèç¹æ¯å¯ä»¥æ¾ç½®äºæ­¤èç¹ä¸çï¼ä¸ä¸ä¼æ<code>0/1</code>ä¸¤ä¸ª<code>offset</code>çåç§»éè¦å¤çã<code>Quill</code>å¯¹äºç©ºè¡å°±æ¯å¦æ­¤å¤ççï¼è¿å¶å®ä¹æ¯å¯ææ¬ç¼è¾å¨çå¸¸è§å®ç°ã</p>
-<p>ä¸è¿å¯¹äºæä»¬æ¥è¯´ï¼å ä¸º<code>br</code>èç¹å¹¶éææ¬ï¼ä¸ä»å­å¨<code>0 offset</code>ï¼è¿å°±å¯¼è´äºéåºå¨<code>Void</code>èç¹æ¶ä¾èµé»è®¤è¡ä¸ºæ æ³æ­£å¸¸å é¤å½åèç¹ï¼è¿éè¦ç¹æ®å¤çéææ¬èç¹ãæ­¤å¤éè¦å¤çæ¹åé®çåè°æ¥æ§å¶åæ ï¼è¿æ<code>issue</code>æå°<code>br</code>èç¹è¿å¯è½å­å¨å¡æ­<code>IME</code>çæåµï¼æä»¥å½åè¿æ¯ä¿æäºé¶å®½å­ç¬¦å®ç°ã</p>
-<pre><code class="language-js">export const getTextNode = (node: Node | null): Text | null =&gt; {
-  if (isDOMText(node)) {
-    return node;
-  }
-  if (isDOMElement(node)) {
-    const textNode = node.childNodes[0];
-    if (textNode &amp;&amp; (isDOMText(textNode) || isBRNode(textNode))) {
-      return textNode;
-    }
-  }
-  return null;
-};
-</code></pre>
-<p>è¡æ«çé¶å®½å­ç¬¦è¿æä¸ªæ¯è¾éè¦çåºç¨ï¼å¦ææä»¬çéåºæä½æ¯ä»ä¸ä¸è¡çæ«å°¾éå°ä¸ä¸è¡çé¨ååå®¹æ¶ï¼éè¿<code>Selection</code>å¾å°çéåºåæ¢ç<code>Model</code>æ¯è·¨è¶ä¸¤è¡çãæ­¤æ¶å¦æåä¸äºæä½ä¾å¦<code>TAB</code>ç¼©è¿çè¯ï¼æ¯ä¼å¯¹å¤è¡åºç¨çæä½ï¼ç¶èæä»¬çæ·¡èè²éåºçèµ·æ¥åªæä¸è¡ï¼å æ­¤çèµ·æ¥ä¼åæ¯ä¸ª<code>BUG</code>ï¼ä¸»è¦è¿æ¯è§è§ä¸ä¸å®éæä½ä¸çä¸ä¸è´ã</p>
-<p>å¨è¾è®¯ææ¡£ãè°·æ­ææ¡£ç­ç±»ä¼¼ç<code>Canvas</code>å®ç°çç¼è¾å¨ä¸­ï¼è¿ä¸ªé®é¢æ¯éè¿é¢å¤ç»å¶äºæ·¡èè²çéåºæ¥è§£å³çãèæä»¬å¦æéè¿<code>DOM</code>æ¥å®ç°çè¯ï¼åä¸è½ç´æ¥ç»å¶åå®¹ï¼è¿æ ·æä»¬å°±å¯ä»¥ä½¿ç¨é¶å®½å­ç¬¦æ¥å®ç°ï¼å³å¨è¡æ«æ·»å ä¸ä¸ªé¶å®½å­ç¬¦èç¹ï¼è¿å¶ä¸­å®ç°çéç¹æ¯ãèå½æä»¬éåºå¨é¶å®½å­ç¬¦åæ¶ï¼ä¸»å¨å°å¶ä¿®æ­£ä¸ºé¶å®½å­ç¬¦åï¼è¿ä¸ªå®ç°å¨<code>Chrome</code>ä¸è¡¨ç°è¯å¥½ï¼ä½æ¯å¨<code>FireFox</code>ä¸å°±æ²¡æææäºã</p>
-<pre><code class="language-html">&lt;div contenteditable="true"&gt;
-  &lt;div&gt;&lt;span&gt;æ«å°¾é¶å®½å­ç¬¦ Line 1&lt;/span&gt;&lt;span&gt;&amp;#8203;&lt;/span&gt;&lt;/div&gt;
-  &lt;div&gt;&lt;span&gt;æ«å°¾é¶å®½å­ç¬¦ Line 2&lt;/span&gt;&lt;span&gt;&amp;#8203;&lt;/span&gt;&lt;/div&gt;
-  &lt;div&gt;&lt;span&gt;æ«å°¾çº¯ææ¬ Line 1&lt;/span&gt;&lt;/div&gt;
-  &lt;div&gt;&lt;span&gt;æ«å°¾çº¯ææ¬ Line 2&lt;/span&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;script&gt;
-  document.addEventListener("selectionchange", () =&gt; {
-    const selection = window.getSelection();
-    if (selection.rangeCount &lt; 1) return;
-    const staticSel = selection.getRangeAt(0);
-    const { startContainer, endContainer, startOffset, endOffset, collapsed } = staticSel;
-    if (startContainer?.textContent === "\u200B" &amp;&amp; startOffset &gt; 0) {
-      selection.setBaseAndExtent( startContainer, 0, endContainer, collapsed ? 0 : endOffset);
-    }
-  });
-&lt;/script&gt;
-</code></pre>
-<h2 id="void-èç¹ç»ä»¶">Void èç¹ç»ä»¶</h2>
-<p><code>Void</code>èç¹å³æä»¬å¸¸è¯´çç©ºèç¹ï¼ç©ºèç¹åé¨åºè¯¥å®å¨ç±ç¨æ·èªå®ä¹ï¼åé¨å³ä½¿å­å¨ææ¬åå®¹ä¹ä¼è¢«ç¼è¾å¨ä½ä¸ºæ´ä½åæ¥å¤çãå æ­¤é¤äº<code>schema</code>ä¸­å®ä¹ä¹å¤ï¼è¿éè¦å®ç°<code>HOC</code>ç»ä»¶æ¥æä¾ç»å¼åèè°ç¨ï¼ç»ä»¶æ´ä½è¿æ¯éå¸¸æ¸æ°çï¼ä½æ¯éè¦å®ç°éåºãç¹å»ç­äºä»¶çå¤çã</p>
-<pre><code class="language-js">/**
- * ç©ºåµå¥èç¹ HOC
- * @param props
- */
-export const Void: FC&lt;VoidProps&gt; = props =&gt; {
-  const { context, tag: Tag = "span" } = props;
-  return (
-    &lt;React.Fragment&gt;
-      &lt;ZeroSpace /&gt;
-      &lt;Tag contentEditable={false}&gt;
-        {props.children}
-      &lt;/Tag&gt;
-    &lt;/React.Fragment&gt;
-  );
-};
-</code></pre>
-<h3 id="éåºæ¥æ¾">éåºæ¥æ¾</h3>
-<p>ä¸è¾¹æä»¬æå°äºï¼è¯¥ç»ä»¶åé¨ç»ææ¯å®å¨ç±ç¨æ·èªå®ä¹çï¼èç¼è¾å¨å¼ææ¬èº«å¹¶ä¸ç¥éè¿éä¼å­å¨ä»ä¹åå®¹ï¼å æ­¤æä»¬å°±éè¦å¨éåºåæ¢æ¶å®ç°ä¸ä¸ªæ¥æ¾é»è¾ãè¿ä¸ªå®ç°å¶å®è¿æ¯éå¸¸å°æ°çï¼å ä¸ºä»ä¸è³ä¸åªæéè¿è¿­ä»£çå½¢å¼æè½æ¥æ¾ï¼<code>slate</code>å°±æ¯ä»¥å±çº§è¿­ä»£çå½¢å¼å®ç°çï¼æä»¬åæ ·å¦æ­¤ã</p>
-<p>ä¸é¢<code>getEditableChildAndIndex</code>å°±æ¯æ¥æ¾å­èç¹çå®ç°ï¼åä¸çº§å¼å§åå«å°è¯æ­£ååååæ¥æ¾ï¼ä»¥ä¼ å¥ç<code>direction</code>æ¹åä¼åï¼ä»¥æ­¤æ¥å°è¯æ¾å°å¯ç¼è¾èç¹ãè¿åªæ¯åä¸çº§çæ¥æ¾ï¼å¦ææ²¡ææ¥æ¾å°çè¯ï¼è¿éè¦ç»§ç»­æ¥æ¾ç¶èç¹çå­èç¹ï¼è¿éä¹æ¯åºäºå±çº§èééå½çå®ç°ã</p>
-<pre><code class="language-js">// https://github.com/ianstormtaylor/slate/blob/9a21251/packages/slate-dom/src/utils/dom.ts#L156
-export const getEditableChildAndIndex = (/* xxx */): [DOMNode, number] =&gt; {
-  while (/* xxx */) {
-    if (triedForward &amp;&amp; triedBackward) {
-      break
-    }
-    if (i &gt;= childNodes.length) {
-      triedForward = true
-      i = index - 1
-      direction = 'backward'
-      continue
-    }
-    if (i &lt; 0) {
-      triedBackward = true
-      i = index + 1
-      direction = 'forward'
-      continue
-    }
-    child = childNodes[i]
-    index = i
-    i += direction === 'forward' ? 1 : -1
-  }
-}
-</code></pre>
-<p>è¿éè¿æéè¦å³æ³¨çæ¯ï¼å¦æè½å¤ç´æ¥æ¾å°ææ¬èç¹èªç¶ä¸éè¦ç»§ç»­æ·±åº¦æ¥æ¾ï¼å¨<code>HTML</code>ä¸­ææ¬èç¹å¹¶ä¸å±äº<code>DOMElement</code>ãæ­¤å¤ï¼ç±äºå·²ç»ç¡®å®äºå½åæ¯éææ¬èç¹ï¼å æ­¤æä»¬æ­¤æ¶ç<code>offset</code>å¼åªä¼æ¯<code>0</code>æèå­èç¹é¿åº¦åç§»ã</p>
-<pre><code class="language-js">// Determine the new offset inside the text node.
-offset = isLast &amp;&amp; node.textContent != null ? node.textContent.length : 0
-</code></pre>
-<h3 id="é»è®¤è¡ä¸º">é»è®¤è¡ä¸º</h3>
-<p>æ¬è´¨ä¸å¯ææ¬ç¼è¾å¨æ¯å¾ææ··æçç¼è¾å¨ï¼å¨éè¿<code>Void</code>æ¥å®ç°å¾ççæ¶åï¼å¯ä»¥åç°å¦æç¹å»å¾çèç¹å¹¶ä¸è½è§¦å<code>DOM</code>éåºçååãèç±äº<code>DOM</code>éåºæ¬èº«ä¸åååä¼å¯¼è´æä»¬ç<code>Model</code>éåºä¸ä¼è·éåå¨ï¼å æ­¤è¯¸å¦ç¦ç¹åéæ©ç­é®é¢å°±ä¼åºç°ã</p>
-<pre><code class="language-html">&lt;div contenteditable&gt;
-  &lt;div&gt;&lt;span&gt;123&lt;/span&gt;&lt;/div&gt;
-  &lt;div&gt;&lt;span&gt;&lt;img src="https://windrunnermax.github.io/DocEditor/favicon.ico" /&gt;&lt;/span&gt;&lt;/div&gt;
-  &lt;div&gt;&lt;span&gt;123&lt;/span&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;script&gt;
-  document.addEventListener("selectionchange", function() {
-    console.log(window.getSelection());
-  });
-&lt;/script&gt;
-</code></pre>
-<p>å¨<code>Slate</code>ä¸­çå®ç°æ¯å½è§¦å<code>OnClick</code>äºä»¶æ¶ï¼ä¼ä¸»å¨è°ç¨<code>ReactEditor.toSlateNode</code>æ¹æ³æ¥æ¾<code>data-slate-node</code>å¯¹åºç<code>DOM</code>èç¹ï¼ç¶åéè¿<code>ELEMENT_TO_NODE</code>æ¥æ¾å¯¹åºç<code>Slate Node</code>èç¹ï¼æååéè¿<code>ReactEditor.findPath</code>æ¥è·åå¶å¯¹åºç<code>Path</code>èç¹ãå¦ææ­¤æ¶ä¸¤ä¸ªåºç¹é½æ¯<code>Void</code>åä¼åå»º<code>range</code>ï¼ç¶åæç»è®¾ç½®ææ°ç<code>DOM</code>ã</p>
-<pre><code class="language-js">// https://github.com/ianstormtaylor/slate/blob/f2e211/packages/slate-react/src/components/editable.tsx#L1153
-const node = ReactEditor.toSlateNode(editor, event.target)
-const path = ReactEditor.findPath(editor, node)
-const start = Editor.start(editor, path)
-const end = Editor.end(editor, path)
-const startVoid = Editor.void(editor, { at: start })
-const endVoid = Editor.void(editor, { at: end })
-if (
-  startVoid &amp;&amp;
-  endVoid &amp;&amp;
-  Path.equals(startVoid[1], endVoid[1])
-) {
-  const range = Editor.range(editor, start)
-  Transforms.select(editor, range)
-}
-</code></pre>
-<p>ç±äºæä»¬çè®¾è®¡æ¯éè¿<code>Void</code>èç¹ä½ä¸ºé«é¶ç»ä»¶æ¥å®ç°ï¼å æ­¤å¨è¿éå¯ä»¥ç´æ¥åå©<code>onMouseDown</code>äºä»¶æ¥å®ç°éåºçè®¾ç½®å³å¯ãèå¨è¿éçéåºååºç°äºé®é¢ï¼æ­¤å¤çèç¹ç¶ææ¯<code> \n</code>ï¼æ­¤å¤å®éä¸ä¼è¢«åä¸ºä¸ä¸ªä½ç½®ï¼èæä»¬å®éä¸ç<code>Void</code>åªåºè¯¥å¨ç¬¬äºä¸ªä½ç½®ï¼èè¿ä¸ªä½ç½®å®éä¸ä¹åºè¯¥è¢«è®¤ä¸ºæ¯è¡é¦ï¼å ä¸ºå¨æé®çå·¦å³é®çæ¶åä¹éè¦ç¨å°ã</p>
-<pre><code class="language-js">const onMouseDown = () =&gt; {
-  const el = ref.current;
-  if (!el) return void 0;
-  const leafNode = el.closest(`[${LEAF_KEY}]`) as HTMLElement | null;
-  const leafState = editor.model.getLeafState(leafNode);
-  if (leafState) {
-    const point = new Point(leafState.parent.index, leafState.offset + leafState.length);
-    const range = new Range(point, point.clone());
-    editor.selection.set(range, true);
-  }
-};
-
-// Case 2: åæ ä½äº data-zero-void èç¹åæ¶, éè¦å°å¶ä¿®æ­£ä¸ºèç¹æ«
-// [cursor][void]\n =&gt; [void][cursor]\n
-const isVoidZero = isVoidZeroNode(node);
-if (isVoidZero &amp;&amp; offset === 0) {
-  return new Point(lineIndex, 1);
-}
-</code></pre>
-<p>å¨ç¼è¾å¨åºæ¯ä¸­ï¼èç¹çéä¸­ç¶ææ¯éå¸¸å¸¸è§çåè½ï¼ä¾å¦å¨å½ç¹å»å¾çèç¹æ¶ï¼éå¸¸éè¦ä¸ºå¾çèç¹æ·»å éä¸­ç¶æãå½åææèäºä¸¤ç§å®ç°æ¹å¼ï¼åå«æ¯ä½¿ç¨<code>React Context</code>ååå»ºçäºä»¶ç®¡çæ¥å®ç°ï¼<code>Context</code>æ¯å¨æå¤å±ç»´æ¤éåºç<code>useState</code>ç¶æï¼èåå»ºäºä»¶ç®¡çåæ¯çå¬ç¼è¾å¨åé¨çéåºäºä»¶æ¥å¤çåè°ã</p>
-<p><code>Slate</code>æ¯ä½¿ç¨<code>Context</code>æ¥å®ç°çï¼å¨æ¯ä¸ª<code>ElementComponent</code>èç¹çå¤å±é½ä¼æ<code>SelectedContext</code>æ¥ç®¡çéä¸­ç¶æï¼å½éåºç¶æååæ¶åä¼éæ°æ§è¡<code>render</code>å½æ°ãè¿æ ·çæ¹å¼å®ç°èµ·æ¥æ¹ä¾¿ï¼åªéè¦é¢è®¾<code>Hooks</code>å°±å¯ä»¥ç´æ¥å¨æ¸²æåçç»ä»¶ä¸­è·åå°éä¸­ç¶æï¼ä½æ¯è¿æ ·çæ¹å¼éè¦å¨æå¤å±å°<code>selection</code>ç¶æä¼ éå°å­ç»ä»¶å½ä¸­ã</p>
-<pre><code class="language-js">// https://github.com/ianstormtaylor/slate/blob/f2e2117/packages/slate-react/src/hooks/use-children.tsx#L64
-const sel = selection &amp;&amp; Range.intersection(range, selection)
-children.push(
-  &lt;SelectedContext.Provider key={`provider-${key.id}`} value={!!sel}&gt;
-    &lt;ElementComponent
-      element={n}
-      key={key.id}
-      selection={sel}
-    /&gt;
-  &lt;/SelectedContext.Provider&gt;
-)
-</code></pre>
-<p>å¨è¿éæä»¬ä½¿ç¨çæ¹å¼åæ¯ç®¡çç¼è¾å¨äºä»¶æ¥ç®¡çéåºï¼å ä¸ºå¨æä»¬çæä»¶éæ¯å®ä¾ååè°ç¨æ¹æ³æ¥å®æè§å¾æ¸²æçè°åº¦ãé£ä¹å¨è¿éæä»¬å°±å®ç°ç»§æ¿äº<code>EditorPlugin</code>çç±»ä»¥åéåºé«é¶ç»ä»¶ï¼å¨å®ä¾ä¸­çå¬ç¼è¾å¨çéåºååï¼ç¨ä»¥è§¦åé«é¶ç»ä»¶çç¶æååï¼èé«é¶ç»ä»¶çéæ©ç¶æåå¯ä»¥ç´æ¥æ ¹æ®<code>leaf</code>çä½ç½®ä¸å½åéåºçä½ç½®æ¥å¤æ­ã</p>
-<pre><code class="language-js">export class SelectionHOC extends React.PureComponent&lt;Props, State&gt; {
-  public onSelectionChange(range: Range | null) {
-    const nextState = range ? isLeafRangeIntersect(this.props.leaf, range) : false;
-    this.state.selected !== nextState &amp;&amp; this.setState({ selected: nextState });
-  }
-  public render() {
-    return (
-      &lt;div className={cs(this.props.className, selected &amp;&amp; "block-kit-selected")}&gt;
-        {React.Children.map(this.props.children, child =&gt; {
-          return React.isValidElement(child) ?
-            React.cloneElement(child, { ...child.props, selected: selected });
-            : child;
-        })}
-      &lt;/div&gt;
-    );
-  }
-}
-</code></pre>
-<p>æ¥ä¸æ¥éè¦å¤ç<code>Void</code>éåºç§»å¨é®é¢ï¼å½éåºå¨<code>Void</code>ä¸æ¶ï¼éåºä¼ç§»å¨å°åè½¦é¶å®½å­ç¬¦çæ«å°¾ï¼èç±äºæä»¬çéåºæ ¡æ­£ä¼å°å¶åæ ¡æ­£å<code>Void</code>èç¹çé¶å®½å­ç¬¦åï¼è¿å°±å¯¼è´äºåæ æ æ³ç§»å¨çé®é¢ãå æ­¤è¿ééè¦ä¸»å¨æ§å¶éåºçç§»å¨ï¼å¨<code>Void</code>èç¹ä¸ç»å®é®çäºä»¶ï¼æä¸ä¸æ¹åé®æ¶åæ§å¤çã</p>
-<pre><code class="language-js">// case KEY_CODE.DOWN:
-const point = new Point(nextLine.index, nextLine.length - 1);
-editor.selection.set(new Range(point, point.clone()), true);
-// case KEY_CODE.UP:
-const point = new Point(prevLine.index, prevLine.length - 1);
-editor.selection.set(new Range(point, point.clone()), true);
-</code></pre>
-<h3 id="è¾å¥æ³å¤ç-1">è¾å¥æ³å¤ç</h3>
-<p>æ¥ä¸æ¥æä»¬å¤çè¾å¥æ³é®é¢ï¼å¦æåæ æ­¤æ¶å¨<code>Void</code>èç¹æ¶ï¼æ­¤æ¶æä¸ä»»ä½è¾å¥é®åä¼å¯¼è´èç¹åå®¹åæ<code>inline-block</code>çå½¢å¼ï¼è¿éçé®é¢æ¯<code>BlockVoid</code>èç¹åºè¯¥æ¯ç¬å ä¸è¡çï¼èè¾å¥åå®¹ä¹åï¼åå®éçç¶æåæäºå¦ä¸åå®¹ã</p>
-<pre><code>[Zero][input]\n
-</code></pre>
-<p>å æ­¤å¨è¿éæç®åçæ¹æ¡åæ¯æ­¤æ¶å¦æåæ å¨<code>Void</code>èç¹æ¶æä¸è¾å¥é®åç´æ¥é»æ­¢é»è®¤è¡ä¸ºï¼å¦æè¾å¥åå®¹åä¸ä¼è§¦å<code>insert</code>å·ä½çææ¬ï¼è¿ä¸ªè¡ä¸ºè·<code>Slate</code>çè¡¨ç°æ¯ä¸è´çã</p>
-<pre><code class="language-js">const indexOp = pickOpAtRange(editor, sel);
-if (editor.schema.isVoid(indexOp)) {
-  return void 0;
-}
-</code></pre>
-<p>ä½æ¯å¨è¿éæä»¬è¿éè¦å¤çä¸­æè¾å¥çæåµï¼å ä¸º<code>beforeinput</code>äºä»¶æ¯ä¸è½å¤å®éé»æ­¢<code>IME</code>çè¡ä¸ºçï¼èæ­¤æ¶æä»¬çåå®¹è½ç¶æ²¡æåæ³è¾å¥è¿å»ï¼ä½æ¯éåºåçäºååãè¿ä¼å¯¼è´æä»¬ç<code>toDOMRange</code>æ¹æ³åºç°äºé®é¢ï¼éåºæ­¤æ¶ä¼è¢«éç½®ä¸º<code>null</code>ï¼å æ­¤æä»¬éè¦å¨éåºä»<code>DOM</code>å°<code>Modal</code>æ¶éæ°ä¸ºå¶æ ¡æ­£ã</p>
-<pre><code class="language-js">// Case 3: åæ ä½äº data-zero-void èç¹å¤èµ· IME è¾å¥, ä¿®æ­£ä¸ºèç¹æ«
-// [ xxx[cursor]]\n =&gt; [ [cursor]xxx]\n
-const isVoidZero = isVoidZeroNode(node);
-if (isVoidZero &amp;&amp; offset !== 1) {
-  return new Point(lineIndex, 1);
-}
-</code></pre>
-<p>æ­¤å¤è¿éä¸ä¸ªå¾æè¶£çäºæï¼æ¯å³äº<code>ContentEditable</code>ä»¥å<code>IME</code>çäº¤äºé®é¢ãå¨<code>slate</code>ç<code>issue</code>ä¸­åç°ï¼å¦ææå¤å±èç¹æ¯<code>editable</code>çï¼ç¶åå­èç¹ä¸­æä¸ªèç¹æ¯<code>not editable</code>çï¼ç¶åå¶åç»­ç´§æ¥çæ¯<code>span</code>çææ¬èç¹ï¼å½ååæ ä½äºè¿ä¸¤èä¸­é´ï¼å³<code>Void</code>èç¹çæ«å°¾ã</p>
-<p>æ­¤æ¶å¤é<code>IME</code>è¾å¥é¨ååå®¹ï¼å¦ææçé®ççå·¦é®å°<code>IME</code>çç¼è¾åå·¦ç§»å¨å°æåï¼åä¼ä½¿æ´ä¸ªç¼è¾å¨å¤±å»ç¦ç¹ï¼<code>IME</code>ä»¥åè¾å¥çææ¬ä¹ä¼æ¶å¤±ï¼æ­¤æ¶å¦æå¨æ­¤å¤é<code>IME</code>åä¼éæ°åºç°ä¹åçææ¬ãè¿ä¸ªç°è±¡åªå¨<code>Chromium</code>ä¸­å­å¨ï¼å¨<code>Firefox/Safari</code>ä¸­åè¡¨ç°æ­£å¸¸ã</p>
-<pre><code class="language-html">&lt;div contenteditable="true"&gt;&lt;span contenteditable="false" style="background:#eee;"&gt;Void&lt;/span&gt;&lt;span&gt;!&lt;/span&gt;&lt;/div&gt;
-</code></pre>
-<p>è¿ä¸ªé®é¢å¨<code>https://github.com/ianstormtaylor/slate/pull/5736</code>ä¸­è¿è¡äºä¿®å¤ï¼å³é®ç¹æ¯å¤å±<code>span</code>æ ç­¾æ<code>display:inline-block</code>æ ·å¼ï¼å­<code>div</code>æ ç­¾æ<code>contenteditable=false</code>å±æ§ã</p>
-<pre><code class="language-html">&lt;div contenteditable="true"&gt;&lt;span contenteditable="false" style="background: #eee; display: inline-block;"&gt;&lt;div contenteditable="false"&gt;Void&lt;/div&gt;&lt;/span&gt;&lt;span&gt;!&lt;/span&gt;&lt;/div&gt;
-</code></pre>
-<h2 id="embed-èç¹ç»ä»¶">Embed èç¹ç»ä»¶</h2>
-<p><code>Embed</code>èç¹ç»ä»¶ç¸å¯¹<code>Void</code>èç¹ç»ä»¶æ´å å¤æï¼å ä¸º<code>Embed</code>èç¹æ¯è¡åèç¹ï¼å æ­¤å¶æ¬èº«æ¯éè¦å®ç°ææ¬éåºçææè¡ä¸ºçãç¶èå¶æ¬èº«å¹¶ä¸æ¯å­ç¬¦ï¼å ä¸ºå¨è¡åè¿éè¦å°å¶ä½ä¸ºå®æ´çè¡ååï¼å¹¶ä¸è¿éè¦å®ç°ææ¬éåºè¡ä¸ºï¼ä¸è¿å¨è¿éæä»¬ä»ç¶æ¯éè¦æä¾ä¸ä¸ª<code>HOC</code>ç»ä»¶ã</p>
-<pre><code class="language-js">/**
- * Embed åµå¥èç¹ HOC
- * - Inline Block HOC
- * @param props
- */
-export const Embed: FC&lt;EmbedProps&gt; = props =&gt; {
-  return (
-    &lt;React.Fragment&gt;
-      &lt;ZeroSpace embed={true} /&gt;
-      &lt;span
-        style={{ margin: "0 0.1px", ...props.style }}
-        contentEditable={false}
-      &gt;
-        {props.children}
-      &lt;/span&gt;
-    &lt;/React.Fragment&gt;
-  );
-};
-</code></pre>
-<h3 id="èç¹ç»æè®¾è®¡">èç¹ç»æè®¾è®¡</h3>
-<p>æä»¬ç<code>Embed</code>èç¹å®éä¸åºè¯¥æ¯<code>InlineVoid</code>èç¹ï¼ä½æ¯å ä¸ºç»ä»¶åå¤ªé¿æä»¥å°±èµ·äºå«åä¸º<code>Embed</code>ï¼èå¨å·ä½å®ç°çæ¶åéå°äºå¤ªå¤äºçé®é¢ï¼æåªå¾ææ¨çº¸ä¸å¾æ¥ç»è§æµï¼ç»ç¥æ­¤äºè¦èº¬è¡ã</p>
-<p>å¨ä¹åæä»¬ä¸ç´é½æ¯å¨ä½¿ç¨å¯ææ¬å¼ææ¥å®ç°åºç¨å±çåè½ï¼èè½ç¶æä¹åºæ¬éè¯»è¿<code>Slate</code>çä»£ç å¹¶ä¸æè¿äºä¸äº<code>pr</code>æ¥è§£å³ä¸äºé®é¢ï¼ä½å¨çæ­£æ³å¯¹ç§å®ç°çæ¶ååç°é®é¢å®å¨æ¯å¤ªå¤ãç°å¨çé®é¢æ¯æä»¬æ¯åå©æµè§å¨æ¬èº«ç<code>ContentEditable</code>æ¥ç»å¶çåæ ä½ç½®ï¼èä¸æ¯éç¨èªç»éåºçæ¹å¼ï¼è¿æ ·å°±å¯¼è´æä»¬å¿é¡»è¦ä¾èµæµè§å¨æ¬èº«å¯¹äºéåºçå®ç°ã</p>
-<p>èæ­¤æ¶å¦ææä»¬æ¯å®ç°<code>InlineVoid</code>èç¹ä¸è¡ååªæè¯¥èç¹æ¶ï¼å°±ä¼å¯¼è´åæ æ æ³æ¾å¨å¨å´çä½ç½®ä¸ï¼è¿è·ææ¬åå®¹çè¡¨ç°æ¯ä¸ä¸è´çãå¨ä¸é¢çä¾å­ä¸­ï¼ä¸­é´çè¡æ¯åä¸å°åå»æ¶åæ è½å¨èç¹æ«å°¾çï¼è½ç¶å¯ä»¥éè¿åå»æèæ¹åé®æ¥å®ç°ï¼ä½æ¯æ­¤æ¶çèç¹å¹¶ä¸æ¯å¨ææ¬èç¹ä¸çï¼ä¸æä»¬çéåºè®¾è®¡ä¸ç¬¦ã</p>
-<pre><code class="language-html">&lt;div contenteditable style="outline: none"&gt;
-  &lt;div data-node&gt;&lt;span data-leaf&gt;&lt;span&gt;123&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;
-  &lt;div data-node&gt;
-    &lt;span data-leaf&gt;&lt;span contenteditable="false"&gt;321&lt;/span&gt;&lt;/span&gt;
-  &lt;/div&gt;
-  &lt;div data-node&gt;&lt;span data-leaf&gt;&lt;span&gt;123&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;
-&lt;/div&gt;
-</code></pre>
-<p>å¯¹äºè¿ä¸ªé®é¢çè§£æ³ï¼æ è®ºæ¯<code>Quill</code>ã<code>Slate</code>é½æ¯å¨<code>Embed</code>èç¹çä¸¤ä¾§æ·»å äºé¶å®½å­ç¬¦<code>&amp;#xFEFF;</code>ç¨ä»¥æ¾ç½®åæ ï¼å½ç¶è¿ä»ä»æ¯å½<code>Embed</code>èç¹å·¦å³æ²¡æææ¬èç¹æ¶çæåµï¼å¦æä¸¤ä¾§æææ¬åä¸éè¦è¿æ ·çç¹æ®å¤çãé£ä¹å¦ææä»¬æ­¤æ¶å¦ææç§<code>Slate</code>çè®¾è®¡ï¼å³æ­¤æ¶å­å¨ä¸ä¸ªå¯éä½ç½®å¯ä»¥æ¾ç½®åæ ä½ä¸ºéåºï¼å³<code>Embed</code>æ¬èº«ä»¥åå·¦å³åæ <code>CARET</code>ï¼é£ä¹æ­¤æ¶å°±ä¼å­å¨ä¸ä¸ªé¶å®½å­ç¬¦ä½ç½®ã</p>
-<pre><code class="language-html">&lt;span data-zero-enter&gt; &lt;/span&gt;
-&lt;span data-zero-embed&gt; &lt;/span&gt;
-&lt;span data-zero-enter&gt; &lt;/span&gt;
-</code></pre>
-<p>èä¸å¨<code>Slate</code>ä¸­çæ°æ®ç»ææ¯ç»è¿<code>normalize</code>ä¹åä¸æ°æ®ç»ææ ¼å¼ä¸¥æ ¼å¯¹åºçï¼ä¹å°±æ¯è¯´å¨ä¸è¾¹è¿ä¸ªä¾å­ä¸­ï¼<code>Slate</code>çè¡ç»æåå®¹å°ä¼ç±»ä¼¼ä¸é¢çåå®¹ãå¶å®è¿æ ·ä¹å°±å¾å®¹æçè§£ä¸ºä»ä¹ç±»ä¼¼äºå¾çè¿ç§<code>Void</code>èç¹ä¹å¿é¡»è¦å­å¨<code>children</code>ç»æäºï¼å ä¸ºå¶å­å¨çé¶å®½å­ç¬¦å¿é¡»è¦å®æ´å¯¹åºæ°æ®ç»æï¼ä¸ç±äºå¶è®¡ç®æ¶ä¼çæ­£è®¡ç®ä¸ºé¶å®½ï¼åæ è½ç¹ä¹å¨é¶å®½å­ç¬¦èç¹ä¸ï¼è¿æ ·åå¯ä»¥ä¿è¯éåºåªä¼å¨é¶å®½èç¹ç<code>0 offset</code>ä¸ã</p>
-<pre><code class="language-js">[
-  { text: "" },
-  { type: "embed", children: [{ text: "" }] },
-  { text: "" }
-]
-</code></pre>
-<p>ä½æ¯æä¸ªéè¦çé®é¢æ¯ï¼é¶å®½å­ç¬¦æ¯å­å¨ä¸¤ä¸ªåæ ä½ç½®çï¼å³<code>0|1</code>ä¸¤ä¸ª<code>offset</code>ï¼é£ä¹æ­¤æ¶æä»¬å°±å­å¨äº<code>4</code>ä¸ªåæ ä½ç½®<code>|||</code>ãèæ­¤æ¶æä»¬ç<code>Model</code>å¨æ­¤æ¶åªæä¸¤ä¸ªèç¹å³<code> \n</code>ï¼é£ä¹å³ä½¿æä»¬ä¸åè®¸åæ æ¾å¨<code>\n</code>åï¼ä¹æè½åå¼ºå¯¹åºä¸ä¸ä¸ªåæ ä½ç½®ï¼èè¿éæéè¦çæ¯æä»¬åè¾¹è¯´çä¸ä¸ªé¶å®½å­ç¬¦å­å¨ä¸¤ä¸ª<code>offset</code>ï¼é£ä¹å¯¹äº<code>toDOMPoint</code>æ¶åä¸ä¸ªåæ ä½ç½®çå¤çå°±ä¼å­å¨ä¸¤ä¸ªæåµã</p>
-<pre><code class="language-html">&lt;span data-zero-enter&gt; |&lt;/span&gt;
-&lt;span data-zero-embed&gt;| &lt;/span&gt;
-&lt;span data-zero-enter&gt; &lt;/span&gt;
-</code></pre>
-<p>èæä»¬æå¼å§è®¾è®¡<code>toDOMPoint</code>çæ¶åä¼åå°åæ æ¾ç½®äºåä¸ä¸ªèç¹çæ«å°¾ï¼é£ä¹æä»¬ç¹å»è¡æ«å°¾çæ¶åï¼æ­¤æ¶çåæ ä¼ä½äº<code>zero-enter</code>èç¹åï¼é£ä¹æ­¤æ¶ç<code>offset</code>æ¯<code>2</code>ï¼èæ­¤æ¶ç±äºæä»¬çéåºæ ¡æ­£å­å¨ï¼è¿éç<code>offset</code>ä¼è¢«æ ¡æ­£ä¸º<code>1</code>ã</p>
-<p>é£ä¹æ­¤æ¶æä»¬çéåºåä¼è¢«æ ¡æ­£ä¸ºç¬¬ä¸ä¸ª<code>data-zero-enter</code>èç¹ï¼ä¸<code>offset</code>çå¼ä¸º<code>1</code>ï¼é£ä¹æ­¤æ¶æä»¬æ¬åºè¯¥å¸ææ¾ç½®äºæåä¸ä¸ª<code>data-zero-enter</code>èç¹ä¸çåæ ï¼ç°å¨å´è¢«æ ¡æ­£å°é¦ä¸ªèç¹ä¸äºï¼è¿éçæ°æ®å¹¶éæä»¬å¸æçéåºä½ç½®ã</p>
-<pre><code class="language-html">&lt;span data-zero-enter&gt; |&lt;/span&gt;
-&lt;span data-zero-embed&gt; &lt;/span&gt;
-&lt;span data-zero-enter&gt; &lt;/span&gt;
-</code></pre>
-<p>é£ä¹åè®¾æä»¬æå¼å§ä¸å°<code>offset</code>ç<code>2</code>å¼æ ¡æ­£ä¸º<code>1</code>çè¯ï¼æ­¤æ¶æä»¬çéåºåä¼è¢«è®¾ç½®å°<code>data-zero-embed</code>èç¹ç<code>offset -&gt; 1</code>ä½ç½®ä¸ï¼ä¾ç¶ä¸æ¯æä»¬å¸æçåæ ä½ç½®ãå æ­¤è¿éä¾ç¶ä¸æ¯æ­£ç¡®çéåºä½ç½®ï¼è¿æ ·ä¾ç¶éè¦å­å¨é¢å¤æ ¡æ­£çæåµã</p>
-<pre><code class="language-html">&lt;span data-zero-enter&gt; &lt;/span&gt;
-&lt;span data-zero-embed&gt; |&lt;/span&gt;
-&lt;span data-zero-enter&gt; &lt;/span&gt;
-</code></pre>
-<p>é£ä¹è¿éå¦ææ¹é èµ·æ¥å¯è½å­å¨ä¸å°é®é¢ï¼ä¸»è¦æ¯è¿éå­å¨äºä¸¤ä¸ªèç¹ççªåï¼é£ä¹æä»¬å¦ææ¢ä¸ªæè·¯åå°é¶å®½å­ç¬¦çèç¹ï¼å³å»æç¬¬ä¸ä¸ªé¶å®½å­ç¬¦èç¹ãé£ä¹æä»¬è¿æ ·å°±æ æ³ä¿æä¸ä¸ªéåºç¶æäºï¼èå¦æå¸æ<code>zero-embed</code>ç<code>0 offset</code>ä¸ºå·¦åæ ï¼<code>offset 1</code>ä¸ºåµå¥åå®¹çéä¸­ææåæ¯ä¸å®¹æå®ç°çï¼å ä¸ºåæ æ¬èº«ä¸è½æ¯å·¦åºç°å³æ¶å¤±çç¶æï¼è¿ééè¦æ ·å¼çé¢å¤å¤çæå¯ä»¥ã</p>
-<p>é£ä¹æ ¹æ®ä¸è¿°çé®é¢ï¼<code>data-zero-embed</code>èç¹åä¼æ¯æä»¬è¦å¤ççå·¦åæ ï¼å³åæ åä¾ç¶æ¯<code>data-zero-enter</code>èç¹ï¼å·¦åæ çå¤çåéè¦è®©å³ä¾§ç<code>Embed</code>åå®¹å­å¨<code>margin</code>æ ·å¼ãé£ä¹å¨é»è®¤æåµä¸ï¼æ­¤æ¶æä»¬å¨æ ¡æ­£<code>\n</code>èç¹åçéåº<code>offset</code>ä¸º<code>1</code>ï¼é»è®¤çéåºä½ç½®åå¦ä¸æç¤ºã</p>
-<pre><code class="language-html">&lt;span data-zero-embed&gt; |&lt;/span&gt;
-&lt;span data-zero-enter&gt; &lt;/span&gt;
-</code></pre>
-<p>é£ä¹è¿éä¾ç¶ä¼æé®é¢ï¼æä»¬ç¹å»è¡æ«å°¾æ¶ï¼æ­¤æ¶çéåºåä¼è¢«æµè§å¨è½¬ç§»å°èç¹åæ å·¦ä¾§çä½ç½®ä¸ï¼è¿éçæææ¾ç¶æ¯ä¸åéçãå ä¸ºè¿æ ·çè¯æä»¬æ æ³èç¦å°è¡æ«ï¼å æ­¤è¿éæä»¬éè¦ä¸º<code>toDOMPoint</code>è®¾ç½®é¢å¤çå¤çé»è¾ï¼å³åæ¶äºé»è®¤ç<code>offset</code>ä¼åé»è¾ï¼èæ¯éç¨<code>node</code>ä¼åé»è¾ãå¨<code>data-zero-embed</code>èç¹ä¸<code>offset</code>ä¸º<code>1</code>æ¶ï¼ä¼åèç¦å°åç»­ç<code>data-zero-enter</code>èç¹<code>offset -&gt; 0</code>ä¸ã</p>
-<pre><code class="language-js">const nodeOffset = Math.max(offset - start, 0);
-const nextLeaf = leaves[i + 1];
-// CASE1: å¯¹åä¸ªåæ ä½ç½®, ä¸å­å¨ä¸¤ä¸ªèç¹ç¸é»æ¶, å®éä¸æ¯å­å¨ä¸¤ç§è¡¨è¾¾
-// å³ &lt;s&gt;1|&lt;/s&gt;&lt;s&gt;1&lt;/s&gt; / &lt;s&gt;1&lt;/s&gt;&lt;s&gt;|1&lt;/s&gt;
-// å½åè®¡ç®æ¹æ³çé»è®¤è¡ä¸ºæ¯ 1, è Embed èç¹å¨æ«å°¾æ¶åéè¦é¢å¤çé¶å®½å­ç¬¦æ¾ç½®åæ 
-// å¦æå½åèç¹æ¯ Embed èç¹, å¹¶ä¸ offset ä¸º 1, å¹¶ä¸å­å¨ä¸ä¸ä¸ªèç¹æ¶
-// éè¦å°ç¦ç¹è½¬ç§»å°ä¸ä¸ä¸ªèç¹, å¹¶ä¸ offset ä¸º 0
-if (
-  leaf.hasAttribute(ZERO_EMBED_KEY) &amp;&amp;
-  nodeOffset === 1 &amp;&amp;
-  nextLeaf &amp;&amp;
-  nextLeaf.hasAttribute(ZERO_SPACE_KEY)
-) {
-  return { node: nextLeaf, offset: 0 };
-}
-</code></pre>
-<p>è¿éå®éä¸è¿å­å¨é®é¢ï¼å¦æåç»­çèç¹æ¯ææ¬èç¹ï¼ä¼ä¾ç¶å¯¼è´æ æ³æ¾ç½®åæ ï¼å æ­¤è¿éå®éä¸åªéè¦å¤æ­<code>nextLeaf</code>å­å¨å³éè¦ç§»å¨éåºä½ç½®ãèæ­¤æ¶ä¾ç¶å­å¨é®é¢ï¼å ä¸ºåèç¹ä¼å­å¨ä¸¤ä¸ª<code>offset</code>ä½ç½®ï¼æä»¥æ­¤æ¶æä»¬è¿æ¯éè¦åæ ¡æ­£<code>toModelPoint</code>çä½ç½®ï¼å³å¦æåæ ä½äº<code>data-zero-embed</code>èç¹åæ¶, éè¦å°å¶ä¿®æ­£ä¸ºèç¹åã</p>
-<pre><code class="language-js">// Case 4: åæ ä½äº data-zero-embed èç¹åæ¶, éè¦å°å¶ä¿®æ­£ä¸ºèç¹å
-// è¥ä¸æ ¡æ­£ä¼æºå¸¦ DOM-Point CASE1 çé¶éåºä½ç½®, æä¸å·¦é®æ æ³æ­£å¸¸ç§»å¨åæ 
-// [embed[cursor]]\n =&gt; [[cursor]embed]\n
-const isEmbedZero = isEmbedZeroNode(node);
-if (isEmbedZero &amp;&amp; offset) {
-  return new Point(lineIndex, leafOffset - 1);
-}
-</code></pre>
-<p>é£ä¹æ­¤æ¶åä¼åºç°æ°çé®é¢ï¼å½åæ ä½äºèç¹å·¦æ¶ï¼ä¼å¯¼è´æä»¬æå³é®æ æ³ç§»å¨åæ ï¼å ä¸ºæ­¤æ¶çéåºä¼è¢«ä¸è¿°çé»è¾æ ¡æ­£ååæ¬çä½ç½®ãå æ­¤æä»¬ä¾ç¶éè¦å¨<code>onKeyDown</code>äºä»¶ä¸­åæ§å¤çè¿ä¸ªé®é¢ï¼å½éåºä½äº<code>data-zero-embed</code>èç¹æ¶ï¼æä¸å³é®åä¸»å¨è°æ´éåºã</p>
-<pre><code class="language-js">const sel = getStaticSelection();
-if (rightArrow &amp;&amp; sel &amp;&amp; isEmbedZeroNode(sel.startContainer)) {
-  event.preventDefault();
-  const newFocus = new Point(focus.line, focus.offset + 1);
-  const isBackward = event.shiftKey &amp;&amp; range.isCollapsed ? false : range.isBackward;
-  const newAnchor = event.shiftKey ? anchor : newFocus.clone();
-  this.set(new Range(newAnchor, newFocus, isBackward), true);
-  return void 0;
-}
-</code></pre>
-<p>è½ç¶çèµ·æ¥é®é¢é½è§£å³äºï¼ä½æ¯<code>DOM</code>ç<code>normalize</code>é¢ç¹æä½å´å¸¦æ¥äºä¸ä¸ªéæ¦çé®é¢ï¼å½è¡ä¸­ä»å­å¨<code>Embed</code>èç¹æ¶ï¼æä»¬æ æ³ç¨é¼ æ ææ½éåºæ¥éä¸­è¯¥èç¹ï¼çè³è¿ä¸ªæä½ä¼è§¦åæä»¬é¢è®¾çéåº<code>limit</code>éè¯¯ï¼èä¸å¨æ§å¶å°çéåºåæ¢æå°éå¸¸é¢ç¹ã</p>
-<p>è¿ä¸ªé®é¢åºè¯¥ç®æ¯åæ§çéåºåéåæ§çæéé æçé®é¢ï¼æä»¬æ æ³æ§å¶æµè§å¨çæéï¼é£ä¹å°±åªè½å°½å¯è½åå°åæ§çè¡ä¸ºãå æ­¤è¿éæä»¬éè¦é¿åå¨ç¨æ·ææ½çæ¶åä¸»å¨è®¾ç½®éåºï¼ä»¥é¿åææ­æéçè¡ä¸ºï¼åæ¶è¿éè¦æ³¨æè¾å¥çæåµä¸å³ä½¿æä¸é¼ æ ä½ä»ç¶éè¦æ´æ°<code>DOM</code>éåºï¼ä¸å¨é¼ æ æ¾å¼æ¶åæ ¡åä¸æ¬¡ã</p>
-<pre><code class="language-js">// æä¸é¼ æ çæåµä¸ä¸æ´æ°éåº, è force çæåµåä¾å¤
-// è¥æ»æ¯æ´æ°éåº, åä¼å¯¼è´ç¬è¡ç Embed èç¹æ æ³éä¸­, éè¦éåæ§
-// è¥æ¯æ²¡æ force çè°åº¦æ§å¶, åå¨æä¸é¼ æ ä¸è¾å¥æ¶ä¼å¯¼è´éåº DOM æ»ç
-if (!force &amp;&amp; this.editor.state.get(EDITOR_STATE.MOUSE_DOWN)) {
-  return false;
-}
-</code></pre>
-<h3 id="éåºè¡ä¸º">éåºè¡ä¸º</h3>
-<p>å¨<code>Slate</code>ä¸­ç<code>inline</code>èç¹æ¯å¨ç©ºèç¹åæ¾ç½®é¶å®½å­ç¬¦ï¼ä»¥æ­¤æ¥å®ç°èç¹æ¬èº«çéä¸­ç¶æãèå¦æç¬å ä¸è¡çæ¶åï¼ååé½ä¼çæé¶å®½å­ç¬¦æ¥æ¾ç½®åæ ãæä»¬æ¬èº«çèç¹æ¯ä¸ä¼å­å¨é¶å®½å­ç¬¦æ¥éä¸­æ¬èº«èç¹çï¼åé¨èªç¶ä¸ä¼å­å¨é¶å®½å­ç¬¦ï¼å¤é¨çé¶å®½å­ç¬¦åæ¯ç¨æ¥æ¾ç½®åæ ï¼è¿é½æ¯ç¬¦ååèªçè¯­ä¹è®¾è®¡çã</p>
-<p>å½ææ½éåºçæ¶åï¼æ­¤æ¶å¦ææ²¡ææè¿<code>Embed</code>èç¹ï¼é£ä¹æµè§å¨éåºçæ¾ç½®åæ¯<code>contenteditable="false"</code>çèç¹ãé£ä¹ä»ä¸è¿°å°±è½å¤çåºæ¥ï¼å¨<code>Slate</code>ä¸­æ¥æ¾èç¹çæ¶åï¼æ¯åºè¯¥æ­£å¸¸ååé¨æ¥æ¾ï¼èæä»¬å®éä¸åºè¯¥æ¥æ¾å¹³çº§çèç¹ï¼å æ­¤è¿éçå®ç°æ¯æå·®å¼çãå½ç¶å¦æéåºè½ç¹å¨<code>data-leaf</code>èç¹ä¸çè¯ï¼ååæ¥æ¾èªç¶æ¯æ²¡æé®é¢çã</p>
-<pre><code class="language-js">// Slate
-&lt;div data-leaf="true"&gt;
-  &lt;div contenteditable="false"&gt;
-    &lt;ZeroSpace&gt;&lt;/ZeroSpace&gt;
-    &lt;span&gt;Mention&lt;/span&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
-
-// å¹³çº§èç¹
-&lt;div data-leaf="true"&gt;
-  &lt;ZeroSpace&gt;&lt;/ZeroSpace&gt;
-  &lt;div contenteditable="false"&gt;&lt;span&gt;Mention&lt;/span&gt;&lt;/div&gt;
-&lt;/div&gt;
-</code></pre>
-<p>ä»åè¾¹<code>Embed</code>èç¹çè®¾è®¡ä¸­ï¼æ¯å°åç½®çé¶å®½å­ç¬¦<code>0/1</code>ä¸¤ä¸ªä½ç½®ä½ä¸ºåæ çæ¾ç½®ä½ç½®ï¼è<code>offset 1</code>çä½ç½®ä¼è¢«å®éç§»å¨å°åä¸ä¸ªèç¹ç<code>offset 0</code>ä¸ï¼é£ä¹å®éä¸å¦ææ­¤æ¶æä»¬ä»ä½¿ç¨è¯¥åç§»æ¹æ¡èä¸æ ¡æ­£<code>ModelPoint</code>çè¯ï¼çè®ºä¸èè¨æ¯å¯è¡çã</p>
-<p>ç¶èå¨å®éçæä½ä¸­ï¼æä»¬åç°å¦æä¸¤ä¸ªéåºèç¹ä¹é´ä¸è¿ç»­çè¯ï¼æå·¦é®ä¼å¯¼è´éåºä»<code>node2 offset 0</code>ç§»å¨å°<code>node1 offset 1</code>çä½ç½®ï¼èå¦æè¿ç»­çè¯åæ¯ä¼æ­£å¸¸ç§»å¨å°<code>node1 offset len-1</code>çä½ç½®ã</p>
-<pre><code class="language-html">&lt;div contenteditable style="outline: none"&gt;
-  &lt;div&gt;&lt;span id="$1"&gt;123&lt;/span&gt;&lt;span contenteditable="false"&gt;Embed&lt;/span&gt;&lt;span id="$2"&gt;456&lt;/span&gt;&lt;/div&gt;
-  &lt;div&gt;&lt;span id="$3"&gt;123&lt;/span&gt;&lt;span id="$4"&gt;456&lt;/span&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;div&gt;
-  &lt;button id="$5"&gt;Embed&lt;/button&gt;
-  &lt;button id="$6"&gt;Span&lt;/button&gt;
-&lt;/div&gt;
-&lt;script&gt;
-  const sel = window.getSelection();
-  document.addEventListener("selectionchange", () =&gt; {
-    console.log("selection", sel?.anchorNode.parentElement, sel?.focusOffset);
-  });
-  $5.onclick = () =&gt; sel.setBaseAndExtent($2.firstChild, 0, $2.firstChild, 0); 
-  $6.onclick = () =&gt; sel.setBaseAndExtent($4.firstChild, 0, $4.firstChild, 0);
-&lt;/script&gt;
-</code></pre>
-<p>å¨è¿ä¸ªä¾å­ä¸­æ<code>Embed</code>æé®ååæå·¦é®éåºåæ¢ç<code>offset</code>ä¼å¾å°<code>3</code>ï¼èä½¿ç¨<code>Span</code>æé®ååä¼å¾å°<code>2</code>ãèå¦æç´æ¥å°é¶å®½å­ç¬¦èç¹æ¾å°<code>Embed</code>èç¹åçè¯è½ç¶å¯ä»¥è§£å³è¿ä¸ªé®é¢ï¼ä½æ¯è¿æ ·å°±æ æ³å°åæ æ¾ç½®äº<code>Embed</code>èç¹åäºã</p>
-<p>æ­¤æ¶è¿å°±éè¦å¨æåè¾¹åæ¾ä¸ä¸ªé¶å®½å­ç¬¦ï¼è¿æ ·é¢å¤çäº¤äºå¤çæ´æ¯éº»ç¦ï¼ä¸å¨<code>Slate</code>è¿æè¿é¶å®½å­ç¬¦ææ­ä¸­æ<code>IME</code>çè¾å¥é®é¢<code>PR</code>ãå¶å®è¿éçéåºæ å°ä¹æä¸ªæè¶£çé®é¢ï¼åæ ä½äº<code>data-zero-embed</code>èç¹åæ¶, éè¦å°å¶ä¿®æ­£ä¸ºèç¹åã</p>
-<p>é£ä¹æ­¤æ¶æä»¬æå³é®éåºä¼è¢«è¿æ®µ<code>toModelPoint</code>ä¸­çé»è¾éæ°æ å°ååæ¬çä½ç½®ï¼å³<code>L =&gt; L</code>å¹¶æ²¡æååï¼é£ä¹ä¹å°±æ æ³è§¦å<code>Model Sel Change</code>ï¼è<code>DOM</code>éåºåä¼ä»<code>offset 1</code>éæ°è¢«<code>force</code>æ ¡æ­£ä¸º<code>0</code>ã</p>
-<p>é£ä¹å¦ææä»¬å¨æä¸å³é®ä¸»å¨è°æ´éåºçè¯ï¼åä¼ååºå<code>Model Sel Change</code>è¿è<code>UpdateDOM</code>ï¼ç¶ååç±<code>DOM Sel Change</code>æ¥æ ¡æ­£éåºï¼å ä¸ºè¿æ¶åéåºä¸å¨<code>Embed</code>é¶å®½å­ç¬¦ä¸äºï¼å°±ä¸ä¼å½ä¸­æ ¡æ­£é»è¾ï¼å èå¯ä»¥æ­£å¸¸è¿è¡éåºçç§»å¨ã</p>
-<pre><code class="language-js">// CASE2: å½ Embed åç´ åå­å¨åå®¹ä¸åæ ä½äºèç¹æ«æ¶, éè¦æ ¡æ­£å° Embed èç¹ä¸
-// &lt;s&gt;1|&lt;/s&gt;&lt;e&gt; &lt;/e&gt; =&gt; &lt;s&gt;1&lt;/s&gt;&lt;e&gt;| &lt;/e&gt;
-if (nodeOffset === len &amp;&amp; nextLeaf &amp;&amp; nextLeaf.hasAttribute(ZERO_EMBED_KEY)) {
-  return { node: nextLeaf, offset: 0 };
-}
-// [[cursor]embed]\n =&gt; right =&gt; [embed[cursor]]\n =&gt; [[cursor]embed]\n
-// SET(1) =&gt; [embed[cursor]]\n =&gt; [embed][[cursor]\n] =&gt; SET(1) =&gt; EQUAL
-</code></pre>
-<p>å¯ä»¥çåº<code>Embed</code>éåºè¡ä¸ºéè¦æ³¨æçç¹è¿å¤ï¼å¨åè¾¹çè®¾è®¡ä¸­è½ç¶åºæ¬æ¯å¯ä»¥å®ç°ï¼ä½æ¯å¨å®éä½¿ç¨è¿ç¨ä¸­ä¼åºç°ä¸äºé®é¢ãä¾å¦å¨ä»å·¦å°å³éæ©æ¶ï¼è¥æ¯é¼ æ ææ½å°<code>Embed</code>èç¹åå·¦æ¶ï¼æµè§å¨éåºå¹¶æªè¦çèç¹ï¼ç¶èæ¬èµ·é¼ æ æ¶çè®¡ç®ä¼å°å¶è¦çæ´ä¸ªèç¹ï¼è¿å±äºæ¯éåºä¸åæ­¥çé®é¢ã</p>
-<p>é æè¿ä¸ªé®é¢çåå æ¯ï¼æä»¬çéåºæ¨¡åè®¾è®¡æ¯å·¦ä¾§çé¶å®½èç¹è®¾è®¡ï¼å ä¸ºæ¾ç½®äºå³ä¾§çè¯å¯è½ä¼å¯¼è´è¾å¥æ³çé®é¢ï¼å¯¹äºç±»ä¼¼çé®é¢å¨<code>slate#5685</code>ä»¥å<code>slate#5736</code>ä¸­é½ææå°è¿ãå æ­¤å¨æä»¬çç¼è¾å¨å®ç°ä¸­ï¼ä¼ç´æ¥å°å¶æ¾ç½®äºåµå¥èç¹çå·¦ä¾§ã</p>
-<pre><code class="language-js">&lt;span data-leaf="true"&gt;
-  &lt;span data-zero-space="true" data-zero-embed="true"&gt;&amp;ZeroWidthSpace;&lt;/span&gt;
-  &lt;span contenteditable="false" data-void="true"&gt;{/** xxx */}&lt;/span&gt;
-&lt;/span&gt;
-</code></pre>
-<p>å æ­¤å¨ååçå®ç°ä¸­ï¼è½ç¶æ´ä¸ªéåºçè¡ä¸ºæ¯æ´å¾åäºåå·¦çèç¹ï¼ä½æ¯å¨<code>Embed</code>èç¹ä¸çå³ä¾§éåºåæ¯åå³çï¼è¿æ¯å ä¸ºè¿éçè®¾è®¡ä¼å¯¼è´æµè§å¨çåæ å§ç»æ¯å±ç¤ºå¨å·¦ä¾§çï¼è¿é¨åå®ç°åä¾æ§ä¿æç°ç¶ãè¯´èµ·æ¥<code>slate</code>çå®ç°æ¯é¢å¤å¢å äºé¶å®½èç¹ä½ä¸ºéåºï¼ä¸ä¼å­å¨ç±»ä¼¼é®é¢ã</p>
-<pre><code class="language-js">// éåºåæ¢è§æµ
-document.onselectionchange = () =&gt; {
-  const sel = document.getSelection();
-  console.log(sel.anchorNode, sel.anchorOffset, sel.focusNode, sel.focusOffset);
-};
-</code></pre>
-<p>æ­¤å¤çä¿®æ¹ä¸»è¦æ¯å¯¹äº<code>Case 4</code>åäºå¢æ·»ï¼ä¸»ä½ååæ¯è½äºé¶å®½å­ç¬¦æ¶ï¼æ è®º<code>offset</code>æ¯<code>0</code>è¿æ¯<code>1</code>ï¼åæ é½ä¼ç½®äºèç¹åï¼å½ç¶ç±äº<code>offset</code>ä¸º<code>0</code>æ¶æ¬èº«å°±æ¯å·¦éåºæ éç¹æ®å¤çã<code>data-void</code>ä½ç½®è¡¨ç¤ºéåºéè¦ç½®äºèç¹å, ç±æ­¤è½å¤å¯¹é½æµè§å¨çå®ç°ã</p>
-<p>å¹¶ä¸å®ç°äº<code>Case 5</code>çæåµï¼ç±äº<code>Embed</code>èç¹æ¯ä¸ä¼å®ç°<code>user-select: none</code>çæåµï¼å æ­¤å¨ææ½éåºæ¶ï¼<code>offset</code>å¯è½ä¼è¶çåºç°åç§»é®é¢ãæ­¤å¤ï¼è¥æ¯éæå çéåº, åéè¦å¤æ­æ¯å¦æ¯<code>End</code>èç¹å³å®è¾¹ç, å°æ´ä¸ª<code>Embed</code>éåºéä¸­ï¼è¿ééè¦ä¼ éç¸å³ç¯å¢ç¶æã</p>
-<pre><code class="language-js">// Case 4: åæ ä½äº data-zero-embed èç¹ä¸æ¶, éè¦å°å¶ä¿®æ­£ä¸ºèç¹å
-// è¥ä¸æ ¡æ­£ä¼æºå¸¦ DOM-Point CASE1 çé¶éåºä½ç½®, æä¸å·¦é®æ æ³æ­£å¸¸ç§»å¨åæ 
-// ä¸»ä½ååæ¯è½äºé¶å®½å­ç¬¦æ¶ï¼åæ ç½®äºèç¹å, `div`ä½ç½®è¡¨ç¤ºèç¹å, å¯¹é½æµè§å¨
-// [[z][caret]]\n =&gt; [[caret][z]]\n
-// [[z][div[caret]]][123]\n =&gt; [[z][div]][[caret]123]\n
-// Case 5: åæ å¨ Embed èç¹åæ¶, åæ å¯è½ä¼å¨å¶åé¨ææ¬ä¸(offset å¯è½ &gt; 1)
-// æ è®ºæ¯éåºæå ä¸å¦, è¥ä¸æ ¡æ­£ä¼å¯¼è´éåºè¶ç, ä¼å¯¼è´ææ½éåºæ¶åºç°åç§»é®é¢
-// è¥æ¯éæå çéåº, åéè¦å¤æ­æ¯å¦æ¯ End èç¹å³å®è¾¹ç, å°æ´ä¸ª Embed éåºéä¸­
-// [embed[caret &gt; 1]] =&gt; [embed[caret = 1]]
-if (leafModel &amp;&amp; leafModel.embed &amp;&amp; offset &gt;= 1) {
-  const isEmbedZeroContainer = isEmbedZeroNode(nodeContainer);
-  if (isEmbedZeroContainer &amp;&amp; nodeOffset) {
-    return new Point(lineIndex, leafModel.offset);
-  }
-  if (!isCollapsed &amp;&amp; isDOMText(nodeContainer)) {
-    return new Point(lineIndex, leafModel.offset + (isEndNode ? 1 : 0));
-  }
-  return new Point(lineIndex, leafModel.offset + 1);
-}
-</code></pre>
-<p>æ­¤å¤ï¼è¥æ¯å­å¨è¿ç»­ç<code>Embed</code>èç¹æ¶ï¼æµè§å¨ä¸å»æ¶ä¼å¯¼è´ä»è½éä¸­è¦çé¦ä¸ªèç¹ï¼åç»­èç¹æ æ³è¦çï¼éåºåæ¢æ¶æ¿å°çæ¯<code>Embed div</code>èç¹ãå æ­¤ï¼æä»¬éè¦é¢å¤å¤æ­ä¸å»æ¶çéåºè¡ä¸ºï¼ç´æ¥ä¸»å¨éæ©æ´è¡ï¼èä¸éè¦ä¾èµæµè§å¨çéåºåæ¢ã</p>
-<pre><code class="language-js">protected onTripleClick(event: MouseEvent) {
-  if (event.detail !== 3 || !this.current) {
-    return void 0;
-  }
-  const line = this.current.start.line;
-  const state = this.editor.state.block.getLine(line);
-  if (!state) {
-    return void 0;
-  }
-  const range = Range.fromTuple([state.index, 0], [state.index, state.length - 1]);
-  this.set(range, true);
-  event.preventDefault();
-}
-</code></pre>
-<h3 id="è¾å¥æ³å¤ç-2">è¾å¥æ³å¤ç</h3>
-<p>å¨<code>Embed</code>èç¹ä¸­ï¼è¾å¥æ³åæ ·ä¼å¸¦æ¥é¢å¤çå½±åï¼é¤äºä¸è¿°æå°çè¾å¥æ³ç¸å³é®é¢æ¶ï¼è¿æä¸ä¸ªé¢å¤éè¦è§£å³ç<code>Case</code>ãå½ææ¬ä»æå¨åè¡ï¼ä¸ä»å­å¨ <code>Embed</code>èç¹æ¶, å¨èç¹æåè¾å¥ä¼å¯¼è´åå®¹éå¤ï¼å³<code>IME</code>å¯¼è´è¾å¥çåå®¹æ»çå¨é¶å®½å­ç¬¦ä¸ã</p>
-<pre><code>[Zero&lt;IME Text&gt;][&lt;IME Text&gt;]\n
-</code></pre>
-<p>å¨è¿ç§æåµä¸ï¼å°±éè¦å¨<code>IME</code>è¾å¥å®æåï¼éæ°æ ¡æ­£é¶å®½å­ç¬¦ä¸çææ¬åå®¹ãç±äºæä»¬æ¬èº«å°±æºå¸¦äºè¡åå®¹çææ¬æ ¡æ­£ï¼æä»¥åªéè¦å¨<code>IME</code>è¾å¥å®æåï¼éæ°æ ¡æ­£é¶å®½å­ç¬¦ä¸çææ¬åå®¹å³å¯ã</p>
-<pre><code class="language-js">const isZeroNode = !!zeroNode;
-const textNode = isZeroNode ? zeroNode : LEAF_TO_TEXT.get(leaf);
-const text = isZeroNode ? ZERO_SYMBOL : leaf.getText();
-// å¦æææ¬åå®¹ä¸åæ³, éå¸¸æ¯ç±äºè¾å¥çè DOM, éè¦çº æ­£åå®¹
-if (isDOMText(textNode.firstChild)) {
-  // Case1: [inline-code][caret][text] IME ä¼å¯¼è´æ¨¡å/ææ¬å·®å¼
-  // Case3: å¨åè¡ä»å­å¨ Embed èç¹æ¶, å¨èç¹æåè¾å¥ä¼å¯¼è´åå®¹éå¤
-  if (textNode.firstChild.nodeValue === text) return false;
-  textNode.firstChild.nodeValue = text;
-} 
-</code></pre>
-<h2 id="æ»ç»">æ»ç»</h2>
-<p>å¨è¿éæä»¬è®¨è®ºäºæ¯ç¼è¾èç¹çç»ä»¶é¢è®¾ï¼åæ¬é¶å®½å­ç¬¦ã<code>Embed</code>èç¹ã<code>Void</code>èç¹ç­ãä¸»è¦æ¯ä¸ºç¼è¾å¨çæä»¶æ©å±æä¾é¢è®¾çç»ä»¶ï¼å¨è¿äºç»ä»¶åå­å¨ä¸äºé»è®¤çè¡ä¸ºï¼å¹¶ä¸åæ ·é¢è®¾äºé¨å<code>DOM</code>ç»æï¼å¤çäºå¤§ééåºäº¤äºä»¥å<code>IME</code>è¾å¥æ³é æçé®é¢ã</p>
-<p>é£ä¹æ¥ä¸æ¥æä»¬éè¦è®¨è®ºçæ¯éç¼è¾èç¹åå®¹æ¸²æï¼ä¹å°±æ¯å ä½èç¹ãåªè¯»æ¨¡å¼ãæä»¶æ¨¡å¼ãå¤é¨èç¹æè½½ç­ãè¿äºèç¹ç±»åå¨ç¼è¾å¨çè®¾è®¡ä¸­å¤äºå¸¸è§çå¤é¨èç¹ï¼ä¾å¦å ä½ç¬¦å·ãå¼¹åºå±ç­ï¼å¹¶ä¸ä¼åç¼è¾èç¹é£æ ·éè¦å¤çéåºäº¤äºä»¥å<code>IME</code>è¾å¥æ³é æçé®é¢ã</p>
-<h2 id="æ¯æ¥ä¸é¢">æ¯æ¥ä¸é¢</h2>
-<ul>
-<li><a href="https://github.com/WindRunnerMax/EveryDay" target="_blank" rel="noopener nofollow">https://github.com/WindRunnerMax/EveryDay</a></li>
-</ul>
-<h2 id="åè">åè</h2>
-<ul>
-<li><a href="https://18.react.dev/" target="_blank" rel="noopener nofollow">https://18.react.dev/</a></li>
-<li><a href="https://www.cnblogs.com/goloving/p/16018529.html" target="_blank">https://www.cnblogs.com/goloving/p/16018529.html</a></li>
-<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/CSS/Guides/Text/Whitespace" target="_blank" rel="noopener nofollow">https://developer.mozilla.org/zh-CN/docs/Web/CSS/Guides/Text/Whitespace</a></li>
-</ul>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-03-23 10:47">2026-03-23 10:46</span>&nbsp;
-<a href="https://www.cnblogs.com/WindrunnerMax">WindRunnerMax</a>&nbsp;
-éè¯»(<span id="post_view_count">17</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19756263);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19756263', targetLink: 'https://www.cnblogs.com/WindrunnerMax/p/19756263', title: 'ä»é¶å®ç°å¯ææ¬ç¼è¾å¨#12-Reactå¯ç¼è¾èç¹çç»ä»¶é¢è®¾' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
     <title><![CDATA[ C++ vs .NET æ°ç»åå°åè½¬å®æµï¼å°æ°ç» C++ ç¢¾åï¼å¤§æ°ç» .NET åæï¼ ]]></title>
     <link>https://www.cnblogs.com/sdcb/p/19756067/cpp-csharp-array-reverse</link>
     <guid>09995f02af4bee2963a1669aa2237a31</guid>
@@ -1995,8 +1593,8 @@ LaunchCount=1  UnrollFactor=1  WarmupCount=3
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-03-23 10:19">2026-03-23 10:18</span>&nbsp;
 <a href="https://www.cnblogs.com/sdcb">.NETéªæä½</a>&nbsp;
-éè¯»(<span id="post_view_count">122</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
+éè¯»(<span id="post_view_count">233</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">3</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19756067);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19756067', targetLink: 'https://www.cnblogs.com/sdcb/p/19756067/cpp-csharp-array-reverse', title: 'C++ vs .NET æ°ç»åå°åè½¬å®æµï¼å°æ°ç» C++ ç¢¾åï¼å¤§æ°ç» .NET åæï¼' })">ä¸¾æ¥</a>
@@ -2258,8 +1856,8 @@ docker compose logs -f openclaw-core
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-03-23 10:03">2026-03-23 10:03</span>&nbsp;
 <a href="https://www.cnblogs.com/yangyibl">yangyiBL</a>&nbsp;
-éè¯»(<span id="post_view_count">89</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">167</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19755963);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19755963', targetLink: 'https://www.cnblogs.com/yangyibl/p/19755963', title: 'ãOpenClaw (Dockeræå·¥é¨ç½²ç) ç»æé¿åä¸å®ææåã' })">ä¸¾æ¥</a>
@@ -2268,14 +1866,14 @@ docker compose logs -f openclaw-core
     </description>
     </item>
 <item>
-    <title><![CDATA[ æè¯äºåç§å»é¤ Gemini æ°´å°çæ¹æ³ï¼æ´çæä¸ç¯å®ç¨å¯¹æ¯ ]]></title>
-    <link>https://www.cnblogs.com/hefty/p/19755939</link>
-    <guid>ca352cb6ab9481a1344f0030789d05d2</guid>
+    <title><![CDATA[ ä¸å¤©ä¸ä¸ªPythonåºï¼oauthlib - è½»æ¾æå»ºOAuthå®¢æ·ç«¯åæå¡å¨ ]]></title>
+    <link>https://www.cnblogs.com/min2k/p/19757868</link>
+    <guid>a52de5a870d6d17dda5dae15a8c2bfbf</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/hefty/p/19755939" title="åå¸äº 2026-03-23 09:59">
-    <span role="heading" aria-level="2">æè¯äºåç§å»é¤ Gemini æ°´å°çæ¹æ³ï¼æ´çæä¸ç¯å®ç¨å¯¹æ¯</span>
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/min2k/p/19757868" title="åå¸äº 2026-03-23 14:58">
+    <span role="heading" aria-level="2">ä¸å¤©ä¸ä¸ªPythonåºï¼oauthlib - è½»æ¾æå»ºOAuthå®¢æ·ç«¯åæå¡å¨</span>
     
 
 </a>
@@ -2284,90 +1882,91 @@ docker compose logs -f openclaw-core
             <div class="clear"></div>
             <div class="postBody">
                 <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>å¦æä½ ç¨è¿ Gemini ç Nano Banana çå¾ï¼å¤§æ¦çå·²ç»è§è¿å³ä¸è§é£ä¸ªç½è²åéæçåè§ææ°´å°ã</p>
-<p>é¢è§æ¶é®é¢ä¸å¤§ï¼çæ¿å»åæç« ãå PPTãæ¾äº§åé¡µé¢ï¼è§æå°±å·®å¾å¤ãå¾çæ¬èº«å¯è½å·²ç»å¤ç¨äºï¼ä½é£ä¸ªæ°´å°ä¼ç«å»ææ³¨æåæèµ°ï¼æåæ´å¼ å¾é½æ¾å¾ä¸å¹²åã</p>
-<p><img alt="å¸¦ gemini æ°´å°çå¾ç" width="1028" height="833" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1061857/202603/1061857-20260323094819540-80399963.png" class="lazyload"></p>
-<p>ææè¿æ­£å¥½è¿ç»­è¯äºå ç§å¤çåæ³ï¼æäºéåä¸´æ¶ææ¥ï¼æäºéåé¿æå·¥ä½æµã</p>
-<h2 id="tldr">TLDR</h2>
+<h1 id="oauthlib---è½»æ¾æå»ºoauthå®¢æ·ç«¯åæå¡å¨">oauthlib - è½»æ¾æå»ºOAuthå®¢æ·ç«¯åæå¡å¨</h1>
+<h2 id="ä¸ä»ä¹æ¯oauthlib">ä¸ãä»ä¹æ¯oauthlibï¼</h2>
+<p><strong>oauthlib</strong> æ¯ä¸ä¸ªç¨äºå®ç° OAuth 1.0a, 2.0 å®¢æ·ç«¯åæå¡å¨ç«¯é»è¾ç Python åºã<br>
+å®å¯ä»¥å¸®å©ä½ ï¼</p>
 <ul>
-<li>å¶å°å¤ç 1 å° 2 å¼ å¾ï¼ç¨å¨çº¿ Gemini å»æ°´å°å·¥å·æå¿«ã</li>
-<li>å¯¹éç§æ¯è¾ææï¼ä¼åéæ¬å°å¤çæ Gemini Watermark Cleaner æµè§å¨æä»¶ã</li>
-<li>å¯¹ç»é¢è¾¹ç¼ä¸ææï¼çææ¶çç½åè£åªï¼æç¨³ä¹æçèå­ã</li>
-<li>ä¸è¿½æ±åç´ çº§ä¸è´ï¼åªæ³è¦ä¸å¼ çèµ·æ¥å·®ä¸å¤çæ°å¾ï¼å¯ä»¥ç´æ¥è®©å«ç AI éç»ã</li>
+<li><strong>æå»ºOAuthå®¢æ·ç«¯</strong>: è®©ä½ èªå·±çåºç¨è½å¤å®å¨å°è®¿é®å¶ä»æå¡çåä¿æ¤èµæºã</li>
+<li><strong>æå»ºOAuthæå¡å¨</strong>: åè®¸ç¬¬ä¸æ¹åºç¨å®å¨å°è®¿é®ä½ æå¡çç¨æ·æ°æ®ã</li>
+<li><strong>å¤çå¤æçOAuthåè®®ç»è</strong>: æ½è±¡åäºç­¾åãä»¤çäº¤æ¢ãæææµç¨ç­åºå±æºå¶ã</li>
 </ul>
-<h2 id="ä¸ºä»ä¹æä¼ä¸é¨å¤çè¿ä¸ªæ°´å°">ä¸ºä»ä¹æä¼ä¸é¨å¤çè¿ä¸ªæ°´å°</h2>
-<p>æä¸æ¯è®¾è®¡å¸ï¼å¾å¤éå¾é½æ¯ç´æ¥ç¨ Gemini çæçãå¯¹åææ¯æç« ãèªåªä½åå®¹æèåå°é¡¹ç®é¡µé¢æ¥è¯´ï¼è¿ç§æ¹å¼ç¡®å®çæ¶é´ã</p>
-<p>é®é¢ä¹å¾ç´æ¥ãåªè¦å³ä¸è§å¸¦çé£ä¸ªæ è®°ï¼è¯»èéå¸¸ä¸ç¼å°±ä¼æè¯å°è¿æ¯ AI å¾ãåä¸æ¯è¯´ AI å¾ä¸è½ç¨ï¼èæ¯å®ä¼è®©å¾ççå®æåº¦å¾ä¸æåæ¡£ãåæ¬æ¯æ³è®©åå®¹æ´å®æ´ï¼ç»æåèæâå»ä»·æâå¸¦åºæ¥äºã</p>
-<p>å¦å¤ï¼Gemini çæå¾æ¬èº«å·²ç»å¸¦æ SynthID è¿ç±»éå¼æ è¯ï¼åé¢å¤å ä¸ä¸ªææ¾çå¯è§æ°´å°ï¼æä¸ªäººä¸ç´è§å¾æç¹å¤ä½ãè³å°å¨æå¸¸ç¨çå ä¸ªæ¨¡åéï¼å Gemini è¿æ ·ç´æ¥ææ°´å°æ¾å¨è§ä¸çï¼å¹¶ä¸å¸¸è§ã</p>
-<h2 id="æ¹æ³-1çææ¶ä¸»å¨çç½ä¸è½½åè£åª">æ¹æ³ 1ï¼çææ¶ä¸»å¨çç½ï¼ä¸è½½åè£åª</h2>
-<p>è¿æ¯æç®åï¼ä¹æä¸ä¾èµå·¥å·çä¸ç§ã</p>
-<p>æ¢ç¶æ°´å°åºå®åºç°å¨å³ä¸è§ï¼é£å°±å«ç­çæå®åè¡¥æï¼ç´æ¥å¨æç¤ºè¯éé¢çä¸åâå¯è£æåºåâãæ¯å¦å¯ä»¥å ä¸å¥ï¼å¨å¾çåºé¨é¢çä¸æ¡ 5% å·¦å³ççº¯è²è¾¹æ¡ï¼æå¨åºé¨ä¿çä¸å°æ®µå®å¨çç½ã</p>
-<p>è¿æ ·åçæè·¯å¾æ´ç´ ï¼è®©æ°´å°è½å¨ä½ æ¬æ¥å°±åå¤è£æçä½ç½®ãä¸è½½åéä¾¿ç¨ä¸ä¸ªå¾çç¼è¾å·¥å·æåºè¾¹è£æï¼æ°´å°ä¹å°±ä¸èµ·æ²¡äºã</p>
-<p>è¿ä¸ªæ¹æ³çä¼ç¹æ¯ç¨³å®ãç®åï¼ä¸ä¾èµç¬¬ä¸æ¹æå¡ï¼ä¹æ²¡æéç§é¡¾èãç¼ºç¹åæ ·ææ¾ï¼å®ä¼å½±åæå¾ãå°¤å¶æ¯ä½ æ¬æ¥å°±æä¸»ä½åå¨ç»é¢ä¸æ¹æ¶ï¼è£å®å¯è½ä¼è§å¾ç»é¢æç¹æ¤ã</p>
-<p>å¦æä½ ä¸æ³è®©è¾¹æ¡å¤ªçªåï¼å¯ä»¥è®©æ¨¡åçç½è²æä¸èæ¯æ¥è¿çæµè²è¾¹ï¼èä¸æ¯ä¸æ¡ææ¾çé»è¾¹ï¼åç»­è£åæ¶ä¼èªç¶ä¸ç¹ã</p>
-<p><img alt="çç½è£åªå» gemini æ°´å°" width="1001" height="837" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1061857/202603/1061857-20260323095041130-1493807161.png" class="lazyload"></p>
-<p>éç¨åºæ¯ï¼</p>
+<h2 id="äºåºç¨åºæ¯">äºãåºç¨åºæ¯</h2>
+<p><strong>oauthlib</strong> å¹¿æ³åºç¨äºä»¥ä¸å®éåºæ¯ï¼</p>
 <ul>
-<li>å¯¹æå¾è¦æ±æ²¡é£ä¹èå»</li>
-<li>ä¸æ³ä¸ä¼ å¾çå°ç¬¬ä¸æ¹æå¡</li>
-<li>åªæ¯å¶å°å¤çå å¼ å¾</li>
+<li><strong>æå»ºåç¹ç»å½ (SSO) ç³»ç»</strong>: ä¾å¦ï¼ç¨æ·å¯ä»¥ä½¿ç¨ Google è´¦å·ç»å½ä½ çç½ç«ã</li>
+<li><strong>éæç¬¬ä¸æ¹æå¡</strong>: ä½ çåºç¨éè¦è®¿é®ç¨æ·å¨ FacebookãTwitter ç­å¹³å°ä¸çæ°æ®ã</li>
+<li><strong>æä¾ API æ¥å£ç»å¼åè</strong>: åè®¸å¶ä»å¼åèæå»ºåºç¨æ¥ä¸ä½ çæå¡è¿è¡äº¤äºã</li>
 </ul>
-<h2 id="æ¹æ³-2ç´æ¥ç¨å¨çº¿å»æ°´å°å·¥å·">æ¹æ³ 2ï¼ç´æ¥ç¨å¨çº¿å»æ°´å°å·¥å·</h2>
-<p>è¿æ¯æå¹³æ¶æå¸¸ç¨çä¸ç±»æ¹æ¡ã</p>
-<p>ç°å¨ç½ä¸å·²ç»æä¸äºä¸é¨å¤ç Gemini æ°´å°çå·¥å·ï¼æä½é½æ¯è¾ç´æ¥ï¼ä¸ä¼ å¾çï¼è¯å«å³ä¸è§åºåï¼ä¿®è¡¥åå¯¼åºãå¯¹å¤§å¤æ°äººæ¥è¯´ï¼è¿æ¡è·¯é¨æ§æä½ï¼å ä¸ºä¸éè¦ä¼ä¿®å¾ï¼ä¹ä¸ç¨èªå·±ç ç©¶åæ°ã</p>
-<p>å®æå¤§çä¼å¿å°±æ¯å¿«ãçæ­£å½±åä½éªçï¼å¶å®ä¸æ¯âä¼ä¸ä¼å»âï¼èæ¯âææ²¡æèå¿æ¯æ¬¡é½æå¨å¤çâãå¨çº¿å·¥å·çä»·å¼å°±å¨è¿éï¼çæ­¥éª¤ã</p>
-<p>ä¸è¿è¿éæä¸ªå¾ç°å®çé®é¢ï¼éç§ãå¾å¤å·¥å·ä¼åæå¾çä¼ å°æå¡å¨åå¤çãå¦æå¾çéæå®¢æ·ä¿¡æ¯ãå°æªå¬å¼çäº§åæªå¾ï¼æèä½ åçº¯ä¸æ³æåå¾äº¤ç»ç¬¬ä¸æ¹ï¼é£å°±å¾çæ¸æ¥å®å°åºæ¯æ¬å°å¤çè¿æ¯æå¡ç«¯å¤çã</p>
-<p>æåæ¥åºå®ç¨çæ¯ Gemini Watermark Cleanerï¼å ä¸ºå®æ¯ææ¬å°å¤çï¼è³å°å¨æèªå·±çä½¿ç¨åºæ¯éæ´å®å¿ä¸äºãå®çå¨çº¿é¡µé¢æ¯ <a href="https://geminiwatermarkcleaner.com/zh-CN/gemini-watermark-remover.html" target="_blank" rel="noopener nofollow">geminiwatermarkcleaner.com/zh-CN/gemini-watermark-remover.html</a>ï¼æ¥å¸¸å°éå¤çåºæ¬å¤ç¨ã</p>
-<p>å®çæè·¯ä¹ä¸å¤æï¼åå®ä½æ°´å°åºåï¼åå°½éç¨å¨å´åç´ æè¿åè¡¥å¹³ãå¯¹çº¯è²èæ¯ãæ¨¡ç³èæ¯ãæ¸åèæ¯ï¼ææé½æ¯è¾ç¨³ã</p>
-<p><img alt="å¨çº¿å·¥å·å» Gemini æ°´å°" width="1392" height="855" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1061857/202603/1061857-20260323095236256-1432087724.png" class="lazyload"></p>
-<p>å¦æä½ æ¬èº«å°±å¨æµè§å¨éé¢ç¹ç¨ Geminiï¼æå¶å®æ´å»ºè®®ç´æ¥ä¸æä»¶ãåå å¾ç®åï¼çä¸æ¬¡æå·¥ä¸ä¼ ä¸è½½ãå¾çå¨ä¸è½½ç¯èå°±å¤çæï¼åºæ¬ä¸ä¼å½±åä½ åæ¥çå·¥ä½æµï¼è¿æ¯æææ¨èçç¨æ³ã</p>
-<p>éç¨åºæ¯ï¼</p>
-<ul>
-<li>æ³ç¨æçæ¶é´çåæ³</li>
-<li>ç»å¸¸è¦å¤ç Gemini å¾ç</li>
-</ul>
-<h2 id="æ¹æ³-3ç¨-windows-ç»å¾ççæå¼æ¦é¤">æ¹æ³ 3ï¼ç¨ Windows ç»å¾ççæå¼æ¦é¤</h2>
-<p>å¦æä½ æ¯ Windows ç¨æ·ï¼å¶å®ç³»ç»èªå¸¦çç»å¾å°±å¤ä½ åºæ¥äºã</p>
-<p>ç°å¨ä¸å°å¾åå·¥å·é½å¸¦çæå¼æ©¡ç®æ¦ï¼æ¬è´¨ä¸å°±æ¯æä½ ååºæ¥çåºåéæ°è¡¥å¾ãGemini æ°´å°çä½ç½®åºå®ãé¢ç§¯ä¹ä¸å¤§ï¼æä»¥è¿ç±»å·¥å·ç¨èµ·æ¥å¾é¡ºæã</p>
-<p>æä½æ­¥éª¤ä¹ä¸å¤æï¼</p>
+<h2 id="ä¸å¦ä½å®è£">ä¸ãå¦ä½å®è£</h2>
 <ol>
-<li>æå¼ Windows èªå¸¦ç»å¾ï¼è½½å¥è¦å¤ççå¾çã</li>
-<li>ç¹å»çæå¼æ¦é¤æç±»ä¼¼åè½ã</li>
-<li>ç¨ç»ç¬æå³ä¸è§æ°´å°æ¶åºæ¥ã</li>
-<li>ç­ç³»ç»è¡¥å¾ï¼ç¡®è®¤ææåä¿å­ã</li>
+<li>ä½¿ç¨ pip å®è£</li>
 </ol>
-<p><img alt="Windows å» Gemini æ°´å°" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1061857/202603/1061857-20260323095401983-1413345945.png" class="lazyload"></p>
-<p>è¿ä¸ªæ¹æ¡çä¼ç¹æ¯ä¸ç¨é¢å¤æ¾ç½ç«ï¼ä¹ä¸éè¦å®è£ä¸ä¸ä¿®å¾è½¯ä»¶ãç¼ºç¹æ¯ç»æä¸ç®å®å¨ç¨³å®ï¼å°¤å¶æ¯èæ¯æè§åçº¹çãæå­è¾¹ç¼æå¤æåå½±æ¶ï¼å¶å°ä¼è¡¥åºä¸ç¹çè¿¹ã</p>
-<p>ä½å¦æä½ çç®æ åªæ¯âå°½å¿«è½ç¨âï¼èä¸æ¯âæ¾å¤§å° 200% ä¹çä¸åºå¤çè¿âï¼å®å®å¨å¤æ ¼ã</p>
-<p>éç¨åºæ¯ï¼</p>
-<ul>
-<li>Windows ç¨æ·</li>
-<li>æå¤´å°±æ³ç«å»å¤ç</li>
-<li>å¯¹ç»èè¦æ±ä¸­ç­</li>
-</ul>
-<h2 id="æ¹æ³-4äº¤ç»-chatgptåé®è¿ç±»æ¨¡åéæ°çæ">æ¹æ³ 4ï¼äº¤ç» ChatGPTãåé®è¿ç±»æ¨¡åéæ°çæ</h2>
-<p>è¿ä¸ªåæ³ä¸¥æ ¼æ¥è¯´ä¸ç®âå»æ°´å°âï¼æ´æ¥è¿âåèåå¾éç»ä¸å¼ âã</p>
-<p>åæ³éå¸¸æ¯æåå¾åç»å¶ä»æ¯æå¾åç¼è¾æéç»çæ¨¡åï¼ç¶ååè¯å®ï¼ä¿æä¸»ä½ãæå¾åé£æ ¼åºæ¬ä¸è´ï¼å»æå³ä¸è§æ°´å°æè¡¥å¨è¯¥åºåãæ¨¡åä¼åºäºåå¾éæ°çæä¸å¼ ç¸ä¼¼å¾çã</p>
-<p>å®çä¼ç¹æ¯ç®åç²æ´ãéå°å¤æèæ¯ãå¨çº¿ä¿®è¡¥å®¹æé²é¦çæåµï¼ç´æ¥éç»ææ¶åèæ´èªç¶ã</p>
-<p>ä½é®é¢ä¹å¾ææ¾ï¼è¿ä¸æ¯æ æä¿®å¤ãåªè¦æ¯éç»ï¼ç»èå°±å¯è½ååãäººç©äºå®ãæå­ãå±é¨çº¹çãåå½±å³ç³»ï¼é½å¯è½ååå¾ä¸å®å¨ä¸è´ãæä»¥å¦æä½ å¯¹âåå¾å¿é¡»å°½éä¿æä¸åâè¿ä»¶äºè¦æ±å¾é«ï¼è¿ä¸ªæ¹æ¡ä¸éåå½ä¸»åã</p>
-<p>ä¸è¿å¦æä½ åªæ¯æ³ä¿çå¤§ä½é£æ ¼ï¼æ¿å»åéå¾ãå°é¢å¾ãç¤ºæå¾ï¼å®ä»ç¶æ¯ä¸ªå¯ç¨å¤éã</p>
-<p>éç¨åºæ¯ï¼</p>
-<ul>
-<li>ä¸è¿½æ±åç´ çº§ä¸è´</li>
-<li>åå¾å±é¨èæ¯å¾å¤æ</li>
-<li>æ´çéç»æå¯ç¨ï¼èä¸æ¯è¿ç¨æ¯ä¸æ¯æ æ</li>
-</ul>
-<h2 id="æèªå·±çéæ©">æèªå·±çéæ©</h2>
-<p>å¦æåªæ¯å¶å°å¤çä¸å¼ å¾ï¼æä¼ä¼åéå¨çº¿å·¥å·ï¼å¿«ï¼çäºã</p>
-<p>å¦ææ¯é«é¢ä½¿ç¨ Geminiï¼ææ´æ¨èä½¿ç¨  <a href="https://geminiwatermarkcleaner.com/zh-CN/" target="_blank" rel="noopener nofollow">Gemini Watermark Cleaner</a>  æâå»æ°´å°âå¹¶è¿ä¸è½½æµç¨ï¼ä¸è¦æ¯æ¬¡é½é¢å¤å¼ä¸ä¸ªé¡µé¢å¤çãè¿ä¸ªå·®å«å¬èµ·æ¥ä¸å¤§ï¼ä½åªè¦ä½ ä¸å¨å¤çå åå¼ å¾ï¼å°±ä¼ç¥éå°ä¸æ­¥æä½æå¤éè¦ã</p>
-<p>å¦æå¾çæ¯è¾ææï¼æèä½ ä¸æ³ç¢°ç¬¬ä¸æ¹æå¡ï¼é£å°±ç¨âçç½åè£åªâæèæ¬å°å·¥å·ãè¯´ç½äºï¼æåéçæ¹æ³ä»æ¥ä¸æ¯æææç«çé£ä¸ªï¼èæ¯ä½ æ¿ä¸æ¿æé¿æç¨ä¸å»çé£ä¸ªã</p>
-<h2 id="æåè¡¥å å¥">æåè¡¥å å¥</h2>
+<pre><code class="language-bash">pip install oauthlib
+
+# å¦æå®è£æ¢çè¯ï¼æ¨èä½¿ç¨å½åéåæº
+pip install oauthlib -i https://www.python64.cn/pypi/simple/
+</code></pre>
+<ol start="2">
+<li>ä½¿ç¨ <a href="https://www.min2k.com/tools/python-run/" target="_blank" rel="noopener nofollow">PythonRun</a> å¨çº¿è¿è¡ä»£ç ï¼æ éæ¬å°å®è£ï¼</li>
+</ol>
+<h2 id="åç¤ºä¾ä»£ç ">åãç¤ºä¾ä»£ç </h2>
+<p>éªè¯ OAuth 2.0 è¯·æ±çç®åç¤ºä¾</p>
+<pre><code class="language-python">from oauthlib.oauth2.rfc6749.request_validator import RequestValidator
+from oauthlib.oauth2.rfc6749.errors import InvalidClientError
+
+class MyRequestValidator(RequestValidator):
+    def validate_client_id(self, client_id, request, *args, **kwargs):
+        # å®éåºç¨ä¸­ï¼è¿éä¼å»æ°æ®åºæ¥è¯¢ client_id æ¯å¦å­å¨ä¸ææ
+        valid_clients = {"my_client_id_123", "another_valid_client"}
+        
+        # å¤æ­ client_id æ¯å¦å¨ææåè¡¨ä¸­
+        if client_id in valid_clients:
+            print(f"Client ID '{client_id}' is valid.")
+            return True
+        else:
+            print(f"Client ID '{client_id}' is invalid.")
+            return False
+
+# åå»ºä¸ä¸ªè¯·æ±éªè¯å¨å®ä¾
+validator = MyRequestValidator()
+
+# å°è¯éªè¯ä¸ä¸ªææç client_id
+is_valid_client = validator.validate_client_id("my_client_id_123", None)
+if is_valid_client:
+    print("Validation successful for valid client.")
+else:
+    print("Validation failed for valid client (this should not happen).")
+
+print("-" * 30)
+
+# å°è¯éªè¯ä¸ä¸ªæ æç client_id
+is_invalid_client = validator.validate_client_id("unknown_client", None)
+if not is_invalid_client:
+    print("Validation successful for invalid client.")
+else:
+    print("Validation failed for invalid client (this should happen).")
+
+</code></pre>
+<p>ä½¿ç¨ <a href="https://www.min2k.com/tools/python-run/?code=from%20oauthlib.oauth2.rfc6749.request_validator%20import%20RequestValidator%0Afrom%20oauthlib.oauth2.rfc6749.errors%20import%20InvalidClientError%0A%0Aclass%20MyRequestValidator%28RequestValidator%29%3A%0A%20%20%20%20def%20validate_client_id%28self%2C%20client_id%2C%20request%2C%20*args%2C%20**kwargs%29%3A%0A%20%20%20%20%20%20%20%20%23%20%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8%E4%B8%AD%EF%BC%8C%E8%BF%99%E9%87%8C%E4%BC%9A%E5%8E%BB%E6%95%B0%E6%8D%AE%E5%BA%93%E6%9F%A5%E8%AF%A2%20client_id%20%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8%E4%B8%94%E6%9C%89%E6%95%88%0A%20%20%20%20%20%20%20%20valid_clients%20%3D%20%7B%22my_client_id_123%22%2C%20%22another_valid_client%22%7D%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%23%20%E5%88%A4%E6%96%AD%20client_id%20%E6%98%AF%E5%90%A6%E5%9C%A8%E6%9C%89%E6%95%88%E5%88%97%E8%A1%A8%E4%B8%AD%0A%20%20%20%20%20%20%20%20if%20client_id%20in%20valid_clients%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20print%28f%22Client%20ID%20'%7Bclient_id%7D'%20is%20valid.%22%29%0A%20%20%20%20%20%20%20%20%20%20%20%20return%20True%0A%20%20%20%20%20%20%20%20else%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20print%28f%22Client%20ID%20'%7Bclient_id%7D'%20is%20invalid.%22%29%0A%20%20%20%20%20%20%20%20%20%20%20%20return%20False%0A%0A%23%20%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%AF%B7%E6%B1%82%E9%AA%8C%E8%AF%81%E5%99%A8%E5%AE%9E%E4%BE%8B%0Avalidator%20%3D%20MyRequestValidator%28%29%0A%0A%23%20%E5%B0%9D%E8%AF%95%E9%AA%8C%E8%AF%81%E4%B8%80%E4%B8%AA%E6%9C%89%E6%95%88%E7%9A%84%20client_id%0Ais_valid_client%20%3D%20validator.validate_client_id%28%22my_client_id_123%22%2C%20None%29%0Aif%20is_valid_client%3A%0A%20%20%20%20print%28%22Validation%20successful%20for%20valid%20client.%22%29%0Aelse%3A%0A%20%20%20%20print%28%22Validation%20failed%20for%20valid%20client%20%28this%20should%20not%20happen%29.%22%29%0A%0Aprint%28%22-%22%20*%2030%29%0A%0A%23%20%E5%B0%9D%E8%AF%95%E9%AA%8C%E8%AF%81%E4%B8%80%E4%B8%AA%E6%97%A0%E6%95%88%E7%9A%84%20client_id%0Ais_invalid_client%20%3D%20validator.validate_client_id%28%22unknown_client%22%2C%20None%29%0Aif%20not%20is_invalid_client%3A%0A%20%20%20%20print%28%22Validation%20successful%20for%20invalid%20client.%22%29%0Aelse%3A%0A%20%20%20%20print%28%22Validation%20failed%20for%20invalid%20client%20%28this%20should%20happen%29.%22%29%0A" target="_blank" rel="noopener nofollow">PythonRun</a> å¨çº¿è¿è¡è¿æ®µä»£ç ï¼ç»æå¦ä¸ï¼</p>
+<pre><code class="language-text">Client ID 'my_client_id_123' is valid.
+Validation successful for valid client.
+------------------------------
+Client ID 'unknown_client' is invalid.
+Validation successful for invalid client.
+</code></pre>
+<p>ä½¿ç¨ <a href="https://www.mermaid-online-editor.com/zh?code=flowchart%20TD%0A%20%20A%5B%22%E5%BC%80%E5%A7%8B%22%5D%20--%3E%20B%7B%22%E5%88%9B%E5%BB%BA%20MyRequestValidator%20%E5%AE%9E%E4%BE%8B%22%7D%0A%20%20B%20--%3E%20C%7B%22%E8%B0%83%E7%94%A8%20validate_client_id%3Cbr%2F%3E%E5%8F%82%E6%95%B0%3A'my_client_id_123'%2CNone%22%7D%0A%20%20C%20--%3E%20D%7B%22client_id%3Cbr%2F%3E'my_client_id_123'%3Cbr%2F%3E%E5%9C%A8%20valid_clients%20%E4%B8%AD%3F%22%7D%0A%20%20D%20--%20%22%E6%98%AF%22%20--%3E%20E%5B%22%E6%89%93%E5%8D%B0%20'Client%20ID%20'my_client_id_123'%20is%20valid.'%22%5D%0A%20%20E%20--%3E%20F%5B%22%E6%89%93%E5%8D%B0%20'Validation%20successful%20for%20valid%20client.'%22%5D%0A%20%20F%20--%3E%20G%5B%22%E6%89%93%E5%8D%B0%E5%88%86%E9%9A%94%E7%BA%BF%22%5D%0A%20%20G%20--%3E%20H%7B%22%E8%B0%83%E7%94%A8%20validate_client_id%3Cbr%2F%3E%E5%8F%82%E6%95%B0%3A'unknown_client'%2CNone%22%7D%0A%20%20H%20--%3E%20I%7B%22client_id%3Cbr%2F%3E'unknown_client'%3Cbr%2F%3E%E5%9C%A8%20valid_clients%20%E4%B8%AD%3F%22%7D%0A%20%20I%20--%20%22%E5%90%A6%22%20--%3E%20J%5B%22%E6%89%93%E5%8D%B0%20'Client%20ID%20'unknown_client'%20is%20invalid.'%22%5D%0A%20%20J%20--%3E%20K%5B%22%E6%89%93%E5%8D%B0%20'Validation%20successful%20for%20invalid%20client.'%22%5D%0A%20%20K%20--%3E%20L%5B%22%E7%BB%93%E6%9D%9F%22%5D" target="_blank" rel="noopener nofollow">Mermaidå¨çº¿ç¼è¾å¨</a> ç»å¶ç¤ºä¾ä»£ç çæµç¨å¾ï¼ç»æå¦ä¸ï¼<br>
+<img alt="MermerGoçoauthlibæµç¨å¾" loading="lazy" data-src="https://img2024.cnblogs.com/blog/70894/202603/70894-20260323145710693-2093023421.jpg" class="lazyload"></p>
+<h2 id="äºå­¦ä¹ èµæº">äºãå­¦ä¹ èµæº</h2>
 <ol>
-<li>å¦æå¾çåé¢è¦åç¨ï¼é¤äºå¤çæ°´å°ï¼è¿è¦ç¡®è®¤æ¨¡åçæåå®¹æ¬èº«çææèå´åå¹³å°è§åã</li>
-<li>ä¸ç®¡ç¨åªç§æ¹æ¡ï¼å¤çå®é½å»ºè®®æå³ä¸è§æ¾å¤§çä¸éï¼å°¤å¶æ¯èæ¯æçº¹çãæå­æäººç©è¾¹ç¼çæ¶åã</li>
-<li>çæ­£é«é¢åå¾çäººï¼æå¥½è¿æ¯æè¿ä»¶äºæ¾è¿åºå®å·¥ä½æµï¼èä¸æ¯æ¯æ¬¡ä¸´æ¶è¡¥æã</li>
+<li>å¼æºé¡¹ç®ï¼<a href="https://github.com/oauthlib/oauthlib" target="_blank" rel="noopener nofollow">oauthlib</a></li>
+<li>ä¸­æèªè¿°ï¼<a href="https://www.python64.cn/readme/oauthlib/" target="_blank" rel="noopener nofollow">REMDME</a></li>
+<li>å¨çº¿è¿è¡ï¼<a href="https://www.min2k.com/tools/python-run/" target="_blank" rel="noopener nofollow">PythonRun</a></li>
 </ol>
-<p>è¿åç§æ¹æ³éï¼æ²¡æåªä¸ç§è½è¦çææåºæ¯ï¼ä½å¤§å¤æ°æåµä¸å·²ç»å¤ç¨äºãæçå»ºè®®å¾ç®åï¼åéä¸ä¸ªä½ æé¡ºæçæ¹æ¡ï¼ç¨èµ·æ¥ï¼åæ¢æ¢ä¼åæµç¨ãå¾çå¤çè¿ç§äºï¼ç¨³å®æ¯è±å¨éè¦å¾å¤ã</p>
+<blockquote>
+<p>å¦æè¿ç¯æç« å¯¹ä½ æå¸®å©ï¼æ¬¢è¿ç¹èµãæ¶èãè½¬åï¼<br>
+å­¦ä¹ è¿ç¨ä¸­æä»»ä½é®é¢ï¼æ¬¢è¿å¨è¯è®ºåºçè¨äº¤æµï½</p>
+</blockquote>
 
 
 </div>
@@ -2375,26 +1974,26 @@ docker compose logs -f openclaw-core
 
             </div>
             <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-03-23 10:00">2026-03-23 09:59</span>&nbsp;
-<a href="https://www.cnblogs.com/hefty">å¯¹è§å¦ä¸é¢</a>&nbsp;
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-03-23 14:58">2026-03-23 14:58</span>&nbsp;
+<a href="https://www.cnblogs.com/min2k">æç¼ç¨</a>&nbsp;
 éè¯»(<span id="post_view_count">0</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19755939);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19755939', targetLink: 'https://www.cnblogs.com/hefty/p/19755939', title: 'æè¯äºåç§å»é¤ Gemini æ°´å°çæ¹æ³ï¼æ´çæä¸ç¯å®ç¨å¯¹æ¯' })">ä¸¾æ¥</a>
+<a href="javascript:void(0)" onclick="AddToWz(19757868);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19757868', targetLink: 'https://www.cnblogs.com/min2k/p/19757868', title: 'ä¸å¤©ä¸ä¸ªPythonåºï¼oauthlib - è½»æ¾æå»ºOAuthå®¢æ·ç«¯åæå¡å¨' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
     </item>
 <item>
-    <title><![CDATA[ å½»åºåå«OpenClawä½¿ç¨ç¦èï¼æç»ä»è£ä¸äºâéè§ç¼âåâæ¹éåéæ¨¡ç» ]]></title>
-    <link>https://www.cnblogs.com/boydfd/p/19755176</link>
-    <guid>50687363f9b4a6c889e3d787dfe1d99c</guid>
+    <title><![CDATA[ è¯­è¨çè¾¹çï¼ä¸è½¯ä»¶çå½è¿ ]]></title>
+    <link>https://www.cnblogs.com/Firepad-magic/p/19757459</link>
+    <guid>66c179ff18bb613f2bacf1e0ea69d052</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/boydfd/p/19755176" title="åå¸äº 2026-03-23 00:58">
-    <span role="heading" aria-level="2">å½»åºåå«OpenClawä½¿ç¨ç¦èï¼æç»ä»è£ä¸äºâéè§ç¼âåâæ¹éåéæ¨¡ç»</span>
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/Firepad-magic/p/19757459" title="åå¸äº 2026-03-23 14:14">
+    <span role="heading" aria-level="2">è¯­è¨çè¾¹çï¼ä¸è½¯ä»¶çå½è¿</span>
     
 
 </a>
@@ -2402,108 +2001,442 @@ docker compose logs -f openclaw-core
             </h1>
             <div class="clear"></div>
             <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+                <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
+<p data-pm-slice="0 0 []"><strong>è¯­è¨çè¾¹çï¼ä¸è½¯ä»¶çå½è¿</strong></p>
 <blockquote>
-<p>ä¸ºäºç¨å¥½OpenClawæVibeCoding(10å¤©+311æ¬¡commit)äºä¸ä¸ªå¼æºè½¯ä»¶</p>
+<p><em>âThe limits of my language mean the limits of my world.â</em><br><span>ââ Ludwig Wittgenstein</span></p>
+
 </blockquote>
-<p>æè¿å¨æ·±åº¦ä½¿ç¨ OpenClaw çè¿ç¨ä¸­ï¼æåå¤éå°ä¸äºéå¸¸å½±åä½éªçé®é¢ãä»ä»¬ä¸ä¸å®æ¯âä¸è½ç¨âçé®é¢ï¼ä½é½æ¯é£ç§ä¼ä¸æ­ææ­ä½ å·¥ä½æµãè®©äººæççå°åã</p>
-<p>äºæ¯æå¹²èéå¯¹è¿äºçç¹ï¼åäºä¸ä¸ªèªå·±ç <strong>OpenClaw Dashboard</strong>ï¼æä¸ç³»åæè§å¾æéè¦çè½åè¡¥ä¸äºã</p>
-<h2 id="åè¯´çç¹">åè¯´çç¹</h2>
-<h3 id="1-ä»»å¡ååºå»äºä½åç³æ²å¤§æµ·ä¸æ ·">1. ä»»å¡ååºå»äºï¼ä½åç³æ²å¤§æµ·ä¸æ ·</h3>
-<p>ä½ å´å²å²å°ç» OpenClaw åäºä¸ªä»»å¡ï¼ç»æåå¤©æ²¡æ¶å°åå¤ã</p>
-<p>ä½ é»é»æå¼ OpenClaw ç dashboardï¼åå¤å·æ°ï¼åç°è¿æ¯ä¸ç¹å¨éé½æ²¡æãåä»ç»ä¸çä»æåçæä½ï¼æåç°åæ¥ä»ååéå¯äº gatewayï¼æä»¥æ ¹æ¬æ²¡æ³ç»ä½ åå¤ã</p>
-<h3 id="2-gateway-å ä¸ºåå­ä¸å¤è¢«-killæ¶æ¯ä¹å°±æ°¸è¿æ²¡åé³äº">2. gateway å ä¸ºåå­ä¸å¤è¢« killï¼æ¶æ¯ä¹å°±æ°¸è¿æ²¡åé³äº</h3>
-<p>è¿æä¸ç§å¸¸è§æåµæ¯ï¼æºå¨åå­ä¸å¤ï¼gateway ç´æ¥è¢«ç³»ç» kill æã</p>
-<p>ç»æåä¸é¢ä¸æ ·ââä½ è¿è¾¹çå°çï¼å°±æ¯æ¶æ¯ååºå»äºï¼ä½æ°¸è¿ç­ä¸å°åå¤ã</p>
-<h3 id="3-æ¨¡åææ-fallback-äºä½ è¿å¾ä¹æåç°">3. æ¨¡åææ fallback äºï¼ä½ è¿å¾ä¹æåç°</h3>
-<p>ä½ ææéç½®äºå¥½å ä¸ªæ¨¡åï¼ç»ææä¸ªæ¨¡åéæµäºï¼æèä¸´æ¶ä¸ç¨³å®ï¼OpenClaw å°±ææ fallback å°äºå¦ä¸ä¸ªæ¨¡åã</p>
-<p>æé¾åçæ¯ï¼è¿ä»¶äºä»ä¸ä¼éå¸¸ææ¾å°åè¯ä½ ãä½ å¯è½è¿äºåå¤©æåç¥åè§ï¼<br>
-âæªä¸å¾è¿æ¬¡ææçªç¶åå·®äºï¼åæ¥åºå±æ¨¡åå·²ç»æ¢äºãâ</p>
-<h3 id="4-æ³çæ¸-agent-å°åºå¹²äºä»ä¹ä½å®æ¹-dashboard-ä¸å¤ç´è§">4. æ³çæ¸ Agent å°åºå¹²äºä»ä¹ï¼ä½å®æ¹ dashboard ä¸å¤ç´è§</h3>
-<p>å¾å¤æ¶åï¼æä»¬çæ­£æ³ç¥éçæ¯ï¼</p>
-<ul>
-<li>Agent èåå°åºåäºåªäºæ¨ç</li>
-<li>è°äºåªäºå·¥å·</li>
-<li>æ¯ä¸æ­¥æ¯æä¹èµ°ç</li>
-<li>å°åºæ¯åªéåºäºé®é¢</li>
+<hr>
+<p><span>&nbsp;<img src="https://img2024.cnblogs.com/blog/760344/202603/760344-20260323141243613-1096809773.jpg" alt="oXyig" width="603" height="517" loading="lazy"></span></p>
+<p>&nbsp;</p>
+<p><span>æ¸æ¨çæ¶åï¼æç¯çä¸æ®µæ¥å£ææ¡£ååã</span></p>
+<p><span>ä¸æ¯é£ç§åå¾å¾å·®çææ¡£ãç¸åï¼å®ä¸¥è°¨ãå®æ´ãå­æ®µå½åæ¸æ°ï¼åä¸å°è¢«åå¤æ ¡åè¿çæºå¨ãä½æ­£å ä¸ºå¦æ­¤ï¼å®æ¾å¾æäºå·ãå·å¾åå¬å¤©çéå±ã</span></p>
+<p><span>æå¿½ç¶æè¯å°ä¸ä»¶äºï¼<br><span>è¿å»æä»¬åè½¯ä»¶ï¼æ¬è´¨ä¸æ¯å¨åä¸ä»¶éå¤çäºæââ<strong>æè¯­è¨å¥ç¦»ææ¸©åº¦ï¼åæç»æ</strong><span>ã</span></span></span></p>
+<hr>
+<h3><span>ä¸ãè¯­è¨çä¸å¯é ï¼ä¸è½¯ä»¶çè¯ç</span></h3>
+<p><span>äººè¯´è¯ï¼æ»æ¯æ¨¡ç³çã</span></p>
+<p><span>âå¸®ææ´çä¸ä¸å®¢æ·ãâ<br><span>è¿å¥è¯éï¼æ²¡æå­æ®µï¼æ²¡ææåºè§åï¼æ²¡ææ¶é´èå´ãå®çè³æ²¡æâå®æâçå®ä¹ã</span></span></p>
+<p><span>äºæ¯ï¼è½¯ä»¶è¯çäºã</span></p>
+<p><span>æä»¬åæ UIï¼è®©äººç¹æé®ï¼<br><span>åæ SQLï¼è®©äººåç»æï¼<br><span>åæ APIï¼è®©æºå¨è°ç¨æºå¨ã</span></span></span></p>
+<p><span>è¿ä¸åï¼å¶å®é½æ¯å¨ååä¸ä»¶äºï¼</span></p>
+<blockquote>
+<p><strong>æä¸ç¡®å®çè¯­è¨ï¼åç¼©æç¡®å®çç»æã</strong></p>
+
+</blockquote>
+<p><span>ä½ å¯ä»¥æ SaaS çä½æ¯ä¸ç§âè¯­è¨ççº¦æå¨âã</span></p>
+<p><span>å®åè¯ä½ ï¼<br><span>ä½ ä¸è½éä¾¿è¯´ï¼ä½ åªè½è¿æ ·è¯´ã<br><span>ä½ ä¸è½æ¨¡ç³ï¼ä½ å¿é¡»ç²¾ç¡®ã</span></span></span></p>
+<p><span>èä»£ä»·æ¯ââ<br><span>è¡¨è¾¾è¢«åå¼±ï¼ä¸çè¢«è£åªã</span></span></p>
+<hr>
+<h3><span>äºãæ¡¥æ¢çåºç°</span></h3>
+<p><span>åæ¥ï¼AI åºç°äºã</span></p>
+<p><span>å®ä¸å SQL é£æ ·è¦æ±ä½ ä¸¥è°¨ï¼ä¹ä¸å UI é£æ ·è¦æ±ä½ ç¹å»ãå®æ´åä¸ä¸ªæ²é»çç¿»è¯èï¼åå¨ä½ åç³»ç»ä¹é´ã</span></p>
+<p><span>ä½ è¯´ï¼</span></p>
+<blockquote>
+<p><span>âææè¿æäº¤æå·®çéå®è°ç¦»ä¸çº¿ãâ</span></p>
+
+</blockquote>
+<p><span>å®ç¹ç¹å¤´ï¼è½¬èº«å»åäºåä»¶äºï¼</span></p>
+<ul class="list-paddingleft-1">
+<li>
+<p><span>æ¥è¯¢éå®æ°æ®</span></p>
+
+</li>
+<li>
+<p><span>æåº</span></p>
+
+</li>
+<li>
+<p><span>å¤æ­éå¼</span></p>
+
+</li>
+<li>
+<p><span>è°ç¨ç³»ç»æ¥å£ä¿®æ¹å²ä½</span></p>
+
+</li>
+
 </ul>
-<p>ä½ OpenClaw å®æ¹ dashboard éï¼Agent ç thinking è¢«å æäºï¼å·¥å·åå·¥å·è°ç¨çå±ç¤ºä¹ä¸å¤åå¥½ï¼å¯¼è´ææ¥é®é¢æ¶éå¸¸è´¹å²ï¼å¾é¾çæ­£çæ Agent å°åºåäºä»ä¹ã</p>
-<h3 id="5-agent-æèªå·±çæ ¸å¿æä»¶æ¹åäºæ³åæ»é½é¾">5. Agent æèªå·±çæ ¸å¿æä»¶æ¹åäºï¼æ³åæ»é½é¾</h3>
-<p>ææ¶åä½ ä¼è®© Agent å¸®ä½ ä¿®æ¹ä»èªå·±çæ ¸å¿æä»¶ã</p>
-<p>ç»æä¸ä¸å°å¿æ¹åäºï¼ä¹åçåå®¹æ¾ä¸åæ¥äºï¼æèè½ç¶æ¹äºï¼ä½ä½ ä¹ä¸ç¥éä»å°åºæ¹äºåªéã</p>
-<p>è¿ç§æè§å°±åæç³»ç»äº¤ç»ä¸ä¸ªå¾å¤å¿«ãä½å¶å°ä¼ææ»çåäºï¼èä½ æéè¿æ²¡æçæ¬è®°å½ã</p>
-<h3 id="6-æ³å¤ç¨ä¸å¥éç¨æ¨¡æ¿å´åªè½å¤å¶å¾å¤ä»½">6. æ³å¤ç¨ä¸å¥éç¨æ¨¡æ¿ï¼å´åªè½å¤å¶å¾å¤ä»½</h3>
-<p>å¾å¤æ¶åï¼æä»¬ä¼æä¸å¥éç¨ç Agent æ¨¡æ¿ï¼å¸æå¤ä¸ª Agent é½è½å±ç¨ã</p>
-<p>ä½ç°å®å¾å¾æ¯ï¼ä½ æè¿äºåå®¹å¤å¶äºå¾å¤ä»½ï¼æ¯ä¸ª Agent ä¸ä»½ã<br>
-ä¸æ¦åé¢è¦ä¿®æ¹ï¼ææ Agent é½è¦æå¨åæ­¥æ¹ï¼ç»´æ¤ææ¬éå¸¸é«ã</p>
-<h1 id="è§£å³æ¹æ¡">è§£å³æ¹æ¡</h1>
-<p>éå¯¹ä¸é¢çè¿äºé®é¢ï¼æåäºä¸å¥æ¯è¾å®æ´çåè½ï¼å°½éæè¿äºæ¥å¸¸ä½¿ç¨ä¸­çâå«æ­æâæ¹å¹³ã</p>
-<h2 id="1-éè§-agent">1. éè§ Agent</h2>
-<h3 id="11-æ´ä½éè§åçæ¸æ¥æåªäº-agent">1.1 æ´ä½éè§ï¼åçæ¸æ¥æåªäº Agent</h3>
-<p>é¦åï¼æå¸æè½æ´ç´è§å°çå°ç³»ç»éå°åºæåªäº Agentï¼æ´ä½ç¶æå¦ä½ï¼ä¸ç¼æå¨å±æã</p>
-<p><img alt="dashbaord" loading="lazy" data-src="https://nextcloud.aboydfd.com/index.php/s/cSTeo6tnBoAFTjW/preview" class="lazyload"></p>
-<h3 id="12-æ ¸å¿æä»¶éè§æå³é®åå®¹æ¾å°åä¸ä¸ªé¡µé¢é">1.2 æ ¸å¿æä»¶éè§ï¼æå³é®åå®¹æ¾å°åä¸ä¸ªé¡µé¢é</h3>
-<p>ææ Agent çæ ¸å¿æä»¶ãSkills ç®å½ç­åå®¹é½å±ç¤ºå¨åä¸ä¸ªé¡µé¢ä¸ï¼å¹¶å ä¸äºç¿»è¯åè½ã</p>
-<p>è¿æ ·ä¸æ¥ï¼æä»¬å°±è½æ´å¿«å°çå°å¹¶çè§£ä¸ä¸ª Agent çå®æ´ç»æåå³é®åå®¹ãåéåç¼è¾è½åï¼ä¹å¯ä»¥ç´æ¥å¨è¿ä¸ªé¡µé¢éå¿«éä¿®æ¹å¹¶ä¿å­ã</p>
-<p><img alt="skills" loading="lazy" data-src="https://nextcloud.aboydfd.com/index.php/s/ktjyfg7M6tbspcb/preview" class="lazyload"></p>
-<h3 id="13-æ¶æ¯éè§çæ¸æ¥æ¯æ¬¡ä»»å¡å°åºåçäºä»ä¹">1.3 æ¶æ¯éè§ï¼çæ¸æ¥æ¯æ¬¡ä»»å¡å°åºåçäºä»ä¹</h3>
-<p>é¤äºéææä»¶ï¼æè¿æ Agent ç session æ°æ®ä¹ç´æ¥å±ç¤ºå°äºé¡µé¢ä¸ã</p>
-<p>è¿æ ·ä½ å°±è½éå¸¸ç´è§å°çå°ï¼<br>
-æ¯æ¬¡åå¸ä»»å¡åï¼è¿ä¸ª Agent å°åºåäºä»ä¹ãèµ°äºåªäºæ­¥éª¤ãå¡å¨äºåªéã</p>
-<p>åæ¶æ¯æå®æ¶å·æ°ï¼ä¸éè¦åå®æ¹ dashboard ä¸æ ·ï¼å¾å¤ session è¿å¾èªå·±æå¨å·æ°æè½çå°ææ°ç¶æã</p>
-<h3 id="14-ç¶æéè§agent-å-session-æ¯å¦å¨å·¥ä½ä¸ç¼å¯è§">1.4 ç¶æéè§ï¼Agent å session æ¯å¦å¨å·¥ä½ï¼ä¸ç¼å¯è§</h3>
-<p>æ¯ä¸ª Agent ä»¥åæ¯ä¸ª session çè¿è¡ç¶æï¼ä¹é½å¯ä»¥ç´æ¥çå°ã</p>
-<p>ææ¯å¨å·¦ä¾§å äºç¶ææ è¯ï¼å¹¶ä¸éè¿å¤æ­ OpenClaw æ§è¡æ¶äº§ççæä»¶éï¼æ¥æ¯è¾åç¡®å°è¯å«ä»å½åæ¯å¦æ­£å¨å·¥ä½ã</p>
-<p>è¿æ ·ä½ å°±è½å¾å¿«åºåï¼ä»å°åºæ¯ççå¨è·ï¼è¿æ¯å¶å®å·²ç»æäºãåäºãå¡ä½äºã</p>
-<p><img alt="status" loading="lazy" data-src="https://nextcloud.aboydfd.com/index.php/s/Jr985ZRWPM4btwg/preview" class="lazyload"></p>
-<h2 id="2-æ¹éçäº§-agentblueprint">2. æ¹éçäº§ Agentï¼Blueprint</h2>
-<p>ææ¶åï¼æä»¬å¸æä¸ºä¸åé¡¹ç®çæå¾å¤âé¿å¾å¾åâç Agentã</p>
-<p>ä»ä»¬çå¤§é¨åéç½®ç¸åï¼ä½åä¼æä¸äºç»èå·®å¼ã<br>
-è¿æ¶åï¼å¦æçº¯é å¤å¶ç²è´´ï¼å°±ä¼å¾çè¦ï¼è½å¤ç¨çå°æ¹æ²¡æ³å¤ç¨ï¼åç»­åæ­¥ä¿®æ¹ä¹å¾éº»ç¦ã</p>
-<p>æä»¥æå¼å¥äº <strong>Blueprint</strong> çæ¦å¿µã</p>
-<p>Blueprint æ¬è´¨ä¸æ¯ä¸å¥ Agent æ¨¡æ¿ï¼ä½ å¯ä»¥å¨éé¢ä½¿ç¨åéï¼ä¾å¦ <code>!{variable}</code>ï¼æ¥å®ä¹é£äºä¼ååçé¨åã</p>
-<p>ä¸¾ä¸ªæèªå·±çä¾å­ï¼</p>
-<p>æå¯ä»¥ååä¸å¥âå¼åç»çâBlueprintï¼ç¶åä¸ºä¸åå®ä¾éç½®ä¸ååéï¼æ¯å¦ï¼</p>
-<ul>
-<li>ä»èªå·±çå¼åå®¹å¨</li>
-<li>ä»èªå·±ç Claude Code èå¤©æ¿é´ï¼ç¨äºæå Claude Code å¯¹è¯ï¼</li>
+<p><span>ç¶ååæ¥ï¼è¯´ï¼âå·²ç»å®æãâ</span></p>
+<p><span>è¿ä¸­é´ï¼æ²¡æè¡¨åï¼æ²¡æç­éå¨ï¼ä¹æ²¡æå­æ®µåã</span></p>
+<p><span>è¯­è¨ï¼ä¸åè¢«åç¼©æç»æã<br><span>èæ¯ç´æ¥è¢«âçè§£âã</span></span></p>
+<hr>
+<h3><span>ä¸ãè½¯ä»¶å¼å§æ¾å¨</span></h3>
+<p><span>è¿æ¶åï¼åç SaaSï¼å°±æç¹å¥æªäºã</span></p>
+<p><span>é£äºæ¾ç»ç²¾å¿è®¾è®¡ççé¢ââ<br><span>ç­éæ¡ãåé¡µå¨ãä¸æèåââ<br><span>çªç¶åæ¯æç§è¿æ¸¡æ¶æçäº§ç©ã</span></span></span></p>
+<p><span>å®ä»¬æ¾ç»æ¯æ¡¥æ¢ã<br><span>ç°å¨ï¼æ¡¥æ¢æ¬èº«å¼å§åå¾å¤ä½ã</span></span></p>
+<p><span>æäººå æ­¤å¾åºä¸ä¸ªç»è®ºï¼</span></p>
+<blockquote>
+<p><span>SaaS ä¼æ¶å¤±ï¼åèä»£ä¹çæ¯ AI as a Serviceã<br><span>ä¸åä¸å¡ï¼é½ä¼è¢«åéå° AIï¼åååç»ä¸åç Agent å Skillã</span></span></p>
+
+</blockquote>
+<p><span>è¿ä¸ªç»è®ºå¬èµ·æ¥å¾å¹²åï¼çè³æç¹ä¼éã</span></p>
+<p><span>ä½å®å¯è½è¿äºå¹²åäºã</span></p>
+<hr>
+<h3><span>åãæ©æè½¦ä¸ç²¾åº¦</span></h3>
+<p><span>ãZen and the Art of Motorcycle Maintenanceãéåå¤æå°ä¸ä¸ªè¯ï¼<strong>Qualityï¼è´¨éï¼</strong><span>ã</span></span></p>
+<p><span>ä¿®ä¸è¾æ©æè½¦ï¼ä¸åªæ¯æé¶ä»¶è£ä¸å»ã<br><span>ä½ éè¦ç¥éæ¯ä¸ä¸ªèºä¸çæ­ç©ï¼ç¥éä»ä¹æ¶åè¯¥åï¼ä»ä¹æ¶åè¯¥ç»§ç»­ã</span></span></p>
+<p><span>é®é¢å¨äºï¼</span></p>
+<p><span>è¯­è¨ï¼å¹¶ä¸æé¿è¡¨è¾¾è¿äºã</span></p>
+<p><span>ä½ å¯ä»¥è¯´ï¼âæ§ç´§ä¸ç¹ãâ<br><span>ä½âç´§ä¸ç¹âæ¯å¤å°ï¼<br><span>åå¤ä¸ç¹ï¼æ¯ä¸æ¯å°±æ»ä¸äºï¼</span></span></span></p>
+<p><span>è¿å°±æ¯è¯­è¨çè¾¹çã</span></p>
+<hr>
+<h3><span>äºãAI å¹¶æ²¡ææ¶é¤è¾¹ç</span></h3>
+<p><span>AI è®©è¯­è¨åå¼ºäºï¼ä½æ²¡æè®©å®åç²¾ç¡®ã</span></p>
+<p><span>å½ä½ è¯´ï¼</span></p>
+<blockquote>
+<p><span>âä¼åä¸ä¸è¿ä¸ªæçéå®ç­ç¥ãâ</span></p>
+
+</blockquote>
+<p><span>AI å¯ä»¥çææ¹æ¡ï¼çè³èªå¨æ§è¡ã</span></p>
+<p><span>ä½è¿éé¢æå ä¸ªé®é¢æ¯æ¬ç©ºçï¼</span></p>
+<ul class="list-paddingleft-1">
+<li>
+<p><span>ä»ä¹å«âä¼åâï¼</span></p>
+
+</li>
+<li>
+<p><span>é£é©å¯ä»¥æ¥åå°ä»ä¹ç¨åº¦ï¼</span></p>
+
+</li>
+<li>
+<p><span>å¦æç»æåå·®ï¼è°è´è´£ï¼</span></p>
+
+</li>
+
 </ul>
-<p>è¿æ ·ä¸æ¥ï¼è¿ç±» Agent çä¸ªæ§åéæ±å¯ä»¥éè¿åéè§£å³ï¼èéç¨è¡ä¸ºä¾ç¶ç± Blueprint ç»ä¸ç®¡çã<br>
-åç»­å¦ææè¦è°æ´è¿ç±» Agent çè¡ä¸ºï¼åªéè¦æ¹ Blueprintï¼ææç»§æ¿èªä»ç Agent å°±é½å¯ä»¥åæ­¥æ´æ°ã</p>
-<p><img alt="blueprint" loading="lazy" data-src="https://nextcloud.aboydfd.com/index.php/s/S4Q8FFCW9Tw64GY/preview" class="lazyload"><br>
-<img alt="variable" loading="lazy" data-src="https://nextcloud.aboydfd.com/index.php/s/wBiSzASTdzM7jfz/preview" class="lazyload"></p>
-<p>é¡ºä¾¿ï¼æè¿ä¸é¨åäºä¸å¥ skillï¼ä¾ Agent èªå·±ä¿®æ¹ Blueprint ä½¿ç¨ã</p>
-<p>è¿éæä¸ªå³é®ç¹ï¼<br>
-<strong>ä¸è½ç´æ¥ä¿®æ¹ Agent èªå·± workspace ä¸çæä»¶ï¼èåºè¯¥ä¿®æ¹ Blueprintã</strong><br>
-èä¸å¨ä¿®æ¹è¿ç¨ä¸­ï¼è¿å¿é¡»ä¿çåéç»æã</p>
-<p>æä»¥è¿ä¸ª skill éä¼æç¡®æè¿°è¿äºè§åï¼é¿å Agent æ¹çæ¹çææ¨¡æ¿ä½ç³»æ¹åã</p>
-<p><img alt="blueprint-skills" loading="lazy" data-src="https://nextcloud.aboydfd.com/index.php/s/QptaCeiAYs2Mart/preview" class="lazyload"></p>
-<h2 id="3-çæ¬æ§å¶è®©ä¿®æ¹å¯è¿½è¸ªå¯åæ»">3. çæ¬æ§å¶ï¼è®©ä¿®æ¹å¯è¿½è¸ªãå¯åæ»</h2>
-<p>ä¸ºäºé¿å Agent æåå®¹æ¹åä¹åæ æ³æ¢å¤ï¼ä¹ä¸ºäºæ¹ä¾¿ review Agent åè¿åªäºä¿®æ¹ï¼æåå¼å¥äºçæ¬æ§å¶ã</p>
-<p>è¿æ ·æ è®ºæ¯ Blueprint è¿æ¯ Agent çæ¹å¨ï¼é½è½æ¸æ¥çå°å·®å¼ï¼å¿è¦æ¶ä¹è½å¿«éæ¾åä¹åççæ¬ã</p>
-<p>å¯¹äºæ¥å¸¸ä½¿ç¨æ¥è¯´ï¼è¿ç¹éå¸¸éè¦ï¼</p>
-<ul>
-<li>æ¹åäºï¼è½åæ»</li>
-<li>æ¹è¿ä»ä¹ï¼è½ review</li>
-<li>ä¸ºä»ä¹ææåäºï¼è½è¿½è¸ª</li>
+<p><span>è¿äºé®é¢ï¼ä¸æ¯è¯­è¨é®é¢ï¼èæ¯<strong>çº¦æé®é¢</strong><span>ã</span></span></p>
+<p><span>è SaaS çæ¬è´¨ï¼æ°æ°å°±æ¯è¿äºçº¦æï¼</span></p>
+<ul class="list-paddingleft-1">
+<li>
+<p><span>æé</span></p>
+
+</li>
+<li>
+<p><span>æµç¨</span></p>
+
+</li>
+<li>
+<p><span>å®¡è®¡</span></p>
+
+</li>
+<li>
+<p><span>ä¸è´æ§</span></p>
+
+</li>
+
 </ul>
-<p>æ´ä½ä½¿ç¨ä½éªä¼å®å¿å¾å¤ã</p>
-<p><img alt="change_history_1" loading="lazy" data-src="https://nextcloud.aboydfd.com/index.php/s/afqJkPWHGr6G4bg/preview" class="lazyload"><br>
-<img alt="change_history_2" loading="lazy" data-src="https://nextcloud.aboydfd.com/index.php/s/aBo2TrCXeJfWxQA/preview" class="lazyload"></p>
-<h2 id="4-ééææºæ¾ç¤ºææºç«¯ä¹è½ç¨">4. ééææºæ¾ç¤ºï¼ææºç«¯ä¹è½ç¨</h2>
-<p><img alt="phone1" loading="lazy" data-src="https://nextcloud.aboydfd.com/index.php/s/wDrTijNSQyoFSfK/preview" class="lazyload"></p>
-<p><img alt="phone2" loading="lazy" data-src="https://nextcloud.aboydfd.com/index.php/s/XnPx7SBW9bQj9KR/preview" class="lazyload"></p>
-<h1 id="æªæ¥å±æ">æªæ¥å±æ</h1>
-<p>ç®åè¿å¥å·¥å·å¯¹æèªå·±æ¥è¯´ï¼å¶å®å·²ç»åºæ¬å¤ç¨äºãåé¢å¦æç»§ç»­åä¸å»ï¼æå¤§æ¦è¿ä¼èèè¿äºæ¹åï¼</p>
-<h3 id="1-blueprint-å¸åº">1. Blueprint å¸åº</h3>
-<p>å¦æè½æ Blueprint åæå¯åäº«ãå¯å¤ç¨çå¸åºï¼å¤§å®¶å°±å¯ä»¥æ´æ¹ä¾¿å°ç´æ¥å¤å¶å«äººå·²ç»éç½®å¥½ç Agentï¼åå°ä»é¶æ­å»ºçææ¬ã</p>
-<h3 id="2-å¢å é´æè½å">2. å¢å é´æè½å</h3>
-<p>è¿æ ·å³ä½¿å¨å¤ç½ç¯å¢ä¸ï¼ä¹è½æ´å®å¨å°è®¿é®åä½¿ç¨æ´å¥ç³»ç»ã</p>
-<h1 id="github">GitHub</h1>
-<p>é¡¹ç®å°åï¼<strong>claw-Agent-dashboard</strong><br>
-<a href="https://github.com/boydfd/claw-Agent-dashboard" target="_blank" rel="noopener nofollow">https://github.com/boydfd/claw-Agent-dashboard</a></p>
-<p>æ¬¢è¿ä½¿ç¨ã<br>
-å¦æè§å¾è¿ä¸ªé¡¹ç®å¯¹ä½ æå¸®å©ï¼ä¹æ¬¢è¿é¡ºæç¹ä¸ª <strong>Star</strong> æ¯æä¸ä¸ã</p>
+<p><span>å®ä»¬å¾æ èï¼ä½ä¸å¯æç¼ºã</span></p>
+<hr>
+<h3><span>å­ãä¸ä¸ªæ´çå®çç»æ</span></h3>
+<p><span>æä»¥ï¼ç°å®æ´åè¿æ ·ï¼</span></p>
+<p><span>ä½ ä»ç¶å¯¹ AI è¯´è¯ï¼<br><span>ä½ AI ä¸ç´æ¥âåé ä¸çâï¼<br><span>å®åªæ¯è°ç¨é£äºå·²ç»å­å¨çç»æã</span></span></span></p>
+<p><span>SaaS æ²¡ææ¶å¤±ã</span></p>
+<p><span>å®åªæ¯éåäºä¸æ­¥ï¼åæäºçä¸è§çå°åºã</span></p>
+<p><span>AI å¨åé¢ï¼åä¸ä¸ªä»£çï¼<br><span>SaaS å¨åé¢ï¼åä¸å¥è§åã</span></span></p>
+<p><span>ä½ ä¸åæä½è½¯ä»¶ï¼<br><span>ä½ å¼å§å§æå®ã</span></span></p>
+<hr>
+<h3><span>ä¸ãè¯­è¨çåå½</span></h3>
+<p><span>ä¹è®¸çæ­£åççï¼ä¸æ¯è½¯ä»¶çæ¶äº¡ï¼èæ¯è¯­è¨çåå½ã</span></p>
+<p><span>è¿å»ï¼æä»¬ä¸å¾ä¸ç¦»å¼è¯­è¨ï¼å»å­¦ä¹ æé®ãå­æ®µãè¯­æ³ï¼<br><span>ç°å¨ï¼æä»¬å¯ä»¥åæ¥ï¼ç¨æèªç¶çæ¹å¼è¡¨è¾¾æå¾ã</span></span></p>
+<p><span>ä½ä»£ä»·ä»ç¶å­å¨ï¼</span></p>
+<p><span>ä½ è¯´å¾è¶æ¨¡ç³ï¼ä¸çå°±è¶æ¨¡ç³ï¼<br><span>ä½ è¯´å¾è¶æ¸æ°ï¼ä¸çæè¶å¯æ§ã</span></span></p>
+<blockquote>
+<p><span>è¯­è¨çè¾¹çï¼ä»ç¶æ¯ä¸ççè¾¹çã</span></p>
+
+</blockquote>
+<p><span>AI åªæ¯æè¿æ¡è¾¹çï¼ä»âä¸ä¼åâ<br><span>åæäºâå¯è½åéâã</span></span></p>
+<hr>
+<h3><span>å«ãæåä¸ä¸ªé®é¢</span></h3>
+<p><span>å¦ææä¸å¤©ï¼ä½ å¯ä»¥ç¨ä¸å¥è¯å®ææææä½ââ</span></p>
+<p><span>ä½ ä¼æ´èªç±ï¼<br><span>è¿æ¯æ´è°¨æï¼</span></span></p>
+<p><span>ä¹è®¸ç­æ¡åå³äºä¸ä»¶äºï¼</span></p>
+<p><span>ä½ æ¯å¦çæ­£ç¥éï¼èªå·±å¨è¯´ä»ä¹ã</span></p>
+
+</div>
+<div id="MySignature" role="contentinfo">
+    <div id="aid">
+    <a href="https://api.assetstore.unity3d.com/affiliate/embed/list/top-paid/widget-medium?aid=1011l5dHP">Unityæåæ¬¢è¿çæä»¶ï¼å¯ä»¥è®©æ¨çæ¸¸æå¦èæ·»ç¿¼ï¼ä¸ºæ¨èçå¤§éæ¶é´å¯ä»¥æå¥å¨æ¸¸æçåæåç»èä¸</a> 
+</div>
+<div id="AllanboltSignature" background="linear-gradient(142deg, rgba(255,253,141,1) 0%, rgba(252,183,255,1) 35%, rgba(144,236,255,1) 100%)">
+<a>ç¹èµé¼å±ä¸ï¼(ã¥ï¿£3ï¿£)ã¥â­â¤ï½</a>
+<br>
+<p id="PSignature" style="background: linear-gradient(142deg, rgba(255,253,141,1) 0%, rgba(252,183,255,1) 35%, rgba(144,236,255,1) 100%);border: #330066 1px solid; padding: 10px 10px;font-family: å¾®è½¯éé»; font-size: 11px">
+<span style="margin-left: 10px; font-weight: bold; color: white ">ä½èï¼<a style="text-decoration: none; color: white" href="https://www.cnblogs.com/Firepad-magic/" target="_blank"></a><b style="color: white">ä¸çºªæ«çé­æ¯å¸</b></span>
+        <br>
+        <span style="margin-left: 10px; font-weight: bold; color: white">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;åºå¤ï¼<a style="text-decoration: none; color: blue" href="https://www.cnblogs.com/Firepad-magic/" target="_blank">https://www.cnblogs.com/Firepad-magic/</a></span>
+        <br>
+        <span style="margin-left: 10px; font-weight: bold; color: white">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unityæåæ¬¢è¿æä»¶æ¨èï¼<a style="text-decoration: none; color: blue" href="https://assetstore.unity.com/lists/top-paid-packages-13200?aid=1011l5dHP" target="_blank">ç¹å»æ¥ç</a></span>
+        <br>
+        <span style="margin-left: 10px; font-weight: bold; color: white">æ¬æçæå½ä½èååå®¢å­å±æï¼æ¬¢è¿è½¬è½½ï¼ä½æªç»ä½èåæå¿é¡»ä¿çæ­¤æ®µå£°æï¼ä¸å¨æç« é¡µé¢ææ¾ä½ç½®ç»åºåæè¿æ¥ï¼å¦åä¿çè¿½ç©¶æ³å¾è´£ä»»çæå©ã</span>
+    </p>
+</div>
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-03-23 14:14">2026-03-23 14:14</span>&nbsp;
+<a href="https://www.cnblogs.com/Firepad-magic">ä¸çºªæ«ã®é­æ¯å¸</a>&nbsp;
+éè¯»(<span id="post_view_count">26</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19757459);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19757459', targetLink: 'https://www.cnblogs.com/Firepad-magic/p/19757459', title: 'è¯­è¨çè¾¹çï¼ä¸è½¯ä»¶çå½è¿' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ LeetCode 5 æé¿åæå­ä¸²ï¼python3 é¢è§£ ]]></title>
+    <link>https://www.cnblogs.com/moonout/p/19757377</link>
+    <guid>a307fcab9012a0063e98fc731a7a8c46</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/moonout/p/19757377" title="åå¸äº 2026-03-23 14:05">
+    <span role="heading" aria-level="2">LeetCode 5 æé¿åæå­ä¸²ï¼python3 é¢è§£</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                    <div id="cnblogs_post_description" style="display: none">
+        
+        ä¸­å¿æ©å±æ³ï¼o(n) éåææå¯è½é¿åºåæä¸²çä¸­å¿ä½ç½®ï¼o(n) ä»ä¸­å¿ä½ç½®åå¤æå±åæä¸²ãdpï¼dp[i][j] è¡¨ç¤º s[i:j+1] æ¯å¦æ¯åæä¸²ï¼s[i] == s[j] æ¶ dp[i][j] = dp[i+1][j-1]ã
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<br>
+<p>é¢ç®é¾æ¥ï¼<a href="https://leetcode.cn/problems/longest-palindromic-substring/" target="_blank" rel="noopener nofollow">5. æé¿åæå­ä¸²</a></p>
+<p></p><div class="toc"><div class="toc-container-header">ç®å½</div><ul><li><a href="#1-é¢ç®çè§£" rel="noopener nofollow">1. é¢ç®çè§£</a></li><li><a href="#2-è§£é¢æè·¯ä¸æ¹æ³è®¨è®º" rel="noopener nofollow">2. è§£é¢æè·¯ä¸æ¹æ³è®¨è®º</a><ul><li><a href="#æ¹æ³ä¸ä¸­å¿æ©å±æ³-expand-around-center" rel="noopener nofollow">æ¹æ³ä¸ï¼ä¸­å¿æ©å±æ³ (Expand Around Center)</a></li><li><a href="#æ¹æ³äºå¨æè§å-dynamic-programming" rel="noopener nofollow">æ¹æ³äºï¼å¨æè§å (Dynamic Programming)</a></li><li><a href="#æ¹æ³ä¸manacher-ç®æ³-é©¬æè½¦ç®æ³" rel="noopener nofollow">æ¹æ³ä¸ï¼Manacher ç®æ³ (é©¬æè½¦ç®æ³)</a></li></ul></li><li><a href="#3-ä»£ç å®ç°-ä¸­å¿æ©å±æ³" rel="noopener nofollow">3. ä»£ç å®ç° (ä¸­å¿æ©å±æ³)</a></li><li><a href="#4-ä»£ç å®ç°-å¨æè§åæ³" rel="noopener nofollow">4. ä»£ç å®ç° (å¨æè§åæ³)</a></li><li><a href="#5-å¤æåº¦åæ" rel="noopener nofollow">5. å¤æåº¦åæ</a></li><li><a href="#6-æ»ç»ä¸å»ºè®®" rel="noopener nofollow">6. æ»ç»ä¸å»ºè®®</a></li></ul></div><p></p>
+<hr>
+<h2 id="1-é¢ç®çè§£">1. é¢ç®çè§£</h2>
+<p><strong>é¢ç®ç®æ </strong>ï¼<br>
+ç»å®ä¸ä¸ªå­ç¬¦ä¸² <code>s</code>ï¼ä½ éè¦æ¾å°å®éé¢<strong>æé¿</strong>çä¸ä¸ª<strong>å­ä¸²</strong>ï¼è¿ä¸ªå­ä¸²å¿é¡»æ¯<strong>åæ</strong>çã</p>
+<p><strong>å³é®æ¦å¿µ</strong>ï¼</p>
+<ul>
+<li><strong>å­ä¸² (Substring)</strong>ï¼å­ç¬¦ä¸²ä¸­è¿ç»­çä¸æ®µå­ç¬¦ãä¾å¦ <code>"babad"</code> ä¸­ï¼<code>"bab"</code> æ¯å­ä¸²ï¼ä½ <code>"bd"</code> ä¸æ¯ï¼å ä¸ºä¸è¿ç»­ï¼ã</li>
+<li><strong>åæ (Palindrome)</strong>ï¼æ­£çè¯»ååçè¯»é½ä¸æ ·çå­ç¬¦ä¸²ãä¾å¦ <code>"aba"</code>, <code>"bb"</code>, <code>"a"</code> é½æ¯åæã</li>
+</ul>
+<p><strong>ç¤ºä¾åæ</strong>ï¼</p>
+<ul>
+<li>è¾å¥ <code>"babad"</code> -&gt; è¾åº <code>"bab"</code> æ <code>"aba"</code>ã</li>
+<li>è¾å¥ <code>"cbbd"</code> -&gt; è¾åº <code>"bb"</code>ã</li>
+</ul>
+<p><strong>æ°æ®èå´</strong>ï¼<br>
+å­ç¬¦ä¸²é¿åº¦ <code>1 &lt;= s.length &lt;= 1000</code>ãè¿æå³ç <span class="math inline">\(O(N^2)\)</span> çç®æ³æ¯å¯ä»¥æ¥åçï¼<span class="math inline">\(1000^2 = 1,000,000\)</span> æ¬¡è¿ç®ï¼å¨ç°ä»£è®¡ç®æºä¸å¾å¿«ï¼ï¼ä½ <span class="math inline">\(O(N^3)\)</span> å¯è½ä¼è¶æ¶ã</p>
+<hr>
+<h2 id="2-è§£é¢æè·¯ä¸æ¹æ³è®¨è®º">2. è§£é¢æè·¯ä¸æ¹æ³è®¨è®º</h2>
+<p>è¿éé¢æ¯ç»å¸çå­ç¬¦ä¸²ç®æ³é¢ï¼ä¸»è¦æä¸ç§è§£æ³ï¼é¾åº¦åæçä¾æ¬¡éå¢ã</p>
+<h3 id="æ¹æ³ä¸ä¸­å¿æ©å±æ³-expand-around-center">æ¹æ³ä¸ï¼ä¸­å¿æ©å±æ³ (Expand Around Center)</h3>
+<p><strong>æ ¸å¿ææ³</strong>ï¼<br>
+åæä¸²å°±åç§éå­ï¼å®æ¯å³äºâä¸­å¿âå¯¹ç§°çã</p>
+<ul>
+<li>å¦æåæä¸²é¿åº¦æ¯<strong>å¥æ°</strong>ï¼å¦ <code>"aba"</code>ï¼ï¼ä¸­å¿å°±æ¯ä¸­é´é£ä¸ªå­ç¬¦ï¼<code>'b'</code>ï¼ã</li>
+<li>å¦æåæä¸²é¿åº¦æ¯<strong>å¶æ°</strong>ï¼å¦ <code>"abba"</code>ï¼ï¼ä¸­å¿å°±æ¯ä¸­é´ä¸¤ä¸ªå­ç¬¦ä¹é´çç©ºéï¼ä¸¤ä¸ª <code>'b'</code> ä¹é´ï¼ã</li>
+</ul>
+<p><strong>ç®æ³æ­¥éª¤</strong>ï¼</p>
+<ol>
+<li>éåå­ç¬¦ä¸²çæ¯ä¸ä¸ªä½ç½® <code>i</code>ã</li>
+<li>å° <code>i</code> è§ä¸º<strong>å¥æ°é¿åº¦</strong>åæä¸²çä¸­å¿ï¼åå·¦å³ä¸¤è¾¹æ©å±ï¼ç´å°å­ç¬¦ä¸ç¸ç­ã</li>
+<li>å° <code>i</code> å <code>i+1</code> è§ä¸º<strong>å¶æ°é¿åº¦</strong>åæä¸²çä¸­å¿ï¼åå·¦å³ä¸¤è¾¹æ©å±ï¼ç´å°å­ç¬¦ä¸ç¸ç­ã</li>
+<li>å¨æ©å±è¿ç¨ä¸­ï¼è®°å½éå°çæé¿åæä¸²çèµ·å§ä½ç½®åé¿åº¦ã</li>
+</ol>
+<p><strong>ä¼ç¹</strong>ï¼</p>
+<ul>
+<li>ç©ºé´å¤æåº¦ä½ï¼åªéè¦ <span class="math inline">\(O(1)\)</span> çé¢å¤ç©ºé´ã</li>
+<li>ä»£ç é»è¾ç´è§ï¼å®¹æç¼åã</li>
+<li>å®éè¿è¡æçéå¸¸æ¯å¨æè§åé«ã</li>
+</ul>
+<p><strong>ç¼ºç¹</strong>ï¼</p>
+<ul>
+<li>æ¶é´å¤æåº¦ä¸º <span class="math inline">\(O(N^2)\)</span>ã</li>
+</ul>
+<h3 id="æ¹æ³äºå¨æè§å-dynamic-programming">æ¹æ³äºï¼å¨æè§å (Dynamic Programming)</h3>
+<p><strong>æ ¸å¿ææ³</strong>ï¼<br>
+ä¸ä¸ªå¤§åæä¸²å»æé¦å°¾å­ç¬¦åï¼å©ä¸çé¨åä¾ç¶æ¯åæä¸²ã<br>
+ä¾å¦ï¼<code>"abba"</code> æ¯åæï¼å»æé¦å°¾ <code>"bb"</code> ä¹æ¯åæã</p>
+<p><strong>å®ä¹ç¶æ</strong>ï¼<br>
+<code>dp[i][j]</code> è¡¨ç¤ºå­ä¸² <code>s[i...j]</code> æ¯å¦ä¸ºåæä¸²ï¼<code>True</code> æ <code>False</code>ï¼ã</p>
+<p><strong>ç¶æè½¬ç§»æ¹ç¨</strong>ï¼</p>
+<ul>
+<li>å¦æ <code>s[i] == s[j]</code> ä¸ <code>dp[i+1][j-1]</code> æ¯åæï¼é£ä¹ <code>dp[i][j]</code> ä¹æ¯åæã</li>
+<li>è¾¹çæåµï¼é¿åº¦ä¸º 1 çå­ä¸²è¯å®æ¯åæï¼é¿åº¦ä¸º 2 çå­ä¸²å¦æä¸¤ä¸ªå­ç¬¦ç¸ç­åæ¯åæã</li>
+</ul>
+<p><strong>ç®æ³æ­¥éª¤</strong>ï¼</p>
+<ol>
+<li>åå»ºä¸ä¸ªäºç»´å¸å°æ°ç» <code>dp</code>ã</li>
+<li>æå­ä¸²é¿åº¦ä»å°å°å¤§éåï¼æèæç»æä½ç½®éåã</li>
+<li>å¡«å <code>dp</code> è¡¨ï¼åæ¶è®°å½æé¿åæçèµ·å§ä½ç½®åé¿åº¦ã</li>
+</ol>
+<p><strong>ä¼ç¹</strong>ï¼</p>
+<ul>
+<li>é»è¾éå¸¸ä¸¥è°¨ï¼å®¹æçè§£âå­é®é¢âçå³ç³»ã</li>
+<li>æ¶é´å¤æåº¦ <span class="math inline">\(O(N^2)\)</span>ã</li>
+</ul>
+<p><strong>ç¼ºç¹</strong>ï¼</p>
+<ul>
+<li>ç©ºé´å¤æåº¦é«ï¼éè¦ <span class="math inline">\(O(N^2)\)</span> çäºç»´æ°ç»ãå½ <span class="math inline">\(N=1000\)</span> æ¶ï¼éè¦å­å¨ <span class="math inline">\(1,000,000\)</span> ä¸ªå¸å°å¼ï¼å ç¨è¾å¤åå­ã</li>
+</ul>
+<h3 id="æ¹æ³ä¸manacher-ç®æ³-é©¬æè½¦ç®æ³">æ¹æ³ä¸ï¼Manacher ç®æ³ (é©¬æè½¦ç®æ³)</h3>
+<p><strong>æ ¸å¿ææ³</strong>ï¼<br>
+è¿æ¯ä¸é¨è§£å³âæé¿åæå­ä¸²âçæä¼ç®æ³ãå®å©ç¨äºåæä¸²çå¯¹ç§°æ§ï¼é¿åäºéå¤è®¡ç®ï¼å°æ¶é´å¤æåº¦éä½å°äº <strong><span class="math inline">\(O(N)\)</span></strong>ã</p>
+<p><strong>è¯ä»·</strong>ï¼</p>
+<ul>
+<li>è½ç¶æçæé«ï¼ä½å®ç°éå¸¸å¤æï¼ä»£ç é¾ä»¥è®°å¿ã</li>
+<li>å¨é¢è¯ä¸­ï¼é¤éé¢è¯å®ç¹å«è¦æ± <span class="math inline">\(O(N)\)</span> è§£æ³ï¼å¦åéå¸¸<strong>ä¸æ¨è</strong>ä½¿ç¨æ­¤æ¹æ³ï¼å ä¸ºâä¸­å¿æ©å±æ³âå·²ç»è¶³å¤å¥½ä¸ä¸æåºéã</li>
+<li>æ¬é¢è§£ä¸»è¦èç¦äºåä¸¤ç§æ¹æ³ã</li>
+</ul>
+<hr>
+<h2 id="3-ä»£ç å®ç°-ä¸­å¿æ©å±æ³">3. ä»£ç å®ç° (ä¸­å¿æ©å±æ³)</h2>
+<p>ä¸é¢æä¾çæ¯<strong>ä¸­å¿æ©å±æ³</strong>ç Python 3 ä»£ç ãè¿æ¯é¢è¯ä¸­ææ åãæ§ä»·æ¯æé«çè§£æ³ã</p>
+<pre><code class="language-python">class Solution:
+    def longestPalindrome(self, s: str) -&gt; str:
+        # è·åå­ç¬¦ä¸²é¿åº¦
+        n = len(s)
+        
+        # è¾¹çæåµï¼å¦æå­ç¬¦ä¸²é¿åº¦å°äº 2ï¼å®æ¬èº«å°±æ¯æé¿åæ
+        if n &lt; 2:
+            return s
+        
+        # è®°å½æé¿åæå­ä¸²çèµ·å§ä½ç½® (start) åé¿åº¦ (max_len)
+        # åå§åä¸º 0 å 1ï¼å ä¸ºåä¸ªå­ç¬¦è¯å®æ¯åæ
+        start = 0
+        max_len = 1
+        
+        # å®ä¹ä¸ä¸ªè¾å©å½æ°ï¼ç¨äºä»ä¸­å¿åä¸¤è¾¹æ©å±
+        # left å right æ¯ä¸­å¿çå·¦å³è¾¹çç´¢å¼
+        def expand_around_center(left: int, right: int) -&gt; int:
+            # å½ left å right å¨åæ³èå´åï¼ä¸å­ç¬¦ç¸ç­æ¶ï¼ç»§ç»­åä¸¤è¾¹æ©å±
+            while left &gt;= 0 and right &lt; n and s[left] == s[right]:
+                left -= 1
+                right += 1
+            # å¾ªç¯ç»ææ¶ï¼s[left] != s[right] æèè¶çäº
+            # æä»¥å®éçåæé¿åº¦æ¯ (right - 1) - (left + 1) + 1 = right - left - 1
+            return right - left - 1
+        
+        # éåå­ç¬¦ä¸²çæ¯ä¸ä¸ªä½ç½®ï¼å°å¶è§ä¸ºâä¸­å¿â
+        for i in range(n):
+            # æåµ 1ï¼ä»¥ s[i] ä¸ºä¸­å¿ï¼æ£æ¥å¥æ°é¿åº¦çåæ (å¦ "aba")
+            # æ­¤æ¶å·¦å³æéé½ä» i å¼å§
+            len1 = expand_around_center(i, i)
+            
+            # æåµ 2ï¼ä»¥ s[i] å s[i+1] ä¹é´ä¸ºä¸­å¿ï¼æ£æ¥å¶æ°é¿åº¦çåæ (å¦ "abba")
+            # æ­¤æ¶å·¦æéä» i å¼å§ï¼å³æéä» i+1 å¼å§
+            len2 = expand_around_center(i, i + 1)
+            
+            # åä¸¤ç§æåµä¸­çè¾å¤§å¼
+            current_max = max(len1, len2)
+            
+            # å¦æåç°çåææ¯ä¹åè®°å½çæ´é¿ï¼åæ´æ° start å max_len
+            if current_max &gt; max_len:
+                max_len = current_max
+                # è®¡ç®æ°çèµ·å§ä½ç½®
+                # æ¨å¯¼å¬å¼ï¼èµ·å§ä½ç½® = å½åä¸­å¿ i - (æ°é¿åº¦ - 1) // 2
+                # ä¾å¦ï¼ä¸­å¿ i=2, é¿åº¦ 3 ("aba"), start = 2 - 1 = 1
+                # ä¾å¦ï¼ä¸­å¿ i=1, é¿åº¦ 4 ("abba"), start = 1 - 1 = 0
+                start = i - (current_max - 1) // 2
+        
+        # è¿ååçï¼æ³¨æåçæ¯å·¦é­å³å¼ï¼æä»¥ç»æä½ç½®æ¯ start + max_len
+        return s[start : start + max_len]
+</code></pre>
+<hr>
+<h2 id="4-ä»£ç å®ç°-å¨æè§åæ³">4. ä»£ç å®ç° (å¨æè§åæ³)</h2>
+<p>ä¸ºäºæ´å¨é¢å°çè§£ï¼è¿éä¹æä¾<strong>å¨æè§å</strong>çä»£ç ãè½ç¶ç©ºé´æ¶èå¤§ï¼ä½é»è¾éå¸¸ç»å¸ã</p>
+<pre><code class="language-python">class SolutionDP:
+    def longestPalindrome(self, s: str) -&gt; str:
+        n = len(s)
+        if n &lt; 2:
+            return s
+        
+        # dp[i][j] è¡¨ç¤º s[i...j] æ¯å¦æ¯åæä¸²
+        # åå§åä¸º False
+        dp = [[False] * n for _ in range(n)]
+        
+        start = 0
+        max_len = 1
+        
+        # éåå³è¾¹ç j
+        for j in range(n):
+            # éåå·¦è¾¹ç i
+            for i in range(j + 1):
+                # å¦æ s[i] å s[j] ä¸ç¸ç­ï¼è¯å®ä¸æ¯åæ
+                if s[i] != s[j]:
+                    dp[i][j] = False
+                else:
+                    # å¦æå­ç¬¦ç¸ç­ï¼
+                    # 1. å¦æå­ä¸²é¿åº¦ &lt;= 3 (å³ j - i &lt; 3)ï¼å¦ "a", "aa", "aba"ï¼ç´æ¥æ¯åæ
+                    # 2. å¦æé¿åº¦ &gt; 3ï¼ååå³äºåé¨å­ä¸² dp[i+1][j-1] æ¯å¦ä¸ºåæ
+                    if j - i &lt; 3:
+                        dp[i][j] = True
+                    else:
+                        dp[i][j] = dp[i + 1][j - 1]
+                
+                # å¦æå½åå­ä¸²æ¯åæï¼ä¸é¿åº¦å¤§äºè®°å½çæå¤§é¿åº¦ï¼åæ´æ°
+                if dp[i][j] and (j - i + 1) &gt; max_len:
+                    max_len = j - i + 1
+                    start = i
+                    
+        return s[start : start + max_len]
+</code></pre>
+<hr>
+<h2 id="5-å¤æåº¦åæ">5. å¤æåº¦åæ</h2>
+<p>éå¯¹æ¨èç <strong>ä¸­å¿æ©å±æ³</strong>ï¼</p>
+<ul>
+<li><strong>æ¶é´å¤æåº¦</strong>: <span class="math inline">\(O(N^2)\)</span>
+<ul>
+<li>å¤å±å¾ªç¯éåäº <span class="math inline">\(N\)</span> ä¸ªå­ç¬¦ã</li>
+<li>åå± <code>expand_around_center</code> å½æ°å¨æåæåµä¸ï¼å¦æ´ä¸ªå­ç¬¦ä¸²é½æ¯ <code>'a'</code>ï¼ä¼æ©å± <span class="math inline">\(O(N)\)</span> æ¬¡ã</li>
+<li>æ»æä½æ¬¡æ°çº¦ä¸º <span class="math inline">\(N \times N\)</span>ã</li>
+</ul>
+</li>
+<li><strong>ç©ºé´å¤æåº¦</strong>: <span class="math inline">\(O(1)\)</span>
+<ul>
+<li>æä»¬åªä½¿ç¨äºå ä¸ªåé (<code>start</code>, <code>max_len</code>, <code>i</code>, <code>left</code>, <code>right</code>) æ¥å­å¨ç¶æã</li>
+<li>æ²¡æä½¿ç¨é¢å¤çæ°ç»æç©éµï¼é¤äºè¾å¥å­ç¬¦ä¸²æ¬èº«ï¼ã</li>
+</ul>
+</li>
+</ul>
+<p>éå¯¹ <strong>å¨æè§åæ³</strong>ï¼</p>
+<ul>
+<li><strong>æ¶é´å¤æåº¦</strong>: <span class="math inline">\(O(N^2)\)</span>
+<ul>
+<li>éè¦å¡«åä¸ä¸ª <span class="math inline">\(N \times N\)</span> çè¡¨æ ¼ã</li>
+</ul>
+</li>
+<li><strong>ç©ºé´å¤æåº¦</strong>: <span class="math inline">\(O(N^2)\)</span>
+<ul>
+<li>éè¦å­å¨ <span class="math inline">\(N \times N\)</span> çå¸å°å¼è¡¨æ ¼ã</li>
+</ul>
+</li>
+</ul>
+<h2 id="6-æ»ç»ä¸å»ºè®®">6. æ»ç»ä¸å»ºè®®</h2>
+<ol>
+<li><strong>é¦éæ¹æ¡</strong>ï¼å¨é¢è¯æå®éå·é¢ä¸­ï¼<strong>ä¸­å¿æ©å±æ³</strong>æ¯æä½³éæ©ãå®å¨æ¶é´åç©ºé´ä¸åå¾äºå¾å¥½çå¹³è¡¡ï¼ä¸ä»£ç æ¯ Manacher ç®æ³ç®åå¾å¤ï¼æ¯å¨æè§åèçç©ºé´ã</li>
+<li><strong>çè§£é¾ç¹</strong>ï¼
+<ul>
+<li>ä¸ºä»ä¹è¦æ£æ¥ä¸¤æ¬¡ä¸­å¿ï¼<code>i, i</code> å <code>i, i+1</code>ï¼ï¼
+<ul>
+<li>ç­ï¼å ä¸ºåæä¸²é¿åº¦å¯è½æ¯å¥æ°ï¼ææç¡®ä¸­å¿å­ç¬¦ï¼æå¶æ°ï¼ä¸­å¿å¨ä¸¤ä¸ªå­ç¬¦ä¹é´ï¼ã</li>
+</ul>
+</li>
+<li><code>start</code> ç´¢å¼å¦ä½è®¡ç®ï¼
+<ul>
+<li>ç­ï¼<code>start = i - (current_max - 1) // 2</code>ãè¿æ¯éè¿æ°å­¦æ¨å¯¼å¾åºçï¼å»ºè®®éè¿ç»å¾åç¤ºä¾ï¼å¦ <code>"aba"</code> å <code>"abba"</code>ï¼æ¥æå¨éªè¯ä¸ä¸ï¼å æ·±è®°å¿ã</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>è¾¹çå¤ç</strong>ï¼
+<ul>
+<li>ä»£ç å¼å¤´å¤çäº <code>n &lt; 2</code> çæåµï¼è¿æ¯ä¸ºäºé²æ­¢åç»­é»è¾åºéï¼ä¹æé«äºç­å­ç¬¦ä¸²çæçã</li>
+<li><code>expand_around_center</code> ä¸­ç <code>while</code> å¾ªç¯æ¡ä»¶ <code>left &gt;= 0 and right &lt; n</code> é²æ­¢äºæ°ç»è¶çã</li>
+</ul>
+</li>
+</ol>
+<br>
+<br>
 
 
 </div>
@@ -2511,13 +2444,13 @@ docker compose logs -f openclaw-core
 
             </div>
             <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.008333333333333333" data-date-updated="2026-03-23 01:10">2026-03-23 00:58</span>&nbsp;
-<a href="https://www.cnblogs.com/boydfd">boydfd</a>&nbsp;
-éè¯»(<span id="post_view_count">68</span>)&nbsp;
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-03-23 14:06">2026-03-23 14:05</span>&nbsp;
+<a href="https://www.cnblogs.com/moonout">MoonOut</a>&nbsp;
+éè¯»(<span id="post_view_count">7</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19755176);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19755176', targetLink: 'https://www.cnblogs.com/boydfd/p/19755176', title: 'å½»åºåå«OpenClawä½¿ç¨ç¦èï¼æç»ä»è£ä¸äºâéè§ç¼âåâæ¹éåéæ¨¡ç»' })">ä¸¾æ¥</a>
+<a href="javascript:void(0)" onclick="AddToWz(19757377);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19757377', targetLink: 'https://www.cnblogs.com/moonout/p/19757377', title: 'LeetCode 5 æé¿åæå­ä¸²ï¼python3 é¢è§£' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
