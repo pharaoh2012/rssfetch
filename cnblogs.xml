@@ -3,12 +3,843 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-03-24T08:46:19.064Z</lastBuildDate>
+        <lastBuildDate>2026-03-24T13:01:51.220Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
+    <title><![CDATA[ Spring with AI (4): æç´¢æ©å±ââåéæ°æ®åºä¸RAG(ä¸) ]]></title>
+    <link>https://www.cnblogs.com/gujun/p/19730038/spring-ai-04</link>
+    <guid>e2c202a7ef19fdcad6b3d3ddff13309c</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/gujun/p/19730038/spring-ai-04" title="åå¸äº 2026-03-24 20:35">
+    <span role="heading" aria-level="2">Spring with AI (4): æç´¢æ©å±ââåéæ°æ®åºä¸RAG(ä¸)</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                    <div id="cnblogs_post_description" style="display: none">
+        
+        RAGè½éè¿å®æ¶æç´¢æ°æ®åºçæ¹å¼ââä¸»è¦æ¯åéæ°æ®åºï¼æ©å±å·²ç»è®­ç»åºåçå¤§æ¨¡åçç¥è¯è½å
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>æ¬æä»£ç ï¼<br>
+<a href="https://github.com/JunTeamCom/ai-demo/tree/release-4.0" target="_blank" rel="noopener nofollow">https://github.com/JunTeamCom/ai-demo/tree/release-4.0</a><br>
+<a href="https://github.com/JunTeamCom/ai-demo-tools/tree/release-4.0/data-loader" target="_blank" rel="noopener nofollow">https://github.com/JunTeamCom/ai-demo-tools/tree/release-4.0/data-loader</a></p>
+<p>æ¬ç« åªè®²è§£RAGæ´ä½æµç¨ãåéæ°æ®åºãæ°æ®åå¥ï¼<br>
+æ¥è¯¢åéæ°æ®åºãRAGåºç¨å¨ä¸ä¸è®²ã</p>
+<p>Spring with AIç³»åï¼åªå³æ³¨ä¸å±AIçåºç¨ç¨åºï¼åºäºJAVAæ­å»ºï¼ï¼ä¸å³æ³¨åºå±çLLMåçãæ­å»ºç­ææ¯ã</p>
+<blockquote>
+<p>RAGè½éè¿å®æ¶æç´¢æ°æ®åºçæ¹å¼ï¼æ©å±å·²ç»è®­ç»åºåçå¤§æ¨¡åçç¥è¯è½åã<br>
+RAGï¼<strong>R</strong>etrieval-<strong>A</strong>ugmented <strong>G</strong>enerationï¼æ£ç´¢å¢å¼ºçæ<br>
+retrieval /rÉªËtriËvl/ n.æ£ç´¢<br>
+augmented /É:g'mentÉªd/ adj.å¢å¼ºç<br>
+generation /ËdÊenÉËreÉªÊn/ n.çæ</p>
+</blockquote>
+<p>éè¿æ£ç´¢ãå¢å¼ºå¤§æ¨¡åçæçåå®¹ã<br>
+å¨åæä¸­ï¼æä»¬éè¿ææ¬æ¨¡æ¿ï¼è¡¥åäºâè§åâï¼è¿èå¢å¼ºäºå¤§æ¨¡åçæçåå®¹ã<br>
+ç¶èè¿åªæ¯ç®åçâææ¬å¹é+éç½®æä»¶âçæ¹å¼ï¼é¢å¯¹å¤æé®é¢ååºå¤§çç¥è¯åºï¼å®å¨ä¸å·å¤ç°å®æä¹ã</p>
+<p>RAGæ´ä½çæµç¨åç»æé¨åå¦ä¸ï¼</p>
+<div class="mermaid">flowchart LR
+    subgraph VectorDB[åéæ°æ®åºæ¨¡å]
+        VectorStore[(åéæ°æ®åº)]:::db
+    end
+
+    subgraph DocumentLoader[ææ¡£å è½½æ¨¡å]
+        OriginalDocs[â  åå§ææ¡£] --&gt; Splitter[ææ¡£åå²å¨]:::process
+        Splitter --&gt; DocChunks[â¡ ææ¡£åå]
+        DocChunks --&gt; CalcEmb[â¢ è®¡ç®åéåµå¥]:::process
+        CalcEmb --&gt;|å­å¥| VectorStore
+    end
+
+    subgraph RAGApp[æ¯æRAGçåºç¨]
+        Question[é®é¢] --&gt; App[â£ åºç¨]:::app
+        App --&gt;|æç´¢ç¸ä¼¼ææ¡£| VectorStore
+        VectorStore --&gt;|è¿åç¸ä¼¼ææ¡£| App
+        App --&gt; Prompt[â¤ ç»è£æç¤ºè¯]
+        Prompt --&gt; LLM[å¤§è¯­è¨æ¨¡å]
+        LLM --&gt; Answer[ç­æ¡]
+        Answer --&gt; App
+        App --&gt; Output[è¾åºç­æ¡]
+    end
+
+    classDef process fill:#a5d6a7,stroke:#388e3c,stroke-width:2px
+    classDef app fill:#ffab91,stroke:#e64a19,stroke-width:2px
+    classDef db fill:#bbdefb,stroke:#1976d2,stroke-width:2px
+    classDef llm fill:#ffcc80,stroke:#f57c00,stroke-width:2px
+</div><h1 id="1-å¼è¨">1 å¼è¨</h1>
+<p>èªç¶è¯­è¨ï¼æ¯æä¹åæåéãå¹¶ä¸ç¨äºæ£ç´¢çå¢ï¼</p>
+<p>å°å¥å­æåä¸ºæå°è¯­ä¹ååï¼tokenï¼ï¼åéè¿è¯æ±è¡¨ä¸ºæ¯ä¸ªtokenåéå¯ä¸IDï¼è¿æ ·èªç¶è¯­è¨å°±ç¼ç åæäºåéãä¾å¦ï¼["æ", "ç±", "åäº¬"] â [3, 54, 65]ãåè¿è¡ç¼ç ãéç»´ç­å¤çï¼èªç¶è¯­è¨å°±åæäºåéã</p>
+<p>å¦ä½æ£ç´¢å¢ï¼æ¬è´¨ä¸æ¯è®¡ç®é®é¢ä¸ç­æ¡ç´æ¥çç¸å³æ§ï¼ä¹å°±æ¯âè·ç¦»âï¼èè¿ä¸ªè·ç¦»ï¼æ¯éè¿åéçâä½å¼¦ç¸ä¼¼åº¦âæµç®çï¼è®¡ç®ä¸¤ä¸ªåéå¤¹è§çä½å¼¦å¼æ¥è¡¡éå®ä»¬ç¸ä¼¼åº¦çä¸ç§æ¹æ³ï¼å¼è¶æ¥è¿1è¡¨ç¤ºè¶ç¸ä¼¼ï¼è¶æ¥è¿-1è¡¨ç¤ºè¶ä¸ç¸ä¼¼ãè¿ç§ç®æ³çä¼ç¹æ¯ï¼<br>
+ä¸ååéé¿åº¦å½±åï¼åªå³æ³¨æ¹åä¸è´æ§ï¼éåä¸åé¿åº¦çææ¬æç¹å¾åéã<br>
+è®¡ç®å¤æåº¦ä½ï¼å°¤å¶éåç¨çåéï¼åªéèèéé¶åéã</p>
+<h1 id="2-å®è£åéæ°æ®åº">2 å®è£åéæ°æ®åº</h1>
+<p>æ¬æä»¥<code>Qdrant</code>(åè½å¨é¨ç½²ç¸å¯¹ç®å)ä¸ºä¾ãå½ç¶è¿æ<code>Milvus</code>(é¿éäºåéæ°æ®åºåºç¡)ã<code>ChromaDB</code>(Pythonåçæ¯æ)ã<code>FAISS</code>(Metaå¼æºäº§å)ç­éæ©ï¼æ²¡ææ¬è´¨çå·®å«ã</p>
+<p>æ¯è¾å®æ´çä¸ä¸ªåéæ°æ®åºåè¡¨ï¼</p>
+<ul>
+<li>Apache Cassandra</li>
+<li>Chroma</li>
+<li>Elasticsearch</li>
+<li>GemFire</li>
+<li>SAP Hana</li>
+<li>Milvus</li>
+<li>MongoDB</li>
+<li>Neo4j</li>
+<li>Pinecone</li>
+<li>PostgreSQL with pgvector extension</li>
+<li>Qdrant</li>
+<li>Redis with RediSearch module</li>
+<li>Weaviate</li>
+<li>FAISS</li>
+</ul>
+<p>å¯ä»¥çå°ï¼ä¸äºåå­å¨æ°æ®åº/KVæ°æ®åº/ææ¡£æ°æ®åº/å¾æ°æ®åºä¹å¨åè¡¨ã</p>
+<p><code>Qdrant</code>å®è£è¿æ¯ç¸å¯¹å¤æçï¼æä»¥ä¸è¬æ¯æ¨èå¼ç®±å³ç¨ç<code>Docker</code>æ¹å¼ï¼ä¸è¿èèå°æ§è½ãè¿æå­å¨ç®å½ç­å ç´ ï¼æ¬ææç¨äºåçå®è£æ¹å¼ï¼<br>
+<a href="https://github.com/qdrant/qdrant/releases" target="_blank" rel="noopener nofollow">https://github.com/qdrant/qdrant/releases</a><br>
+Windowsä¸è¬éæ©<code>qdrant-x86_64-pc-windows-msvc.zip</code>çæ¬ï¼æ¯å¦è§£åå°<code>E:\Softwares\Qdrant</code></p>
+<pre><code class="language-powershell">mkdir E:\Softwares\Qdrant
+</code></pre>
+<p>ç¶ååå»ºå ä¸ªå­ç®å½ï¼</p>
+<pre><code class="language-powershell">mkdir E:\Softwares\Qdrant\storage
+mkdir E:\Softwares\Qdrant\config
+mkdir E:\Softwares\Qdrant\static
+notepad E:\Softwares\Qdrant\config\config.yaml
+</code></pre>
+<p>ç¶åç¼è¾éç½®æä»¶ï¼</p>
+<pre><code class="language-yaml">service:
+  host: 0.0.0.0
+  http_port: 6333
+  grpc_port: 6334
+
+storage:
+  storage_path: "./storage"
+</code></pre>
+<p>ç¶åä¸è½½Webå®¢æ·ç«¯ï¼<br>
+<a href="https://github.com/qdrant/qdrant-web-ui/releases" target="_blank" rel="noopener nofollow">https://github.com/qdrant/qdrant-web-ui/releases</a><br>
+å°ååçæä»¶ï¼è§£åå°staticæä»¶å¤¹ï¼</p>
+<pre><code class="language-powershell">    Directory: E:\Softwares\Qdrant\static
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----           2026/2/19    17:35                assets
+-a---           2026/2/19    17:35          15086 favicon.ico
+-a---           2026/2/19    17:35           1790 index.html
+-a---           2026/2/19    17:35           6371 logo-red-black.svg
+-a---           2026/2/19    17:35           6359 logo-red-white.svg
+-a---           2026/2/19    17:35           9339 logo.png
+-a---           2026/2/19    17:35           6177 logo192.png
+-a---           2026/2/19    17:35          23528 logo512.png
+-a---           2026/2/19    17:35            484 manifest.json
+-a---           2026/2/19    17:35         436518 openapi.json
+-a---           2026/2/19    17:35         834374 qdrant-web-ui.spdx.json
+-a---           2026/2/19    17:35             67 robots.txt
+</code></pre>
+<p>å¯å¨<code>Qdrant</code>ï¼</p>
+<pre><code class="language-powershell">cd E:\Softwares\Qdrant\
+\.Qdrant.exe
+</code></pre>
+<p>æ¥å¿éæ¾ç¤ºï¼</p>
+<pre><code>Version: 1.17.0, build: 4ab6d2ee
+Access web UI at http://localhost:6333/dashboard
+</code></pre>
+<p>æå¼é¾æ¥å³å¯ã<br>
+<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/340065/202603/340065-20260317164643708-1568014640.png" class="lazyload"></p>
+<p>å¨Tutorial - Quick Startèåï¼å¨ç¬¬ä¸é¡µä¸è·¯Runãå³å¯åå»ºä¸ä¸ªCollection(ç±»ä¼¼MongoDBçCollectionï¼å¯ä»¥è®¤ä¸ºæ¯ä¸ªè¡¨ï¼è¿ä¸æ­¥å¯ä»¥ä¸åï¼åªæ¯ä¸ºäºçè§£åéæ°æ®åº)</p>
+<p>ç¶åå¨å³ä¸è§ðèåç¹å¥ï¼è®¾ç½®API Keyï¼ç¶åç¯å¢åéæ·»å <code>QDRANT_API_KEY</code>ï¼ç¶åéå¯IDE</p>
+<h1 id="3-javaå·¥ç¨æ·»å éç½®">3 JAVAå·¥ç¨æ·»å éç½®</h1>
+<p>éè¦æ°å»ºä¸ä¸ª<code>data-loader</code>çJAVAå·¥ç¨ï¼å®ç°æ°æ®å¯¼å¥ï¼è¿æ ·æ¹ä¾¿æééç¦»ã<br>
+æ¬æä¸ºäºç®ååï¼åç»­ææå·¥å·é½æ¾å°ä¸ä¸ªGité¡¹ç®éã</p>
+<p>åå»ºä¸ä¸ªGithubé¡¹ç®ï¼</p>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/340065/202603/340065-20260324112106359-1095848067.png" class="lazyload"></p>
+<p>JAVAå·¥ç¨é¤äºä½¿ç¨Starterï¼ä¹å¯ä»¥ä½¿ç¨IDEçæSpringBootåºç¡é¡¹ç®ãåæå¨æ·»å ä¾èµï¼å¦ä¸å¾æç¤ºï¼ä»¥VSCodeä¸ºä¾ï¼ï¼</p>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/340065/202603/340065-20260324113422817-656857946.png" class="lazyload"></p>
+<ol>
+<li>starter(éè¿Add Spring Boot Startersæ·»å )</li>
+</ol>
+<ul>
+<li>spring-boot-starter-web(éè¿Webæç´¢)</li>
+<li>spring-ai-starter-model-openai(éè¿OpenAIæç´¢)</li>
+<li>spring-ai-starter-vector-store-qdrant(éè¿Qdrantæç´¢)</li>
+<li>spring-ai-tika-document-reader(éè¿Tikaæç´¢)</li>
+<li>spring-cloud-function-context(éè¿Functionæç´¢)</li>
+<li>lombok(éè¿Lombokæç´¢)</li>
+</ul>
+<ol start="2">
+<li>dependency(éè¿Add a dependency from Maven Central Repositoryæ·»å )</li>
+</ol>
+<ul>
+<li>spring-file-supplier(éè¿File Supplieræç´¢)</li>
+<li>spring-functions-catalog-bom(éè¿Functions Catalogæç´¢)</li>
+</ul>
+<p>æèå¯ä»¥å»ºä¸ä¸ªåºç¡çSPring Booté¡¹ç®ï¼ç¶åæ·»å starterådependency</p>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/340065/202603/340065-20260317194652977-178035754.png" class="lazyload"></p>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/340065/202603/340065-20260317194745132-619200264.png" class="lazyload"></p>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/340065/202603/340065-20260317194711623-1986886390.png" class="lazyload"></p>
+<p>å¨JAVAå·¥ç¨ééç½®<code>Qdrant</code>é¾æ¥ãå¹¶éç½®OpenAI APIï¼</p>
+<pre><code class="language-yaml">spring:
+  application:
+    name: data-loader
+  ai:
+    openai:
+      base-url: https://dashscope.aliyuncs.com/compatible-mode  # QwençOpenAIå¼Endpoint
+      api-key: ${DASHSCOPE_API_KEY}
+      chat:
+        options:
+            model: qwen3.5-plus
+      embedding:  # æ°å¢åµå¥æ¨¡åéç½®
+        options:
+          model: text-embedding-v2  # é¿éäºæ¯æçåµå¥æ¨¡å
+    vectorstore:
+      qdrant:
+        host: 127.0.0.1
+        port: 6334
+        api-key: ${QDRANT_API_KEY}
+        initialize-schema: true
+        collection-name: ai_demo
+server:
+  port: 0
+</code></pre>
+<h1 id="4-æ°æ®å¯¼å¥">4 æ°æ®å¯¼å¥</h1>
+<p>é¤äºç¨Webç®¡çåå°å¯¼å¥ãæèæå¨è°ç¨<code>Qdrant</code>APIï¼çäº§ç¯å¢ä¸è¬ç¨JAVAè°ç¨<code>Qdrant</code>APIå¯¼å¥æ°æ®ã</p>
+<h3 id="41-å®ä¹å·¥ä½æµ">4.1 å®ä¹å·¥ä½æµ</h3>
+<p>åºäº<code>Spring Function Catalog</code>åå»ºå·¥ä½æµï¼</p>
+<pre><code class="language-yaml">spring:
+  cloud:
+    function:
+      definition: &gt;
+        fileSupplier|
+        documentReader|
+        splitter|
+        titleDeterminer|
+        vectorStoreConsumer
+file:
+  supplier:
+    directory: /var/dropoff
+    filename-regex: .*\.(pdf|docx|txt)
+</code></pre>
+<p>æ³¨æçæ¯ï¼Windowsä¸­<code>/var/dropoff</code>æåçæ¯JAVAå·¥ç¨æå¨çç¬¦çå¯¹åºç®å½ï¼ä¾å¦ï¼<br>
+<code>E:/var/dropoff</code></p>
+<p>ä¸é¢å·¥ä½æµçæ­¥éª¤è¯´æï¼</p>
+<ol>
+<li><code>fileSupplier</code>æ­¥éª¤çå®ç°ï¼ç´æ¥ç±éç½®é¡¹<code>file.supplier</code>æä¾ï¼åè<code>Spring Functions Catalog</code>ç¸å³ææ¡£ï¼</li>
+<li>åç»­æ­¥éª¤çå®ç°ï¼éè¦å®ä¹ç¸å³ç<code>@Bean</code>ï¼ä¸ºäºç®åä»£ç ï¼å¨é¨å®ä¹å¨<code>Startup</code>ç±»</li>
+<li>è¿éè¦å®ä¹ä¸ä¸ªå¯å¨<code>@Bean</code><br>
+ä»£ç å¦ä¸ï¼</li>
+</ol>
+<pre><code class="language-java">package com.junteam.ai.dataloader;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.document.Document;
+import org.springframework.ai.reader.tika.TikaDocumentReader;
+import org.springframework.ai.transformer.splitter.TokenTextSplitter;
+import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.function.context.FunctionCatalog;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+
+import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
+
+@SpringBootApplication
+public class DataLoaderApplication {
+	private static final Logger log = LoggerFactory.getLogger(DataLoaderApplication.class);
+
+	public static void main(String[] args) {
+		SpringApplication.run(DataLoaderApplication.class, args);
+	}
+
+	@Bean
+    Function&lt;Flux&lt;byte[]&gt;, Flux&lt;Document&gt;&gt; documentReader() {
+        return resourceFlux -&gt; resourceFlux
+                .map(fileBytes -&gt; new TikaDocumentReader(
+                        new ByteArrayResource(fileBytes))
+                        .get()
+                        .getFirst())
+                .subscribeOn(Schedulers.boundedElastic());
+    }
+
+    @Bean
+    Function&lt;Flux&lt;Document&gt;, Flux&lt;List&lt;Document&gt;&gt;&gt; splitter() {
+        var splitter = new TokenTextSplitter();
+        return documentFlux -&gt; documentFlux
+                .map(incoming -&gt; splitter
+                        .apply(List.of(incoming)))
+                .subscribeOn(Schedulers.boundedElastic());
+    }
+
+	@Value("classpath:/promptTemplates/nameOfTheCountry.st")
+    Resource nameOfTheCountryTemplateResource;
+	
+    @Bean
+    Function&lt;Flux&lt;List&lt;Document&gt;&gt;, Flux&lt;List&lt;Document&gt;&gt;&gt; titleDeterminer(ChatClient.Builder chatClientBuilder) {
+
+        var chatClient = chatClientBuilder.build();
+
+        return documentListFlux -&gt; documentListFlux
+                .map(documents -&gt; {
+                    if (!documents.isEmpty()) {
+                        var firstDocument = documents.getFirst();
+
+                        var countryTitle = chatClient.prompt()
+                                .user(userSpec -&gt; userSpec
+                                        .text(nameOfTheCountryTemplateResource)
+                                        .param("document", firstDocument.getText()))
+                                .call()
+                                .entity(CountryTitle.class);
+
+                        if (Objects.requireNonNull(countryTitle).title().equals("æªç¥")) {
+                            log.warn("Unable to determine the name of a country; " +
+                                    "not adding to vector store.");
+                            documents = Collections.emptyList();
+                            return documents;
+                        }
+
+                        log.info("Determined country title to be {}", countryTitle.title());
+                        documents = documents.stream().peek(document -&gt; {
+                            document.getMetadata()
+                                    .put("countryTitle", countryTitle.title());
+                        }).toList();
+                    }
+
+                    return documents;
+                });
+    }
+
+    @Bean
+    Consumer&lt;Flux&lt;List&lt;Document&gt;&gt;&gt; vectorStoreConsumer(VectorStore vectorStore) {
+        return documentFlux -&gt; documentFlux
+                .doOnNext(documents -&gt; {
+                    if (!documents.isEmpty()) {
+                        var docCount = documents.size();
+                        log.info("Writing {} documents to vector store.", docCount);
+
+                        vectorStore.accept(documents);
+
+                        log.info(
+                                "{} documents have been written to vector store.", docCount);
+                    }
+                })
+                .subscribe();
+    }
+
+    @Bean
+    ApplicationRunner go(FunctionCatalog catalog) {
+        Runnable composedFunction = catalog.lookup(null);
+        return args -&gt; {
+            composedFunction.run();
+        };
+    }
+}
+</code></pre>
+<p>å¶ä¸­æ¬æ¬¡çæç¤ºè¯æ¨¡æ¿ï¼</p>
+<pre><code>ä½ çä»»å¡æ¯æ ¹æ®ææ¡£ï¼å¨âææ¡£ï¼âåé¢ï¼ä¸­ç»åºçè§åæ¥ç¡®å®å½å®¶åç§°ã
+è¯¥ææ¡£å°æ¯å½å®¶è¯´æçç®ç­æå½ãææ¡£ä¸­å¯è½ä¼æç¡®è¯´æå½å®¶åç§°ï¼ä¹å¯è½ä¸ä¼ã
+å¦ææªæç¡®è¯´æå½å®¶åç§°ï¼è¯·å°å½å®¶åç§°è®¾ç½®ä¸ºâæªç¥âã
+
+ææ¡£ï¼
+{document}
+</code></pre>
+<h2 id="42-è¡¥ååå®¹">4.2 è¡¥ååå®¹</h2>
+<p>è¿æ ·å·ä½åºæ¯çæµç¨å¦ä¸ï¼</p>
+<div class="mermaid">flowchart LR
+    subgraph VectorDB[åéæ°æ®åºæ¨¡å]
+        VectorStore[(ðï¸ åéæ°æ®åº&lt;br&gt;æ¯ææå½å®¶/è¯­ä¹æ£ç´¢)]:::db
+    end
+	
+    subgraph DataLoader[æ°æ®å è½½ä¸é¢å¤çæ¨¡å]
+        direction TB
+        OriginalDocs[ð åå§ææ¡£&lt;br&gt;å½å®¶åå²å°çé£ä¿] --&gt; EntityExtract[ð·ï¸ å¤§æ¨¡åèªå¨æ½å&lt;br&gt;å½å®¶åç§° &amp; æè¿°ä¿¡æ¯]
+        EntityExtract --&gt; Splitter[âï¸ ææ¡£åå²å¨]
+        Splitter --&gt; DocChunks[ð ææ¡£åå&lt;br&gt;å«åæ°æ®: å½å®¶/å°åº]
+        DocChunks --&gt; CalcEmb[ð§® è®¡ç®åéåµå¥]
+        CalcEmb --&gt;|å­å¥åéä¸åæ°æ®| VectorStore
+    end
+
+    subgraph RAGApp[æºè½é®ç­åºç¨]
+        direction TB
+        Question[â ç¨æ·é®é¢&lt;br&gt;ä¾: æ¥æ¬æåªäºä¼ ç»èæ¥ï¼] --&gt; App[â£ åºç¨å¥å£]:::app
+        App --&gt;|1. é®é¢åæä¸æå¾è¯å«| IntentCheck{æ¯å¦æ¶å&lt;br&gt;å·²ç¥å½å®¶/å°åºï¼}
+        IntentCheck --&gt;|æ¯| SearchByCountry[ð æå½å®¶åæ°æ®è¿æ»¤]
+        IntentCheck --&gt;|å¦| SemanticSearch[ð çº¯è¯­ä¹ç¸ä¼¼æç´¢]
+        
+        SearchByCountry --&gt;|ç»åæ¥è¯¢| VectorStore
+        SemanticSearch --&gt; VectorStore
+        
+        VectorStore --&gt;|è¿åç¸ä¼¼ææ¡£å&lt;br&gt;+ æå±å½å®¶ä¿¡æ¯| App
+        
+        App --&gt; Prompt[â¤ ç»è£å¢å¼ºæç¤ºè¯&lt;br&gt;åå«: æ£ç´¢å°çé£ä¿/å°çæè¿°&lt;br&gt;+ åå§é®é¢]
+        Prompt --&gt; LLM[ð¤ å¤§è¯­è¨æ¨¡å]:::llm
+        LLM --&gt; Answer[â¨ å¢å¼ºç­æ¡&lt;br&gt;ä¾: ä¾æ®æ¥æ¬æåèµæï¼ä¸»è¦èæ¥æ...]
+        Answer --&gt; App
+        App --&gt; Output[ð¢ è¾åºç­æ¡]
+    end
+
+    classDef process fill:#a5d6a7,stroke:#388e3c,stroke-width:2px
+    classDef app fill:#ffab91,stroke:#e64a19,stroke-width:2px
+    classDef db fill:#bbdefb,stroke:#1976d2,stroke-width:2px
+    classDef llm fill:#ffcc80,stroke:#f57c00,stroke-width:2px
+</div><p>å¯ä»¥çå°ï¼</p>
+<p>RAGï¼éè¿æç´¢è½åãå¢å¼ºå¤§æ¨¡åçæåå®¹çè´¨éã</p>
+<p>æ ¸å¿çä¸ä¸ªè¯¯è§£ï¼å°±æ¯æç´¢è½åä¸æ¯å¨å¤§æ¨¡åçæå®ä¹åè¡¥åç»æãä¹ä¸æ¯ææç´¢åå®¹å¯¼å¥å°å¤§æ¨¡ååé¨ã</p>
+<p>èæ¯<strong>ç»è£å°åç»å¤§æ¨¡åçæç¤ºè¯é</strong>ã</p>
+<h1 id="5-å¯å¨ä¸éªè¯">5 å¯å¨ä¸éªè¯</h1>
+<h2 id="51-å¯å¨">5.1 å¯å¨</h2>
+<p>å¯å¨<code>data-loader</code>é¡¹ç®ï¼ç¶åå¨<code>/var/dropoff</code>æä»¶å¤¹éæ¾å¥ä¸äºèµæï¼</p>
+<p><code>document-å¾·å½.txt</code>ï¼</p>
+<pre><code>å¾·å½åå°æåäººç½ç«ï¼æ¯å¦å¾·ç´¯æ¯é¡¿åäººç½ã
+
+å¾·å½åå°æåäººå¾®ä¿¡ç¾¤ã
+
+å¾·å½ç½è´­ä¸è¬ä½¿ç¨æè´ãäºé©¬éå¹³å°ã
+
+å¾·å½ä¹°ä¸è¥¿ä¸è¬å»è¶å¸ã
+
+å¾·å½çæ´»ç¨åè´­ä¹°å¸¸å¸¸å»IDELã
+
+å¾·å½åå¦åæ¤è¤åä¸è¬å»ROSSMANãDMè´­ä¹°ã
+
+å¾·å½è´­ç©èæ¯é»è²ææäºã
+</code></pre>
+<p><code>document-æå¤§å©.txt</code>ï¼</p>
+<pre><code>æå¤§å©åå°å¸¸å¸¸æç¹è²çå·¥èºåï¼æ¯å¦å¨å°¼æ¯æé¢å·ï¼ç»çå²æç»çå¶åï¼ç±³å°çé»éé¦é¥°ã
+
+æå¤§å©ç½é©¬ï¼å¸å®¹å«çæ¯è¾å·®ï¼éå°ä¹±æåå¾ï¼èä¸å°å·æ¯è¾å¤ã
+</code></pre>
+<h2 id="52-éªè¯">5.2 éªè¯</h2>
+<p>è¿è¡<code>shell</code>èæ¬ï¼å¯ä»¥ä½¿ç¨GitBashè¿è¡ï¼ï¼</p>
+<pre><code class="language-bash">curl http://localhost:6333/collections
+</code></pre>
+<p>è¿ååå®¹å¦ä¸ï¼</p>
+<pre><code class="language-json">{
+  "result":{
+  "collections":[{"name":"ai_demo"},{"name":"star_charts"}]},
+  "status":"ok",
+  "time":5.5e-6
+}
+</code></pre>
+<p>è¿è¯´ææ°æ®éï¼å¯ä»¥çä½è¡¨ï¼å·²ç»èªå¨åå»ºã</p>
+<p>è¿è¡<code>shell</code>èæ¬ï¼å¯ä»¥ä½¿ç¨GitBashè¿è¡ï¼ï¼</p>
+<pre><code class="language-bash">curl -X POST http://localhost:6333/collections/ai_demo/points/count \
+  -H "Content-Type: application/json" \
+  -d '{"exact": true}'
+</code></pre>
+<p>è¿ååå®¹å¦ä¸ï¼</p>
+<pre><code class="language-json">{"result":{"count":2},"status":"ok","time":0.0004876}
+</code></pre>
+<p>è¿è¯´ææ°æ®å·²ç»æåå¯¼å¥ã</p>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-03-24 20:35">2026-03-24 20:35</span>&nbsp;
+<a href="https://www.cnblogs.com/gujun">gujunge</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19730038);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19730038', targetLink: 'https://www.cnblogs.com/gujun/p/19730038/spring-ai-04', title: 'Spring with AI (4): æç´¢æ©å±ââåéæ°æ®åºä¸RAG(ä¸)' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ Serilogï¼ä»ç»æåæ¥å¿è®¤ç¥å° .NET å·¥ç¨è½å° ]]></title>
+    <link>https://www.cnblogs.com/denglei1024/p/19765966</link>
+    <guid>245af3e07fc192abdc6b6dabe2c7b5c5</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/denglei1024/p/19765966" title="åå¸äº 2026-03-24 20:05">
+    <span role="heading" aria-level="2">Serilogï¼ä»ç»æåæ¥å¿è®¤ç¥å° .NET å·¥ç¨è½å°</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h2 id="é®é¢èæ¯">é®é¢èæ¯</h2>
+<p>å¾å¤é¡¹ç®ä¸ç¼ºæ¥å¿ï¼ç¼ºçæ¯æç¨çæ¥å¿ã</p>
+<p>å¹³æ¶æ¥å£è·å¾é¡ºï¼å¤§å®¶é½è§å¾æ¥å¿å¤ç¨ãçå°çº¿ä¸åºé®é¢ï¼æ¥å¿çç­æ¿ä¼ä¸ä¸å­æ´é²åºæ¥ã</p>
+<p>æ¯å¦è®¢åæ¥å£å¶åè¶æ¶ï¼æ¥å¿éåªå©è¿ä¹ä¸å¥ï¼</p>
+<pre><code class="language-text">Create order failed for customer 1024, cost 3800ms, trace abc123
+</code></pre>
+<p>è¿ç§æ¥å¿å¹³æ¶ççè¿è¡ï¼çå°çº¿ä¸æéæ¶åºæ¬å¸®ä¸ä¸å¤ªå¤å¿ï¼</p>
+<ol>
+<li>ä½ æ²¡æ³ç´æ¥æ CustomerIdãTraceIdãElapsedMs åè¿æ»¤åèåï¼åªè½å¨ææç´¢</li>
+<li>åä¸ä¸ªå­æ®µä»å¤©å customerIdï¼æå¤©å userIdï¼åå¤©åæ¢æ client_idï¼æ¥è¯¢æ¡ä»¶æ ¹æ¬æ²æ·ä¸ä¸æ¥</li>
+<li>æ³ç»è®¡æç±»éè¯¯çæ°éãå¹³åèæ¶ãå¤±è´¥å æ¯ï¼å¾å¾è¿å¾åé¢å¤èæ¬äºæ¬¡æ¸æ´</li>
+<li>æ¥å¿å¹³å°è½åçåæè½åå¾å¼±ï¼å ä¸ºå®æ¿å°çåªæ¯ä¸æ®µææ¬ï¼ä¸æ¯ä¸æ¡å¯åæçæ°æ®</li>
+</ol>
+<p>é®é¢å¾å¾ä¸å¨äºæ¥å¿æå¾ä¸å¤å¤ï¼èå¨äºæ¥å¿ä»ä¸å¼å§å°±æ²¡æå¯æ£ç´¢ãå¯èåãå¯å³èçæ¹å¼å»è®¾è®¡ã</p>
+<p>ä¼ ç»ææ¬æ¥å¿æ´ååç»äººççå¤æ³¨ï¼ç»æåæ¥å¿æååç»ç³»ç»æ¶è´¹çæ°æ®ãä¸å¡ä¸æ¦è¿å¥å¤äººåä½ãçº¿ä¸æéãç»ä¸è§æµè¿äºé¶æ®µï¼æ¥å¿å°±ä¸ååªæ¯æåºæ¥çä¸ç¼ï¼èæ¯æéãå®¡è®¡ãåè­¦ãææ è¡¥åãé¾è·¯è¿½è¸ªçä¸é¨åãèµ°å°è¿ä¸æ­¥ï¼ç»æåæ¥å¿å°±ä¸æ¯é¦ä¸æ·»è±ï¼èæ¯è¯¥è¡¥çåºç¡è¯¾ã</p>
+<h2 id="åçè§£æ">åçè§£æ</h2>
+<h3 id="ä»ä¹æ¯ç»æåæ¥å¿">ä»ä¹æ¯ç»æåæ¥å¿</h3>
+<p>å¾å¤äººç¬¬ä¸æ¬¡æ¥è§¦ç»æåæ¥å¿ï¼ä¼ä¸æè¯æéç¹æ¾å¨ JSON è¾åºä¸ãå¶å® JSON åªæ¯è¡¨ç°å½¢å¼ï¼æ ¸å¿ä¸å¨æ¥å¿é¿ä»ä¹æ ·ï¼èå¨æ¥å¿éçå­æ®µææ²¡ææç¡®è¯­ä¹ï¼åç»­è½ä¸è½è¢«ç³»ç»ç¨³å®è¯å«ã</p>
+<p>åçä¸¤ç§åæ³çå·®å¼ã</p>
+<p>æ®éææ¬æ¥å¿ï¼</p>
+<pre><code class="language-csharp">logger.LogInformation(
+    $"Order {order.Id} created for customer {order.CustomerId}, amount {order.Amount}, cost {elapsedMs}ms"
+);
+</code></pre>
+<p>è¿è¡ä»£ç æç»åªä¼äº§åºä¸æ®µå­ç¬¦ä¸²ãäººç±»çæ²¡é®é¢ï¼ä½æ¥å¿å¹³å°æ¿å°ä»¥åï¼å¹¶ä¸ç¥éåªä¸æ®µæ¯è®¢åå·ï¼åªä¸æ®µæ¯éé¢ï¼åªä¸æ®µæ¯èæ¶ã</p>
+<p>ç»æåæ¥å¿ï¼</p>
+<pre><code class="language-csharp">logger.LogInformation(
+    "Order {OrderId} created for customer {CustomerId}, amount {Amount}, cost {ElapsedMs}ms",
+    order.Id,
+    order.CustomerId,
+    order.Amount,
+    elapsedMs
+);
+</code></pre>
+<p>æ¢æè¿ç§åæ³ä»¥åï¼æ¥å¿æ¡æ¶è®°å½çå°±ä¸åæ¯ä¸æ´æ®µæ®éå­ç¬¦ä¸²ï¼èæ¯ä¸ä¸ªæ¥å¿äºä»¶ï¼</p>
+<ul>
+<li>æ¨¡æ¿æ¯ Order {OrderId} created for customer {CustomerId}, amount {Amount}, cost {ElapsedMs}ms</li>
+<li>å±æ§æ¯ OrderIdãCustomerIdãAmountãElapsedMs</li>
+<li>åæ°æ®è¿åæ¬æ¶é´ãçº§å«ãå¼å¸¸ãæ¥æºãçº¿ç¨ãTraceId è¿äºä¸ä¸æ</li>
+</ul>
+<p>è¾åºå°æ§å¶å°æ¶ï¼å®å¯ä»¥æ¸²ææäººè½ç´æ¥ççå¥å­ï¼éå° ElasticsearchãSeqãLoki æ OpenTelemetry åç«¯æ¶ï¼å®åè½ä»¥å­æ®µåæ°æ®çå½¢å¼è¢«æ£ç´¢åèåã</p>
+<p>æä»¥ï¼ç»æåæ¥å¿æ¬è´¨ä¸æ¯äºä»¶å å­æ®µï¼ä¸æ¯ææ¥å¿æ¢ä¸ªæ´æ¼äº®çæ ¼å¼ã</p>
+<h3 id="ä¸ºä»ä¹éè¦ç»æåæ¥å¿">ä¸ºä»ä¹éè¦ç»æåæ¥å¿</h3>
+<p>ç»æåæ¥å¿çæ­£è§£å³çï¼æ¯ææ¬æ¥å¿è¿å¥å·¥ç¨åé¶æ®µä»¥åæ´é²åºæ¥çå ä¸ªç¡¬ä¼¤ã</p>
+<h3 id="1-æ£ç´¢ææ¬é«">1. æ£ç´¢ææ¬é«</h3>
+<p>ææ¬æ¥å¿éåèç¼ç¿»çï¼ä¸éåæºå¨åæãå­æ®µåå¨å¥å­éï¼æ£ç´¢éå¸¸ä¾èµæ¨¡ç³å¹éæèæ­£åï¼ææ¬é«ï¼ä¹ä¸ç¨³å®ã</p>
+<p>ä¸æ¦æ¥å¿å¤©ç¶å¸¦å­æ®µï¼ææ¥å¨ä½ä¼ç´æ¥ä»ç¿»ææ¬åææ¥æ°æ®ï¼</p>
+<ul>
+<li>æ TraceId æ¾ä¸æ¡è¯·æ±çå¨é¾è·¯æ¥å¿</li>
+<li>æ OrderId æ¾æä¸ç¬è®¢åçç¶æåå</li>
+<li>æ StatusCode = 500 ç»è®¡æè¿ 10 åéçå¼å¸¸å³°å¼</li>
+<li>æ ElapsedMs &gt; 3000 è¿æ»¤æææ¢è¯·æ±</li>
+</ul>
+<p>è¿äºå¨ä½æ¾å¨ææ¬æ¥å¿éé½æºå«æ­ï¼æ¾å¨ç»æåæ¥å¿éåèæ¯æåºç¡çç¨æ³ã</p>
+<h3 id="2-å­æ®µä¸ç¨³å®å¢éåä½ææ¬é«">2. å­æ®µä¸ç¨³å®ï¼å¢éåä½ææ¬é«</h3>
+<p>åä¸ä¸ªä¸å¡å«ä¹ï¼å¦æä»å¤©æäººå customerIdï¼æå¤©æäººå userIdï¼åå¤©åæäººå client_idï¼æ¥å¿ç³»ç»å°±å¾é¾å½¢æç¨³å®æ¥è¯¢ã</p>
+<p>ç»æåæ¥å¿è¿æä¸ä¸ªå¾ç°å®çä»·å¼ï¼å®ä¼é¼çå¢éæå­æ®µå¥çº¦æ¢æ¢æ¶æä¸æ¥ï¼æ¯å¦ï¼</p>
+<ul>
+<li>TraceId è¡¨ç¤ºé¾è·¯æ è¯</li>
+<li>OrderId è¡¨ç¤ºè®¢åæ è¯</li>
+<li>UserId è¡¨ç¤ºå½åç»å½ç¨æ·</li>
+<li>ElapsedMs è¡¨ç¤ºèæ¶ï¼ç»ä¸ææ¯«ç§è®°å½</li>
+</ul>
+<p>ä¸æ¦å­æ®µç¨³å®ä¸æ¥ï¼æéèæ¬ãçæ§è§åãä»ªè¡¨çãåè­¦æ¡ä»¶é½è½å¤ç¨ã</p>
+<h3 id="3-æ æ³èªç¶æ¥å¥å¯è§æµä½ç³»">3. æ æ³èªç¶æ¥å¥å¯è§æµä½ç³»</h3>
+<p>ç°å¨çæ¥å¿éå¸¸ä¸ä¼åç¬å­å¨ï¼èæ¯è¦åææ ãé¾è·¯è¿½è¸ªä¸èµ·å·¥ä½ã</p>
+<p>å¦æä½ çæ¥å¿éæ²¡æç¨³å®å­æ®µï¼æ²¡æ TraceIdãSpanIdãRequestPathãStatusCode è¿äºä¸ä¸æï¼æ¥å¿å tracing å°±è¿ä¸èµ·æ¥ãæåç»å¸¸ä¼çå°è¿ç§å°´å°¬åºæ¯ï¼</p>
+<ul>
+<li>é¾è·¯å¹³å°éè½çå°ä¸ä¸ªæ¢è¯·æ±</li>
+<li>æ¥å¿å¹³å°éä¹æä¸æ¡éè¯¯æ¥å¿</li>
+<li>ä½ä¸¤è¾¹å³èä¸ä¸ï¼åªè½é æ¶é´æ³äººå·¥ç</li>
+</ul>
+<p>è¿å°±æ¯ç»æåæ¥å¿çæ­£å¼é±çå°æ¹ãå®ææ¥å¿ä»è¾åºä¸æ®µææ¬ï¼æ¬å°äºæ²æ·ä¸æ¡å¯è§æµæ°æ®çå±æ¬¡ã</p>
+<h3 id="ä¸ºä»ä¹å¨-net-éå¾å¤å¢ééæ©-serilog">ä¸ºä»ä¹å¨ .NET éå¾å¤å¢ééæ© Serilog</h3>
+<p>.NET æ¬èº«æä¾çæ¯ Microsoft.Extensions.Logging è¿ä¸å±æ¥å¿æ½è±¡ï¼å®è§£å³çæ¯ç»ä¸æ¥å£é®é¢ï¼ä½ä¸ç´æ¥å³å®ä½ çç»æåæ¥å¿æ¹æ¡æä¹è½å°ã</p>
+<p>çå°å·¥ç¨è½å°è¿ä¸æ­¥ï¼å¾å¤å¢éä¼é Serilogï¼åå å¤§è´æè¿å ä¸ªï¼</p>
+<ol>
+<li>å®ä»è®¾è®¡ä¸å°±æ¯å´ç»ç»æåæ¥å¿å±å¼çï¼ä¸æ¯åæ¥è¡¥ä¸çè½å</li>
+<li>Message Template è¯­ä¹æçï¼å­æ®µæ¨¡åæ¸æ°</li>
+<li>Sink çæå®æ´ï¼æ§å¶å°ãæä»¶ãSeqãElasticsearchãOpenTelemetry é½ææçæ¯æ</li>
+<li>EnricherãDestructuringãè¿æ»¤ãåçº§æ§å¶è¿äºè½åéåé¿æè·å¨çäº§ç¯å¢é</li>
+</ol>
+<p>è¯´å¾æ´ä¸¥è°¨ä¸ç¹ï¼Serilog ä¸æ¯ .NET éçå¯ä¸éé¡¹ï¼ä½å®ç¡®å®æ¯æå¸¸è§ãææççç»æåæ¥å¿æ¹æ¡ä¹ä¸ã</p>
+<h3 id="serilog-å°åºåäºä»ä¹">Serilog å°åºåäºä»ä¹</h3>
+<p>Serilog çæ ¸å¿é¾è·¯å¯ä»¥ç®åæä¸é¢è¿æ ·ï¼</p>
+<pre><code class="language-text">åºç¨ä»£ç 
+  -&gt; Message Template
+  -&gt; LogEvent
+  -&gt; Enricher è¡¥åä¸ä¸æ
+  -&gt; Sink è¾åºå° ConsoleãFileãSeqãOTLP ç­ç®æ 
+</code></pre>
+<p>è¿éé¢æå³é®çæ¯ LogEventãå®ä¸æ¯æ®éå­ç¬¦ä¸²ï¼èæ¯ä¸ä¸ªæ¥å¿äºä»¶å¯¹è±¡ï¼éé¢è³å°ä¼å¸¦ä¸è¿äºä¿¡æ¯ï¼</p>
+<ul>
+<li>Timestamp</li>
+<li>Level</li>
+<li>MessageTemplate</li>
+<li>Properties</li>
+<li>Exception</li>
+</ul>
+<p>ä¹å°±æ¯è¯´ï¼ä½ åä¸æ¥çä¸ååªæ¯ä¸å¥è¯ï¼èæ¯ä¸ä»½å¸¦ä¸ä¸æå­æ®µçäºä»¶æ°æ®ã</p>
+<p>åçæå¸¸è§çè¿ä¸è¡ï¼</p>
+<pre><code class="language-csharp">Log.Information(
+    "Payment {PaymentId} completed for order {OrderId}",
+    paymentId,
+    orderId
+);
+</code></pre>
+<p>Serilog ä¼æå®ææï¼</p>
+<ul>
+<li>æ¨¡æ¿ï¼Payment {PaymentId} completed for order</li>
+<li>å±æ§ï¼PaymentIdãOrderId</li>
+<li>çº§å«ï¼Information</li>
+<li>æ¶é´æ³ï¼å½åæ¶é´</li>
+</ul>
+<p>å¦æè¾åºå° JSON Sinkï¼æ¥å¿åç«¯çå°çå°±æ¯å­æ®µåç»æï¼èä¸æ¯ä¸æ´æ®µå¥å­ã</p>
+<h2 id="ç¤ºä¾ä»£ç ">ç¤ºä¾ä»£ç </h2>
+<h3 id="ä»ææ¬æ¥å¿åå°ç»æåæ¥å¿">ä»ææ¬æ¥å¿åå°ç»æåæ¥å¿</h3>
+<p>åçä¸ç§é¡¹ç®éå¾å¸¸è§ï¼ä½åé¢åºæ¬é½ä¼è¿å·¥çåæ³ï¼</p>
+<pre><code class="language-csharp">app.MapPost("/orders", async (
+    CreateOrderRequest request,
+    OrderApplicationService orderService,
+    ILogger&lt;Program&gt; logger) =&gt;
+{
+    var startedAt = Stopwatch.GetTimestamp();
+
+    try
+    {
+        var orderId = await orderService.CreateAsync(request);
+        var elapsedMs = Stopwatch.GetElapsedTime(startedAt).TotalMilliseconds;
+
+        logger.LogInformation(
+            $"Create order success, orderId={orderId}, customerId={request.CustomerId}, elapsed={elapsedMs}ms"
+        );
+
+        return Results.Ok(new { OrderId = orderId });
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(
+            ex,
+            $"Create order failed, customerId={request.CustomerId}, totalAmount={request.TotalAmount}"
+        );
+
+        return Results.Problem();
+    }
+});
+</code></pre>
+<p>è¿æ®µä»£ç ä¹ä¸çæ²¡ä»ä¹é®é¢ï¼ä½åé¢ä¼å¾é¾ç¨ï¼ä¸»è¦å¡å¨ä¸¤ä¸ªç¹ï¼</p>
+<ol>
+<li>æåæ¥å¿è¿æ¯å­ç¬¦ä¸²æ¼æ¥ï¼å­æ®µæ æ³ç¨³å®æå</li>
+<li>åä¸ç±»äºä»¶çå­æ®µå½åæ²¡æåºå®æ¨¡æ¿ï¼åç»­å¾é¾åæ¥è¯¢åç»è®¡</li>
+</ol>
+<p>æ¢æç»æååæ³åï¼äºæä¼ç®åå¾å¤ï¼</p>
+<pre><code class="language-csharp">app.MapPost("/orders", async (
+    CreateOrderRequest request,
+    OrderApplicationService orderService,
+    ILogger&lt;Program&gt; logger) =&gt;
+{
+    var startedAt = Stopwatch.GetTimestamp();
+
+    try
+    {
+        var orderId = await orderService.CreateAsync(request);
+        var elapsedMs = Stopwatch.GetElapsedTime(startedAt).TotalMilliseconds;
+
+        logger.LogInformation(
+            "Create order succeeded. OrderId: {OrderId}, CustomerId: {CustomerId}, TotalAmount: {TotalAmount}, ElapsedMs: {ElapsedMs}",
+            orderId,
+            request.CustomerId,
+            request.TotalAmount,
+            elapsedMs
+        );
+
+        return Results.Ok(new { OrderId = orderId });
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(
+            ex,
+            "Create order failed. CustomerId: {CustomerId}, TotalAmount: {TotalAmount}",
+            request.CustomerId,
+            request.TotalAmount
+        );
+
+        return Results.Problem();
+    }
+});
+
+public sealed record CreateOrderRequest(int CustomerId, decimal TotalAmount, List&lt;int&gt; ItemIds);
+</code></pre>
+<p>è¿éæå³é®çååï¼ä¸æ¯ææå¼å­ç¬¦ä¸²æ¿æ¢æäºå ä½ç¬¦ï¼èæ¯å­æ®µç»äºç¨³å®ä¸æ¥äºãåé¢ä½ å¨æ¥å¿å¹³å°éæ CustomerIdãOrderIdãElapsedMs å»æ¥ï¼å°±ä¸ä¼åé·å¥å¨ææç´¢ã</p>
+<h3 id="å¨-aspnet-core-éæ¥å¥-serilog">å¨ ASP.NET Core éæ¥å¥ Serilog</h3>
+<p>ä¸é¢ç»ä¸ä¸ªæå¸¸è§çæ¥å¥æ¹å¼ï¼ç¤ºæä»£ç åºäº .NET 8ã</p>
+<p>åå®è£å¸¸ç¨åï¼</p>
+<ul>
+<li>Serilog.AspNetCore</li>
+<li>Serilog.Sinks.Console</li>
+<li>Serilog.Sinks.File</li>
+<li>Serilog.Enrichers.Environment</li>
+</ul>
+<p>Program.cs å¯ä»¥è¿æ ·åï¼</p>
+<pre><code class="language-csharp">using Serilog;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((context, services, loggerConfiguration) =&gt;
+{
+    loggerConfiguration
+        .ReadFrom.Configuration(context.Configuration)
+        .Enrich.FromLogContext()
+        .Enrich.WithMachineName()
+        .Enrich.WithEnvironmentName()
+        .Enrich.WithProperty("Application", "OrderService")
+        .WriteTo.Console(
+            outputTemplate:
+                "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}"
+        )
+        .WriteTo.File(
+            path: "logs/order-service-.log",
+            rollingInterval: RollingInterval.Day,
+            retainedFileCountLimit: 14
+        );
+});
+
+builder.Services.AddProblemDetails();
+
+var app = builder.Build();
+
+app.UseSerilogRequestLogging(options =&gt;
+{
+    options.MessageTemplate =
+        "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
+});
+
+app.MapGet("/orders/{orderId:int}", (
+    int orderId,
+    ILogger&lt;Program&gt; logger) =&gt;
+{
+    logger.LogInformation("Get order detail. OrderId: {OrderId}", orderId);
+    return Results.Ok(new { OrderId = orderId, Status = "Paid" });
+});
+
+app.Run();
+</code></pre>
+<p>è¿æ®µéç½®åçäºæå¶å®å¾ç´æ¥ï¼</p>
+<ol>
+<li>è®© ASP.NET Core é»è®¤æ¥å¿ç®¡éæ¥å¥ Serilog</li>
+<li>èªå¨ææ¥å¿ä¸ä¸æåè¿å»ï¼æ¯å¦ç¯å¢åãæºå¨åãè¯·æ±ä¸ä¸æ</li>
+<li>åæ¶è¾åºå°æ§å¶å°åæä»¶ï¼ä¾¿äºå¼ååæ¬å°ææ¥</li>
+<li>ç¨è¯·æ±æ¥å¿ä¸­é´ä»¶ç»ä¸è®°å½ HTTP è¯·æ±ï¼ä¸ç¨æ¯ä¸ªæ¥å£é½æåä¸é</li>
+</ol>
+<h3 id="serilog-éææä»·å¼çä¸ä¸ªè½å">Serilog éææä»·å¼çä¸ä¸ªè½å</h3>
+<h4 id="1-message-template">1. Message Template</h4>
+<p>å®å³å®äºä½ çæ¥å¿å°åºæ¯ä¸æ¯ç»æåæ¥å¿ã</p>
+<pre><code class="language-csharp">logger.LogInformation(
+    "User {UserId} paid {Amount} for order {OrderId}",
+    userId,
+    amount,
+    orderId
+);
+</code></pre>
+<p>è¿éç UserIdãAmountãOrderId é½ä¼åæç¬ç«å­æ®µãåç»­æ è®ºè¾åºå°ææ¬ãJSON è¿æ¯æ¥å¿å¹³å°ï¼è¿äºå­æ®µé½è½ç»§ç»­ä¿çä¸æ¥ã</p>
+<h4 id="2-enricher">2. Enricher</h4>
+<p>Enricher çä»·å¼å¾ç´æ¥ï¼å°±æ¯æé£äºæ¯æ¡æ¥å¿é½æ³å¸¦ä¸ãä½åä¸æ³å¨ä¸å¡ä»£ç ééå¤ä¼ éçä¸ä¸æç»ä¸è¡¥è¿å»ã</p>
+<p>æ¯å¦ç»ä¸è¡¥åæå¡åãé¨ç½²ç¯å¢ãèç¹åï¼</p>
+<pre><code class="language-csharp">loggerConfiguration
+    .Enrich.WithProperty("Application", "OrderService")
+    .Enrich.WithEnvironmentName()
+    .Enrich.WithMachineName();
+</code></pre>
+<p>å¦æè¦æ TraceIdãTenantIdãUserId è¿ç±»ä¿¡æ¯èªå¨è¡¥å°æ¯æ¡æ¥å¿éï¼ä¹éå¸¸æ¯éè¿ Enricher æ LogContext å®æã</p>
+<h4 id="3-sink">3. Sink</h4>
+<p>Sink å³å®æ¥å¿æåè½å°åªéã</p>
+<p>å¸¸è§éæ©åæ¬ï¼</p>
+<ul>
+<li>Consoleï¼éåæ¬å°å¼ååå®¹å¨æ åè¾åº</li>
+<li>Fileï¼éåç®åé¨ç½²ææ¬å°ææ¥</li>
+<li>Seqï¼éåç»æåæ¥å¿çå¿«éæ¥è¯¢åæ¼ç¤º</li>
+<li>Elasticsearch æ Lokiï¼éåæ¥å¥ä¸­å¿åæ¥å¿å¹³å°</li>
+<li>OpenTelemetryï¼éåçº³å¥ç»ä¸å¯è§æµä½ç³»</li>
+</ul>
+<p>Serilog çä¼å¿ä¸åªæ¯ Sink å¤ï¼èæ¯è¿äº Sink å¤§å¤å¤©ç¶çè§£ç»æåå­æ®µï¼è¿ä¸ç¹å¨åç»­æ¥æ¥å¿å¹³å°æ¶ä¼çå¾å¤äºã</p>
+<h3 id="è®°å½å¤æå¯¹è±¡æ¶æä¹å">è®°å½å¤æå¯¹è±¡æ¶æä¹å</h3>
+<p>å¦æä¸ä¸ªå¯¹è±¡æ¬èº«å°±å¸¦çæç¡®çä¸å¡è¯­ä¹ï¼å¯ä»¥ç´æ¥è®© Serilog å±å¼å¯¹è±¡å­æ®µï¼</p>
+<pre><code class="language-csharp">logger.LogInformation("Submit order request: {@OrderRequest}", request);
+</code></pre>
+<p>è¿éç @ è¡¨ç¤ºæå¯¹è±¡ç»æå±å¼ï¼èä¸æ¯åªè°ç¨ ToString()ã</p>
+<p>éåçåºæ¯ï¼</p>
+<ul>
+<li>è¯·æ±å¥åææ¥</li>
+<li>é¢åäºä»¶å¿«ç§</li>
+<li>å®¡è®¡æ¥å¿éè®°å½ä¸å¡å¯¹è±¡æè¦</li>
+</ul>
+<p>ä½è¿éæä¸ªåæï¼å¯¹è±¡éä¸è½ç´æ¥å¸¦å¯ç ãä»¤çãé¶è¡å¡å·è¿ç±»ææå­æ®µï¼æèè³å°è¦ååè±æã</p>
+<h2 id="å·¥ç¨å®è·µå»ºè®®">å·¥ç¨å®è·µå»ºè®®</h2>
+<h3 id="1-åè®¾è®¡å­æ®µååæ¥å¿">1. åè®¾è®¡å­æ®µï¼ååæ¥å¿</h3>
+<p>å¦ææ Serilog æ¥è¿æ¥äºï¼æ¥å¿ä¹å¼å§ç»æåäºï¼æåè¿æ¯ä¸å¥½æ¥ãé®é¢éå¸¸ä¸å¨æ¡æ¶ï¼èå¨å­æ®µè®¾è®¡ã</p>
+<p>éç¨åºæ¯ï¼åå¤ç»æ ¸å¿ä¸å¡é¾è·¯è¡¥æ¥å¿æ¶</p>
+<p>å»ºè®®ï¼</p>
+<ul>
+<li>åå®ä¸å¥é«é¢å­æ®µåï¼æ¯å¦ TraceIdãUserIdãOrderIdãElapsedMsãStatusCode</li>
+<li>åä¸ä¸å¡æ¦å¿µåªä¿çä¸ä¸ªå½åï¼ä¸è¦æ··çå</li>
+<li>æ°å¼å­æ®µå°½éä¿æçå®æ°å¼ç±»åï¼ä¸è¦æåæ¼æå­ç¬¦ä¸²</li>
+</ul>
+<p>æ³¨æäºé¡¹ï¼å­æ®µå½åä¸æ¦è¢«åè­¦ãä»ªè¡¨çãæ¥è¯¢èæ¬ä¾èµï¼åé¢æ¹å¨ææ¬ä¼å¾é«ã</p>
+<h3 id="2-å¼å¸¸ä¸å®ä½ä¸ºç¬ç«åæ°ä¼ å¥">2. å¼å¸¸ä¸å®ä½ä¸ºç¬ç«åæ°ä¼ å¥</h3>
+<p>éè¯¯æ¥å¿éæå®¹æè¸©çåï¼å°±æ¯æå¼å¸¸ä¿¡æ¯å½æ®éå­ç¬¦ä¸²å»æ¼ã</p>
+<p>éè¯¯åæ³ï¼</p>
+<pre><code class="language-csharp">logger.LogError("Create order failed: {Exception}", ex.Message);
+</code></pre>
+<p>æ¨èåæ³ï¼</p>
+<pre><code class="language-csharp">logger.LogError(ex, "Create order failed. OrderId: {OrderId}", orderId);
+</code></pre>
+<p>éç¨åºæ¯ï¼ææå¼å¸¸æ¥å¿</p>
+<p>æ³¨æäºé¡¹ï¼å¼å¸¸å¯¹è±¡ç¬ç«ä¼ å¥åï¼å æ ãåé¨å¼å¸¸ãå¼å¸¸ç±»åæè½è¢«æ¥å¿ç³»ç»æ­£ç¡®è¯å«ã</p>
+<h3 id="3-ä¸è¦é»è®¤è®°å½å®æ´è¯·æ±ä½åååºä½">3. ä¸è¦é»è®¤è®°å½å®æ´è¯·æ±ä½åååºä½</h3>
+<p>å¦æä½ çå¢éä¸ºäºæ¹ä¾¿ææ¥ï¼ä¸ä¸æ¥å°±æè¯·æ±ä½åååºä½å¨éæè¿æ¥å¿ãç­æçåæ¯çäºï¼åé¢å¤§æ¦çä¼åææ°çé®é¢æºå¤´ã</p>
+<p>éç¨åºæ¯ï¼æ¯ä»ãç¨æ·ãè®¤è¯ãè®¢åç­ææä¸å¡æ¥å£</p>
+<p>é£é©ï¼</p>
+<ul>
+<li>æ¥å¿ä½ç§¯è¿éè¨è</li>
+<li>ä¸ªäººä¿¡æ¯åææå­æ®µæ³æ¼</li>
+<li>åºååå¼éå¢å ï¼è¯·æ±å»¶è¿ä¸å</li>
+</ul>
+<p>å»ºè®®ï¼é»è®¤åªè®°å½å³é®æè¦å­æ®µãç¡®å®è¦æ¥ body æ¶ï¼èµ°ç½ååæ¥å£ãä¸´æ¶å¼å³æèéæ ·ç­ç¥ã</p>
+<h3 id="4-å¼åç¯å¢åçäº§ç¯å¢çæ¥å¿ç­ç¥è¦åå¼">4. å¼åç¯å¢åçäº§ç¯å¢çæ¥å¿ç­ç¥è¦åå¼</h3>
+<p>éç¨åºæ¯ï¼åä¸å¥åºç¨å¨æ¬å°ãæµè¯ãçäº§é½è¦è¿è¡</p>
+<p>å»ºè®®ï¼</p>
+<ul>
+<li>å¼åç¯å¢ä¼åæ§å¶å°å¯è¯»æ§</li>
+<li>çäº§ç¯å¢ä¼åç»æç¨³å®ãä¾¿äºå¹³å°éé</li>
+<li>Debug çº§å«ä¸è¦å¨çäº§ç¯å¢é¿æå¼å¯</li>
+</ul>
+<p>æ³¨æäºé¡¹ï¼æ¥å¿çº§å«è¿ä½ãå­æ®µè¿å¤ãè¾åºç®æ è¿éï¼æåé½ä¼åæçå®çæ§è½ææ¬ã</p>
+<h2 id="æ»ç»">æ»ç»</h2>
+<p>ç»æåæ¥å¿è§£å³çï¼ä»æ¥é½ä¸æ¯æ¥å¿æ ¼å¼å¥½ä¸å¥½çï¼èæ¯æ¥å¿è½ä¸è½è¢«ç³»ç»ç¨³å®æ¶è´¹ã</p>
+<p>å½æ¥å¿å¼å§æ¿ææéãå®¡è®¡ãåè­¦ãé¾è·¯å³èè¿äºèè´£æ¶ï¼çº¯ææ¬æ¥å¿å¾å¿«å°±ä¼æä¸å¤©è±æ¿ãç»æåæ¥å¿ææ¥å¿ä»å¥å­åæäºä»¶ï¼ææ£ç´¢ä»å¨ææç´¢åæå­æ®µæ¥è¯¢ï¼è¿ä¸æ­¥å¾å³é®ã</p>
+<p>å¨ .NET çæéï¼Serilog è¢«å¤§éå¢ééç¨ï¼ä¸åªæ¯å ä¸ºå®å¥½ç¨ï¼æ´éè¦çæ¯å®æ Message TemplateãEnricherãSink è¿å å±é½åå¾æ¯è¾æçï¼è½æç»æåæ¥å¿çæ­£è½å°å·¥ç¨éï¼èä¸æ¯åçå¨æ¦å¿µä¸ã</p>
+
+
+</div>
+<div id="MySignature" role="contentinfo">
+    <p>æ¬ææ¥èªåå®¢å­ï¼ä½èï¼<a href="https://www.cnblogs.com/denglei1024/" target="_blank">éç£DL</a>ï¼è½¬è½½è¯·æ³¨æåæé¾æ¥ï¼<a href="https://www.cnblogs.com/denglei1024/p/19765966" target="_blank">https://www.cnblogs.com/denglei1024/p/19765966</a></p>
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-03-24 20:05">2026-03-24 20:05</span>&nbsp;
+<a href="https://www.cnblogs.com/denglei1024">éç£DL</a>&nbsp;
+éè¯»(<span id="post_view_count">23</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19765966);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19765966', targetLink: 'https://www.cnblogs.com/denglei1024/p/19765966', title: 'Serilogï¼ä»ç»æåæ¥å¿è®¤ç¥å° .NET å·¥ç¨è½å°' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
     <title><![CDATA[ ä¸è®°å½ä»¤ä¹è½æéï¼catpaw chat å®ææå ]]></title>
     <link>https://www.cnblogs.com/ulricqin/p/19764870</link>
     <guid>32cb1db18f6887007638e61c76449a78</guid>
@@ -725,7 +1556,7 @@ model = "gpt-4o"
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-03-24 16:40">2026-03-24 16:40</span>&nbsp;
 <a href="https://www.cnblogs.com/ulricqin">ITè¿ç»´çæ§</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">23</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19764870);return false;">æ¶è</a>&nbsp;
@@ -825,7 +1656,7 @@ model = "gpt-4o"
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-03-24 16:33">2026-03-24 16:32</span>&nbsp;
 <a href="https://www.cnblogs.com/gocodinginmyway">GoCodingInMyWay</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">14</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19764815);return false;">æ¶è</a>&nbsp;
@@ -949,168 +1780,11 @@ UI éå¯ä»¥ç´è§çå° Pool åè¡¨ãå®¹é�
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0.001388888888888889" data-date-updated="2026-03-24 16:06">2026-03-24 16:04</span>&nbsp;
 <a href="https://www.cnblogs.com/xguo">i'mèåè±</a>&nbsp;
-éè¯»(<span id="post_view_count">17</span>)&nbsp;
+éè¯»(<span id="post_view_count">46</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19764598);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19764598', targetLink: 'https://www.cnblogs.com/xguo/p/19764598', title: 'Agent-Sandbox UI ä¸çº¿ï¼æ¥ççæåªäºçåè½æ¯ä½ ç»å¸¸ä½¿ç¨çï¼' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ ååï¼å¾®ä¿¡ç»äºè½ç¨ OpenClaw äºï¼å®å iOS é½è¡ï¼éä¿å§çº§æç¨ ]]></title>
-    <link>https://www.cnblogs.com/yupi/p/19764404</link>
-    <guid>2dae1059a9953fb819377731d0492304</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/yupi/p/19764404" title="åå¸äº 2026-03-24 16:00">
-    <span role="heading" aria-level="2">ååï¼å¾®ä¿¡ç»äºè½ç¨ OpenClaw äºï¼å®å iOS é½è¡ï¼éä¿å§çº§æç¨</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                    <div id="cnblogs_post_description" style="display: none">
-        
-        å¾®ä¿¡å®æ¹æ¨åºäº OpenClaw å°é¾è¾æ¥å¥å¾®ä¿¡çæä»¶ãå¾®ä¿¡ ClawBotãï¼ç´æ¥ææ­»äºæ¯èµï¼ææææä½ æä¹ä½¿ç¨
-    </div>
-<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>å¤§å®¶å¥½ï¼ææ¯ç¨åºåé±¼ç®ã</p>
-<p>å å¤©åï¼å¾®ä¿¡å®æ¹æ¨åºäº OpenClaw å°é¾è¾æ¥å¥å¾®ä¿¡çæä»¶ãå¾®ä¿¡ ClawBotãï¼ç´æ¥ææ­»äº âäºå¤ºå»è¾å¥å£â çæ¯èµï¼</p>
-<p><img alt="" loading="lazy" data-src="https://pic.yupi.icu/1/%25E5%25BE%25AE%25E4%25BF%25A1%25E4%25BB%258B%25E5%2585%25A5openclaw.png" class="lazyload"></p>
-<p>ä½æ¯åå¼å§åªæ IOS è¹æææºæè½ç¨ï¼æè¿è·åäºå¼ç©ç¬è¯´ï¼ä¿ºä¸æ¯é«è´µç âè¹æäººâï¼åªè½åæè¾è«åäºâ¦â¦</p>
-<p>ç»æï¼ä»å¤©æ©ä¸æå¼ææºä¸çï¼æå»ï¼æææ²¡æåçº§å¾®ä¿¡çæ¬ï¼ç«ç¶è½å¤ä½¿ç¨å¾®ä¿¡ ClawBot æä»¶äºï¼</p>
-<p>æè¯äºä¸ä¸ï¼æ¥å¥éå¸¸ç®åï¼ççå¯ä»¥è¯´æ¯ææå°±è¡ï¼ç´æ¥å¨å¾®ä¿¡éè·å°é¾è¾èå¤©ãåå¾çãä¸ä»»å¡ï¼ä¸æ»å¾ä¸ç®~</p>
-<p><img alt="" loading="lazy" data-src="https://pic.yupi.icu/1/image-20260324150329933.png" class="lazyload"></p>
-<p>ä¸é¢ï¼ææ¥æå¤§å®¶å¦ä½æ OpenClaw å°é¾è¾æ¥å¥å¾®ä¿¡ï¼ä¿å§ç®å·²ä¸çº¿ â</p>
-<h2 id="ä¸è®¤å»ä¸åªå°é¾è¾-">ä¸ãè®¤å»ä¸åªå°é¾è¾ ð¦</h2>
-<p>å¾®ä¿¡ ClawBot æä»¶çä½ç¨æ¯è¿æ¥ OpenClaw åå¾®ä¿¡ï¼è®©ä½ è½éè¿ææºè·å°é¾è¾èå¤©åä¸åä»»å¡ï¼æä»¥é¦åä½ è¦æä¸åªå°é¾è¾ã</p>
-<p>ä¹åæåäºä¸æ´å¥ <a href="https://ai.codefather.cn/vibe" target="_blank" rel="noopener nofollow">ãOpenClaw ä¿å§çº§æç¨ã</a>ï¼ä»å®è£å°è¿é¶ç©æ³å¨è¦çï¼å¸®ä¸å°æåæåå»ä¸äºèªå·±çå°é¾è¾ã</p>
-<p><img alt="" loading="lazy" data-src="https://pic.yupi.icu/1/%E5%9B%BE2-16%E6%AF%949OpenClaw%E7%9F%A5%E8%AF%86%E5%BA%93%E5%9C%A8%E7%BA%BF%E9%98%85%E8%AF%BB.png" class="lazyload"></p>
-<p>ä½ å¯ä»¥éè¿ä¸é¢ 3 ç§æ¹æ³ï¼å¿«éå®è£ OpenClaw å¹¶è·åèªå·±çå°é¾è¾ï¼æ¯ç§æ¹æ³æé½æä¾äºå»çå¼æç¨ï¼</p>
-<ul>
-<li>
-<p>æ¬å°ä¸é®å®è£ï¼<a href="https://mp.weixin.qq.com/s/fKp1BmuNKSC0lPHJlsIaiA" target="_blank" rel="noopener nofollow">ãOpenClaw ä¸é®é¨ç½²å®è£æç¨ã</a></p>
-</li>
-<li>
-<p>æ¬å°æå¨å®è£ï¼<a href="https://mp.weixin.qq.com/s/l5hmyYIssMcNjB_2Ccx-Og" target="_blank" rel="noopener nofollow">ãOpenClaw æå¨å®è£æç¨ã</a></p>
-</li>
-<li>
-<p>äºæå¡å¨ä¸é®å®è£ï¼<a href="https://mp.weixin.qq.com/s/DZYc92rLzhX95L6OBEQUyQ" target="_blank" rel="noopener nofollow">ãOpenClaw äºæå¡å¨å®è£æç¨ã</a></p>
-</li>
-</ul>
-<p>æ¨èæ°æåå°è¯ <a href="https://mp.weixin.qq.com/s/fKp1BmuNKSC0lPHJlsIaiA" target="_blank" rel="noopener nofollow">æ¬å°ä¸é®å®è£</a>ï¼1 åéæå®ï¼</p>
-<p>1ï¼æ è®ºä½ æ¯ Windows è¿æ¯ Mac ç³»ç»ï¼è¦åæå¼å½ä»¤è¡ç»ç«¯ã</p>
-<p>Windows å¯ä»¥æç´¢ PowerShellï¼å¹¶ <strong>ä»¥ç®¡çåèº«ä»½è¿è¡</strong>ï¼Mac ç´æ¥æç´¢ "ç»ç«¯" å¹¶æå¼å³å¯ï¼</p>
-<p><img alt="" loading="lazy" data-src="https://pic.yupi.icu/1/image-20260324102432835.png" class="lazyload"></p>
-<p>2ï¼ç¶åæ ¹æ®æä½ç³»ç»ï¼å¨ç»ç«¯ä¸­è¾å¥ä¸è¡å½ä»¤ï¼è¿è¡æç»å¤§å®¶æä¾çãå¨èªå¨å®è£èæ¬ãï¼</p>
-<pre><code class="language-powershell"># Windows è¾å¥
-$env:OPENCLAW_VERSION='2026.3.13'; irm https://codefather.cn/openclaw_install/install-openclaw.ps1 | iex
-
-# Mac è¾å¥
-curl -fsSL https://codefather.cn/openclaw_install/install-openclaw.sh | bash -s -- --version 2026.3.13
-</code></pre>
-<p>ç»å¿çåå­¦ä¼åç°ï¼æå¨å½ä»¤ä¸­æ·»å äºçæ¬åæ°ï¼æå®å®è£ <code>2026.3.13</code> è¿ä¸ªçæ¬ã</p>
-<p>â ï¸ è¿éåä¸è¦æ³¨æï¼<strong>ä¸è¦å®è£ &gt;= 3.22 ç OpenClaw çæ¬ï¼</strong>å¦åæ æ³å¼å®¹å¾®ä¿¡ ClawBot ç­æä»¶ï¼é½æªå®æ¹æ´æ°å°å¤ªå¿«å¤ªç²æ´äºï¼</p>
-<p>3ï¼æ¥ä¸æ¥åªéè¦ç­å¾çå»ï¼èæ¬ä¼èªå¨å¸®ä½ æ£æµåå®è£ç¯å¢ï¼å¹¶å®è£ OpenClaw ç¨åºæ¬èº«ã</p>
-<p><img alt="" loading="lazy" data-src="https://pic.yupi.icu/1/image-20260324115344988.png" class="lazyload"></p>
-<p>4ï¼å®è£æååï¼ä¼å¼å¯¼ä½ éç½® AI çå¤§æ¨¡å API Key å¯é¥ã</p>
-<p>æ¨èåç¨å½äº§æ¨¡åï¼æ¯å¦æºè°±ï¼zaiï¼æè Kimiï¼moonshotï¼ï¼ç¨åªå®¶çå¤§æ¨¡åï¼å°±å°åªå®¶çå¼æ¾å¹³å°è·å API Key å³å¯ã</p>
-<p><img alt="" loading="lazy" data-src="https://pic.yupi.icu/1/image-20260324140749942.png" class="lazyload"></p>
-<p>5ï¼æåï¼æ­£å¸¸æåµä¸ï¼ä¼èªå¨æå¼ OpenClaw ç®¡çç½é¡µï¼ä½ çå°é¾è¾åæ¥æ¥å°ï¼</p>
-<p><img alt="" loading="lazy" data-src="https://pic.yupi.icu/1/image-20260324102805104.png" class="lazyload"></p>
-<p>å¦æä½ è¿è¡ä¸é®å®è£èæ¬åºéäºï¼å¯ä»¥å°è¯ <a href="https://mp.weixin.qq.com/s/l5hmyYIssMcNjB_2Ccx-Og" target="_blank" rel="noopener nofollow">æ¬å°æå¨å®è£</a> ã</p>
-<p>å¦æä½ æå¿å°é¾è¾å¨èªå·±ççµèéè¡ä½éä¸ºï¼æèæ³è®©å® 7 x 24 å°æ¶ä¸é´æ­è¿è¡ï¼å¯ä»¥èè <a href="https://mp.weixin.qq.com/s/DZYc92rLzhX95L6OBEQUyQ" target="_blank" rel="noopener nofollow">å¨äºæå¡å¨ä¸å®è£</a> ã</p>
-<h2 id="äºæ¥å¥å¾®ä¿¡-clawbot-æä»¶">äºãæ¥å¥å¾®ä¿¡ ClawBot æä»¶</h2>
-<p>é¦åæå¼å¾®ä¿¡ï¼ä¾æ¬¡ç¹å»ï¼æ â è®¾ç½® â æä»¶ï¼è½å¤çå°å¾®ä¿¡ ClawBot æä»¶ï¼</p>
-<p><img alt="" loading="lazy" data-src="https://pic.yupi.icu/1/image-20260324134224548.png" class="lazyload"></p>
-<p>ä¸æ¯å¥ä»¬ï¼è¿ä¹å¤å¹´äºï¼å°±è¿ä¸ä¸ªæä»¶åï¼</p>
-<p>ä¹è¶³ä»¥çåºè¾è®¯è¿æ³¢æ³æ¿ä¸ AI å¥å£æµéçéå¿äºã</p>
-<p><img alt="" loading="lazy" data-src="https://pic.yupi.icu/1/HDnaD6IbEAMKVS0-20260322141650228.jpeg" class="lazyload"></p>
-<p>è¿å¥æä»¶è¯¦æï¼å¯ä»¥çå°å®æ¹ç»åºäºæ¥å¥å¾®ä¿¡ ClawBot çæå¼ï¼</p>
-<p><img alt="" loading="lazy" data-src="https://pic.yupi.icu/1/Screenshot_20260324_094406_com.tencent_%E5%89%AF%E6%9C%AC.mm.jpg" class="lazyload"></p>
-<p>ä¸é¢æä»¬å¼å§æä½ï¼ä¾ç¶æ¯ 1 åéæå®ï¼</p>
-<p>1ï¼é¦åå¨å®è£äº OpenClaw å°é¾è¾ççµèä¸æå¼ CMD ç»ç«¯ãWindows æ <code>Win + R</code> é®ï¼ç¶åè¾å¥ <code>cmd</code> å¹¶åè½¦ï¼</p>
-<p><img alt="" loading="lazy" data-src="https://pic.yupi.icu/1/image-20260324113126474.png" class="lazyload"></p>
-<p>2ï¼æå¼ç»ç«¯åï¼æ§è¡è¿è¡å½ä»¤ï¼å®è£å¾®ä¿¡æ¥å¥ OpenClaw çæä»¶ï¼</p>
-<pre><code class="language-bash">npx -y @tencent-weixin/openclaw-weixin-cli@latest install
-</code></pre>
-<p>æ­£å¸¸æåµä¸ï¼ä¼æ¾ç¤ºä¸ä¸ªè¿æ¥ç ï¼</p>
-<p><img alt="" loading="lazy" data-src="https://pic.yupi.icu/1/image-20260324141342230.png" class="lazyload"></p>
-<p>3ï¼ç¨ææºæ«ä¸ä¸ï¼ç¶ååæè¿æ¥å°±å¥½ãæä½å®æåï¼ç»ç«¯ä¼æ¾ç¤º âä¸å¾®ä¿¡è¿æ¥æåâï¼å°±å·²ç»æå®äº~</p>
-<p><img alt="" loading="lazy" data-src="https://pic.yupi.icu/1/image-20260324141941525.png" class="lazyload"></p>
-<p>è¯ä¸è¯éè¿å¾®ä¿¡å OpenClaw å°é¾è¾å¯¹è¯å§ï¼èä¸ä¸éè¦ä»ä¹éç½®ï¼å°±è½è®©å®å¸®ä½ åæå¾çãç»ä½ åéå¾çï¼</p>
-<p><img alt="" loading="lazy" data-src="https://pic.yupi.icu/1/image-20260324143907284.png" class="lazyload"></p>
-<h3 id="å¸¸è§éè¯¯">å¸¸è§éè¯¯</h3>
-<p>å®è£è¿ç¨ä¸­ï¼å¯è½ä¼åºç°ä¸äºéè¯¯ï¼è¿æ¯æ­£å¸¸çãï¼æ²¡åºéçåå­¦è¿æ°ççéå¸¸å¥½äº~ï¼</p>
-<p>1ï¼æä»¶å®è£å¤±è´¥</p>
-<p>è¿æ¯å ä¸º OpenClaw å®æ¹æä»¶ä»åºå¤ªç«çäºï¼å¯¼è´å®è£æ¶å¯è½ä¼è¢«éæµï¼</p>
-<p><img alt="" loading="lazy" data-src="https://pic.yupi.icu/1/image-20260324104016363.png" class="lazyload"></p>
-<p>è§£å³æ¹æ³æ¯éè¯å æ¬¡ï¼æèç­å¤§å®¶é½ç¡çäºåå®è£~</p>
-<p>2ï¼æä»¶å è½½å¤±è´¥</p>
-<p>å¦æä½ åé¢æ²¡æè®¤ççæçæç¨ï¼ä¸å°å¿å®è£äº &gt;= 3.22 ççæ¬ï¼å°±ä¼çå°ä¸é¢è¿ä¸ªéè¯¯ï¼</p>
-<p><img alt="" loading="lazy" data-src="https://pic.yupi.icu/1/image-20260324110402003.png" class="lazyload"></p>
-<p>æ­¤æ¶å¯ä»¥æç§ææ¡£æ¥åæ»å°ä¹åççæ¬ï¼æ§è¡å ä¸ªå½ä»¤å°±å¥½ï¼</p>
-<blockquote>
-<p>æè·¯ï¼<a href="https://clawfather.cn/install/updating" target="_blank" rel="noopener nofollow">https://clawfather.cn/install/updating</a></p>
-</blockquote>
-<p><img alt="" loading="lazy" data-src="https://pic.yupi.icu/1/image-20260324124003675.png" class="lazyload"></p>
-<h3 id="æå¨å®è£">æå¨å®è£</h3>
-<p>å¦æä¸é®å®è£å½ä»¤è·ä¸éï¼ä¹å¯ä»¥æå¨ä¸æ­¥æ­¥æ¥ï¼å°± 4 æ¡å½ä»¤çäºå¿ï¼</p>
-<p>1ï¼å®è£æä»¶ï¼</p>
-<pre><code class="language-bash">openclaw plugins install "@tencent-weixin/openclaw-weixin"
-</code></pre>
-<p>2ï¼å¯ç¨æä»¶ï¼</p>
-<pre><code class="language-bash">openclaw config set plugins.entries.openclaw-weixin.enabled true
-</code></pre>
-<p>3ï¼æ«ç ç»å½ï¼ç»ç«¯ä¼å¼¹åºäºç»´ç ï¼ç¨ææºæ«ç å¹¶ç¡®è®¤ææå°±è¡ï¼ç»å½å­è¯ä¼èªå¨ä¿å­å°æ¬å°ï¼</p>
-<pre><code class="language-bash">openclaw channels login --channel openclaw-weixin
-</code></pre>
-<p>4ï¼éå¯ç½å³ï¼è®©æä»¶çæï¼</p>
-<pre><code class="language-bash">openclaw gateway restart
-</code></pre>
-<p>å¦æä½ æ³è®©å¤ä¸ªå¾®ä¿¡å·é½è½è·é¾è¾èå¤©ï¼åæ§è¡ä¸æ¬¡ <code>openclaw channels login --channel openclaw-weixin</code> æ«ç å°±è¡ï¼æ¯æ¬¡æ«ç ä¼åå»ºä¸ä¸ªæ°çè´¦å·ï¼æ¯æå¤ä¸ªå¾®ä¿¡å·åæ¶å¨çº¿ã</p>
-<h2 id="ä¸æ´å¤ç©æ³">ä¸ãæ´å¤ç©æ³</h2>
-<p>å®è£å®æä»¶åï¼ä½ å¯ä»¥å¨ OpenClaw çæä»¶ç®å½ä¸æ¾å° <code>openclaw-weixin</code> ç¸å³çæºç å README.md ä»ç»ææ¡£ï¼æå´è¶£çåå­¦å¯ä»¥ç¿»ä¸ç¿»ï¼</p>
-<p><img alt="" loading="lazy" data-src="https://pic.yupi.icu/1/image-20260324143134753.png" class="lazyload"></p>
-<p>éè¿éè¯»è¿ä¸ªææ¡£ï¼ä½ å¯ä»¥äºè§£å°æ´å¤é«çº§ç¨æ³ï¼æ¯å¦å¤è´¦å·ä¸ä¸æéç¦»ï¼è®©æ¯ä¸ªå¾®ä¿¡å·çå¯¹è¯è®°å¿äºä¸å¹²æ°ï¼ãåç«¯ API åè®®ï¼æ¹ä¾¿äºæ¬¡å¼åå¯¹æ¥èªå·±çæå¡ï¼ãCDN åªä½ä¸ä¼ æµç¨ç­ï¼</p>
-<p><img alt="" loading="lazy" data-src="https://pic.yupi.icu/1/image-20260324144620649.png" class="lazyload"></p>
-<p>æ¥å¥å¾®ä¿¡åªæ¯ç¬¬ä¸æ­¥ï¼æ³æå°é¾è¾ç©åºè±æ¥ï¼å¯ä»¥ççé±¼ç®ä¹ååäº«ç <a href="https://mp.weixin.qq.com/s/kbewg3kIsfcBN-jUIfzkpg" target="_blank" rel="noopener nofollow">ãä¸å­å¹²è´§ | OpenClaw è¿é¶ç©æ³å¤§å¨ï¼50+ å®ææå·§ä¸æ¬¡å­¦ä¼ã</a>ï¼å¨æè¶ 1.2 ä¸å­ãé 100 å¤å¼ å®ææªå¾ï¼æ¶µçäºï¼</p>
-<ul>
-<li>åå§åéç½®ä¸æ¨¡ååæ¢ï¼å¨å± / ä¸´æ¶ï¼</li>
-<li>é«é¢ææ å½ä»¤ä¸å·¥å·ç®¡ç</li>
-<li>TTS æå­è½¬è¯­é³</li>
-<li>å®æ¶ä»»å¡ä¸å¿è·³æºå¶</li>
-<li>Skills æè½ç³»ç»ï¼åç½®æè½ / ç¬¬ä¸æ¹æè½ / AI èªå»ºæè½ï¼</li>
-<li>å­ Agent ä¸å¤ Agent åä½</li>
-<li>é®é¢èªæ£ä¿®å¤ä¸ Git éç½®ç®¡ç</li>
-<li>è®°å¿ç³»ç»ãææ¬æ§å¶ãå®å¨é²æ¤</li>
-</ul>
-<p>æ»å± 13 ä¸ªæ¨¡åï¼éåå·²ç»å®è£å¥½ OpenClawãæ³æ·±å¥ææ¡é«çº§ç¨æ³çåå­¦ã</p>
-<h2 id="æå">æå</h2>
-<p>OpenClaw çè¿­ä»£éåº¦å®å¨å¤ªå¿«äºï¼ä»åªè½å¨ç»ç«¯èå¤©å°ç°å¨å¾®ä¿¡ç´è¿ï¼ä¹å°±å ä¸ªæçäºãè°ä¹ä¸ç¥éä¸ä¸ä¸ªçæ¬åä¼è¹¦åºä»ä¹æ°è±æ ·ã</p>
-<p>ä½æä¸ä»¶äºæ¯ç¡®å®çï¼<strong>ä½¿ç¨ AI Agent çææ¬ä¸å®ä¼è¶æ¥è¶ä½</strong>ï¼æä»¥ä¸å¿å ä¸ºæ²¡æ¶é´ç© OpenClawãç¨ä¸å¥½ OpenClaw èç¦èï¼éè¦ç¨å°çæ¶ååå­¦ä¹æ¯ OK çã</p>
-<p>ä¸ºäºå¸®å¤§å®¶æ´å¥½å°ç©è½¬ OpenClawï¼é±¼ç®åäºä¸æ´å¥ <a href="https://ai.codefather.cn/vibe" target="_blank" rel="noopener nofollow">ãOpenClaw ä¿å§çº§æç¨ã</a>ï¼è¿ 20 ç¯ä»å¥é¨å°è¿é¶çå®æ´æç¨ï¼æ¶µçå®è£é¨ç½²ãèå¤©æ¥å¥ãæ¨¡ååæ¢ãæè½ç³»ç»ãå¤ Agent åä½ãå®å¨é²æ¤ç­æ¹æ¹é¢é¢ï¼å®å¨åè´¹å¼æºï¼æ¬¢è¿å¤§å®¶éè¯»ã</p>
-<p><img alt="" loading="lazy" data-src="https://pic.yupi.icu/1/%E5%9B%BE1%E9%B1%BC%E7%9A%AE%E7%9A%84OpenClaw%E6%95%99%E7%A8%8B-3%E6%AF%944%E5%A4%A7%E7%BA%B2%E5%A4%A7.jpeg" class="lazyload"></p>
-<p>ä¹æ¬¢è¿å¨è¯è®ºåºèèä½ çå»è¾ä½éª~</p>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-03-24 16:01">2026-03-24 16:00</span>&nbsp;
-<a href="https://www.cnblogs.com/yupi">ç¨åºåé±¼ç®</a>&nbsp;
-éè¯»(<span id="post_view_count">93</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19764404);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19764404', targetLink: 'https://www.cnblogs.com/yupi/p/19764404', title: 'ååï¼å¾®ä¿¡ç»äºè½ç¨ OpenClaw äºï¼å®å iOS é½è¡ï¼éä¿å§çº§æç¨' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -1489,179 +2163,11 @@ metadata:
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0.007638888888888889" data-date-updated="2026-03-24 16:12">2026-03-24 16:01</span>&nbsp;
 <a href="https://www.cnblogs.com/easyday">æ½ä¼237</a>&nbsp;
-éè¯»(<span id="post_view_count">32</span>)&nbsp;
+éè¯»(<span id="post_view_count">72</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19758815);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19758815', targetLink: 'https://www.cnblogs.com/easyday/p/19758815', title: 'Skills ç¼åå­¦ä¹ ' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ å¤§æ¨¡åæºè½ä½ ï¼agentï¼ç®ææµç¨ä»ç» ]]></title>
-    <link>https://www.cnblogs.com/somefuture/p/19764574</link>
-    <guid>f1f5d2f8d11c7764485d45c87348d7b3</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/somefuture/p/19764574" title="åå¸äº 2026-03-24 16:01">
-    <span role="heading" aria-level="2">å¤§æ¨¡åæºè½ä½ ï¼agentï¼ç®ææµç¨ä»ç»</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>ä¸é¢æ¯ä¸ä¸ªä½¿ç¨ Rig æå»ºçç®å Agent ç¤ºä¾ãå®å®ä¹äºä¸ä¸ªè®¡ç®å·¥å·ï¼å¹¶è®© Agent èªä¸»å³å®æ¯å¦è°ç¨å®ã</p>
-<blockquote>
-<p>ä¸ºä»ä¹ä¸ç¨langChainï¼ è¿ä¸ªé®é¢æ¾å°æåè¯´</p>
-</blockquote>
-<h1 id="1-æ ¸å¿ä»£ç ç¤ºä¾">1 æ ¸å¿ä»£ç ç¤ºä¾</h1>
-<p>å¨ <code>Cargo.toml</code> ä¸­ï¼åªéè¦ <code>rig-core</code> å <code>tokio</code>ã</p>
-<pre><code class="language-rust">use rig::{completion::Prompt, providers::openai};
-use serde::{Deserialize, Serialize};
-
-// 1. å®ä¹å·¥å·çè¾å¥åæ°ï¼å¼ºç±»åï¼ç±»ä¼¼ Java ç DTOï¼
-#[derive(Deserialize, Serialize, JsonSchema)]
-struct AddArgs {
-    x: i32,
-    y: i32,
-}
-
-#[tokio::main]
-async fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::pub_error::Error&gt;&gt; {
-    // 2. åå§åå®¢æ·ç«¯ (è¿éä»¥ OpenAI ä¸ºä¾ï¼ä¹æ¯æ Gemini/Claude)
-    let client = openai::Client::from_env();
-
-    // 3. å®ä¹ä¸ä¸ªå·¥å· (Tool)
-    // å¨ Rust éï¼å·¥å·å°±æ¯ä¸ä¸ªå¸¦æåæ°æ®çå½æ°
-    let add_tool = rig::tool::Tool::new(
-        "add",
-        "Adds two numbers together",
-        |args: AddArgs| async move {
-            Ok(args.x + args.y)
-        },
-    );
-
-    // 4. æå»º Agent (å¸åç Builder æ¨¡å¼)
-    let agent = client
-        .agent("gpt-4o")
-        .preamble("ä½ æ¯ä¸ä¸ªç²¾éæ°å­¦çå©æã")
-        .tool(add_tool) // æ³¨åå·¥å·
-        .build();
-
-    // 5. æç¤ºå¹¶è¿è¡
-    let response = agent.prompt("è¯·é® 123 å ä¸ 456 ç­äºå¤å°ï¼").await?;
-
-    println!("Agent åå¤: {}", response);
-
-    Ok(())
-}
-</code></pre>
-<h2 id="ç®åä¸ç®å">ç®åä¸ç®å</h2>
-<ul>
-<li>
-<p><code>JsonSchema</code> æ´¾çå®ï¼ å¨ Rust éï¼éè¿ <code>#[derive(JsonSchema)]</code>ï¼Rig ä¼èªå¨çæ LLM éè¦ç JSON æè¿°ãè¿æ¯ Python éæå¨åæè¿°å­ç¬¦ä¸²è¦å®å¨å¾å¤ï¼ä¿®æ¹å­æ®µåæ¶ç¼è¯å¨ä¼å¸®ä½ æ£æ¥ã</p>
-</li>
-<li>
-<p>å¼æ­¥åç (Tokio)ï¼ç±äº Agent å¾å¾éè¦ç­å¾ç½ç» IOï¼æ¨¡åååºãAPI è°ç¨ï¼ï¼Rig åºäº <code>tokio</code> æå»ºï¼è½å®ç¾éæå°ä½ çé«æ§è½åç«¯æå¡ä¸­ã</p>
-</li>
-<li>
-<p>é¶ç¢æ½è±¡ï¼Rig ä¸å LangChain é£æ ·å¼ºè¿«ä½ å­¦ä¹  ChainãMemoryãOutputParser ç­å åä¸ªæ¦å¿µãå®è®¤ä¸º Agent = Model + Prompt + Toolsãè¿ç§æå¹³åè®¾è®¡è®©è°è¯åå¾éå¸¸ç®åã</p>
-</li>
-</ul>
-<h1 id="2-ç®ææµç¨">2 ç®ææµç¨</h1>
-<p>æ¢ç¶ç¬¬åæ­¥è¯·æ±äºgptä¸ºä»ä¹ç¬¬ä¸æ­¥è¿è¦åå»ºä¸ä¸ªå½æ°ï¼é¾égptä¼ä½¿ç¨è¿ä¸ªå½æ°åï¼</p>
-<h3 id="å½ç¶">å½ç¶!</h3>
-<p>è¿æ¯éå¸¸å³é®çä¸ä¸ªç¹ï¼ä¹æ¯ Agentï¼æºè½ä½ï¼ ä¸æ®é Chatbotï¼èå¤©æºå¨äººï¼ çæ¬è´¨åºå«ã</p>
-<p>ç­æ¡æ¯ï¼GPT å¯è½ä¼ååºäºä¸ä¸ªâè°ç¨æä»¤âã</p>
-<p>è¿éæè¿ä¸ªè¿ç¨æè§£ä¸ºä¸ä¸ªé¶æ®µï¼è¿å¨ Java ä¸­ç±»ä¼¼äºè¿ç¨è¿ç¨è°ç¨ RPC æåå°ï¼ï¼</p>
-<h3 id="1-å®£åè½å">1. å®£åè½å</h3>
-<p>å¨ç¬¬ 4 æ­¥ <code>build()</code> æ¶ï¼Rig ä¼æç¬¬ 3 æ­¥å®ä¹çå·¥å·åæ°æ®ï¼å½æ°åï¼<code>add</code>ï¼æè¿°ï¼<code>Adds two numbers together</code>ï¼åæ°ç»æï¼<code>x, y</code>ï¼è½¬æ¢æä¸ä¸ª JSON Schemaï¼å¹¶éé®é¢ä¸èµ·åç» GPTã</p>
-<p>åéç» GPT çéèä¿¡æ¯ï¼<br>
-âç¨æ·é®äºï¼123+456 ç­äºå¤å°ï¼å¦å¤ï¼æè¿æä¸ä¸ªå·¥å·å« <code>add(x, y)</code>ï¼å¦æä½ è§å¾ç¨å¾çï¼å¯ä»¥åè¯æãâ</p>
-<h3 id="2-é»è¾å³ç­">2. é»è¾å³ç­</h3>
-<p>GPT æ¥æ¶å°è¯·æ±åï¼å®ä¸ä¼ç´æ¥åç­âç­æ¡æ¯ 579âãå®ä¼åæè¯­ä¹ï¼åç°èªå·±éè¦åæ°å­¦è¿ç®ï¼äºæ¯å®ä¸è¿åææ¬ï¼èæ¯è¿åä¸ä¸ª Function Call è¯·æ±ã</p>
-<p>GPT è¿åç» Rig çä¿¡å·ï¼<br>
-<code>{ "call": "add", "arguments": { "x": 123, "y": 456 } }</code></p>
-<h3 id="3-æ¬å°æ§è¡">3. æ¬å°æ§è¡</h3>
-<p>è¿æ¶åï¼Rig æ¡æ¶ï¼å¨ä½ ç Rust ç¨åºéï¼æ¶å°äºè¿ä¸ªä¿¡å·ãå®ä¼ï¼</p>
-<ul>
-<li>å¨æ¬å°æ¥æ¾å°æä»¬åæ³¨åçé£ä¸ª <code>add_tool</code>å½æ°ã</li>
-<li>æ GPT ç»åºç JSON åæ°ååºååä¸º Rust ç <code>AddArgs</code> ç»æä½ã</li>
-<li>çæ­£è¿è¡æä»¬ç Rust ä»£ç ï¼æ§è¡ <code>x + y</code>ï¼ã</li>
-<li>æç»æ <code>579</code> åååç» GPTã</li>
-<li>GPT çå°ç»æåï¼æåç»ç»è¯­è¨åç­ä½ ï¼â123 å ä¸ 456 ç­äº 579ãâ</li>
-</ul>
-<hr>
-<p>è¿å°±æ¯agentçè¿ç¨ãä½æ¯ä½ åºè¯¥ä¼é®ï¼âä¸ºä»ä¹è¦è¿ä¹éº»ç¦ï¼ç´æ¥è®© GPT ç®ä¸è¡åï¼â<br>
-å ä¸º</p>
-<ul>
-<li>
-<p>GPT å¹¶ä¸æé¿è®¡ç®ï¼ å¯¹äº <code>12345 * 67890</code> è¿ç§å¤§æ°ï¼GPT ç»å¸¸ä¼ä¸æ¬æ­£ç»å°è¡è¯´å«éã</p>
-</li>
-<li>
-<p>GPT æ æ³è§¦è¾¾å¤é¨ä¸çï¼ å®ä¸è½ç´æ¥æ¥è¯¢ä½ ç MySQL æ°æ®åºï¼ä¸è½è°ç¨ä½ ç Java å¾®æå¡æ¥å£ï¼ä¹ä¸è½è¯»åæ¬å°æä»¶ã</p>
-</li>
-</ul>
-<p>éè¿è¿ç§æ¨¡å¼ï¼ä½ å¯ä»¥æ llm å½æä¸ä¸ªâå¤§èâï¼èæä½ ç Rust å½æ°å½æå®çâæâï¼</p>
-<ul>
-<li>
-<p>å¤§èï¼GPTï¼ è´è´£æè§£ä»»å¡ãçè§£æå¾ãå³å®ä»ä¹æ¶åè¯¥ç¨ä»ä¹å·¥å·ã</p>
-</li>
-<li>
-<p>æï¼Rust å½æ°ï¼ è´è´£ç²¾åæ§è¡ãè®¿é®ç§ææ°æ®ãå¤çéåè®¡ç®ã</p>
-</li>
-</ul>
-<blockquote>
-<p>æèä½ æå®æ³è±¡æä¸ä¸ªæ°æ®åºæ¥è¯¢ <code>findUserById(Long id)</code>ï¼ GPT å°±è½æ ¹æ®ç¨æ·çèå¤©åå®¹ï¼èªå¨è°ç¨æä»¬æ¬å°çè½åï¼å¥½åæ¯å»æ°æ®åºéæ¥æ°æ®äºã</p>
-</blockquote>
-<h1 id="3-ä¸ºä»ä¹ä¸ç¨langchain">3 ä¸ºä»ä¹ä¸ç¨langChain?</h1>
-<p>LangChain æ¯ç®åçææä¸°å¯ãåè½æå®å¤ç Agent æ¡æ¶ï¼ä½å®å·²ç»ä¸åæ¯å¯ä¸çéæ©ã</p>
-<p>ç°å¨ä¸åæ LangChain çä½ä¸ä¸ªåä¸çåºï¼èæ¯ä¸ä¸ªå¨æ çæç³»ç»ã<br>
-å®ä¹æä»¥è¢«è®¤ä¸ºâæå®æ´âï¼æ¯å ä¸ºå®è¦çäºä»ååå¼åãçäº§ç¯å¢ç¼æå°åæçæµçå¨çå½å¨æã<br>
-ææ ¸å¿éä¸è§ï¼LangChain + LangGraph + LangSmithã</p>
-<h2 id="rig-å¢">Rig å¢</h2>
-<p>èRig (rig-core) ä»£è¡¨äºä¸ LangChain å®å¨ä¸åçè¿åæ¹åï¼æè´çæ§è½ãç±»åå®å¨ä»¥ååºå±ææ§åã</p>
-<ul>
-<li>
-<p>Rust åçï¼ äº«å Rust çåå­å®å¨åé¶ææ¬æ½è±¡ãè¿æå³çå¨å¤çæ°åä¸ªå¹¶å Agent è¯·æ±æ¶ï¼å®çèµæºå ç¨è¿ä½äº Pythonã</p>
-</li>
-<li>
-<p>ç±»åå®å¨ï¼Type Safetyï¼ï¼ å¨ LangChain éï¼ä½ ç»å¸¸ä¼éå°âè¿è¡æ¶éè¯¯âï¼è¿è¡å°ä¸åæåç°åéç±»åä¸å¯¹ï¼ãèå¨ Rig ä¸­ï¼ä¾é  Rust å¼ºå¤§çç¼è¯å¨ï¼å¤§é¨åé»è¾éè¯¯å¨ä»£ç ç¼è¯é¶æ®µå°±è½è¢«æªåºæ¥ã</p>
-</li>
-<li>
-<p>æç®æ½è±¡ï¼ ç¸æ¯äº LangChain åµå¥äºå­å±çç±»ç»§æ¿ï¼Rig çè®¾è®¡éå¸¸æå¹³ï¼ä»£ç è¯»èµ·æ¥ç´è§å¾å¤ã</p>
-</li>
-</ul>
-<h2 id="æµç¨ç¼æå¢">æµç¨ç¼æå¢</h2>
-<p>Rig å¹¶æ²¡æå LangGraph é£æ ·å¼å¥å¤æçâå¾âæ¦å¿µãï¼ç°é¶æ®µï¼å®å¾åäºè®©å¼åèéè¿ Traits å å¼æ­¥æµ æ¥å¤çé»è¾ã</p>
-<ul>
-<li>
-<p>Rig çè§£å³æ¹å¼ï¼ å®æä¾äºä¸å¥æ¸æ°ç Agent å Tool å®ä¹è§èãè½ç¶å®æ²¡æåç½®å LangGraph é£æ ·çâå¯è§åç¶ææºâï¼ä½éè¿ Rust çæä¸¾ï¼Enumsï¼åæ¨¡å¼å¹éï¼Pattern Matchingï¼ï¼è½ååºæ¯ Python æ´å ä¸¥å¯çç¶æè½¬æ¢é»è¾ã</p>
-</li>
-<li>
-<p>RAG æ¯æï¼ Rig åç½®äºéå¸¸è½»éåçåéå­å¨æ½è±¡ï¼ç¹å«éåæå»ºé«æ§è½çæ£ç´¢å¢å¼ºçæåºç¨ã</p>
-</li>
-</ul>
-<h2 id="æåæéè¦çä¸ç¹è¿æ¯ç«åªæ¯ä¸ä¸ªdemoæä¹ç®åæä¹æ¥-">æåï¼æéè¦çä¸ç¹ï¼è¿æ¯ç«åªæ¯ä¸ä¸ªdemoï¼æä¹ç®åæä¹æ¥ ð</h2>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.017361111111111112" data-date-updated="2026-03-24 16:26">2026-03-24 16:01</span>&nbsp;
-<a href="https://www.cnblogs.com/somefuture">å¤§å«å°ä¸ï¼Sheldonï¼</a>&nbsp;
-éè¯»(<span id="post_view_count">1</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19764574);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19764574', targetLink: 'https://www.cnblogs.com/somefuture/p/19764574', title: 'å¤§æ¨¡åæºè½ä½ ï¼agentï¼ç®ææµç¨ä»ç»' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -1785,7 +2291,7 @@ async def get_profile(user: dict = Depends(get_current_user)):
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-03-24 15:22">2026-03-24 15:21</span>&nbsp;
 <a href="https://www.cnblogs.com/ymtianyu">ä¸åç¨åºåªå</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">56</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19764225);return false;">æ¶è</a>&nbsp;
@@ -1944,244 +2450,6 @@ async def get_profile(user: dict = Depends(get_current_user)):
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19762982);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19762982', targetLink: 'https://www.cnblogs.com/MrVolleyball/p/19762982', title: 'å¤§æ¨¡åå°åºæ¯å¥ï¼è¿ç»´äºº10åéææï¼ä¸ç¨æ°å­¦ï¼' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ .NETå¯¹è±¡è½¬JSONï¼å°åºæå ç§æ¹å¼ï¼ ]]></title>
-    <link>https://www.cnblogs.com/shenchuanchao/p/19762829</link>
-    <guid>e1e1b7bd702737e8c6cd9a53e1f0af71</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/shenchuanchao/p/19762829" title="åå¸äº 2026-03-24 11:38">
-    <span role="heading" aria-level="2">.NETå¯¹è±¡è½¬JSONï¼å°åºæå ç§æ¹å¼ï¼</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                    <div id="cnblogs_post_description" style="display: none">
-        
-        å¯¹è±¡è½¬JSONè¿äºå¿ï¼è¯´å¤§ä¸å¤§ï¼è¯´å°ä¸å°ãéå¯¹äºåºï¼ä»£ç è·å¾æºï¼ééäºï¼è¦ä¹åè½ä¸å¤ç¨ï¼è¦ä¹æ§è½æè¯ã
-    </div>
-<div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
-<h2 data-pm-slice="0 0 []"><span><span>é®é¢ï¼å¯¹è±¡è½¬JSONï¼å°åºè¯¥ç¨åªä¸ªåºï¼</span></span></h2>
-<p><span>åå å¤©å¨å¶ä¸­ä¸ä¸ªç¾¤éçå°ä¸ªæºæææçå¯¹è¯ï¼</span></p>
-<blockquote>
-<p><span>âåå¼ï¼ä½ é£ä¸ªæ¥å£è¿åçJSONåå¼çï¼â</span></p>
-<p><span>âå°±JsonConvert.SerializeObjectåï¼è¿è½åå¼ãâ</span></p>
-<p><span>âè¿ä¸æ¯Newtonsoft.Jsonåï¼ç°å¨æ°é¡¹ç®ä¸æ¯æ¨èç¨System.Text.Jsonï¼â</span></p>
-<p><span>âåï¼è¿ä¿©å¥åºå«ï¼æç¨äºå¥½å å¹´Newtonsoftäºï¼æ²¡åºè¿é®é¢åãâ</span></p>
-</blockquote>
-<p><span>è¯´å®è¯ï¼è¿ç§å°æå¤ªå¸¸è§äºã.NETéå¯¹è±¡è½¬JSONçæ¹å¼ç¡®å®ä¸å°ï¼èä¸åæåçè¾æ°ãä»å¤©å±ä»¬å°±æè¿äºææ¸æ¥ï¼ä»¥åå«åçº ç»äºã</span></p>
-<h2><span><span>ç»è®ºï¼ä¸ç§ä¸»æµæ¹å¼ï¼åæåçç¨æ­¦ä¹å°</span></span></h2>
-<p><span>ä¸å¥è¯æ»ç»ï¼</span></p>
-<ul class="list-paddingleft-1">
-<li>
-<p>System.Text.Json<span>ï¼.NETäº²å¿å­ï¼æ§è½å¥½ï¼æ°é¡¹ç®é¦é</span></p>
-</li>
-<li>
-<p>Newtonsoft.Json<span>ï¼èççèï¼åè½å¨ï¼æ§é¡¹ç®ç»´æ¤ç¦»ä¸å¼</span></p>
-</li>
-<li>
-<p>Utf8Json<span>ï¼æ§è½çé­ï¼è¿½æ±æè´éåº¦çå¤éæ¹æ¡</span></p>
-</li>
-</ul>
-<p><span>ä¸é¢ä¸ä¸ªä¸ä¸ªèï¼ççå®ä»¬å°åºæå¥ä¸ä¸æ ·ã</span></p>
-<h2><span><span>å±å¼ï¼ä¸ç§æ¹å¼æ·±åº¦å¯¹æ¯</span></span></h2>
-<h3><span>1. System.Text.Jsonï¼å®æ¹åºåï¼æ§è½æå½</span></h3>
-<p><span>ä».NET Core 3.0å¼å§ï¼å¾®è½¯èªå·±æäºä¸ªJSONå¤çåºï¼å°±æ¯<code><span>System.Text.Json</span></code><span>ãä¸ºå¥è¦èªå·±é è½®å­ï¼å ä¸ºè¦è¿½æ±é«æ§è½ãä½åå­å ç¨<span>ï¼ååå©ç¨äº<code><span>Span&lt;T&gt;</span></code><span>è¿äºç°ä»£.NETç¹æ§ã</span></span></span></span></p>
-<p>åºæ¬ç¨æ³ï¼</p>
-<pre class="code-snippet__js" data-lang="cs"><code><span><span class="code-snippet__keyword">using&nbsp;System.Text.Json;</span></span></code><code><span><br></span></code><code><span><span class="code-snippet__keyword">var&nbsp;user =&nbsp;<span class="code-snippet__keyword">new&nbsp;{ Name =&nbsp;<span class="code-snippet__string">"ç ååå­", Age =&nbsp;<span class="code-snippet__number">30, City =&nbsp;<span class="code-snippet__string">"åäº¬"&nbsp;};</span></span></span></span></span></span></code><code><span><br></span></code><code><span><span class="code-snippet__comment">// åºç¡åºåå</span></span></code><code><span><span class="code-snippet__built_in">string&nbsp;jsonString = JsonSerializer.Serialize(user);</span></span></code><code><span><br></span></code><code><span><span class="code-snippet__comment">// å¸¦éç½®çåºååï¼æ ¼å¼åè¾åºï¼</span></span></code><code><span><span class="code-snippet__keyword">var&nbsp;options =&nbsp;<span class="code-snippet__keyword">new&nbsp;JsonSerializerOptions&nbsp;</span></span></span></code><code><span>{&nbsp;</span></code><code><span>&nbsp; &nbsp; WriteIndented =&nbsp;<span class="code-snippet__literal">true, &nbsp;<span class="code-snippet__comment">// æ ¼å¼åï¼æ´æè¯»</span></span></span></code><code><span>&nbsp; &nbsp; PropertyNamingPolicy = JsonNamingPolicy.CamelCase &nbsp;<span class="code-snippet__comment">// é©¼å³°å½å</span></span></code><code><span>};</span></code><code><span><span class="code-snippet__built_in">string&nbsp;prettyJson = JsonSerializer.Serialize(user, options);</span></span></code></pre>
-<p>å®å¼ºå¨åªï¼</p>
-<ul class="list-paddingleft-1">
-<li>
-<p>æ§è½å¥½<span>ï¼æ¯Newtonsoft.Jsonå¿«ï¼åå­åéå°</span></p>
-</li>
-<li>
-<p>é¶ä¾èµ<span>ï¼.NET Core/5+èªå¸¦ï¼ä¸ç¨è£NuGetå</span></p>
-</li>
-<li>
-<p>é»è®¤ä¸¥æ ¼<span>ï¼å±æ§åå¿é¡»å¹éï¼æååç°é®é¢</span></p>
-</li>
-</ul>
-<p>å®åå¨åªï¼</p>
-<ul class="list-paddingleft-1">
-<li>
-<p>åè½ç¸å¯¹å°<span>ï¼æäºNewtonsoftè±å¨çåè½å®æ²¡æ</span></p>
-</li>
-<li>
-<p>æ¥ææ ¼å¼æ¯ææé<span>ï¼ä¸å¦Newtonsoftçµæ´»</span></p>
-</li>
-<li>
-<p>å±æ§åé»è®¤è½¬é©¼å³°<span>ï¼ä»¥åç¨PascalCaseçèä»£ç è¦æ¹</span></p>
-</li>
-</ul>
-<p>éç¨åºæ¯ï¼</p>
-<ul class="list-paddingleft-1">
-<li>
-<p><span>æ°é¡¹ç®ï¼å°¤å¶æ¯.NET Core 3.0+</span></p>
-</li>
-<li>
-<p><span>è¿½æ±æ§è½çWeb API</span></p>
-</li>
-<li>
-<p><span>äºåçåºç¨ï¼éè¦æ§å¶åå­</span></p>
-</li>
-</ul>
-<h3><span>2. Newtonsoft.Jsonï¼Json.NETï¼ï¼èççèï¼åè½æå¨</span></h3>
-<p><span>å¨<code><span>System.Text.Json</span></code><span>åºçä¹åï¼Newtonsoft.Jsonå°±æ¯.NETç¤¾åºçäºå®æ åãå ä¹ææ.NETé¡¹ç®é½å¨ç¨å®ï¼è³ä»ä»æå¤§éé¡¹ç®ä¾èµã</span></span></p>
-<p>åºæ¬ç¨æ³ï¼</p>
-<pre class="code-snippet__js" data-lang="cs"><code><span><span class="code-snippet__keyword">using&nbsp;Newtonsoft.Json;</span></span></code><code><span><br></span></code><code><span><span class="code-snippet__keyword">var&nbsp;user =&nbsp;<span class="code-snippet__keyword">new&nbsp;{ Name =&nbsp;<span class="code-snippet__string">"ç ååå­", Age =&nbsp;<span class="code-snippet__number">30, City =&nbsp;<span class="code-snippet__string">"åäº¬"&nbsp;};</span></span></span></span></span></span></code><code><span><br></span></code><code><span><span class="code-snippet__comment">// åºç¡åºåå</span></span></code><code><span><span class="code-snippet__built_in">string&nbsp;jsonString = JsonConvert.SerializeObject(user);</span></span></code><code><span><br></span></code><code><span><span class="code-snippet__comment">// å¸¦éç½®çåºåå</span></span></code><code><span><span class="code-snippet__keyword">var&nbsp;settings =&nbsp;<span class="code-snippet__keyword">new&nbsp;JsonSerializerSettings&nbsp;</span></span></span></code><code><span>{&nbsp;</span></code><code><span>&nbsp; &nbsp; Formatting = Formatting.Indented, &nbsp;<span class="code-snippet__comment">// æ ¼å¼å</span></span></code><code><span>&nbsp; &nbsp; ReferenceLoopHandling = ReferenceLoopHandling.Ignore &nbsp;<span class="code-snippet__comment">// å¿½ç¥å¾ªç¯å¼ç¨</span></span></code><code><span>};</span></code><code><span><span class="code-snippet__built_in">string&nbsp;complexJson = JsonConvert.SerializeObject(user, settings);</span></span></code></pre>
-<p>å®å¼ºå¨åªï¼</p>
-<ul class="list-paddingleft-1">
-<li>
-<p>åè½æå¶ä¸°å¯<span>ï¼å¾ªç¯å¼ç¨å¤çãèªå®ä¹è½¬æ¢å¨ãæ¡ä»¶åºåå...</span></p>
-</li>
-<li>
-<p>å®¹éæ§å¼º<span>ï¼JSONæ ¼å¼ä¸å¤ªè§èä¹è½å¤ç</span></p>
-</li>
-<li>
-<p>ææ¡£å¨ãç¤¾åºå¤§<span>ï¼éå°é®é¢ä¸æä¸å¤§æ</span></p>
-</li>
-</ul>
-<p>å®åå¨åªï¼</p>
-<ul class="list-paddingleft-1">
-<li>
-<p>æ§è½ç¨é<span>ï¼æ¯System.Text.Jsonæ¢ä¸ç¹</span></p>
-</li>
-<li>
-<p>é¢å¤ä¾èµ<span>ï¼éè¦è£NuGetå</span></p>
-</li>
-<li>
-<p>ä½ç§¯è¾å¤§<span>ï¼åè½å¤ï¼ä½ç§¯èªç¶å¤§</span></p>
-</li>
-</ul>
-<p>éç¨åºæ¯ï¼</p>
-<ul class="list-paddingleft-1">
-<li>
-<p><span>ç»´æ¤èé¡¹ç®ï¼å°¤å¶æ¯.NET Frameworké¡¹ç®</span></p>
-</li>
-<li>
-<p><span>éè¦å¤æJSONå¤ççåºæ¯ï¼å¾ªç¯å¼ç¨ãå¨æå¯¹è±¡ç­ï¼</span></p>
-</li>
-<li>
-<p><span>å¯¹æ¥çç¬¬ä¸æ¹æ¥å£JSONæ ¼å¼ä¹±ä¸å«ç³</span></p>
-</li>
-</ul>
-<h3><span>3. Utf8Jsonï¼æ§è½çé­ï¼æè´è¿½æ±</span></h3>
-<p><span>å¦æä½ å¯¹æ§è½æè¿ä¹èå»çè¦æ±ï¼æ¯å¦é«é¢äº¤æãæ¸¸ææå¡å¨è¿ç±»åºæ¯ï¼å¯ä»¥çç<code><span>Utf8Json</span></code><span>ã</span></span></p>
-<p>åºæ¬ç¨æ³ï¼</p>
-<pre class="code-snippet__js" data-lang="cs"><code><span><span class="code-snippet__keyword">using&nbsp;Utf8Json;</span></span></code><code><span><br></span></code><code><span><span class="code-snippet__keyword">var&nbsp;product =&nbsp;<span class="code-snippet__keyword">new&nbsp;{ ID =&nbsp;<span class="code-snippet__number">101, Name =&nbsp;<span class="code-snippet__string">"é¼ æ ", Price =&nbsp;<span class="code-snippet__number">99.9&nbsp;};</span></span></span></span></span></span></code><code><span><br></span></code><code><span><span class="code-snippet__comment">// ç´æ¥åºååä¸ºäºè¿å¶å­èæ°ç»ï¼æå¿«ï¼</span></span></code><code><span><span class="code-snippet__built_in">byte[] jsonBytes = JsonSerializer.Serialize(product);</span></span></code><code><span><br></span></code><code><span><span class="code-snippet__comment">// è½¬æå­ç¬¦ä¸²</span></span></code><code><span><span class="code-snippet__built_in">string&nbsp;jsonString = JsonSerializer.ToJsonString(product);</span></span></code></pre>
-<p>å®å¼ºå¨åªï¼</p>
-<ul class="list-paddingleft-1">
-<li>
-<p>éåº¦æå¿«<span>ï¼ç´æ¥æä½UTF-8å­èæµï¼è·³è¿ä¸­é´æ­¥éª¤</span></p>
-</li>
-<li>
-<p>åå­åéå°<span>ï¼ä¸ä½¿ç¨åå°ï¼éè¿ILçæä»£ç </span></p>
-</li>
-<li>
-<p>é¶åé<span>ï¼å¨æäºåºæ¯ä¸è½åå°</span></p>
-</li>
-</ul>
-<p>å®åå¨åªï¼</p>
-<ul class="list-paddingleft-1">
-<li>
-<p>åè½æé<span>ï¼å°±æ¯ä¸ªåºååå·¥å·ï¼å«ææè±å¨åè½</span></p>
-</li>
-<li>
-<p>ç¤¾åºå°<span>ï¼éå°é®é¢ä¸å¥½æ¥</span></p>
-</li>
-<li>
-<p>å­¦ä¹ ææ¬<span>ï¼ç¨æ³ååé¢ä¸¤ä¸ªä¸å¤ªä¸æ ·</span></p>
-</li>
-</ul>
-<p>éç¨åºæ¯ï¼</p>
-<ul class="list-paddingleft-1">
-<li>
-<p><span>æ§è½ç¶é¢å¤ï¼å±é¨ä¼å</span></p>
-</li>
-<li>
-<p><span>é«é¢è°ç¨çå°å¯¹è±¡åºåå</span></p>
-</li>
-<li>
-<p><span>åå­åéçç¯å¢</span></p>
-</li>
-</ul>
-<h2><span><span>æä¹éï¼ç»ä¸ªå®å¨çå»ºè®®</span></span></h2>
-<p><span>çå®äºä¸é¢ä¸ç§ï¼ä¼°è®¡æäººè¦é®ï¼é£æå°åºè¯¥ç¨åªä¸ªï¼</span></p>
-<p><span>æä¸è¬è¿ä¹å»ºè®®ï¼</span></p>
-<p>1. å¦æä½ æ¯å¨æ°é¡¹ç®ï¼ç¨.NET Core 3.0ä»¥ä¸ï¼<span><br><span>ä¼åç¨<code><span>System.Text.Json</span></code><span>ãå®æ¹åºåï¼æ§è½å¥½ï¼å°è£ä¸ä¸ªåæ¯ä¸ä¸ªï¼ä»¥ååçº§ä¹çå¿ã</span></span></span></p>
-<p>2. å¦æä½ å¨ç»´æ¤èé¡¹ç®ï¼<span><br><span>ç»§ç»­ç¨<code><span>Newtonsoft.Json</span></code><span>ï¼å«æè¾ãèä»£ç è·å¾å¥½å¥½çï¼æ¢åºå®¹æåºå¹ºè¾å­ã</span></span></span></p>
-<p>3. å¦æä½ çé¡¹ç®å·²ç»ç¨äºNewtonsoftï¼ä½æ³æ¢ï¼<span><br><span>å»ºè®®è°¨æãä¸¤ä¸ªåºæä¸å°å·®å¼ï¼</span></span></p>
-<ul class="list-paddingleft-1">
-<li>
-<p><span>é»è®¤å±æ§å½åç­ç¥ä¸åï¼camelCase vs åæ ·ï¼</span></p>
-
-</li>
-<li>
-<p><span>æ¥ææ ¼å¼å¤çä¸å</span></p>
-
-</li>
-<li>
-<p><span>æäºé«çº§ç¹æ§ä¸å¼å®¹</span></p>
-
-</li>
-
-</ul>
-<p><span>çæ³æ¢ï¼åå¥½ååæµè¯ã</span></p>
-<p>4. å¦æä½ å¨åæ§è½ææçæ ¸å¿ä»£ç ï¼<span><br><span>å¯ä»¥èèå±é¨ç¨<code><span>Utf8Json</span></code><span>åä¼åï¼ä½å«æ´ä¸ªé¡¹ç®é½ç¨ï¼æ¯ç«åè½æéã</span></span></span></p>
-<h2><span>å®ç¨å°æå·§</span></h2>
-<p>ç»System.Text.Jsonéç½®å¨å±éé¡¹ï¼</p>
-<pre class="code-snippet__js" data-lang="javascript"><code><span><span class="code-snippet__comment">// Program.cs æ Startup.cs</span></span></code><code><span>builder.<span class="code-snippet__property">Services.<span class="code-snippet__property">Configure&lt;<span class="code-snippet__title">JsonOptions&gt;(<span class="code-snippet__function">options<span class="code-snippet__function">&nbsp;=&gt;</span></span></span></span></span></span></code><code><span>{</span></code><code><span>&nbsp; &nbsp; options.<span class="code-snippet__property">SerializerOptions.<span class="code-snippet__property">WriteIndented&nbsp;=&nbsp;<span class="code-snippet__literal">true;</span></span></span></span></code><code><span>&nbsp; &nbsp; options.<span class="code-snippet__property">SerializerOptions.<span class="code-snippet__property">PropertyNamingPolicy&nbsp;=&nbsp;<span class="code-snippet__title">JsonNamingPolicy.<span class="code-snippet__property">CamelCase;</span></span></span></span></span></code><code><span>&nbsp; &nbsp; options.<span class="code-snippet__property">SerializerOptions.<span class="code-snippet__property">DefaultIgnoreCondition&nbsp;=&nbsp;<span class="code-snippet__title">JsonIgnoreCondition.<span class="code-snippet__property">WhenWritingNull;</span></span></span></span></span></code><code><span>});</span></code></pre>
-<p>Newtonsoft.Jsonå¤çå¾ªç¯å¼ç¨ï¼</p>
-<pre class="code-snippet__js" data-lang="javascript"><code><span><span class="code-snippet__keyword">var&nbsp;settings =&nbsp;<span class="code-snippet__keyword">new&nbsp;<span class="code-snippet__title">JsonSerializerSettings</span></span></span></span></code><code><span>{</span></code><code><span>&nbsp; &nbsp;&nbsp;<span class="code-snippet__title">ReferenceLoopHandling&nbsp;=&nbsp;<span class="code-snippet__title">ReferenceLoopHandling.<span class="code-snippet__property">Ignore, &nbsp;<span class="code-snippet__comment">// å¿½ç¥å¾ªç¯å¼ç¨</span></span></span></span></span></code><code><span>&nbsp; &nbsp;&nbsp;<span class="code-snippet__title">PreserveReferencesHandling&nbsp;=&nbsp;<span class="code-snippet__title">PreserveReferencesHandling.<span class="code-snippet__property">Objects&nbsp;&nbsp;<span class="code-snippet__comment">// æä¿çå¼ç¨</span></span></span></span></span></code><code><span>};</span></code><code><span><span class="code-snippet__keyword">var&nbsp;json =&nbsp;<span class="code-snippet__title">JsonConvert.<span class="code-snippet__title">SerializeObject(objWithCycle, settings);</span></span></span></span></code></pre>
-<p>æ§è½ä¼åå°è´´å£«ï¼</p>
-<ul class="list-paddingleft-1">
-<li>
-<p><span>éå¤åºååç¸åå¯¹è±¡ï¼èèç¼å­ç»æ</span></p>
-</li>
-<li>
-<p><span>å¤§JSONç¨æµå¼å¤çï¼å«ä¸æ¬¡å¨å è½½</span></p>
-</li>
-<li>
-<p><span>èªå®ä¹è½¬æ¢å¨å¤çç¹æ®ç±»å</span></p>
-</li>
-</ul>
-<h2><span>æ»ç»</span></h2>
-<p><span>å¯¹è±¡è½¬JSONè¿äºå¿ï¼è¯´å¤§ä¸å¤§ï¼è¯´å°ä¸å°ãéå¯¹äºåºï¼ä»£ç è·å¾æºï¼ééäºï¼è¦ä¹åè½ä¸å¤ç¨ï¼è¦ä¹æ§è½æè¯ã</span></p>
-<ul class="list-paddingleft-1">
-<li>
-<p>æ°é¡¹ç®<span>ï¼System.Text.Json</span></p>
-</li>
-<li>
-<p>èé¡¹ç®<span>ï¼Newtonsoft.Json</span></p>
-</li>
-<li>
-<p>æè´æ§è½<span>ï¼Utf8Json</span></p>
-</li>
-</ul>
-<p><span>è®°ä½è¿ä¸ªååï¼ä»¥åå«åå­æè§éäºã</span></p>
-<hr>
-<p>ææ¯ç ååå­<span>ï¼</span>å¦æè§å¾æ¬æå¯¹ä½ æå¸®å©ï¼æ¬¢è¿æ¶èãè½¬åãå³æ³¨ï¼è®©æ´å¤å°ä¼ä¼´å°èµ°å¼¯è·¯ï¼</p>
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.005555555555555556" data-date-updated="2026-03-24 11:46">2026-03-24 11:38</span>&nbsp;
-<a href="https://www.cnblogs.com/shenchuanchao">ç ååå­</a>&nbsp;
-éè¯»(<span id="post_view_count">80</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19762829);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19762829', targetLink: 'https://www.cnblogs.com/shenchuanchao/p/19762829', title: '.NETå¯¹è±¡è½¬JSONï¼å°åºæå ç§æ¹å¼ï¼' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -2538,6 +2806,509 @@ public class BeanConfiguration {
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19762735);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19762735', targetLink: 'https://www.cnblogs.com/alineverstop/p/19762735', title: 'SpringCloudè¿é¶--Sentinel æµéé²å«åµ' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ ä¸ä¸ªç®æ´æç¨ç Delphi JSON å°è£åºï¼åºäº System.JSON`ååå°è£ï¼æä¾æ´ç´è§ç API ]]></title>
+    <link>https://www.cnblogs.com/mufeesama/p/19762704</link>
+    <guid>abd9d347cb08e08cf2d3524268616a52</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/mufeesama/p/19762704" title="åå¸äº 2026-03-24 11:18">
+    <span role="heading" aria-level="2">ä¸ä¸ªç®æ´æç¨ç Delphi JSON å°è£åºï¼åºäº System.JSON`ååå°è£ï¼æä¾æ´ç´è§ç API</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>å¼æºå°å:<a href="https://github.com/MufeeSama/SimpleJSON" target="_blank" rel="noopener nofollow">https://github.com/MufeeSama/SimpleJSON</a></p>
+<h1 id="simplejson">SimpleJSON</h1>
+<p>ä¸ä¸ªç®æ´æç¨ç Delphi JSON å°è£åºï¼åºäº <code>System.JSON</code> ååå°è£ï¼æä¾æ´ç´è§ç APIã</p>
+<h2 id="ç¹æ§">ç¹æ§</h2>
+<ul>
+<li><strong>ç±»ååå±æ§è®¿é®</strong> - ä½¿ç¨ <code>S/I/L/F/B/D</code> å±æ§ç´æ¥è¯»åä¸åç±»åå¼</li>
+<li><strong>æ¥ææ¶é´æ¯æ</strong> - åç½® ISO 8601 æ¥ææ ¼å¼èªå¨è½¬æ¢ï¼æ¯ææ¶åº</li>
+<li><strong>é¾å¼è°ç¨</strong> - æ¯ææµå¼ APIï¼ä»£ç æ´ç®æ´</li>
+<li><strong>èªå¨åå­ç®¡ç</strong> - åºäºæ¥å£å¼ç¨è®¡æ°ï¼æ éæå¨éæ¾</li>
+<li><strong>åµå¥å¯¹è±¡æ¯æ</strong> - è½»æ¾åå»ºåè®¿é®å¤å±åµå¥ç»æ</li>
+<li><strong>è·¯å¾è®¿é®</strong> - æ¯æ <code>info.city</code>ã<code>users.0.name</code> æ ¼å¼çè·¯å¾è®¿é®</li>
+<li><strong>Null å¼å¤ç</strong> - æ¯æ <code>IsNull</code>/<code>SetNull</code> æä½</li>
+<li><strong>å®å¨è·åå¼</strong> - <code>TryGet*</code> ç³»åæ¹æ³é¿åé®ä¸å­å¨æ¶çå¼å¸¸</li>
+<li><strong>æä»¶è¯»å</strong> - <code>SaveToFile</code>/<code>LoadFromFile</code> ä¾¿æ·æä½</li>
+<li><strong>é¶ä¾èµ</strong> - ä»ä¾èµ Delphi æ ååº</li>
+</ul>
+<h2 id="å¿«éå¼å§">å¿«éå¼å§</h2>
+<h3 id="åºæ¬ç¨æ³">åºæ¬ç¨æ³</h3>
+<pre><code class="language-delphi">uses
+  SimpleJSON;
+
+var
+  Json: IJson;
+begin
+  // åå»ºå¯¹è±¡
+  Json := TJson.Create;
+  
+  // è®¾ç½®å¼
+  Json.S['name'] := 'å¼ ä¸';
+  Json.I['age'] := 25;
+  Json.L['id'] := 9876543210;      // Int64 å¤§æ´æ°
+  Json.F['salary'] := 8500.50;
+  Json.B['active'] := True;
+  Json.D['created'] := Now;         // æ¥ææ¶é´
+  
+  // è¯»åå¼
+  Writeln(Json.S['name']);
+  Writeln(IntToStr(Json.I['age']));
+  Writeln(IntToStr(Json.L['id']));
+  
+  // æ é Freeï¼æ¥å£èªå¨ç®¡çåå­
+end;
+</code></pre>
+<h3 id="è§£æ-json-å­ç¬¦ä¸²">è§£æ JSON å­ç¬¦ä¸²</h3>
+<pre><code class="language-delphi">var
+  Json: IJson;
+begin
+  Json := TJson.Parse('{"id":1001,"name":"Delphi","price":199.99}');
+  if Assigned(Json) then
+    Writeln(Json.S['name']);  // è¾åº: Delphi
+end;
+</code></pre>
+<h3 id="æ¥ææ¶é´ç±»å">æ¥ææ¶é´ç±»å</h3>
+<pre><code class="language-delphi">var
+  Json: IJson;
+begin
+  Json := TJson.Create;
+  
+  // è®¾ç½®æ¥ææ¶é´å¼ (èªå¨è½¬æ¢ä¸º ISO 8601 æ ¼å¼)
+  Json.D['created_at'] := Now;
+  Json.D['birthday'] := EncodeDate(1990, 5, 15);
+  
+  // è¯»åæ¥ææ¶é´å¼
+  Writeln(DateTimeToStr(Json.D['created_at']));
+  Writeln(DateToStr(Json.D['birthday']));
+  
+  // è§£æåå«æ¥æç JSON (æ¯ææ¶åº)
+  Json := TJson.Parse('{"event":"ä¼è®®","start_time":"2024-01-15T09:30:00+08:00"}');
+  Writeln(DateTimeToStr(Json.D['start_time']));
+end;
+</code></pre>
+<p>æ¯æçæ¥ææ ¼å¼ï¼</p>
+<ul>
+<li>ISO 8601 å¸¦æ¯«ç§: <code>2024-01-15T09:30:00.000</code></li>
+<li>ISO 8601 ä¸å¸¦æ¯«ç§: <code>2024-01-15T09:30:00</code></li>
+<li>å¸¦æ¶åº: <code>2024-01-15T09:30:00+08:00</code></li>
+<li>UTC æ è®°: <code>2024-01-15T09:30:00Z</code></li>
+<li>ç®ç­æ¥æ: <code>2024-01-15</code></li>
+</ul>
+<h3 id="null-å¼å¤ç">Null å¼å¤ç</h3>
+<pre><code class="language-delphi">var
+  Json: IJson;
+begin
+  Json := TJson.Create;
+  
+  // è®¾ç½® null å¼
+  Json.SetNull('deleted_at');
+  
+  // æ£æ¥æ¯å¦ä¸º null
+  if Json.IsNull('deleted_at') then
+    Writeln('deleted_at æ¯ null');
+  
+  // æ°ç»ä¸­ç null
+  Json.A['items'].AddNull;
+  if Json.A['items'].IsNull(0) then
+    Writeln('ç¬¬ä¸ä¸ªåç´ æ¯ null');
+end;
+</code></pre>
+<h3 id="å®å¨è·åå¼-tryget">å®å¨è·åå¼ (TryGet)</h3>
+<pre><code class="language-delphi">var
+  Json: IJson;
+  Name: string;
+  Age: Integer;
+begin
+  Json := TJson.Parse('{"name":"å¼ ä¸","age":25}');
+  
+  // å®å¨è·åï¼é¿åé®ä¸å­å¨æ¶è¿åé»è®¤å¼
+  if Json.TryGetS('name', Name) then
+    Writeln('å§å: ' + Name);
+  
+  if Json.TryGetI('age', Age) then
+    Writeln('å¹´é¾: ' + IntToStr(Age));
+  
+  // é®ä¸å­å¨æ¶è¿å False
+  if not Json.TryGetS('not_exists', Name) then
+    Writeln('é®ä¸å­å¨');
+end;
+</code></pre>
+<h3 id="åµå¥å¯¹è±¡">åµå¥å¯¹è±¡</h3>
+<pre><code class="language-delphi">var
+  Json: IJson;
+begin
+  Json := TJson.Create;
+  
+  // èªå¨åå»ºåµå¥å¯¹è±¡
+  Json.O['address'].S['city'] := 'åäº¬';
+  Json.O['address'].S['zip'] := '100001';
+  
+  // è®¿é®åµå¥å¼
+  Writeln(Json.O['address'].S['city']);  // è¾åº: åäº¬
+end;
+</code></pre>
+<h3 id="æ°ç»æä½">æ°ç»æä½</h3>
+<pre><code class="language-delphi">var
+  Json: IJson;
+  i: Integer;
+begin
+  Json := TJson.Create;
+  
+  // é¾å¼æ·»å æ°ç»åç´ 
+  Json.A['fruits']
+    .Add('è¹æ')
+    .Add('é¦è')
+    .Add('æ©å­');
+  
+  // æ·»å å¤§æ´æ°
+  Json.A['ids'].Add(Int64(12345678901234));
+  
+  // éåæ°ç»
+  for i := 0 to Json.A['fruits'].Count - 1 do
+    Writeln(Json.A['fruits'].S[i]);
+end;
+</code></pre>
+<h3 id="å¯¹è±¡æ°ç»">å¯¹è±¡æ°ç»</h3>
+<pre><code class="language-delphi">var
+  Json: IJson;
+begin
+  Json := TJson.Create;
+  
+  // æ·»å å¯¹è±¡å°æ°ç»
+  Json.A['users'].AddObject.S['name'] := 'ç¨æ·1';
+  Json.A['users'].O[0].I['age'] := 20;
+  
+  Json.A['users'].AddObject.S['name'] := 'ç¨æ·2';
+  Json.A['users'].O[1].I['age'] := 25;
+end;
+</code></pre>
+<h3 id="è·¯å¾è®¿é®">è·¯å¾è®¿é®</h3>
+<pre><code class="language-delphi">var
+  Json: IJson;
+begin
+  Json := TJson.Create;
+  Json.S['name'] := 'æµè¯';
+  Json.O['info'].S['city'] := 'ä¸æµ·';
+  Json.A['tags'].Add('tag1').Add('tag2');
+  
+  // ä½¿ç¨è·¯å¾è®¿é®
+  Writeln(Json.Path['name']);        // è¾åº: æµè¯
+  Writeln(Json.Path['info.city']);   // è¾åº: ä¸æµ·
+  Writeln(Json.Path['tags.0']);      // è¾åº: tag1
+end;
+</code></pre>
+<h3 id="æä»¶è¯»å">æä»¶è¯»å</h3>
+<pre><code class="language-delphi">var
+  Json: IJson;
+begin
+  // åå»ºå¹¶ä¿å­
+  Json := TJson.Create;
+  Json.S['name'] := 'æµè¯';
+  Json.I['version'] := 1;
+  Json.SaveToFile('config.json');
+  
+  // ä»æä»¶å è½½
+  Json := TJson.LoadFromFile('config.json');
+  Writeln(Json.S['name']);
+  
+  // ä¹å¯ä»¥ä½¿ç¨ ParseFile (å«å)
+  Json := TJson.ParseFile('config.json');
+end;
+</code></pre>
+<h2 id="api-åè">API åè</h2>
+<h3 id="ijson-æ¥å£">IJson æ¥å£</h3>
+<table>
+<thead>
+<tr>
+<th>å±æ§/æ¹æ³</th>
+<th>è¯´æ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>S[Key]</code></td>
+<td>å­ç¬¦ä¸²ç±»åè¯»å</td>
+</tr>
+<tr>
+<td><code>I[Key]</code></td>
+<td>æ´æ°ç±»åè¯»å (32ä½)</td>
+</tr>
+<tr>
+<td><code>L[Key]</code></td>
+<td>é¿æ´æ°ç±»åè¯»å (64ä½)</td>
+</tr>
+<tr>
+<td><code>F[Key]</code></td>
+<td>æµ®ç¹æ°ç±»åè¯»å</td>
+</tr>
+<tr>
+<td><code>B[Key]</code></td>
+<td>å¸å°ç±»åè¯»å</td>
+</tr>
+<tr>
+<td><code>D[Key]</code></td>
+<td>æ¥ææ¶é´ç±»åè¯»å (ISO 8601 æ ¼å¼)</td>
+</tr>
+<tr>
+<td><code>O[Key]</code></td>
+<td>è·ååµå¥å¯¹è±¡</td>
+</tr>
+<tr>
+<td><code>A[Key]</code></td>
+<td>è·åæ°ç»</td>
+</tr>
+<tr>
+<td><code>Path[Path]</code></td>
+<td>è·¯å¾æ¹å¼è®¿é®å¼</td>
+</tr>
+<tr>
+<td><code>IsNull(Key)</code></td>
+<td>æ£æ¥å¼æ¯å¦ä¸º null</td>
+</tr>
+<tr>
+<td><code>SetNull(Key)</code></td>
+<td>è®¾ç½®å¼ä¸º null</td>
+</tr>
+<tr>
+<td><code>TryGetS(Key, out)</code></td>
+<td>å®å¨è·åå­ç¬¦ä¸²å¼</td>
+</tr>
+<tr>
+<td><code>TryGetI(Key, out)</code></td>
+<td>å®å¨è·åæ´æ°å¼</td>
+</tr>
+<tr>
+<td><code>TryGetL(Key, out)</code></td>
+<td>å®å¨è·åé¿æ´æ°å¼</td>
+</tr>
+<tr>
+<td><code>TryGetF(Key, out)</code></td>
+<td>å®å¨è·åæµ®ç¹æ°å¼</td>
+</tr>
+<tr>
+<td><code>TryGetB(Key, out)</code></td>
+<td>å®å¨è·åå¸å°å¼</td>
+</tr>
+<tr>
+<td><code>TryGetD(Key, out)</code></td>
+<td>å®å¨è·åæ¥ææ¶é´å¼</td>
+</tr>
+<tr>
+<td><code>Contains(Key)</code></td>
+<td>æ£æ¥é®æ¯å¦å­å¨</td>
+</tr>
+<tr>
+<td><code>Remove(Key)</code></td>
+<td>å é¤æå®é®</td>
+</tr>
+<tr>
+<td><code>Clear</code></td>
+<td>æ¸ç©ºå¯¹è±¡</td>
+</tr>
+<tr>
+<td><code>GetKeys</code></td>
+<td>è·åææé®å</td>
+</tr>
+<tr>
+<td><code>Count</code></td>
+<td>è·åé®æ°é</td>
+</tr>
+<tr>
+<td><code>ToJSON</code></td>
+<td>è¾åºç´§å JSON å­ç¬¦ä¸²</td>
+</tr>
+<tr>
+<td><code>Format</code></td>
+<td>è¾åºæ ¼å¼å JSON å­ç¬¦ä¸²</td>
+</tr>
+<tr>
+<td><code>SaveToFile(FileName)</code></td>
+<td>ä¿å­å°æä»¶</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ijsonarray-æ¥å£">IJsonArray æ¥å£</h3>
+<table>
+<thead>
+<tr>
+<th>å±æ§/æ¹æ³</th>
+<th>è¯´æ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>S[Index]</code></td>
+<td>è·åå­ç¬¦ä¸²åç´ </td>
+</tr>
+<tr>
+<td><code>I[Index]</code></td>
+<td>è·åæ´æ°åç´ </td>
+</tr>
+<tr>
+<td><code>L[Index]</code></td>
+<td>è·åé¿æ´æ°åç´ </td>
+</tr>
+<tr>
+<td><code>F[Index]</code></td>
+<td>è·åæµ®ç¹æ°åç´ </td>
+</tr>
+<tr>
+<td><code>B[Index]</code></td>
+<td>è·åå¸å°åç´ </td>
+</tr>
+<tr>
+<td><code>D[Index]</code></td>
+<td>è·åæ¥ææ¶é´åç´ </td>
+</tr>
+<tr>
+<td><code>O[Index]</code></td>
+<td>è·åå¯¹è±¡åç´ </td>
+</tr>
+<tr>
+<td><code>IsNull(Index)</code></td>
+<td>æ£æ¥åç´ æ¯å¦ä¸º null</td>
+</tr>
+<tr>
+<td><code>Add(Value)</code></td>
+<td>æ·»å åç´ ï¼è¿å Self æ¯æé¾å¼è°ç¨</td>
+</tr>
+<tr>
+<td><code>AddNull</code></td>
+<td>æ·»å  null åç´ </td>
+</tr>
+<tr>
+<td><code>AddObject</code></td>
+<td>æ·»å å¯¹è±¡å¹¶è¿å</td>
+</tr>
+<tr>
+<td><code>AddArray</code></td>
+<td>æ·»å æ°ç»å¹¶è¿å</td>
+</tr>
+<tr>
+<td><code>Delete(Index)</code></td>
+<td>å é¤æå®ä½ç½®åç´ </td>
+</tr>
+<tr>
+<td><code>Clear</code></td>
+<td>æ¸ç©ºæ°ç»</td>
+</tr>
+<tr>
+<td><code>Count</code></td>
+<td>è·ååç´ æ°é</td>
+</tr>
+<tr>
+<td><code>ToJSON</code></td>
+<td>è¾åºç´§å JSON å­ç¬¦ä¸²</td>
+</tr>
+<tr>
+<td><code>Format</code></td>
+<td>è¾åºæ ¼å¼å JSON å­ç¬¦ä¸²</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ç±»æ¹æ³">ç±»æ¹æ³</h3>
+<table>
+<thead>
+<tr>
+<th>æ¹æ³</th>
+<th>è¯´æ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TJson.Create</code></td>
+<td>åå»ºç©º JSON å¯¹è±¡</td>
+</tr>
+<tr>
+<td><code>TJson.Parse(String)</code></td>
+<td>ä»å­ç¬¦ä¸²è§£æ JSON</td>
+</tr>
+<tr>
+<td><code>TJson.ParseFile(FileName)</code></td>
+<td>ä»æä»¶è§£æ JSON</td>
+</tr>
+<tr>
+<td><code>TJson.LoadFromFile(FileName)</code></td>
+<td>ä»æä»¶å è½½ JSON (ParseFile å«å)</td>
+</tr>
+<tr>
+<td><code>TJsonArray.Create</code></td>
+<td>åå»ºç©º JSON æ°ç»</td>
+</tr>
+<tr>
+<td><code>TJsonArray.Parse(String)</code></td>
+<td>ä»å­ç¬¦ä¸²è§£æ JSON æ°ç»</td>
+</tr>
+</tbody>
+</table>
+<h2 id="ä¸åç-systemjson-å¯¹æ¯">ä¸åç System.JSON å¯¹æ¯</h2>
+<h3 id="åçåæ³">åçåæ³</h3>
+<pre><code class="language-delphi">var
+  Obj: TJSONObject;
+begin
+  Obj := TJSONObject.Create;
+  try
+    Obj.AddPair('name', TJSONString.Create('å¼ ä¸'));
+    Obj.AddPair('age', TJSONNumber.Create(25));
+    Writeln(Obj.GetValue&lt;string&gt;('name'));
+  finally
+    Obj.Free;
+  end;
+end;
+</code></pre>
+<h3 id="simplejson-åæ³">SimpleJSON åæ³</h3>
+<pre><code class="language-delphi">var
+  Json: IJson;
+begin
+  Json := TJson.Create;
+  Json.S['name'] := 'å¼ ä¸';
+  Json.I['age'] := 25;
+  Writeln(Json.S['name']);
+  // æ é Free
+end;
+</code></pre>
+<h2 id="æä»¶ç»æ">æä»¶ç»æ</h2>
+<pre><code>jsontest/
+âââ SimpleJSON.pas        # æ ¸å¿å°è£åå
+âââ SimpleJSONDemo.dpr    # æ¼ç¤ºç¨åº
+âââ README.md             # æ¬ææ¡£
+</code></pre>
+<h2 id="ç¼è¯è¦æ±">ç¼è¯è¦æ±</h2>
+<ul>
+<li>Delphi 10.4 Sydney ææ´é«çæ¬</li>
+<li>æ¯æ Win32/Win64 å¹³å°</li>
+</ul>
+<h2 id="ç¼è¯æ¹æ³">ç¼è¯æ¹æ³</h2>
+<pre><code class="language-bash">dcc32 SimpleJSONDemo.dpr
+</code></pre>
+<h2 id="è®¸å¯è¯">è®¸å¯è¯</h2>
+<p>MIT License</p>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-03-24 11:18">2026-03-24 11:18</span>&nbsp;
+<a href="https://www.cnblogs.com/mufeesama">MufeeSama</a>&nbsp;
+éè¯»(<span id="post_view_count">71</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">2</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19762704);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19762704', targetLink: 'https://www.cnblogs.com/mufeesama/p/19762704', title: 'ä¸ä¸ªç®æ´æç¨ç Delphi JSON å°è£åºï¼åºäº System.JSON`ååå°è£ï¼æä¾æ´ç´è§ç API' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
