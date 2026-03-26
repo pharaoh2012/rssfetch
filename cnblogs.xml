@@ -3,7 +3,7 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-03-26T16:57:19.338Z</lastBuildDate>
+        <lastBuildDate>2026-03-26T20:30:55.523Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
@@ -2143,6 +2143,430 @@ Returns:
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19716388);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19716388', targetLink: 'https://www.cnblogs.com/rossiXYZ/p/19716388', title: 'ãGUI-Agentãé¶è·æè¾° GUI-MCP è§£è¯»---(5)---å½ä»¤è§£æåå·¥å·æ å°' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ Spring with AI (5): æç´¢æ©å±ââåéæ°æ®åºä¸RAG(ä¸) ]]></title>
+    <link>https://www.cnblogs.com/gujun/p/19771143/spring-ai-05</link>
+    <guid>d329da7f3e0927e9fe9f9e025c36dc92</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/gujun/p/19771143/spring-ai-05" title="åå¸äº 2026-03-26 17:03">
+    <span role="heading" aria-level="2">Spring with AI (5): æç´¢æ©å±ââåéæ°æ®åºä¸RAG(ä¸)</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                    <div id="cnblogs_post_description" style="display: none">
+        
+        RAGè½éè¿å®æ¶æç´¢æ°æ®åºçæ¹å¼ââä¸»è¦æ¯åéæ°æ®åºï¼æ©å±å·²ç»è®­ç»åºåçå¤§æ¨¡åçç¥è¯è½å
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>æ¬æä»£ç ï¼<br>
+<a href="https://github.com/JunTeamCom/ai-demo/tree/release-5.0" target="_blank" rel="noopener nofollow">https://github.com/JunTeamCom/ai-demo/tree/release-5.0</a><br>
+<a href="https://github.com/JunTeamCom/ai-demo-tools/tree/release-5.0/data-loader" target="_blank" rel="noopener nofollow">https://github.com/JunTeamCom/ai-demo-tools/tree/release-5.0/data-loader</a></p>
+<p>æ¬ç« è®²è§£æ¥è¯¢åéæ°æ®åºãRAGåºç¨ã</p>
+<p>Spring with AIç³»åï¼åªå³æ³¨ä¸å±AIçåºç¨ç¨åºï¼åºäºJAVAæ­å»ºï¼ï¼ä¸å³æ³¨åºå±çLLMåçãæ­å»ºç­ææ¯ã</p>
+<blockquote>
+<p>RAGè½éè¿å®æ¶æç´¢æ°æ®åºçæ¹å¼ï¼æ©å±å·²ç»è®­ç»åºåçå¤§æ¨¡åçç¥è¯è½åã<br>
+RAGï¼<strong>R</strong>etrieval-<strong>A</strong>ugmented <strong>G</strong>enerationï¼æ£ç´¢å¢å¼ºçæ<br>
+retrieval /rÉªËtriËvl/ n.æ£ç´¢<br>
+augmented /É:g'mentÉªd/ adj.å¢å¼ºç<br>
+generation /ËdÊenÉËreÉªÊn/ n.çæ</p>
+</blockquote>
+<p>éè¿æ£ç´¢ãå¢å¼ºå¤§æ¨¡åçæçåå®¹ã<br>
+å¨åæä¸­ï¼æä»¬éè¿ææ¬æ¨¡æ¿ï¼è¡¥åäºâè§åâï¼è¿èå¢å¼ºäºå¤§æ¨¡åçæçåå®¹ã<br>
+ç¶èè¿åªæ¯ç®åçâææ¬å¹é+éç½®æä»¶âçæ¹å¼ï¼é¢å¯¹å¤æé®é¢ååºå¤§çç¥è¯åºï¼å®å¨ä¸å·å¤ç°å®æä¹ã</p>
+<p>RAGæ´ä½çæµç¨åç»æé¨åå¦ä¸ï¼</p>
+<div class="mermaid">flowchart LR
+    subgraph VectorDB[åéæ°æ®åºæ¨¡å]
+        VectorStore[(åéæ°æ®åº)]:::db
+    end
+
+    subgraph DocumentLoader[ææ¡£å è½½æ¨¡å]
+        OriginalDocs[â  åå§ææ¡£] --&gt; Splitter[ææ¡£åå²å¨]:::process
+        Splitter --&gt; DocChunks[â¡ ææ¡£åå]
+        DocChunks --&gt; CalcEmb[â¢ è®¡ç®åéåµå¥]:::process
+        CalcEmb --&gt;|å­å¥| VectorStore
+    end
+
+    subgraph RAGApp[æ¯æRAGçåºç¨]
+        Question[é®é¢] --&gt; App[â£ åºç¨]:::app
+        App --&gt;|æç´¢ç¸ä¼¼ææ¡£| VectorStore
+        VectorStore --&gt;|è¿åç¸ä¼¼ææ¡£| App
+        App --&gt; Prompt[â¤ ç»è£æç¤ºè¯]
+        Prompt --&gt; LLM[å¤§è¯­è¨æ¨¡å]
+        LLM --&gt; Answer[ç­æ¡]
+        Answer --&gt; App
+        App --&gt; Output[è¾åºç­æ¡]
+    end
+
+    classDef process fill:#a5d6a7,stroke:#388e3c,stroke-width:2px
+    classDef app fill:#ffab91,stroke:#e64a19,stroke-width:2px
+    classDef db fill:#bbdefb,stroke:#1976d2,stroke-width:2px
+    classDef llm fill:#ffcc80,stroke:#f57c00,stroke-width:2px
+</div><p>æ¬Demoçå·ä½åºæ¯åï¼ä¸å¾åä¸ºï¼</p>
+<p>å·ä½åºæ¯çæµç¨å¦ä¸ï¼</p>
+<div class="mermaid">flowchart LR
+    subgraph VectorDB[åéæ°æ®åºæ¨¡å]
+        VectorStore[(ðï¸ åéæ°æ®åº&lt;br&gt;æ¯ææå½å®¶/è¯­ä¹æ£ç´¢)]:::db
+    end
+	
+    subgraph DataLoader[æ°æ®å è½½ä¸é¢å¤çæ¨¡å]
+        direction TB
+        OriginalDocs[ð åå§ææ¡£&lt;br&gt;å½å®¶åå²å°çé£ä¿] --&gt; EntityExtract[ð·ï¸ å¤§æ¨¡åèªå¨æ½å&lt;br&gt;å½å®¶åç§° &amp; æè¿°ä¿¡æ¯]
+        EntityExtract --&gt; Splitter[âï¸ ææ¡£åå²å¨]
+        Splitter --&gt; DocChunks[ð ææ¡£åå&lt;br&gt;å«åæ°æ®: å½å®¶/å°åº]
+        DocChunks --&gt; CalcEmb[ð§® è®¡ç®åéåµå¥]
+        CalcEmb --&gt;|å­å¥åéä¸åæ°æ®| VectorStore
+    end
+
+    subgraph RAGApp[æºè½é®ç­åºç¨]
+        direction TB
+        Question[â ç¨æ·é®é¢&lt;br&gt;ä¾: æ¥æ¬æåªäºä¼ ç»èæ¥ï¼] --&gt; App[â£ åºç¨å¥å£]:::app
+        App --&gt;|1. é®é¢åæä¸æå¾è¯å«| IntentCheck{æ¯å¦æ¶å&lt;br&gt;å·²ç¥å½å®¶/å°åºï¼}
+        IntentCheck --&gt;|æ¯| SearchByCountry[ð æå½å®¶åæ°æ®è¿æ»¤]
+        IntentCheck --&gt;|å¦| SemanticSearch[ð çº¯è¯­ä¹ç¸ä¼¼æç´¢]
+        
+        SearchByCountry --&gt;|ç»åæ¥è¯¢| VectorStore
+        SemanticSearch --&gt; VectorStore
+        
+        VectorStore --&gt;|è¿åç¸ä¼¼ææ¡£å&lt;br&gt;+ æå±å½å®¶ä¿¡æ¯| App
+        
+        App --&gt; Prompt[â¤ ç»è£å¢å¼ºæç¤ºè¯&lt;br&gt;åå«: æ£ç´¢å°çé£ä¿/å°çæè¿°&lt;br&gt;+ åå§é®é¢]
+        Prompt --&gt; LLM[ð¤ å¤§è¯­è¨æ¨¡å]:::llm
+        LLM --&gt; Answer[â¨ å¢å¼ºç­æ¡&lt;br&gt;ä¾: ä¾æ®æ¥æ¬æåèµæï¼ä¸»è¦èæ¥æ...]
+        Answer --&gt; App
+        App --&gt; Output[ð¢ è¾åºç­æ¡]
+    end
+
+    classDef process fill:#a5d6a7,stroke:#388e3c,stroke-width:2px
+    classDef app fill:#ffab91,stroke:#e64a19,stroke-width:2px
+    classDef db fill:#bbdefb,stroke:#1976d2,stroke-width:2px
+    classDef llm fill:#ffcc80,stroke:#f57c00,stroke-width:2px
+</div><p>å¯ä»¥çå°ï¼</p>
+<p>RAGï¼éè¿æç´¢è½åãå¢å¼ºå¤§æ¨¡åçæåå®¹çè´¨éã</p>
+<p>æ ¸å¿çä¸ä¸ªè¯¯è§£ï¼å°±æ¯æç´¢è½åä¸æ¯å¨å¤§æ¨¡åçæå®ä¹åè¡¥åç»æãä¹ä¸æ¯ææç´¢åå®¹å¯¼å¥å°å¤§æ¨¡ååé¨ã</p>
+<p>èæ¯<strong>ç»è£å°åç»å¤§æ¨¡åçæç¤ºè¯é</strong>ã</p>
+<h1 id="1-ä¾èµä¸éç½®">1 ä¾èµä¸éç½®</h1>
+<h2 id="11-qdrantéç½®">1.1 Qdrantéç½®</h2>
+<p>åå°AI-Demoé¡¹ç®ï¼æ·»å åéæ°æ®åºåRAGä¾èµï¼</p>
+<p>spring-ai-starter-vector-store-qdrant(éè¿Qdrantæç´¢Starter)<br>
+spring-ai-advisors-vector-store(éè¿Advisors Vectoræç´¢Dependency)<br>
+spring-ai-rag(éè¿Spring RAGæç´¢Dependency)</p>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/340065/202603/340065-20260325105457813-1864298289.png" class="lazyload"></p>
+<p>éç½®æ°æ®æºï¼æ³¨æå¨Qdrantä¸­éç½®å¥½API Keyãå¹¶éç½®å°ç¯å¢åéï¼ï¼</p>
+<pre><code class="language-yaml">spring:
+  application:
+    name: ai-demo
+  ai:
+    openai:
+      base-url: https://dashscope.aliyuncs.com/compatible-mode  # QwençOpenAIå¼Endpoint
+      api-key: ${DASHSCOPE_API_KEY}
+      chat:
+        options:
+            model: qwen3.5-plus
+      embedding:  # æ°å¢åµå¥æ¨¡åéç½®
+        options:
+          model: text-embedding-v2  # é¿éäºæ¯æçåµå¥æ¨¡å
+    vectorstore:
+      qdrant:
+        host: 127.0.0.1
+        port: 6334
+        api-key: ${QDRANT_API_KEY}
+        initialize-schema: true
+        collection-name: ai_demo
+</code></pre>
+<p>ç¶åå¯å¨<code>Qdrant</code>æå¡ï¼åèä¸ä¸èï¼ã</p>
+<h2 id="12-lombokéç½®">1.2 Lombokéç½®</h2>
+<p>ä¸ºäºæ¹ä¾¿ææ¥å¿ãæå»ºå®ä½ç­ï¼æ·»å Lombokä¾èµä¸æä»¶ï¼åå§ååå»ºé¡¹ç®æ¶ï¼å¯ä»¥ç´æ¥æ·»å Starterå®ç°ï¼ï¼</p>
+<pre><code class="language-xml">&lt;!-- pom.xmléç½®--&gt;
+
+&lt;!-- 1. ä¾èµéç½® --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
+            &lt;artifactId&gt;lombok&lt;/artifactId&gt;
+            &lt;optional&gt;true&lt;/optional&gt;
+        &lt;/dependency&gt;
+&lt;!-- 2. æä»¶éç½® --&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+                &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+                &lt;configuration&gt;
+                    &lt;annotationProcessorPaths&gt;
+                        &lt;path&gt;
+                            &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
+                            &lt;artifactId&gt;lombok&lt;/artifactId&gt;
+                        &lt;/path&gt;
+                    &lt;/annotationProcessorPaths&gt;
+                &lt;/configuration&gt;
+            &lt;/plugin&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+                &lt;configuration&gt;
+                    &lt;excludes&gt;
+                        &lt;exclude&gt;
+                            &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
+                            &lt;artifactId&gt;lombok&lt;/artifactId&gt;
+                        &lt;/exclude&gt;
+                    &lt;/excludes&gt;
+                &lt;/configuration&gt;
+            &lt;/plugin&gt;
+</code></pre>
+<h2 id="13-promptæ¨¡æ¿éç½®">1.3 Promptæ¨¡æ¿éç½®</h2>
+<p>ä¿®æ¹Promptæ¨¡æ¿ï¼å®å¨åºäºæç´¢åå®¹è¿è¡æ¨çï¼</p>
+<pre><code class="language-plaintext">ä½ æ¯ä¸ä¸ªæç¨çå©æï¼è´è´£åç­æå³{countryTitle}çåå²å°çé£ä¿é®é¢ã
+
+æ ¹æ®âææ¡£âé¨åä¸­çä¸ä¸æä¸æ åéªç¥è¯ï¼åç­ç¨æ·å³äºåå²å°çé£ä¿çé®é¢ã
+å¦æç­æ¡ä¸å¨âææ¡£âé¨åï¼è¯·åå¤âæä¸ç¥éâã
+
+ææ¡£ï¼
+----------
+{rules}
+----------
+</code></pre>
+<p>èå¡«å¥ç<code>{rules}</code>ï¼å°±æ¯ä¸ä¸èå¯¼å¥åéæ°æ®åºçåå®¹ã</p>
+<h1 id="2-ä»£ç ä¿®æ¹">2 ä»£ç ä¿®æ¹</h1>
+<h2 id="21-è§åå®ä¹">2.1 è§åå®ä¹</h2>
+<p>æç´¢åéæ°æ®åºï¼æ ¹æ®âé®é¢+å½å®¶âæç´¢ä¿¡æ¯ã</p>
+<pre><code class="language-java">package com.junteam.ai.demo.service;
+
+import java.util.stream.Collectors;
+
+import org.springframework.ai.document.Document;
+import org.springframework.ai.vectorstore.SearchRequest;
+import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
+import org.springframework.stereotype.Service;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Service
+public class ChatRulesService {
+    private VectorStore vectorStore;
+
+    public ChatRulesService(VectorStore vectorStore) {
+        this.vectorStore = vectorStore;
+    }
+
+    public String getRulesFor(String countryTitle, String question) {
+        var searchRequest = SearchRequest
+                .builder()
+                .query(question)
+                .filterExpression(new FilterExpressionBuilder()
+                        .eq("countryTitle", countryTitle)
+                        .build())
+                .build();
+        log.info("Search Request:" + searchRequest);
+
+        var similarDocuments = vectorStore.similaritySearch(searchRequest);
+        if (similarDocuments.isEmpty()) {
+            return countryTitle + "çä¿¡æ¯ä¸å¯ç¨ã";
+        }
+        return similarDocuments.stream()
+                .map(Document::getText)
+                .collect(Collectors.joining(System.lineSeparator()));
+    }
+}
+</code></pre>
+<h2 id="22-è§åä½¿ç¨">2.2 è§åä½¿ç¨</h2>
+<p>å°ä¸ä¸æ­¥ä»åéæ°æ®åºæç´¢å°çä¿¡æ¯ï¼systemæ¹æ³è°ç¨ãææ¬åµå¥ï¼ãä»¥åé®é¢ï¼useræ¹æ³è°ç¨ãèå¤©çé®é¢ï¼ï¼æ¼è£å°å¤§æ¨¡åã</p>
+<pre><code class="language-java">package com.junteam.ai.demo.service.impl;
+
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Service;
+
+import com.junteam.ai.demo.model.ChatAnswer;
+import com.junteam.ai.demo.model.ChatQuestion;
+import com.junteam.ai.demo.service.ChatRulesService;
+import com.junteam.ai.demo.service.ChatService;
+
+@Service
+public class OpenAIChatServiceImpl implements ChatService {
+
+    private final ChatClient chatClient;
+    private final ChatRulesService chatRulesService;
+
+    public OpenAIChatServiceImpl(ChatClient.Builder chatClientBuilder, ChatRulesService chatRulesService) {
+        this.chatClient = chatClientBuilder.build();
+        this.chatRulesService = chatRulesService;
+    }
+
+    @Value("classpath:/promptTemplates/questionPromptTemplate.st")
+    Resource questionPromptTemplate;
+
+    @Override
+    public ChatAnswer ask(ChatQuestion chatQuestion) {
+        var chatRules = chatRulesService.getRulesFor(chatQuestion.title(), chatQuestion.question());
+        var answer = chatClient
+                .prompt()
+                .system(systemSpec -&gt; systemSpec
+                        .text(questionPromptTemplate)
+                        .param("countryTitle", chatQuestion.title())
+                        .param("rules", chatRules))
+                .user(chatQuestion.question())
+                .call();
+        var answerText = answer.content();
+        return new ChatAnswer(chatQuestion.title(), answerText);
+    }
+}
+</code></pre>
+<h1 id="3-æµè¯éªè¯">3 æµè¯éªè¯</h1>
+<pre><code class="language-bash">curl http://localhost:8080/web/ask \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"title": "å¾·å½", "question": "è´­ç©ä¸è¬æåªäºæ¸ éï¼"}' 
+</code></pre>
+<p>è¿åç»æå½¢å¦ï¼</p>
+<pre><code class="language-json">{
+  "title":"å¾·å½",
+  "answer":"æ ¹æ®ææ¡£ï¼å¾·å½è´­ç©ä¸è¬æä»¥ä¸æ¸ éï¼\n\n1.  **ç½è´­**ï¼ä¸è¬ä½¿ç¨æè´ãäºé©¬éå¹³å°ã\n2.  **è¶å¸**ï¼ä¹°ä¸è¥¿ä¸è¬å»è¶å¸ã\n3.  **çæ´»ç¨ååº**ï¼è´­ä¹°å¸¸å¸¸å» IDELã\n4.  **åå¦åæ¤è¤ååº**ï¼ä¸è¬å» ROSSMANãDM è´­ä¹°ã"
+}
+</code></pre>
+<p>æ´çåºåå®¹å¦ä¸ï¼</p>
+<blockquote>
+<p>æ ¹æ®ææ¡£ï¼å¾·å½è´­ç©ä¸è¬æä»¥ä¸æ¸ éï¼</p>
+<ol>
+<li><strong>ç½è´­</strong>ï¼ä¸è¬ä½¿ç¨æè´ãäºé©¬éå¹³å°ã</li>
+<li><strong>è¶å¸</strong>ï¼ä¹°ä¸è¥¿ä¸è¬å»è¶å¸ã</li>
+<li><strong>çæ´»ç¨ååº</strong>ï¼è´­ä¹°å¸¸å¸¸å» IDELã</li>
+<li><strong>åå¦åæ¤è¤ååº</strong>ï¼ä¸è¬å» ROSSMANãDM è´­ä¹°ã</li>
+</ol>
+</blockquote>
+<p>å¯è§æ¯âåéæ°æ®åºçç¥è¯â+âå¤§æ¨¡åçæ¨çè½åâï¼ç»åå®ç°äºç­æ¡è¾åºã</p>
+<p>RAGçå¤§é¨åå·¥ä½é½å¨å®éæç¤ºè¯<strong>åéç»å¤§æ¨¡åä¹å</strong>å®æã</p>
+<h1 id="4-é¡¾é®éé¡¹">4 é¡¾é®éé¡¹</h1>
+<p>RAGå¨<code>Spring AI</code>ä¸­çè¿ç§å·¥ä½æ¨¡å¼ï¼ç§°ä¸ºâé¡¾é®âï¼Advisorï¼ã</p>
+<h2 id="41-é®ç­é¡¾é®">4.1 é®ç­é¡¾é®</h2>
+<p>é»è®¤çé¡¾é®éé¡¹ï¼ç§°ä¸ºâé®ç­é¡¾é®âï¼QuestionAnswerAdvisorï¼ï¼<br>
+å¯ä»¥éè¿<code>.advisors()</code>æ¹æ³ä¿®æ¹æ§å¶ï¼</p>
+<pre><code class="language-java">var answer = chatClient
+        .prompt()
+        .system(systemSpec -&gt; systemSpec
+                .text(questionPromptTemplate)
+                .param("countryTitle", chatQuestion.title())
+                .param("rules", chatRules))
+        .user(chatQuestion.question())
+        .advisors(
+            QuestionAnswerAdvisor.builder(vectorStore).build())
+        .call();
+var answerText = answer.content();
+</code></pre>
+<p>æèå¯ä»¥å®ä¹<code>Config</code>ç±»ï¼å¨<code>ChatClient</code>çæå»ºè¿ç¨ä¸­å®ä¹ï¼</p>
+<pre><code class="language-java">@Configuration
+public class AiConfig {
+    @Bean
+    ChatClient chatClient(
+            ChatClient.Builder chatClientBuilder, VectorStore vectorStore) {
+        return chatClientBuilder
+                .defaultAdvisors(
+                        QuestionAnswerAdvisor.builder(vectorStore).build())
+                .build();
+    }
+}
+</code></pre>
+<h2 id="42-å¢å¼ºæç´¢é¡¾é®">4.2 å¢å¼ºæç´¢é¡¾é®</h2>
+<p>å¢å¼ºæç´¢é¡¾é®ï¼RetrievalAugmentationAdvisorï¼æä¾æ´å çµæ´»å¼ºå¤§çé¡¾é®éé¡¹ï¼</p>
+<pre><code class="language-java">package com.junteam.ai.demo.config;
+
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
+import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
+import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class AiConfig {
+    @Bean
+    ChatClient chatClient(ChatClient.Builder chatClientBuilder, VectorStore vectorStore) {
+        // æå»ºRAGé¡¾é®
+        var advisor = RetrievalAugmentationAdvisor.builder()
+                .documentRetriever(VectorStoreDocumentRetriever.builder()
+                        .vectorStore(vectorStore)
+                        .build())
+                .build();
+        // è®¾ç½®é¡¾é®éç½®é¡¹
+        return chatClientBuilder
+                .defaultAdvisors(advisor)
+                .build();
+    }
+}
+</code></pre>
+<p>å¯ä»¥ä¿®æ¹<code>.documentRetriever()</code>æ¹æ³çæé å¥åï¼å®ç°å¤ç§é¡¾é®æ¹å¼ã</p>
+<h1 id="5-è¡¥åä¼å">5 è¡¥åä¼å</h1>
+<p>åºäº<code>RetrievalAugmentationAdvisor</code>ï¼ä¸äºå¯¹èå¤©é®é¢çéè¦æ©åé¡¹ï¼</p>
+<p>ç¿»è¯ãéåï¼ç®åï¼ãæ©å±ç¸å³è¯é¢</p>
+<pre><code class="language-java">package com.junteam.ai.demo.config;
+
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
+import org.springframework.ai.rag.preretrieval.query.expansion.MultiQueryExpander;
+import org.springframework.ai.rag.preretrieval.query.transformation.RewriteQueryTransformer;
+import org.springframework.ai.rag.preretrieval.query.transformation.TranslationQueryTransformer;
+import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
+import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class AiConfig {
+    @Bean
+    ChatClient chatClient(ChatClient.Builder chatClientBuilder, VectorStore vectorStore) {
+        // æå»ºRAGé¡¾é®
+        var advisor = RetrievalAugmentationAdvisor.builder()
+                .documentRetriever(VectorStoreDocumentRetriever.builder()
+                        .vectorStore(vectorStore)
+                        .build())
+                // å¯¹èå¤©çé®é¢è¿è¡å å·¥å¤ç
+                .queryTransformers(
+                        // ç¿»è¯é®é¢
+                        TranslationQueryTransformer.builder()
+                                .chatClientBuilder(chatClientBuilder)
+                                .targetLanguage("Chinese")
+                                .build(),
+                        // éåï¼ç®åï¼é®é¢
+                        RewriteQueryTransformer.builder()
+                                .chatClientBuilder(chatClientBuilder)
+                                .build())
+                // æ©å±ç¸å³è¯é¢ï¼æ©å±5ä¸ªï¼
+                .queryExpander(MultiQueryExpander.builder()
+                        .chatClientBuilder(chatClientBuilder)
+                        .numberOfQueries(5)
+                        .includeOriginal(false)
+                        .build())
+                .build();
+        // è®¾ç½®é¡¾é®éç½®é¡¹
+        return chatClientBuilder
+                .defaultAdvisors(advisor)
+                .build();
+    }
+}
+</code></pre>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-03-26 17:03">2026-03-26 17:03</span>&nbsp;
+<a href="https://www.cnblogs.com/gujun">gujunge</a>&nbsp;
+éè¯»(<span id="post_view_count">35</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19771143);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19771143', targetLink: 'https://www.cnblogs.com/gujun/p/19771143/spring-ai-05', title: 'Spring with AI (5): æç´¢æ©å±ââåéæ°æ®åºä¸RAG(ä¸)' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -5093,7 +5517,7 @@ graph TB
  			Posted on 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-03-26 16:05">2026-03-26 16:04</span>&nbsp;
 <a href="https://www.cnblogs.com/hl13571">å°ç°ç°å¼å§æ´æ´»å¿å¦</a>&nbsp;
-éè¯»(<span id="post_view_count">47</span>)&nbsp;
+éè¯»(<span id="post_view_count">139</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19777072);return false;">æ¶è</a>&nbsp;
@@ -5130,6 +5554,115 @@ graph TB
 <div class="clear"></div>
 </div>
 	 ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ æ°æ®å¢éè¯¥ééäºï¼AIæºè½ä½ä¸æ¯ä½ çä¸ä¸ä¸ªä»ªè¡¨ç ]]></title>
+    <link>https://www.cnblogs.com/wang_yb/p/19776389</link>
+    <guid>dabf309d9cc69611d45d2abe8d5244a9</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/wang_yb/p/19776389" title="åå¸äº 2026-03-26 14:58">
+    <span role="heading" aria-level="2">æ°æ®å¢éè¯¥ééäºï¼AIæºè½ä½ä¸æ¯ä½ çä¸ä¸ä¸ªä»ªè¡¨ç</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>2026å¹´åï¼ç§ææèµå¬å¸Prosuså®£å¸äºä¸ä¸ªæäººçæ°å­ï¼<strong>å¶å¨ççæç³»ç»ä¸­å·²é¨ç½²37,000ä¸ªAIæºè½ä½</strong>ââèå°±å¨åå¹´åï¼è¿ä¸ªç®æ è¿è¢«å¤çè§ä¸ºâç¯çâã</p>
+<p>ä¸æ­¤åæ¶ï¼Just Eatæè¶è¿95%çå·¥ç¨å¸æ¯å¤©é½å¨ä½¿ç¨AIç¼ç å·¥å·ï¼30-40%ççäº§ä»£ç ç±AIçæã</p>
+<p>æ°æ®å¢éä¹æ­£ç«å¨ä¸ä¸ªåå­è·¯å£ã</p>
+<ul>
+<li>ä¸æ¹é¢ï¼AIæºè½ä½æä¸ºæ°çâæ°æ®æ¶è´¹èâï¼å¯¹ä¸ä¸æçéæ±å¦é¥¥ä¼¼æ¸´ï¼</li>
+<li>å¦ä¸æ¹é¢ï¼æä»¬è¿å»äºå¹´ç²¾å¿æé çâç°ä»£æ°æ®æ âå´æäºæ²éçè´æââæåä¸ä¸çdbtæ¨¡åãæ°ç¾ä¸ªèå¼±çAirflow DAGãç¢çåçä¾åºåæ¸åï¼è®©å¢é80%çç²¾åèè´¹å¨ç»´æç³»ç»è¿è½¬ä¸ã</li>
+</ul>
+<p><strong>å¦æä½ è¿å¨ç¨BIæ¶ä»£çæç»´åºå¯¹AIæ¶ä»£ï¼ä½ å·²ç»è¾äºã</strong></p>
+<h1 id="è®¤æ¸ç°å®æ°æ®æ¶è´¹èå·²ç»åäº">è®¤æ¸ç°å®ï¼æ°æ®æ¶è´¹èå·²ç»åäº</h1>
+<p>è¿å»åå¹´ï¼æä»¬ä¼åçæ¯âäººç±»ç¼çâââä»ªè¡¨çãæ¥è¡¨ãå¯è§åã</p>
+<p>ç°å¨ï¼æä»¬éè¦ä¼åçæ¯âæºå¨å¤§èâââAIæºè½ä½ã</p>
+<p>ä¸¤èçéæ±å¤©å·®å°å«ï¼</p>
+<ul>
+<li><strong>äººç±»</strong>å¯ä»¥å¿åâèæ°æ®âï¼è½é ç»éªåç´è§å¡«è¡¥ç©ºç½</li>
+<li><strong>æºè½ä½</strong>éè¦ç²¾ç¡®çè¯­ä¹å®ä¹ï¼å¦åå°±ä¼äº§çç¾é¾æ§çâå¹»è§â</li>
+</ul>
+<p>Denodoå¤§ä¸­ååºæ»è£ä½å·ä¸¾è¿ä¸ä¸ªç»å¸ä¾å­ï¼å½ä½ åéå®ãè´¢å¡ãå®¢æä¸ä¸ªé¨é¨é®âå¬å¸æå¤å°å®¢æ·âï¼ä¼å¾å°ä¸ä¸ªä¸åç­æ¡ââéå®æä¸è¿è®¢åçå«å®¢æ·ï¼è´¢å¡æç­¾äºåçº¦çå«å®¢æ·ï¼å®¢ææå®æäº¤ä»çå«å®¢æ·ã</p>
+<p>è¿ä¸ªå·®å¼å¨BIæ¶ä»£åªæ¯âæ²éææ¬âï¼ä½å¨AIæ¶ä»£ï¼<strong>å®ä¼ç´æ¥å¯¼è´æºè½ä½ååºéè¯¯å³ç­ï¼å¹¶èªå¨ãè§æ¨¡åå°æ§è¡éè¯¯è¡å¨</strong>ã</p>
+<p>åå·çµä¿¡çå®è·µæ­ç¤ºäºè¿ä¸ææçä¸¥å³»æ§ï¼é¢å¯¹æå¡è¶9000ä¸ç¨æ·çåºå¤§æ°æ®çæï¼ä»ä»¬éè¦å»ºè®¾ä¸å¥æºè½åæ°æ®åç±»åçº§ä½ç³»ã</p>
+<p>ä¼ ç»æ¹æ³å¤çåä¸ªå­æ®µéè¦5åéï¼èä»ä»¬åå©âè§å+è¯­ä¹+LLMæ¨çâä¸çº§å¼æï¼å°æ¶é´ç¼©ç­å°30ç§ï¼ä¸ªäººææä¿¡æ¯è¯å«åç¡®çè¶94%ã</p>
+<p>ä¸ºä»ä¹ï¼å ä¸ºåªæè®©æºå¨âçè§£âæ°æ®ï¼æè½è®©æºè½ä½âç¨å¥½âæ°æ®ã</p>
+<h1 id="å¿é¡»ç æçä¸å¤§éäº§åè¢±">å¿é¡»ç æçä¸å¤§âéäº§åè¢±â</h1>
+<ol>
+<li>åè¢±ä¸ï¼ç¢çåçâç°ä»£æ°æ®æ â</li>
+</ol>
+<p>è¿å»äºå¹´ï¼æä»¬ä¹ æ¯äºä¸ºæ¯ä¸ä¸ªå¾®å°éæ±å¼å¥ç¬ç«ä¾åºåââè¿ä¸ªåè½¬æ¢ï¼é£ä¸ªåè¡ç¼ï¼æ°æ®æ¥æºè¿½è¸ªï¼ï¼å¦ä¸ä¸ªåè´¨éçæ§ãç»æå°±æ¯<strong>ä¸ä¸æè¢«åå²æç¢çï¼æ£è½å¨ä¸åå·¥å·çâå´å¢è±å­âé</strong>ã</p>
+<p>å¯¹æºè½ä½èè¨ï¼è¿ç®ç´æ¯ç¾é¾ãå®ä»¬éè¦âçå°âå®æ´ç»é¢æè½æ­£ç¡®æ¨çï¼èç¢çåçææ¯æ åç°çåªæ¯ä¸ç³»åæ æ³å­¦ä¹ çé»ç®±ã</p>
+<ol start="2">
+<li>åè¢±äºï¼âæå·¥æ¬è¿âå¼çæ°æ®éæ</li>
+</ol>
+<p>ä¼ ç»BIæ¶ä»£ï¼ä¸å¡éæ±ä¸åï¼ITå°±å¾éæ°æ¸æ´ãæ´çãæ¬è¿æ°æ®ãè¿ç§æ¨¡å¼å¨æé¿ãæçä½ï¼å®å¨æ æ³æ»¡è¶³AIæ¶ä»£çå®æ¶æ§è¦æ±ã</p>
+<ol start="3">
+<li>åè¢±ä¸ï¼âé¨è½ç¥è¯âå¼çææ¡£ç¼ºå¤±</li>
+</ol>
+<p>å¤§å¤æ°ä¸å¡ä¸ä¸æç°å¨å­å¨äºâé¨è½ç¥è¯âæè¢«éå¿çSlackçº¿ç¨ä¸­ã</p>
+<p>æºè½ä½éè¦ç¥éçä¸åªæ¯âå¦ä½è®¡ç®ææ âï¼æ´æ¯âææ ä»£è¡¨ä»ä¹ãä¸ºä»ä¹è¿æ ·ç®ãè°æ¥æå®ãè¾¹ç¼æåµæ¯ä»ä¹ãææ ååæ¶éè¦åä»ä¹âã</p>
+<h1 id="å¿é¡»éå»ºçä¸å¤§çå­åºåº§">å¿é¡»éå»ºçä¸å¤§âçå­åºåº§â</h1>
+<ol>
+<li>åºåº§ä¸ï¼æ°æ®äº§åæç»´ï¼åä»£âæå¡å¿æâ</li>
+</ol>
+<p>æ°æ®å¢éå ä¹æ°¸è¿äººæä¸è¶³ãè¯å¾èµ¢å¾æ¯ä¸åºææï¼å°±ä¼è¾ææ´åºæäºã</p>
+<p>âæ°æ®äº§åâä¸æ¯æ°æ¦å¿µï¼ä½å¨AIæ¶ä»£æäºæ°å®ä¹ï¼<strong>æç¡®æææãSLAãæåææ </strong>ã</p>
+<p>æ é¡åºåè¿è¥ä¸­å¿çå®è·µå¼å¾å³æ³¨ââä»ä»¬æåäº¤æäºâå»æ è¯åå»çå½±åæ°æ®éâåâæ é¡å°åºæ¢æ§ç¾çç»¼åæ°æ®éâä¸¤æ¬¾å»çæ°æ®äº§åã</p>
+<p>è¿ä¸æ¯ç®åçæ°æ®ä¹°åï¼èæ¯å°æ°æ®å°è£æå¯äº¤æãå¯è®¡éçæ ååäº§åï¼ç²¾åå¹éå»çç§ç ãAIç åç­åºæ¯ã</p>
+<ol start="2">
+<li>åºåº§äºï¼è¯­ä¹å±ï¼ä»âå¯éâå°âå¿éâ</li>
+</ol>
+<p>ä½å·å¼ºè°ï¼âè¯­ä¹ç»ä¸æ¯AIæ¶ä»£æ°å­åçåºç³ãâ å½ä¼ä¸é¢ä¸´æ°ä»¥ä¸è®¡çæºè½ä½åæ¶è°ç¨æ°æ®ï¼å¿é¡»å»ºç«æ ååè¯­ä¹ä½ç³»ï¼åå®ä»¬æç¡®ä¼ è¾¾ï¼æ°æ®å¦ä½ç»ç»ãå­å¨äºä½å¤ãåºå¦ä½è§£è¯»ã</p>
+<p>è¿ä¸æ¯ææ¯é®é¢ï¼æ¯<strong>çå­é®é¢</strong>ãæ°æ®å©ç¨çä¸è¶³20%çç°ç¶ï¼æå³ç80%çæ°æ®æèµæ­£å¨ææ°´æ¼ãèè¯­ä¹å±æ­£æ¯é£ä¸ªâæ¬å¨æ²é»æ°æ®âçæ¯ç¹ã</p>
+<ol start="3">
+<li>åºåº§ä¸ï¼ä»âåçäºä»ä¹âå°âç°å¨åä»ä¹â</li>
+</ol>
+<p>ä¼ ç»BIé®çæ¯âæ°æ®è¯´äºä»ä¹âï¼AIæ¶ä»£é®çæ¯ <strong>âæ¢ç¶æ°æ®è¯´äºXï¼æä»¬èªå¨éåä»ä¹è¡å¨ï¼â</strong></p>
+<p>éå²æ°æ®éå¢è¿æåå¸çå¨å½é¦ä¾çº¯æ°æ®èµäº§ä¿¡ææ¶çæABSï¼åè¡æ»é¢10äº¿åï¼æ å¿çæ°æ®ä»âä¾éâèµ°åâç¬ç«âââå½»åºæéâæ°æ®èµæº-æ°æ®èµäº§-æ°æ®èµæ¬âå¨é¾æ¡ã</p>
+<p>è¿æ¯æ°æ®ä»·å¼çç»æä½ç°ï¼<strong>æ°æ®ä¸ååªæ¯è¢«âçâï¼èæ¯è¢«âç¨âæ¥åé çå®ç»æµä»·å¼</strong>ã</p>
+<h1 id="åé©ç®¡ç37000ä¸ªæºè½ä½èåççç¸">åé©ç®¡çï¼37,000ä¸ªæºè½ä½èåççç¸</h1>
+<p>åå°å¼å¤´çProsusæ¡ä¾ãå½ä»ä»¬å¨2025å¹´7æå®£å¸è¦é¨ç½²30,000ä¸ªAIæºè½ä½æ¶ï¼å¾å¤äººè§å¾è¿ä¸ªæ°å­å¾ç¯çââæ¯ç«å½æ¶ä»ä»¬åªæ18ä¸ªã</p>
+<p>ä½Prosuså¨çAIè´è´£äººEuro Beinatçè§£è¯»åäººæ·±çï¼â30,000ä¸ªæºè½ä½å®éä¸æå³çè¿æ¯ä¸ä¸ªåé©ç®¡çè¿ç¨ï¼æ¯ä¸ä¸ªæåè¿ç¨ï¼ä¸ææ¯æ¬èº«æ å³ãâ</p>
+<p>ä»ä»¬åç°ï¼å°½ç®¡æºè½ä½æå»ºå·¥å·å·å¤ææåè½ï¼ä½ä½¿ç¨éä¸åº¦åæ»ââå ä¸ºâææå¶ä»äººé½è®¤ä¸ºè¿æ¯å·¥ç¨å¸çå·¥å·âã</p>
+<p>è§£å³æ¹æ³å¾ç®åï¼åå¨å¸åºé¨é¨ãäººåèµæºé¨é¨çäººæè¾¹ï¼å¨30åéååå»ºæºè½ä½ãä¸æ¦äººä»¬äº²èº«ä½éªäºâåå»ºè½å¸¦æ¥æ¹åçèªå¨åå°±è¿ä¹ç¹âï¼éç¢å°±æ¶å¤±äºã</p>
+<p><strong>å·¥å·å¿é¡»ç«å³æç¨</strong>ï¼å¦åå°±ä¸è¯¥åãå¦æä¸ä»¶äºå¯¹åå·¥æ²¡æç´æ¥å¸®å©ï¼ç»ç»ä¸åºè¯¥ææä»ä»¬ä¸ºå®åéâç¹æ®æ¶é´âââé£åªä¼å¶é æ©æ¦ã</p>
+<h1 id="ç»è®ºçå­è¿æ¯æ¯ç­">ç»è®ºï¼çå­è¿æ¯æ¯ç­ï¼</h1>
+<p>ProsusçCTO Mertå¨å¨åå¤§ä¼ä¸çè¡¨æå¾ç´æ¥ï¼âä½ ä»¬å¿é¡»ä½¿ç¨è¿äºå·¥å·ãè¿æ²¡æéæ©ä½å°ãå ä¸ºä¸æ¯AIä¼åä»£ä½ ï¼èæ¯ä¼ç¨AIçäººä¼åä»£ä½ ãâ</p>
+<p>è¿å¥è¯åæ ·éç¨äºæ°æ®å¢éãAIæºè½ä½ä¸æ¯âåä¸ä¸ªä»ªè¡¨çâï¼èæ¯<strong>å¨æ°çæ°æ®æ¶è´¹è</strong>ã</p>
+<p>ä¸ºå®ä»¬åå¥½åå¤ï¼æå³çï¼</p>
+<ul>
+<li>ç æç¢çåçææ¯æ ï¼æ¥æ±å¼æ¾æ ¼å¼</li>
+<li>åå«âæå·¥æ¬è¿âï¼æå»ºè¯­ä¹å±</li>
+<li>åæ­¢âæå¡å¿æâï¼è½¬åæ°æ®äº§å</li>
+<li>ä»âè¢«å¨åç­âåçº§å°âä¸»å¨è¡å¨â</li>
+</ul>
+<p>éå²æéäºâæ°æ®èµæº-æ°æ®èµäº§-æ°æ®èµæ¬âçééï¼æ é¡å®ç°äºå»çæ°æ®çå¸åºåæµéï¼åå·çµä¿¡ç¨AIæ²»çè®©æ°æ®èµäº§âå¯è§ãå¯æ§ãå¯ç¨âââè¿äºä¸æ¯å­¤ç«æ¡ä¾ï¼èæ¯<strong>æ°æ®å¢éè½¬åçæ¹åæ </strong>ã</p>
+<p>æ°æ®å·¥ç¨å¸åªæ¯ä¸ªå¤´è¡ï¼ä»·å¼åé èææ¯èä¸ã</p>
+<p>AIæ¶ä»£ä¸ä¼æ·æ±°æ°æ®å¢éï¼ä½ä¼æ·æ±°é£äº<strong>è¿å¨ç¨BIæç»´åºå¯¹AIéæ±çäºº</strong>ã</p>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-03-26 14:59">2026-03-26 14:58</span>&nbsp;
+<a href="https://www.cnblogs.com/wang_yb">wang_yb</a>&nbsp;
+éè¯»(<span id="post_view_count">202</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19776389);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19776389', targetLink: 'https://www.cnblogs.com/wang_yb/p/19776389', title: 'æ°æ®å¢éè¯¥ééäºï¼AIæºè½ä½ä¸æ¯ä½ çä¸ä¸ä¸ªä»ªè¡¨ç' })">ä¸¾æ¥</a>
+</div>
+         ]]>
     </description>
     </item>
 <item>
@@ -5654,564 +6187,6 @@ CREATE TABLE IF NOT EXISTS `undo_log` (
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19774862);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19774862', targetLink: 'https://www.cnblogs.com/xize766/p/19774862/bp-use2', title: 'Burpsuiteä¹æ´åç ´è§£+éªè¯ç è¯å« | æ·»æ´ä¸å ç«' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ è¥éèªå¨åæ°æ®é©±å¨ - å¤æºæ°æ® OLAP æ¶ææ¼è¿ ]]></title>
-    <link>https://www.cnblogs.com/vivotech/p/19774845</link>
-    <guid>a9fc4bb19f52f03f9f5c875eabc575b2</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/vivotech/p/19774845" title="åå¸äº 2026-03-26 11:15">
-    <span role="heading" aria-level="2">è¥éèªå¨åæ°æ®é©±å¨ - å¤æºæ°æ® OLAP æ¶ææ¼è¿</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                    <div id="cnblogs_post_description" style="display: none">
-        
-        æ¬æåºäºè¥éèªå¨åæ°æ®é©±å¨åºæ¯ï¼åæä»ç»äºPresto+å¤§å®½è¡¨æ¹æ¡ãBitmapæ¹æ¡ãStarRocksæ¹æ¡çæ¶ææ¼è¿ã
-    </div>
-<div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
-<blockquote data-first-child="" data-pid="lonlZT4k">ä½èï¼vivoäºèç½æå¡å¨å¢é- Liu Xianchao<br>æ¬æåºäºè¥éèªå¨åæ°æ®é©±å¨åºæ¯ï¼åæä»ç»äºPresto+å¤§å®½è¡¨æ¹æ¡ãBitmapæ¹æ¡ãStarRocksæ¹æ¡çæ¶ææ¼è¿ã</blockquote>
-<p data-pid="SFwf7dQj">1åéçå¾ææ¡æ ¸å¿è§ç¹ð</p>
-<div class="RichText-ConditionalImagePortal">
-<div class="GifPlayer css-1isopsn" data-size="normal" data-za-detail-view-path-module="GifItem"><img alt="å¨å¾å°é¢" width="864" class="ztext-gif lazyload" data-thumbnail="https://pic2.zhimg.com/v2-f230d69dd9222c845f2fa099511f87df_b.jpg" data-size="normal" data-src="https://pic2.zhimg.com/v2-f230d69dd9222c845f2fa099511f87df_b.jpg">
-<div class="GifPlayer-icon css-d39tw7">&nbsp;</div>
-
-</div>
-
-</div>
-<div class="RichText-ConditionalImagePortal">
-<div class="GifPlayer css-1isopsn" data-size="normal" data-za-detail-view-path-module="GifItem"><img alt="å¨å¾å°é¢" width="864" class="ztext-gif lazyload" data-thumbnail="https://pic1.zhimg.com/v2-d7fc3a065e0120f7a8ab36ea4878280c_b.jpg" data-size="normal" data-src="https://pic1.zhimg.com/v2-d7fc3a065e0120f7a8ab36ea4878280c_b.jpg">
-<div class="GifPlayer-icon css-d39tw7">&nbsp;</div>
-
-</div>
-
-</div>
-<p data-pid="RpvoxbrU"><em>å¾ 1 VS å¾ 2ï¼æ¨æ´å¾åäºåªå¼ å¾æ¥è¾å©çè§£å¨æå¢ï¼æ¬¢è¿å¨è¯è®ºåºçè¨ã</em></p>
-<h2>ä¸ãä¸å¡èæ¯</h2>
-<p data-pid="NUbpEP1O">ä»å¢éå¸åºè¿å¥å­éå¸åºï¼ç²æ¾åçè¿è¥å·²ç»æ æ³ä¸ºä¼ä¸å¸¦æ¥æ´å¤çå¸åºä»½é¢åè¥æ¶å¢é¿ãè¿ä¸ç°ç¶ä¹é©±å¨ä¼ä¸æèç²¾ç»åè¿è¥ï¼éè¿ç²¾ç»åè¿è¥ææåºç¨æ·æå¤§ä»·å¼ï¼ä»èæåç¨æ·LTVãç²¾ç»åè¿è¥è½å°çéè¦ä¸¾æªå°±æ¯æ°æ®é©±å¨ãéè¿é¨åºæ°å­åè¿è¥ï¼å¯ä»¥å®ç°æéåçä¸å¯¼è´­ä¸æ¶è´¹èçå¨ç¨è§¦ç¹ï¼æ²æ·ãçå­åºæ¯åäº¤äºæ°æ®ï¼æ·±åº¦ææå®¢æ·éæ±ï¼ä¸ºç¨æ·æä¾ä¸ªæ§åæå¡ãä¾å¦ï¼çº¿ä¸çé¨åºå¼ä¸æèåä¸äºä¿éæ´»å¨ï¼éè¿ç­ä¿¡ãå¯åªä½ç­ä¿¡ãä¼ä¸å¾®ä¿¡ãå¯¼è´­æååç­è§¦ç¹å°æ´»å¨ä¿¡æ¯ä¼ éç»é¨åºå¨è¾¹æéè¦çç¨æ·ï¼å¸å¼ç¨æ·å°åºã</p>
-<h2>äºãåºç¡æ¶æ</h2>
-<p data-pid="1P34b9Xf">vivoéè¿æºè½ææºä»¥åæºè½ææºå®åæ¸ éçè¿è¥ï¼ç§¯ç´¯äºå¨æ¸ éï¼å¨åºæ¯çé¨åºç¸å³æ°æ®ã</p>
-<ul>
-<li data-pid="RpzoDQ03"><strong>æ ç­¾æ°æ®ï¼</strong>ç¨æ·ç»åçå³é®ç¹å¨äºéè¿æåæ ç­¾çæ¹å¼å°ç¨æ·ç¹å¾å¸æ¾åºæ¥ï¼ç°æå­éç¨æ·æ°æ®éçº§<strong>5äº¿+</strong>ã</li>
-<li data-pid="JoVBwrjI"><strong>äºä»¶æ°æ®ï¼</strong>éå¸¸ç»åæ ç­¾çäº§åºéè¦æ°æ®å¢éæ¸æ´å å·¥ï¼ç®æ³ä»å¥ï¼ä¸æ¶ç­ä¸ç³»åæä½ï¼çäº§ææ¬è¾å¤§ï¼ä¸çµæ´»æ§åå®æ¶æ§é½æä¸è¶³ãäºä»¶æ°æ®åºäºå¶å¼ºå¤§çåºæ¯åè¡¨ç°è½åï¼å å·¥ç®åï¼ä¸æ¶éåº¦å¿«çç¹ç¹ï¼æä¸ºæ ç­¾ä¹å¤çå¦ä¸ä¸ªéè¦æ°æ®æ¥æºã</li>
-<li data-pid="d3PhNeWL"><strong>é¨åºLBSæ°æ®ï¼</strong>çº¿ä¸è¥éè¦ç¹éå¸¸æ¯å¸å¼ç¨æ·å°åºï¼ä½éªé¨åºäº§åï¼ä»èä¿æäº¤æãèé¨åºæå¶ç¬ç¹çç»ç»æ¶æï¼å æ­¤é¨åºç¸å³çLBSä¹æ¯éè¦çæ°æ®æºä¹ä¸ï¼æ°æ®å¢éåºäºå­éç¨æ·æ°æ®é¢è®¡ç®é¨åºLBSå³ç³»æ°æ®è¨èè³<strong>90äº¿+</strong>ã</li>
-
-</ul>
-<p data-pid="h8n0V0Ns">ç»¼åäºæ ç­¾ãäºä»¶ãé¨åºLBSæ°æ®çåä¼ç­éï¼æä¸ºç²¾ç»åè¥éçä¸å¤§é¾ç¹ã</p>
-<p data-pid="jugmdZHl">é¦åMySQLçæ§è½ä¸è¶³ä»¥æ¯æäº¿çº§æ°æ®å¤è¡¨ä¸æéé»è¾å®æ¶è®¡ç®ï¼éè¿è°ç ä»¥åå¬å¸æµ·éè®¡ç®ç»å¢éçæ¹åï¼æä»¬éç¨äºOLAPï¼ç¨äºåæåæ¥è¯¢å¤§è§æ¨¡æ°æ®éçè®¡ç®å¤çææ¯ï¼å¼æPrestoï¼å©ç¨PrestoçSQL on Everythingç¹æ§ï¼å®ç°äºå¤æ°æ®æºç»¼åçåä¼åéã</p>
-<div class="RichText-ConditionalImagePortal"><img width="1080" class="origin_image zh-lightbox-thumb lazyload" data-caption="" data-size="normal" data-rawwidth="1080" data-rawheight="401" data-original-token="v2-cbdf437e6f3c987b24da975e306a2bb9" data-original="https://pic2.zhimg.com/v2-cbdf437e6f3c987b24da975e306a2bb9_r.jpg" data-src="https://pic2.zhimg.com/v2-cbdf437e6f3c987b24da975e306a2bb9_1440w.jpg"></div>
-<p data-pid="F25iwOJi">å¾ä¸­ä¸ºè¥éèªå¨åå¹³å°æ°æ®é©±å¨æ´ä½æ¶æï¼åä¸ºä¸å¡å±ãè®¡ç®å±ãæ°ä»å±ã</p>
-<ul>
-<li data-pid="fyYV_nsT"><strong>æ°ä»å±ï¼</strong>ä¸»è¦ä¸ºHiveæ°æ®ä»åºï¼æ°æ®ç±å¤§æ°æ®å¢éæ´åæ ç­¾ãé¨åºãäºä»¶ï¼ä»¥åç¨æ·èªå®ä¹ä¸ä¼ çäººç¾¤åæ°æ®ã</li>
-<li data-pid="io5KOtBc"><strong>è®¡ç®å±ï¼</strong>ç±OLAPå¼æ-Prestoææï¼æ§è¡SQLãè·åHiveæ°ä»æ°æ®è¿è¡å®æ¶è®¡ç®ã</li>
-<li data-pid="SGthAu7b"><strong>ä¸å¡å±ï¼</strong>æä¾äººç¾¤åä¼ç­éãåä¼äººç¾¤åºåãæ¸ éäººç¾¤ä¸åé»è¾ä¸å¡å¤çè½åï¼å¯¹å¤ä¸»è¦æä¾åä¼ç­é-æ ç­¾+äºä»¶+äººç¾¤çé¢ä¼°è½åã</li>
-
-</ul>
-<p data-pid="PbxOer61"><strong>åºäºè¿å¥æ¶æççç¹ï¼</strong></p>
-<ul>
-<li data-pid="xgxgvjMP">æ ç­¾æ°æ®æ¥æºDMPç³»ç»ï¼å¤§æ°æ®å¢ééåä¸æ¶DMPç³»ç»ï¼åä¸æ¶èªæCMSç³»ç»ä¸­ï¼æ¶æT+2èµ·æ­¥ã</li>
-<li data-pid="w4aykPGf">æ ç­¾å®½è¡¨éçæ ç­¾å­æ®µå¢é¿ï¼ä¸ä¸ªå®½è¡¨300+å­æ®µï¼ç»´æ¤ææ¬é«ã</li>
-<li data-pid="6MDhVzRJ">æ ç­¾+é¨åºLBSå¤§è¡¨ï¼æ¥è¯¢æ§è½åéçº§å«ååºï¼ç¨æ·ä½éªä¸ä½³ã</li>
-
-</ul>
-<h2>ä¸ãæ¶æè¿­ä»£</h2>
-<p data-pid="8BLHCp0H">ä¸ºè§£å³ä»¥ä¸é®é¢ç¹ï¼éè¿ä¸å¤§æ°æ®ãDMPå¢éåä½ä¼ååºå±æ ç­¾æ°æ®ç»æï¼éç¨Bitmapæ°æ®ç»æè®¾è®¡æ ç­¾ä¼ååºå±æ°æ®æºã</p>
-<h2>3.1 Bitmapæ¹æ¡</h2>
-<h3>3.1.1 è®¾è®¡ä¸å®ç°</h3>
-<p data-pid="Flzq9w2c">æ°æ®ç»æè®¾è®¡å¦ä¸ï¼</p>
-<div class="RichText-ConditionalImagePortal"><img width="1080" class="origin_image zh-lightbox-thumb lazyload" data-caption="" data-size="normal" data-rawwidth="1080" data-rawheight="212" data-original-token="v2-1f10abe26dd4c22b5bd62e7a7e3c1c04" data-original="https://pic3.zhimg.com/v2-1f10abe26dd4c22b5bd62e7a7e3c1c04_r.jpg" data-src="https://pic3.zhimg.com/v2-1f10abe26dd4c22b5bd62e7a7e3c1c04_1440w.jpg"></div>
-<p data-pid="iWbedsXc">åºäºç¨æ·ç»´åº¦é¢è®¡ç®èªå¢idï¼ä½ä¸ºBitmapä¸æ ï¼å°æ ç­¾åå¼è½¬æ¢ä¸ºè¡å¼ï¼æ¯è¡é½å­å¨ææç¨æ·åç¼©æBitmapçæ°æ®ã</p>
-<p data-pid="RjcEDfil">ç±äºå¼å¥DMPæ ç­¾æå¡ï¼éå¯¹ç°æOLAPå¼æè¿è¡æ¹é ã</p>
-<div class="RichText-ConditionalImagePortal"><img width="530" class="origin_image zh-lightbox-thumb lazyload" data-caption="" data-size="normal" data-rawwidth="530" data-rawheight="405" data-original-token="v2-c8bb6cf1a24e830fdb2f9f578faa13a3" data-original="https://pic4.zhimg.com/v2-c8bb6cf1a24e830fdb2f9f578faa13a3_r.jpg" data-src="https://pic4.zhimg.com/v2-c8bb6cf1a24e830fdb2f9f578faa13a3_1440w.jpg"></div>
-<p data-pid="JyDn1k9v"><strong>åºå±æ°æ®æºï¼</strong>ç±äºPresto SQL On Everythingçç¹æ§ï¼æ¯æåç§å­å¨å¨ä¸åæ°æ®åºä¸­çæ°æ®ï¼éè¿å¼åPresto Connector Pluginè·åDMPå¹³å°æ ç­¾æå¡ï¼å¤§é¨åæ°æ®è¿æ¯å¨Hiveæ°ä»è¡¨ä¸­ãå¦ï¼äºä»¶æ°æ®/é¨åºæ°æ®ç­ã</p>
-<p data-pid="xQXfYUs5"><strong>Prestoè®¡ç®å±ï¼</strong>å¨Prestoæå¡ï¼ä¸»è¦å¼åäºPresto Bitmapç¸å³çUDF Pluginï¼Presto Connectorè·åDMPå¹³å°æ ç­¾ï¼éè¿Prestoæºç æ¹é å®ç° Select In Bitmapè½åã è¿è¡ä¸è¿°æ¹é åï¼è®¡ç®å±å°±å¯ä»¥éè¿ç»ä¸çSQLå®ç°åç§æå¡ã</p>
-<p data-pid="qmu6zXtv">ä½¿ç¨ç¤ºä¾ï¼</p>
-<div class="highlight">
-<pre class="highlighter-hljs"><code>select count(user_id) from user_id_mapping where day='${day}'and user_rn in(select bitmap from dmp.virtual_table where rule='#æ ç­¾è§å')</code></pre>
-</div>
-<p data-pid="YLWOydCC">éè¿èæåDMPè¡¨ï¼å¨Prestoä¸­è§£æåæ¥è¯¢DMPæ ç­¾Bitmapç¨æ·æ°æ®è¿åä¸æ æ°ç»ä¸id_mappingè¡¨è¿è¡è®¡ç®ã</p>
-<h3>3.1.2 å®ç°ææ</h3>
-<p data-pid="ivA3oSb8">è¥éèªå¨åæ ¸å¿æµç¨ä¸­ç§»é¤äºå¯¹å¤§å®½è¡¨ä¾èµï¼æ°æ ç­¾ä¸æ¶å¯ç±åæ¥1.5äººå¤©æåå°0.5äººå¤©ã</p>
-<p data-pid="cymwG5Tz">æ¥è¯¢èæ¶ç±å½åçåéçº§å«ä¼åå°ç§çº§å«ï¼P90=38sï¼ï¼å¶ä¸­çº¯æ ç­¾åºæ¯å¯ä»¥ä½è³æ¯«ç§çº§å«ã</p>
-<h3>3.1.3 Presto + Bitmapçå±é</h3>
-<p data-pid="LSDC2TnR">æ­¤æ¬¡è¿­ä»£è§£å³äºæ¥è¯¢æ§è½åæ ç­¾ä¸æ¶æçé®é¢ï¼ä½éçä¸å¡å¤æåº¦å¢å ï¼ç°ææ¶æé¢ä¸´æ°çææ¯ææï¼</p>
-<ul>
-<li data-pid="eIW3W3GO"><strong>å¤ææ¥è¯¢æ§è½ç¶é¢ï¼</strong>&nbsp;é¢å¯¹å¤è¡¨å³èï¼Joinï¼åå¤æèåçæ¥è¯¢åºæ¯ï¼ç¹å«æ¯å¨é¨åºLBSæ°æ®è¡¨çåºç¡ä¸è¿è¡å¤è¡¨Joinæ¶ï¼æ§è½ä¸åå­ç®¡çé¢ä¸´ååã</li>
-<li data-pid="tXSiQk4Q"><strong>ææ¯é»å¡ä¸å¡å®å¨ï¼</strong>&nbsp;Prestoæ æ³åå¥å å¯Hiveè¡¨ï¼ç´æ¥é»ç¢äºæ°æ®å®å¨åè§çè½å°ï¼æä¸ºä¸é¡¹å¾è§£å³çææ¯åºå¡ã</li>
-</ul>
-<h2>3.2 å¼å¥StarRocksæ¹æ¡</h2>
-<p data-pid="WktCduvK">ä¸ºè§£å³ä¸è¿°å±éï¼å¹¶ä¸ºä¸ä¸ä»£å®æ¶æ°æ®åæä¸å¡åºæ¯åå¥½åå¤ï¼æä»¬è¯ä¼°å¹¶å¼å¥StarRocksï¼å¶å­ç®ä¸ä½æ¶æãåéåæ§è¡å¼æï¼ææå¨å®æ¶åæåºæ¯å¸¦æ¥çªç ´æ§æåã</p>
-<h3>3.2.1 ä¸Prestoç°ææ¶æå¯¹æ¯</h3>
-<p data-pid="07s61Rhz">ä¸ºä½ç°åæ¢StarRocksçåçº§ä»·å¼ï¼ä»<span style="text-decoration: underline">é«æ§è½</span>ã<span style="text-decoration: underline">é«å¯ç¨</span>ã<span style="text-decoration: underline">é«å®å¨</span>ç»´åº¦è¿è¡å¯¹æ¯ã</p>
-<div class="RichText-ConditionalImagePortal"><img width="1080" class="origin_image zh-lightbox-thumb lazyload" data-caption="" data-size="normal" data-rawwidth="1080" data-rawheight="368" data-original-token="v2-ed0697d37763a6ccc2faf533841ddc98" data-original="https://pica.zhimg.com/v2-ed0697d37763a6ccc2faf533841ddc98_r.jpg" data-src="https://pica.zhimg.com/v2-ed0697d37763a6ccc2faf533841ddc98_1440w.jpg"></div>
-<h3>3.2.2 ç°ç¶åºæ¯åæ</h3>
-<p data-pid="YEN4qDLV">éè¿3.2.1çè°ç å¯¹æ¯ï¼ææ¾ç¡®å®äºStarRocksçä¼å¿ï¼å æ­¤å¯¹ç°æä¸å¡ç³»ç»åºæ¯åæï¼æåå°StarRockséè¦å¼å®¹çç¹æ¹é å®æã</p>
-<div class="RichText-ConditionalImagePortal"><img width="1080" class="origin_image zh-lightbox-thumb lazyload" data-caption="" data-size="normal" data-rawwidth="1080" data-rawheight="435" data-original-token="v2-c1a0c4e4be2822be067eaca48cae2705" data-original="https://pic2.zhimg.com/v2-c1a0c4e4be2822be067eaca48cae2705_r.jpg" data-src="https://pic2.zhimg.com/v2-c1a0c4e4be2822be067eaca48cae2705_1440w.jpg"></div>
-<h3>3.2.3 è½å°è§å</h3>
-<p data-pid="RvnnCG8n">å°åæ¢StarRockséè¦æ¹é çç¹é½åå¤å®æåï¼æä»¬å°éµå¾ªâç±ç®å°ç¹ãç±è¯»å°åãåé¶æ®µæ¨è¿âçååï¼åä¸ºåä¸ªé¶æ®µæ¹é ä¸å¡ç³»ç»ï¼æ§å¶åæ¢é£é©åå¹³æ»è¿æ¸¡ï¼</p>
-<div class="RichText-ConditionalImagePortal"><img width="961" class="origin_image zh-lightbox-thumb lazyload" data-caption="" data-size="normal" data-rawwidth="961" data-rawheight="268" data-original-token="v2-00eb1e2ded42d8114abb5b1035a256d3" data-original="https://picx.zhimg.com/v2-00eb1e2ded42d8114abb5b1035a256d3_r.jpg" data-src="https://picx.zhimg.com/v2-00eb1e2ded42d8114abb5b1035a256d3_1440w.jpg"></div>
-<p data-pid="Vt2d2i22">ç»è¿ä»¥ä¸è¿­ä»£åæ¶æå¦ä¸ï¼</p>
-<div class="RichText-ConditionalImagePortal"><img width="915" class="origin_image zh-lightbox-thumb lazyload" data-caption="" data-size="normal" data-rawwidth="915" data-rawheight="423" data-original-token="v2-e4af8bc5cc197e7f8aae84bcb2e295a9" data-original="https://picx.zhimg.com/v2-e4af8bc5cc197e7f8aae84bcb2e295a9_r.jpg" data-src="https://picx.zhimg.com/v2-e4af8bc5cc197e7f8aae84bcb2e295a9_1440w.jpg"></div>
-<p data-pid="RPRzFRAc">è®¡ç®åæ°ä»å±åä¸ºå­ç®å±ï¼è®¡ç®åæ°ä»ä¸ä½åï¼æ´ä½ç±StarRocksæ§å¶ã</p>
-<h3>3.2.4 å®ç°ææ</h3>
-<ul>
-<li data-pid="88Tr9e-A"><strong>èµæºéæ¬ï¼</strong>åæPrestoéç¾¤53å°ï¼å½åStarRocksæ­å»ºçéç¾¤ä¸º3å°ï¼è´¹ç¨ææ¬éä½çº¦<strong>93%</strong>ã</li>
-<li data-pid="Eu031RzO"><strong>æ§è½æåï¼</strong>æ¥è¯¢P95èæ¶ä»<strong>65s</strong>éä½è³<strong>6s</strong>ã</li>
-<li data-pid="FvGNiaa4"><strong>æ°æ®å®å¨ï¼</strong>åºå±æ HDFSæä»¶ï¼å½åå¯ä½¿ç¨StarRockså½æ°å¯¹æ°æ®è¿è¡å è§£å¯ï¼åæç±æµ·éè®¡ç®ç»åäºå¼åèªå¨å è§£å¯åè½ã</li>
-</ul>
-<div class="RichText-ConditionalImagePortal"><img width="921" class="origin_image zh-lightbox-thumb lazyload" data-caption="" data-size="normal" data-rawwidth="921" data-rawheight="420" data-original-token="v2-211c5b5180b85f91ccb97ba80a212cf1" data-original="https://pic2.zhimg.com/v2-211c5b5180b85f91ccb97ba80a212cf1_r.jpg" data-src="https://pic2.zhimg.com/v2-211c5b5180b85f91ccb97ba80a212cf1_1440w.jpg"></div>
-<h3>3.2.5 åæ¢åçé®é¢</h3>
-<p data-pid="eubxiHfI"><strong>é®é¢ä¸ï¼</strong></p>
-<p data-pid="eXVXy1b0"><strong>è¥éç­ä¿¡ä»»å¡ä¸ååºæ¯ä¸­ï¼ä»é¨åæ°æ®ä¸åï¼å¦æ»éä¸åä¸åä¸æ¡ï¼å®éä»åè®¸ä¸åä¸ç¾ä¸æ¡ï¼</strong></p>
-<p data-pid="gZmmx5ZR"><strong>åæéªè¯ï¼</strong></p>
-<ul>
-<li data-pid="GlCK_3f_">éè¿æ¥å¿åæåç°ï¼å½æ¥è¯¢ä»»å¡æ¶åä¸åä¸æ°æ®æ¶ï¼å®éä»è¿åä¸ç¾ä¸æ¡ç»æï¼è¶åºæ°æ®ä¸¢å¤±ãç¸å³æ¥è¯¢SQLç¤ºä¾å¦ä¸ï¼select channel_id from table where crowd_id=100ãç±äºè¯¥SQLå¨è¿ç§»è³StarRocksè¿ç¨ä¸­æªåè¯­æ³æ¹é ï¼åæ­¥å¤æ­ä¸ºStarRockséå¶æè´ã</li>
-<li data-pid="ULwbeSR7">æ¥éStarRockså®æ¹ææ¡£ï¼ç¡®è®¤å­å¨ç³»ç»åé sql_select_limitï¼ç¨äºéå¶æ¥è¯¢ç»æçæ°æ®éãç¸å³è¯´æè¯¦è§ï¼<a class=" wrap external" href="https://link.zhihu.com/?target=https%3A//docs.starrocks.io/docs/sql-reference/System_variable/%23sql_select_limit" rel="noopener nofollow" target="_blank" data-za-detail-view-id="1043">StarRocksç³»ç»åéææ¡£</a>ã</li>
-<li data-pid="UtHcVGZT">ä¸ºéªè¯è¯¥å¤æ­ï¼å¨æµè¯éç¾¤ä¸­åå«å°è¯¥åæ°è®¾ç½®ä¸º100ä¸ã200ä¸ï¼å¹¶æ¬å°ç¯å¢è¿è¡éªè¯ï¼ç»æç¬¦åé¢æï¼æ¥è¯¢ç»ææ°éåéäºæè®¾åæ°å¼ã</li>
-</ul>
-<p data-pid="JAP1bUlE"><strong>è§£å³æ¹æ¡ï¼åè°éç¾¤è¿ç»´åäºï¼è°æ´çº¿ä¸StarRockséç¾¤çç³»ç»åé sql_select_limitï¼è§£é¤100ä¸æ¡ç»æééå¶ï¼å¹¶å¨éå¯éç¾¤åé®é¢å¾ä»¥è§£å³ã</strong></p>
-<p data-pid="qHINI0Qs"><strong>é®é¢äºï¼</strong></p>
-<p data-pid="I-DK3O4T"><strong>æå¡é¢ç¹Full GCï¼ä¸GCèæ¶1sä»¥ä¸ï¼å¯¼è´æå¡è¯·æ±è¶æ¶</strong></p>
-<p data-pid="U6hcEH6j"><strong>åæéªè¯ï¼</strong></p>
-<ul>
-<li data-pid="wP9azYTm">è¶æ¶è¯·æ±å¨æå¡ç«¯çæ¥æ¶æ¶é´è³å¤çè¿åæ¶é´åå¨1såï¼ä½å®¢æç«¯è®°å½çè¯·æ±æ¶é´æ©äºæå¡æ¥æ¶æ¶é´ï¼ä¸å·®å¼è¶è¿1sï¼ç»ä¸è¿ç»´æ²éç¡®è®¤ï¼æé¤ç½ç»é®é¢ã</li>
-<li data-pid="NJkUv1g1">å¨ç»ä¸å¯è§æµå¹³å°ä¸­æ¥çè¯¥æå¡åºç¨çæ§ï¼åç°è¶æ¶æ¶é´ç¹å­å¨Full GCç°è±¡ï¼ä¸GCèæ¶è¶è¿1sï¼éåéç½®JVMåæ°çæGCæ¥å¿ä¾¿äºè¿ä¸æ­¥åæã</li>
-<li data-pid="GrUfIRf2">ä½¿ç¨Memory Analyzer Toolåæçæçå è½¬å¨æä»¶ï¼åç°ä¸»è¦æ¯å¤§å¯¹è±¡ä¸ºRowDataStaticï¼è¯¥å¯¹è±¡å¨è·åæ°æ®åºæ°æ®æ¶æ¯å°ææç»æéå è½½è³åå­ä¸­ãç±äºæ­¤åå·²è§£é¤100ä¸æ°æ®æ¥è¯¢éå¶ï¼å½æ°æ®éè¾¾å°èå¹´ä»£ç©ºé´ä¸´çå¼æ¶ï¼è§¦åFull GCã</li>
-<li data-pid="zuhdDxnB">å®ä¸ºå°æ¥è¯¢æç»æ°æ®çä»£ç é»è¾å­å¨é®é¢ãPrestoæ¯æµå¼æ¥è¯¢ï¼èStarRocksåºäºMySQLåè®®è¿æ¥ï¼ééç½®ç¸åºåæ°æè½å¯ç¨æµå¼æ¥è¯¢æºå¶ã</li>
-<li data-pid="oRRSkN_o">å¨æ¬å°ç¯å¢ä¸­ï¼éè¿è°æ´PreparedStatementçfetchSizeåæ°è¿è¡å¯¹æ¯æµè¯ï¼å¤ç°äºçº¿ä¸æå¡GCæåç°è±¡ï¼å½æªå¯ç¨æµå¼æ¥è¯¢æ¶ï¼GCæåæ¶é´é¿è¾¾10sã</li>
-</ul>
-<div class="RichText-ConditionalImagePortal"><img width="1080" class="origin_image zh-lightbox-thumb lazyload" data-caption="" data-size="normal" data-rawwidth="1080" data-rawheight="597" data-original-token="v2-babf25fb47098cc82489f7a35b1c4e80" data-original="https://pic3.zhimg.com/v2-babf25fb47098cc82489f7a35b1c4e80_r.jpg" data-src="https://pic3.zhimg.com/v2-babf25fb47098cc82489f7a35b1c4e80_1440w.jpg"></div>
-<div class="RichText-ConditionalImagePortal"><img width="1080" class="origin_image zh-lightbox-thumb lazyload" data-caption="" data-size="normal" data-rawwidth="1080" data-rawheight="567" data-original-token="v2-07d9aadf64c35a69e4578eb43758c3b2" data-original="https://pic1.zhimg.com/v2-07d9aadf64c35a69e4578eb43758c3b2_r.jpg" data-src="https://pic1.zhimg.com/v2-07d9aadf64c35a69e4578eb43758c3b2_1440w.jpg"></div>
-<p data-pid="uy-59fAG"><strong>è§£å³æ¹æ¡ï¼éè¿æ¹é ä»£ç ä¸­MySQL JDBCçéç½®åæ°ï¼å¯ç¨æµå¼æ¥è¯¢åè½ã</strong></p>
-<h2>åãç»è¯­</h2>
-<p data-pid="pvfqfR9R">æ¬æä¸»è¦ä»ç»äºè¥éèªå¨åæ°æ®é©±å¨-OLAPæ¶ææ¼è¿å²ï¼æåä¸ºè§£å³ä¸å¡è¯æ±ï¼æ¯æä¸å¡å¿«éä¸çº¿ï¼åºç¡æ¶æéç¨Presto+å¤§å®½è¡¨æ¹æ¡ã</p>
-<p data-pid="6jBI1YSK">éçæ°æ®éåæ ç­¾ç»´åº¦çæ¿å¢ï¼ä¸ºæåæ ç­¾ä¸æ¶æçï¼å¼å¥Bitmapæ¹æ¡å®ç°é¢èåè®¡ç®ï¼éè¿æ ç­¾ä¸æ¶ç»ä¸è³DMPï¼æ¾èéä½ååºå»¶è¿ï¼å¨æ»¡è¶³ä¸å¡è¯æ±çåæ¶ï¼éå¯¹æ°æ®å®å¨æ¹åè¿è¡æ·±å¥æ¢ç´¢OLAPå¼æè½åï¼ä»Prestoåæ¢ä¸ºStarRockså¼æï¼ä¸ä»å¨æ°æ®å®å¨æ¹é¢æä¿éï¼åæ¶ä¹æåäºæ¥è¯¢æ§è½ä»¥åå®ææºå¨èµæºçéæ¬ã</p>
-
-</div>
-<div id="MySignature" role="contentinfo">
-    åäº« vivo äºèç½ææ¯å¹²è´§ä¸æ²é¾æ´»å¨ï¼æ¨èææ°è¡ä¸å¨æä¸ç­é¨ä¼è®®ã
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.008333333333333333" data-date-updated="2026-03-26 11:27">2026-03-26 11:15</span>&nbsp;
-<a href="https://www.cnblogs.com/vivotech">vivoäºèç½ææ¯</a>&nbsp;
-éè¯»(<span id="post_view_count">82</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19774845);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19774845', targetLink: 'https://www.cnblogs.com/vivotech/p/19774845', title: 'è¥éèªå¨åæ°æ®é©±å¨ - å¤æºæ°æ® OLAP æ¶ææ¼è¿' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ gitruï¼ä¸ä¸ªç± Rust æé çé¶ä¾èµ Git æäº¤ä¿¡æ¯æ ¡éªå·¥å· ]]></title>
-    <link>https://www.cnblogs.com/xiyixiaodao/p/19772549</link>
-    <guid>457c346201b723f4274c7b05c592e007</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/xiyixiaodao/p/19772549" title="åå¸äº 2026-03-26 10:43">
-    <span role="heading" aria-level="2">gitruï¼ä¸ä¸ªç± Rust æé çé¶ä¾èµ Git æäº¤ä¿¡æ¯æ ¡éªå·¥å·</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<blockquote>
-<p><a href="https://crates.io/crates/gitru" target="_blank" rel="noopener nofollow">gitru</a> åºäº Git ç <code>commit-msg</code> Hook å®ç°ï¼ç¨äºå¨æäº¤é¶æ®µèªå¨æ ¡éªæäº¤ä¿¡æ¯æ ¼å¼ã</p>
-</blockquote>
-<p>å¨å¢éåä½å¼åä¸­ï¼<strong>è§èç Git æäº¤ä¿¡æ¯</strong>æ¯ä»£ç è¿½æº¯ãçæ¬ç®¡çãèªå¨çæåæ´æ¥å¿çåºç¡ã<br>
-ä½ç°å®å¾å¾æ¯ï¼</p>
-<ul>
-<li>äººå·¥çº¦æå®¹æéæ¼</li>
-<li>æå¨éç½® Hook ç¹ç</li>
-<li>æäº¤ä¿¡æ¯æ ¼å¼éå¿ææ¬²</li>
-<li>çæ changelog æ¶å¼å¸¸çè¦</li>
-</ul>
-<p>å æ­¤ï¼<strong>å¿é¡»ç±å·¥å·æ¥ä¿è¯æäº¤ä¿¡æ¯çè§èæ§</strong>ã</p>
-<p>å¸é¢ä¸å·²æä¸å°æçå·¥å·ï¼ä½å¤§å¤åºäº Node.js / Python / Shell å®ç°ãé®é¢æ¯ï¼</p>
-<ul>
-<li>åªæ¯æ³æ ¡éªä¸ä¸ªå­ç¬¦ä¸²ï¼å´è¦åå®è£ Node æ Python</li>
-<li>çæ¬ä¸ä¸è´å¯è½å¯¼è´åç§å¥æªçé®é¢</li>
-<li>å½åä¸è½½ä¾èµéåº¦æ¢çè³å¤±è´¥</li>
-<li>å®è£ä¸ä¸ªå·¥å·å¯è½è¦æä¸ä¸å å</li>
-</ul>
-<p>å±äºâæä½ä¸å¤§å ï¼å´è¿æ²¡å¼å§è¿å¥æ­£é¢âã</p>
-<p>è¿äºå¯¹æ®éå¼åèï¼å°¤å¶æ¯æ°æï¼å¹¶ä¸åå¥½ã</p>
-<blockquote>
-<p>å½ç¶ï¼è¿å¹¶ä¸æ¯å¦å®è¿äºå·¥å·ãç¸åï¼å®ä»¬éå¸¸ä¼ç§ï¼æ¬é¡¹ç®å¼åè¿ç¨ä¸­ä¹ä½¿ç¨äºèåç <code>pre-commit</code>ãä¸è¿äºæçå·¥å·ç¸æ¯ï¼gitru çè³è¿ hello-world é½ç®ä¸ä¸ï¼åªæ¯ä¸ä¸ªæ´è½»ãæ´ç®åçéæ©ã</p>
-</blockquote>
-<p>åºäºä»¥ä¸èèï¼åå ä¸ Rust éå¸¸éåç¼å CLI å·¥å·ï¼äºæ¯å°±æäº <strong>gitru</strong>ã</p>
-<br>
-<hr>
-<h1 id="-é¡¹ç®ç¹ç¹">â¨ é¡¹ç®ç¹ç¹</h1>
-<ul>
-<li>
-<p>ð¦ <strong>Rust ç¼åï¼é¶ä¾èµäºè¿å¶åå</strong><br>
-ä¸è½½å³å¯è¿è¡ï¼æ é NodeãPython æèæç¯å¢ã<br>
-ï¼è½ç¶æä¸æ³æâRust ç¼åâå½æåç¹ï¼åå¾è¢«è¯¯ä¼æ Rust ä¼ æå£«ï¼ä½åå¶ä»æçå·¥å·ç¸æ¯ï¼è¿ç¡®å®æ¯ gitru å°æ°è½æ¿å¾åºæçç¹ç¹ä¹ä¸ãï¼</p>
-</li>
-<li>
-<p>âï¸ <strong>TOML æ ¼å¼èªå®ä¹è§å</strong><br>
-ç®åãæ¸æ°ãæè¯»ãæç»´æ¤ã</p>
-</li>
-<li>
-<p>â­ï¸ <strong>æ¯æéè¿å³é®å­è·³è¿æ ¡éª</strong><br>
-éç¨äºèªå¨åæäº¤ãç´§æ¥ä¿®å¤ç­åºæ¯ã</p>
-</li>
-<li>
-<p>ð¨ð³ <strong>æ¯æä¸­ææäº¤ä¿¡æ¯æ ¡éª</strong><br>
-ä¸ä¼è¯¯å¤ä¸­ææ ç¹ï¼å¯¹ä¸­æå¼åèæ´åå¥½ã</p>
-</li>
-<li>
-<p>ð¨ <strong>éè¯¯ä¿¡æ¯å¸¦é¢è²è¾åº</strong><br>
-æ´ç´è§ãæ´æè¯»ã</p>
-</li>
-<li>
-<p>ð <strong>æ¯æ Footer å³é®å­æ¼åæ ¡éªï¼Spell Checkï¼</strong><br>
-å½æäº¤ä¿¡æ¯çä¼¼æ¼åéè¯¯æ¶ï¼gitru ä¼èªå¨æ£æµå¹¶ç»åºåå¥½æç¤ºï¼é¿åå æ¼åéè¯¯å¯¼è´èªå¨åæµç¨å¤±æã(å½ç¶ï¼è¿é¨åä¾èµç®æ³åç¨æ·éç½®ï¼ä½éªè¿ä¸å¦å½ä¸çai)</p>
-</li>
-</ul>
-<br>
-<hr>
-<h1 id="-conventional-commits-ç®ä»">ð Conventional Commits ç®ä»</h1>
-<p>å¨ä»ç» gitru çä½¿ç¨åï¼å¿é¡»åäºè§£ä¸åå¹¿æ³éç¨çæäº¤è§è ââ<br>
-<strong><a href="https://www.conventionalcommits.org/" target="_blank" rel="noopener nofollow">Conventional Commits</a></strong>ã</p>
-<p>å®å®ä¹äºæäº¤ä¿¡æ¯çç»æï¼</p>
-<pre><code class="language-text">&lt;type&gt;[optional scope]: &lt;subject&gt;
-
-[optional body]
-
-[optional footer(s)]
-</code></pre>
-<p>å¶ä¸­ï¼</p>
-<ul>
-<li><strong>typeï¼å¿å¡«ï¼</strong>ï¼å¦ <code>feat</code>ã<code>fix</code>ï¼ç¨äºåç±»</li>
-<li><strong>scopeï¼å¯éï¼</strong>ï¼å¦ <code>core</code>ã<code>ui</code>ï¼ç¨äºæè¿°å½±åèå´</li>
-<li><strong>!ï¼å¯éï¼</strong>ï¼è¡¨ç¤ºç ´åæ§åæ´</li>
-<li><strong>subjectï¼å¿å¡«ï¼</strong>ï¼ç®ç­æè¿°æ¬æ¬¡åæ´</li>
-<li><strong>bodyï¼å¯éï¼</strong>ï¼è¯¦ç»è¯´æ</li>
-<li><strong>footerï¼å¯éï¼</strong>ï¼å¦ BREAKING CHANGEãCloses #123</li>
-</ul>
-<p>gitru å°±æ¯åºäºæ­¤è§èå®ç°çï¼å¹¶åè®¸ä½ éè¿éç½®æä»¶è¿è¡èªå®ä¹ã</p>
-<br>
-<hr>
-<h1 id="-å®è£-gitru">ð¦ å®è£ gitru</h1>
-<p>ä½ å¯ä»¥éè¿ä¸ç§æ¹å¼å®è£ï¼</p>
-<hr>
-<h2 id="æ¹å¼ä¸ç´æ¥ä¸è½½äºè¿å¶æä»¶æ¨è">æ¹å¼ä¸ï¼ç´æ¥ä¸è½½äºè¿å¶æä»¶ï¼æ¨èï¼</h2>
-<p>åå¾ð <a href="https://github.com/xiyixiaodao/gitru/releases" target="_blank" rel="noopener nofollow">GitHub Releases</a></p>
-<p>ä¸è½½å¯¹åºå¹³å°çåç¼©åï¼è§£ååï¼</p>
-<ul>
-<li>æ¾å°ä»»æç®å½</li>
-<li>å å¥ PATH</li>
-<li>Linux / macOS å¯è½éè¦æ§è¡æé</li>
-</ul>
-<hr>
-<h2 id="æ¹å¼äºéè¿-cargo-å®è£é-rust-ç¯å¢">æ¹å¼äºï¼éè¿ cargo å®è£ï¼é Rust ç¯å¢ï¼</h2>
-<pre><code class="language-bash">cargo install gitru
-</code></pre>
-<hr>
-<h2 id="æ¹å¼ä¸æ¬å°ç¼è¯">æ¹å¼ä¸ï¼æ¬å°ç¼è¯</h2>
-<pre><code class="language-bash">git clone https://github.com/xiyixiaodao/gitru.git
-cd gitru
-cargo install --path .
-</code></pre>
-<p>éªè¯å®è£ï¼</p>
-<pre><code class="language-bash">gitru --version
-</code></pre>
-<br>
-<hr>
-<h1 id="-ä½¿ç¨æ¹æ³">ð  ä½¿ç¨æ¹æ³</h1>
-<h2 id="ä¸é®åå§å">ä¸é®åå§å</h2>
-<p>ä»¥ä¸å½ä»¤ä¼åæ¶å®è£ Hook å¹¶çæéç½®æä»¶ï¼</p>
-<pre><code class="language-bash">gitru ii commit-msg
-</code></pre>
-<p>å®ç­ä»·äºï¼</p>
-<pre><code class="language-bash">gitru install commit-msg
-gitru init commit-msg
-</code></pre>
-<p>å¦ææä»¶å·²å­å¨ï¼å¯å¼ºå¶è¦çï¼</p>
-<pre><code class="language-bash">gitru ii commit-msg -f
-</code></pre>
-<hr>
-<h2 id="å¸è½½-hook">å¸è½½ Hook</h2>
-<pre><code class="language-bash">gitru uninstall commit-msg
-</code></pre>
-<p>ç¶åæå¨å é¤ <code>.commit-msg-rule.toml</code>ã</p>
-<br>
-<hr>
-<h1 id="ï¸-èªå®ä¹æ ¡éªè§å">âï¸ èªå®ä¹æ ¡éªè§å</h1>
-<p>gitru çæ ¸å¿æ¯éç½®æä»¶ <code>.commit-msg-rule.toml</code>ã<br>
-ä½ åªéè¦ä¿®æ¹å®ï¼å°±è½å®å¨å®å¶æ ¡éªé»è¾ã</p>
-<p>ä¸ºä»ä¹éæ© <strong>TOML</strong> èä¸æ¯ YAMLï¼</p>
-<ul>
-<li>YAML ç»æä¾èµç¼©è¿ï¼å®¹æéä½</li>
-<li><code>.yaml</code> / <code>.yml</code> åç¼å®¹ææ··æ·</li>
-<li>TOML æ´ç®åãå¯è¯»æ§æ´å¼º</li>
-<li>å¯¹æ°ææ´åå¥½</li>
-</ul>
-<p>å³ä½¿ä½ ä¸æ TOMLï¼ä¹å®å¨ä¸å½±åä½¿ç¨ã</p>
-<hr>
-<br>
-<h1 id="-éç½®æä»¶ç¤ºä¾">ð éç½®æä»¶ç¤ºä¾</h1>
-<p>ä¸é¢æ¯ gitru åå§ååçæçéç½®æä»¶ï¼é¨åæ³¨éå·²å»é¤ï¼ï¼</p>
-<pre><code class="language-toml"># âââââââââââââââââââââââââââââââââââââââââââââââââââ
-# â          COMMIT FORMAT TEMPLATE                 â
-# â ââââââââââââââââââââââââââââââââââââââââââââââââââ£
-# â    type(optional scope): subject                â
-# â                                                 â
-# â    [optional body]                              â
-# â                                                 â
-# â    [optional footer]                            â
-# â     - BREAKING CHANGE: xxxxx                    â
-# â     - Closes #issue                             â
-# âââââââââââââââââââââââââââââââââââââââââââââââââââ
-
-[global]
-version = "1.0.0"
-enable_validation = true
-skip_validation_words = ["--no-verify", "SKIP"]
-
-[header.type]
-allowed_types = ["feat", "fix", "docs", "style", "refactor", "test", "chore", "ci"]
-
-[header.scope]
-required = false
-allowed_scopes = ["core", "cli", "ui", "docs", "test"]
-
-[header.subject]
-spaces_after_colon = 1
-forbid_trailing_period = true
-min_length = 2
-max_length = 72
-
-[body]
-required = false
-min_blank_lines_before_body = 1
-forbid_trailing_whitespace = true
-min_line_length = 2
-max_line_length = 72
-
-[footer]
-start_key_words = ["BREAKING CHANGE", "Closes", "Fixes", "Signed-off-by"]
-min_blank_lines_before_footer = 1
-min_line_length = 2
-max_line_length = 72
-forbid_trailing_whitespace = true
-
-[footer.start_key_words_spellcheck]
-enable = true
-threshold = 0.7
-</code></pre>
-<br>
-<hr>
-<h1 id="-éç½®é¡¹è¯¦è§£">ð éç½®é¡¹è¯¦è§£</h1>
-<p>ä¸é¢å¯¹å³é®éç½®é¡¹è¿è¡è¯´æï¼ææ¨¡åååï¼ã</p>
-<hr>
-<h2 id="1-å¨å±éç½®global">1. å¨å±éç½®ï¼globalï¼</h2>
-<p>æ§å¶ gitru çæ´ä½è¡ä¸ºï¼</p>
-<pre><code class="language-toml">[global]
-version = "1.0.0"
-enable_validation = true
-skip_validation_words = ["--no-verify", "SKIP"]
-</code></pre>
-<ul>
-<li><code>version</code>: ç¨äºä»¥åå¤§çæ¬åæ´åçº§åºåï¼å½åæ²¡æåºå«ã</li>
-<li><code>enable_validation</code>ï¼æ¯å¦å¯ç¨æ ¡éª</li>
-<li><code>skip_validation_words</code>ï¼æäº¤ä¿¡æ¯ç¬¬ä¸è¡å®å¨å¹éæ¶è·³è¿æ ¡éª</li>
-</ul>
-<hr>
-<h2 id="2-header-æ ¡éª">2. Header æ ¡éª</h2>
-<p>Header æ¯æéè¦çé¨åï¼åå«ï¼</p>
-<pre><code>type(scope): subject
-</code></pre>
-<h3 id="21-type-æ ¡éª">2.1 type æ ¡éª</h3>
-<pre><code class="language-toml">[header.type]
-allowed_types = ["feat", "fix", "docs", "style", "refactor", "test", "chore", "ci"]
-</code></pre>
-<ul>
-<li>é¿ååºç° <code>update</code>ã<code>tmp</code>ã<code>aaa</code> ç­æ æä¹ type</li>
-<li>è®©å¢éæäº¤ç±»åç»ä¸</li>
-<li>è®© changelog èªå¨çææ´åç¡®</li>
-</ul>
-<p>â  <strong>ä¸åè®¸ä¸ºç©ºæ°ç»</strong><br>
-è¥ä¸éè¦ type æ ¡éªï¼è¯·æ³¨éææ´ä¸ªå­æ®µã</p>
-<p>æäº¤ç¤ºä¾ï¼</p>
-<p>æ ¡éªéè¿ï¼</p>
-<pre><code>feat: add login API
-</code></pre>
-<p>æ ¡éªå¤±è´¥ï¼</p>
-<pre><code>#éè¯¯ç¤ºä¾1
-update: change UI layout
-
-#æç¤º
-error: commit type `update` is not in the allowed list, allowed types are ["feat", "fix", "docs", "style", "refactor", "test", "chore", "ci"]
-
-
-#éè¯¯ç¤ºä¾2
-feats: add login API
-
-#æç¤º
-error: unknown commit type `feats`
-help: did you mean `feat`? (similarity 0.80)
-note: allowed types: ["feat", "fix", "docs", "style", "refactor", "test", "chore", "ci"]
-</code></pre>
-<hr>
-<h3 id="22-scope-æ ¡éª">2.2 scope æ ¡éª</h3>
-<pre><code class="language-toml">[header.scope]
-required = false
-allowed_scopes = ["core", "cli", "ui", "docs", "test"]
-</code></pre>
-<ul>
-<li><code>required = true</code> â å¿é¡»æä¾ scope</li>
-<li><code>required = false</code> â å¯é</li>
-<li>è¥æä¾ scopeï¼å¿é¡»å¨ allowed_scopes ä¸­<br>
-â  allowed_scopes ä¸åè®¸ä¸ºç©ºæ°ç»ï¼è¥ä¸éè¦æ ¡éªï¼è¯·æ³¨éææ´ä¸ªå­æ®µã</li>
-</ul>
-<hr>
-<h3 id="23-subject-æ ¡éª">2.3 subject æ ¡éª</h3>
-<pre><code class="language-toml">[header.subject]
-spaces_after_colon = 1
-forbid_trailing_period = true
-min_length = 2
-max_length = 72
-</code></pre>
-<ul>
-<li>éå¶åå·åç©ºæ ¼æ°é(é»è®¤ä¸ºæ¨èç1ä¸ªï¼å»ºè®®ä¸è¦ä¿®æ¹)</li>
-<li>ç¦æ­¢å¥å·ç»å°¾(åå«è±æå¥å·åä¸­æå¥å·)</li>
-<li>éå¶ subject é¿åº¦</li>
-</ul>
-<hr>
-<h2 id="3-body-æ ¡éª">3. Body æ ¡éª</h2>
-<pre><code class="language-toml">[body]
-required = false
-min_blank_lines_before_body = 1
-forbid_trailing_whitespace = true
-min_line_length = 2
-max_line_length = 72
-</code></pre>
-<hr>
-<ul>
-<li>é»è®¤å¯é</li>
-<li>bodyåheaderä¹é´çç©ºè¡æ°é(ä¸å»ºè®®ä¿®æ¹)</li>
-<li>ç¦æ­¢è¡å°¾åºç°å¤ä½ç©ºæ ¼</li>
-<li>éå¶ bodyæ¯ä¸è¡çé¿åº¦</li>
-</ul>
-<h2 id="4-footer-æ ¡éª">4. Footer æ ¡éª</h2>
-<pre><code class="language-toml">[footer]
-start_key_words = ["BREAKING CHANGE", "Closes", "Fixes", "Signed-off-by"]
-</code></pre>
-<ul>
-<li>footeré¨åçèµ·å§å³é®å­</li>
-</ul>
-<p>æ¯æå³é®å­æ¼åæ£æ¥ï¼</p>
-<pre><code class="language-toml">[footer.start_key_words_spellcheck]
-enable = true
-threshold = 0.7
-</code></pre>
-<p>æäº¤ç¤ºä¾ï¼</p>
-<pre><code>feat: test footer
-
-
-Close: #123
-</code></pre>
-<p>éè¯¯æç¤ºï¼</p>
-<pre><code>error: footer keyword appears misspelled:
-  "Close" â "Closes"
-  similarity = 0.83 (threshold = 0.70)
-</code></pre>
-<br>
-<hr>
-<h1 id="-gitru-çä¸¤å¤§ç¹è²è½å">â­ gitru çä¸¤å¤§ç¹è²è½å</h1>
-<h2 id="1-è·³è¿æ ¡éªskip-validation">1. è·³è¿æ ¡éªï¼Skip Validationï¼</h2>
-<p>è½ç¶æäº¤ä¿¡æ¯è§èéå¸¸éè¦ï¼ä½å¨å®éå¼åä¸­ï¼æ»ä¼éå°ä¸äº<strong>å¿é¡»ç»è¿æ ¡éª</strong>çåºæ¯ï¼è¿äºæäº¤å¾å¾ä¸éè¦éµå¾ªå¢éç commit è§èï¼çè³<strong>æ æ³</strong>éµå¾ªã</p>
-<p>å æ­¤ï¼gitru å¿é¡»æä¾ä¸ç§ <strong>å®å¨ãæç¡®ãå¯æ§</strong> çæ¹å¼æ¥è·³è¿æ ¡éªã</p>
-<p>å¨ Git çæä¸­ï¼å¸¸è§çè·³è¿æ ¡éªæ¹å¼æä¸ç§ï¼</p>
-<p>â  <strong>å½ä»¤è¡åæ°ï¼</strong><code>git commit --no-verify</code><br>
-Git åçæ¯æï¼</p>
-<pre><code class="language-bash">git commit --no-verify
-</code></pre>
-<p>å®ä¼è·³è¿ææ Hookï¼åæ¬ï¼</p>
-<ul>
-<li>commit-msg</li>
-<li>pre-commit</li>
-<li>prepare-commit-msg</li>
-<li>post-commit</li>
-</ul>
-<p>â¡ <strong>IDE è®¾ç½®è·³è¿ Hook</strong><br>
-ä¾å¦ï¼</p>
-<ul>
-<li>JetBrains ç³»åï¼IDEA / PyCharm / RustRoverï¼</li>
-<li>VSCode<br>
-ä¸åIDEçè®¾ç½®ä¸ä¸è´ï¼æçéè¦è®¾ç½®ä¸­é»è®¤å¼å¯æä¼æå¯¹åºæä½ï¼æ¯å¦VSCodeï¼æçéæ©è·³è¿åå¦æå¿è®°æå¨éåæ¥ï¼åç»­æ ¡éªä¹ä¼ç»§ç»­è·³è¿ã</li>
-</ul>
-<p>â¢ <strong>gitru çæ¹å¼ï¼æäº¤ä¿¡æ¯é¦è¡å³é®å­</strong></p>
-<p>gitru åè®¸éè¿æäº¤ä¿¡æ¯ç¬¬ä¸è¡å®å¨å¹éå³é®å­æ¥è·³è¿æ ¡éªï¼<br>
-æ³¨æï¼å³é®å­å¯å¨éç½®æä»¶ä¸­éç½®ï¼ä½æ¯ä¸¥æ ¼åºåå¤§å°å(å½ç¶ï¼å¦æåªæ¯å¤§å°åä¸ä¸è´ä¼ææ¥éä¿¡æ¯åç¡®æç¤º)</p>
-<p>ç¤ºä¾ï¼</p>
-<pre><code class="language-bash">SKIP
-
-fix: hotfix production issue
-</code></pre>
-<p>æï¼</p>
-<pre><code class="language-bash">--no-verify
-
-feat: auto commit from script
-</code></pre>
-<p>é»è®¤éç½®ä¸ï¼ä»¥ä¸æäº¤é½ä¼ç´æ¥è·³è¿æææ ¡éªï¼å¹¶ä¸å¨æç»çæçæ ¡éªä¿¡æ¯ä¸­å»é¤é¦è¡å³é®å­ã</p>
-<h2 id="2-æ¼åæ£æµspell-check">2. æ¼åæ£æµï¼Spell Checkï¼</h2>
-<p>ç±äºè§èçº¦å®ç¼æï¼bodyå¯éï¼ä¸­é´å¯æç©ºè¡ï¼footerä¹æ¯å¯éçï¼æä»¥å¾é¾åºåäºèãgitruéç¨äºfooteréç½®å³é®å­æ¥åºåã</p>
-<p>è¿æ ·ä¸æ¥footeræ ¡éªä¸¥éä¾èµç¨æ·è¾å¥çåè¯ï¼èäººæ¯æé ä¸ä½çï¼æä»¥å°½å¯è½åç¹ä¿éï¼æ ¡éªç¨æ·æ¯å¦æ¼åéè¯¯ã</p>
-<ul>
-<li>æ£æµ footer å³é®å­æ¯å¦æ¼åéè¯¯</li>
-<li>é¿å <code>Clsoe</code>ã<code>Fixex</code> è¿ç§ä½çº§éè¯¯å¯¼è´èªå¨åæµç¨å¤±æ</li>
-<li>ä½¿ç¨ç¸ä¼¼åº¦ç®æ³ï¼é»è®¤éå¼ 0.7ï¼</li>
-<li>å½æ£æµå°çä¼¼æ¼åéè¯¯æ¶ï¼ä¼é»æ­¢æäº¤å¹¶ç»åºåå¥½æç¤º</li>
-</ul>
-<p>å¦æç¨æ·ç¡®è®¤èªå·±æ²¡éï¼å°±å¯ä»¥ä½¿ç¨ä¸ä¸æ­¥æä¾çæ¹æ³è·³è¿æ ¡éªå¼ºå¶æäº¤ã</p>
-<p>footeræåå³é®å­ä¾èµ<code>:</code>åå²ã</p>
-<p>ç±äºfooteré¨åèªç±åº¦å¤ªé«ï¼ç®åæ²¡æ³å°å®ç¾çæ ¡éªæ¹æ³ï¼å¥½å¨æä»¬å¤§é¨åæ¶é´ç¨å°çæ¯headeråbodyæ ¡éªã</p>
-<br>
-<h1 id="-æ»ç»">ð æ»ç»</h1>
-<p>gitru çç®æ ä¸æ¯åä»£ç°æå·¥å·ï¼èæ¯æä¾ä¸ä¸ªï¼</p>
-<ul>
-<li>æ´è½»é</li>
-<li>æ´ç®å</li>
-<li>æ´æå®è£</li>
-<li>æ´éåé Node/Python é¡¹ç®</li>
-</ul>
-<p>ç commit-msg æ ¡éªæ¹æ¡ã</p>
-<p>å¦æä½ å¨ä½¿ç¨è¿ç¨ä¸­æä»»ä½å»ºè®®æé®é¢ï¼æ¬¢è¿å¨ <a href="https://github.com/xiyixiaodao/gitru" target="_blank" rel="noopener nofollow">GitHub</a> æ issueï¼ä¸èµ·è®©è¿ä¸ªå°å·¥å·åå¾æ´å¥½ã</p>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.0006944444444444445" data-date-updated="2026-03-26 10:44">2026-03-26 10:43</span>&nbsp;
-<a href="https://www.cnblogs.com/xiyixiaodao">å¸å¤·å°é</a>&nbsp;
-éè¯»(<span id="post_view_count">123</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19772549);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19772549', targetLink: 'https://www.cnblogs.com/xiyixiaodao/p/19772549', title: 'gitruï¼ä¸ä¸ªç± Rust æé çé¶ä¾èµ Git æäº¤ä¿¡æ¯æ ¡éªå·¥å·' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
