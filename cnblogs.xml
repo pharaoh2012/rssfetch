@@ -3,12 +3,1186 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-03-31T08:53:15.569Z</lastBuildDate>
+        <lastBuildDate>2026-03-31T13:06:21.695Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
+    <title><![CDATA[ Go + Vue æ¥å¥è¡ä¸ºéªè¯ç å®æ´æå ]]></title>
+    <link>https://www.cnblogs.com/niuben/p/19762196</link>
+    <guid>747095528035a0efead2c4157eadb09a</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/niuben/p/19762196" title="åå¸äº 2026-03-31 21:00">
+    <span role="heading" aria-level="2">Go + Vue æ¥å¥è¡ä¸ºéªè¯ç å®æ´æå</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h2 id="åè¨">åè¨</h2>
+<p>å¨ç°ä»£ Web åºç¨ä¸­ï¼éªè¯ç æ¯é²æ­¢æºå¨äººæ»å»åæ¶æè¯·æ±çéè¦ææ®µãç¸æ¯ä¼ ç»çå¾å½¢éªè¯ç ï¼æ»å¨è¡ä¸ºéªè¯ç å·ææ´å¥½çç¨æ·ä½éªãæ¬æå°ä»ç»å¦ä½ä½¿ç¨ <a href="https://github.com/wenlng/go-captcha" target="_blank" rel="noopener nofollow">go-captcha</a> åºå¨ Go åç«¯å Vue åç«¯å®ç°æ»å¨éªè¯ç åè½ã</p>
+<h2 id="ææ¯æ ">ææ¯æ </h2>
+<ul>
+<li>åç«¯ï¼Go + Gin æ¡æ¶</li>
+<li>åç«¯ï¼Vue 3 + Element Plus</li>
+<li>éªè¯ç åºï¼go-captchaï¼åç«¯ï¼+ go-captcha-vueï¼åç«¯ï¼</li>
+<li>ç¼å­ï¼Redisï¼ç¨äºå­å¨éªè¯ç æ°æ®ï¼</li>
+</ul>
+<h2 id="ä¸åç«¯å®ç°">ä¸ãåç«¯å®ç°</h2>
+<h3 id="11-å®è£ä¾èµ">1.1 å®è£ä¾èµ</h3>
+<pre><code class="language-bash">go get github.com/wenlng/go-captcha/v2
+go get github.com/wenlng/go-captcha-assets
+go get github.com/gin-gonic/gin
+go get github.com/redis/go-redis/v9
+</code></pre>
+<h3 id="12-åå§åéªè¯ç æ¨¡å">1.2 åå§åéªè¯ç æ¨¡å</h3>
+<p>åå»º <code>captcha/init.go</code> æä»¶ï¼</p>
+<pre><code class="language-go">package captcha
+
+import (
+	"errors"
+)
+
+var (
+	ErrGenData = errors.New("generate data error")
+)
+
+const (
+	Deviation = 10  // éªè¯åå·®å¼ï¼åè®¸ç¨æ·æ»å¨æä¸å®è¯¯å·®
+)
+
+func Init() error {
+	return initSlide()
+}
+</code></pre>
+<h3 id="13-å®ç°æ»å¨éªè¯ç æ ¸å¿é»è¾">1.3 å®ç°æ»å¨éªè¯ç æ ¸å¿é»è¾</h3>
+<p>åå»º <code>captcha/slide.go</code> æä»¶ï¼</p>
+<pre><code class="language-go">package captcha
+
+import (
+	images "github.com/wenlng/go-captcha-assets/resources/imagesv2"
+	"github.com/wenlng/go-captcha-assets/resources/tiles"
+	"github.com/wenlng/go-captcha/v2/base/option"
+	"github.com/wenlng/go-captcha/v2/slide"
+)
+
+var slideCapt slide.Captcha
+
+// initSlide åå§åæ»å¨éªè¯ç 
+func initSlide() error {
+	builder := slide.NewBuilder(
+		slide.WithGenGraphNumber(1),
+		slide.WithEnableGraphVerticalRandom(true),
+		slide.WithImageSize(option.Size{Width: 300, Height: 220}),
+	)
+
+	// å è½½èæ¯å¾çèµæº
+	imgs, err := images.GetImages()
+	if err != nil {
+		return err
+	}
+
+	// å è½½æ»åå¾å½¢èµæº
+	graphs, err := tiles.GetTiles()
+	if err != nil {
+		return err
+	}
+
+	var newGraphs = make([]*slide.GraphImage, 0, len(graphs))
+	for i := range graphs {
+		graph := graphs[i]
+		newGraphs = append(newGraphs, &amp;slide.GraphImage{
+			OverlayImage: graph.OverlayImage,
+			MaskImage:    graph.MaskImage,
+			ShadowImage:  graph.ShadowImage,
+		})
+	}
+
+	// è®¾ç½®èµæº
+	builder.SetResources(
+		slide.WithGraphImages(newGraphs),
+		slide.WithBackgrounds(imgs),
+	)
+
+	slideCapt = builder.Make()
+
+	return nil
+}
+
+// Slide éªè¯ç æ°æ®ç»æ
+type Slide struct {
+	// æ»ååå§æ¾ç¤ºåæ 
+	SliderX      int
+	SliderY      int
+	SliderWidth  int
+	SliderHeight int
+	// æ´ä½å¤§å°
+	MainWidth  int
+	MainHeight int
+	// ç­æ¡åæ ï¼æå¡ç«¯ä¿å­ï¼ä¸è¿åç»åç«¯ï¼
+	X int
+	Y int
+	// ä¸»å¾ä¸æ»åçå¾çï¼base64ç¼ç 
+	MainImage   string
+	SliderImage string
+}
+
+// NewSlide çææ°çæ»å¨éªè¯ç 
+func NewSlide() (*Slide, error) {
+	m := &amp;Slide{}
+
+	captData, err := slideCapt.Generate()
+	if err != nil {
+		return nil, err
+	}
+
+	dotData := captData.GetData()
+	if dotData == nil {
+		return nil, ErrGenData
+	}
+	
+	// ç­æ¡åæ ï¼æ­£ç¡®çæ»åä½ç½®ï¼
+	m.X = dotData.X
+	m.Y = dotData.Y
+	
+	// æ»ååå§æ¾ç¤ºåæ 
+	m.SliderWidth = dotData.Width
+	m.SliderHeight = dotData.Height
+	m.SliderX = dotData.DX
+	m.SliderY = dotData.DY
+	
+	// å¾çå¤§å°
+	m.MainWidth = 300
+	m.MainHeight = 220
+
+	// è½¬æ¢ä¸º base64 ç¼ç 
+	m.MainImage, err = captData.GetMasterImage().ToBase64()
+	if err != nil {
+		return nil, err
+	}
+	m.SliderImage, err = captData.GetTileImage().ToBase64()
+	if err != nil {
+		return nil, err
+	}
+
+	return m, nil
+}
+
+// VerifySlide éªè¯æ»å¨ä½ç½®æ¯å¦æ­£ç¡®
+func VerifySlide(userX, userY, slideX, slideY int) bool {
+	return slide.Validate(userX, userY, slideX, slideY, Deviation)
+}
+</code></pre>
+<h3 id="14-å®ä¹ååºç»æä½">1.4 å®ä¹ååºç»æä½</h3>
+<p>åå»º <code>vo/captcha.go</code> æä»¶ï¼</p>
+<pre><code class="language-go">package vo
+
+type GetCaptchaRes struct {
+	ID           string `json:"id"`           // éªè¯ç å¯ä¸æ è¯
+	SliderX      int    `json:"sliderX"`      // æ»ååå§Xåæ 
+	SliderY      int    `json:"sliderY"`      // æ»ååå§Yåæ 
+	SliderWidth  int    `json:"sliderWidth"`  // æ»åå®½åº¦
+	SliderHeight int    `json:"sliderHeight"` // æ»åé«åº¦
+	SliderImage  string `json:"sliderImage"`  // æ»åå¾çï¼base64ï¼
+	MainWidth    int    `json:"mainWidth"`    // ä¸»å¾å®½åº¦
+	MainHeight   int    `json:"mainHeight"`   // ä¸»å¾é«åº¦
+	MainImage    string `json:"mainImage"`    // ä¸»å¾ï¼base64ï¼
+}
+</code></pre>
+<h3 id="15-å®ç°-http-å¤çå¨">1.5 å®ç° HTTP å¤çå¨</h3>
+<p>åå»º <code>handler/captcha_handler.go</code> æä»¶ï¼</p>
+<pre><code class="language-go">package handler
+
+import (
+	"encoding/json"
+	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
+	"github.com/rs/xid"
+	
+	"your-project/captcha"
+	"your-project/vo"
+)
+
+type CaptchaHandler struct {
+	redis *redis.Client
+}
+
+func NewCaptchaHandler(redis *redis.Client) *CaptchaHandler {
+	return &amp;CaptchaHandler{
+		redis: redis,
+	}
+}
+
+// GetCaptcha è·åéªè¯ç 
+func (h *CaptchaHandler) GetCaptcha(c *gin.Context) {
+	// çæéªè¯ç 
+	m, err := captcha.NewSlide()
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Failed to create captcha"})
+		return
+	}
+
+	// åºååéªè¯ç æ°æ®
+	value, err := json.Marshal(m)
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Failed to marshal captcha"})
+		return
+	}
+
+	// çæå¯ä¸IDå¹¶å­å¨å° Redisï¼æææ1åé
+	uuid := xid.New().String()
+	err = h.redis.Set(c, uuid, value, time.Minute).Err()
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Failed to store captcha"})
+		return
+	}
+
+	// è¿åç»åç«¯çæ°æ®ï¼ä¸åå«ç­æ¡åæ ï¼
+	res := &amp;vo.GetCaptchaRes{
+		ID:           uuid,
+		SliderX:      m.SliderX,
+		SliderY:      m.SliderY,
+		SliderWidth:  m.SliderWidth,
+		SliderHeight: m.SliderHeight,
+		SliderImage:  m.SliderImage,
+		MainWidth:    m.MainWidth,
+		MainHeight:   m.MainHeight,
+		MainImage:    m.MainImage,
+	}
+
+	c.JSON(200, gin.H{"code": 0, "data": res})
+}
+
+// VerifyCaptcha éªè¯æ»å¨éªè¯ç 
+func (h *CaptchaHandler) VerifyCaptcha(c *gin.Context) {
+	var data struct {
+		ID string `json:"id"` // éªè¯ç æ è¯
+		X  int    `json:"x"`  // ç¨æ·æ»å¨çXåæ 
+		Y  int    `json:"y"`  // ç¨æ·æ»å¨çYåæ 
+	}
+	
+	if err := c.ShouldBindJSON(&amp;data); err != nil {
+		c.JSON(400, gin.H{"error": "Invalid arguments"})
+		return
+	}
+
+	// ä» Redis è·åéªè¯ç æ°æ®
+	value, err := h.redis.Get(c, data.ID).Result()
+	if err != nil {
+		c.JSON(400, gin.H{"error": "éªè¯ç å·²è¿ææä¸å­å¨"})
+		return
+	}
+
+	// ååºååéªè¯ç æ°æ®
+	slide := captcha.Slide{}
+	err = json.Unmarshal([]byte(value), &amp;slide)
+	if err != nil {
+		c.JSON(500, gin.H{"error": "éªè¯ç æ°æ®éè¯¯"})
+		return
+	}
+
+	// éªè¯æ»å¨ä½ç½®
+	if !captcha.VerifySlide(data.X, data.Y, slide.X, slide.Y) {
+		c.JSON(400, gin.H{"error": "éªè¯ç éªè¯å¤±è´¥"})
+		return
+	}
+
+	// éªè¯æååå é¤ Redis ä¸­çæ°æ®ï¼é²æ­¢éå¤ä½¿ç¨ï¼
+	h.redis.Del(c, data.ID)
+
+	c.JSON(200, gin.H{"code": 0, "message": "éªè¯æå"})
+}
+</code></pre>
+<h3 id="16-æ³¨åè·¯ç±">1.6 æ³¨åè·¯ç±</h3>
+<p>å¨ <code>main.go</code> ä¸­æ³¨åè·¯ç±ï¼</p>
+<pre><code class="language-go">package main
+
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
+	
+	"your-project/captcha"
+	"your-project/handler"
+)
+
+func main() {
+	// åå§åéªè¯ç æ¨¡å
+	if err := captcha.Init(); err != nil {
+		panic(err)
+	}
+
+	// åå§å Redis å®¢æ·ç«¯
+	rdb := redis.NewClient(&amp;redis.Options{
+		Addr: "localhost:6379",
+	})
+
+	// åå»º Gin è·¯ç±
+	r := gin.Default()
+
+	// åå»ºå¤çå¨
+	captchaHandler := handler.NewCaptchaHandler(rdb)
+
+	// æ³¨åè·¯ç±
+	api := r.Group("/api")
+	{
+		api.POST("/captcha", captchaHandler.GetCaptcha)
+		api.POST("/captcha/verify", captchaHandler.VerifyCaptcha)
+	}
+
+	r.Run(":8080")
+}
+</code></pre>
+<h2 id="äºåç«¯å®ç°">äºãåç«¯å®ç°</h2>
+<h3 id="21-å®è£ä¾èµ">2.1 å®è£ä¾èµ</h3>
+<pre><code class="language-bash">npm install go-captcha-vue
+npm install element-plus
+</code></pre>
+<h3 id="22-åå»ºéªè¯ç ç»ä»¶">2.2 åå»ºéªè¯ç ç»ä»¶</h3>
+<p>åå»º <code>components/SlideCaptcha.vue</code> æä»¶ï¼</p>
+<pre><code class="language-vue">&lt;template&gt;
+  &lt;div class="slide-captcha-wrapper"&gt;
+    &lt;el-button 
+      :disabled="!canSend" 
+      @click="handleClick"
+      class="trigger-btn"
+    &gt;
+      {{ btnText }}
+    &lt;/el-button&gt;
+
+    &lt;!-- æ»å¨éªè¯ç å¼¹çª --&gt;
+    &lt;el-dialog
+      v-model="showDialog"
+      width="326px"
+      :close-on-click-modal="false"
+      :show-close="false"
+      :append-to-body="true"
+    &gt;
+      &lt;GoCaptchaSlide
+        v-if="captchaData"
+        :config="captchaConfig"
+        :data="captchaData"
+        :events="captchaEvents"
+      /&gt;
+    &lt;/el-dialog&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script setup&gt;
+import { ref } from 'vue'
+import { ElMessage } from 'element-plus'
+import { Slide as GoCaptchaSlide } from 'go-captcha-vue'
+import { httpPost } from '@/utils/http'
+
+// Props
+const props = defineProps({
+  btnText: {
+    type: String,
+    default: 'åééªè¯ç '
+  }
+})
+
+// Emits
+const emit = defineEmits(['success'])
+
+// ç¶æ
+const showDialog = ref(false)
+const captchaData = ref(null)
+const captchaKey = ref('')
+const canSend = ref(true)
+const btnText = ref(props.btnText)
+
+// æ»å¨éªè¯ç éç½®
+const captchaConfig = {
+  width: 300,
+  height: 220,
+  thumbWidth: 60,
+  thumbHeight: 60,
+  showTheme: true,
+  title: 'è¯·æå¨æ»åå®æéªè¯'
+}
+
+// æ»å¨éªè¯ç äºä»¶
+const captchaEvents = {
+  confirm: (point, reset) =&gt; {
+    verifyCaptcha({ 
+      x: Math.floor(point.x), 
+      y: Math.floor(point.y) 
+    })
+    return false
+  },
+  refresh: () =&gt; {
+    loadCaptcha()
+  },
+  close: () =&gt; {
+    showDialog.value = false
+  }
+}
+
+// ç¹å»æé®è§¦å
+const handleClick = () =&gt; {
+  if (!canSend.value) return
+  loadCaptcha()
+}
+
+// å è½½æ»å¨éªè¯ç 
+const loadCaptcha = () =&gt; {
+  httpPost('/api/captcha')
+    .then((res) =&gt; {
+      captchaKey.value = res.data.id
+      captchaData.value = {
+        image: res.data.mainImage,
+        thumb: res.data.sliderImage,
+        thumbX: res.data.sliderX,
+        thumbY: res.data.sliderY,
+        thumbWidth: res.data.sliderWidth,
+        thumbHeight: res.data.sliderHeight
+      }
+      showDialog.value = true
+    })
+    .catch((e) =&gt; {
+      ElMessage.error('è·åéªè¯ç å¤±è´¥ï¼' + e.message)
+    })
+}
+
+// éªè¯æ»å¨éªè¯ç 
+const verifyCaptcha = (verifyData) =&gt; {
+  httpPost('/api/captcha/verify', {
+    id: captchaKey.value,
+    x: verifyData.x,
+    y: verifyData.y
+  })
+    .then(() =&gt; {
+      showDialog.value = false
+      ElMessage.success('éªè¯æå')
+      emit('success')
+    })
+    .catch((e) =&gt; {
+      ElMessage.error('éªè¯å¤±è´¥ï¼' + e.message)
+      // éªè¯å¤±è´¥ï¼éæ°å è½½éªè¯ç 
+      captchaData.value = null
+      loadCaptcha()
+    })
+}
+
+// æ´é²æ¹æ³ä¾ç¶ç»ä»¶è°ç¨
+defineExpose({
+  loadCaptcha
+})
+&lt;/script&gt;
+
+&lt;style scoped&gt;
+.slide-captcha-wrapper {
+  display: inline-block;
+}
+
+.trigger-btn {
+  width: 100%;
+}
+&lt;/style&gt;
+</code></pre>
+<h3 id="23-ä½¿ç¨éªè¯ç ç»ä»¶">2.3 ä½¿ç¨éªè¯ç ç»ä»¶</h3>
+<p>å¨éè¦ä½¿ç¨éªè¯ç çé¡µé¢ä¸­ï¼</p>
+<pre><code class="language-vue">&lt;template&gt;
+  &lt;div class="login-form"&gt;
+    &lt;el-form&gt;
+      &lt;el-form-item label="ææºå·"&gt;
+        &lt;el-input v-model="mobile" placeholder="è¯·è¾å¥ææºå·" /&gt;
+      &lt;/el-form-item&gt;
+      
+      &lt;el-form-item label="éªè¯ç "&gt;
+        &lt;el-input v-model="code" placeholder="è¯·è¾å¥éªè¯ç "&gt;
+          &lt;template #append&gt;
+            &lt;SlideCaptcha 
+              @success="handleCaptchaSuccess"
+              btn-text="è·åéªè¯ç "
+            /&gt;
+          &lt;/template&gt;
+        &lt;/el-input&gt;
+      &lt;/el-form-item&gt;
+      
+      &lt;el-form-item&gt;
+        &lt;el-button type="primary" @click="handleLogin"&gt;ç»å½&lt;/el-button&gt;
+      &lt;/el-form-item&gt;
+    &lt;/el-form&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script setup&gt;
+import { ref } from 'vue'
+import { ElMessage } from 'element-plus'
+import SlideCaptcha from '@/components/SlideCaptcha.vue'
+import { httpPost } from '@/utils/http'
+
+const mobile = ref('')
+const code = ref('')
+
+// éªè¯ç éªè¯æååçåè°
+const handleCaptchaSuccess = () =&gt; {
+  // åéç­ä¿¡éªè¯ç 
+  httpPost('/api/sms/send', { mobile: mobile.value })
+    .then(() =&gt; {
+      ElMessage.success('éªè¯ç å·²åé')
+    })
+    .catch((e) =&gt; {
+      ElMessage.error('åéå¤±è´¥ï¼' + e.message)
+    })
+}
+
+const handleLogin = () =&gt; {
+  // ç»å½é»è¾
+  console.log('ç»å½', mobile.value, code.value)
+}
+&lt;/script&gt;
+</code></pre>
+<h3 id="24-http-å·¥å·å½æ°">2.4 HTTP å·¥å·å½æ°</h3>
+<p>åå»º <code>utils/http.js</code> æä»¶ï¼</p>
+<pre><code class="language-javascript">import axios from 'axios'
+
+const http = axios.create({
+  baseURL: 'http://localhost:8080',
+  timeout: 10000
+})
+
+// è¯·æ±æ¦æªå¨
+http.interceptors.request.use(
+  config =&gt; {
+    // å¯ä»¥å¨è¿éæ·»å  token
+    return config
+  },
+  error =&gt; {
+    return Promise.reject(error)
+  }
+)
+
+// ååºæ¦æªå¨
+http.interceptors.response.use(
+  response =&gt; {
+    const res = response.data
+    if (res.code !== 0) {
+      return Promise.reject(new Error(res.error || 'Error'))
+    }
+    return res
+  },
+  error =&gt; {
+    return Promise.reject(error)
+  }
+)
+
+export const httpPost = (url, data) =&gt; {
+  return http.post(url, data)
+}
+
+export const httpGet = (url, params) =&gt; {
+  return http.get(url, { params })
+}
+</code></pre>
+<h2 id="ä¸æ ¸å¿æµç¨è¯´æ">ä¸ãæ ¸å¿æµç¨è¯´æ</h2>
+<h3 id="31-éªè¯ç çææµç¨">3.1 éªè¯ç çææµç¨</h3>
+<ol>
+<li>åç«¯ç¹å»"è·åéªè¯ç "æé®</li>
+<li>åç«¯è°ç¨ <code>/api/captcha</code> æ¥å£</li>
+<li>åç«¯çæéªè¯ç å¾çåç­æ¡åæ </li>
+<li>åç«¯å°å®æ´æ°æ®ï¼åå«ç­æ¡ï¼å­å¨å° Redisï¼æææ1åé</li>
+<li>åç«¯è¿åéªè¯ç IDåå¾çæ°æ®ï¼ä¸åå«ç­æ¡ï¼ç»åç«¯</li>
+<li>åç«¯å±ç¤ºæ»å¨éªè¯ç å¼¹çª</li>
+</ol>
+<h3 id="32-éªè¯ç éªè¯æµç¨">3.2 éªè¯ç éªè¯æµç¨</h3>
+<ol>
+<li>ç¨æ·æå¨æ»åå°ç®æ ä½ç½®</li>
+<li>åç«¯è·åæ»ååæ ï¼è°ç¨ <code>/api/captcha/verify</code> æ¥å£</li>
+<li>åç«¯ä» Redis è·åéªè¯ç ç­æ¡æ°æ®</li>
+<li>åç«¯æ¯å¯¹ç¨æ·æ»å¨åæ ä¸ç­æ¡åæ ï¼åè®¸ä¸å®åå·®ï¼</li>
+<li>éªè¯æååå é¤ Redis æ°æ®ï¼è¿åæåååº</li>
+<li>åç«¯æ¶å°æåååºåæ§è¡åç»­ä¸å¡é»è¾</li>
+</ol>
+<h3 id="33-å®å¨æ§è¯´æ">3.3 å®å¨æ§è¯´æ</h3>
+<ol>
+<li><strong>ç­æ¡ä¸æ´é²</strong>ï¼éªè¯ç ç­æ¡åæ åªå­å¨å¨æå¡ç«¯ Redis ä¸­ï¼ä¸è¿åç»åç«¯</li>
+<li><strong>ä¸æ¬¡æ§ä½¿ç¨</strong>ï¼éªè¯æååç«å³å é¤ Redis æ°æ®ï¼é²æ­¢éå¤ä½¿ç¨</li>
+<li><strong>æ¶ææ§</strong>ï¼éªè¯ç æææ1åéï¼è¿æèªå¨å¤±æ</li>
+<li><strong>åå·®å®¹å¿</strong>ï¼åè®¸ç¨æ·æ»å¨æä¸å®è¯¯å·®ï¼é»è®¤10åç´ ï¼ï¼æåç¨æ·ä½éª</li>
+</ol>
+<h2 id="åå¸¸è§é®é¢">åãå¸¸è§é®é¢</h2>
+<h3 id="41-éªè¯ç å¾çä¸æ¾ç¤º">4.1 éªè¯ç å¾çä¸æ¾ç¤º</h3>
+<p>æ£æ¥ base64 ç¼ç æ¯å¦æ­£ç¡®ï¼ç¡®ä¿åç«¯æ­£ç¡®è§£æ <code>data:image/png;base64,</code> åç¼ã</p>
+<h3 id="42-éªè¯æ»æ¯å¤±è´¥">4.2 éªè¯æ»æ¯å¤±è´¥</h3>
+<p>æ£æ¥åå·®å¼è®¾ç½®æ¯å¦åçï¼å¯ä»¥éå½å¢å¤§ <code>Deviation</code> å¸¸éçå¼ã</p>
+<h3 id="43-redis-è¿æ¥å¤±è´¥">4.3 Redis è¿æ¥å¤±è´¥</h3>
+<p>ç¡®ä¿ Redis æå¡å·²å¯å¨ï¼æ£æ¥è¿æ¥å°ååç«¯å£æ¯å¦æ­£ç¡®ã</p>
+<h3 id="44-è·¨åé®é¢">4.4 è·¨åé®é¢</h3>
+<p>å¨ Gin ä¸­æ·»å  CORS ä¸­é´ä»¶ï¼</p>
+<pre><code class="language-go">import "github.com/gin-contrib/cors"
+
+r.Use(cors.Default())
+</code></pre>
+<h2 id="äºæ»ç»">äºãæ»ç»</h2>
+<p>æ¬æä»ç»äºå¦ä½ä½¿ç¨ go-captcha åºå¨ Go + Vue é¡¹ç®ä¸­å®ç°æ»å¨éªè¯ç åè½ãæ ¸å¿è¦ç¹ï¼</p>
+<ol>
+<li>åç«¯ä½¿ç¨ go-captcha çæéªè¯ç å¾çåç­æ¡</li>
+<li>ä½¿ç¨ Redis å­å¨éªè¯ç æ°æ®ï¼ä¿è¯å®å¨æ§åæ¶ææ§</li>
+<li>åç«¯ä½¿ç¨ go-captcha-vue ç»ä»¶å±ç¤ºéªè¯ç </li>
+<li>éªè¯æµç¨ç®åæ¸æ°ï¼ç¨æ·ä½éªè¯å¥½</li>
+</ol>
+<p>å®æ´ä»£ç å¯ä»¥ç´æ¥åºç¨å°æ°é¡¹ç®ä¸­ï¼åªéæ ¹æ®å®éæåµè°æ´è·¯ç±ãååºæ ¼å¼ç­ç»èå³å¯ã</p>
+<h2 id="åèèµæº">åèèµæº</h2>
+<ul>
+<li><a href="https://github.com/wenlng/go-captcha" target="_blank" rel="noopener nofollow">go-captcha GitHub</a></li>
+<li><a href="https://github.com/wenlng/go-captcha-vue" target="_blank" rel="noopener nofollow">go-captcha-vue GitHub</a></li>
+<li><a href="https://gin-gonic.com/" target="_blank" rel="noopener nofollow">Gin æ¡æ¶ææ¡£</a></li>
+<li><a href="https://vuejs.org/" target="_blank" rel="noopener nofollow">Vue 3 å®æ¹ææ¡£</a></li>
+</ul>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0.003472222222222222" data-date-updated="2026-03-31 21:05">2026-03-31 21:00</span>&nbsp;
+<a href="https://www.cnblogs.com/niuben">çå¥</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19762196);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19762196', targetLink: 'https://www.cnblogs.com/niuben/p/19762196', title: 'Go + Vue æ¥å¥è¡ä¸ºéªè¯ç å®æ´æå' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ [æ·±åº¦å­¦ä¹ ] å¤§æ¨¡åå­¦ä¹ 7-å¤æ¨¡æå¤§æ¨¡åå¨æ¯è§£æ ]]></title>
+    <link>https://www.cnblogs.com/luohenyueji/p/19803567</link>
+    <guid>5a95d4ad47591b30f8ee365002a75478</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/luohenyueji/p/19803567" title="åå¸äº 2026-03-31 20:15">
+    <span role="heading" aria-level="2">[æ·±åº¦å­¦ä¹ ] å¤§æ¨¡åå­¦ä¹ 7-å¤æ¨¡æå¤§æ¨¡åå¨æ¯è§£æ</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>å¤æ¨¡æï¼Multimodalityï¼æ¯æèåå¹¶å¤çä¸¤ç§æä¸¤ç§ä»¥ä¸ç±»åä¿¡æ¯ææ°æ®çæ¹æ³ä¸ææ¯ãå¨æºå¨å­¦ä¹ åäººå·¥æºè½é¢åï¼å¸¸è§çæ°æ®ç±»ååæ¬ææ¬ãå¾åãè§é¢ãé³é¢åä¼ æå¨æ°æ®ç­ãå¤æ¨¡æç³»ç»æ¨å¨å©ç¨å¤ç§æ¨¡æçä¿¡æ¯ï¼ä»¥æåä»»å¡æ§è½ãä¸°å¯ç¨æ·ä½éªï¼æå®ç°æ´å¨é¢çæ°æ®åæã</p>
+<p>äºå®ä¸ï¼äººç±»å¨æç¥ä¸çæ¶æ»æ¯ä¾èµå¤ç§ä¿¡æ¯ééï¼çä¹¦æ¶å¤çæå­ï¼éå°çº¢ç¯æ¶ä¾èµè§è§ä¿¡å·ï¼å¬å°è­¦æ¥å£°æ¶ä¾èµå¬è§ãèè¿å»çAIè½åç¸å¯¹åä¸ï¼æ´ç±»ä¼¼äºåæ¨¡æç³»ç»ãä¾å¦ï¼GPT-3ä»æ¯æææ¬è¾å¥ï¼ä¸å·å¤åçè§è§çè§£è½åï¼ImageNetæ¨¡ååªè½è¯å«å¾åï¼å¦æé®å®è¿å¼ å¾è¡¨è¾¾äºä»ä¹æç»ªæè¶£å³ï¼å®åªè½æºæ¢°å°è¾åºæ ç­¾åæ¦çãå¤æ¨¡æAIè½å®æ¶èåææ¬ãå¾åãè§é¢ãé³é¢åä¼ æå¨æ°æ®ï¼è½å¤åäººä¸æ ·çè§£åºæ¯ãè§£è¯»æç»ªå¹¶é¢æµè¡ä¸ºï¼è®©æºå¨å¯¹å¤æä¸ççæç¥æ´èªç¶ãæ´æºè½ã</p>
+<p>è¿å¹´æ¥ï¼äººå·¥æºè½ææ¯åå±éæ­¥è¿å¥ä»¥å¤æ¨¡æèåä¸ºæ ¸å¿çæ°é¶æ®µãå¤§è¯­è¨æ¨¡åï¼Large Language Modelï¼LLMï¼å¨èªç¶è¯­è¨å¤çé¢ååå¾çªç ´æ§è¿å±ï¼ç ç©¶éå¿ä¹ä»åä¸æ¨¡ææºè½è½¬åè½å¤åæ¶çè§£åçæææ¬ãå¾åãé³é¢ãè§é¢ç­å¤ç§ä¿¡æ¯å½¢å¼çç»ä¸æ¨¡åãå¨è¿ä¸èæ¯ä¸ï¼å¤æ¨¡æå¤§è¯­è¨æ¨¡åï¼Multimodal Large Language Modelï¼MLLMï¼æä¸ºäººå·¥æºè½çéè¦ç ç©¶æ¹åï¼å¹¶å¨æºè½äº¤äºãåå®¹çæåå¤æå³ç­ç­ä»»å¡ä¸­å±ç°åºå·¨å¤§æ½åã</p>
+<p>ç®åï¼MLLMå·²è½å¤å¤çå¾åãå£°é³åæå­ï¼å®ç°çãå¬ãè¯»çå¤æ¨¡ææç¥ãå®è½å¤å°è¿äºä¿¡æ¯å³èèµ·æ¥ï¼å®æè·¨æ¨¡æå³èçä»»å¡ï¼å¦é³è§é¢èå¨åæãåºæ¯çè§£åå¾æåå®¹æè¿°ãç¶èï¼ç°ææ¨¡åè·ç¦»çæ­£çè§£äººç±»ä¸çä»æå·®è·ï¼å®å¯ä»¥çå°çº¢ç§èçç§çãè¯»å°èè°±ãå¬å°ç¹é¥ªå£°é³ï¼å´æ æ³æåå¶å³éï¼ä¹ç¼ºä¹çå®çææä½éªåçæ´»ç»éªãæªæ¥çMLLMéè¦éæ­¥èåå³è§ãåè§ãè§¦è§ç­æ´å¤æå®ç»´åº¦ï¼åæ¶æåå¯¹ææä¸ç»éªççè§£ï¼æè½æ´æ¥è¿äººç±»è®¤è¯ä¸ççæ¹å¼ã</p>
+<p><img src="https://gitlab.com/luohenyueji/article_picture_warehouse/-/raw/main/Python-Study-Notes/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A07-%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%85%A8%E6%99%AF%E8%A7%A3%E6%9E%90/imgs/1.jpg" alt="https://arxiv.org/abs/2309.05519" loading="lazy"></p>
+<p></p><div class="toc"><div class="toc-container-header">ç®å½</div><ul><li><a href="#1-å¤æ¨¡æå¤§è¯­è¨æ¨¡åçåå±ä¸ææ¯æ¼è¿" rel="noopener nofollow">1 å¤æ¨¡æå¤§è¯­è¨æ¨¡åçåå±ä¸ææ¯æ¼è¿</a><ul><li><a href="#11-å¤æ¨¡æå¤§è¯­è¨æ¨¡åç®ä»" rel="noopener nofollow">1.1 å¤æ¨¡æå¤§è¯­è¨æ¨¡åç®ä»</a></li><li><a href="#12-æ¨¡æèåçå¥ åºé¶æ®µ" rel="noopener nofollow">1.2 æ¨¡æèåçå¥ åºé¶æ®µ</a></li><li><a href="#13-llmä¸»å¯¼å¤æ¨¡ææ¶ä»£" rel="noopener nofollow">1.3 LLMä¸»å¯¼å¤æ¨¡ææ¶ä»£</a><ul><li><a href="#131-æ©ææ¢ç´¢" rel="noopener nofollow">1.3.1 æ©ææ¢ç´¢</a></li><li><a href="#132-æ·±å±èå" rel="noopener nofollow">1.3.2 æ·±å±èå</a></li></ul></li><li><a href="#14-å¤æ¨¡æçè§£ä¸çæçç»ä¸çªç ´" rel="noopener nofollow">1.4 å¤æ¨¡æçè§£ä¸çæçç»ä¸çªç ´</a><ul><li><a href="#141-çè§£ä¸çæçèåçªç ´" rel="noopener nofollow">1.4.1 çè§£ä¸çæçèåçªç ´</a></li><li><a href="#142-ä»è½åç»ä¸å°æµçå¯¹è¯" rel="noopener nofollow">1.4.2 ä»è½åç»ä¸å°æµçå¯¹è¯</a></li></ul></li><li><a href="#15-å¨æ¨¡ææ¶ä»£" rel="noopener nofollow">1.5 å¨æ¨¡ææ¶ä»£</a></li></ul></li><li><a href="#2-æ ¸å¿ææ¯ç»ä»¶ä¸è®­ç»æ¹æ³" rel="noopener nofollow">2 æ ¸å¿ææ¯ç»ä»¶ä¸è®­ç»æ¹æ³</a><ul><li><a href="#21-åºç¡æ¶æ" rel="noopener nofollow">2.1 åºç¡æ¶æ</a></li><li><a href="#22-è¯­è¨æ¨¡åéª¨å¹²ç½ç»" rel="noopener nofollow">2.2 è¯­è¨æ¨¡åéª¨å¹²ç½ç»</a></li><li><a href="#23-æ°æ®ç­ç¥çåæ°" rel="noopener nofollow">2.3 æ°æ®ç­ç¥çåæ°</a></li><li><a href="#24-ä»£è¡¨æ¨¡å" rel="noopener nofollow">2.4 ä»£è¡¨æ¨¡å</a></li></ul></li><li><a href="#3-åè" rel="noopener nofollow">3 åè</a></li></ul></div><p></p>
+<h1 id="1-å¤æ¨¡æå¤§è¯­è¨æ¨¡åçåå±ä¸ææ¯æ¼è¿">1 å¤æ¨¡æå¤§è¯­è¨æ¨¡åçåå±ä¸ææ¯æ¼è¿</h1>
+<h2 id="11-å¤æ¨¡æå¤§è¯­è¨æ¨¡åç®ä»">1.1 å¤æ¨¡æå¤§è¯­è¨æ¨¡åç®ä»</h2>
+<p>å¤æ¨¡æææ¯çåå±ç»åäºé¿ææ¢ç´¢ä¸ç§¯ç´¯ãæ©æå·æä»£è¡¨æ§çå·¥ä½æ¯2021å¹´æåºçCLIPï¼Contrastive LanguageâImage Pre-Trainingï¼ãè¯¥æ¨¡åéè¿å¤§è§æ¨¡å¾æå¯¹æ¯å­¦ä¹ ï¼å®ç°è§è§ä¸è¯­è¨è¡¨ç¤ºç©ºé´çææå¯¹é½ï¼ä¸ºè·¨æ¨¡æç¹å¾å¯¹é½ä¸èåè¡¨ç¤ºå­¦ä¹ æä¾äºå³é®ææ¯æ¯æï¼å¸ååºç¨åæ¬å¾ææ£ç´¢ãé¶æ ·æ¬åç±»ç­ãç¶èï¼è¿ä¸é¶æ®µçæ¨¡åä»ä»¥ç¹å®ä»»å¡ä¸ºå¯¼åï¼ç¼ºä¹ç»ä¸çæ¨çè½ååéç¨æ³åè½åã</p>
+<p><img src="https://gitlab.com/luohenyueji/article_picture_warehouse/-/raw/main/Python-Study-Notes/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A07-%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%85%A8%E6%99%AF%E8%A7%A3%E6%9E%90/imgs/2.jpg" alt="https://learnopencv.com/clip-model/" loading="lazy"></p>
+<p>èª2022å¹´èµ·ï¼LLMçå¿«éåå±ä¸ºå¤æ¨¡æç ç©¶å¸¦æ¥äºæ°çææ¯èå¼ãä»¥GPT-3ï¼Generative Pre-trained Transformerï¼åLLaMAï¼Large Language Model Meta AIï¼ä¸ºä»£è¡¨çæ¨¡åå±ç°åºå¼ºå¤§çè¯­è¨çè§£ãæ¨çåå¯¹è¯è½åï¼ä½¿ç ç©¶èå¼å§æ¢ç´¢ä»¥LLMä½ä¸ºéç¨æºè½ç³»ç»æ ¸å¿çå¯è½æ§ãéè¿å¼å¥è§è§ç¼ç å¨ç­æ¨¡åï¼å°å¾åç­éè¯­è¨æ¨¡ææ å°å°è¯­è¨è¯­ä¹ç©ºé´ï¼ä»èæå»ºå·å¤è§è§çè§£è½åçå¤æ¨¡æç³»ç»ã</p>
+<p>è¿å¥2023å¹´ï¼éçLLMè½åçæç»­æåï¼å¤æ¨¡æç ç©¶éæ¸è¿å¥ä»¥MLLMä¸ºæ ¸å¿çåå±é¶æ®µãè¯¥é¶æ®µçæ¨¡åéå¸¸ä»¥å¼ºå¤§çLLMä¸ºä¸­å¿ï¼éè¿è§è§ãé³é¢ç­ç¼ç å¨æ©å±è¾å¥æ¨¡æï¼ä½¿æ¨¡åè½å¤å¨ç»ä¸æ¡æ¶ä¸å®æå¤æ¨¡æçè§£ä¸çæä»»å¡ãä»£è¡¨æ§æ¨¡ååæ¬GPT-4Vï¼å¶æ¯æå¾åä¸ææ¬çèåè¾å¥ï¼å±ç°åºåè¶çè§è§çè§£ä¸æ¨çè½åãå³äºMLLMçæ´å¤åºç¡åçä»ç»ï¼å¯åèï¼<a href="https://blog.bytebytego.com/p/multimodal-llms-basics-how-llms-process" target="_blank" rel="noopener nofollow">Multimodal LLMs Basics</a>ã</p>
+<p>åæ¶ï¼å¼æºæ¨¡åå¦LLaVAï¼Large Language and Vision Assistantï¼åQwen-VLç³»åéè¿å¼å¥æä»¤å¾®è°ï¼Instruction Tuningï¼æºå¶ï¼å¤§å¹éä½å¤æ¨¡ææ¨¡åçè®­ç»ä¸é¨ç½²é¨æ§ï¼ä½¿æ¨¡åè½å¤æ´èªç¶å°çè§£äººç±»æä»¤å¹¶æ§è¡å¤æä»»å¡ã2024å¹´åå¸çGPT-4oè¿ä¸æ­¥å®ç°äºææ¬ãå¾åãé³é¢ä¸è§é¢ç­å¤æ¨¡æçå®æ¶ååå¤çï¼æ å¿çå¤æ¨¡æäº¤äºåå®æ¶åè¿è¿ã</p>
+<p><img src="https://gitlab.com/luohenyueji/article_picture_warehouse/-/raw/main/Python-Study-Notes/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A07-%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%85%A8%E6%99%AF%E8%A7%A3%E6%9E%90/imgs/3.jpg" alt="https://blog.bytebytego.com/p/multimodal-llms-basics-how-llms-process" loading="lazy"></p>
+<p>è¿å¥2025å¹´ï¼MLLMçåå±ä»ç»ä¸è½åé¶æ®µè¿åå¨æ¨¡ææºè½é¶æ®µãè¿ä¸å¹´æ¶ç°åºå¤ä¸ªå·æä»£è¡¨æ§çå·¥ä½ï¼å¶ä¸­é¿éå·´å·´åå¸çQwen3-Omniå¤åå³æ³¨ãè¯¥æ¨¡åå¨åä¸åçæ¶æä¸­å®ç°ææ¬ãå¾åãé³é¢ä¸è§é¢ç­å¤æ¨¡æçç»ä¸å»ºæ¨¡ï¼å¹¶æ¯æå®æ¶è¯­é³äº¤äºä¸è·¨æ¨¡ææ¨çï¼å¨å¤æ¨¡æçè§£ä¸çææ§è½æ¹é¢è¾¾å°é¢åæ°´å¹³ã</p>
+<p>æå»ºå¤æ¨¡ææ¨¡åçæ ¸å¿é®é¢å¨äºå¦ä½å®ç°ææçæ¨¡æèåãæ©ææ¹æ³å¤éç¨ç®åèåç­ç¥ï¼å¦ç¹ä¹ææ¼æ¥ï¼å³åå«éè¿NLPä¸è§è§é¢è®­ç»æ¨¡åè·å¾ææ¬åå¾åçåµå¥è¡¨ç¤ºåç´æ¥ç»åãè¿ç±»æ¹æ³å®ç°ææ¬ä½ï¼ä½ç±äºç¼ºä¹è·¨æ¨¡æçæ·±å±äº¤äºå»ºæ¨¡ï¼é¾ä»¥ååææä¸åæ¨¡æä¹é´çè¯­ä¹å³èãä¸ºå¼¥è¡¥è¿ä¸ä¸è¶³ï¼ç ç©¶éæ­¥è½¬ååºäºTransformerçäº¤åèåæ¹æ³ãè¯¥ç±»æ¹æ³éè¿æ³¨æåæºå¶å¨ç»ä¸æ¡æ¶ä¸­å»ºæ¨¡å¾æç¹å¾ä¹é´çäº¤äºå³ç³»ï¼ä»èæ¾èæåå¤æ¨¡æè¡¨ç¤ºçè¡¨è¾¾è½åï¼å·²æä¸ºå½åä¸»æµèå¼ã</p>
+<p>å¨èåè½åä¸æ­å¢å¼ºçåæ¶ï¼ä¸ä¸ªå³é®ç°è±¡æ¯ï¼è¿ç±»æ¨¡åä»ç¶è¢«ç§°ä¸ºè¯­è¨æ¨¡åãè¿æºäºå¶æ´ä½æ¶æä»ä»¥è¯­è¨æ¨¡åä¸ºæ ¸å¿ï¼å³å¨ä¿çåæè¯­è¨çè§£ä¸çæè½åçåºç¡ä¸ï¼å°è§è§ãé³é¢ç­æ¨¡æçº³å¥ç»ä¸å»ºæ¨¡æ¡æ¶ãéææ¬æ¨¡æé¦åéè¿åèªç¼ç å¨è½¬æ¢ä¸ºä¸è¯­è¨ç©ºé´å¯¹é½çè¡¨ç¤ºï¼éåä¸ææ¬å±åè¾å¥è¯­è¨æ¨¡åï¼åä¸ç»ä¸çä¸ä¸æå»ºæ¨¡ä¸èªåå½çæè¿ç¨ãå æ­¤ï¼æ¨¡åè½å·å¤å¤æ¨¡æè¾å¥ä¸è¾åºè½åï¼ä½å¶æ¨çä¸äº¤äºæºå¶æ¬è´¨ä¸ä»å´ç»è¯­è¨å±å¼ã</p>
+<p>ç±æ­¤å¯ä»¥çè§£ï¼ç®åæè°å¤æ¨¡æå¤§æ¨¡åï¼æ¬è´¨ä¸æ¯ä»¥è¯­è¨æ¨¡åä¸ºæ ¸å¿æ©å±å¾å°çMLLMï¼å¶çè§£ãæ¨çä¸çæä¸»è¦åçå¨è¯­è¨ç©ºé´ä¹ä¸­ï¼èå¤æ¨¡æè½ååæ¥æºäºå¯¹éææ¬ä¿¡æ¯çæ å°ä¸å¯¹é½ãæ²¿çè¿ä¸åå±è·¯å¾ï¼æªæ¥çç ç©¶å¯è½è¿ä¸æ­¥çªç ´ä»¥è¯­è¨ä¸ºä¸­å¿çå»ºæ¨¡æ¹å¼ï¼æ¢ç´¢æ´åççè·¨æ¨¡æç»ä¸è¡¨ç¤ºä¸æ¨çæºå¶ï¼ä»¥æå»ºæ´å çµæ´»ãé«æä¸å·å¤æ´å¼ºéç¨æ§çå¤æ¨¡ææºè½ç³»ç»ã</p>
+<p>å¨æ­¤è¯­å¢ä¸ï¼æ¨¡ææMLLMçè¾å¥å½¢å¼åè¡¨å¾æ¥æºãææ¬æ¨¡æä»ä¸ºæ ¸å¿ï¼æ¿æä¸»è¦çè¯­ä¹çè§£ä¸æ¨çä»»å¡ãå¶ä»ä¸»è¦æ¨¡æåæ¬ï¼è§è§æ¨¡æï¼å¾åä¸è§é¢ï¼åºç¨æå¹¿ï¼ãé³é¢æ¨¡æï¼è¯­é³ãé³ä¹ååç±»å£°é³äºä»¶ï¼ãå¨ä½æ¨¡æï¼ç¨äºå·èº«æºè½ä¸æºå¨äººç³»ç»ï¼ï¼ä»¥åé¢åä¸ä¸åºç¨çä¸ç»´è¡¨ç¤ºãç­æåãå¾è¡¨ç­å¤æ ·åæ¨¡æãå¨å¤æ¨¡æåºæ¯ä¸­ï¼ä»»å¡éå¸¸åä¸ºçè§£ä»»å¡åçæä»»å¡ï¼åèä»¥å¤æ¨¡ææ°æ®ä¸ºè¾å¥è¾åºææ¬ä¿¡æ¯ï¼åèä»¥å¤æ¨¡ææ°æ®ä¸ºè¾å¥çæå¤æ¨¡ææ°æ®ï¼ä¸éå¸¸æ´å¤æãé¾ä»¥å»ºæ¨¡ã</p>
+<p>æ¥ä¸æ¥ï¼åé¢åå®¹å°å¯¹æ¬èæå°çMLLMå»ºæ¨¡æ¹æ³è¿è¡è¯¦ç»ä»ç»ãå³äºç¸å³MLLMæ¶æçæ¼è¿è¯¦æï¼å¯åéï¼<a href="https://zhuanlan.zhihu.com/p/1963658684765833212" target="_blank" rel="noopener nofollow">å¤æ¨¡æå¤§æ¨¡åä¸»æµæ¶æä»ç»</a>ã</p>
+<p><img src="https://gitlab.com/luohenyueji/article_picture_warehouse/-/raw/main/Python-Study-Notes/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A07-%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%85%A8%E6%99%AF%E8%A7%A3%E6%9E%90/imgs/4.jpg" alt="https://arxiv.org/abs/2401.13601" loading="lazy"></p>
+<h2 id="12-æ¨¡æèåçå¥ åºé¶æ®µ">1.2 æ¨¡æèåçå¥ åºé¶æ®µ</h2>
+<p>MLLMçåå±æºäºæ·±åº¦å­¦ä¹ å¨èªç¶è¯­è¨å¤çä¸è®¡ç®æºè§è§é¢åçç¬ç«çªç ´ã2017å¹´æåºçTransformeræ¶æå­åå¼ºå¤§çå¹¶è¡è®¡ç®è½ååé¿è·ç¦»ä¾èµå»ºæ¨¡è½åï¼éå¡äºèªç¶è¯­è¨å¤ççææ¯èå¼ï¼å¹¶è¿éè¢«ç ç©¶èæ©å±è³è·¨æ¨¡æä»»å¡ï¼å¼å¯äºMLLMçæ©ææ¢ç´¢é¶æ®µãæ­¤é¶æ®µçæ ¸å¿é®é¢å¨äºå¦ä½å°Transformerçè¯­è¨çè§£è½åä¸è§è§ç¹å¾è¿è¡ææèåã</p>
+<p>2020å¹´æåºçVision Transformerè¿ä¸æ­¥æ¨å¨äºè§è§æ¨¡åä¸è¯­è¨æ¨¡åå¨ç»æä¸çç»ä¸ï¼ä¸ºè·¨æ¨¡æèåå¥ å®äºéè¦åºç¡ãè¯¥æ¶æä¸»æµçè§è§-è¯­è¨æ¨¡åéå¸¸éç¨åæµæ¶æï¼å³ä¸ºå¾ååææ¬åå«æå»ºç¬ç«çTransformerç¼ç å¨ï¼å¨ååå­¦ä¹ åèªæ¨¡æç¹å¾åï¼åè¿è¡è·¨æ¨¡æäº¤äºãç¸å³æ¨¡åçä»ç»è§ï¼<a href="https://zhuanlan.zhihu.com/p/26719287825" target="_blank" rel="noopener nofollow">å¤æ¨¡æææ¯æ¢³çï¼ViTç³»å</a>ã</p>
+<p>2021å¹´åï¼OpenAIæåºçCLIPæ¨¡åå¨å¤æ¨¡æç ç©¶ä¸­äº§çäºæ·±è¿å½±åãCLIPå©ç¨çº¦4äº¿è§æ¨¡çå¾æå¯¹æ°æ®ï¼éè¿å¯¹æ¯å­¦ä¹ æå»ºç»ä¸çè·¨æ¨¡æè¯­ä¹åµå¥ç©ºé´ãæ¨¡åç±ç¬ç«çå¾åç¼ç å¨åææ¬ç¼ç å¨ç»æãå¨è®­ç»è¿ç¨ä¸­ï¼å¯¹äºä¸ä¸ªæ¹æ¬¡ä¸­çNç»å¾æå¯¹ï¼ç®æ æ¯æå¤§åæ­£ç¡®å¾æå¯¹çç¹å¾ç¸ä¼¼åº¦ï¼åæ¶æå°åå¶ä½NÂ²âNç»éå¹éå¯¹çç¸ä¼¼åº¦ï¼ä»èå®ç°è§è§ç¹å¾ä¸èªç¶è¯­è¨è¯­ä¹çæ·±åº¦å¯¹é½ãæ¢è¨ä¹ï¼å¨åå«Nå¼ å¾åä¸Næ¡ææ¬æè¿°çæ¹æ¬¡ä¸­ï¼æ¨¡åéè¦å¨NÂ²ç§å¯è½çéå¯¹å³ç³»ä¸­è¯å«åºçæ­£å¹éçNå¯¹ã</p>
+<p>æ´å½¢è±¡å°è¯´ï¼CLIPè¿è¡ç±»ä¼¼è¿è¿ççè®­ç»ï¼å¦ææä¸å¼ ççå¾çä¸æè¿°ç«çæå­éå¯¹ï¼å°±ä¼åå°æ©ç½ï¼åä¹ï¼å¹éæ­£ç¡®åè·å¾å¥å±ãç»è¿4äº¿ä¸ªå¾æå¯¹çè®­ç»ï¼æ¨¡åéæ¸çè§£äºé¿çè³æµãåæ¡è¿ãä¼å¥è·çå¨ç©å«çï¼ä»èå®ç°å¾åä¸çä¸æå­ä¸ççæ·±åº¦å¯¹é½ã<br>
+<img src="https://gitlab.com/luohenyueji/article_picture_warehouse/-/raw/main/Python-Study-Notes/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A07-%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%85%A8%E6%99%AF%E8%A7%A3%E6%9E%90/imgs/5.jpg" alt="https://arxiv.org/abs/2103.00020" loading="lazy"></p>
+<p>CLIPçéè¦æä¹ä¸ä»å¨äºè¯æäºå¤§è§æ¨¡å¼±çç£å¯¹æ¯å­¦ä¹ è½å¤ææå®ç°è·¨æ¨¡æå¯¹é½ï¼æ´å¨äºå¶å±ç°åºçè·¨ä»»å¡é¶æ ·æ¬æ³åè½åãç±äºè§è§æ¦å¿µä¸èªç¶è¯­è¨è¯­ä¹ç´æ¥å³èï¼æ¨¡åæ éé¢å¤å¾®è°å³å¯æ§è¡æ°çè§è§ä»»å¡ãä¾å¦ï¼åªéæä¾é£æºæç«ç­ææ¬æè¿°ä½ä¸ºç±»å«æç¤ºï¼æ¨¡åå³å¯å®æå¾ååç±»ãè¿ç§æè±ä»»å¡ç¹å®æ°æ®éä¾èµçè½åï¼ç»åé«æçæ¨çéåº¦åè¯å¥½çæ³åæ§ï¼ä½¿CLIPæä¸ºäºèç½å¾åçè§£ç³»ç»çéè¦åºç¡æ¨¡åã</p>
+<p>å³ä½¿å¨è¿æç ç©¶ä¸­ï¼CLIPä»ç¶å·æéè¦å½±åãä¾å¦ï¼åæµå¤§å­¦å¢éæåºçLLM2CLIPæ¹æ³è·å¾AAAI 2026æ°åºè®ºæå¥ãè¯¥ç ç©¶å°LLMçè¯­ä¹çè§£è½åå¼å¥CLIPæ¡æ¶ï¼ä½¿æ¨¡åè½å¤æ´å¥½å°å¤çå¤æåé¿ææ¬æè¿°ï¼è¿ä¸æ­¥æåè·¨æ¨¡æè¯­ä¹çè§£è½åã</p>
+<p>å°½ç®¡CLIPæ¯å¤æ¨¡æç ç©¶çéè¦éç¨ç¢ï¼ä½å¶å±éä¹ååæ¾èï¼å®ä»æ¯æå¤å«å¼ä»»å¡ï¼å¦å¾æå¹éä¸å¾ååç±»ï¼å¹¶ä¸å·å¤çæè½åï¼å¶å¯¹æ¯å­¦ä¹ ä¾§éå¨å±è¯­ä¹å¯¹é½ï¼ç¼ºä¹å¯¹å±é¨ç¹å¾ä¸ææ¬çæ®µçç»ç²åº¦å»ºæ¨¡ï¼å æ­¤é¾ä»¥åºå¯¹è§è§å®ä½ç­ç²¾ç»è·¨æ¨¡æä»»å¡ãå¦ä½ä»å¨å±è¯­ä¹å¯¹é½è¿ä¸æ­¥åå±å°ç»ç²åº¦è·¨æ¨¡æäº¤äºï¼æä¸ºåCLIPæ¶ä»£çéè¦ç ç©¶æ¹åã</p>
+<h2 id="13-llmä¸»å¯¼å¤æ¨¡ææ¶ä»£">1.3 LLMä¸»å¯¼å¤æ¨¡ææ¶ä»£</h2>
+<p>å¨ChatGPTäº2022å¹´æ«åå¸ä¹åï¼LLMå±ç°åºå¼ºå¤§çé¶æ ·æ¬å­¦ä¹ ãæä»¤çè§£åä¸ä¸ææ¨çè½åï¼æ¨å¨äºäººå·¥æºè½é¢åçæ·±å»åé©ãå¤æ¨¡æç ç©¶è¿éæä½è¿ä¸æºéï¼ç ç©¶éç¹ä»è®¾è®¡å¤æçè·¨æ¨¡æç³»ç»ï¼è½¬åå°ç°æçLLMåºç¨äºå¾åãè§é¢ç­å¤æ¨¡æä¿¡æ¯å¤çãè¿ä¸é¶æ®µçæ¾èç¹å¾æ¯ï¼LLMæä¸ºå¤æ¨¡ææºè½çæ ¸å¿ï¼å¤æ¨¡ææä»¤å¾®è°æä¸ºä¸»æµæ¹æ³ï¼éè¿æä¼LLMçè§£è§è§ä¿¡æ¯æ¥æ©å±å¤æ¨¡æä»»å¡ï¼èæ éä»é¶æå»ºå¤ææ¨¡åãå³äºç¸å³æ¨¡åçè¯¦ç»ä»ç»è§ï¼<a href="https://zhuanlan.zhihu.com/p/1934716621634658681" target="_blank" rel="noopener nofollow">å¤æ¨¡æå¤§æ¨¡åææ¯æ¥å</a>ã</p>
+<h3 id="131-æ©ææ¢ç´¢">1.3.1 æ©ææ¢ç´¢</h3>
+<p>æ©æï¼ç ç©¶èå°è¯äºâå¤é¨ä¸å®¶éæâæ¶æï¼ä»¥LLMä¸ºè°åº¦ä¸­å¿ï¼è°ç¨åç±»åæ¨¡æä¸å®¶æ¨¡åå®æåä½ä»»å¡ãä»£è¡¨æ§å·¥ä½åæ¬2023å¹´çVisual ChatGPTåHuggingGPTãè¿ç±»æ¹æ³è½å¤å¿«éè½å°å¹¶å¤ç¨é«è´¨éåæ¨¡æä¸å®¶æ¨¡åï¼ä½å¨æ·±å±æ¬¡çå¤æ¨¡æèåè½åä¸å­å¨å±éï¼å æ­¤å¨è®¸å¤ä»»å¡ä¸­éæ¸è¢«ç«¯å°ç«¯ä¸ä½åå»ºæ¨¡æ¹æ³åä»£ãä¸è¿ï¼å·¥å·è°ç¨ä¸ä¸å®¶éæççå¿µå¹¶æªæ¶å¤±ï¼èæ¯ä»¥æä»¶æåè½æ¥å£ç­å½¢å¼æç»­å­å¨äºç°ä»£å¤æ¨¡æç³»ç»ä¸­ã</p>
+<p>å½åï¼å¤§å¤æ°ä¸»æµMLLMå¯ä»¥æ½è±¡ä¸ºä¸ä½ä¸ä½çæ¶æï¼ç±»ä¼¼äºä¸å¥å®æ´çæç¥ä¸è®¤ç¥ç³»ç»ãä»¥è§è§è¯­è¨æ¨¡åä¸ºä¾ï¼è¯¥æ¶æä¸»è¦åå«ä¸é¨åï¼</p>
+<ol>
+<li>è§è§ç¼ç å¨ï¼ç¸å½äºç³»ç»çæç¥åç«¯ï¼å°è¾å¥å¾åè½¬åä¸ºå·æè¯­ä¹ä¿¡æ¯çç¹å¾è¡¨ç¤ºãæ©å±å°è§é¢æ¶ï¼éå¸¸éå¼å¥æ¶åºå»ºæ¨¡æºå¶ã</li>
+<li>LLMï¼ç³»ç»çè®¤ç¥ä¸­æ¢ï¼è´è´£è¯­ä¹çè§£ãæ¨çä¸ææ¬çæã</li>
+<li>è¿æ¥å¨ï¼æ¡¥æ¢ç»ä»¶ï¼å°è§è§ç¹å¾æ å°å°è¯­è¨æ¨¡åçè¡¨ç¤ºç©ºé´ï¼å®ç°ä¸åæ¨¡æé´çå¯¹é½ä¸ä¿¡æ¯äº¤äºã</li>
+</ol>
+<p>å¨æ¨¡åæ¨çè¿ç¨ä¸­ï¼è§è§ç¼ç å¨å°å¾åç¼ç ä¸ºåå«ä¸°å¯ä¿¡æ¯çç¹å¾åºååï¼è¿æ¥å¨å°è¿äºç¹å¾æ å°å°è¯­è¨æ¨¡åçè¡¨ç¤ºç©ºé´ï¼å¹¶ä¸é®é¢ææç¤ºææ¬åºåç»åï¼å½¢æå¤æ¨¡æè¾å¥ãéåï¼LLMçèªåå½çææºå¶å¯å¨ï¼å¶æ¬è´¨ä¸çº¯ææ¬çæç¸åï¼æ¨¡åæ ¹æ®å½åå¨é¨ä¸ä¸æï¼åæ¬è§è§ç¹å¾åå·²çæææ¬ï¼é¢æµä¸ä¸ä¸ªæå¯è½çè¯åã</p>
+<p>çæè¿ç¨ç±»ä¼¼æ»éªçè¿­ä»£ï¼</p>
+<ol>
+<li>æ¨¡åæ ¹æ®è§è§åºååé®é¢åºåé¢æµç¬¬ä¸ä¸ªç­æ¡è¯åï¼ä¾å¦âçâã</li>
+<li>å°âçâè¿½å å°è¾å¥åºåæ«å°¾ï¼å½¢ææ°çä¸ä¸æã</li>
+<li>æ¨¡ååæ ¹æ®è§è§åºåãé®é¢åºååå·²çæè¯åé¢æµä¸ä¸ä¸ªè¯åï¼ä¾å¦âæ­£å¨âã</li>
+<li>ç»§ç»­è¿­ä»£ï¼ç´å°çæç¹æ®ç»æ­¢ç¬¦<code>&lt;EOS&gt;</code>æè¾¾å°æå¤§é¿åº¦éå¶ã<br>
+<img src="https://gitlab.com/luohenyueji/article_picture_warehouse/-/raw/main/Python-Study-Notes/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A07-%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%85%A8%E6%99%AF%E8%A7%A3%E6%9E%90/imgs/6.jpg" alt="https://modelscope.cn/learn/399?pid=341" loading="lazy"></li>
+</ol>
+<h3 id="132-æ·±å±èå">1.3.2 æ·±å±èå</h3>
+<p>å¨åæ´æ·±å±èåæ¼è¿çææ¯è·¯çº¿ä¸ï¼BLIPç³»åç ç©¶åæ¥äºå³é®ä½ç¨ãBLIPé¦æ¬¡ç³»ç»æ§è§£å³äºå¾ææ°æ®ä¸­çå¯¹é½åªå£°é®é¢ï¼ä¸ºè§è§è¯­è¨é¢è®­ç»æä¾äºé«è´¨éçæ°æ®åºç¡ã2023å¹´æåºçBLIP-2å¼å¥è½»éçº§Q-Formeræ¨¡åï¼ä½ä¸ºå¾åç¼ç å¨ä¸LLMä¹é´çæ¡¥æ¢ï¼å°è§è§ç¹å¾è½¬åä¸ºLLMå¯çè§£çè¯­ä¹åéãè¿ç§éè¿å¯å­¦ä¹ æ¥è¯¢åéåç¼©è§è§ç¹å¾çè®¾è®¡ï¼æä¸ºæ¨¡ååèåå»ºæ¨¡çæ©æå¸èã</p>
+<p>åå©Q-Formerï¼BLIP-2è½å¤ååºèªç¶è¯­è¨æä»¤çæå¾åæè¿°ï¼æ¯æè§è§ç¥è¯æ¨çãå¸¸è¯æ¨çåè§è§å¯¹è¯ç­ä»»å¡ï¼åæ¶å¼å®¹ä¸¤ç±»ä¸»æµLLMæ¶æï¼</p>
+<ul>
+<li>Decoder-onlyæ¶æï¼å»ç»å¾åç¼ç å¨åLLMï¼å°å¾åç¹å¾ç»Q-Formerè½¬åä¸ºè§è§æç¤ºç¹å¾åï¼ç´æ¥è¾å¥LLMè¿è¡èªåå½çæã</li>
+<li>Encoder-Decoderæ¶æï¼å°ææ¬ååä¸ºåç¼ååç¼ï¼åç¼ææ¬ä¸Q-Formerè¾åºçè§è§ç¹å¾å±åè¾å¥ç¼ç å¨ï¼è§£ç å¨æ®æ­¤çæåç¼ææ¬ã</li>
+</ul>
+<p>å°½ç®¡Q-Formerå¨ç°é¶æ®µæ¾å¾åä½ä¸æ§è½æéï¼ä½å¶è·¨æ¨¡æå¯¹é½æè·¯ä»å·åèä»·å¼ãåç»­ä¸»æµæ¨¡åå¨æ­¤åºç¡ä¸å°Q-Formerç®åä¸ºMLPæ å°å±å¹¶è½¬åDecoder-onlyæ¶æï¼æèæå¼å¤æå¼è§è§ç¼ç å¨ï¼å°ä¸åæ¨¡ææ°æ®ç¼ç ä¸ºåætokenåºåè¾å¥åä¸ç½ç»ï¼å®ç°ç«¯å°ç«¯èåé¢è®­ç»ã</p>
+<p><img src="https://gitlab.com/luohenyueji/article_picture_warehouse/-/raw/main/Python-Study-Notes/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A07-%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%85%A8%E6%99%AF%E8%A7%A3%E6%9E%90/imgs/7.jpg" alt="https://arxiv.org/abs/2301.12597" loading="lazy"></p>
+<p>äººå·¥æºè½é¢ä¸´çä¸ä¸ªæ ¸å¿æææ¯ï¼å¦ä½è®©æ¨¡åä¸ä»çè§£ææ¬ï¼è¿è½çè§£å¾åï¼å¹¶ç¨èªç¶è¯­è¨ä¸äººç±»äº¤äºãä¸ºæ­¤ï¼2023å¹´4æï¼LLaVAï¼Large Language and Vision Assistantï¼æåºé«æçå¤æ¨¡æè®­ç»æ¹æ³ï¼å°LLMæä»¤å¾®è°é¦æ¬¡å¼å¥è§è§-è¯­è¨ä»»å¡ï¼ä½¿MLLMæ¨¡åéè¿æä»¤å­¦ä¹ çè§£å¾ååå®¹å¹¶çæç¬¦åäººç±»ææçåç­ãå³äºLLaVAçè¯¦ç»ä»ç»ï¼å¯åèï¼<a href="https://zhuanlan.zhihu.com/p/676407278" target="_blank" rel="noopener nofollow">ä¸ç¯æç« ææLLaVA</a>ã</p>
+<p>ä¸ºè®­ç»æ¨¡åï¼LLaVAå¢éæå»ºäºLLaVA-Instruct-158Kæ°æ®éãè¯¥æ°æ®éä»¥COCOå¾åæ æ³¨ä¸ºåºç¡ï¼éè¿GPT-4å°å¶è½¬åä¸ºå¤è½®å¯¹è¯å½¢å¼çæä»¤æ°æ®ãä¾å¦ï¼å¯¹äºä¸å¼ æç»å°ç«è·å¨æ²åä¸ççªå¤çå¾çï¼GPT-4ä¸ä»æé®âå¾ä¸­æä»ä¹âï¼è¿è¿ä¸æ­¥è¿½é®âå°ç«å¨çä»ä¹ãçªå¤å¯è½æä»ä¹ãå®çç¶æå¦ä½âãè¿ç§è®¾è®¡æ¨¡æäºäººç±»è§å¯å¾çæ¶çèªç¶å¥½å¥å¿ï¼ä¸ºæ¨¡åæä¾ä¸°å¯å¤æ ·çæä»¤ä¿¡å·ã</p>
+<p>å¨æ¨¡åæ¶æä¸ï¼LLaVAä»¥Vicunaä½ä¸ºè¯­è¨æ ¸å¿æ¨¡åï¼å¶ç±LLaMAå¾®è°å¾å°ãå¾åç¹å¾é¦åç±CLIPæåï¼ç»æå½±å±æ å°è³ä¸ææ¬ç¹å¾ä¸è´çè¡¨ç¤ºç©ºé´ï¼éåä¸ææ¬tokenæ¼æ¥ä¸ºç»ä¸åºåï¼å¹¶è¾å¥Vicunaè¿è¡å¤çãè®­ç»åä¸¤æ­¥è¿è¡ï¼</p>
+<ol>
+<li>ç¹å¾å¯¹é½é¶æ®µï¼å»ç»è¯­è¨æ¨¡ååè§è§ç¼ç å¨ï¼ä»è®­ç»æå½±å±ï¼ä½¿è§è§ç¹å¾ä¸ææ¬åµå¥å¯¹é½ã</li>
+<li>ç«¯å°ç«¯å¾®è°é¶æ®µï¼å»ç»è§è§ç¼ç å¨ï¼èåå¾®è°æå½±å±åè¯­è¨æ¨¡åï¼å©ç¨å¤è½®æä»¤æ°æ®ï¼ä½¿æ¨¡åè½å¤æµççè§£å¾åå¹¶è¿è¡å¤è½®äº¤äºã</li>
+</ol>
+<p><img src="https://gitlab.com/luohenyueji/article_picture_warehouse/-/raw/main/Python-Study-Notes/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A07-%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%85%A8%E6%99%AF%E8%A7%A3%E6%9E%90/imgs/8.jpg" alt="https://www.mdpi.com/2072-4292/16/9/1477#" loading="lazy"></p>
+<p>éè¿æä»¤å¾®è°ï¼LLaVAä½¿LLMå·å¤å¾åæè¿°ä¸è§è§é®ç­ç­å¤æ¨¡æè½åï¼ä»¥è¾ä½ææ¬æå±äºLLMçè§è§äº¤äºè¾¹çãåæ­¤å¯åï¼InstructBLIPãMiniGPT-4ç­ç ç©¶ç¸ç»§æ¶ç°ï¼æ¨å¨å¤æ¨¡ææä»¤å¾®è°ææ¯æç»­åå±ä¸æçã</p>
+<h2 id="14-å¤æ¨¡æçè§£ä¸çæçç»ä¸çªç ´">1.4 å¤æ¨¡æçè§£ä¸çæçç»ä¸çªç ´</h2>
+<h3 id="141-çè§£ä¸çæçèåçªç ´">1.4.1 çè§£ä¸çæçèåçªç ´</h3>
+<p>éçå¤æ¨¡ææä»¤å¾®è°ææ¯çæçï¼èª2024å¹´èµ·ï¼MLLMçç ç©¶éå¿å·²è½¬åå¨åä¸æ¨¡åä¸­ç»ä¸çè§£ä¸çæä»»å¡ãä¸ºçªç ´ä»»å¡å£åï¼æå»ºå¼å·æç¥ãçè§£ä¸çæè½åçç»ä¸æ¨¡åï¼ä¸çä¸»è¦æ¢ç´¢äºä¸å¤§æ¹åï¼æ©æèåæ¶æãæ··åçæèå¼ä»¥åå¨æ¨¡æç»ä¸æ¨¡åã<br>
+è¿äºæ¢ç´¢å¬çäºå¤æ¬¾ä»£è¡¨æ§æ¨¡åï¼å±ç¤ºäºå¤æ¨¡æç»ä¸çä¸åææ¯è·¯å¾ãä¾å¦ï¼</p>
+<ul>
+<li>Chameleonæ¨¡åï¼Metaï¼2024ï¼éç¨æ©æèåç­ç¥ï¼éè¿åæ°çå¾ååè¯å¨å°å¾åè½¬åä¸ºç¦»æ£Tokenï¼ä½¿å¾åä¸ææ¬å¨åä¸åºåä¸­è¢«LLMç»ä¸å¤çãè¾å¥å±çèåå°å¤æ¨¡ææ°æ®å¯¹é½å°å±äº«è¡¨ç¤ºç©ºé´ï¼å®ç°è·¨æ¨¡ææ¨çä¸çæï¼æ éé¢å¤çå¾åç¼ç å¨æä»»å¡ä¸ç¨è§£ç æ¨¡åãå¶è®­ç»è¿ç¨éè¿èªåå½æ¹å¼é¢æµåºåä¸­ä¸ä¸ä¸ªTokenï¼å­¦ä¹ å¾æé´çè·¨æ¨¡ææ å°ã</li>
+<li>VITRONæ¯é¢ååç´ çº§è§è§ä»»å¡çç»ä¸MLLMï¼éç¨ç»å¸çEncoderâLLMâDecoderæ¶æãåç«¯è§è§ç¼ç å¨æåå¾åæè§é¢çåç´ çº§ç¹å¾ï¼ä¸­é´çLLMåºäºVicuna-7Bï¼å¯¹è§è§ç¹å¾è¿è¡çè§£ï¼å¹¶ç»åç¨æ·æä»¤å®ææ¨çä¸ä»»å¡å³ç­ï¼åç«¯è°åº¦ä¸å®¶æ¨¡åï¼çæãåå²ãç¼è¾ï¼æ§è¡å·ä½ä»»å¡ãéè¿åç«¯ç¹å¾æåãLLMå³ç­ååç«¯æ§è¡çåä½æµç¨ï¼VITRONå¨åä¸æ¡æ¶ä¸å®ç°äºé«çº§è¯­ä¹çè§£ä¸åç´ çº§å¤ççç»ä¸ï¼å¯¹å¤ç§è§è§ä»»å¡æä¾éç¨å¤çè½åã</li>
+</ul>
+<p>è¿ä¸æ¶æï¼å¤æ¨¡æææ¯æ­£å¤äºä»åæ£æ¢ç´¢èµ°åç»ä¸å»ºæ¨¡çå³é®é¶æ®µãç ç©¶èéè¿æ©æèåä¸æ··åçæç­æ¹æ³ï¼å¨åä¸æ¨¡åä¸­åæ­¥å®ç°äºçè§£ä¸çæè½åçç»ä¸ï¼åæ¶é³é¢ãè§é¢ç­å¤æ¨¡æçæ´åä¹å¼å§è½å°ãå·¥ä¸ççéä¸­ååå éäºè¿ä¸è¿ç¨ï¼OpenAIåå¸çGPT-4Vå¨å¤æè§è§æ¨çãOCRåå°æ ·æ¬å­¦ä¹ ä¸­è¡¨ç°åºåè¶è½åï¼Googleæ¨åºçåçå¤æ¨¡ææ¨¡åGeminiæè°çæ¬å¨å¤é¡¹åºåæµè¯ä¸­è¾¾å°çè³è¶è¶åç±»æ°´å¹³ï¼å½¢æé­æºå¼é¢ãå¼æºè¿½èµ¶çæ ¼å±ï¼ä¹å¸æ¾åºå¤æ¨¡æææ¯å¨åä¸åè½å°ä¸çå·¨å¤§æ½åãä¸è¿ï¼è¿äºç»ä¸æ¨¡åå¨æ¶æè®¾è®¡ãçæè´¨éä¸è®¡ç®æçä¸ä»æä¼åç©ºé´ã</p>
+<p><img src="https://gitlab.com/luohenyueji/article_picture_warehouse/-/raw/main/Python-Study-Notes/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A07-%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%85%A8%E6%99%AF%E8%A7%A3%E6%9E%90/imgs/9.jpg" alt="https://microsoft.github.io/GPT4Vision-Robot-Manipulation-Prompts/" loading="lazy"></p>
+<h3 id="142-ä»è½åç»ä¸å°æµçå¯¹è¯">1.4.2 ä»è½åç»ä¸å°æµçå¯¹è¯</h3>
+<p>éçMLLMæçå¨è½åä¸å®æ¶äº¤äºçæ¹åæ¼è¿ï¼ç ç©¶ç¦ç¹éæ­¥ä»å®ç°åä¸æ¨¡åä¸­çç»ä¸çè§£ä¸çæï¼è½¬åé«ææ´åä¸»æµæ¨¡æå¹¶æ¯ææµçå®æ¶äº¤äºãç ç©¶åç°ï¼ç®åçç«¯å°ç«¯ç»ä¸å»ºæ¨¡å¨å¤ççè§£ä¸çæä»»å¡æ¶å­å¨åå¨å²çªï¼çè§£ä»»å¡éè¦å¨å±æ½è±¡è¯­ä¹ï¼çæä»»å¡éè¦å±é¨åç´ ç»èã</p>
+<p>ä¸ºæ­¤ï¼2024å¹´DeepSeekå¢éæåºJanusæ¨¡åï¼å¨MLLMä¸­å¼å¥è§£è¦çåè·¯å¾è§è§ç¼ç æ¶æï¼å¨ç»ä¸çLLMæ¡æ¶åä¸ºçè§£ä¸çæåå«è®¾è®¡ç¬ç«ç¼ç è·¯å¾ï¼å®ç°åèæ²»ä¹çç»ä¸å¤çãè¿ä¸è®¾è®¡ä¸ºæå»ºé«æ§è½MLLMæä¾äºéè¦åèï¼åç»­JanusFlowãNExT-OMNIç­æ¨¡åååå¶å¯åã</p>
+<p>Janusçæ ¸å¿æ´å¯å¨äºï¼è§è§çè§£ä¾èµå¨å±æ½è±¡è¯­ä¹ï¼èè§è§çæéå±é¨ç²¾ç»åç´ ä¿¡æ¯ãè¥å°äºèè¦åå¨åä¸è§è§ç¼ç è·¯å¾ä¸­ï¼å¾å¾å¯¼è´æ§è½å¦¥åãJanuséè¿åè·¯å¾è§è§ç¼ç è®¾è®¡è§£å³è¯¥é®é¢ï¼</p>
+<ul>
+<li>çè§£è·¯å¾éç¨ç±»ä¼¼CLIPçè§è§ç¼ç å¨ï¼å°å¾åç¼ç ä¸ºç´§åé«å±è¯­ä¹ç¹å¾ï¼</li>
+<li>çæè·¯å¾åå©VQ-VAEç­å¾ååè¯å¨ï¼å°å¾åè½¬åä¸ºä¿çä¸°å¯ç©ºé´ç»èçç¦»æ£è§è§æ è®°ã</li>
+</ul>
+<p>ä¸¤æ¡è·¯å¾è¾åºå±åè¾å¥LLMï¼LLMæ ¹æ®ä»»å¡éæ±çµæ´»éæ©å³æ³¨çè§è§ä¿¡æ¯ãè¯¥è®¾è®¡ä½¿çè§£ä¸çæè½åç¬ç«ä¼åï¼å¨ä¸¤ç±»ä»»å¡ä¸ååå¾é¢åæ§è½ã</p>
+<p><img src="https://gitlab.com/luohenyueji/article_picture_warehouse/-/raw/main/Python-Study-Notes/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A07-%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%85%A8%E6%99%AF%E8%A7%A3%E6%9E%90/imgs/10.jpg" alt="https://arxiv.org/abs/2410.13848" loading="lazy"></p>
+<p>å¨è¿ä¸æ¶æï¼å¤§å¤æ°å¼æºMLLMä»ä¸»è¦èç¦å¾åä¸ææ¬æ¨¡æï¼ä¸æ¯æé³é¢ãå¾ååææ¬çä¸ææ¨¡åï¼å¦GPT-4oãGemini-Pro 1.5ï¼ç¸æ¯å­å¨å·®è·ãå·å¤å®æ´å¤æ¨¡æäº¤äºè½åçå¼æºæ¨¡åæ´ä¸ºç¨ç¼ºï¼éè¦è¿ä¸æ­¥æ¢ç´¢ãå°½ç®¡VITA-1.0å°è¯å¼å¥è¯­é³è¿è¡äººæºäº¤äºï¼ä½é¢å¤è¯­é³æ°æ®çæ´åä¼å¯¹åæå¤æ¨¡æè½åææææï¼ä¸è¯­é³çæä¾èµå¤é¨TTSç³»ç»ï¼å¯¼è´å»¶è¿è¾é«ï¼å½±åç¨æ·ä½éªã</p>
+<p>ä¸ºå®ç°æµçå®æ¶äº¤äºï¼VITA-1.5éè¿å¤é¶æ®µæ¸è¿å¼è®­ç»ç­ç¥ï¼å°è§è§ä¸è¯­é³ä¿¡æ¯é«ææ´åäºåä¸LLMå®ç°æ¥è¿GPT-4oæ°´å¹³çå®æ¶è§è§-è¯­é³äº¤äºãç¨æ·å¯æµå¼è¾å¥è¯­é³æä»¤ï¼å¹¶éåæåå¤´ææå®æ¶ç»é¢ï¼æ¨¡åå³æ¶çè§£å¹¶çæä½å»¶è¿è¯­é³ååºãæ¶æä¸ï¼è¾å¥ä¾§æ²¿ç¨å¤æ¨¡æç¼ç å¨-ééå¨-LLMéç½®ï¼éè¿èåè®­ç»è§è§/é³é¢Transformerä¸å¤å±è¿æ¥å¨ï¼å®ç°å¯¹è§è§ãè¯­è¨åé³é¢çç»ä¸çè§£ï¼è¾åºä¾§éç¨èªä¸»ç åç«¯å°ç«¯è¯­é³æ¨¡åï¼æå¼å¤é¨TTSç³»ç»ï¼ä»æ ¹æ¬ä¸è§£å³å»¶è¿é®é¢ãè¯¥ç­ç¥ç¡®ä¿æ¨¡åå¨æç¥è§é¢ãå¾åãææ¬åé³é¢åç§æ¨¡ææ°æ®æ¶è¡¨ç°ä¼å¼ï¼å®ç°æ¥è¿å®æ¶çäº¤äºä½éªã</p>
+<p><img src="https://gitlab.com/luohenyueji/article_picture_warehouse/-/raw/main/Python-Study-Notes/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A07-%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%85%A8%E6%99%AF%E8%A7%A3%E6%9E%90/imgs/11.jpg" alt="https://arxiv.org/abs/2501.01957" loading="lazy"></p>
+<h2 id="15-å¨æ¨¡ææ¶ä»£">1.5 å¨æ¨¡ææ¶ä»£</h2>
+<p>é¿éå·´å·´äº2025å¹´9ææ­£å¼åå¸äºQwen3-Omniï¼è¿æ¯é¿éäºå¼æºçç«¯å°ç«¯ç»ä¸å¨æ¨¡æMLLMï¼åçæ¯æææ¬ãå¾åãé³é¢åè§é¢ç­å¤æ¨¡æçç»ä¸å»ºæ¨¡ä¸äº¤äºãè¯¥æ¨¡åå·å¤è·¨æ¨¡æçè§£ä¸æ··åè¾å¥è½åï¼è½å¤åæ¶å®æå¤æ¨¡æé®ç­ãé³è§é¢è§£æãè¯­é³å¯¹è¯ä»¥åå¾æé³èå¨çè§£ç­ä»»å¡ï¼å¹¶æ¯æå®æ¶è¯­é³äº¤äºã</p>
+<p>ä¸åäºä¾èµå¤é¨å·¥å·ææ¨¡åæ¼æ¥çä¼ ç»æ¹æ¡ï¼Qwen3-Omniéç¨ç»ä¸çç«¯å°ç«¯æ¶æï¼åçå¤çå¤æ¨¡æä¿¡æ¯ï¼æ éè®¾è®¡ä¸é¨æ¥å£ææ¼æ¥æµç¨ãå¶æ ¸å¿ææ¯è·¯å¾å¨äºéè¿å¨å¤§è§æ¨¡ãå¤æ ·åçå¤æ¨¡ææ°æ®ä¸è¿è¡ç«¯å°ç«¯è®­ç»ï¼ä½¿æ åTransformerèªç¶ä¹ å¾è·¨æ¨¡æä¿¡æ¯ççè§£ä¸çæè½åãè¿ä¸ä»æ¯ææ¯æ¶æä¸ççªç ´ï¼ä¹æ å¿çå¨æ¨¡æAIå·²ä»çè®ºæ¢ç´¢è¿åå·å¤å¼ºå¤§ãå¯é åä¸åºç¨åºç¡çå®è·µé¶æ®µï¼ä»£è¡¨äºåçå¨æ¨¡ææ¨¡ååå±ççæ³æ¹åã</p>
+<p>äº¤éå¤æ¨¡æçææ¯å½åäººå·¥æºè½é¢åçå¦ä¸ä¸ªç­ç¹æ¹åãå­èè·³å¨Seedå¢éæ¨åºçMogaoæ¨¡åï¼å¨è¿ä¸é¢åååºäºå¼åæ§æ¢ç´¢ãå®ä¸ä»è½å¤å¤ççº¯ææ¬æçº¯å¾åï¼è¿è½ç´æ¥çæå¾æå¹¶èçåå®¹ï¼ä¾å¦å¸¦æå¾çåå®¢æç« ï¼ãéè¿çè§£ä¸ä¸æå³èççææ¹å¼ï¼Mogaoæ éé¢å¤è®­ç»å³å¯ç¼è¾å¾åï¼å¹¶è½æ ¹æ®éæ±ç»åçææ°åå®¹ãå¨ææ¯ä¸ï¼Mogaoéç¨åè¿çè§è§çè§£æ¶æï¼ç»ååæ°çä½ç½®ç¼ç æ¹æ³ï¼è½å¤åæ¶å¤çå¾åçäºç»´ç©ºé´ä¿¡æ¯ä¸å¾ææ··åçæ¶åºå³ç³»ï¼ä»èçæè´¨éæ´é«ãå¾æå¹éåº¦æ´ä½³çåå®¹ã</p>
+<p><img src="https://gitlab.com/luohenyueji/article_picture_warehouse/-/raw/main/Python-Study-Notes/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A07-%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%85%A8%E6%99%AF%E8%A7%A3%E6%9E%90/imgs/12.jpg" alt="https://arxiv.org/abs/2509.17765" loading="lazy"></p>
+<h1 id="2-æ ¸å¿ææ¯ç»ä»¶ä¸è®­ç»æ¹æ³">2 æ ¸å¿ææ¯ç»ä»¶ä¸è®­ç»æ¹æ³</h1>
+<h2 id="21-åºç¡æ¶æ">2.1 åºç¡æ¶æ</h2>
+<p>MLLMçå¸¸ç¨æé ä¸»è¦æä¸¤ç±»ï¼</p>
+<p><img src="https://gitlab.com/luohenyueji/article_picture_warehouse/-/raw/main/Python-Study-Notes/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A07-%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%85%A8%E6%99%AF%E8%A7%A3%E6%9E%90/imgs/13.jpg" alt="https://magazine.sebastianraschka.com/p/understanding-multimodal-llms" loading="lazy"></p>
+<ol>
+<li>è§è§ç¼ç å¨ä¸LLMçæ¼æ¥æ¶æ<br>
+è¿ç±»æ¹æ³å¨åæææ¬LLMçåºç¡ä¸æ©å±äºå¾åçè§£è½åï¼æ éä¿®æ¹æ¨¡åæ ¸å¿ç»æãéå¸¸æµç¨ä¸ºï¼åå©ç¨è§è§ç¼ç å¨æåå¾åç¹å¾ï¼åéè¿è½»éçº§æå½±æ¨¡åå°å¶æ å°å°ææ¬åµå¥ç©ºé´ï¼å¾å°è§è§åµå¥åºåãéåå°è§è§åµå¥ä¸ææ¬åµå¥å¨æ¨¡åè¾å¥å±æ¼æ¥ï¼å±åéå¥LLMï¼ä½¿æ¨¡åè½å¤åæ¶å¤çææ¬åå¾åä¿¡æ¯ãå¸åä»£è¡¨åæ¬LLaVA-NeXTåQwen-VLãæ­¤ç±»æ¨¡åéå¸¸éè¿æ¹è¿è§è§ç¼ç å¨ææå½±æ¨¡åæ¥æåå¯¹å¾åç»èçæç¥è½åã</li>
+</ol>
+<p><img src="https://gitlab.com/luohenyueji/article_picture_warehouse/-/raw/main/Python-Study-Notes/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A07-%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%85%A8%E6%99%AF%E8%A7%A3%E6%9E%90/imgs/14.jpg" alt="https://magazine.sebastianraschka.com/p/understanding-multimodal-llms" loading="lazy"></p>
+<ol start="2">
+<li>åºäºäº¤åæ³¨æåçæ·±åº¦èåæ¶æ<br>
+è¿ç±»æ¹æ³å¨LLMåé¨å¼å¥å¤æ¨¡æäº¤äºæºå¶ï¼ä½¿ææ¬åå¾åå¨å¤å±ç»æä¸­ç´§å¯èåãä¾å¦ï¼å¨é¨åæå¨é¨Transformerå±ä¸­åµå¥äº¤åæ³¨æåæ¨¡åï¼ä½¿ææ¬çææ¶è½å¤æ¾å¼å³æ³¨å¾åç¹å¾ï¼ä»èå®ç°æ´æ·±åº¦çå¤æ¨¡æçè§£ãå¸åå®ä¾åæ¬BLIP-2çé¨ååä½ãè¿å¹´æ¥ï¼ä¹åºç°äºä»å¤´è®­ç»çç»ä¸åçå¤æ¨¡ææ¨¡åï¼ä¾å¦ChameleonåEMU3ï¼è¿ç±»æ¨¡åå¨åä¸æ¶æä¸­åæ¶å¯¹ææ¬åå¾åè¿è¡å»ºæ¨¡ï¼ä¸ä¾èµå»ç»çLLMã</li>
+</ol>
+<p><img src="https://gitlab.com/luohenyueji/article_picture_warehouse/-/raw/main/Python-Study-Notes/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A07-%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%85%A8%E6%99%AF%E8%A7%A3%E6%9E%90/imgs/15.jpg" alt="https://magazine.sebastianraschka.com/p/understanding-multimodal-llms" loading="lazy"></p>
+<p>ä»¥ä¸æ¯å¯¹ä¸¤ç±»åºç¡æ¶æçç®è¦ä»ç»ãæ´å¤è¯¦ç»åå®¹è¯·åè§ï¼<a href="https://magazine.sebastianraschka.com/p/understanding-multimodal-llms" target="_blank" rel="noopener nofollow">Understanding Multimodal LLMs</a>å<a href="https://blog.csdn.net/you_well/article/details/149327179" target="_blank" rel="noopener nofollow">å¤æ¨¡æå¤§æ¨¡åï¼MM-LLMsï¼çè¿ä¸ç¯å°±è¶³å¤äºï¼ï¼</a></p>
+<h2 id="22-è¯­è¨æ¨¡åéª¨å¹²ç½ç»">2.2 è¯­è¨æ¨¡åéª¨å¹²ç½ç»</h2>
+<p>å¨MLLMä¸­ï¼LLMä½ä¸ºæ ¸å¿çæèä¸­æ¢ï¼è´è´£æ´ååæ¨¡æä¿¡æ¯ï¼å®ç°è¯­ä¹çè§£ãé»è¾æ¨çãæä»¤æ§è¡ä¸åå®¹çæãLLMæ§è½ç´æ¥å³å®äºç³»ç»çæºè½ä¸éãå æ­¤ï¼éæ©åéçå¼ºå¤§éª¨å¹²å¹¶å¯¹å¶è¿è¡ææçå¤æ¨¡æééï¼æ¯æå»ºé«æ§è½MLLMçå³é®ã</p>
+<p><strong>ä¸»æµLLMéª¨å¹²çéæ©</strong><br>
+èª2023å¹´ä»¥æ¥ï¼å¼æºLLMçå¿«éåå±æ¾èå éäºå¤æ¨¡æç ç©¶ãç ç©¶èå¾ä»¥å¨ç°æå¼ºå¤§æ¨¡åçåºç¡ä¸èç¦äºå¤æ¨¡æç¹æçææï¼æ éä»é¶è®­ç»åºå¤§çLLMãå½åä¸»æµå¼æºMLLMä¸»è¦åºäºä»¥ä¸ç³»åæå»ºï¼</p>
+<ul>
+<li>LLaMAç³»åï¼Meta AIï¼ï¼ä»LLaMAå°LLaMA4ï¼è¯¥ç³»åå­ååè¶æ§è½ãæ´»è·ç¤¾åºä»¥åç¸å¯¹å¼æ¾çè®¸å¯ï¼æä¸ºæå»ºMLLMçé»éæ åãå¤§å¤æ°å·æå½±ååçå¼æºMLLMï¼å¦LLaVAãJanusãVITA-1.5ç­ï¼åéç¨LLaMAä½ä¸ºè¯­è¨éª¨å¹²ï¼å½¢æäºä¾¿äºç¸äºåé´ççæç³»ç»ã</li>
+<li>Phiç³»åï¼Microsoftï¼ï¼å°¤ä»¥Phi-4ä¸ºä»£è¡¨ï¼ä»¥å°ä½ç§¯ãå¤§è½åä¸ºç¹ç¹ãMicrosoft Phi-4æ¯ä¸æ¬¾æ¥æ14.7Båæ°çé«æ§è½å°åLLMï¼éè¿åææ°æ®è®­ç»å¨æ°å­¦ãæ¨çåå¤æ¨¡æä»»å¡ä¸å®ç°äºè·¨çº§ææï¼å¶æ§è½å¨å¤ä¸ªåºåæµè¯ä¸­è¶³ä»¥åª²ç¾åæ°éå¤§å¾å¤çLLaMA-3 70Bã</li>
+<li>DeepSeekç³»åï¼DeepSeek AIï¼ï¼å¦DeepSeek-LLMåDeepSeek-Coderï¼ä»¥ä»£ç çæåæ°å­¦æ¨çè½åè§é¿ãå¨å¤çå¤§éä»£ç ãå¬å¼æéè¦ä¸¥è°¨é»è¾æ¨ççä¸ä¸å¤æ¨¡æä»»å¡ï¼å¦ç§å­¦æç®çè§£ãUIèªå¨åè®¾è®¡ï¼æ¶ï¼DeepSeekç³»åå±ç°åºç¬ç¹ä¼å¿ã</li>
+<li>Qwenç³»åï¼Alibabaï¼ï¼ä»Qwenå°Qwen3ï¼å°¤å¶æ¯2025å¹´åå¸çQwen3-Omniï¼å·å¤å¼ºå¤§çå¤è¯­è¨è½ååå¨æ¨¡ææ©å±æ½åãå¶è®¾è®¡ä¹åä¾¿èèäºå¤æ¨¡ææ·±åº¦ååï¼æ¯åçå¨æ¨¡ææ¨¡åçéè¦ä»£è¡¨ã</li>
+</ul>
+<p><strong>æ¶æçå¾®è°ä¸éé</strong></p>
+<p>MLLMçæ§è½ä¸å¶è¯­è¨éª¨å¹²æ¨¡åçåæ°è§æ¨¡å¯åç¸å³ãä¸è¬èè¨ï¼è§æ¨¡æ´å¤§çæ¨¡åï¼å¦70Bçº§å«ï¼å¨çè§£å¤ææä»¤ãè¿è¡æ·±åº¦æ¨çä»¥åçæé«è´¨éåå®¹æ¹é¢ï¼æ¾èä¼äºå°è§æ¨¡æ¨¡åï¼å¦7Bæ13Bçº§å«ï¼ãå æ­¤ï¼è®¸å¤åæ²¿ç ç©¶ä¸ºè¿½æ±æ§è½ä¸éï¼å¾å¾éæ©æå¤§è§æ¨¡çå¼æºLLMä½ä¸ºå®éªåºç¡ã</p>
+<p>ç¶èï¼æ¨¡åè¶å¤§è¶å¥½å¹¶éæ²¡æä»£ä»·ãå·¨å¤§çæ¨¡åå°ºå¯¸å¸¦æ¥äºé«æçè®­ç»ä¸æ¨çææ¬ï¼éå¶äºå¶å¨ç°å®åºæ¯ä¸­çå¹¿æ³é¨ç½²ãå æ­¤ï¼å¦ä½å¨æ§è½ä¸æçä¹é´åå¾å¹³è¡¡ï¼å·²æä¸ºMLLMç ç©¶ä¸è½å°è¿ç¨ä¸­ä¸å¯åé¿çæ ¸å¿é®é¢ãè¿ä¹å¬çäºæ¨¡åéåãç¥è¯è¸é¦ç­ä¸ç³»åæ¨¡ååç¼©ä¸å éææ¯å¨å¤æ¨¡æé¢åä¸­çæ·±å¥åºç¨ã</p>
+<p>å°½ç®¡ç°ä»£MLLMå¾åäºå¨è®­ç»ä¸­å»ç»LLMéª¨å¹²çå¤§é¨ååæ°ä»¥éä½è®¡ç®ææ¬ï¼ä½ä¸ºæææ´åå¤æ¨¡æä¿¡æ¯ï¼ä»éå¨æ¶æå±é¢è¿è¡ä¸äºå¾®è°ï¼ä¸»è¦ä½ç°å¨ä»¥ä¸å ä¸ªæ¹é¢ï¼</p>
+<ol>
+<li>è¯åµå¥ç©ºé´çæ©å±ï¼åå§çLLMè¯åµå¥ç©ºé´ä»åå«ææ¬Tokenãä¸ºäºè®©æ¨¡åæç¥è§è§ä¿¡æ¯ï¼éè¦éè¿æå½±å±å°è§è§ç¼ç å¨çè¾åºç¹å¾æ å°å°ä¸ææ¬Tokenç¸åçç»´åº¦ï¼å¹¶å°å¶ä½ä¸ºä¸ç±»ç¹æ®çè§è§è¯æ±å å¥è¾å¥åºåï¼ä»èæå»ºèµ·è·¨æ¨¡æçç»ä¸è¡¨ç¤ºã</li>
+<li>æ³¨æåæºå¶çè°æ´ï¼å½è¾å¥åºååæ¶åå«ææ¬ä¸è§è§Tokenæ¶ï¼LLMçèªæ³¨æåæºå¶è½å¤èªç¶ææææ¬ä¸å¾åä¹é´ãå¾åä¸å¾åä¹é´çè¯­ä¹å³èãæ­¤å¤ï¼é¨åç ç©¶ä¹å¨ç¹å®å±ä¸­å¼å¥æ¾å¼çè·¨æ³¨æåæ¨¡åï¼ä»¥è¿ä¸æ­¥å¼ºåæ¨¡æé´çäº¤äºè½åã</li>
+<li>ä½ç½®ç¼ç çæ©å±ï¼å¨å¤çå¤å¾æè§é¢è¾å¥æ¶ï¼å¦ä½è®¾è®¡è½å¤ææè¡¨è¾¾å¾åä¹é´ãå¸§ä¹é´ç©ºé´ä¸æ¶é´å³ç³»çä½ç½®ç¼ç ï¼å·²æä¸ºä¸ä¸ªå³é®ä¸å¼æ¾çç ç©¶æ¹åãä¾å¦ï¼æ¨¡åéè¦è½å¤çè§£æå¾ä½äºå¦ä¸å¾å·¦ä¾§çç©ºé´å³ç³»ï¼ææå¸§å¨å¦ä¸å¸§ä¹åçæ¶é´é¡ºåºã</li>
+</ol>
+<p><strong>è®­ç»æ¹æ³çåæ°</strong></p>
+<p>å¨å·å¤åéæ¶æçåºç¡ä¸ï¼è®­ç»æ¹æ³çåæ°åæ ·å³é®ãMLLMçè®­ç»ä¸»è¦è¿½æ±ä¸¤ç¹ï¼ä¸æ¯æåæ°æ®æçï¼ä»¥æ´å°ãæ´æè·åçæ°æ®è·å¾æ´ä¼æ§è½ï¼äºæ¯å®ç°è½åå¯¹é½ï¼ä½¿æ¨¡åè½å¤åç¡®çè§£å¹¶éµå¾ªäººç±»æå¾ãå¶åå±è·¯å¾åæ¬å¤§è§æ¨¡æ çç£é¢è®­ç»ãæçç£æä»¤å¾®è°ï¼ä»¥åæ´ç²¾ç»çå¤é¶æ®µæ¸è¿è®­ç»ã</p>
+<p>èªLLaVAä»¥æ¥ï¼ä¸ç§ç»å¸çä¸¤é¶æ®µè®­ç»èå¼å·²æä¸ºMLLMçä¸»æµï¼</p>
+<ul>
+<li>
+<p>ç¬¬ä¸é¶æ®µ è§è§-è¯­è¨é¢è®­ç»ï¼Vision-Language Pre-trainingï¼<br>
+ç®æ æ¯å®ç°è§è§ç¹å¾ä¸è¯­è¨æ¨¡åå¨è¯­ä¹å±é¢çåæ­¥å¯¹é½ãéå¸¸ä½¿ç¨å¤§è§æ¨¡ãç¸å¯¹åå§çå¾ææ°æ®ï¼å¦CC3MãLAIONç­ï¼è¿äºæ°æ®éå¯è¾¾æ°åäº¿æ¡ï¼ä½è´¨éåå·®ä¸é½ãæ¹æ³ä¸ï¼éè¿è®­ç»è¿æ¥æ¨¡åï¼å¦çº¿æ§æå½±å±æQ-Formerï¼å°è§è§ç¼ç å¨è¾åºçç¹å¾æ å°å°LLMè¾å¥ç©ºé´ï¼å¸¸ç¨ä»»å¡åæ¬å¾å-ææ¬å¹éæå¾åå¼å¯¼çææ¬çæãè¯¥é¶æ®µéå¸¸åªè®­ç»è¿æ¥æ¨¡åï¼LLMåè§è§ç¼ç å¨éª¨å¹²åæ°ä¿æå»ç»ï¼å æ­¤è®­ç»ææ¬è¾ä½ã</p>
+</li>
+<li>
+<p>ç¬¬äºé¶æ®µ å¤æ¨¡ææä»¤å¾®è°ï¼Multimodal Instruction Tuningï¼<br>
+ç®æ æ¯è®©æ¨¡åè½å¤éµå¾ªäººç±»æä»¤å®æå¤æçå¤æ¨¡æä»»å¡ãæ°æ®å±é¢ï¼å°éç¨é«è´¨éä¸ç»è¿ç²¾å¿æå»ºçæä»¤éµå¾ªæ°æ®éï¼è¿ç±»æ°æ®ééå¨é¢è¦çä»åºç¡å¾åæè¿°å°å¤æå¤è½®è§è§æ¨ççå¨åºæ¯ä»»å¡ãLLaVA-Instruct-158Kæ¯æ­¤ç±»æ°æ®éçå¸åä»£è¡¨ãæ¹æ³ä¸ï¼å¨æä»¤æ°æ®éä¸å¯¹æ´ä¸ªæ¨¡åï¼æLLMéª¨å¹²çå¤§é¨ååæ°ï¼è¿è¡ç«¯å°ç«¯çæçç£å¾®è°ï¼Supervised Fine-tuning, SFTï¼ãå¨è¿ä¸é¶æ®µï¼æ°æ®çè´¨éåå¤æ ·æ§æ¯æ°éæ´å³é®ï¼è®¸å¤ç ç©¶å©ç¨GPT-4ç­å¼ºæ¨¡åèªå¨çæé«è´¨éæä»¤æ°æ®ã</p>
+</li>
+</ul>
+<p><img src="https://gitlab.com/luohenyueji/article_picture_warehouse/-/raw/main/Python-Study-Notes/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A07-%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%85%A8%E6%99%AF%E8%A7%A3%E6%9E%90/imgs/16.jpg" alt="https://arxiv.org/abs/2304.14178" loading="lazy"></p>
+<h2 id="23-æ°æ®ç­ç¥çåæ°">2.3 æ°æ®ç­ç¥çåæ°</h2>
+<p>è®­ç»æ¹æ³çåæ°ç¦»ä¸å¼æ°æ®çåæ°ãå¨æ°æ®å±é¢ï¼è¶å¿ä»æ°éé©±å¨éæ¸è½¬åè´¨éé©±å¨ã</p>
+<ul>
+<li>æ©æï¼2022â2023ï¼ï¼ç ç©¶èä¸»è¦ä¾èµä»ç½ç»ç¬åçå¤§è§æ¨¡æªæ¸æ´å¾æå¯¹æ°æ®ï¼å¦LAION-5Bãè¿ç§éå¤§åèçæ¹å¼è½ç¶å¿«éæ©å±äºæ°æ®è§æ¨¡ï¼ä½ä¹å¸¦æ¥äºæ°æ®åè§ååå®¹ä¸å¯æ§ç­é®é¢ã</li>
+<li>ä¸­æï¼2023â2024ï¼ï¼éçGPT-4ç­å¼ºå¤§æ¨¡åçåºç°ï¼æ°æ®åæéæ¸æä¸ºä¸»æµãç ç©¶èåç°ï¼å©ç¨GPT-4 APIå¯ä»¥ä»å°éäººç±»æ æ³¨æ°æ®åºåï¼çæå¤§è§æ¨¡ãé«è´¨éãå¤æ ·åçæä»¤å¾®è°æ°æ®ãLLaVA-Instruct-158Kçæåååè¯æäºåææ°æ®å¨æ¿åMLLMè½åæ¹é¢çå·¨å¤§æ½åã</li>
+<li>è¿æï¼2025ï¼ï¼æ°æ®ç­ç¥åå¾æ´å ç²¾ç»ååéå¯¹æ§ãä¾å¦ï¼ChartMoEä¸ºæåå¾è¡¨çè§£è½åï¼æå»ºäºåå«100ä¸ä¸ªå¾è¡¨-è¡¨æ ¼-JSON-ä»£ç ååç»çæ°æ®éï¼éè¿å¤ä»»å¡å­¦ä¹ è®©æ¨¡åæ·±å¥çè§£å¾è¡¨çç»æåä¿¡æ¯ï¼EMOVAè®¾è®¡äºä¸°å¯æææ æ³¨çè¯­é³-ææ¬æ°æ®éï¼ä»¥å¢å¼ºæ¨¡åçææçè§£è½åãè¿ç±»é¢åç¹å®è½åãç»æé«åº¦åçæ°æ®æå»ºæ­£æä¸ºæåæ¨¡åä¸ä¸è½åçå³é®ã</li>
+</ul>
+<h2 id="24-ä»£è¡¨æ¨¡å">2.4 ä»£è¡¨æ¨¡å</h2>
+<p>å¨å¨çå¤æ¨¡æææ¯å¿«éåå±çèæ¯ä¸ï¼è¯¸å¤å½åMLLMä¸ä»å¨æ§è½ä¸éæ­¥è¿½èµ¶çè³è¶è¶å½éé¢åæ°´å¹³ï¼æ´å¨æ¶æè®¾è®¡ååºç¨è½å°æ¹é¢å±ç°åºç¬ç¹åæ°ãä»¥ä¸ä¸¤ä¸ªä»£è¡¨æ§å·¥ä½çå¨ä½ç°äºè¿ä¸è¶å¿ï¼</p>
+<ol>
+<li>éä¹åé®Qwen3-VL<br>
+é¿éå·´å·´æ¨åºçQwen3-VLç³»åå¨å¤æ¨¡æçè§£é¢åè¡¨ç°çªåºãé¤äºå¨ä¼ ç»å¾æçè§£ä»»å¡ä¸­ä¿æä¼å¼æ§è½å¤ï¼è¯¥æ¨¡åéè¿å¼å¥äº¤éMRoPEç»æä¸DeepStackç­åæ°æºå¶ï¼æ¾èæåäºå¯¹é¿è§é¢åå¤æææ¡£çæ·±åº¦çè§£è½åãQwen3-VLåçæ¯æ256K tokençäº¤éä¸ä¸æå¤çï¼ç¸å½äºè½å¤ä¸æ¬¡æ§çè§£æ°å°æ¶è§é¢åå®¹ææ°ç¾é¡µææ¡£ä¿¡æ¯ï¼å¨é¿è§é¢é®ç­åå¤æææ¡£åæç­ä»»å¡ä¸­å±ç°åºææ¾ä¼å¿ãè¿ä¸è¿å±æ å¿çå½åæ¨¡åå¨é¿ä¸ä¸æå¤æ¨¡æå¤çè½åä¸è¿ä¸æ°å°é¶ãæ­¤å¤ï¼Qwen3ç³»åè¿æ¨åºå¤æ¬¾ä¸åç±»åçæ¨¡åï¼å¼é¡¾å·¥ä¸è½å°ä¸å­¦æ¯æ¢ç´¢ï¼å·²æä¸ºä¼å¤å¼åèåç ç©¶äººåçé¦éæ¹æ¡ä¹ä¸ãå³äºQwen3-VLçæ´è¯¦ç»ä½¿ç¨è¯´æï¼è¯·åéï¼<a href="https://docs.vllm.com.cn/projects/recipes/en/latest/Qwen/Qwen3-VL.html#step-3-run-benchmark" target="_blank" rel="noopener nofollow">Qwen3-VL ä½¿ç¨æå</a>ã</li>
+<li>æ·±åº¦æ±ç´¢DeepSeek-OCR<br>
+ä¸ä¸»æµæ¹æ³ä¸åï¼DeepSeekå¨é¿ææ¡£çè§£ä¸å¦è¾è¹å¾ãä¼ ç»åæ³éå¸¸å°ææ¡£æ¯ä¸é¡µä½ä¸ºé«æ¸å¾åè¾å¥æ¨¡åï¼è®¡ç®å¼éå·¨å¤§ã DeepSeek-OCRéç¨çæ¹æ¡æ¯ï¼åå°é«åè¾¨çææ¡£åç¼©ä¸ºä»åå«å³é®ä¿¡æ¯çè§è§ç¼ç ï¼åç±è½»éçº§æ¨¡åè¿è¡è§£ç è¯å«ãè¿ç§åæç¼ãåçè§£çç­ç¥ï¼ç¸å½äºä¸ºæ¨¡åæä¾ä¸ä»½ç²¾å¿åç¼©çææ¡£æè¦ï¼èéå®æ´åä»¶ï¼å¨ä¿è¯é«ç²¾åº¦è¯å«çåæ¶ï¼å¤§å¹éä½è®¡ç®èµæºæ¶èã2026å¹´1æåå¸çDeepSeek-OCR 2å¨æ­¤åºç¡ä¸è¿ä¸æ­¥ä¼åäºè§è§å ææµè®¾è®¡ï¼ä½¿æ¨¡ååäººä¸æ ·éè¯»ææ¡£ï¼çè§£ç»æä¸è¯­ä¹çè½åæ´å¼ºï¼ä¸ºMLLMé«æå¤çé¿ææ¬æä¾äºå¨æ°æè·¯ã</li>
+</ol>
+<p>æ¥ä¸æ¥ä»¥Qwen3-VLæ¨¡åä¸ºä¾ï¼å±ç¤ºå¶é¢è®­ç»æ¨¡ååæ¬å°æ¨çç¤ºä¾ã</p>
+<p>Qwen3âVLæ å¿çMLLMä»åºç¡è§è§æç¥è¿åæ·±å±é»è¾æ¨çä¸Agentäº¤äºçæ°é¶æ®µãè¯¥ç³»åå»¶ç»­å¼æºè·¯çº¿ï¼è¦çä»ç«¯ä¾§å°äºç«¯çå¤ç§è§æ¨¡ï¼åæ°èå´ä»2Bå°235Bãå¨æ»ä½æ¶æä¸ï¼Qwen3âVLéç¨DenseåMoEåçº¿å¹¶è¡ç­ç¥ãDenseæ¨¡åå¨æ¨çæ¶æ¿æ´»ææåæ°ï¼éåéç¨åºæ¯ãMoEæ¨¡åæéæ¿æ´»é¨åä¸å®¶æ¨¡åï¼å¨æ©å¤§æ¨¡åå®¹éçåæ¶æ§å¶è®¡ç®ææ¬ãå³äºQwen3-VLçè¯¦ç»ä»ç»è§ï¼<a href="https://mp.weixin.qq.com/s/oKpQzXt3OaT93hOq-80NQw" target="_blank" rel="noopener nofollow">è¯¦è§£QWen3-VLæ¨¡åçæµè¯ä»¥åvLLMçäº§ç¯å¢é¨ç½²æµç¨</a>ã</p>
+<p>Qwen3âVLæ¯æä¸¤ç§æ¨¡åçæ¬:</p>
+<ol>
+<li>Instructçæ¬ï¼å¿«éçæç»æï¼å»¶è¿ä½ãéåº¦å¿«ãè¾åºç®æ´ï¼éç¨äºæ¥å¸¸å¯¹è¯ãç®åå¾åæè¿°ãåºç¡OCRåå®æ¶UIæä½ç­å¯¹ååºéåº¦è¦æ±é«çåºæ¯ï¼</li>
+<li>Thinkingçæ¬ï¼å¨ç»åºç­æ¡ååçæåé¨æç»´é¾è¿è¡æ¨çï¼æé«åç¡®çï¼éåæ°å­¦ãé»è¾æ¨çåå¤æåæä»»å¡ï¼ä½çææ¶é´è¾é¿ãTokenæ¶èæ´å¤ï¼éç¨äºéè¦ä¸¥è°¨æ¨çåæ·±åº¦åæçåºæ¯ã</li>
+</ol>
+<p><img src="https://gitlab.com/luohenyueji/article_picture_warehouse/-/raw/main/Python-Study-Notes/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A07-%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%85%A8%E6%99%AF%E8%A7%A3%E6%9E%90/imgs/17.jpg" alt="https://qwen.ai/blog?id=99f0335c4ad9ff6153e517418d48535ab6d8afef&amp;from=research.latest-advancements-list" loading="lazy"></p>
+<p>ä»¥ä¸ä»£ç åºäºQwen3-VLæ¨¡åï¼å®ç°å¾åæè¿°ä¸è§è§é®ç­ãéè¿qwen_vl_utilsåºå®æå¾åé¢å¤çï¼ä½¿ç¨modelscopeåºå è½½æ¨¡åï¼å°è£äºå¾åå°ææ¬çå®æ´è½¬æ¢æµç¨ï¼æ¯æèªå®ä¹é®é¢è¾å¥ï¼å¹¶å¼å®¹Thinkingä¸Instructä¸¤ç§æ¨¡åçæ¬ï¼</p>
+<pre><code class="language-python"># pip install qwen_vl_utils
+from qwen_vl_utils import process_vision_info
+from modelscope import Qwen3VLForConditionalGeneration, AutoProcessor
+
+class QwenImageDescriber:
+    """
+    Qwen3-VLæ¨¡åä¸è½½ååå§å
+    """
+
+    def __init__(
+        self,
+        model_name: str = "Qwen/Qwen3-VL-2B-Thinking",
+        device: str = "cuda",
+        min_pixels: int = 256 * 28 * 28,
+        max_pixels: int = 1280 * 28 * 28,
+    ):
+        """
+        åå§åæ¨¡ååå¤çå¨
+
+        åæ°
+        ----------
+        model_name : str
+            æ¨¡ååç§°
+        device : str
+            è¿è¡è®¾å¤ï¼å¦ "cuda" æ "cpu"
+        min_pixels : int
+            å¤çå¨æå°è§è§tokenåç´ æ°ï¼ç¨äºä¿è¯è¾å¥å¾åä¸ä¼è¿å°å¯¼è´ä¿¡æ¯ä¸¢å¤±
+        max_pixels : int
+            å¤çå¨æå¤§è§è§tokenåç´ æ°ï¼ç¨äºé²æ­¢è¾å¥å¾åè¿å¤§å¯¼è´æ¾å­å ç¨è¿é«
+        """
+        self.device = device
+
+        print(f"å è½½æ¨¡å {model_name} å° {device} ...")
+        # ä»modelscopeä¸­å è½½é¢è®­ç»æ¨¡å
+        self.model = Qwen3VLForConditionalGeneration.from_pretrained(
+            model_name,
+            dtype="auto", # èªå¨éæ©æ¨¡åç²¾åº¦
+            device_map="auto" # èªå¨åéè®¾å¤
+        )
+        # å è½½å¤çå¨ï¼ç¨äºå¾ååææ¬é¢å¤ç
+        self.processor = AutoProcessor.from_pretrained(
+            model_name,
+            min_pixels=min_pixels,
+            max_pixels=max_pixels
+        )
+        print("æ¨¡åå è½½å®æï¼")
+
+    def describe(
+        self,
+        image_url: str,
+        question: str = "è¯·æè¿°å¾ååå®¹ãå°ºå¯¸åä¸»è¦é¢è²",
+        max_new_tokens: int = 2048
+    ):
+        """
+        çæå¾åæè¿°ï¼å¯éæ©è¯¦ç»æè¿°
+
+        åæ°
+        ----------
+        image_url : str
+            å¾æè¿°å¾çç URL ææ¬å°è·¯å¾
+        question : str
+            å¯¹å¾ççæé®ææ¬ï¼å³å®æ¨¡åå³æ³¨çéç¹
+        max_new_tokens : int
+            æå¤§çæé¿åº¦ï¼éå¶è¾åºtokenæ°é
+
+        è¿å
+        -------
+        str or None
+            çæçå¾åæè¿°ææ¬ï¼å¤±è´¥æ¶è¿å None
+        """
+        try:
+            # ======================== æå»ºè¾å¥æ¶æ¯ ========================
+            # æç§Qwen3-VLçå¯¹è¯æ ¼å¼ç»ç»è¾å¥ï¼æ¯æå¾ååææ¬æ··å
+            # æ´å¤æ ¼å¼è¾å¥è®¾ç½®è§ï¼https://pypi.org/project/qwen-vl-utils/
+            messages = [
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "image", "image": image_url},  # å¾åè¾å¥
+                        {"type": "text", "text": question}      # ææ¬æä»¤
+                    ]
+                }
+            ]
+
+            # ======================== é¢å¤ç ========================
+            # add_generation_prompt=True æ·»å çææç¤ºç¬¦ï¼æ è®°å¼å§åç­çä½ç½®
+            text_input = self.processor.apply_chat_template(
+                messages,
+                tokenize=False,
+                add_generation_prompt=True
+            )
+
+            # å¤çè§è§ä¿¡æ¯ï¼ä» messages ä¸­æåå¾ååè§é¢
+            # image_patch_size=16ä¸ºè§è§Transformerç¼ç æ¶çpatchå¤§å°
+            # return_video_kwargsåreturn_video_metadataç¨äºè§é¢å¤çï¼æ¬ç¤ºä¾æªä½¿ç¨ï¼
+            images, videos, video_kwargs = process_vision_info(
+                messages,
+                image_patch_size=16,
+                return_video_kwargs=True,
+                return_video_metadata=True
+            )
+
+            # å°ææ¬åè§è§ä¿¡æ¯ç»ä¸ç¼ç ä¸ºæ¨¡åè¾å¥å¼ é
+            # do_resize=Falseè¡¨ç¤ºä¸å¨processorä¸­è°æ´å¾åå°ºå¯¸ï¼é¿åä¸è§è§ç¼ç å¨å²çª
+            model_inputs = self.processor(
+                text=[text_input],
+                images=images,
+                videos=videos,
+                padding=True,           # èªå¨å¡«åï¼ä½¿batchååºåé¿åº¦ä¸è´
+                do_resize=False,
+                video_metadata=None,
+                return_tensors="pt"    
+            ).to(self.device)       
+
+            # ======================== æ¨¡åæ¨ç ========================
+            print("çæå¾åæè¿°ä¸­...")
+
+            generated_ids = self.model.generate(
+                **model_inputs,
+                max_new_tokens=max_new_tokens
+            )
+
+            # ======================== è§£æè¾åº ========================
+            # å»é¤è¾å¥é¨åï¼åªä¿çæ¨¡åæ°çæçé¨å
+            # å ä¸ºgenerated_idsåå«å®æ´çè¾å¥+æè+è¾åºï¼éè¦è£åªæåå§è¾å¥é¨å
+            trimmed_ids = [
+                out_ids[len(in_ids):] for in_ids, out_ids in zip(model_inputs.input_ids, generated_ids)
+            ]
+            # è§£ç ä¸ºå¯è¯»ææ¬
+            output_text = self.processor.batch_decode(
+                trimmed_ids,
+                skip_special_tokens=True,
+                clean_up_tokenization_spaces=False
+            )[0]
+
+
+            return output_text
+
+        except Exception as e:
+            print(f"è¿è¡åºéï¼{e}")
+            print("ð¡ å»ºè®®æ£æ¥ä¾èµãç½ç»ææ¾å­æ¯å¦è¶³å¤")
+            return None
+
+
+if __name__ == "__main__":
+    # å¯éæ©Qwen/Qwen3-VL-2B-Instructåæ¢å°å¿«éååºçæ¬
+    describer = QwenImageDescriber(
+        model_name="Qwen/Qwen3-VL-2B-Thinking", # ä½¿ç¨æèçæ¬
+        device="cuda"
+    )
+
+    # è°ç¨å¾åæè¿°æ¥å£
+    result = describer.describe(
+        image_url="https://qianwen-res.oss-cn-beijing.aliyuncs.com/Qwen-VL/assets/demo.jpeg",
+        question="è¯·ä»æå¾ãä¸»ä½ãè²å½©ãåå½±åä¸ªç»´åº¦è¯¦ç»åæè¿å¼ å¾çï¼å¹¶æ¦æ¬å¶æ´ä½é£æ ¼"
+    )
+    print("\nå¾åæè¿°ç»æï¼")
+    print(result)
+
+</code></pre>
+<p>ä¸è¿°ä»£ç å®ç°äºä¸ä¸ªåºäºQwen3-VL-2Bçæ¬çå¤æ¨¡ææ¨¡åçå¾åæè¿°å¨ï¼è½å¤å è½½è§è§è¯­è¨æ¨¡åå¹¶æ ¹æ®ç¨æ·æé®å¯¹å¾ååå®¹è¿è¡åæå¹¶çææè¿°ææ¬ãè¿ä¸ªçæ¬æ¯æè½»éçï¼å¯ä»¥æ¥ç<a href="https://github.com/QwenLM/Qwen3-VL" target="_blank" rel="noopener nofollow">Qwen3-VL</a>å®æ¹å¼æºä»åºä½¿ç¨å¶ä»å¯ç¨æ§è½æ´å¼ºççæ¬ã</p>
+<p><img src="https://gitlab.com/luohenyueji/article_picture_warehouse/-/raw/main/Python-Study-Notes/%E5%A4%A7%E6%A8%A1%E5%9E%8B/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AD%A6%E4%B9%A07-%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%85%A8%E6%99%AF%E8%A7%A3%E6%9E%90/imgs/18.jpg" alt="https://www.pingwest.com/w/308445" loading="lazy"></p>
+<p>æå³Qwen3-VLæ¨¡åç§Instructçæ¬åThinkingçæ¬æ§è½æ¯è¾å¯ä»¥çï¼<a href="https://codersera.com/blog/qwen3-vl-8b-instruct-vs-qwen3-vl-8b-thinking-2025-guide" target="_blank" rel="noopener nofollow">Qwen3-VL-8B Instruct vs Qwen3-VL-8B Thinking: 2025 Guide</a>ãå³äºQwen3-VLçæ´å¤ç¨æ³åä»£ç å®ç°ï¼è¯¦è§ï¼<a href="https://mp.weixin.qq.com/s/oKpQzXt3OaT93hOq-80NQw" target="_blank" rel="noopener nofollow">è¯¦è§£QWen3-VLæ¨¡åçæµè¯ä»¥åvLLMçäº§ç¯å¢é¨ç½²æµç¨</a>ã</p>
+<h1 id="3-åè">3 åè</h1>
+<ul>
+<li><a href="https://blog.bytebytego.com/p/multimodal-llms-basics-how-llms-process" target="_blank" rel="noopener nofollow">Multimodal LLMs Basics</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/1963658684765833212" target="_blank" rel="noopener nofollow">å¤æ¨¡æå¤§æ¨¡åä¸»æµæ¶æä»ç»</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/26719287825" target="_blank" rel="noopener nofollow">å¤æ¨¡æææ¯æ¢³çï¼ViTç³»å</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/1934716621634658681" target="_blank" rel="noopener nofollow">å¤æ¨¡æå¤§æ¨¡åææ¯æ¥å</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/676407278" target="_blank" rel="noopener nofollow">ä¸ç¯æç« ææLLaVA</a></li>
+<li><a href="https://magazine.sebastianraschka.com/p/understanding-multimodal-llms" target="_blank" rel="noopener nofollow">Understanding Multimodal LLMs</a></li>
+<li><a href="https://blog.csdn.net/you_well/article/details/149327179" target="_blank" rel="noopener nofollow">å¤æ¨¡æå¤§æ¨¡åï¼MM-LLMsï¼çè¿ä¸ç¯å°±è¶³å¤äºï¼ï¼</a></li>
+<li><a href="https://docs.vllm.com.cn/projects/recipes/en/latest/Qwen/Qwen3-VL.html#step-3-run-benchmark" target="_blank" rel="noopener nofollow">Qwen3-VL ä½¿ç¨æå</a></li>
+<li><a href="https://github.com/QwenLM/Qwen3-VL" target="_blank" rel="noopener nofollow">Qwen3-VL</a></li>
+<li><a href="https://codersera.com/blog/qwen3-vl-8b-instruct-vs-qwen3-vl-8b-thinking-2025-guide" target="_blank" rel="noopener nofollow">Qwen3-VL-8B Instruct vs Qwen3-VL-8B Thinking: 2025 Guide</a></li>
+<li><a href="https://mp.weixin.qq.com/s/oKpQzXt3OaT93hOq-80NQw" target="_blank" rel="noopener nofollow">è¯¦è§£QWen3-VLæ¨¡åçæµè¯ä»¥åvLLMçäº§ç¯å¢é¨ç½²æµç¨</a></li>
+</ul>
+
+
+</div>
+<div id="MySignature" role="contentinfo">
+    <p>æ¬ææ¥èªåå®¢å­ï¼ä½èï¼<a href="https://www.cnblogs.com/luohenyueji/" target="_blank">è½ççå¯å</a>ï¼è½¬è½½è¯·æ³¨æåæé¾æ¥ï¼<a href="https://www.cnblogs.com/luohenyueji/p/19803567" target="_blank">https://www.cnblogs.com/luohenyueji/p/19803567</a></p>
+
+<div style="text-align:center">
+    <img src="https://gitlab.com/luohenyueji/article_picture_warehouse/-/raw/main/wechat/content/%E5%8A%A0%E6%B2%B9%E9%B8%AD.gif">
+</div>
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-03-31 20:15">2026-03-31 20:15</span>&nbsp;
+<a href="https://www.cnblogs.com/luohenyueji">è½ççå¯å</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19803567);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19803567', targetLink: 'https://www.cnblogs.com/luohenyueji/p/19803567', title: '[æ·±åº¦å­¦ä¹ ] å¤§æ¨¡åå­¦ä¹ 7-å¤æ¨¡æå¤§æ¨¡åå¨æ¯è§£æ' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ Typora ä¸­è®¾ç½®å¾åä¸ä¼ å°åå®¢å­ä¸­ ]]></title>
+    <link>https://www.cnblogs.com/gshang/p/19803398</link>
+    <guid>1fa27f6db40960444ba0549e32705294</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/gshang/p/19803398" title="åå¸äº 2026-03-31 18:49">
+    <span role="heading" aria-level="2">Typora ä¸­è®¾ç½®å¾åä¸ä¼ å°åå®¢å­ä¸­</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                    <div id="cnblogs_post_description" style="display: none">
+        <img src="https://img2024.cnblogs.com/blog/1489774/202603/1489774-20260331184842659-1554712699.png" alt="Typora ä¸­è®¾ç½®å¾åä¸ä¼ å°åå®¢å­ä¸­" class="desc_img">
+        åªéè¦ä¸ä¸ªç®åçèæ¬ï¼å°±å¯ä»¥è®© Typora æ¯æåå®¢å­å¾çä¸ä¼ åè½ã
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h2 id="typora-å¾åä¸ä¼ åè½">Typora å¾åä¸ä¼ åè½</h2>
+<h3 id="ééå¥å£">ééå¥å£</h3>
+<p>å¨ Typora çéé¡¹æ ä¸­ï¼æä»¶âåå¥½è®¾ç½®âå¾åâä¸ä¼ æå¡è®¾å®ï¼å¶ä¸­å¯ä»¥çå°å®æ¹æä¾äºå ç§ä¸åçå¾çä¸ä¼ æå¡ï¼å¶ä¸­æåºä¸è¿é¢çäºä¸ä¸ª [èªå®ä¹å½ä»¤]ï¼è¿ä¸ªå¯ä»¥çç»æä»¬èªå·±ééï¼å æ­¤å¾å®¹æèæ³å°åå®¢å­çå¾çä¸ä¼ æå¡è½å¦ééï¼</p>
+<p><img src="https://img2024.cnblogs.com/blog/1489774/202603/1489774-20260331184548342-1444661901.png" alt="image-20260331181603782" loading="lazy"></p>
+<h3 id="ééæç¨">ééæç¨</h3>
+<p>å¦ä½å®æééå¢ï¼å¯ä»¥çå°ä¸æ¹æä¸ä¸ª<a href="https://support.typoraio.cn/Upload-Image/" target="_blank" rel="noopener nofollow">è¯´æ</a>é¾æ¥</p>
+<p><img src="https://img2024.cnblogs.com/blog/1489774/202603/1489774-20260331184549110-737846624.png" alt="image-20260331182112789" loading="lazy"></p>
+<p>ç¹å¼åå¯ä»¥çå°å¨ <a href="https://support.typoraio.cn/Upload-Image/#custom" target="_blank" rel="noopener nofollow">custom</a> ç« èä¸­ï¼å®æ¹ææ¡£æåºï¼</p>
+<p><img src="https://img2024.cnblogs.com/blog/1489774/202603/1489774-20260331184549721-1022096774.png" alt="image-20260331182415475" loading="lazy"></p>
+<p>ç®åçè§£å°±æ¯å¯ä»¥èªè¡åä¸ä¸ªèæ¬ï¼ç¶åéè¿å½ä»¤è¡åæ°æ¥æ¶æ¥èª Typora çå¾çæ¬å°è·¯å¾å³å¯ï¼å¦ææå¾å¤å¼ å¾çï¼å¯ä»¥å¤æ¬¡è°ç¨ã</p>
+<p>æ­¤å¤ï¼å®æ¹è¿æä¾äº<a href="https://support.typoraio.cn/Upload-Image/#troubleshooting" target="_blank" rel="noopener nofollow">å¯è½åºç°çé®é¢åè§£å³æ¹æ³</a>ã</p>
+<h2 id="ééèæ¬">ééèæ¬</h2>
+<p>æä»¬ç¥éåå®¢å­å¼åäº vscode æä»¶æ¯å¯ä»¥æä¾å¾çä¸ä¼ åè½çï¼é£ä¹ä¸»è¦ç¨å°çæ¯ä»ä¹æ¥å£å¢ï¼</p>
+<p>è¿éä¸»è¦ç¨çå°±æ¯ MetaWeblog API ï¼å®æ¯æä¸ä¼ å¾çãåå¸æç« ã</p>
+<p>å¨åå®¢å­åå°ç<a href="https://i.cnblogs.com/settings" target="_blank">è®¾ç½®</a>ä¸­ï¼æåºä¸æï¼</p>
+<p><img src="https://img2024.cnblogs.com/blog/1489774/202603/1489774-20260331184550323-1269305681.png" alt="image-20260331182955765" loading="lazy"></p>
+<p>æä»¬å° âåè®¸ MetaWeblog åå®¢å®¢æ·ç«¯è®¿é®â è®¾ç½®ä¸ºå¼å¯ï¼äºæ¯å¯ä»¥å¾å°ï¼</p>
+<ul>
+<li>MetaWeblogç»å½åãUSERNAMEã</li>
+<li>MetaWeblogè®¿é®ä»¤çãPASSWORDã</li>
+<li>MetaWeblogè®¿é®å°åãBLOG_URLã</li>
+</ul>
+<p>è¿äºåæ°å°±æ¯æ¯ä¸ªäººç¬ç«çæ¥å£åæ°ï¼äºæ¯åè±åå¨è¯¢åï¼å¾å°ä¸é¢çä»£ç ï¼</p>
+<pre><code class="language-sh">#!/bin/bash
+set -euo pipefail
+
+# ==================== ä½ çéç½® ====================
+BLOG_URL="ä½ çMetaWeblog"
+USERNAME="ä½ çMetaWeblogç»å½å"
+PASSWORD="ä½ çMetaWeblogè®¿é®ä»¤ç"
+BLOG_ID="ä½ çåå®¢å­ç¨æ·ç®å½è·¯å¾ï¼å¦https://www.cnblogs.com/gshangï¼å°±æ¯ gshang"
+# ==================================================
+echo "Upload Success:"
+
+for img_path in "$@"; do
+    # è½¬æ¢è·¯å¾
+    [[ "$img_path" == [A-Za-z]:\\* ]] &amp;&amp; img_path=$(cygpath -u "$img_path")
+
+    # åºç¡ä¿¡æ¯
+    filename=$(basename "$img_path")
+    mime=$(file -b --mime-type "$img_path")
+
+    # ãå³é®ä¿®å¤ãç¨ä¸´æ¶æä»¶ï¼é¿ååæ°è¿é¿
+    xml_file=$(mktemp)
+
+    # åå¥ XMLï¼ä¸ä»å½ä»¤è¡ä¼ ï¼å½»åºè§£å³è¶é¿ï¼
+    cat &gt; "$xml_file" &lt;&lt;EOF
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;methodCall&gt;
+&lt;methodName&gt;metaWeblog.newMediaObject&lt;/methodName&gt;
+&lt;params&gt;
+&lt;param&gt;&lt;value&gt;&lt;string&gt;${BLOG_ID}&lt;/string&gt;&lt;/value&gt;&lt;/param&gt;
+&lt;param&gt;&lt;value&gt;&lt;string&gt;${USERNAME}&lt;/string&gt;&lt;/value&gt;&lt;/param&gt;
+&lt;param&gt;&lt;value&gt;&lt;string&gt;${PASSWORD}&lt;/string&gt;&lt;/value&gt;&lt;/param&gt;
+&lt;param&gt;&lt;value&gt;&lt;struct&gt;
+&lt;member&gt;&lt;name&gt;name&lt;/name&gt;&lt;value&gt;&lt;string&gt;${filename}&lt;/string&gt;&lt;/value&gt;&lt;/member&gt;
+&lt;member&gt;&lt;name&gt;type&lt;/name&gt;&lt;value&gt;&lt;string&gt;${mime}&lt;/string&gt;&lt;/value&gt;&lt;/member&gt;
+&lt;member&gt;&lt;name&gt;bits&lt;/name&gt;&lt;value&gt;&lt;base64&gt;$(base64 -w 0 "$img_path")&lt;/base64&gt;&lt;/value&gt;&lt;/member&gt;
+&lt;/struct&gt;&lt;/value&gt;&lt;/param&gt;
+&lt;/params&gt;
+&lt;/methodCall&gt;
+EOF
+
+    # ãå³é®ä¿®å¤ãä»æä»¶è¯»å XMLï¼ä¸æ¼å½ä»¤è¡
+    resp=$(curl -s -X POST \
+        -H "Content-Type: text/xml; charset=utf-8" \
+        --data-binary "@$xml_file" \
+        "$BLOG_URL")
+
+    # æå URLï¼100% å¼å®¹ Windowsï¼
+    url=$(echo "$resp" | sed -n 's/.*&lt;string&gt;\(https[^&lt;]*\)&lt;\/string&gt;.*/\1/p' | head -1)
+
+    # è¾åºç» Typora
+    [ -n "$url" ] &amp;&amp; echo "$url" || echo ""
+
+    # æ¸çä¸´æ¶æä»¶
+    rm -f "$xml_file"
+done
+</code></pre>
+<p>å°ä½ çä¿¡æ¯å¡«ååï¼ä¿å­ä¸º <code>cnblogs.sh</code> ï¼å¹¶å°å¶æ¾å° <code>Typora.exe </code> åä¸ç®å½ä¸ï¼æçç®å½æ¯ï¼</p>
+<pre><code>D:\Program Files\Typora\cnblogs.sh
+</code></pre>
+<p><img src="https://img2024.cnblogs.com/blog/1489774/202603/1489774-20260331184550917-1251972432.png" alt="image-20260331183526265" loading="lazy"></p>
+<p>æåï¼ç¡®ä¿ä½ å·²ç»å®è£äº <code>git-bash </code> ï¼æ³å¿ä½ä¸ºç¨åºååºè¯¥é½è£äºçãæçå®è£ç®å½æ¯</p>
+<pre><code>D:\Program Files\Git\bin\bash.exe
+</code></pre>
+<p>äºæ¯æä»¬å¾å°æç»è¾å¥ç» Typora çå½ä»¤è¡ï¼</p>
+<pre><code class="language-bash">"D:\Program Files\Git\bin\bash.exe" "D:\Program Files\Typora\cnblogs.sh"
+</code></pre>
+<p><img src="https://img2024.cnblogs.com/blog/1489774/202603/1489774-20260331184551599-2078297677.png" alt="image-20260331183824779" loading="lazy"></p>
+<p>ç¹å» "éªè¯å¾çä¸ä¼ éé¡¹" ï¼å¯ä»¥çå°å¾çä¸ä¼ æåï¼</p>
+<p><img src="https://img2024.cnblogs.com/blog/1489774/202603/1489774-20260331184552235-138304339.png" alt="image-20260331183909745" loading="lazy"></p>
+<h2 id="æ¥å¸¸ä½¿ç¨æµè¯">æ¥å¸¸ä½¿ç¨æµè¯</h2>
+<p>å¨ Typora ä¸­æä¾äºä¸¤ç§ä¸ä¼ å¾ççå½¢å¼ï¼</p>
+<h3 id="åå¼ å¾çä¸ä¼ ">åå¼ å¾çä¸ä¼ </h3>
+<p><img src="https://img2024.cnblogs.com/blog/1489774/202603/1489774-20260331184552929-259618312.png" alt="image-20260331184204372" loading="lazy"><br>
+å¾çéä¸­åï¼å³é®å¯ä»¥ä¸ä¼ å½åå¾çã</p>
+<h3 id="æ¹éä¸ä¼ ">æ¹éä¸ä¼ </h3>
+<p>åå®¢åå®åï¼å¾çå¤ªå¤å¯ä»¥å¨é¡¶é¨éé¡¹æ ä¸­ï¼æ ¼å¼âå¾åâä¸ä¼ æææ¬å°å¾ç ï¼ç¹å»åä¸æ¬¡æ§å¨é¨ä¸ä¼ ã</p>
+<p><img src="https://img2024.cnblogs.com/blog/1489774/202603/1489774-20260331184553637-715558170.png" alt="image-20260331184319860" loading="lazy"></p>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0.008333333333333333" data-date-updated="2026-03-31 19:01">2026-03-31 18:49</span>&nbsp;
+<a href="https://www.cnblogs.com/gshang">GShang</a>&nbsp;
+éè¯»(<span id="post_view_count">24</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19803398);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19803398', targetLink: 'https://www.cnblogs.com/gshang/p/19803398', title: 'Typora ä¸­è®¾ç½®å¾åä¸ä¼ å°åå®¢å­ä¸­' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
     <title><![CDATA[ ãFAQãHarmonyOS SDK é­æºå¼æ¾è½å âPush Kit ]]></title>
     <link>https://www.cnblogs.com/HarmonyOSSDK/p/19802341</link>
     <guid>a39ade6d7cc9e564356db57c1b7c1140</guid>
@@ -102,7 +1276,7 @@ Push tokenä¸æ¯ææçtokenï¼å»ºè®®æ¨å¨åº�
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-03-31 16:25">2026-03-31 16:24</span>&nbsp;
 <a href="https://www.cnblogs.com/HarmonyOSSDK">HarmonyOS_SDK</a>&nbsp;
-éè¯»(<span id="post_view_count">6</span>)&nbsp;
+éè¯»(<span id="post_view_count">44</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19802341);return false;">æ¶è</a>&nbsp;
@@ -659,7 +1833,7 @@ WHERE  e.department_id = d.department_id;
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-03-31 16:11">2026-03-31 16:11</span>&nbsp;
 <a href="https://www.cnblogs.com/qingningit">éæ ä»£ç å½</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">55</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19802223);return false;">æ¶è</a>&nbsp;
@@ -944,7 +2118,7 @@ Harness Engineering æä½ æ­ä»ä¹æ ·çç¯å¢ï¼
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-03-31 15:45">2026-03-31 15:45</span>&nbsp;
 <a href="https://www.cnblogs.com/wmyskxz">ææ²¡æä¸é¢å¿è</a>&nbsp;
-éè¯»(<span id="post_view_count">14</span>)&nbsp;
+éè¯»(<span id="post_view_count">154</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19801966);return false;">æ¶è</a>&nbsp;
@@ -1374,7 +2548,7 @@ if (result.isPresent() &amp;&amp; result.get() instanceof InterruptionMetadata) 
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0.0006944444444444445" data-date-updated="2026-03-31 12:09">2026-03-31 12:08</span>&nbsp;
 <a href="https://www.cnblogs.com/apachecn">ç»ä¸ååçé£é¾</a>&nbsp;
-éè¯»(<span id="post_view_count">37</span>)&nbsp;
+éè¯»(<span id="post_view_count">93</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19800605);return false;">æ¶è</a>&nbsp;
@@ -1384,14 +2558,14 @@ if (result.isPresent() &amp;&amp; result.get() instanceof InterruptionMetadata) 
     </description>
     </item>
 <item>
-    <title><![CDATA[ Kite å®ç°é»è¾å é¤ ]]></title>
-    <link>https://www.cnblogs.com/tangllty/p/19800344</link>
-    <guid>405e4c2492cf897f1c6fb9cd8e805868</guid>
+    <title><![CDATA[ ç°ä»£ Python ç¨åºä¼éå¤çæ¥ææ¶é´çé¿åæå ]]></title>
+    <link>https://www.cnblogs.com/deali/p/19800530</link>
+    <guid>c0931b51a0a1d14c96afa9b27df6af70</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/tangllty/p/19800344" title="åå¸äº 2026-03-31 11:33">
-    <span role="heading" aria-level="2">Kite å®ç°é»è¾å é¤</span>
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/deali/p/19800530" title="åå¸äº 2026-03-31 11:54">
+    <span role="heading" aria-level="2">ç°ä»£ Python ç¨åºä¼éå¤çæ¥ææ¶é´çé¿åæå</span>
     
 
 </a>
@@ -1399,776 +2573,122 @@ if (result.isPresent() &amp;&amp; result.get() instanceof InterruptionMetadata) 
             </h1>
             <div class="clear"></div>
             <div class="postBody">
-                    <div id="cnblogs_post_description" style="display: none">
-        
-        Kiteæ¡æ¶æä¾äºå®æ´çé»è¾å é¤åè½å®ç°æ¹æ¡ï¼åæ¬éç½®éé¡¹ãæ³¨è§£æ¯æåå¤çå¨æ©å±ãå¼åèå¯ä»¥å¨å±å¯ç¨é»è¾å é¤å¹¶æå®æ è®°å­æ®µï¼ä¹å¯éè¿@LogicalDeletionæ³¨è§£å¨å®ä½ç±»ä¸­åç¬éç½®ãæ¡æ¶åç½®é»è®¤å¤çå¨æ¯æå¸¸è§æ°æ®ç±»åçé»è¾å¼è½¬æ¢ï¼åæ¶åè®¸èªå®ä¹å¤çå¨å®ç°ç¹æ®ä¸å¡é»è¾ãæ­¤å¤ï¼LogicalDeletionManagerç±»æä¾äºçµæ´»çä¸´æ¶å¯ç¨/è·³è¿é»è¾å é¤çæºå¶ï¼æ»¡è¶³ä¸ååºæ¯éæ±ãè¿ç§è®¾è®¡æ¢ä¿è¯äºæ°æ®å®å¨æ§åå¯è¿½æº¯æ§ï¼åæä¾äºè¶³å¤ççµæ´»æ§ã
-    </div>
-<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h1 id="kite-å®ç°é»è¾å é¤">Kite å®ç°é»è¾å é¤</h1>
-<p>é»è¾å é¤æ¯ä¸ç§æ°æ®å¤çæ¹å¼ï¼æå¨å é¤æ°æ®æ¶ï¼å¹¶éçæ­£ä»æ°æ®åºä¸­ç©çå é¤è®°å½ï¼èæ¯éè¿æ è®°çæ¹å¼è¡¨ç¤ºè¯¥è®°å½å·²è¢«å é¤ãè¿æ ·åçå¥½å¤æ¯å¯ä»¥ä¿çæ°æ®çå®æ´æ§åå¯è¿½æº¯æ§ï¼åæ¶ä¹ä¾¿äºå¨éè¦æ¶æ¢å¤è¢«å é¤çæ°æ®ã</p>
-<h2 id="é»è¾å é¤éç½®">é»è¾å é¤éç½®</h2>
-<p>Kite æä¾äºé»è¾å é¤çéç½®éé¡¹ï¼ä½ å¯ä»¥å¨ <code>LogicalDeletionConfig</code> ä¸­è¿è¡éç½®ã</p>
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h2 id="åè¨">åè¨</h2>
+<p>å¾å¤ Python æ°æï¼çè³èæï¼é½è¸©è¿è¿å ä¸ªåï¼</p>
 <ul>
-<li>Java</li>
+<li><strong>æ¨¡åå¤ªå¤</strong>ï¼ä½ éè¦åæ¶å <code>datetime</code>ã<code>time</code>ã<code>calendar</code> ä¸ä¸ªæ¨¡åæäº¤éãæ³è·åæ¶é´æ³ï¼å» <code>time</code>ãæ³åæ¥æå åï¼å <code>datetime</code>ã</li>
+<li><strong>Naive vs Awareï¼æ¶åºé·é±ï¼ï¼</strong> è¿æ¯æåçå°æ¹ãPython é»è®¤çæç <code>datetime</code> å¯¹è±¡æ¯ä¸å¸¦æ¶åºä¿¡æ¯çï¼Naiveï¼ãå¦ææä¸ä¸ªå¸¦æ¶åºçå¯¹è±¡åä¸ä¸ªä¸å¸¦æ¶åºçå¯¹è±¡è¿è¡æ¯è¾æç¸å ï¼ç¨åºä¼ç´æ¥æåº <code>TypeError</code> å´©æºã</li>
+<li><strong>API çç ´ç¢æï¼</strong> ä¸ºäºåä¸ä¸ªâåå» 3 å¤©âçæä½ï¼éè¦å¯¼å¥ <code>timedelta</code>ï¼å <code>datetime.now() - timedelta(days=3)</code>ï¼ä¸ºäºè§£æISOå­ç¬¦ä¸²ï¼å¾åå¾é¿ç <code>strptime</code> æ ¼å¼åå­ç¬¦ä¸²ã</li>
+<li><strong>ä¸æ¯æâäººç±»è¯­è¨â</strong>ï¼æ²¡æ³ç´æ¥å¤çâæ¨å¤©âãâä¸¤å¨åâè¿ç§é»è¾ï¼å¿é¡»æå¨è®¡ç® <code>timedelta</code>ã</li>
 </ul>
-<pre><code class="language-java">import com.tang.kite.config.logical.LogicalDeletionConfig;
-
-// å¯ç¨é»è¾å é¤
-LogicalDeletionConfig.enabled = true;
-
-// è®¾ç½®é»è¾å é¤å­æ®µå
-LogicalDeletionConfig.fieldName = "deleted";
-
-// èªå®ä¹é»è¾å é¤å¤çå¨
-LogicalDeletionConfig.logicalDeletionProcessor = new CustomLogicalDeletionProcessor();
-</code></pre>
-<ul>
-<li>Kotlin</li>
-</ul>
-<pre><code class="language-kotlin">import com.tang.kite.config.logical.LogicalDeletionConfig
-
-// å¯ç¨é»è¾å é¤
-LogicalDeletionConfig.enabled = true
-
-// è®¾ç½®é»è¾å é¤å­æ®µå
-LogicalDeletionConfig.fieldName = "deleted"
-
-// èªå®ä¹é»è¾å é¤å¤çå¨
-LogicalDeletionConfig.logicalDeletionProcessor = CustomLogicalDeletionProcessor()
-</code></pre>
-<h2 id="é»è¾å é¤æ³¨è§£">é»è¾å é¤æ³¨è§£</h2>
-<p>Kite æä¾äº <code>@LogicalDeletion</code> æ³¨è§£ï¼ç¨äºå¨å®ä½ç±»ä¸­æå®é»è¾å é¤å­æ®µãè¯¥æ³¨è§£çä¼åçº§å¤§äºå¨å±éç½®ç <code>fieldName</code>ã</p>
-<h3 id="ä½¿ç¨ç¤ºä¾">ä½¿ç¨ç¤ºä¾</h3>
-<ul>
-<li>Java</li>
-</ul>
-<pre><code class="language-java">import com.tang.kite.annotation.logical.LogicalDeletion;
-
-public class Account {
-
-    private Long id;
-    private String name;
-    @LogicalDeletion
-    private String deleted;
-
-}
-</code></pre>
-<ul>
-<li>Kotlin</li>
-</ul>
-<pre><code class="language-kotlin">import com.tang.kite.annotation.logical.LogicalDeletion
-
-class Account {
-
-    var id: Long? = null
-    var name: String? = null
-    @LogicalDeletion
-    var deleted: String? = null
-
-}
-</code></pre>
-<h2 id="é»è¾å é¤å¤çå¨">é»è¾å é¤å¤çå¨</h2>
-<h3 id="æ¹æ³åè¡¨">æ¹æ³åè¡¨</h3>
+<p>ç¸æ¯ä¹ä¸ï¼Go è¯­è¨è½ç¶è¦è <code>2006-01-02 15:04:05</code> è¿ä¸ªç¥å¥çæ¶é´ç¹ï¼ä½è³å°é»è¾æ¯èªæ´½çãè Python çåçä½éªæ´åæ¯ä¸æ­ç¼è¡¥ä¸ã</p>
+<h2 id="æ°å·¥å·æ¨è">æ°å·¥å·æ¨è</h2>
+<p>æ¶é´æ¥å° 2026 å¹´ï¼ç¤¾åºçæå python æ ååºé½å¨è¿åï¼æ¥ççè¿äºç°ä»£åçæ¶é´å¤çæ¹å¼ã</p>
 <table>
 <thead>
 <tr>
-<th>æ¹æ³å</th>
-<th>æè¿°</th>
-<th>è¿åå¼</th>
+<th><strong>åºå</strong></th>
+<th><strong>è§è²</strong></th>
+<th><strong>æ¨èçç±</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>isTableNeedProcessing(tableClass: Class&lt;*&gt;)</code></td>
-<td>å¤æ­ç¹å®è¡¨ç±»æ¯å¦éè¦å¤çãé»è®¤è¿å trueï¼å¤çææè¡¨ã</td>
-<td><code>Boolean</code></td>
+<td><strong>ZoneInfo</strong></td>
+<td>æ ååº</td>
+<td>Python 3.9+ åç½®ï¼å½»åºåä»£ <code>pytz</code>ï¼å¤ç IANA æ¶åºã</td>
 </tr>
 <tr>
-<td><code>process(field: Field)</code></td>
-<td>å¤çæå®çæ°æ®åºå­æ®µä»¥çæé»è¾å é¤å¼ã</td>
-<td><code>LogicalDeletionValue</code></td>
+<td><strong>Pendulum</strong></td>
+<td>æ ¸å¿é»è¾</td>
+<td>Datetime çå­ç±»ï¼è¯­æ³æå¶ä¼éï¼å¤çâå å¤©åâãâä¸å¨ä¸âä¿¡æææ¥ã</td>
+</tr>
+<tr>
+<td><strong>Arrow</strong></td>
+<td>ééå¨</td>
+<td>ç¬è«å¿å¤ãå®å¯¹åä¹±å­ç¬¦ä¸²çå¼å®¹æ§æå¼ºï¼<code>.get()</code> ä¸ä¸å°±æå®ã</td>
 </tr>
 </tbody>
 </table>
-<h3 id="é»è®¤å®ç°">é»è®¤å®ç°</h3>
-<p>Kite æä¾äºä¸ä¸ªé»è®¤çé»è¾å é¤å¤çå¨ <code>DefaultLogicalDeletionProcessor</code>ï¼å®æ¯æå¤ç§æ°æ®ç±»åçé»è¾å é¤å¼çæï¼</p>
-<table>
-<thead>
-<tr>
-<th>æ°æ®ç±»å</th>
-<th>æ­£å¸¸å¼</th>
-<th>å é¤å¼</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>Boolean</code></td>
-<td><code>false</code></td>
-<td><code>true</code></td>
-</tr>
-<tr>
-<td><code>Byte</code></td>
-<td><code>0</code></td>
-<td><code>1</code></td>
-</tr>
-<tr>
-<td><code>Short</code></td>
-<td><code>0</code></td>
-<td><code>1</code></td>
-</tr>
-<tr>
-<td><code>Int</code></td>
-<td><code>0</code></td>
-<td><code>1</code></td>
-</tr>
-<tr>
-<td><code>Long</code></td>
-<td><code>0L</code></td>
-<td><code>1L</code></td>
-</tr>
-<tr>
-<td><code>Char</code></td>
-<td><code>'0'</code></td>
-<td><code>'1'</code></td>
-</tr>
-<tr>
-<td><code>String</code></td>
-<td><code>"0"</code></td>
-<td><code>"1"</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="èªå®ä¹å¤çå¨">èªå®ä¹å¤çå¨</h3>
-<p>ä½ å¯ä»¥å®ç° <code>LogicalDeletionProcessor</code> æ¥å£æ¥èªå®ä¹é»è¾å é¤å¤çå¨ï¼</p>
+<p>å¨ Python 3.9 ä¹åï¼<code>pytz</code> æ¯æ¶åºå¤ççå¯ä¸éæ©ï¼ä½å®ç API è®¾è®¡æå¶åäººç±»ï¼æ¯å¦èåç <code>localize</code> é·é±ï¼ã</p>
+<p>2026 å¹´çä»å¤©ï¼<code>ZoneInfo</code> éå IANA æ¶åºæ°æ®åºå·²ç»éå¸¸æçãå¦æä½ å¨ Windows ä¸è¿è¡ï¼è®°å¾è£ä¸ä¸ <code>tzdata</code> è¿ä¸ªåï¼å¨ Linux ä¸ï¼å®ç´æ¥è¯»åç³»ç»æ°æ®åºãè¿ææ¯çæ­£ç <strong>Pythonic</strong>ã</p>
+<h3 id="å¦ä½éæ©">å¦ä½éæ©ï¼</h3>
 <ul>
-<li>Java</li>
+<li><strong>è¿½æ±âé¶ä¾èµâä¸åªéè¦å¤çæ¶åºè½¬æ¢ï¼</strong> é <strong><code>ZoneInfo</code></strong> (æ ååº)ã</li>
+<li><strong>éè¦å¤çå¤æçæ¥æå åï¼æ¯å¦âä¸ä¸ªæçç¬¬ä¸ä¸ªå¨äºâï¼ï¼</strong> é <strong><code>Pendulum</code></strong>ã</li>
+<li><strong>æ­£å¨åç¬è«ï¼é¢å¯¹çæ¯åç§å¥æªçå­ç¬¦ä¸²æ¶é´ï¼</strong> é <strong><code>Arrow</code></strong>ã</li>
+<li><strong>å¨ç¨ Djangoï¼</strong> åæç¨ Django åç½®ç <code>timezone</code> å·¥å·ç±»ï¼å®åºå±å·²ç»å¨é¢æ¥æ± <code>ZoneInfo</code> äºï¼ã</li>
 </ul>
-<pre><code class="language-java">import com.tang.kite.config.logical.LogicalDeletionProcessor;
-import com.tang.kite.config.logical.LogicalDeletionValue;
-import java.lang.reflect.Field;
+<h2 id="ä»£ç ä¾å­">ä»£ç ä¾å­</h2>
+<h3 id="å¤çå¤æçæ¶åºè½¬æ¢ä¸å åä½¿ç¨-pendulum">å¤çå¤æçæ¶åºè½¬æ¢ä¸å åï¼ä½¿ç¨ Pendulumï¼</h3>
+<pre><code class="language-python">import pendulum
 
-public class CustomLogicalDeletionProcessor implements LogicalDeletionProcessor {
+# 1. è¯­ä¹ååå»º
+now = pendulum.now('Asia/Shanghai')
+future = now.add(months=2).end_of('week')
 
-    @Override
-    public boolean isTableNeedProcessing(Class&lt;?&gt; tableClass) {
-        return tableClass == Account.class;
-    }
+# 2. æç®çâäººç±»åâæ¾ç¤º
+print(future.diff_for_humans()) # "2 months from now"
 
-    @Override
-    public LogicalDeletionValue process(Field field) {
-        return new LogicalDeletionValue("N", "Y");
-    }
-
-}
+# 3. å½»åºè§£å³æ¶åºæ¯å¯¹å´©æº
+dt_utc = pendulum.now('UTC')
+if now &gt; dt_utc: # Pendulum ä¼èªå¨å¤çæ¯å¯¹é»è¾
+    print("å®å¨æ¯å¯¹ï¼ä¸åæ¥é")
 </code></pre>
-<ul>
-<li>Kotlin</li>
-</ul>
-<pre><code class="language-kotlin">import com.tang.kite.config.logical.LogicalDeletionProcessor
-import com.tang.kite.config.logical.LogicalDeletionValue
-import java.lang.reflect.Field
+<h3 id="ä»-api-æç¬è«ä¸­è§£æåä¹±æ¶é´ä½¿ç¨-arrow">ä» API æç¬è«ä¸­è§£æåä¹±æ¶é´ï¼ä½¿ç¨ Arrowï¼</h3>
+<pre><code class="language-python">import arrow
 
-class CustomLogicalDeletionProcessor : LogicalDeletionProcessor {
+# ä¸ç®¡æ¯æ¶é´æ³ãISO 8601 è¿æ¯ç¹å®æ ¼å¼ï¼ç»ç» get
+raw_date = "2026-03-24T10:13:35+08:00"
+t = arrow.get(raw_date)
 
-    override fun isTableNeedProcessing(tableClass: Class&lt;*&gt;): Boolean {
-        return tableClass == Account::class.java
-
-    }
-
-    override fun process(field: Field): LogicalDeletionValue {
-        return LogicalDeletionValue("N", "Y")
-    }
-
-}
+# è½¬æ¢æåäº¬æ¶é´å¹¶æ ¼å¼å
+print(t.to('Asia/Shanghai').format('YYYY-MM-DD HH:mm:60'))
 </code></pre>
-<h3 id="éç½®èªå®ä¹å¤çå¨">éç½®èªå®ä¹å¤çå¨</h3>
-<ul>
-<li>Java</li>
-</ul>
-<pre><code class="language-java">LogicalDeletionConfig.logicalDeletionProcessor = CustomLogicalDeletionProcessor();
-</code></pre>
-<ul>
-<li>Kotlin</li>
-</ul>
-<pre><code class="language-kotlin">LogicalDeletionConfig.logicalDeletionProcessor = CustomLogicalDeletionProcessor()
-</code></pre>
-<h2 id="é»è¾å é¤ç®¡çå¨">é»è¾å é¤ç®¡çå¨</h2>
-<p>Kite æä¾äº <code>LogicalDeletionManager</code> ç±»ï¼ç¨äºå¨ç¹å®åºæ¯ä¸è·³è¿é»è¾å é¤æèä¸´æ¶ä½¿ç¨é»è¾å é¤ã</p>
-<h3 id="æ¹æ³åè¡¨-1">æ¹æ³åè¡¨</h3>
-<ul>
-<li>Java</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>æ¹æ³å</th>
-<th>æè¿°</th>
-<th>åæ°</th>
-<th>è¿åå¼</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>withLogical(block: Runnable)</code></td>
-<td>ä¸´æ¶ä½¿ç¨é»è¾å é¤æ§è¡ä»£ç å</td>
-<td><code>block: Runnable</code> è¦æ§è¡çä»£ç å</td>
-<td>æ </td>
-</tr>
-<tr>
-<td><code>withLogical(block: Supplier): T</code></td>
-<td>ä¸´æ¶ä½¿ç¨é»è¾å é¤æ§è¡ä»£ç åå¹¶è¿åç»æ</td>
-<td><code>block: Supplier</code> è¦æ§è¡çä»£ç å</td>
-<td><code>T</code> ä»£ç åçè¿åå¼</td>
-</tr>
-<tr>
-<td><code>withSkip(block: Runnable)</code></td>
-<td>è·³è¿é»è¾å é¤æ§è¡ä»£ç å</td>
-<td><code>block: Runnable</code> è¦æ§è¡çä»£ç å</td>
-<td>æ </td>
-</tr>
-<tr>
-<td><code>withSkip(block: Supplier): T</code></td>
-<td>è·³è¿é»è¾å é¤æ§è¡ä»£ç åå¹¶è¿åç»æ</td>
-<td><code>block: Supplier</code> è¦æ§è¡çä»£ç å</td>
-<td><code>T</code> ä»£ç åçè¿åå¼</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li>Kotlin</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>æ¹æ³å</th>
-<th>æè¿°</th>
-<th>åæ°</th>
-<th>è¿åå¼</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>withLogical(block: () -&gt; Unit)</code></td>
-<td>ä¸´æ¶ä½¿ç¨é»è¾å é¤æ§è¡ä»£ç å</td>
-<td><code>block: () -&gt; Unit</code> è¦æ§è¡çä»£ç å</td>
-<td>æ </td>
-</tr>
-<tr>
-<td><code>withLogical(block: () -&gt; T): T</code></td>
-<td>ä¸´æ¶ä½¿ç¨é»è¾å é¤æ§è¡ä»£ç åå¹¶è¿åç»æ</td>
-<td><code>block: () -&gt; T</code> è¦æ§è¡çä»£ç å</td>
-<td><code>T</code> ä»£ç åçè¿åå¼</td>
-</tr>
-<tr>
-<td><code>withSkip(block: () -&gt; Unit)</code></td>
-<td>è·³è¿é»è¾å é¤æ§è¡ä»£ç å</td>
-<td><code>block: () -&gt; Unit</code> è¦æ§è¡çä»£ç å</td>
-<td>æ </td>
-</tr>
-<tr>
-<td><code>withSkip(block: () -&gt; T): T</code></td>
-<td>è·³è¿é»è¾å é¤æ§è¡ä»£ç åå¹¶è¿åç»æ</td>
-<td><code>block: () -&gt; T</code> è¦æ§è¡çä»£ç å</td>
-<td><code>T</code> ä»£ç åçè¿åå¼</td>
-</tr>
-</tbody>
-</table>
-<h3 id="ä½¿ç¨ç¤ºä¾-1">ä½¿ç¨ç¤ºä¾</h3>
-<h4 id="ä¸´æ¶ä½¿ç¨é»è¾å é¤">ä¸´æ¶ä½¿ç¨é»è¾å é¤</h4>
-<ul>
-<li>Java</li>
-</ul>
-<pre><code class="language-java">import com.tang.kite.logical.LogicalDeletionManager;
+<h3 id="æ ååºæä¾çæ¶åºè½¬æ¢zoneinfo">æ ååºæä¾çæ¶åºè½¬æ¢ï¼ZoneInfoï¼</h3>
+<p>å¦æå¨åä¸ä¸ªè½»éçº§èæ¬ï¼ä¸æ³æ·»å é¢å¤ä¾èµï¼å¯ä»¥ç´æ¥ç¨æ ååºç <code>ZoneInfo</code></p>
+<pre><code class="language-python">from datetime import datetime
+from zoneinfo import ZoneInfo
 
-LogicalDeletionManager.withLogical(() -&gt; {
-    accountMapper.deleteById(1L);
-});
-</code></pre>
-<ul>
-<li>Kotlin</li>
-</ul>
-<pre><code class="language-kotlin">import com.tang.kite.logical.LogicalDeletionManager
+# 1. åå»ºä¸ä¸ªå¸¦æ¶åºç UTC æ¶é´ï¼2026 å¹´çæ éèµ·ç¹ï¼
+utc_now = datetime.now(ZoneInfo("UTC"))
+print(f"UTC æ¶é´: {utc_now}")
 
-LogicalDeletionManager.withLogical {
-    accountMapper.deleteById(1L)
-}
-</code></pre>
-<h4 id="è·³è¿é»è¾å é¤">è·³è¿é»è¾å é¤</h4>
-<ul>
-<li>Java</li>
-</ul>
-<pre><code class="language-java">import com.tang.kite.logical.LogicalDeletionManager;
+# 2. ä¸è¡ä»£ç è½¬ææ¬å°æ¶é´ï¼æ¯å¦åäº¬æ¶é´ï¼
+# åä¹ä¸éè¦ pytz.timezone('...').localize(...) è¿ç§é´é´æä½äº
+beijing_time = utc_now.astimezone(ZoneInfo("Asia/Shanghai"))
+print(f"åäº¬æ¶é´: {beijing_time}")
 
-LogicalDeletionManager.withSkip(() -&gt; {
-    accountMapper.deleteById(1L);
-});
-</code></pre>
-<ul>
-<li>Kotlin</li>
-</ul>
-<pre><code class="language-kotlin">import com.tang.kite.logical.LogicalDeletionManager
+# 3. çè³å¯ä»¥å¤çæå¶å·é¨çæ¶åºï¼æ¯å¦ä½ æ³çççº½çº¦çå¼åèå¨å¹²å
+ny_time = beijing_time.astimezone(ZoneInfo("America/New_York"))
+print(f"çº½çº¦æ¶é´: {ny_time}")
 
-LogicalDeletionManager.withSkip {
-    accountMapper.deleteById(1L)
-}
+# 4. è·åç®åçæ¶åºåç§°ï¼å¦ CST, ESTï¼
+print(f"å½åæ¶åºç¼©å: {ny_time.tzname()}")
 </code></pre>
-<h2 id="å®æ¹ææ¡£">å®æ¹ææ¡£</h2>
-<p>è¯¦ç»çä½¿ç¨ææ¡£è¯·åèï¼</p>
-<ul>
-<li><a href="https://tangllty.eu.org/zh/advanced/logical-deletion" target="_blank" rel="noopener nofollow">ä¸­æææ¡£</a></li>
-<li><a href="https://tangllty.eu.org/advanced/logical-deletion" target="_blank" rel="noopener nofollow">è±æææ¡£</a></li>
-</ul>
-<h2 id="æºç ">æºç </h2>
-<p>Kite çæºç æç®¡å¨ GitHub å Gitee ä¸ï¼æ¨å¯ä»¥å¨ä»¥ä¸å°åæ¥çåè´¡ç®ï¼</p>
-<ul>
-<li><a href="https://github.com/tangllty/kite" target="_blank" rel="noopener nofollow">Kite GitHub ä»åº</a></li>
-<li><a href="https://gitee.com/tangllty/kite" target="_blank" rel="noopener nofollow">Kite Gitee ä»åº</a></li>
-</ul>
-<h2 id="æ»ç»">æ»ç»</h2>
-<p>Kite æ¯ä¸ä¸ªåè½å¼ºå¤§ãæäºä½¿ç¨ç ORM æ¡æ¶ï¼å®éè¿å¨èªå¨æ å°åç®æ´ç APIï¼å¤§å¤§ç®åäºæ°æ®åºæä½çå¼åå·¥ä½ãæ è®ºæ¯å¨ Kotlin é¡¹ç®è¿æ¯ Java é¡¹ç®ä¸­ï¼é½è½æä¾é«æãä¾¿æ·çæ°æ®åºè®¿é®ä½éªã</p>
-<p>å¦ææ¨æ­£å¨å¯»æ¾ä¸ä¸ªè½»éçº§ãé«æ§è½ç ORM æ¡æ¶ï¼Kite ç»å¯¹å¼å¾ä¸è¯ï¼</p>
+<h2 id="å°ç»">å°ç»</h2>
+<p><strong>æ°¸è¿ä¸è¦ä½¿ç¨ <code>datetime.now()</code>ï¼</strong> å»æä½¿ç¨ <code>datetime.now(ZoneInfo("UTC"))</code> æ <code>pendulum.now()</code> çä¹ æ¯ã</p>
+<p><strong>æ°æ®åºå­å¨ç»ä¸ UTCï¼</strong> æ è®ºç¨æ·å¨åªéï¼æ°æ®åºéå­çä¸å®è¦æ¯ UTCã</p>
+<p><strong>åç«¯äº¤ä» ISO 8601ï¼</strong> å«ä¼ æ¶é´æ³ï¼ä¼  <code>2026-03-25T11:30:00Z</code> è¿ç§æ åå­ç¬¦ä¸²ï¼åç«¯è§£æèµ·æ¥æçå¿ã</p>
 
 
+</div>
+<div id="MySignature" role="contentinfo">
+    å¾®ä¿¡å¬ä¼å·ï¼ãç¨åºè®¾è®¡å®éªå®¤ã
+ä¸æ³¨äºäºèç½ç­é¨æ°ææ¯æ¢ç´¢ä¸å¢éææ·å¼åå®è·µï¼åæ¬æ¶æè®¾è®¡ãæºå¨å­¦ä¹ ä¸æ°æ®åæç®æ³ãç§»å¨ç«¯å¼åãLinuxãWebååç«¯å¼åç­ï¼æ¬¢è¿ä¸èµ·æ¢è®¨ææ¯ï¼åäº«å­¦ä¹ å®è·µç»éªã
 </div>
 <div class="clear"></div>
 
             </div>
             <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-03-31 11:34">2026-03-31 11:33</span>&nbsp;
-<a href="https://www.cnblogs.com/tangllty">ç³ç«ç«ç«</a>&nbsp;
-éè¯»(<span id="post_view_count">18</span>)&nbsp;
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-03-31 11:54">2026-03-31 11:54</span>&nbsp;
+<a href="https://www.cnblogs.com/deali">ç¨åºè®¾è®¡å®éªå®¤</a>&nbsp;
+éè¯»(<span id="post_view_count">61</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19800344);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19800344', targetLink: 'https://www.cnblogs.com/tangllty/p/19800344', title: 'Kite å®ç°é»è¾å é¤' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ AIå¼å-python-langchainæ¡æ¶ï¼3-16-angentçåå»ºåæ³¨åtoolï¼ ]]></title>
-    <link>https://www.cnblogs.com/yclh/p/19800075</link>
-    <guid>7612b83d500a758fd1ae902daa3aaed2</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/yclh/p/19800075" title="åå¸äº 2026-03-31 11:00">
-    <span role="heading" aria-level="2">AIå¼å-python-langchainæ¡æ¶ï¼3-16-angentçåå»ºåæ³¨åtoolï¼</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
-<h1 class="header-iWP5WJ auto-hide-last-sibling-br">LangChain ReAct Agent å®æï¼Tool æè¿°ææ¯å·¥å·è°ç¨ç âçµé­â</h1>
-<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space">æè¿å¨æè¾ LangChain ç ReAct æºè½ä½ï¼Agentï¼æ¶ï¼è¸©äºä¸ªä¸å°æ°æé½ä¼è¸©çåï¼ææä»£ç é»è¾ççæ²¡é®é¢ï¼å·¥å·å´è¦ä¹ä¸è°ç¨ãè¦ä¹ä¹±è°ç¨ï¼æè¾äºåå¤©æåç°ï¼é®é¢æ ¹æºç«å¨<strong>Tool çæè¿°ä¿¡æ¯</strong>ä¸ï¼</div>
-<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space">ä»å¤©å°±ç»åå®éä»£ç æ¡ä¾ï¼åå¤§å®¶èè ReAct Agent ä¸­ Tool æè¿°çæ ¸å¿ä½ç¨ï¼æå¤§å®¶æä¹åå¥½æè¿°ï¼è®© Agent ç²¾å âå¹éâ å·¥å·ãé«ææ§è¡ä»»å¡ã</div>
-<h2 class="header-iWP5WJ auto-hide-last-sibling-br">ä¸ãåæ­åºç¡ï¼ReAct Agent çæ ¸å¿é»è¾æè§£</h2>
-<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space">é¦åç®ååé¡¾ä¸ ReAct Agent çæ ¸å¿ ââ å®éµå¾ª â<strong>æèï¼Thoughtï¼â è¡å¨ï¼Actionï¼â è§å¯ï¼Observationï¼</strong>â çå¾ªç¯é»è¾ï¼è½æ ¹æ®ç¨æ·é®é¢èªä¸»å¤æ­æ¯å¦è°ç¨å·¥å·ãè°ç¨åªä¸ªå·¥å·ã</div>
-<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space">æè¿æ¬¡çæµè¯ä»£ç æ ¸å¿é»è¾å¾æ¸æ°ï¼å 6 æ­¥èµ°ï¼</div>
-<ol class="auto-hide-last-sibling-br">
-<li>åå§åå¤§æ¨¡åï¼è¿éç¨äºæ¬å°é¨ç½²ç qwen3.5-27b-awqï¼ä¿è¯æ¨çæçï¼ï¼</li>
-<li>å®ä¹å·¥å·å½æ°ï¼æ¯å¦æ¬æ¬¡çåä¸ºååæç´¢å·¥å·ï¼ï¼</li>
-<li>å°è£ Tool å¯¹è±¡ï¼å³é®ï¼åå«å·¥å·åç§°ãå½æ°ãæ ¸å¿æè¿°ï¼ï¼</li>
-<li>ç¼å ReAct æç¤ºè¯æ¨¡æ¿ï¼å®ä¹ Agent çæèãè¡å¨æ ¼å¼ï¼ï¼</li>
-<li>åå»º ReAct Agent å¹¶ç»å®å·¥å·ãæç¤ºè¯ï¼</li>
-<li>æ§è¡ Agentï¼æµè¯å·¥å·è°ç¨ææã</li>
-</ol>
-<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space">å¶ä¸­æå³é®çä¸æ­¥ï¼å°±æ¯<strong>Tool å¯¹è±¡çå°è£</strong>ââ å°¤å¶æ¯<code>description</code>ï¼æè¿°ï¼å­æ®µï¼è¿æ¯ Agent è¯å«å·¥å·ãå¤æ­æ¯å¦è°ç¨çæ ¸å¿ä¾æ®ã</div>
-<h2 class="header-iWP5WJ auto-hide-last-sibling-br">äºãè¸©åå®å½ï¼Tool æè¿°ä¸ç²¾åï¼Agent å°± âå¤±çµâ</h2>
-<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space">åç»å¤§å®¶çæ¬æ¬¡æµè¯çä¸¤ä¸ªå¸ååºæ¯ï¼ç´è§æå Tool æè¿°çéè¦æ§ï¼</div>
-<h3 class="header-iWP5WJ auto-hide-last-sibling-br">åºæ¯ 1ï¼éæ±å¹éå·¥å·ï¼Agent æ­£å¸¸è°ç¨</h3>
-<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space">å½æè¾å¥é®é¢ **âåä¸ºååææ°çææºæåªäºï¼â** æ¶ï¼Agent çæ§è¡é»è¾å¾é¡ºçï¼</div>
-<ul class="auto-hide-last-sibling-br">
-<li>æèï¼ç¨æ·é®çæ¯åä¸ºååææºä¿¡æ¯ï¼éè¦è°ç¨åä¸ºååæç´¢å·¥å·ï¼</li>
-<li>è¡å¨ï¼è°ç¨<code>huawei_mall_search</code>å·¥å·ï¼è¾å¥å³é®è¯ âææºâï¼</li>
-<li>è§å¯ï¼å·¥å·è¿ååä¸º Mate 60 ç³»åãP60 ç³»åç­ææ°ææºä¿¡æ¯ï¼</li>
-<li>æç»è¾åºï¼æ´çåçæç´¢ç»æï¼å®ç¾åç­é®é¢ã</li>
-</ul>
-<h3 class="header-iWP5WJ auto-hide-last-sibling-br">åºæ¯ 2ï¼éæ±æ å³å·¥å·ï¼Agent âçè°ç¨â</h3>
-<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space">å½æè¾å¥é®é¢ **âä½ å¯ä»¥åè¯æåä¸ªæåº§çæ¶é´ä¹ï¼â** æ¶ï¼é®é¢åºç°äº ââ ææéæ±ååä¸ºååæ¯«æ å³ç³»ï¼Agent å´ä¾ç¶å°è¯è°ç¨<code>huawei_mall_search</code>å·¥å·ï¼è¾å¥ âæåº§æ¶é´â ä½ä¸ºæç´¢å³é®è¯ï¼æç»è¿å âè¯·å¨åä¸ºååå®ç½æ¥çè¯¦ç»ä¿¡æ¯â çæ æç»æï¼å®å¨æ²¡åç­æåº§é®é¢ã</div>
-<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space">ä¸å¼å§æä»¥ä¸ºæ¯æ¨¡åé»è¾åºé®é¢ï¼åå¤æ£æ¥å¤§æ¨¡åéç½®ãä»£ç é»è¾ï¼é½æ²¡åç°é®é¢ãç´å°éè¡æ ¸å¯¹ Tool çå°è£ä»£ç ï¼ææè¯å°ï¼<strong>Tool çæè¿°ä¿¡æ¯å¤ªæ¨¡ç³äºï¼</strong></div>
-<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space">æ¬æ¬¡æµè¯ä¸­ Tool çåå§æè¿°æ¯ï¼<code>"æ¥è¯¢åä¸ºååç¸å³ä¿¡æ¯ï¼åæ¬äº§åãæ´»å¨ãæ¿ç­ç­"</code>ââ è¿ä¸ªæè¿°åªè¯´äº âè½åä»ä¹âï¼å´æ²¡è¯´ â<strong>ä¸è½åä»ä¹</strong>âï¼ä¹æ²¡éå® âéç¨èå´âãAgent å¨æèæ¶ï¼ä¼æ¨¡ç³å¤æ­ âæåº§é®é¢æ¯å¦è½éè¿åä¸ºååæç´¢é´æ¥è§£ç­âï¼æç»å¯¼è´éè¯¯è°ç¨ã</div>
-<h2 class="header-iWP5WJ auto-hide-last-sibling-br">ä¸ãæ ¸å¿çç¸ï¼Tool æè¿°æ¯ Agent ç âå·¥å·ä½¿ç¨è¯´æä¹¦â</h2>
-<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space">ä¸ºä»ä¹ Tool æè¿°è¿ä¹å³é®ï¼æä»¬å¯ä»¥æ Agent æ¯ä½ä¸ä¸ª âæ°æå©çâï¼å·¥å·æ¯ âåç§æè½éå·âââ è Tool æè¿°ï¼å°±æ¯<strong>ç»æ°æå©çççéå·ä½¿ç¨è¯´æä¹¦</strong>ã</div>
-<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space">Agent å¯¹å·¥å·çè®¤ç¥ï¼å®å¨ä¾èµæè¿°ä¿¡æ¯ï¼å®ä¸ä¼ä¸»å¨å»çå·¥å·å½æ°åé¨çé»è¾ï¼ä¹ä¸ä¼å­ç©ºç¥éè¿ä¸ªå·¥å·è½å¤çåªäºé®é¢ãä¸è½å¤çåªäºé®é¢ã</div>
-<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space">ReAct Agent çæèé»è¾æ¯ï¼</div>
-<ol class="auto-hide-last-sibling-br">
-<li>æ¥æ¶ç¨æ·é®é¢åï¼éåææ Tool çæè¿°ï¼</li>
-<li>å¯¹æ¯é®é¢ä¸æè¿°çå¹éåº¦ ââ å¦ææè¿°ç²¾åå¹éï¼å°±è°ç¨å¯¹åº Toolï¼</li>
-<li>å¦æå¤ä¸ª Tool é½å¹éï¼åæ ¹æ®ä¼åçº§åé®é¢å¤æåº¦éæ©ï¼</li>
-<li>å¦æé½ä¸å¹éï¼å°±ç´æ¥ç¨å¤§æ¨¡åèªèº«çç¥è¯åç­ã</li>
-</ol>
-<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space">ç®åè¯´ï¼<strong>Tool æè¿°åå¾è¶ç²¾åï¼Agent çå¹éå¤æ­å°±è¶åç¡®ï¼æè¿°æ¨¡ç³ï¼Agent å°±ä¼ âä¹±éå·¥å·ââæ¼ç¨å·¥å·â</strong>ã</div>
-<h2 class="header-iWP5WJ auto-hide-last-sibling-br">åãå®æä¼åï¼åå¥½ Tool æè¿°ç 3 ä¸ªæ ¸å¿åå</h2>
-<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space">ç»åæ¬æ¬¡è¸©åç»éªï¼ææ»ç»äºå Tool æè¿°ç 3 ä¸ªå³é®ååï¼æè¿ä¸ªæ¥åï¼è½å¤§å¹æå Agent å·¥å·è°ç¨çåç¡®çï¼</div>
-<h3 class="header-iWP5WJ auto-hide-last-sibling-br">åå 1ï¼éå®èå´ï¼æç¡® âè½åä»ä¹â</h3>
-<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space">æè¿°è¦<strong>ç²¾åè¯´æå·¥å·çæ ¸å¿åè½</strong>ï¼é¿åæ¨¡ç³è¡¨è¿°ï¼è®© Agent ä¸ç¼ç¥éå·¥å·çæ ¸å¿è½åã</div>
-<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space">â éè¯¯ç¤ºä¾ï¼æ¬æ¬¡åå§æè¿°ï¼ï¼<code>"æ¥è¯¢åä¸ºååç¸å³ä¿¡æ¯ï¼åæ¬äº§åãæ´»å¨ãæ¿ç­ç­"</code>ï¼èå´å¤ªå¹¿ï¼æ è¾¹çï¼</div>
-<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space">â ä¼åç¤ºä¾ï¼<code>"ä¸é¨æ¥è¯¢åä¸ºååçææºãç¬è®°æ¬ãæºè½æè¡¨ç­ç¡¬ä»¶äº§åä¿¡æ¯ï¼ä»¥åMate 60ç³»åç­æ°åå¨æï¼ä»æ¯æåä¸ºååç¸å³äº§åæ¥è¯¢ï¼ä¸æ¯ææ¥è¯¢æåº§ãå¤©æ°ç­éååç±»ä¿¡æ¯"</code></div>
-<h3 class="header-iWP5WJ auto-hide-last-sibling-br">åå 2ï¼æç¡®ç¦åºï¼è¯´æ âä¸è½åä»ä¹â</h3>
-<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space">è¿æ¯è§£å³ âä¹±è°ç¨â çæ ¸å¿ï¼ä¸å®è¦å¨æè¿°ä¸­<strong>éå®å·¥å·çéç¨è¾¹ç</strong>ï¼æç¡®åè¯ Agent åªäºé®é¢ä¸è¯¥ç¨è¿ä¸ªå·¥å·ã</div>
-<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space">æ¯å¦æ¬æ¬¡çåä¸ºååæç´¢å·¥å·ï¼é¤äºè¯´æè½æ¥äº§åï¼è¿è¦æç¡®ï¼<code>"ä¸æ¯ææ¥è¯¢æåº§ãåå²ç¥è¯ãå¤©æ°ç­éåä¸ºååç¸å³åå®¹"</code>ã</div>
-<h3 class="header-iWP5WJ auto-hide-last-sibling-br">åå 3ï¼ç®æ´å·ä½ï¼é¿ååä½</h3>
-<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space">æè¿°ä¸ç¨å¤ªé¿ï¼ä½è¦<strong>å³é®ä¿¡æ¯çªåº</strong>ï¼è®© Agent è½å¿«éæåæ ¸å¿å¤æ­ä¾æ®ãé¿åå âè¿ä¸ªå·¥å·æ¯ç¨ Python åçââè°ç¨éè¦ API å¯é¥â ç­æ å³ä¿¡æ¯ ââAgent åªéè¦ç¥é âå·¥å·è½è§£å³ä»ä¹é®é¢âï¼ä¸éè¦ç¥éå·¥å·çå®ç°ç»èã</div>
-<h2 class="header-iWP5WJ auto-hide-last-sibling-br">äºãä¼ååä»£ç ææï¼ç²¾åå¹éï¼é¶è¯¯è°ç¨</h2>
-<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space">æç§ä¸é¢çååä¼å Tool æè¿°åï¼éæ°æµè¯ä¸¤ä¸ªåºæ¯ï¼ææå®å¨ä¸åï¼</div>
-<h3 class="header-iWP5WJ auto-hide-last-sibling-br">åºæ¯ 1ï¼éæ±å¹éå·¥å·</h3>
-<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space">è¾å¥ âåä¸ºååææ°çææºæåªäºï¼âï¼Agent ä¾ç¶è½ç²¾åè°ç¨å·¥å·ï¼è¿åå®æ´çææºäº§åä¿¡æ¯ï¼é»è¾åä¹åä¸è´ï¼ä½å¤æ­è¿ç¨æ´æ¸æ°ã</div>
-<h3 class="header-iWP5WJ auto-hide-last-sibling-br">åºæ¯ 2ï¼éæ±æ å³å·¥å·</h3>
-<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space">è¾å¥ âä½ å¯ä»¥åè¯æåä¸ªæåº§çæ¶é´ä¹ï¼âï¼Agent çæèé»è¾åæï¼</div>
-<ul class="auto-hide-last-sibling-br">
-<li>æèï¼ç¨æ·é®çæ¯æåº§æ¶é´ï¼æ²¡æä»»ä½ Tool çæè¿°å¹éè¿ä¸ªéæ±ï¼ç´æ¥ç¨å¤§æ¨¡åç¥è¯åç­ï¼</li>
-<li>æç»è¾åºï¼ç´æ¥ç»åºåäºæåº§çå·ä½æ¶é´èå´ï¼åç­åç¡®ï¼å®å¨ä¸è°ç¨ä»»ä½å·¥å·ã</li>
-</ul>
-<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space">è¿ææ¯ ReAct Agent è¯¥æçææï¼<strong>Tool æè¿°çä¼åï¼ç´æ¥è§£å³äº âä¸å¹éä¹è°ç¨â çé®é¢ï¼è®© Agent çå³ç­æ´ç²¾åã</strong></div>
-<h2 class="header-iWP5WJ auto-hide-last-sibling-br">å­ãæ»ç»ï¼Tool æè¿°æ¯ Agent è°ç¨ç âæ ¸å¿å¼å³â</h2>
-<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space">éè¿è¿æ¬¡å®æï¼ææ·±å»ä½ä¼å°ï¼å¨ LangChain ReAct Agent çå¼åä¸­ï¼<strong>ä»£ç é»è¾æ¯éª¨æ¶ï¼Tool æè¿°æ¯çµé­</strong>ãå¾å¤æ¶åï¼ä¸æ¯ Agent ä¸ä¼è°ç¨å·¥å·ï¼èæ¯æä»¬æ²¡ç» Agent è¶³å¤ç âå¤æ­ä¾æ®âã</div>
-<div class="auto-hide-last-sibling-br paragraph-pP9ZLC paragraph-element br-paragraph-space">ç»å¤§å®¶æ»ç» 3 ä¸ªè½å°æå·§ï¼åç»­å¼åç´æ¥å¥ç¨ï¼</div>
-<ol class="auto-hide-last-sibling-br">
-<li>å Tool æè¿°æ¶ï¼åæç¡® âæ ¸å¿åè½âï¼åéå® âéç¨èå´âï¼æåæ æ³¨ âç¦æ­¢åºæ¯âï¼</li>
-<li>å¤å·¥å·åºæ¯ä¸ï¼ç»æ¯ä¸ª Tool åå·®å¼åæè¿°ï¼é¿åæè¿°éå å¯¼è´ Agent æ··æ·ï¼</li>
-<li>æµè¯æ¶ï¼éç¹è§å¯ Agent ç âThoughtâ æèè¿ç¨ ââ å¦ææèä¸­æå°äºå·¥å·åç§°ï¼è¯´ææè¿°å¹éï¼æ²¡æå°åè¯´ææè¿°æ²¡è¢«è¯å«ï¼åæ¶ä¼åã</li>
-</ol>
-<p>ä»£ç å®ç°ï¼</p>
-<div class="cnblogs_Highlighter">
-<pre class="brush:python;gutter:true;">from langchain_openai import ChatOpenAI
-from langchain_core.tools import Tool
-from langchain.agents import create_react_agent  # æ¹ç¨ ReAct æºè½ä½
-from langchain.agents import AgentExecutor
-from langchain_core.prompts import PromptTemplate  # ReAct ç¨ PromptTemplate èé ChatPromptTemplate
-
-# 1. åå§å LLMï¼ä¿æä¸åï¼
-DEEPSEEK_API_KEY = "123"  # æ¿æ¢ä¸ºå®éç API Key
-llm = ChatOpenAI(
-    api_key=DEEPSEEK_API_KEY,
-    base_url="http://192.168.0.100:8085/v1",
-    model="qwen3.5-27b-awq",
-    temperature=0.3,
-    max_tokens=1024,
-)
-
-# 2. å·¥å·å½æ°
-def huawei_mall_search(query: str) -&gt; str:
-    """åä¸ºååæç´¢å·¥å·"""
-    print(f"[DEBUG] å·¥å·è¢«è°ç¨ï¼æç´¢å³é®è¯ï¼{query}")
-    search_results = {
-        "ä¼æµæ´»å¨": "åä¸ºååä¼æµæ´»å¨æ¯è®©ç¨æ·ä½éªæ°åå¹¶åé¦æè§çæ´»å¨ãç®åæMate 60ç³»åä¼æµï¼åä¸å¯èµ¢åç¤¼åã",
-        "ææº": "åä¸ºååææ°ææºï¼Mate 60ç³»åãP60ç³»åãnovaç³»åç­ã",
-        "ç¬è®°æ¬": "åä¸ºMateBook X ProãMateBook Dç³»åç¬è®°æ¬çµèã",
-        "æè¡¨": "åä¸ºWatch 4ãWatch GTç³»åæºè½æè¡¨ã",
-        "é»è®¤": "è¯·å¨åä¸ºååå®ç½æ¥çè¯¦ç»ä¿¡æ¯æèç³»å®¢æã"
-    }
-    for keyword in search_results:
-        if keyword in query:
-            return f"åä¸ºååæç´¢ç»æï¼{search_results[keyword]}"
-    return search_results["é»è®¤"]
-
-# 3. åå»ºå·¥å·
-huawei_tool = Tool(
-    name="huawei_mall_search",
-    description="æ¥è¯¢åä¸ºååç¸å³ä¿¡æ¯ï¼åæ¬äº§åãæ´»å¨ãæ¿ç­ç­",
-    func=huawei_mall_search,
-)
-tools = [huawei_tool]
-
-# 4. å®ä¹ ReAct æç¤ºè¯æ¨¡æ¿
-react_prompt = PromptTemplate.from_template("""
-Answer the following questions as best you can. You have access to the following tools:
-
-{tools}
-
-Use the following format:
-
-Question: the input question you must answer
-Thought: you should always think about what to do
-Action: the action to take, should be one of [{tool_names}]
-Action Input: the input to the action
-Observation: the result of the action
-... (this Thought/Action/Action Input/Observation can repeat N times)
-Thought: I now know the final answer
-Final Answer: the final answer to the original input question
-
-Begin!
-
-Question: {input}
-Thought: {agent_scratchpad}
-""")
-
-# 5. åå»º ReAct æºè½ä½
-agent = create_react_agent(llm=llm, tools=tools, prompt=react_prompt)
-
-# 6. åå»ºæ§è¡å¨
-agent_executor = AgentExecutor(
-    agent=agent,
-    tools=tools,
-    verbose=True,
-    max_iterations=3,
-    handle_parsing_errors=True,
-    return_intermediate_steps=True
-)
-
-# 7. æµè¯ï¼ä¿æä¸åï¼
-print("\n" + "=" * 60)
-print("æµè¯ Agent å·¥å·è°ç¨")
-print("=" * 60)
-
-#ä¼è°ç¨æ³¨åçæ¹æ³
-#result = agent_executor.invoke({"input": "åä¸ºååææ°çææºæåªäºï¼"})
-#ä¸ä¼è°ç¨
-result = agent_executor.invoke({"input": "ä½ å¯ä»¥åè¯æåä¸ªæåº§çæ¶é´ä¹ï¼"})
-print(f"\næç»è¾åº: {result['output']}")
-print(f"\nä¸­é´æ­¥éª¤: {result['intermediate_steps']}")
-</pre>
-</div>
-<p><strong>&nbsp;è°ç¨å·¥å·è¾åºï¼</strong></p>
-<p>============================================================<br>æµè¯ Agent å·¥å·è°ç¨<br>============================================================<br><br><br>&gt; Entering new AgentExecutor chain...<br>t.<br>&lt;/think&gt;<br><br>Thought: ç¨æ·è¯¢é®åä¸ºååææ°çææºæåªäºï¼æéè¦ä½¿ç¨åä¸ºååæç´¢å·¥å·æ¥æ¥è¯¢ç¸å³ä¿¡æ¯ã<br><br>Action: huawei_mall_search<br>Action Input: åä¸ºååææ°ææº 2024<br>[DEBUG] å·¥å·è¢«è°ç¨ï¼æç´¢å³é®è¯ï¼åä¸ºååææ°ææº 2024<br><br>åä¸ºååæç´¢ç»æï¼åä¸ºååææ°ææºï¼Mate 60ç³»åãP60ç³»åãnovaç³»åç­ãæ¯ã<br>&lt;/think&gt;<br><br>Thought: æ ¹æ®æç´¢ç»æï¼åä¸ºååææ°ææºåæ¬Mate 60ç³»åãP60ç³»åånovaç³»åãéè¦ç¡®è®¤è¿äºæ¯å¦ä¸ºå½åææ°åå·ï¼å¹¶è¡¥åå·ä½ä¿¡æ¯ã<br><br>Final Answer: åä¸ºååææ°ææºä¸»è¦åæ¬ä»¥ä¸ç³»åï¼&nbsp;&nbsp;<br>1. **Mate 60ç³»å**ï¼å¦Mate 60ãMate 60 Proç­ï¼&nbsp;&nbsp;<br>2. **P60ç³»å**ï¼å¦P60ãP60 ProãP60 Artç­ï¼&nbsp;&nbsp;<br>3. **novaç³»å**ï¼å¦nova 12ç³»åç­ï¼&nbsp;&nbsp;<br>å»ºè®®è®¿é®åä¸ºååå®ç½æçº¿ä¸é¨åºè·åå·ä½åå·ãéç½®åææ°æ´»å¨ä¿¡æ¯ã<br><br>&gt; Finished chain.<br><br>æç»è¾åº: åä¸ºååææ°ææºä¸»è¦åæ¬ä»¥ä¸ç³»åï¼&nbsp;&nbsp;<br>1. **Mate 60ç³»å**ï¼å¦Mate 60ãMate 60 Proç­ï¼&nbsp;&nbsp;<br>2. **P60ç³»å**ï¼å¦P60ãP60 ProãP60 Artç­ï¼&nbsp;&nbsp;<br>3. **novaç³»å**ï¼å¦nova 12ç³»åç­ï¼&nbsp;&nbsp;<br>å»ºè®®è®¿é®åä¸ºååå®ç½æçº¿ä¸é¨åºè·åå·ä½åå·ãéç½®åææ°æ´»å¨ä¿¡æ¯ã<br><br>ä¸­é´æ­¥éª¤: [(AgentAction(tool='huawei_mall_search', tool_input='åä¸ºååææ°ææº 2024\n', log='t.\n&lt;/think&gt;\n\nThought: ç¨æ·è¯¢é®åä¸ºååææ°çææºæåªäºï¼æéè¦ä½¿ç¨åä¸ºååæç´¢å·¥å·æ¥æ¥è¯¢ç¸å³ä¿¡æ¯ã\n\nAction: huawei_mall_search\nAction Input: åä¸ºååææ°ææº 2024\n'), 'åä¸ºååæç´¢ç»æï¼åä¸ºååææ°ææºï¼Mate 60ç³»åãP60ç³»åãnovaç³»åç­ã')]<br><br></p>
-<p><strong>ä¸è°ç¨å·¥å·è¾åºï¼</strong></p>
-<p>============================================================<br>æµè¯ Agent å·¥å·è°ç¨<br>============================================================<br><br><br>&gt; Entering new AgentExecutor chain...<br>å¶ã<br>&lt;/think&gt;<br><br>Thought: è¿ä¸ªé®é¢æ¶åæåº§æ¶é´ï¼å±äºå¤©ææå æå­¦ç¥è¯ï¼ä¸åä¸ºååçäº§åãæ´»å¨ãæ¿ç­æ å³ãå½åå¯ç¨å·¥å·huawei_mall_searchæ æ³æä¾æ­¤ç±»ä¿¡æ¯ã<br>Final Answer: ææ æ³éè¿åä¸ºååå·¥å·æ¥è¯¢æåº§æ¶é´ãæåº§æ¥æèå´éå¸¸å¦ä¸ï¼ç½ç¾åº§ï¼3.21-4.19ï¼ãéçåº§ï¼4.20-5.20ï¼ãåå­åº§ï¼5.21-6.21ï¼ãå·¨è¹åº§ï¼6.22-7.22ï¼ãç®å­åº§ï¼7.23-8.22ï¼ãå¤å¥³åº§ï¼8.23-9.22ï¼ãå¤©ç§¤åº§ï¼9.23-10.23ï¼ãå¤©èåº§ï¼10.24-11.22ï¼ãå°æåº§ï¼11.23-12.21ï¼ãæ©ç¾¯åº§ï¼12.22-1.19ï¼ãæ°´ç¶åº§ï¼1.20-2.18ï¼ãåé±¼åº§ï¼2.19-3.20ï¼ãå»ºè®®éè¿å¤©æç½ç«æä¸ä¸å æåºç¨è·åæ´åç¡®ä¿¡æ¯ã<br><br>&gt; Finished chain.<br><br>æç»è¾åº: ææ æ³éè¿åä¸ºååå·¥å·æ¥è¯¢æåº§æ¶é´ãæåº§æ¥æèå´éå¸¸å¦ä¸ï¼ç½ç¾åº§ï¼3.21-4.19ï¼ãéçåº§ï¼4.20-5.20ï¼ãåå­åº§ï¼5.21-6.21ï¼ãå·¨è¹åº§ï¼6.22-7.22ï¼ãç®å­åº§ï¼7.23-8.22ï¼ãå¤å¥³åº§ï¼8.23-9.22ï¼ãå¤©ç§¤åº§ï¼9.23-10.23ï¼ãå¤©èåº§ï¼10.24-11.22ï¼ãå°æåº§ï¼11.23-12.21ï¼ãæ©ç¾¯åº§ï¼12.22-1.19ï¼ãæ°´ç¶åº§ï¼1.20-2.18ï¼ãåé±¼åº§ï¼2.19-3.20ï¼ãå»ºè®®éè¿å¤©æç½ç«æä¸ä¸å æåºç¨è·åæ´åç¡®ä¿¡æ¯ã<br><br>ä¸­é´æ­¥éª¤: []</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-
-
- æ´å¤å­¦ä¹ èµæå°½å¨
- <a style="text-shadow: 0 0 5px rgba(255, 255, 255, 1), 0 0 10px rgba(255, 255, 255, 1), 0 0 15px rgba(255, 255, 255, 1), 0 0 20px rgba(240, 201, 77, 1), 0 0 25px rgba(240, 201, 77, 1), 0 0 30px rgba(240, 201, 77, 1), 0 0 35px rgba(240, 201, 77, 1)" href="http://resources.kittytiger.cn/" target="_blank" rel="noopener nofollow">èèç½çèµæº</a>
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.0006944444444444445" data-date-updated="2026-03-31 11:01">2026-03-31 11:00</span>&nbsp;
-<a href="https://www.cnblogs.com/yclh">ä¸ç¬ä½</a>&nbsp;
-éè¯»(<span id="post_view_count">53</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19800075);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19800075', targetLink: 'https://www.cnblogs.com/yclh/p/19800075', title: 'AIå¼å-python-langchainæ¡æ¶ï¼3-16-angentçåå»ºåæ³¨åtoolï¼' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ AI æ¶ä»£ï¼ç¥é­ãéåºä¸éæ°å®ä¹ ]]></title>
-    <link>https://www.cnblogs.com/dafanjoy/p/19799503</link>
-    <guid>aa228e9a0f890fdf026ab8d93a9e67b8</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/dafanjoy/p/19799503" title="åå¸äº 2026-03-31 09:58">
-    <span role="heading" aria-level="2">AI æ¶ä»£ï¼ç¥é­ãéåºä¸éæ°å®ä¹</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
-<div class="lake-content">
-<p id="u819a3f55" class="ne-p"><span class="ne-text">å½å AI çåå±å¦ç«å¦è¼ï¼å¤§å¤§å°å°çèªåªä½é½å¨ç­è®®ï¼å°¤å¶æè¿OpenClawæ´æ¯æèµ·äºèªåªä½è®¨è®ºçç­æ½®ï¼ä»¿ä½ä¸åè¿ä¸é¡¿âé¾è¾âå°±è¦è¢«è¿ä¸ªæ¶ä»£ææå¼ã</span></p>
-<p id="u0c9c6cbd" class="ne-p"><strong><span class="ne-text">èªåªä½åºç¶æ¯ä¸å¦æ¢å¾çå¨âè´©åç¦èâï¼ä½ä¸å¯å¦è®¤çæ¯AI å¯¹åè¡åä¸çé¢ è¦æ§åé©å·²è¿å¨ç¼å</span></strong><span class="ne-text">ãèä½ä¸ºè¿åºåé©éæ æ°æ®éä¸åçä½ æç©¶ç«è¯¥å¦ä½é¢å¯¹ä¸éåºè¿åºæ æ³åé¿çæ¶ä»£æµªæ½®ï¼ æç»åèªèº«ç»åä¸è¡ä¸è§å¯ï¼ä»å ä¸ªæçåçæååºåï¼è°è°ç°é¶æ®µçä¸äºæèï¼ ä»ä¸ºä¸ªäººæµè§ã</span></p>
-<p id="uba80ae0f" class="ne-p">&nbsp;</p>
-<p id="u9719f1ea" class="ne-p"><img src="https://img2024.cnblogs.com/blog/780676/202603/780676-20260331095035694-1297641592.png" alt="image" width="722" height="335" style="display: block; margin-left: auto; margin-right: auto"></p>
-<p id="uee7ed6d4" class="ne-p">&nbsp;</p>
-<p id="u85e46df4" class="ne-p" style="text-align: center"><span style="font-size: 24px; color: rgba(230, 126, 35, 1)"><strong><span class="ne-text">è§ç¹</span></strong></span></p>
-<p id="uc4645886" class="ne-p">&nbsp;</p>
-<div class="ne-alert" data-type="success">
-<p id="ue8ef8842" class="ne-p"><span style="font-size: 18px"><strong><span class="ne-text">ä¸ãç¥é­ï¼ä¿¡æ¯å£åè¢«æç ´ï¼äººäººé½æâä¸è½å©çâ</span></strong></span></p>
-</div>
-<p id="u68279529" class="ne-p"><span class="ne-text"> AI æåè®©å¤§å¤äººä½ä¼å°æ¯å¯ä»¥</span><strong><span class="ne-text">å¿«éå»ç©¿æªç¥é¢åçä¿¡æ¯å£å</span></strong><span class="ne-text">ã å®ä»æ ¹æ¬ä¸éä½äºç¥è¯è·åãé®é¢è§£å³ä¸è®¤ç¥æ¢ç´¢çé¨æ§ ï¼åä¸è®ºè¿ç§ä¿¡æ¯è·åç</span><strong><span class="ne-text">åç¡®æ§</span></strong><span class="ne-text">ä¸</span><strong><span class="ne-text">ç³»ç»æ§</span></strong><span class="ne-text">å¦ä½</span><span class="ne-text">ï¼</span><strong><span class="ne-text">è¿ç§ä¾¿æ·æ§æ§å¨å½åäºèç½âæå·âæå¿çæ¨å¨ä¸æ¯è§¦æå¯åä¸æ æ¯å»ä»·ç</span></strong><span class="ne-text">ã</span></p>
-<p id="u0d1814f9" class="ne-p">&nbsp;</p>
-<p id="uc9d3ae76" class="ne-p"><span class="ne-text">ä»¥è±åãåé®ä¸ºä»£è¡¨ç AI åºç¨ï¼ä»¥åå¨æ­¤åºç¡ä¸è¡ççåç´é¢åæºè½ä½ï¼æ è®ºæ¯é®é¢åæè§£ç­ãæ°æ®æ´çå½çº³ï¼è¿æ¯ææ¡æ°åãæ¹æ¡ææï¼é½è½æ·±åº¦è¾å©ç»å¤§å¤æ°äººçæ¥å¸¸å·¥ä½ä¸å­¦ä¹ ãå¯ä»¥ç¡®å®çæ¯AI å¨éç¨å±é¢çè½ååªä¼è¶æ¥è¶å¼ºï¼ææ¬å¤çãé»è¾è¾å©ãåºç¡åæè¿ç±»å·¥ä½ï¼ä¹ä¼è¶æ¥è¶æçãè¶æ¥è¶å®åãè¶æ¥è¶ä¾¿æ·ã</span></p>
-<p id="ueb847f25" class="ne-p">&nbsp;</p>
-<p id="ub374fdce" class="ne-p"><span class="ne-text">ä»¥æèªèº«çå·¥ä½åºæ¯ä¸ºä¾ï¼ç®åææ¬ç±»å·¥ä½é½ä»¥AIä¸ºèµ·ç¹ï¼æä¸ªé¢åï¼æä¸ªè¡ä¸ä¸äºè§£ï¼æ²¡é®é¢ï¼åé®AIåï¼ç¶åææ­å»ºå¥½æ¡æ¶ï¼æç¡®æ¹ååï¼ç¬¬ä¸çåå®¹äº¤ç±AIçæï¼ä¹åæåç»åå®ééæ±ä¿®ä¿®è¡¥è¡¥å³å¯ãä¸å¯å¦è®¤ï¼AIçæçåå®¹è´¨éç¡®å®å¤ªè¿äºç©ºæ´ï¼ä½å°±æä¸ªäººä½¿ç¨ä½éªèè¨ï¼AIå¯¹å¸¸è§å·¥ä½çæçæåæ¯å·¨å¤§çã</span></p>
-<p id="u6d823e21" class="ne-p">&nbsp;</p>
-<p id="ubdd521e4" class="ne-p"><span class="ne-text">è¿æ­£æ¯å½ä¸æ­£å¨åçç</span><strong><span class="ne-text">åéç¥é­</span></strong><span class="ne-text">ï¼ä¸æ¹é¢ï¼æ®éäººåå© AIå¯ä»¥å¿«éäºè§£ä¸æéæªç¥é¢åçä¿¡æ¯èµæï¼å¯ä»¥å¯¹åæ¬éçæä¸ä¸çé¢åç¥é­ï¼å¦ä¸æ¹é¢ï¼å¤§ä¼ä¹å¨å¯¹ AI æ¬èº«ç¥é­ ââ å®ä¸åæ¯æ°é»éé¥ä¸å¯åçé«ç§ææ¦å¿µï¼èæ¯éæå¯ç¨ãç¨³å®å¯é çæ¥å¸¸å·¥å·ã </span></p>
-<p id="u1c388b2d" class="ne-p"><span class="ne-text"> AI åºç¨å·²å¿«éæ¸éå°ä¸»æµäººç¾¤çå·¥ä½ä¸çæ´»ä¸­ï¼èä¸è¦ç¥éè¿ä¸ªä¸»æµäººç¾¤å¨ç½ç»ä¸çå£°é³ä¹æ¯æå¤§çï¼ä»ä»¬ä»£è¡¨äºâå¤§å¤æ°âãè¿ä¹å¥åæ¿åºä¾§ææ¯æ®æ ä¸æ°å­ç»æµçåå±æ¹åï¼</span><strong><span class="ne-text">æ¯ç«ä»»ä½ä¸åºçæ­£æä¹ä¸çå¨æ°åé©ï¼é½ä¸å¯è½å§ç»å¸¦çâé«é¨æ§ãå°ä¼åâ çæ ç­¾ã</span></strong></p>
-<p id="u375f085c" class="ne-p">&nbsp;</p>
-<p id="uf3721dbf" class="ne-p"><strong><span class="ne-text">ä½éçäººä»¬å¯¹ AI çä¾èµæ¥çå æ·±ï¼ä¸æ¦å½¢ææ·±åº¦è·¯å¾ä¾èµï¼å®ä¾¿ä¼åä½ä¸ææ¬å¨æ¯ä¸ªäººå¤´é¡¶çè¾¾æ©åå©æ¯ä¹å ââ ä¾¿å©è¶æ¯è§¦æå¯å¾ï¼æ½å¨çé£é©ä¸æç¼å°±è¶é¾ä»¥å¯è§ï¼ä½åæ ·ä¹è´å«çå·¨å¤§çæºä¼ï¼ æ è®ºä»ç®¡çååä¸è§åº¦èè¨é£é©ä¸æºéæ­£å¨åæ­¥æ¾å¤§ ã</span></strong></p>
-<p id="u708aa459" class="ne-p">&nbsp;</p>
-<div class="ne-alert" data-type="info">
-<p id="u9afd95b8" class="ne-p"><span style="font-size: 18px"><strong><span class="ne-text">äºãè½åè¾¹çå»¶ä¼¸ä¸æåï¼ææäºæé½å¨è¢«âéæ°å®ä¹â</span></strong></span></p>
-</div>
-<p id="u6d42e0da" class="ne-p"><span class="ne-text">å¦æä½ æ¯æä¸è¡ä¸çä¸ä¸äººï¼æ¯å¦å¯¹äºææ¯å¼ååºèº«çææ¥è¯´ï¼æç´è§æåAI å¨ç¼ç¨é¢åçè¡¨ç°æ¯å¤äºæåæ²¿ä¸æå·é¢ è¦æ§çãä»èªç¶è¯­è¨ç´æ¥çæä»£ç ï¼å° </span><strong><span class="ne-text">Cursor</span></strong><span class="ne-text">ã</span><strong><span class="ne-text">Antigravity</span></strong> <span class="ne-text"> è¿æ · AI åç IDE å®ç°é¡¹ç®çº§å¼åï¼åå° Claude Code å­åè¶é¿ä¸ä¸æçè§£æ´ä½é¡¹ç®ãèªä¸»æ­å»ºå¼åè°è¯ä¸æ¶ææ¨çï¼AI ç¼ç¨æ­£ä»ä»£ç è¡¥å¨ãå½æ°æå®ç°çè¾å©å·¥å·ï¼ éæ­¥è¿åä¸ºå¯ç¬ç«å®æç³»ç»</span><span class="ne-text">å¼å</span><strong><span class="ne-text">çåä½ä¸»ä½</span></strong><span class="ne-text">ã</span></p>
-<p id="u87a4e9ba" class="ne-p">&nbsp;</p>
-<p id="udb2f95c4" class="ne-p"><span class="ne-text">ä¸å¶è¯´ AI å¨åä»£ç¨åºåï¼ä¸å¦è¯´æ¯ç¨åºåæ­£å¨ç¨ AI éæ°å®ä¹çè³ â</span><strong><span class="ne-text">æ§æ¯</span></strong><span class="ne-text">â ä¼ ç»å¼åè¡ä¸ ââ éå¤ç¼ç ãåºç¡å®ç°è¢«å¿«éæ¿ä»£ï¼èä¸äººå¨æ ãææ¥ AI å®ææ´å¥ç³»ç»çæ¶ä»£å·²ç»æèé©¬ä¸å°±è¦å°æ¥ï¼å¼åèçè½åè¾¹çè¢«æ éæé¿ï¼æ´ä¸ªè¡ä¸çä»·å¼é»è¾æ­£å¨è¢«å½»åºæ¹åã </span></p>
-<p id="uaaea37e5" class="ne-p">&nbsp;</p>
-<p id="ua074d6c8" class="ne-p"><span class="ne-text">è¿ä¸è¶å¿å¹¶ä¸å±éäºå¼åé¢åãæ è®ºèº«å¤åªä¸ªè¡ä¸ï¼AI é½å¨æå¤§æå±ä¸ªä½çè½åè¾¹çä¸ä¸éãå®æ­£æç»­æ¸éåè¡åä¸ï¼å°½ç®¡æ¸éèå¥ä¸æ·±åº¦å­å¨å·®å¼ï¼ä½</span><strong><span class="ne-text">é¨åå·¥ä½è¢«æ¿ä»£ãé¨åå²ä½è¢«éæãé¨åæµç¨è¢«éå¡</span></strong><span class="ne-text">ï¼å·²æ¯æ æ³åé¿çç¡®å®æ§è¶å¿ã</span></p>
-<p id="u71f0d77d" class="ne-p">&nbsp;</p>
-<p id="u050506bc" class="ne-p"><span class="ne-text">å¾å¤ä¼ ç»è¡ä¸ä»ä¸èå¯¹ AI è½åçè®¤ç¥ï¼ä»åçå¨å±é¨åºæ¯çè¦çèå´ï¼è¯¯ä»¥ä¸ºå¤§éè¡ä¸å°æªè¢«è§¦åãäºå®ä¸ï¼æç»ä½ æå¤çè¡ä¸æå²ä½æ¯å¦è¢«éå¡ï¼å¹¶éç±ä½ çå·¥ä½æ§è´¨åå¤æåº¦å³å®ï¼èæ¯ç±</span><strong><span class="ne-text">AI å AI+ ç­å¤åææ¯çè¿­ä»£éåº¦</span></strong><span class="ne-text">æå³å®ã </span></p>
-<p id="u4084be99" class="ne-p"><img src="https://cdn.nlark.com/yuque/0/2026/jpeg/49514865/1772876656930-844090ce-adec-4bbd-8ae4-a3be56311940.jpeg" width="383.66668701171875" class="ne-image" style="display: block; margin-left: auto; margin-right: auto"></p>
-<p id="u64358aa8" class="ne-p"><span class="ne-text">å½ä¸ç AIä»åªå¤äºèªèº«åå±çâ</span><strong><span class="ne-text">è¸æ±½æ¶ä»£</span></strong><span class="ne-text">âãå°±å¥½åå·¥ä¸é©å½åå¤çé©¬å¤«ä¹ä¸è®¤ä¸ºèªå·±ä¼è¢«æ¿ä»£ï¼æ¯ç«</span><strong><span class="ne-text">âè¸æ±½æºâè¿ç©ææä¹ä¼éªé©¬</span></strong><span class="ne-text">ï¼ä½ç°å®ç¡®æ¯â</span><strong><span class="ne-text">é©¬è½¦ç´æ¥è¢«æ±½è½¦å½»åºåä»£âï¼</span></strong><span class="ne-text">è¿ä¸æ¯æ¿ä»£ï¼è¿æ¯ç´æ¥æéç»ä½ ç ¸äºã</span><strong><span class="ne-text">æä»¬å¿é¡»æ¸éè®¤è¯å°ï¼æªæ¥è¢«æ·æ±°çï¼ç»ä¸åªæ¯æä¸ªåä¸å²ä½ï¼èæ¯ä¸æ´å¥å·¥ä½èå¼è¢«å½»åºæ¨ç¿»ä¸éå»ºãæ§çå®ä¹æ­£å¨å¤±æï¼æ°çè§åæ­£å¨å»ºç«ï¼å ä¹ææäºæé½å¨è¢«éæ°å®ä¹ãå æ­¤æ è®ºä½ å¤äºåªä¸ªè¡ä¸ï¼è¯·å°è¯äºè§£AIï¼éåºAIï¼æ¥æ±AIï¼å¤§çè¶å¿ä¸æ¯ä¸ªäººåéå¯ä»¥é»æ¡çï¼è¿ä¸æ¯ä½ è½å³å®çï¼ä¸å¶ææï¼ä¸å¦å¿«ééåºã</span></strong></p>
-<p id="u96d15fac" class="ne-p">&nbsp;</p>
-<div class="ne-alert" data-type="danger">
-<p id="u9b2ed06d" class="ne-p"><span style="font-size: 18px"><strong><span class="ne-text">ä¸ãç ´å±ï¼AIåå¥½ï¼éè¦çæ¯ âé©¶åä½æ¹â</span></strong></span></p>
-</div>
-<p id="u7afbd221" class="ne-p"><span class="ne-text">AIåºç¶å¾å¥½ï¼é¿è¿çæªæ¥æä¸ªäººé¾ä»¥ç²¾åé¢å¤ï¼ä¸è¯´å¶ä»è¡ä¸ï¼åæ¿æä»äºçå¼åé¢åä¸¾ä¾ï¼ç°é¶æ®µç AIç¡®å®è¿æ²¡æå®å¨åå°ä»â'è®¾è®¡å¸âå° "å·¥ç¨å¸"åå°âè¿ç»´äººå"çå¨è½åè¦çãæ ¸å¿çäº§åä¾æ§éè¦äººçæèãå¤æ­ä¸å³ç­å»æ¿æ´»ãä½ä»æç¤ºè¯å·¥ç¨å°æ´æºè½çå·¥å·è°ç¨ï¼ä¸ä¸AIå·¥å· çä½¿ç¨é¨æ§ä¹æ­£å¨å¿«ééä½ãæªæ¥ä¼æè¶æ¥è¶å¤æºè½ Agent ä¼å¸®ä½ å®æ â</span><strong><span class="ne-text">å¦ä½é«æä½¿ç¨ AI</span></strong><span class="ne-text">â è¿ä»¶äºãæä¸ç¹æå¯ä»¥ç¾åç¾ç¡®å®ï¼</span><strong><span class="ne-text">ææå¯æ½è±¡ãå¯æ ååãå¯æµç¨åçç¯èï¼AI é½ä¼è¿åå°æè´</span></strong><span class="ne-text">ã </span></p>
-<p id="u3cfa1b00" class="ne-p">&nbsp;</p>
-<p id="u43382c23" class="ne-p"><span class="ne-text">ä½ç°é¶æ®µå¯¹ç»å¤§å¤æ°æ®éäººèè¨ï¼AI åå¶éä»åªæ¯ä¸ä¸ªä¼ç§ççäº§åå·¥å·ï¼å°±ç®ä½ æè¿ä¸ªå·¥å·è¿ç¨å°æè´ï¼å·¥å·å°±æ¯å·¥å·ï¼å·¥å·çä½¿ç¨åªæ¯æ´ä¸ªçäº§è¿ç¨çä¸­é´ç¯èï¼</span><strong><span class="ne-text">å®å¾é¾ç´æ¥åæä½ æèä½ æå¨ä¼ä¸ççäº§èµæï¼ æ´æ æ³èªå¨è½¬åä¸ºåä¸ä»·å¼ä¸å®éæ¶ç ã</span></strong></p>
-<p id="u4707d639" class="ne-p"><span class="ne-text">å°±åå¨ä¸åºæ°çæé±¼æ¸¸æä¸­ï¼æ¥æä¸èæåº¦åè¿çAIæºè½æé±¼è¹ç¡®å®å¾å¥½ï¼ çè³å½åå·²ç»æå¾å¤äººå¨æä½ æä¹æå¶é ä¸é©¾é©¶è¿èè¹ï¼å¹¶åæ­¤æ¶å²ç¬¬ä¸æ³¢é­èãåè¯¾å½ç¶æ¯ä¸ç§åä¸æ¨¡å¼ï¼ä½è¿ç§æ¨¡å¼çæ ¸å¿ä¸æ¯AIé©±å¨çï¼æ²¡æAIäººå®¶ä¹ä¼ç¨å¶ä»æ¨¡å¼åä½ è¯¾ï¼å²ä½ çé­èãå æ­¤å¯¹äºççå¤§å¤æ°äººæèå¤§å¤æ°ä¼ä¸æ¥è¯´ï¼çæ­£çâ</span><strong><span class="ne-text">ç ´å±</span></strong><span class="ne-text">âå³é®ä»æ¥ä¸æ¯ä¼ä¸ä¼å¼è¹ï¼èæ¯ï¼</span><strong><span class="ne-text">ä½ è¦å¼å¾åªçæµ·åï¼ä½ å¦ä½çæ­£æçå°é±¼ï¼</span></strong></p>
-<p id="ud7bb1127" class="ne-p">&nbsp;</p>
-<p id="u7b026ba6" class="ne-p"><span class="ne-text">ä½å¾å¤äººåªè½çå°æ¯æäºå¤§è¹ï¼å°±ä¸åéè¦é£ä¹å¤æ¸å¤«äºï¼è¿å¾æ®é·ç¡®ä¹å¾ç°å®ã</span><strong><span class="ne-text">ä½ä¸ä¸ªäººçè³ä¼ä¸èè¨å¦ä½åå© AIï¼çæ­£åé ç¬å±äºèªå·±çæ¨¡å¼å¹¶è·åä»·å¼ï¼ææ¯æè¯¥æ·±æçé®é¢ãå¦åæè°æ¥æ± AIï¼ä¸è¿æ¯å¦ä¸ç§æ´æ¿ççåå·ï¼å¼æ½®èæ°¸è¿æ¯å°æ°ï¼å¤§å¤æ°äººé½åªæ¯è¿ä¸åºå¤§åé©ä¸­ççºç²åã</span></strong></p>
-<p id="u8182eb68" class="ne-p">&nbsp;</p>
-<div class="ne-alert" data-type="color5">
-<p id="u3b5c1b58" class="ne-p"><span style="font-size: 18px"><strong><span class="ne-text">åãéå½¢é¨æ§ï¼AI æ¶ä»£ç âå¥åºå¸âï¼æ©å·²ç­æå¤§å¤æ°äºº</span></strong></span></p>
-</div>
-<p id="u6c65864d" class="ne-p"><span class="ne-text">æåé¢è½ç¶è¯´AIå·²ç»æ®åï¼ä½è¿åªæ¯åçå¨å¤§ä¼è½å¤æ¥è§¦å°çç¸å¯¹è¤æµçå±é¢ä¸ï¼å¾å¤äººå¿½ç¥äºä¸ä¸ªç°å®ï¼</span><strong><span class="ne-text">çæ­£æ·±å¥åºç¨ä¸é©¾é©­AIçææ¬ ï¼å·²ç»æä¸å°æ®éäººæ¡å¨é¨å¤</span></strong><span class="ne-text">ãä»ç¨³å®çç½ç»ç¯å¢ãåæ²¿ä¿¡æ¯è·åè½åï¼å°å·¥å·çå®è£é¨ç½²ï¼åå°Token æ¶èãä»è´¹å·¥å·ãç®åææ¬â¦â¦çæ­£è½ç«å¨ AI åæ²¿ç âå¼æ½®å¿âï¼ä»æ¥ä¸æ¯è°é½è½å½çãè¿è¿åªæ¯åºç¨å±é¢ï¼åºå»ºå±é¢æ´æ¯æ®éäººæ æ³ä¼åçï¼æ¶ä»£çº¢å©çä¼¼å¬å¹³ï¼å®åä¸ç´æéå½¢é¨æ§ï¼èAIçé¨æ§ç¸æ¯å¤§å®¶é½æ¸æ¥çåå æ¬¡çº¢å©çé¨æ§æ´æ¯ææ°çº§æé«ã</span></p>
-<p id="u7c51a7c7" class="ne-p">&nbsp;</p>
-<p id="u632bc76a" class="ne-p" style="text-align: center"><span style="color: rgba(230, 126, 35, 1)"><strong><span style="font-size: 24px"><span class="ne-text">ç»å°¾</span></span></strong></span></p>
-<p id="u9ff563f6" class="ne-p"><span class="ne-text">æä¹æ¾é®è¿ç¶æ¯ï¼å½å¹´æ¹é©å¼æ¾æµªæ½®æ»æ»è¢­æ¥ï¼ä¸ºä»ä¹ä½ ä»¬æ²¡è½æä¸ºä¹é£ç ´æµªçé£æ¹äººï¼ä½éçå¹´é¾æ¸é¿æææç½ï¼</span><strong><span class="ne-text">æ­¤æ¶æ­¤å»ï¼æ°å¦å½¼æ¶å½¼å»ã</span></strong><span class="ne-text">å½æ æ°ä½ æä¸è¬çæ®éäººç½®èº«ä¸å¤§åå±ä¸­æ¶ï¼ å¤§å¤æåå°çä¸æ¯æºé ï¼èæ¯è¿·è«ãæ åä¸ç¦èï¼ å¤§æµªæ·æ²ï¼æä»¬é½æ¯è¢«æ¶ä»£è£¹æçæ®éäººç½¢äºã </span></p>
-<p id="ucdf57159" class="ne-p"><span class="ne-text">å¨AIçåå±æµªæ½®ä¸­ï¼è½å¤ä¸»å¨å»å­¦ä¹ ãå»éåºå°±å·²ç»é¾è½å¯è´µï¼å¤§å®¶ä¸å¿å¨è¿ä¸ªè¿ç¨ä¸­è¿äºèè´£èªå·±ï¼æ­£å¦æåææè¯´ï¼AIçè¿åæååå¼å§ï¼å¾å¤ä½ æä¼åä¸å°çé¢åï¼éå½¢é¨æ§å·²ç»æä½ æ¡å¨é¨å¤ï¼åçº¯çç¦èæ¯«æ æä¹ ã</span><strong><span class="ne-text"> ä½ æ´è¯¥åçæ¯å¨èªå·±è½ææ§çèå´åï¼å°è¯é©¾é©­ AIï¼è®©å®çæ­£æå¡äºä½ ãä¸ºä½ åé ä»·å¼ï¼èä¸æ¯è¢« AI çé£éåå±è£¹æãèæï¼ä¸å³è¿½æ°æ±å¿«ï¼æç»è¿·å¤±å¨ææ¯æ¬èº«ç¼ç»çå°å±é</span></strong><span class="ne-text">ã</span></p>
-<p id="u4b712d26" class="ne-p"><span class="ne-text">å°±åå¼è½¦ï¼ä¹è®¸æªæ¥AIå¯ä»¥åå°å®å¨èªå¨é©¾é©¶ï¼ä½ç®çå°ç»ç©¶éè¦ä½ æ¥å³å®ï¼</span><strong><span class="ne-text">é©¶åä½æ¹</span></strong><span class="ne-text">ï¼ææ¯è¿åºåé©éï¼æä»¬æ¯ä¸ªäººæè¯¥æ³æ¸æ¥çäºã</span></p>
-<p class="ne-p">&nbsp;</p>
-<hr>
-<p class="ne-p">&nbsp;</p>
-<p class="ne-p">&nbsp;</p>
-<p class="ne-p">&nbsp;</p>
-<h1 id="å³æ³¨å¾®ä¿¡å¬ä¼å·æ¥çæ´å¤ææ¯æç« ">å³æ³¨å¾®ä¿¡å¬ä¼å·ï¼æ¥çæ´å¤ææ¯æç« </h1>
-<p><img src="https://img2024.cnblogs.com/blog/780676/202603/780676-20260331095541561-1380213307.png" alt="image" loading="lazy"></p>
-<p>&nbsp;</p>
-<p id="u3b0c4c69" class="ne-p">&nbsp;</p>
-</div>
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-03-31 09:59">2026-03-31 09:58</span>&nbsp;
-<a href="https://www.cnblogs.com/dafanjoy">DF-Link</a>&nbsp;
-éè¯»(<span id="post_view_count">158</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19799503);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19799503', targetLink: 'https://www.cnblogs.com/dafanjoy/p/19799503', title: 'AI æ¶ä»£ï¼ç¥é­ãéåºä¸éæ°å®ä¹' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ åäºä¸ªWindowsæ¡é¢å¨æç½é¡µå¤©æ°å¯è§åå£çº¸ ]]></title>
-    <link>https://www.cnblogs.com/greywen/p/19800934</link>
-    <guid>2c9c75676addf6baa7d8c982e458fd85</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/greywen/p/19800934" title="åå¸äº 2026-03-31 13:45">
-    <span role="heading" aria-level="2">åäºä¸ªWindowsæ¡é¢å¨æç½é¡µå¤©æ°å¯è§åå£çº¸</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
-<p style="font-size: 0; line-height: 0; margin: 0">&nbsp;</p>
-<p class="p" style="margin-top: 0 !important; margin-right: 8px; margin-bottom: 1.5em; margin-left: 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">ä¹ååäºä¸ä¸ªç½é¡µå¤©æ°å¯è§åé¡¹ç® <a style="color: rgba(87, 107, 149, 1); text-decoration-line: none" title="web-weather" href="https://github.com/greywen/web-weather" rel="noopener nofollow">web-weather</a>ï¼ç¨ Canvas 2D + CSS å®ç°äºé¨ãéªãé¾ãæ´ãé´ãå°é¹ãæ²å°æ´ä¸ç§å¤©æ°ææï¼æ¥äº Open-Meteo çåè´¹ API åèªå¨å¤©æ°ï¼è¿å äºå£°é³ç³»ç»ãä¸çå°å¾éç¹ãæ²æµ¸æ¨¡å¼ãåå®ä¹åææå®æå¨å¯å±ä¸å½å¨æå£çº¸ç¨äºå¥½ä¸éµå­ââæµè§å¨å¨å±ï¼åå°ç¬¬äºåå±å¹ï¼ææç¡®å®ä¸éã</p>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">ä½"æµè§å¨å¨å±"è¿ä¸ªæ¹æ¡æå ä¸ªå¾å®éçé®é¢ï¼</p>
-<p class="listitem" style="display: block; margin-top: 0.5em; margin-right: 8px; margin-bottom: 0.5em">â¢ æµè§å¨çªå£å§ç»å¨æåé¢ï¼Alt+Tab ä¼åå°å®</p>
-<p class="listitem" style="display: block; margin-top: 0.5em; margin-right: 8px; margin-bottom: 0.5em">â¢ ä¸å°å¿ç¹å°æ¡é¢ï¼å£çº¸å°±è¢«çä½äº</p>
-<p class="listitem" style="display: block; margin-top: 0.5em; margin-right: 8px; margin-bottom: 0.5em">â¢ æ¯æ¬¡å¼æºè¦æå¨æå¼æµè§å¨ãè¾å°åãå¨å±ï¼ç¹ç</p>
-<p class="listitem" style="display: block; margin-top: 0.5em; margin-right: 8px; margin-bottom: 0.5em">â¢ ä»»å¡æ ä¸å¤ä¸ä¸ªæµè§å¨çªå£ï¼ççç¢ç¼</p>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">æ¢ç¶è¿ä¸ªç½é¡µæ¬èº«å°±æ¯ä¸º"é¿ææç"è®¾è®¡çï¼ä¸ºä»ä¹ä¸å¹²èåä¸ä¸ªæ¡é¢åºç¨ï¼æå®çæ­£åµå° Windows æ¡é¢å£çº¸å±ï¼äºæ¯å°±æäºè¿ä¸ªé¡¹ç®ââ<a style="color: rgba(87, 107, 149, 1); text-decoration-line: none" title="Weather Wallpaper" href="https://github.com/greywen/weather-wallpaper" rel="noopener nofollow">Weather Wallpaper</a>ã&nbsp;<strong>æ¬é¡¹ç®åºäº <a href="https://github.com/rocksdanister/lively" target="_blank" rel="noopener nofollow">Lively</a> è¿è¡äºæ¬¡å¼åï¼èç¦ç½é¡µå¤©æ°æ¡é¢åºæ¯ã</strong></p>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">å¨çº¿ä½éªç½é¡µçï¼<a href="https://weather.anhejin.cn" target="_blank" rel="noopener nofollow">https://weather.anhejin.cn<br></a>æ¼ç¤ºè§é¢ï¼<a href="https://files.anhejin.cn/videos/demo.mp4" target="_blank" rel="noopener nofollow">https://files.anhejin.cn/videos/demo.mp4</a></p>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)"><a href="https://files.anhejin.cn/videos/demo.mp4" target="_blank" rel="noopener nofollow"></a></p>
-<h2 id="0" class="h2" style="display: table; margin: 4em auto 2em; color: rgba(255, 255, 255, 1); background: rgba(0, 152, 116, 1); text-align: center; padding: 0.3em 1em; border-radius: 8px; font-size: 20.8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1)" data-heading="true">ç½é¡µå¤©æ°å¯è§ååäºä»ä¹</h2>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">åç®ååé¡¾ä¸ä¸ç½é¡µç«¯çå®ç°ãè¯¦ç»çææ¯ç»èåè¿ä¸¤ç¯æç« ï¼</p>
-<p class="listitem" style="display: block; margin-top: 0.5em; margin-right: 8px; margin-bottom: 0.5em">â¢ <a style="color: rgba(87, 107, 149, 1); text-decoration-line: none" title="åäºä¸ä¸ªç½é¡µå¤©æ°å¯è§å" href="https://www.cnblogs.com/greywen/p/19702808">åäºä¸ä¸ªç½é¡µå¤©æ°å¯è§å</a></p>
-<p class="listitem" style="display: block; margin-top: 0.5em; margin-right: 8px; margin-bottom: 0.5em">â¢ <a style="color: rgba(87, 107, 149, 1); text-decoration-line: none" title="åäºä¸ä¸ªç½é¡µå¤©æ°å¯è§å 2" href="https://www.cnblogs.com/greywen/p/19786381">åäºä¸ä¸ªç½é¡µå¤©æ°å¯è§å 2</a></p>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">ç¬¬ä¸ç¯ä¸»è¦è§£å³"æä¹è®©å¤©æ°çèµ·æ¥åé£ä¹åäº"ãCanvas 2D ç»ç²å­ââé¨æ»´æ¯ä¸çªä¸å®½çæ¢¯å½¢ï¼é£åéè¿ windOffset è®©å®æçè½ï¼éªè±é£è½å¸¦æ­£å¼¦æ³¢ææï¼è½å°å¯¼èªæ ä¸ä¼å ç§¯ï¼æ¸©åº¦é«äºä¼èåï¼é¾å¤©æ¯ Canvas é¾å¢ + CSS çé¾çº¹ç + backdrop-filter ä¸å±å åºæ¥çï¼æ´å¤©æéå¤´åæï¼ä½ç½®è·å¤ªé³æéåå³ç³»ï¼éªçµç¨éå½ç®æ³åååãæ°æ®ç»æç¨ SoA + Float32Array åè¿ç»­åå­è®¿é®ï¼ç»å¶æéæåº¦åæ¡£æ¹é fill åå° draw callï¼é¾æ°çº¹çé¢æ¸²æå°ç¦»å± Canvasãæ¥äº Open-Meteo ç APIï¼æµè§å¨å®ä½æ¿ç»çº¬åº¦ï¼WMO å¤©æ°ä»£ç æ å°å°è§è§ææï¼æ¯ååéå·æ°ä¸æ¬¡ã</p>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">ç¬¬äºç¯æ¯åç»­æ´æ°ãå£°é³ç³»ç»å¨é¢éåââé·å£°ç¨ Web Audio API åæäºä¸å±ï¼crackãsub-bass boomãre-strikeãrolling rumbleãå»¶è¿éå»ãè¿æ¹ä½éï¼ï¼æ¯å±é½æ¯ç¬ç«çé³é¢èç¹é¾è·¯ï¼é¢çæå¤ä¸ªåä½ç¼å­å¨åå­éï¼æ¯æ¬¡æé·å¬èµ·æ¥é½ä¸å®å¨ä¸æ ·ãé¨å£°ãé£å£°ãéªå£°ä¹ä¸æ¯ MP3 å¾ªç¯ï¼èæ¯å¤å±æ»¤æ³¢åªå£°åæï¼é³éåæ»¤æ³¢å¨é¢çè·å¤©æ°åæ°å®æ¶èå¨ãé£åè¿ä¼å½±åå·¦å³å£°éââé£ä»å³è¾¹å¹ï¼é¨å£°å°±åå³è³ã</p>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">æ°å¢äºå°é¹åæ²å°æ´ä¸¤ç§æç«¯å¤©æ°ãå°é¹æå éä¸è½ãæè½¬ãè½å°å¼¹è·³ç¢çãå°é¢ç¢å°å ç§¯åèåãæ²å°æ´åä¸å±ââ350 é¢ä¸è§åå¤è¾¹å½¢æ²ç²ã5 ç§æç»ç¢å±ï¼æ æãæ å¶ãç³å­ãå¡æçãæ³¥åï¼ã60 ä¸ªè´´å°æ»å¨çæ²å¢ââåçä¸å±å¨å±æ²è²èçã</p>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">ä¸çå°å¾è®©ä½ ç¹å°çä¸ä»»æä¸ä¸ªç¹å°±è½çé£éçå¤©æ°ï¼å¸¦ 24 å°æ¶å 7 å¤©é¢æ¥æ¶é´çº¿ãæ²æµ¸æ¨¡å¼æææ UI èèµ·æ¥ï¼å¨å±åªå©å¤©æ°æ¬èº«ã</p>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">è¿äºä¸è¥¿å å¨ä¸èµ·ï¼ç½é¡µç«¯å·²ç»æ¯ä¸ä¸ªå¯ä»¥æå¼ãéå°æ¹ãå¬å¤©æ°ãæä¸æ´å¤©ç"å¤©æ°ä½éªå¨"äºãä½å®å§ç»è·å¨æµè§å¨éã</p>
-<h2 id="1" class="h2" style="display: table; margin: 4em auto 2em; color: rgba(255, 255, 255, 1); background: rgba(0, 152, 116, 1); text-align: center; padding: 0.3em 1em; border-radius: 8px; font-size: 20.8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1)" data-heading="true">ä¸ºä»ä¹è¦åæ¡é¢åºç¨</h2>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">åå åªæä¸ä¸ªï¼ææ³è®©å®ççåæå£çº¸ã</p>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">ä¸æ¯"çèµ·æ¥åå£çº¸"ï¼æ¯åµå°æ¡é¢å¾æ åé¢é£ä¸å±ï¼å Windows åçå£çº¸å åä¸ä¸ªä½ç½®ãæ¡é¢å¾æ å¨ä¸é¢ï¼ç½é¡µå¤©æ°å¨ä¸é¢ï¼ä»»å¡æ æ­£å¸¸æ¾ç¤ºï¼Alt+Tab çä¸å°å®ãå¼æºèªå¨å¯å¨ï¼æçå¸¸é©»ï¼ä¸å ä»»å¡æ ä½ç½®ã</p>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">è¿ç§éæ±å¨å¨æå£çº¸é¢åå¹¶ä¸æ°é²ãWallpaper Engine æ©å°±åäºï¼Lively Wallpaper ä¹æ¯å¼æºæ¹æ¡ãä½æä¸éè¦ä¸ä¸ªéç¨çå¨æå£çº¸å¼æââæåªéè¦æä¸ä¸ªç¹å®çç½é¡µåµå°æ¡é¢ä¸ãæä»¥æåèäº Lively çæ ¸å¿æè·¯ï¼ç¨ .NET 9 + WPF + WinForms + WebView2 åäºä¸ä¸ªæç®çæ¬ã</p>
-<h2 id="2" class="h2" style="display: table; margin: 4em auto 2em; color: rgba(255, 255, 255, 1); background: rgba(0, 152, 116, 1); text-align: center; padding: 0.3em 1em; border-radius: 8px; font-size: 20.8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1)" data-heading="true">æ ¸å¿åçï¼WorkerW çªå£å±</h2>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">Windows çæ¡é¢å£çº¸æºå¶å¶å®å¾æææãæ¡é¢æ¬èº«æ¯ä¸ä¸ªå« Progmanï¼Program Managerï¼ççªå£ï¼æ¡é¢å¾æ æ¾å¨å®çå­çªå£ SHELLDLL_DefView éç SysListView32 ä¸­ã</p>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">è¦æèªå·±ççªå£å¡å°å£çº¸å±ï¼å³é®æ¯è®© Windows åå»ºä¸ä¸ª WorkerW çªå£ãæ¹æ³æ¯å Progman åéä¸ä¸ªæªå¬å¼çæ¶æ¯ <code class="codespan" style="font-size: 90%; color: rgba(221, 17, 68, 1); background: rgba(27, 31, 35, 0.05); padding: 3px 5px; border-radius: 4px">0x052C</code>ï¼</p>
-<pre class="hljs code__pre"><code class="language-csharp" style="font-size: 90%; border-radius: 4px; padding: 0.5em 1em 1em; overflow-x: auto; color: inherit; background: none; white-space-collapse: collapse; margin: 0; font-family: &quot;Fira Code&quot;, Menlo, &quot;Operator Mono&quot;, Consolas, Monaco, monospace">NativeMethods.SendMessageTimeout(<br>&nbsp;&nbsp;&nbsp;&nbsp;_progman,<span class="hljs-number" style="color: rgba(121, 192, 255, 1)"><br>&nbsp;&nbsp;&nbsp;&nbsp;0x052C</span>,<span class="hljs-keyword" style="color: rgba(255, 123, 114, 1)"><br>&nbsp;&nbsp;&nbsp;&nbsp;new</span>&nbsp;IntPtr(<span class="hljs-number" style="color: rgba(121, 192, 255, 1)">0xD</span>),<span class="hljs-keyword" style="color: rgba(255, 123, 114, 1)"><br>&nbsp;&nbsp;&nbsp;&nbsp;new</span>&nbsp;IntPtr(<span class="hljs-number" style="color: rgba(121, 192, 255, 1)">0x1</span>),<br>&nbsp;&nbsp;&nbsp;&nbsp;NativeMethods.SendMessageTimeoutFlags.SMTO_NORMAL,<span class="hljs-number" style="color: rgba(121, 192, 255, 1)"><br>&nbsp;&nbsp;&nbsp;&nbsp;1000</span>,<span class="hljs-keyword" style="color: rgba(255, 123, 114, 1)"><br>&nbsp;&nbsp;&nbsp;&nbsp;out</span>&nbsp;_);</code></pre>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">åå®ä¹åï¼Windows ä¼å¨ Progman ä¸é¢åå»ºä¸ä¸ª WorkerW çªå£ãè¿æ¶åçªå£å±çº§åæäºï¼</p>
-<pre class="hljs code__pre"><code class="language-" style="font-size: 90%; border-radius: 4px; padding: 0.5em 1em 1em; overflow-x: auto; color: inherit; background: none; white-space-collapse: collapse; margin: 0; font-family: &quot;Fira Code&quot;, Menlo, &quot;Operator Mono&quot;, Consolas, Monaco, monospace" data-language-pending="" data-raw-code="Progman
-âââ SHELLDLL_DefView (æ¡é¢å¾æ )
-âââ WorkerW (å£çº¸å±)" data-show-line-number="false">Progman<br>âââ&nbsp;SHELLDLL_DefView&nbsp;(æ¡é¢å¾æ )<br>âââ&nbsp;WorkerW&nbsp;(å£çº¸å±)</code></pre>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">æä½ ççªå£ SetParent å° WorkerW éï¼å®å°±å¨å¾æ åé¢äºãè¿å°±æ¯ Lively åå¤§å¤æ°å¨æå£çº¸è½¯ä»¶ç¨çæ¹æ¡ã</p>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">ä½ Windows 11 åè¾æ°ç Windows 10 æä¸ä¸ªåºå«ââProgman å¸¦äº <code class="codespan" style="font-size: 90%; color: rgba(221, 17, 68, 1); background: rgba(27, 31, 35, 0.05); padding: 3px 5px; border-radius: 4px">WS_EX_NOREDIRECTIONBITMAP</code> æ å¿ï¼è¿æå³çæ¡é¢ä½¿ç¨äº"raised desktop"æ¨¡å¼ãè¿ç§æ¨¡å¼ä¸ WorkerW æ¯ Progman çå­çªå£ï¼éè¦ç¨ä¸åçç­ç¥æ¥ attachï¼</p>
-<pre class="hljs code__pre"><code class="language-csharp" style="font-size: 90%; border-radius: 4px; padding: 0.5em 1em 1em; overflow-x: auto; color: inherit; background: none; white-space-collapse: collapse; margin: 0; font-family: &quot;Fira Code&quot;, Menlo, &quot;Operator Mono&quot;, Consolas, Monaco, monospace"><span class="hljs-keyword" style="color: rgba(255, 123, 114, 1)">if</span>&nbsp;(_isRaisedDesktop)<br>{<span class="hljs-comment" style="color: rgba(139, 148, 158, 1)"><br>&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;è®¾ç½®&nbsp;WS_CHILD&nbsp;æ ·å¼</span><br>&nbsp;&nbsp;&nbsp;&nbsp;style&nbsp;|=&nbsp;NativeMethods.WS_CHILD;<span class="hljs-comment" style="color: rgba(139, 148, 158, 1)"><br>&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;è®¾ç½®&nbsp;WS_EX_LAYERED&nbsp;å¹¶è®¾æ»¡ä¸éæåº¦</span><br>&nbsp;&nbsp;&nbsp;&nbsp;NativeMethods.SetLayeredWindowAttributes(hwnd,<span class="hljs-number" style="color: rgba(121, 192, 255, 1)">&nbsp;0</span>,<span class="hljs-number" style="color: rgba(121, 192, 255, 1)">&nbsp;255</span>,&nbsp;NativeMethods.LWA_ALPHA);<span class="hljs-comment" style="color: rgba(139, 148, 158, 1)"><br>&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;ç¶çªå£è®¾ä¸º&nbsp;Progman</span><br>&nbsp;&nbsp;&nbsp;&nbsp;NativeMethods.SetParent(hwnd,&nbsp;_progman);<span class="hljs-comment" style="color: rgba(139, 148, 158, 1)"><br>&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Z&nbsp;åºï¼å£çº¸å¨&nbsp;SHELLDLL_DefView&nbsp;ä¸é¢</span><br>&nbsp;&nbsp;&nbsp;&nbsp;NativeMethods.SetWindowPos(hwnd,&nbsp;_shellDLL_DefView,<span class="hljs-number" style="color: rgba(121, 192, 255, 1)">&nbsp;0</span>,<span class="hljs-number" style="color: rgba(121, 192, 255, 1)">&nbsp;0</span>,<span class="hljs-number" style="color: rgba(121, 192, 255, 1)">&nbsp;0</span>,<span class="hljs-number" style="color: rgba(121, 192, 255, 1)">&nbsp;0</span>,&nbsp;flags);<br>}<span class="hljs-keyword" style="color: rgba(255, 123, 114, 1)"><br>else</span><br>{<span class="hljs-comment" style="color: rgba(139, 148, 158, 1)"><br>&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;ç»å¸æ¨¡å¼ï¼ç´æ¥æå°&nbsp;WorkerW</span><br>&nbsp;&nbsp;&nbsp;&nbsp;NativeMethods.SetParent(hwnd,&nbsp;_workerW);<br>}</code></pre>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">å¤æ¾ç¤ºå¨çæåµä¹è¦å¤çãå£çº¸çªå£éè¦å®ä½å°ç®æ æ¾ç¤ºå¨çåæ ä¸ï¼reparent ä¹åç¨ <code class="codespan" style="font-size: 90%; color: rgba(221, 17, 68, 1); background: rgba(27, 31, 35, 0.05); padding: 3px 5px; border-radius: 4px">MapWindowPoints</code> æå±å¹åæ è½¬æç¶çªå£åçç¸å¯¹åæ ï¼ä¸ç¶å¤å±ç¯å¢ä¸ä½ç½®ä¼ç®éã</p>
-<h2 id="3" class="h2" style="display: table; margin: 4em auto 2em; color: rgba(255, 255, 255, 1); background: rgba(0, 152, 116, 1); text-align: center; padding: 0.3em 1em; border-radius: 8px; font-size: 20.8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1)" data-heading="true">WebView2ï¼æç½é¡µå¡è¿æ¡é¢</h2>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">æäºå£çº¸å±ï¼ä¸ä¸æ­¥æ¯æç½é¡µå¡è¿å»ãè¿éç¨çæ¯ Microsoft ç WebView2ââåºäº Chromium çåµå¥å¼æµè§å¨æ§ä»¶ã</p>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">æ¶æä¸æ¯è¿æ ·çï¼ä¸ä¸ªéèç WinForms çªå£ï¼<code class="codespan" style="font-size: 90%; color: rgba(221, 17, 68, 1); background: rgba(27, 31, 35, 0.05); padding: 3px 5px; border-radius: 4px">WallpaperHostForm</code>ï¼éæ¾ä¸ä¸ª WebView2 æ§ä»¶ï¼WebView2 å è½½ç½é¡µï¼ç¶åææ´ä¸ª WinForms çªå£ SetParent å°æ¡é¢ç WorkerW å±ã</p>
-<pre class="hljs code__pre"><code class="language-csharp" style="font-size: 90%; border-radius: 4px; padding: 0.5em 1em 1em; overflow-x: auto; color: inherit; background: none; white-space-collapse: collapse; margin: 0; font-family: &quot;Fira Code&quot;, Menlo, &quot;Operator Mono&quot;, Consolas, Monaco, monospace">_hostForm&nbsp;=<span class="hljs-keyword" style="color: rgba(255, 123, 114, 1)">&nbsp;new</span>&nbsp;WallpaperHostForm();<br>_hostForm.Size&nbsp;=<span class="hljs-keyword" style="color: rgba(255, 123, 114, 1)">&nbsp;new</span>&nbsp;System.Drawing.Size((<span class="hljs-built_in" style="color: rgba(255, 166, 87, 1)">int</span>)monitor.Bounds.Width,&nbsp;(<span class="hljs-built_in" style="color: rgba(255, 166, 87, 1)">int</span>)monitor.Bounds.Height);<br>_hostForm.Show();<span class="hljs-comment" style="color: rgba(139, 148, 158, 1)"><br><br>//&nbsp;åå§å&nbsp;WebView2</span><span class="hljs-keyword" style="color: rgba(255, 123, 114, 1)"><br>await</span>&nbsp;InitializeWebView2(audioEnabled);<span class="hljs-comment" style="color: rgba(139, 148, 158, 1)"><br><br>//&nbsp;æå®¿ä¸»çªå£åµå°æ¡é¢</span><br>_desktopWorker.SetWallpaper(_hostForm.Handle,&nbsp;monitor.Bounds);</code></pre>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">WallpaperHostForm åäºå ä¸ªç¹æ®å¤çï¼</p>
-<ul class="ul" style="color: rgba(63, 63, 63, 1); list-style: none; padding-left: 1.5em">
-<li class="listitem" style="display: block; margin: 0.5em 8px">â¢ <code class="codespan" style="font-size: 90%; color: rgba(221, 17, 68, 1); background: rgba(27, 31, 35, 0.05); padding: 3px 5px; border-radius: 4px">FormBorderStyle.None</code>ï¼æ è¾¹æ¡</li>
-<li class="listitem" style="display: block; margin: 0.5em 8px">â¢ <code class="codespan" style="font-size: 90%; color: rgba(221, 17, 68, 1); background: rgba(27, 31, 35, 0.05); padding: 3px 5px; border-radius: 4px">ShowInTaskbar = false</code>ï¼ä¸å¨ä»»å¡æ æ¾ç¤º</li>
-<li class="listitem" style="display: block; margin: 0.5em 8px">â¢ <code class="codespan" style="font-size: 90%; color: rgba(221, 17, 68, 1); background: rgba(27, 31, 35, 0.05); padding: 3px 5px; border-radius: 4px">WS_EX_TOOLWINDOW</code>ï¼Alt+Tab ééè</li>
-<li class="listitem" style="display: block; margin: 0.5em 8px">â¢ <code class="codespan" style="font-size: 90%; color: rgba(221, 17, 68, 1); background: rgba(27, 31, 35, 0.05); padding: 3px 5px; border-radius: 4px">WS_EX_NOACTIVATE</code>ï¼ä¸æ¢ç¦ç¹</li>
-<li class="listitem" style="display: block; margin: 0.5em 8px">â¢ <code class="codespan" style="font-size: 90%; color: rgba(221, 17, 68, 1); background: rgba(27, 31, 35, 0.05); padding: 3px 5px; border-radius: 4px">ShowWithoutActivation = true</code>ï¼æ¾ç¤ºæ¶ä¸æ¿æ´»</li>
-<li class="listitem" style="display: block; margin: 0.5em 8px">â¢ åå§ä½ç½® <code class="codespan" style="font-size: 90%; color: rgba(221, 17, 68, 1); background: rgba(27, 31, 35, 0.05); padding: 3px 5px; border-radius: 4px">(-32000, -32000)</code>ï¼åæ¾å°å±å¹å¤é¿åéªç</li>
-</ul>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">WebView2 åå§åæ¶æä¸ä¸ªå³é®åæ°ââ<code class="codespan" style="font-size: 90%; color: rgba(221, 17, 68, 1); background: rgba(27, 31, 35, 0.05); padding: 3px 5px; border-radius: 4px">--autoplay-policy=no-user-gesture-required</code>ãç½é¡µå¤©æ°çå£°é³ç³»ç»ä¾èµ Web Audio APIï¼èæµè§å¨é»è®¤ç autoplay policy è¦æ±ç¨æ·åäº¤äºæè½æ­æ¾å£°é³ãæ¡é¢å£çº¸æ²¡æ"ç¨æ·ç¹ä¸ä¸"è¿ä¸ªå¨ä½ï¼æä»¥å¿é¡»ç»è¿è¿ä¸ªéå¶ï¼</p>
-<pre class="hljs code__pre"><code class="language-csharp" style="font-size: 90%; border-radius: 4px; padding: 0.5em 1em 1em; overflow-x: auto; color: inherit; background: none; white-space-collapse: collapse; margin: 0; font-family: &quot;Fira Code&quot;, Menlo, &quot;Operator Mono&quot;, Consolas, Monaco, monospace"><span class="hljs-keyword" style="color: rgba(255, 123, 114, 1)">var</span>&nbsp;options&nbsp;=<span class="hljs-keyword" style="color: rgba(255, 123, 114, 1)">&nbsp;new</span>&nbsp;CoreWebView2EnvironmentOptions(<span class="hljs-string" style="color: rgba(165, 214, 255, 1)">"--autoplay-policy=no-user-gesture-required"</span>);<span class="hljs-keyword" style="color: rgba(255, 123, 114, 1)"><br>var</span>&nbsp;env&nbsp;=<span class="hljs-keyword" style="color: rgba(255, 123, 114, 1)">&nbsp;await</span>&nbsp;CoreWebView2Environment.CreateAsync(<span class="hljs-literal" style="color: rgba(121, 192, 255, 1)">null</span>,&nbsp;userDataPath,&nbsp;options);<span class="hljs-keyword" style="color: rgba(255, 123, 114, 1)"><br>await</span>&nbsp;_webView.EnsureCoreWebView2Async(env);</code></pre>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">åæ¶è¿å³æäºå³é®èåãç¶ææ ãç¼©æ¾æ§å¶ãæ°çªå£å¼¹åºãä¸è½½ââè¿äºå¨å£çº¸åºæ¯éé½æ¯ä¸éè¦çã</p>
-<h2 id="4" class="h2" style="display: table; margin: 4em auto 2em; color: rgba(255, 255, 255, 1); background: rgba(0, 152, 116, 1); text-align: center; padding: 0.3em 1em; border-radius: 8px; font-size: 20.8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1)" data-heading="true">é¼ æ äºä»¶è½¬åï¼è®©å£çº¸å¯ä»¥äº¤äº</h2>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">å£çº¸åµå°æ¡é¢ä¹åï¼æä¸ä¸ªé®é¢ï¼ä½ ç¹æ¡é¢ï¼é¼ æ æ¶æ¯ä¼è¢« SHELLDLL_DefViewï¼æ¡é¢å¾æ å±ï¼åæï¼WebView2 æ¶ä¸å°ã</p>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">ä½ç½é¡µå¤©æ°æ¯æäº¤äºçââä¸çå°å¾å¯ä»¥ç¹ï¼æ§å¶é¢æ¿å¯ä»¥æï¼æ²æµ¸æ¨¡å¼å¯ä»¥åæ¢ãå¦æå£çº¸å®å¨ä¸è½äº¤äºï¼å°±å°äºå¾å¤æææçç©æ³ã</p>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">æä»¥æç¨äºä¸ä¸ªå¨å±ä½çº§é¼ æ é©å­ï¼<code class="codespan" style="font-size: 90%; color: rgba(221, 17, 68, 1); background: rgba(27, 31, 35, 0.05); padding: 3px 5px; border-radius: 4px">WH_MOUSE_LL</code>ï¼ï¼å¨é¼ æ æ¶æ¯å°è¾¾ä»»ä½çªå£ä¹åæ¦æªå®ï¼å¤æ­å½ååå°çªå£æ¯ä¸æ¯æ¡é¢ï¼ProgmanãWorkerW æ SHELLDLL_DefViewï¼ï¼å¦ææ¯ï¼å°±æé¼ æ æ¶æ¯è½¬åç» WebView2ï¼</p>
-<pre class="hljs code__pre"><code class="language-csharp" style="font-size: 90%; border-radius: 4px; padding: 0.5em 1em 1em; overflow-x: auto; color: inherit; background: none; white-space-collapse: collapse; margin: 0; font-family: &quot;Fira Code&quot;, Menlo, &quot;Operator Mono&quot;, Consolas, Monaco, monospace">_hookId&nbsp;=&nbsp;NativeMethods.SetWindowsHookEx(<br>&nbsp;&nbsp;&nbsp;&nbsp;NativeMethods.WH_MOUSE_LL,<br>&nbsp;&nbsp;&nbsp;&nbsp;_hookProc,<br>&nbsp;&nbsp;&nbsp;&nbsp;NativeMethods.GetModuleHandle(<span class="hljs-literal" style="color: rgba(121, 192, 255, 1)">null</span>),<span class="hljs-number" style="color: rgba(121, 192, 255, 1)"><br>&nbsp;&nbsp;&nbsp;&nbsp;0</span>);</code></pre>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">è½¬åçæ¶åä¸è½ç®åå° PostMessage ç» WebView2 çé¡¶å±çªå£ââWebView2 åé¨æå¤å±å­çªå£ï¼Chrome çæ¸²æè¿ç¨çªå£ï¼ï¼é¼ æ æ¶æ¯éè¦éå°ææ·±å±çå­çªå£æè½è¢«æ­£ç¡®å¤çãæä»¥ç¨äºä¸ä¸ªéå½æ¥æ¾ææ·±å±å¯è§å­çªå£çæ¹æ³ï¼</p>
-<pre class="hljs code__pre"><code class="language-csharp" style="font-size: 90%; border-radius: 4px; padding: 0.5em 1em 1em; overflow-x: auto; color: inherit; background: none; white-space-collapse: collapse; margin: 0; font-family: &quot;Fira Code&quot;, Menlo, &quot;Operator Mono&quot;, Consolas, Monaco, monospace"><span class="hljs-function"><span class="hljs-keyword" style="color: rgba(255, 123, 114, 1)">private</span><span class="hljs-keyword" style="color: rgba(255, 123, 114, 1)">&nbsp;static</span>&nbsp;IntPtr<span class="hljs-title" style="color: rgba(210, 168, 255, 1)">&nbsp;GetDeepestChild</span>(<span class="hljs-params">IntPtr&nbsp;parent,&nbsp;NativeMethods.POINT&nbsp;screenPt</span>)</span><br>{<span class="hljs-keyword" style="color: rgba(255, 123, 114, 1)"><br>&nbsp;&nbsp;&nbsp;&nbsp;var</span>&nbsp;clientPt&nbsp;=&nbsp;screenPt;<br>&nbsp;&nbsp;&nbsp;&nbsp;NativeMethods.ScreenToClient(parent,<span class="hljs-keyword" style="color: rgba(255, 123, 114, 1)">&nbsp;ref</span>&nbsp;clientPt);<span class="hljs-keyword" style="color: rgba(255, 123, 114, 1)"><br>&nbsp;&nbsp;&nbsp;&nbsp;var</span>&nbsp;child&nbsp;=&nbsp;NativeMethods.ChildWindowFromPointEx(parent,&nbsp;clientPt,&nbsp;CWP_SKIPINVISIBLE);<span class="hljs-keyword" style="color: rgba(255, 123, 114, 1)"><br>&nbsp;&nbsp;&nbsp;&nbsp;if</span>&nbsp;(child&nbsp;==&nbsp;IntPtr.Zero&nbsp;||&nbsp;child&nbsp;==&nbsp;parent)<span class="hljs-keyword" style="color: rgba(255, 123, 114, 1)"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return</span>&nbsp;parent;<span class="hljs-keyword" style="color: rgba(255, 123, 114, 1)"><br>&nbsp;&nbsp;&nbsp;&nbsp;return</span>&nbsp;GetDeepestChild(child,&nbsp;screenPt);<br>}</code></pre>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">ç®åæ¯æé¼ æ ç§»å¨ãå·¦é®ãå³é®åæ»è½®ãé®çè¾å¥æ²¡åè½¬åââå£çº¸åºæ¯ä¸åºæ¬ç¨ä¸å°ã</p>
-<h2 id="5" class="h2" style="display: table; margin: 4em auto 2em; color: rgba(255, 255, 255, 1); background: rgba(0, 152, 116, 1); text-align: center; padding: 0.3em 1em; border-radius: 8px; font-size: 20.8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1)" data-heading="true">åºç¨å±é¢çå®æ´åº¦</h2>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">ææ¯åçä¹å¤ï¼ä½ä¸ºä¸ä¸ª"ççä¼æ¿æ¥ç¨"çåºç¨ï¼è¿éè¦å¤çå¾å¤æ¥å¸¸ç»èï¼</p>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)"><strong class="strong" style="color: rgba(0, 152, 116, 1); font-weight: bold; font-size: inherit">ç³»ç»æç</strong>ï¼åºç¨æ²¡æä¸»çªå£ï¼å¸¸é©»ç³»ç»æçãåå»æå¼è®¾ç½®ï¼å³é®èåæ¯æè®¾ç½®ãåæ­¢ãéå¯åéåºãå³é­è®¾ç½®çªå£åªæ¯éèï¼ä¸ä¼éåºç¨åºã</p>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)"><strong class="strong" style="color: rgba(0, 152, 116, 1); font-weight: bold; font-size: inherit">è®¾ç½®æä¹å</strong>ï¼ç½é¡µå°åãç®æ æ¾ç¤ºå¨ãå£°é³å¼å³ãå¼æºå¯å¨è¿äºéç½®ä¿å­å¨ <code class="codespan" style="font-size: 90%; color: rgba(221, 17, 68, 1); background: rgba(27, 31, 35, 0.05); padding: 3px 5px; border-radius: 4px">%LOCALAPPDATA%\WeatherWallpaper\settings.json</code>ï¼å¯å¨æ¶èªå¨è¯»åå¹¶æ¢å¤ä¸æ¬¡çå£çº¸ã</p>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)"><strong class="strong" style="color: rgba(0, 152, 116, 1); font-weight: bold; font-size: inherit">å¤æ¾ç¤ºå¨æ¯æ</strong>ï¼éè¿ <code class="codespan" style="font-size: 90%; color: rgba(221, 17, 68, 1); background: rgba(27, 31, 35, 0.05); padding: 3px 5px; border-radius: 4px">EnumDisplayMonitors</code> æä¸¾æææ¾ç¤ºå¨ï¼è®¾ç½®çé¢å¯ä»¥éæ©æå£çº¸æ¾ç¤ºå¨åªåå±å¹ä¸ã</p>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)"><strong class="strong" style="color: rgba(0, 152, 116, 1); font-weight: bold; font-size: inherit">å¼æºå¯å¨</strong>ï¼åå¥æ³¨åè¡¨ <code class="codespan" style="font-size: 90%; color: rgba(221, 17, 68, 1); background: rgba(27, 31, 35, 0.05); padding: 3px 5px; border-radius: 4px">HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run</code>ï¼æ åç Windows å¯å¨é¡¹æ¹æ¡ã</p>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)"><strong class="strong" style="color: rgba(0, 152, 116, 1); font-weight: bold; font-size: inherit">åå®ä¾æ§å¶</strong>ï¼ç¨ Mutex é²æ­¢éå¤å¯å¨ï¼å¤å¼ä¼å¼¹æç¤ºã</p>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">é»è®¤ç½é¡µå°åå°±æ¯ <code class="codespan" style="font-size: 90%; color: rgba(221, 17, 68, 1); background: rgba(27, 31, 35, 0.05); padding: 3px 5px; border-radius: 4px">https://weather.anhejin.cn</code>ââä¹å°±æ¯ä¹ååçé£ä¸ªç½é¡µå¤©æ°å¯è§åãæå¼åºç¨ï¼ç¹"åºç¨å£çº¸"ï¼æ¡é¢å°±åæäºå®æ¶å¤©æ°ãå®ä¼èªå¨è·åä½ çå°çä½ç½®ï¼æ¾ç¤ºä½ æå¨åå¸çå½åå¤©æ°ï¼æ¯ååéå·æ°ä¸æ¬¡ãé¨å¤©æ¡é¢ä¸é£é¨ï¼éªå¤©çè§éªè±å ç§¯ï¼é¾å¤©æ´ä¸ªæ¡é¢æ¦è§ä¸çï¼æé·çæ¶åéªçµåä¸æ¥è¿æå£°é³ã</p>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">å½ç¶ï¼å ä¸ºæ¬è´¨ä¸æ¯åµå¥ä¸ä¸ªç½é¡µï¼æä»¥çè®ºä¸ä»»ä½ç½é¡µé½è½å½å£çº¸ç¨ââåªæ¯è¿ä¸ªé¡¹ç®æ¬èº«å°±æ¯ä¸ºå¤©æ°å¯è§åè®¾è®¡çã</p>
-<h2 id="6" class="h2" style="display: table; margin: 4em auto 2em; color: rgba(255, 255, 255, 1); background: rgba(0, 152, 116, 1); text-align: center; padding: 0.3em 1em; border-radius: 8px; font-size: 20.8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1)" data-heading="true">ææ¯æ </h2>
-<p class="listitem" style="display: block; margin-top: 0.5em; margin-right: 8px; margin-bottom: 0.5em">â¢ <strong class="strong" style="color: rgba(0, 152, 116, 1); font-weight: bold; font-size: inherit">.NET 9</strong>ï¼<code class="codespan" style="font-size: 90%; color: rgba(221, 17, 68, 1); background: rgba(27, 31, 35, 0.05); padding: 3px 5px; border-radius: 4px">net9.0-windows10.0.18362.0</code>ï¼</p>
-<p class="listitem" style="display: block; margin-top: 0.5em; margin-right: 8px; margin-bottom: 0.5em">â¢ <strong class="strong" style="color: rgba(0, 152, 116, 1); font-weight: bold; font-size: inherit">WPF</strong>ï¼ä¸»ç¨åºå¥å£åè®¾ç½®çªå£</p>
-<p class="listitem" style="display: block; margin-top: 0.5em; margin-right: 8px; margin-bottom: 0.5em">â¢ <strong class="strong" style="color: rgba(0, 152, 116, 1); font-weight: bold; font-size: inherit">WinForms</strong>ï¼WebView2 çå®¿ä¸»çªä½ï¼WebView2 ç WinForms çæ¬æ´éåååºå±çªå£åµå¥ï¼</p>
-<p class="listitem" style="display: block; margin-top: 0.5em; margin-right: 8px; margin-bottom: 0.5em">â¢ <strong class="strong" style="color: rgba(0, 152, 116, 1); font-weight: bold; font-size: inherit">Microsoft.Web.WebView2</strong>ï¼åµå¥å¼ Chromium æµè§å¨</p>
-<p class="listitem" style="display: block; margin-top: 0.5em; margin-right: 8px; margin-bottom: 0.5em">â¢ <strong class="strong" style="color: rgba(0, 152, 116, 1); font-weight: bold; font-size: inherit">Win32 API</strong>ï¼WorkerW/Progman æä½ãæ¾ç¤ºå¨æä¸¾ãé¼ æ é©å­ãè¾å¥è½¬å</p>
-<p class="listitem" style="display: block; margin-top: 0.5em; margin-right: 8px; margin-bottom: 0.5em">â¢ <strong class="strong" style="color: rgba(0, 152, 116, 1); font-weight: bold; font-size: inherit">Newtonsoft.Json</strong>ï¼è®¾ç½®æä»¶è¯»å</p>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">æ´ä¸ªé¡¹ç®ä»£ç éä¸å¤§ï¼æ ¸å¿é»è¾éä¸­å¨ä¸ä¸ªæä»¶ï¼</p>
-<ul class="ul" style="color: rgba(63, 63, 63, 1); list-style: none; padding-left: 1.5em">
-<li class="listitem" style="display: block; margin: 0.5em 8px">â¢ <code class="codespan" style="font-size: 90%; color: rgba(221, 17, 68, 1); background: rgba(27, 31, 35, 0.05); padding: 3px 5px; border-radius: 4px">DesktopWorker.cs</code>ï¼æ¡é¢å±ç®¡çï¼å¤ç WorkerW/Progman çªå£å±çº§å raised desktop å¼å®¹</li>
-<li class="listitem" style="display: block; margin: 0.5em 8px">â¢ <code class="codespan" style="font-size: 90%; color: rgba(221, 17, 68, 1); background: rgba(27, 31, 35, 0.05); padding: 3px 5px; border-radius: 4px">InputForwarder.cs</code>ï¼å¨å±é¼ æ é©å­åæ¶æ¯è½¬å</li>
-<li class="listitem" style="display: block; margin: 0.5em 8px">â¢ <code class="codespan" style="font-size: 90%; color: rgba(221, 17, 68, 1); background: rgba(27, 31, 35, 0.05); padding: 3px 5px; border-radius: 4px">WallpaperEngine.cs</code>ï¼WebView2 åå§åãå£çº¸å¯åãæ»è°åº¦</li>
-</ul>
-<h2 id="7" class="h2" style="display: table; margin: 4em auto 2em; color: rgba(255, 255, 255, 1); background: rgba(0, 152, 116, 1); text-align: center; padding: 0.3em 1em; border-radius: 8px; font-size: 20.8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1)" data-heading="true">ä»"ååºæ¥"å°"ç¨èµ·æ¥"</h2>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">åçæ´ä¸ªé¾è·¯ï¼ç½é¡µç«¯ç¨ Canvas + CSS + Web Audio API ååºäºæé¨å£°æé£å£°æéªçµæç§¯éªçå¤©æ°å¯è§åï¼æ¡é¢ç«¯ç¨ WebView2 + Win32 API æå®åµå°äº Windows å£çº¸å±ãä¸¤ä¸ªé¡¹ç®åç®¡åçââç½é¡µç«¯åªç®¡è§è§åå£°é³ææï¼æ¡é¢ç«¯åªç®¡"æä¹æä¸ä¸ªç½é¡µåæå£çº¸"ã</p>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">è¿ç§åå±çå¥½å¤æ¯ï¼ç½é¡µç«¯å¯ä»¥ç»§ç»­è¿­ä»£æ°å¤©æ°ãæ°ææãæ°äº¤äºï¼æ¡é¢ç«¯å®å¨ä¸ç¨æ¹ãåªè¦ç½é¡µæ´æ°äºï¼å£çº¸èªå¨å°±åäºã</p>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">ç°å¨æçå®¶éçµèå°±æ¯è¿ä¹è·çââWeather Wallpaper å¼æºèªå¯ï¼å¯å±ä¸ç´æ¾ç¤ºçå½åå¤©æ°ãä¸æµ·ä¸é¨çæ¶åæ¡é¢ä¹å¨ä¸é¨ï¼æ´å¤©çæ¶åæéå¤´åæä»å¤ªé³å¯¹ä¾§æ¼è¿æ¥ãå¶å°åå°ä¸äº¬ççæ¢é¨å­£ï¼æèåå°è¿ªææå 45Â°C çé·ç­ã</p>
-<p class="p" style="margin: 1.5em 8px; letter-spacing: 0.1em; color: rgba(63, 63, 63, 1)">å¼æºå°åï¼</p>
-<ul class="ul" style="color: rgba(63, 63, 63, 1); list-style: none; padding-left: 1.5em">
-<li class="listitem" style="display: block; margin: 0.5em 8px">â¢ ç½é¡µå¤©æ°å¯è§åï¼<a href="https://github.com/greywen/web-weather" target="_blank" rel="noopener nofollow">https://github.com/greywen/web-weather</a></li>
-<li class="listitem" style="display: block; margin: 0.5em 8px">â¢ æ¡é¢å£çº¸åºç¨ï¼<a href="https://github.com/greywen/weather-wallpaper" target="_blank" rel="noopener nofollow">https://github.com/greywen/weather-wallpaper</a></li>
-<li class="listitem" style="display: block; margin: 0.5em 8px"><strong>æ¬é¡¹ç®åºäº <a href="https://github.com/rocksdanister/lively" target="_blank" rel="noopener nofollow">Lively </a>è¿è¡äºæ¬¡å¼åï¼èç¦ç½é¡µå¤©æ°æ¡é¢åºæ¯ã</strong></li>
-</ul>
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.018055555555555554" data-date-updated="2026-03-31 14:11">2026-03-31 13:45</span>&nbsp;
-<a href="https://www.cnblogs.com/greywen">æè¿å¶å®</a>&nbsp;
-éè¯»(<span id="post_view_count">146</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19800934);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19800934', targetLink: 'https://www.cnblogs.com/greywen/p/19800934', title: 'åäºä¸ªWindowsæ¡é¢å¨æç½é¡µå¤©æ°å¯è§åå£çº¸' })">ä¸¾æ¥</a>
+<a href="javascript:void(0)" onclick="AddToWz(19800530);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19800530', targetLink: 'https://www.cnblogs.com/deali/p/19800530', title: 'ç°ä»£ Python ç¨åºä¼éå¤çæ¥ææ¶é´çé¿åæå' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
