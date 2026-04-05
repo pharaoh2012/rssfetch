@@ -3,12 +3,996 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-04-05T04:38:10.057Z</lastBuildDate>
+        <lastBuildDate>2026-04-05T08:38:49.902Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
+    <title><![CDATA[ Calico VXLAN ä½¿ç¨æå ]]></title>
+    <link>https://www.cnblogs.com/manuscript/p/19823849</link>
+    <guid>2554ab243a6a4b34b98cf8493cfb8223</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/manuscript/p/19823849" title="åå¸äº 2026-04-05 16:20">
+    <span role="heading" aria-level="2">Calico VXLAN ä½¿ç¨æå</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h1 id="æ¨¡å¼ä»ç»">æ¨¡å¼ä»ç»</h1>
+<blockquote>
+<p>é¡¹ç®ææ¡£ï¼<a href="https://docs.tigera.io/calico/latest/networking/configuring/vxlan-ipip" target="_blank" rel="noopener nofollow">https://docs.tigera.io/calico/latest/networking/configuring/vxlan-ipip</a></p>
+</blockquote>
+<p>VXLANï¼Virtual eXtensible LANï¼è¿ç§ç½ç»å°è£åè®®ï¼å° Pod åå§æ°æ®åå°è£å¨ UDP æ°æ®åä¸­ä¼ è¾ï¼ä½¿åºå±ç½ç»ä¸éè¦æç¥ Pod IP å°åãVXLAN çä¼å¿æ¯ä¸ä¾èµ BGPãæ¯æ IPv6ï¼å¯¹æ¯ IPIP æ¨¡å¼ï¼å®çå¤´é¨æ´å¤§ï¼50B vs IPIP 20Bï¼ï¼æ§è½ç¥å·®ãå¨ IPIP å¯ç¨çæåµä¸ï¼å¦ AWSï¼ï¼IPIP éå¸¸æ¯æ´å¥½çéæ©ã</p>
+<p>ç®åæ¥è®²ï¼åä¸å±åç½éä¸­äº¤æ¢æºæ ¹æ® MAC å°åè®©ä¸åæºå¨éä¿¡ãä½ VXLAN åçæ¯ï¼<strong>æä¸ä¸ªäºå±ç½ç»å°è£å° UDP åéï¼éè¿ä¸å±ç½ç»ä¼ è¾</strong>ãè¿æ ·å³ä½¿ä¸¤å°æºå¨ä¸å¨åä¸ä¸ªç©çäº¤æ¢æºä¸ï¼ä¹è½åå¨åä¸ä¸ªå±åç½éä¸æ ·éä¿¡ã</p>
+<p>è¿ä¹æ¯ Overlay ç½ç»çæ ¸å¿ï¼å©ç¨çå®ç IP ç½ç»ï¼ä¸å±ï¼ä½ä¸ºè¿è¾ééï¼æåæ¬åªè½å¨åä¸äº¤æ¢æºä¸çæçäºå± MAC æºå¶ï¼ç¨é§éææ¯ä¼ªè£æä¸ä¸ªå¤§çèæå±åç½ãä¸åäºä¼ ç»äºå±ä¾èµå¹¿æ­å­¦ä¹  MACï¼Overlay éå¸¸ç±<strong>æ§å¶å¹³é¢ä¸»å¨ä¸åæ å°</strong>æ¥é¿åå¹¿æ­é£æ´ã</p>
+<blockquote>
+<p>æ­¤å¤çæ§å¶å¹³é¢æçæ¯è·å¨æ¯ä¸ªèç¹ä¸ç <code>felix</code></p>
+</blockquote>
+<pre><code class="language-bash">root@network-demo:~# kubectl get pods -n kube-system | grep 'calico-node'
+calico-node-696p5                                    1/1     Running   1 (5d5h ago)   7d3h
+calico-node-dxz57                                    1/1     Running   1 (5d5h ago)   7d3h
+
+root@network-demo:~# docker exec calico-vxlan-control-plane ss -nltup | grep -i calico
+tcp   LISTEN 0      4096       127.0.0.1:9099       0.0.0.0:*    users:(("calico-node",pid=1284,fd=9))   
+
+root@network-demo:~# docker exec calico-vxlan-control-plane ps aux | grep '-felix'
+root        1284  0.8  0.2 2117200 64012 ?       Sl   Mar31  66:17 calico-node -felix
+</code></pre>
+<h2 id="ä½¿ç¨åºæ¯">ä½¿ç¨åºæ¯</h2>
+<table>
+<thead>
+<tr>
+<th>åºæ¯</th>
+<th>æ¯å¦æ¨è</th>
+<th>è¯´æ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Azure ç¯å¢</td>
+<td>â</td>
+<td>Azure å°ç¦ IPIP åè®®ï¼VXLAN æ¯å¯ä¸ overlay éé¡¹</td>
+</tr>
+<tr>
+<td>IPv6 ç¯å¢</td>
+<td>â</td>
+<td>IPIP ä»æ¯æ IPv4ï¼VXLAN æ¯ IPv6 overlay å¯ä¸éæ©</td>
+</tr>
+<tr>
+<td>å¯ç¨ eBPF</td>
+<td>â</td>
+<td>eBPF æ¨¡å¼ä¸æ¯æ IPIPï¼å¿é¡»ç¨ VXLAN</td>
+</tr>
+<tr>
+<td>AWS å¤ AZ / è·¨å­ç½</td>
+<td>â</td>
+<td>å AZ ç´éãè·¨ AZ å°è£ â <code>vxlanMode: CrossSubnet</code> æ§è½æ´ä¼</td>
+</tr>
+<tr>
+<td>å¬æäº</td>
+<td>â</td>
+<td>æ æ³é BGP æåºå±è·¯ç± â <code>vxlanMode: Always</code> å¼ç®±å³ç¨</td>
+</tr>
+<tr>
+<td>å¿«éä½¿ç¨</td>
+<td>â</td>
+<td>ä¸æè¾åºå±ç½ç»ï¼ç´æ¥ overlay èµ·æ¥ï¼å¯å³é­ BGP åå°ç»ä»¶</td>
+</tr>
+<tr>
+<td>èªå»ºæºæ¿</td>
+<td>â</td>
+<td>æå®æ´ç½ç»æ§å¶æ â æ å°è£ + BGP æ¯å®æ¹é¦é</td>
+</tr>
+<tr>
+<td>Pod IP ééç¾¤å¤å¯è¾¾</td>
+<td>â</td>
+<td>Overlay ä¸ Pod IP ä¸å¯è·¯ç±å°å¤é¨ â BGP çº¯è·¯ç±æ¨¡å¼</td>
+</tr>
+</tbody>
+</table>
+<h1 id="é¨ç½²æµç¨">é¨ç½²æµç¨</h1>
+<h2 id="éè¿-kind-å¿«éçæéç¾¤å¹¶é¨ç½²-calico-vxlan-æ¨¡å¼">éè¿ Kind å¿«éçæéç¾¤å¹¶é¨ç½² Calico VXLan æ¨¡å¼</h2>
+<pre><code class="language-bash">#!/bin/bash
+set -v
+
+# 1. prep NoCNI environment
+cat &lt;&lt;EOF | HTTP_PROXY= HTTPS_PROXY= http_proxy= https_proxy= kind create cluster --name=calico-vxlan --image=kindest/node:v1.27.3 --config=-
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+networking:
+        disableDefaultCNI: true
+nodes:
+        - role: control-plane
+        - role: worker
+EOF
+
+# 2. Remove taints
+controller_node_ip=`kubectl get node -o wide --no-headers | grep -E "control-plane|bpf1" | awk -F " " '{print $6}'`
+kubectl taint nodes $(kubectl get nodes -o name | grep control-plane) node-role.kubernetes.io/control-plane:NoSchedule-
+kubectl get nodes -o wide
+
+# 3. Collect startup message
+controller_node_name=$(kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}' | grep control-plane)
+if [ -n "$controller_node_name" ]; then
+  timeout 1 docker exec -t $controller_node_name bash -c 'cat &lt;&lt; EOF &gt; /root/monitor_startup.sh
+#!/bin/bash
+ip -ts monitor all &gt; /root/startup_monitor.txt 2&gt;&amp;1
+EOF
+chmod +x /root/monitor_startup.sh &amp;&amp; /root/monitor_startup.sh'
+else
+  echo "No such controller_node!"
+fi
+
+# 4. Install CNI[Calico v3.23.2]
+kubectl apply -f calico.yaml
+</code></pre>
+<pre><code class="language-bash">## calico.yaml
+## https://gitee.com/rowan-wcni/wcni-kind/blob/master/LabasCode/calico/03-calico-vxlan/calico.yaml
+</code></pre>
+<h2 id="åå»ºæµè¯-pod">åå»ºæµè¯ Pod</h2>
+<blockquote>
+<p>å®éå°±æ¯ Nginxï¼ä»ç¨äºåç»­äºè®¿æ¶æå</p>
+</blockquote>
+<pre><code class="language-yaml">apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    app: wluo
+  name: wluo
+spec:
+  selector:
+    matchLabels:
+      app: wluo
+  template:
+    metadata:
+      labels:
+        app: wluo
+    spec:
+      containers:
+      - image: burlyluo/nettool:latest
+        name: nettoolbox
+        env:
+          - name: NETTOOL_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+        securityContext:
+          privileged: true
+</code></pre>
+<h2 id="æ¥çé¨ç½²ç»æ">æ¥çé¨ç½²ç»æ</h2>
+<pre><code class="language-bash">root@network-demo:~# kubectl get pods -A -o wide
+NAMESPACE     NAME                                                 READY   STATUS    RESTARTS   AGE   IP              NODE
+default       wluo-nkmtp                                           1/1     Running   1          47h   10.244.177.66   calico-vxlan-worker
+default       wluo-qf5cc                                           1/1     Running   1          47h   10.244.110.74   calico-vxlan-control-plane
+kube-system   calico-kube-controllers-5b5ff6cb74-fp4r9             1/1     Running   1          47h   10.244.110.72   calico-vxlan-control-plane
+kube-system   calico-node-696p5                                    1/1     Running   1          47h   172.18.0.2      calico-vxlan-worker
+kube-system   calico-node-dxz57                                    1/1     Running   1          47h   172.18.0.3      calico-vxlan-control-plane
+kube-system   coredns-5d78c9869d-w4d2g                             1/1     Running   1          47h   10.244.110.71   calico-vxlan-control-plane
+kube-system   coredns-5d78c9869d-zl7qg                             1/1     Running   1          47h   10.244.110.70   calico-vxlan-control-plane
+kube-system   etcd-calico-vxlan-control-plane                      1/1     Running   1          47h   172.18.0.3      calico-vxlan-control-plane
+kube-system   kube-apiserver-calico-vxlan-control-plane            1/1     Running   1          47h   172.18.0.3      calico-vxlan-control-plane
+kube-system   kube-controller-manager-calico-vxlan-control-plane   1/1     Running   1          47h   172.18.0.3      calico-vxlan-control-plane
+kube-system   kube-proxy-rsf5n                                     1/1     Running   1          47h   172.18.0.2      calico-vxlan-worker
+kube-system   kube-proxy-zn8vq                                     1/1     Running   1          47h   172.18.0.3      calico-vxlan-control-plane
+kube-system   kube-scheduler-calico-vxlan-control-plane            1/1     Running   1          47h   172.18.0.3      calico-vxlan-control-plane
+</code></pre>
+<h1 id="éªè¯ææ">éªè¯ææ</h1>
+<h2 id="æ¥è¯¢-node-èç¹-vxlan-è®¾å¤fdbarpè·¯ç±è¡¨ä¿¡æ¯">æ¥è¯¢ Node èç¹ VXLAN è®¾å¤ãFDBãARPãè·¯ç±è¡¨ä¿¡æ¯</h2>
+<pre><code class="language-bash">## èç¹ä¿¡æ¯
+root@network-demo:~# kubectl get node -o wide
+NAME                         STATUS   ROLES           AGE   VERSION   INTERNAL-IP
+calico-vxlan-control-plane   Ready    control-plane   47h   v1.27.3   172.18.0.3
+calico-vxlan-worker          Ready    &lt;none&gt;          47h   v1.27.3   172.18.0.2
+
+## Pod ä¿¡æ¯
+root@network-demo:~# kubectl get pods -o wide
+NAME         READY   STATUS    RESTARTS   AGE   IP              NODE
+wluo-nkmtp   1/1     Running   1          47h   10.244.177.66   calico-vxlan-worker
+wluo-qf5cc   1/1     Running   1          47h   10.244.110.74   calico-vxlan-control-plane 
+</code></pre>
+<h3 id="1æ¥è¯¢-vxlancalico-è®¾å¤ä¿¡æ¯">1.æ¥è¯¢ vxlan.calico è®¾å¤ä¿¡æ¯</h3>
+<blockquote>
+<p>å¼å¤´æå° vxlan æ¨¡å¼æ¯æä¸ä¸ªäºå±ç½ç»å°è£å° UDP åéï¼éè¿ä¸å±ç½ç»ä¼ è¾ãé£ä¹ vxlan.calico è®¾å¤å°±æ¯ä¸»æºä¸ç VTEP è®¾å¤ï¼ç¨æ¥åå°è£/è§£å°è£ã</p>
+</blockquote>
+<pre><code class="language-bash">root@calico-vxlan-control-plane:/# ip -d link show vxlan.calico
+6: vxlan.calico: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UNKNOWN mode DEFAULT group default 
+    link/ether 66:40:d4:7a:17:07 brd ff:ff:ff:ff:ff:ff promiscuity 0 minmtu 68 maxmtu 65535 
+    vxlan id 4096 local 172.18.0.3 dev eth0 srcport 0 0 dstport 4789 nolearning ttl auto ageing 300 udpcsum noudp6zerocsumtx noudp6zerocsumrx addrgenmode eui64 numtxqueues 1 numrxqueues 1 gso_max_size 65536 gso_max_segs 65535 
+
+root@calico-vxlan-control-plane:/# ip address show vxlan.calico
+6: vxlan.calico: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UNKNOWN group default 
+    link/ether 66:40:d4:7a:17:07 brd ff:ff:ff:ff:ff:ff
+    inet 10.244.110.64/32 scope global vxlan.calico
+       valid_lft forever preferred_lft forever
+</code></pre>
+<h3 id="2æ¥è¯¢èç¹è·¯ç±è¡¨">2.æ¥è¯¢èç¹è·¯ç±è¡¨</h3>
+<blockquote>
+<p>æ¥è¯¢è·¯ç±è¡¨åç°ï¼è®¿é®å¯¹ç«¯ Pod æ¶éè¿ <strong>vxlan.calico</strong> è®¾å¤è¿è¡è½¬å</p>
+<p>è·¯ç±ä¿¡æ¯ä¸­ <code>onlink</code> æ å¿è¡¨ç¤º<strong>è®¤ä¸ºä¸ä¸è·³ä½äºæ¬å°é¾è·¯ä¸</strong>ï¼å³ä½¿è¯¥ç½å³ä¸å¨åä¸ç½æ®µãå ä¸ºå®éå¯è¾¾æ§ç± VXLAN é§éä¿è¯ï¼èä¸æ¯ç´æ¥ L3 å¯è¾¾</p>
+</blockquote>
+<pre><code class="language-bash">root@network-demo:~# docker exec -it calico-vxlan-control-plane ip route show | grep '10.244.177.64'
+
+## è®¿é® 10.244.177.66 èµ°è¿æ¡è·¯ç±ï¼å­ç½æ©ç  /26 åå«ï¼ï¼å·ä½çä¸é¢ ipcalc ç»æ
+10.244.177.64/26 via 10.244.177.64 dev vxlan.calico onlink
+
+## ipcalc 10.244.177.64/26
+## Address:   10.244.177.64        00001010.11110100.10110001.01 000000
+## Netmask:   255.255.255.192 = 26 11111111.11111111.11111111.11 000000
+## Wildcard:  0.0.0.63             00000000.00000000.00000000.00 111111
+## =&gt;
+## Network:   10.244.177.64/26     00001010.11110100.10110001.01 000000
+## HostMin:   10.244.177.65        00001010.11110100.10110001.01 000001
+## HostMax:   10.244.177.126       00001010.11110100.10110001.01 111110
+## Broadcast: 10.244.177.127       00001010.11110100.10110001.01 111111
+## Hosts/Net: 62                    Class A, Private Internet
+
+## ææå ip route show
+root@network-demo:~# docker exec -it calico-vxlan-control-plane route -n | grep '10.244.177.64'
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.244.177.64   10.244.177.64   255.255.255.192 UG    0      0        0 vxlan.calico
+</code></pre>
+<h3 id="3æ¥è¯¢èç¹-arp-è¡¨">3.æ¥è¯¢èç¹ ARP è¡¨</h3>
+<blockquote>
+<p>è·¨èç¹ Pod æµéèµ° VXLAN é§éãæ¯æ¡è¿ç«¯ Pod IP â VTEP MAC çæ å°ç± <strong>Felixï¼Calico agentï¼</strong> ä¸»å¨åå¥é»å±è¡¨å¹¶æ è®°ä¸º <code>PERMANENT</code>ã</p>
+<p>æ¢ç¶æ¯è¿ç«¯ï¼è¿éç <code>66:aa:ae:c0:d0:7a</code> MAC è¯å®æ¯å¯¹ç«¯ Pod Node VTEP MACã</p>
+</blockquote>
+<pre><code class="language-bash">root@network-demo:~# docker exec calico-vxlan-control-plane ip neighbor show | grep '10.244.177.64'
+10.244.177.64 dev vxlan.calico lladdr 66:aa:ae:c0:d0:7a PERMANENT
+
+root@network-demo:~# docker exec calico-vxlan-control-plane arp -n | grep '10.244.177.64'
+Address                  HWtype  HWaddress           Flags Mask            Iface
+10.244.177.64            ether   66:aa:ae:c0:d0:7a   CM                    vxlan.calico
+</code></pre>
+<h3 id="4æ¥è¯¢èç¹-fdb-è¡¨">4.æ¥è¯¢èç¹ FDB è¡¨</h3>
+<blockquote>
+<p><strong>vxlan.calico</strong> æ¯ vxlan è®¾å¤ï¼è¯·æ±ç»è¿ä»æ¶ï¼ä¼éè¿ FDB è¡¨æ¥è¯¢</p>
+</blockquote>
+<pre><code class="language-bash">root@network-demo:~# docker exec -it calico-vxlan-control-plane bridge fdb show | grep '172.18.0.2'
+
+## å¦æè¦å VXLAN å¸§ç»è¿ä¸ª MACï¼å°è£åçå¤å±ç®ç IP æ¯ 172.18.0.2
+66:aa:ae:c0:d0:7a dev vxlan.calico dst 172.18.0.2 self permanent
+</code></pre>
+<h2 id="æ¥è¯¢-pod-è·¯ç±arpç½ç»è®¾å¤ä¿¡æ¯">æ¥è¯¢ Pod è·¯ç±ãARPãç½ç»è®¾å¤ä¿¡æ¯</h2>
+<blockquote>
+<p>éªè¯è·¯ç±è§åãcalico çæçç½ç»è®¾å¤å¼å¯ proxy_arp åçææ</p>
+</blockquote>
+<h3 id="1æ¥è¯¢-pod-ç½å¡ä¿¡æ¯">1.æ¥è¯¢ Pod ç½å¡ä¿¡æ¯</h3>
+<pre><code class="language-bash">## Pod æå¤ç½æ®µå­ç½æ©ç ä¸º 32ï¼å³è¯¥ç½æ®µåªå­å¨ Pod IP
+## /32 æå³ç Pod æ¯"å­¤å²"ï¼ä»»ä½å¶ä» IP é½ä¸å¨æ¬å°ç½æ®µ
+root@network-demo:~# kubectl exec wluo-qf5cc -- ip address show eth0
+4: eth0@if11: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UP group default 
+    link/ether a2:7f:ae:c6:af:99 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 10.244.110.74/32 scope global eth0
+       valid_lft forever preferred_lft forever
+</code></pre>
+<h3 id="2æ¥è¯¢-pod-è·¯ç±">2.æ¥è¯¢ Pod è·¯ç±</h3>
+<blockquote>
+<p>ä¸ Calico IPIP æ¨¡å¼ä¸æ ·ï¼å®¹å¨é»è®¤ç½å³ç IP 169.254.1.1 æ¯ä»ä¹å¶å®æ æè°ãå ä¸ºéè¿ <code>scope link</code> éç½®åï¼è¿æ¡è·¯ç±è¢«æ è®°ä¸ºæ¬å°é¾è·¯è·¯ç±ï¼éä¿¡èµ°çæ¯<strong>äºå±è½¬å</strong>ï¼ä¾èµçæ¯ MAC å°åèé IP å°åã</p>
+</blockquote>
+<pre><code class="language-bash">root@network-demo:~# kubectl exec wluo-qf5cc -- ip route show
+default via 169.254.1.1 dev eth0 
+169.254.1.1 dev eth0 scope link 
+
+root@network-demo:~# kubectl exec wluo-qf5cc -- route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         169.254.1.1     0.0.0.0         UG    0      0        0 eth0
+169.254.1.1     0.0.0.0         255.255.255.255 UH    0      0        0 eth0
+</code></pre>
+<h3 id="3æ¥è¯¢-pod-arp-ä¿¡æ¯">3.æ¥è¯¢ Pod ARP ä¿¡æ¯</h3>
+<pre><code class="language-bash">root@network-demo:~# kubectl exec wluo-qf5cc -- ip neighbor show
+172.18.0.3 dev eth0 lladdr ee:ee:ee:ee:ee:ee STALE
+169.254.1.1 dev eth0 lladdr ee:ee:ee:ee:ee:ee STALE
+
+root@network-demo:~# kubectl exec wluo-qf5cc -- arp -n
+Address                  HWtype  HWaddress           Flags Mask            Iface
+172.18.0.3               ether   ee:ee:ee:ee:ee:ee   C                     eth0
+169.254.1.1              ether   ee:ee:ee:ee:ee:ee   C                     eth0
+</code></pre>
+<h2 id="pod-ç½å¡å¤æå">Pod ç½å¡å¤æå</h2>
+<pre><code class="language-bash">root@network-demo:~# kubectl exec wluo-qf5cc -- curl -s 10.244.177.66
+PodName: wluo-nkmtp | PodIP: eth0 10.244.177.66/32
+</code></pre>
+<p><img src="https://img2024.cnblogs.com/blog/3735354/202604/3735354-20260405162002448-727659404.png" alt="image" loading="lazy"></p>
+<p><img src="https://img2024.cnblogs.com/blog/3735354/202604/3735354-20260405162018569-413227942.png" alt="image" loading="lazy"></p>
+<h2 id="node-ç½å¡å¤æå">Node ç½å¡å¤æå</h2>
+<p><img src="https://img2024.cnblogs.com/blog/3735354/202604/3735354-20260405162030743-159605971.png" alt="image" loading="lazy"></p>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-04-05 16:21">2026-04-05 16:20</span>&nbsp;
+<a href="https://www.cnblogs.com/manuscript">æä¹è¿å¨åä»£ç </a>&nbsp;
+éè¯»(<span id="post_view_count">1</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19823849);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19823849', targetLink: 'https://www.cnblogs.com/manuscript/p/19823849', title: 'Calico VXLAN ä½¿ç¨æå' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ RDK-OE-LLMå·¥å·é¾éåSigLipå¨æµç¨ ]]></title>
+    <link>https://www.cnblogs.com/SkyXZ/p/19823799</link>
+    <guid>8918d6da251adeaf97be674f98baad4b</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/SkyXZ/p/19823799" title="åå¸äº 2026-04-05 16:02">
+    <span role="heading" aria-level="2">RDK-OE-LLMå·¥å·é¾éåSigLipå¨æµç¨</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<blockquote>
+<p>ä½èï¼SkyXZ</p>
+<p>CSDNï¼<a href="https://blog.csdn.net/xiongqi123123?spm=1000.2115.3001.5343" target="_blank" rel="noopener nofollow">SkyXZï½-CSDNåå®¢</a></p>
+<p>åå®¢å­ï¼<a href="https://www.cnblogs.com/SkyXZ" target="_blank">SkyXZ - åå®¢å­</a></p>
+</blockquote>
+<ul>
+<li>LLMå·¥å·é¾å·¥å·åï¼wget <a href="https://d-robotics-aitoolchain.oss-cn-beijing.aliyuncs.com/llm_s100/1.0.0/D-Robotics_LLM_S100_1.0.0_SDK.tar.gz" target="_blank" rel="noopener nofollow">https://d-robotics-aitoolchain.oss-cn-beijing.aliyuncs.com/llm_s100/1.0.0/D-Robotics_LLM_S100_1.0.0_SDK.tar.gz</a></li>
+<li>LLMå·¥å·é¾å¼åææ¡£ï¼wget <a href="https://d-robotics-aitoolchain.oss-cn-beijing.aliyuncs.com/llm_s100/1.0.0/D-Robotics_LLM_S100_1.0.0_Doc.zip" target="_blank" rel="noopener nofollow">https://d-robotics-aitoolchain.oss-cn-beijing.aliyuncs.com/llm_s100/1.0.0/D-Robotics_LLM_S100_1.0.0_Doc.zip</a></li>
+<li>ææä»£ç å·²ä¼ è³ï¼<a href="https://github.com/xiongqi123123/RDK_OE_LLM_ZOO" target="_blank" rel="noopener nofollow">https://github.com/xiongqi123123/RDK_OE_LLM_ZOO</a></li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;éçå¤æ¨¡æå¤§æ¨¡åãVLM ä¹è³ VLA çå¿«éåå±ï¼è¶æ¥è¶å¤çæ¨¡åå¨è§è§ç¼ç å¨é¨åéç¨äº SigLip è¿ä¸ç±»ç»æãç¸æ¯ä¼ ç» CNNï¼SigLip è¿ç±»ä»¥ Transformer ä¸ºæ ¸å¿çè§è§éª¨å¹²å¨è·¨æ¨¡æä»»å¡ä¸­è¡¨ç°æ´å¼ºï¼ä½ä¹æ­£å ä¸ºå¶ç»ææ´å¤æãå¯¹æ°å¼åå¸æ´ææï¼ç´æ¥æ²¿ç¨ RDK ä¼ ç» PTQ éåæµç¨æ¶ï¼å¾å¾ä¼åºç°è¾ææ¾çç²¾åº¦æç¹ãæ­¤åæä¹åè¿ä¸ç¯<a href="https://forum.d-robotics.cc/t/topic/31516?u=skyxz" target="_blank" rel="noopener nofollow">åºäºä¼ ç»å·¥å·é¾éå ViT çæç¨</a>ï¼è½ç¶æ´ä½æµç¨è½å¤è·éï¼ä½ä»æç»æææ¥çï¼ç²¾åº¦æå¤±ä»ç¶åå¤§ï¼å¹¶ä¸ç®æ¯ä¸ä¸ªè¶³å¤çæ³çé¨ç½²æ¹æ¡ãèè¶å¥ä¹ååè¿ä¸ä¸ª<a href="https://forum.d-robotics.cc/t/topic/32917?u=skyxz" target="_blank" rel="noopener nofollow">ææ¡£</a>ï¼ä½æ¯å¹¶æ²¡æç»åºéåçåèä»ç»åºäºå¯ä¸è½½çéååçæéã<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;èæ¬æååºäºå°çæºå¨äººæ¨åºç OE-LLM å¤§æ¨¡åå·¥å·é¾ï¼ä»¥ siglip-so400m-patch14-384 ä¸ºä¾ï¼å®æ´è®°å½ææ¯å¦ä½ä»æ¨¡åç»æåæåºåï¼ä¸æ­¥æ­¥å®æ SigLip å¨ Leap æ¡æ¶ä¸çç½ç»éæãæ¨¡åæ³¨åãæ ¡åç¼è¯ä»¥åPC ä¸æ¿ç«¯éªè¯çãç¸è¾äºä¼ ç» PTQ æ¹æ³ï¼OE-LLM æ´éåå¤çè¿ç±»é¢åå¤§æ¨¡åæ¶ä»£ç Transformer è§è§ç¼ç å¨ï¼ä¹æ´ææºä¼å¨ä¿è¯å¯é¨ç½²æ§çåæ¶ï¼åå¾æ´ç¨³å®çéåææãå¸æè¿ç¯æç« ä¸ä»è½å¤å¸®å©å¤§å®¶å¨ RDK å¹³å°ä¸è·é SigLip çéåé¨ç½²æµç¨ï¼ä¹è½ä¸ºåç»­ééæ´å¤è§è§ç¼ç å¨æå¤æ¨¡ææ¨¡åæä¾ä¸ä¸ªå¯å¤ç¨çåèã</p>
+<h2 id="ä¸ç¯å¢éç½®æç§å¼åæåéç½®å³å¯">ä¸ãç¯å¢éç½®(æç§å¼åæåéç½®å³å¯)</h2>
+<h3 id="å¼åæºéç½®pcçµè">å¼åæºéç½®(PCçµè)</h3>
+<pre><code class="language-Bash"># Step1:ä¸è½½D-Robotics_LLM_{version}.tar.gzå®è£åå¹¶æ­£ç¡®è§£åã
+wget https://d-robotics-aitoolchain.oss-cn-beijing.aliyuncs.com/llm_s100/1.0.0/D-Robotics_LLM_S100_1.0.0_SDK.tar.gz
+# Step2:å®è£Condaç¯å¢
+wget -c https://mirrors.bfsu.edu.cn/github-release/conda-forge/miniforge/LatestRelease/Miniforge3-Linux-x86_64.sh
+chmod 777 Miniforge3-Linux-x86_64.sh
+sh Miniforge3-Linux-x86_64.sh
+conda create -n oellm python=3.10
+conda activate oellm
+# (oellm) xxx@xxx:~$ 
+# Step3:å®è£å¿è¦çpythonç¯å¢
+# D-Robotics_LLM_{version}è·¯å¾ä¸
+pip install -r ./oellm_build/requirements.txt
+pip install ./oellm_build/hbdk4_compiler-{version}-cp310-cp310-manylinux_2_17_x86_64.whl
+pip install ./oellm_build/hbdk4_runtime_aarch64_unknown_linux_gnu_nash-{version}-py3-none-any.whl
+pip install ./oellm_build/leap_llm-{version}-py310-none-any.whl
+
+# Step4:å°leapllmçmodelé¾æ¥è¿æ¬å°å¼åç®å½
+pip3 show leap-llm
+ln -s /path/you/oellm/lib/python3.10/site-packages/leap_llm .
+</code></pre>
+<h3 id="æéä¸è½½">æéä¸è½½</h3>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;æä»¬ä»¥<code>siglip-so400m-patch14-384</code>ä¸ºç¤ºä¾æ¥ä½éªoe_llm</p>
+<pre><code class="language-Bash">export HF_ENDPOINT=https://hf-mirror.com
+huggingface-cli download google/siglip-so400m-patch14-384 --local-dir siglip-so400m-patch14-384
+</code></pre>
+<h2 id="äºä½¿ç¨oe-llméåç¼è¯">äºãä½¿ç¨OE-LLMéåç¼è¯</h2>
+<h3 id="leapå·¥å·é¾åæä»ä¸ªäººåæä¸ä»£è¡¨å°çå®æ¹">Leapå·¥å·é¾åæ(ä»ä¸ªäººåæï¼ä¸ä»£è¡¨å°çå®æ¹)</h3>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;æä¸ªäººçè§£ï¼<code>oe-llm</code>ä¸ä¼ ç»çéåæµç¨ï¼å¦ç¦»çº¿ PTQ æ QATï¼æææ¾åºå«ãå®æ´åæ¯ä¸å¥âæ¨¡åéæ + æ ¡å + ç¼è¯å¯¼åºâçå·¥å·é¾ï¼å¼åèéè¦ååºäº<code>leap_llm</code>æä¾çæ¨¡åï¼å°åå§ PyTorch ç½ç»æ¹åä¸º Leap å¯è¯å«çå®ç°ï¼éåä½¿ç¨æ ¡åæ°æ®è¿è¡æµ®ç¹<code>forward()</code>æ¶ééåç»è®¡ä¿¡æ¯ï¼æååæ¢å°<code>build()</code>è·¯å¾ï¼å°æ¨¡åå¯¼åºä¸º Leap/HBDK è®¡ç®å¾å¹¶ç¼è¯æå¯é¨ç½²å°æ¿ç«¯ç HBM æ¨¡åã</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ä»æºç æ¥çï¼<code>leap_llm/nn/modules</code>ä¸­å¸¸ç¨çéåç¸å³ç»ä»¶ä¸»è¦åæ¬ä»¥ä¸å ç±»ãéè¦æ³¨æçæ¯ï¼å¹¶ä¸æ¯æææ¨¡åé½åªä¾èµ<code>FakeQuant</code>æ¨¡åï¼é¨åæ¨¡åä¹ä¼æ··ç¨<code>DynamicQuant</code>ã<code>RMSNorm</code>ã<code>LayerNormSplit</code>ç­å¶ä»å°è£ç»ä»¶ã</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center"><strong>éåç¸å³ç»ä»¶</strong></th>
+<th style="text-align: center"><strong>æå¨æä»¶</strong></th>
+<th style="text-align: center"><strong>åè½æè¿°</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center">FakeQuantEmbedding</td>
+<td style="text-align: center">embedding.py</td>
+<td style="text-align: center">éååµå¥å±</td>
+</tr>
+<tr>
+<td style="text-align: center">FakeQuantLinear</td>
+<td style="text-align: center">linear.py</td>
+<td style="text-align: center">éåçº¿æ§å±</td>
+</tr>
+<tr>
+<td style="text-align: center">FakeQuantRMSNorm</td>
+<td style="text-align: center">rms_norm.py</td>
+<td style="text-align: center">éå RMS å½ä¸å</td>
+</tr>
+<tr>
+<td style="text-align: center">ConstFakeQuant</td>
+<td style="text-align: center">const_fake_quant.py</td>
+<td style="text-align: center">å¸¸éåéå/å®ç¹å</td>
+</tr>
+<tr>
+<td style="text-align: center">FakeQuantAdd</td>
+<td style="text-align: center">ops.py</td>
+<td style="text-align: center">éåå æ³</td>
+</tr>
+<tr>
+<td style="text-align: center">FakeQuantMul</td>
+<td style="text-align: center">ops.py</td>
+<td style="text-align: center">éåä¹æ³</td>
+</tr>
+<tr>
+<td style="text-align: center">FakeQuantRsqrt</td>
+<td style="text-align: center">ops.py</td>
+<td style="text-align: center">éåå¹³æ¹æ ¹åæ°</td>
+</tr>
+<tr>
+<td style="text-align: center">FakeQuantReduceMean</td>
+<td style="text-align: center">ops.py</td>
+<td style="text-align: center">éååå¼å½çº¦</td>
+</tr>
+<tr>
+<td style="text-align: center">FakeQuantPow</td>
+<td style="text-align: center">ops.py</td>
+<td style="text-align: center">éåå¹è¿ç®</td>
+</tr>
+<tr>
+<td style="text-align: center">FakeQuantMatmul</td>
+<td style="text-align: center">matmul.py</td>
+<td style="text-align: center">éåç©éµä¹æ³</td>
+</tr>
+<tr>
+<td style="text-align: center">DynamicQuantMatmul</td>
+<td style="text-align: center">matmul.py</td>
+<td style="text-align: center">å¨æéåç©éµä¹æ³</td>
+</tr>
+<tr>
+<td style="text-align: center">FakeQuantSoftmax</td>
+<td style="text-align: center">activation.py</td>
+<td style="text-align: center">éå Softmax</td>
+</tr>
+<tr>
+<td style="text-align: center">FakeQuantSwish</td>
+<td style="text-align: center">activation.py</td>
+<td style="text-align: center">éå Swish æ¿æ´»</td>
+</tr>
+<tr>
+<td style="text-align: center">FakeQuantGELU</td>
+<td style="text-align: center">activation.py</td>
+<td style="text-align: center">éå GELU æ¿æ´»</td>
+</tr>
+<tr>
+<td style="text-align: center">FakeQuantPatchEmbedding</td>
+<td style="text-align: center">vision_embedding.py</td>
+<td style="text-align: center">éåè§è§ Patch åµå¥</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;æ´ä½æµç¨å¯ä»¥æ¦æ¬ä¸ºä¸æ­¥ãç¬¬ä¸æ­¥æ¯å®ææ¨¡åéæãéå¸¸éè¦å°åå§ç<code>nn.Module</code>æ¹åä¸ºç»§æ¿<code>Model</code>æ<code>Module</code>ç Leap çæ¬ï¼å¹¶å°å¶ä¸­çå³é®ç®å­æ¿æ¢ä¸ºå¯¹åºçéåç»ä»¶ãæ¯ä¸ªéæåçæ¨¡åéå¸¸é½éè¦åæ¶å®ç°<code>build()</code>å<code>forward()</code>ä¸¤å¥é»è¾ï¼å¶ä¸­<code>build()</code>è´è´£ä½¿ç¨<code>leap.*</code>ç®å­æè¿°æç»è¦ç¼è¯å° BPU ä¸çè®¡ç®å¾ï¼<code>forward()</code>åä¿ç PyTorch æµ®ç¹è·¯å¾ï¼ç¨äºæ ¡ååç²¾åº¦å¯¹é½ã</p>
+<pre><code class="language-Python"># åå§æ¨¡å
+class StandardLLM(nn.Module):
+    def __init__(self):
+        self.embedding = nn.Embedding(vocab_size, hidden_size)
+        self.layers = nn.ModuleList([DecoderLayer() for _ in range(num_layers)])
+        self.norm = nn.RMSNorm(hidden_size)
+        self.lm_head = nn.Linear(hidden_size, vocab_size)
+
+# OE-LLMéæåçæ¨¡åï¼ç¤ºæï¼
+class QuantLLM(Model):
+    def __init__(self):
+        self.embedding = FakeQuantEmbedding(vocab_size, hidden_size)
+        self.layers = nn.ModuleList([QuantDecoderLayer() for _ in range(num_layers)])
+        self.norm = FakeQuantRMSNorm(hidden_size)
+        self.lm_head = FakeQuantLinear(hidden_size, vocab_size)
+    def build(self, inputs):
+        pass
+    def forward(self, inputs):
+        pass
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ç¬¬äºæ­¥æ¯æ ¡åãæ ¡åé¶æ®µçæ ¸å¿ç®æ æ¯è®©åä¸ªéåæ¨¡åå¨æµ®ç¹ååè¿ç¨ä¸­æ¶éç»è®¡ä¿¡æ¯ï¼ä¾å¦<code>absmax</code>ãç¼©æ¾å å­æå½ä¸åç¸å³çèå´ä¿¡æ¯ãå æ­¤ï¼æ ¡åæ°æ®çé¢å¤çæµç¨å¿é¡»ä¸ç®æ æ¨¡åççå®è¾å¥åå¸å°½å¯è½ä¸è´ãå¯¹äºè§è§æ¨¡åï¼å¾å¾éè¦åç¬å®ç°éåè¯¥æ¨¡åçå¾åé¢å¤çä¸ patch åé»è¾ï¼èä¸è½ç´æ¥å¥ç¨é»è®¤ç LLM ææ¬é¢å¤çæµç¨ã</p>
+<pre><code class="language-Python"># æ¶ééåç»è®¡ä¿¡æ¯
+model.set_compile_mode(False)
+for batch in calibration_data:
+    model.forward(batch)  # éåæ¨¡åå¨forwardè¿ç¨ä¸­æ¶éç»è®¡ä¿¡æ¯
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;æåä¸æ­¥æ¯ç¼è¯å¯¼åºãæ­¤æ¶æ¨¡åä¼åæ¢å°<code>build()</code>è·¯å¾ï¼ç±<code>leap_llm</code>å°è®¡ç®å¾å¯¼åºãè½¬æ¢å¹¶è¿ä¸æ­¥ç¼è¯ä¸ºæ¿ç«¯å¯æ§è¡çæ¨¡åæä»¶ãè¿éç<code>dtype</code>å<code>march</code>å¹¶ä¸æ¯åºå®ä¸åçï¼éè¦æ ¹æ®å·ä½æ¨¡åå®ç°åç®æ å¹³å°æ¥ç¡®å®ãä»¥æ¬æç SigLip Vision ä¸ºä¾ï¼æç»ç¼è¯é¶æ®µä½¿ç¨çæ¯<code>leap.float16</code>ã</p>
+<pre><code class="language-Python"># çæéåç¼è¯æ¨¡å
+model.set_compile_mode(True)
+model.compile(
+    dtype=leap.float16,
+    march="nash-e",
+    output_model_path="model.hbm"
+)
+</code></pre>
+<h3 id="siglipç»æåæä¸å·¥å·é¾éé">SigLipç»æåæä¸å·¥å·é¾éé</h3>
+<ul>
+<li>SigLipç½ç»ç»ææºç å¼æºï¼<a href="https://github.com/huggingface/transformers/blob/main/src/transformers/models/siglip/modeling_siglip.py" target="_blank" rel="noopener nofollow">transformers/src/transformers/models/siglip/modeling_siglip.py at main Â· huggingface/transformers</a></li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;æä»¬æ ¹æ®åéçæ åæ ¼å¼åå»ºå¥½SigLipçæä»¶ç»æä¾¿å¯ä»¥ç»åSigLipçPytorchç½ç»ç»æä½¿ç¨<code>FakeQuant</code>ç±»å¯¹åºæ§è¡éæï¼æ¥ä¸æ¥æä»¬ç»åTransformeråºä¸­SigLipçPyTorchå®ç°æ¥å¯¹æ¯åæå®ç°</p>
+<pre><code class="language-Bash">(xq) qi.xiong@instance-ujccspas:~/RDK_OE_LLM/D-Robotics_LLM_S100_1.0.0_SDK/leap_llm/models/siglip$ tree -L 2
+.
+âââ __init__.py
+âââ blocks
+â   âââ __init__.py
+â   âââ attention.py
+â   âââ encoder_layer.py
+â   âââ mlp.py
+âââ model.py
+4 directories, 8 files
+</code></pre>
+<h4 id="1mlpé¨å">(1)MLPé¨å</h4>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SigLip ç MLP é¨åéå¸¸æ åï¼æ¬è´¨ä¸å°±æ¯ Vision Transformer ä¸­æå¸¸è§çåé¦ç½ç»ç»æï¼åå°ééç»´ä»<code>hidden_size</code>åç»´å°<code>intermediate_size</code>ï¼ç»è¿æ¿æ´»å½æ°ååæå½±ååç»´åº¦ãç±äº SigLip ä½¿ç¨çæ¯æ®éç GELU MLPï¼èä¸æ¯ SwiGLU æ MoE è¿ç±»æ´å¤æçç»æï¼å æ­¤è¿ä¸é¨åä¹æ¯æ´ä¸ªå·¥å·é¾ééä¸­æå®¹æå®æä¸ä¸æ å°çé¨åã</p>
+<p><strong>å®æ¹ SigLip å®ç°</strong></p>
+<pre><code class="language-Python">class SiglipMLP(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        self.activation_fn = ACT2FN[config.hidden_act]
+        self.fc1 = nn.Linear(config.hidden_size, config.intermediate_size)
+        self.fc2 = nn.Linear(config.intermediate_size, config.hidden_size)
+
+    def forward(self, hidden_states):
+        hidden_states = self.fc1(hidden_states)
+        hidden_states = self.activation_fn(hidden_states)
+        hidden_states = self.fc2(hidden_states)
+        return hidden_states
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ä»ç»æä¸çï¼è¿ä¸åæ²¡æé¢å¤çæ®å·®ãæ²¡æé¨æ§ãä¹æ²¡æç¹æ®çæ°æ®æå¸ååï¼æä»¥æå¨ Leap ä¸­ç´æ¥æç§âçº¿æ§å± -&gt; æ¿æ´»å½æ° -&gt; çº¿æ§å±âçé¡ºåºè¿è¡äºéåãå¶æ ¸å¿ææ³å°±æ¯æ PyTorch ç<code>nn.Linear</code>å GELU æ¿æ´»æ¿æ¢æ Leap å·¥å·é¾éå¯¹åºçéåæ¨¡åï¼å¹¶ä¿æå¼ éæµåå®å¨ä¸è´ã</p>
+<p><strong>Leapä¸­çå®ç°</strong></p>
+<pre><code class="language-Python">class SiglipMLP(Module):
+    def __init__(self, hidden_size, intermediate_size):
+        super().__init__()
+        self.fc1 = FakeQuantLinear(hidden_size, intermediate_size, bias=True)
+        self.fc2 = FakeQuantLinear(intermediate_size, hidden_size, bias=True)
+        self.activation_fn = FakeQuantGELU(quantized=True, quant_bits=16)
+
+    def build(self, hidden_states):
+        hidden_states = self.fc1(hidden_states)
+        hidden_states = self.activation_fn(hidden_states)
+        hidden_states = self.fc2(hidden_states)
+        return hidden_states
+
+    def forward(self, hidden_states):
+        hidden_states = self.fc1(hidden_states)
+        hidden_states = self.activation_fn(hidden_states)
+        hidden_states = self.fc2(hidden_states)
+        return hidden_states
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;è¿ä¸é¨åçééæè·¯å¯ä»¥æ»ç»ä¸ºä¸ç¹ãç¬¬ä¸ï¼<code>nn.Linear</code>ç´æ¥æ¿æ¢ä¸º<code>FakeQuantLinear</code>ï¼æéåæ¿æ´»éåé½äº¤ç»å·¥å·é¾åé¨å¤çãç¬¬äºï¼å®æ¹å®ç°éç GELU å¯¹åºæ¿æ¢ä¸º<code>FakeQuantGELU</code>ï¼å¹¶ä¿æåæçè®¡ç®é¡ºåºä¸åãç¬¬ä¸ï¼ç±äºè¿é¨åæ²¡ææ§å¶æµåå¨æå¾æä½ï¼å æ­¤<code>build()</code>å<code>forward()</code>å ä¹å¯ä»¥ä¿æå®å¨åæï¼è¿ä¹æ¯ SigLip ééç¸å¯¹é¡ºæçåå ä¹ä¸ã</p>
+<h4 id="2attentioné¨å">(2)Attentioné¨å</h4>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SigLip çè§è§æ³¨æååæ ·å±äºæ¯è¾âå¹²åâçæ åå¤å¤´èªæ³¨æåãè¾å¥ç<code>hidden_states</code>ååå«ç»è¿<code>q_proj</code>ã<code>k_proj</code>ã<code>v_proj</code>çº¿æ§æ å°ï¼ç¶å reshape æå¤å¤´æ ¼å¼ï¼æ¥çæ§è¡<code>QK^T</code>ãç¼©æ¾ãSoftmaxï¼åå<code>V</code>åä¹æ³ï¼æåç»è¿<code>out_proj</code>è¾åºãè¿ä¸è·¯å¾ä¸ç»å¸ ViT å ä¹ä¸è´ã</p>
+<p><strong>å®æ¹ SigLip å®ç°</strong></p>
+<pre><code class="language-Python">class SiglipAttention(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        self.embed_dim = config.hidden_size
+        self.num_heads = config.num_attention_heads
+        self.head_dim = self.embed_dim // self.num_heads
+        self.scale = self.head_dim ** -0.5
+
+        self.k_proj = nn.Linear(self.embed_dim, self.embed_dim)
+        self.v_proj = nn.Linear(self.embed_dim, self.embed_dim)
+        self.q_proj = nn.Linear(self.embed_dim, self.embed_dim)
+        self.out_proj = nn.Linear(self.embed_dim, self.embed_dim)
+
+    def forward(self, hidden_states):
+        batch_size, seq_length, embed_dim = hidden_states.shape
+        queries = self.q_proj(hidden_states)
+        keys = self.k_proj(hidden_states)
+        values = self.v_proj(hidden_states)
+
+        queries = queries.view(batch_size, seq_length, self.num_heads, self.head_dim).transpose(1, 2)
+        keys = keys.view(batch_size, seq_length, self.num_heads, self.head_dim).transpose(1, 2)
+        values = values.view(batch_size, seq_length, self.num_heads, self.head_dim).transpose(1, 2)
+
+        attn_weights = torch.matmul(queries, keys.transpose(-1, -2)) * self.scale
+        attn_weights = nn.functional.softmax(attn_weights, dim=-1)
+        attn_output = torch.matmul(attn_weights, values)
+        attn_output = attn_output.transpose(1, 2).reshape(batch_size, seq_length, embed_dim)
+        return self.out_proj(attn_output)
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;æå¨ Leap ä¸­å®ç°è¿é¨åæ¶ï¼æ ¸å¿å¹¶ä¸æ¯âæ¹ç»æâï¼èæ¯æåæ ·çç»æç¨å·¥å·é¾å¯è¯å«çç®å­æ¾å¼å°ååºæ¥ãå°¤å¶æ¯å¨<code>build()</code>éï¼å¼ éç<code>reshape</code>ã<code>transpose</code>å<code>matmul</code>é½éè¦æç¡®æè¿°ï¼ä¸è½ä¾èµ PyTorch å¨è¿è¡æ¶åéå¼æ¨å¯¼ãåæ¶ï¼ç±äºè¿éééçæ¯è§è§ç¼ç å¨æ¨çè·¯å¾ï¼æä¹ä¸éè¦ä¿çå®æ¹å®ç°ä¸­<code>attention_mask</code>ã<code>output_attentions</code>ä»¥å dropout ç­è®­ç»æè°è¯ç¸å³åæ¯ã</p>
+<p><strong>Leapä¸­çå®ç°</strong></p>
+<pre><code class="language-Python">class SiglipAttention(Module):
+    def __init__(self, hidden_size, num_attention_heads):
+        super().__init__()
+        self.embed_dim = hidden_size
+        self.num_heads = num_attention_heads
+        self.head_dim = self.embed_dim // self.num_heads
+        self.scale = self.head_dim ** -0.5
+
+        self.q_proj = FakeQuantLinear(self.embed_dim, self.embed_dim, bias=True)
+        self.k_proj = FakeQuantLinear(self.embed_dim, self.embed_dim, bias=True)
+        self.v_proj = FakeQuantLinear(self.embed_dim, self.embed_dim, bias=True)
+        self.out_proj = FakeQuantLinear(self.embed_dim, self.embed_dim, bias=True)
+
+        self.qk = FakeQuantMatmul(8, 16)
+        self.sv = FakeQuantMatmul(None, 8)
+        self.softmax = FakeQuantSoftmax(quant_bits=16, quantized=True)
+
+    def build(self, hidden_states):
+        batch_size = hidden_states.type.shape[0]
+        q_len = hidden_states.type.shape[1]
+
+        query_states = self.q_proj(hidden_states)
+        key_states = self.k_proj(hidden_states)
+        value_states = self.v_proj(hidden_states)
+
+        query_states = leap.reshape(query_states, [batch_size, q_len, self.num_heads, self.head_dim])
+        query_states = leap.transpose(query_states, [0, 2, 1, 3])
+        key_states = leap.reshape(key_states, [batch_size, q_len, self.num_heads, self.head_dim])
+        key_states = leap.transpose(key_states, [0, 2, 3, 1])
+        value_states = leap.reshape(value_states, [batch_size, q_len, self.num_heads, self.head_dim])
+        value_states = leap.transpose(value_states, [0, 2, 1, 3])
+
+        attn_weights = self.qk(query_states, key_states)
+        attn_weights = leap.mul(attn_weights, self.scale)
+        attn_weights = self.softmax(attn_weights)
+        attn_output = self.sv(attn_weights, value_states)
+
+        attn_output = leap.transpose(attn_output, [0, 2, 1, 3])
+        attn_output = leap.reshape(attn_output, [batch_size, q_len, self.embed_dim])
+        return self.out_proj(attn_output)
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;è¿ä¸é¨åçéééç¹ä¸»è¦æä¸ç¹ãç¬¬ä¸ï¼QKV åè¾åºæå½±å¨é¨æ¿æ¢ä¸º<code>FakeQuantLinear</code>ãç¬¬äºï¼ä¸¤ä¸ªç©éµä¹æ³åå«ä½¿ç¨<code>FakeQuantMatmul</code>æ¥å®æï¼å¶ä¸­<code>QK^T</code>å<code>Attn @ V</code>éç¨äºä¸åçéåéç½®ãç¬¬ä¸ï¼Softmax åå¯¹åºä¸º<code>FakeQuantSoftmax</code>ãæ´ä½æ¥çï¼è¿ä¸å±ä»ç¶ä¸¥æ ¼ä¿æäºå®æ¹ SigLip çæ³¨æåç»æï¼åªæ¯æåæ¬ç± PyTorch éå¼å®æçæ­¥éª¤å±å¼æäº Leap å¯ä»¥ç´æ¥ç¼è¯çæ¾å¼å¾ã</p>
+<h4 id="3encoderlayeré¨å">(3)EncoderLayeré¨å</h4>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;å¦æè¯´ MLP å Attention æ¯ SigLip çåºæ¬ç®å­ååï¼é£ä¹ Encoder Layer åæ¯å®ä»¬å¨ Vision Transformer ä¸­çæ­£çç»åæ¹å¼ãå®æ¹ SigLip çåå±ç»ææ¯å¸åç Pre-Norm å½¢å¼ï¼åå<code>LayerNorm -&gt; Self-Attention -&gt; Residual</code>ï¼åå<code>LayerNorm -&gt; MLP -&gt; Residual</code>ãè¿ä¸å±çé»è¾å®éä¸å³å®äºæ´ä¸ªè§è§ä¸»å¹²ç½ç»çä¸»ä½ææã</p>
+<p><strong>å®æ¹ SigLip å®ç°</strong></p>
+<pre><code class="language-Python">class SiglipEncoderLayer(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        self.layer_norm1 = nn.LayerNorm(config.hidden_size, eps=config.layer_norm_eps)
+        self.self_attn = SiglipAttention(config)
+        self.layer_norm2 = nn.LayerNorm(config.hidden_size, eps=config.layer_norm_eps)
+        self.mlp = SiglipMLP(config)
+
+    def forward(self, hidden_states):
+        residual = hidden_states
+        hidden_states = self.layer_norm1(hidden_states)
+        hidden_states = self.self_attn(hidden_states)
+        hidden_states = residual + hidden_states
+
+        residual = hidden_states
+        hidden_states = self.layer_norm2(hidden_states)
+        hidden_states = self.mlp(hidden_states)
+        hidden_states = residual + hidden_states
+        return hidden_states
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;å¨æå Leap ééæ¶ï¼è¿ä¸å±çæ­£éè¦æèçå°æ¹å¹¶ä¸æ¯æ®å·®è¿æ¥æ¬èº«ï¼èæ¯<code>LayerNorm</code>åºè¯¥æä¹è½å°ãç¸æ¯çº¿æ§å±åç©éµä¹æ³ï¼å½ä¸åç®å­éå¸¸å¯¹æ°å¼èå´æ´ææï¼å æ­¤æè¿éæ²¡æç´æ¥ä½¿ç¨æ®é<code>LayerNorm</code>å°è£ï¼èæ¯ä½¿ç¨äºå·¥å·é¾ä¸­æ´ç¨³å®ç<code>LayerNormSplit</code>å®ç°ãå®ä¼å¨æ ¡åé¶æ®µç»è®¡è¾å¥èå´ï¼å¹¶å¨<code>build()</code>é¶æ®µæ¾å¼ææåå¼ãæ¹å·®ã<code>rsqrt</code>ãç¼©æ¾ååç½®ç­åå­æä½ï¼æ´éåå½åè¿æ¡ Vision PTQ è·¯å¾ã</p>
+<p><strong>Leapä¸­çå®ç°</strong></p>
+<pre><code class="language-Python">class SiglipEncoderLayer(Module):
+    def __init__(self, layer_id, hidden_size, num_attention_heads, intermediate_size, layer_norm_eps):
+        super().__init__()
+        self.self_attn = SiglipAttention(hidden_size, num_attention_heads)
+        self.layer_norm1 = LayerNormSplit(hidden_size, eps=layer_norm_eps)
+        self.mlp = SiglipMLP(hidden_size, intermediate_size)
+        self.layer_norm2 = LayerNormSplit(hidden_size, eps=layer_norm_eps)
+
+    def build(self, hidden_states):
+        residual = hidden_states
+        hidden_states = self.layer_norm1(hidden_states)
+        hidden_states = self.self_attn(hidden_states)
+        hidden_states = leap.add(residual, hidden_states)
+
+        residual = hidden_states
+        hidden_states = self.layer_norm2(hidden_states)
+        hidden_states = self.mlp(hidden_states)
+        hidden_states = leap.add(residual, hidden_states)
+        return hidden_states
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ä»ç»æä¸çï¼è¿ä¸å±çéæä»ç¶ä¿æäºåå®æ¹å®ç°ç¸åçååé¡ºåºï¼å æ­¤æ´ç½çè¯­ä¹ä¸ä¼åçååãçæ­£çåååªåçå¨ç®å­å±ï¼<code>nn.LayerNorm</code>è¢«æ¿æ¢ä¸º<code>LayerNormSplit</code>ï¼æ®å·®å æ³å¨<code>build()</code>ä¸­åæ<code>leap.add</code>ï¼èæ³¨æåå MLP åå¤ç¨åé¢å·²ç»éåå¥½çå­æ¨¡åãè¿ç§åå±æ¿æ¢çæ¹å¼æä¸ä¸ªææ¾å¥½å¤ï¼å°±æ¯æ¯ä¸å±é½è½ç¬ç«å¯¹é½ãç¬ç«è°è¯ã</p>
+<h4 id="4embeddingä¸æ´ä½visionmodelé¨å">(4)Embeddingä¸æ´ä½VisionModelé¨å</h4>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SigLip çè§è§è¾å¥é¨åå CLIP æä¸ä¸ªå¾ææ¾çåºå«ï¼å®ç Vision Embedding ä¸å¼å¥ class tokenï¼èæ¯ç´æ¥å°å¾ååæ patch åæ å°å° token åºåï¼åå å ç»å¯¹ä½ç½®ç¼ç ãå¯¹äºåºå®è¾å¥åè¾¨ççé¨ç½²åºæ¯æ¥è¯´ï¼è¿ä¸è®¾è®¡éå¸¸éååéæå¾ç¼è¯ã</p>
+<p><strong>å®æ¹ SigLip Embedding ä¸ Vision ä¸»å¹²å®ç°</strong></p>
+<pre><code class="language-Python">class SiglipVisionEmbeddings(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        self.patch_embedding = nn.Conv2d(
+            in_channels=config.num_channels,
+            out_channels=config.hidden_size,
+            kernel_size=config.patch_size,
+            stride=config.patch_size,
+        )
+        self.num_patches = (config.image_size // config.patch_size) ** 2
+        self.position_embedding = nn.Embedding(self.num_patches, config.hidden_size)
+
+    def forward(self, pixel_values):
+        patch_embeds = self.patch_embedding(pixel_values)
+        embeddings = patch_embeds.flatten(2).transpose(1, 2)
+        embeddings = embeddings + self.position_embedding(self.position_ids)
+        return embeddings
+
+
+class SiglipVisionTransformer(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        self.embeddings = SiglipVisionEmbeddings(config)
+        self.encoder = SiglipEncoder(config)
+        self.post_layernorm = nn.LayerNorm(config.hidden_size, eps=config.layer_norm_eps)
+
+    def forward(self, pixel_values):
+        hidden_states = self.embeddings(pixel_values)
+        hidden_states = self.encoder(hidden_states)
+        hidden_states = self.post_layernorm(hidden_states)
+        return hidden_states
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;æå¨ Leap éå¹¶æ²¡æææ´ä¸ª HuggingFace ç<code>SiglipVisionTransformer</code>åå°ä¸å¨æ¬è¿æ¥ï¼èæ¯åäºé¢åç¼è¯é¨ç½²çæè§£ãå·ä½æ¥è¯´ï¼è¾å¥é¨åè¢«ææäº<code>PatchEmbedding</code>å<code>PositionEmbedding</code>ä¸¤ä¸ªæ´å°çæ¨¡åï¼ä¸»å¹²ç½ç»åç±<code>SiglipVisionEmbeddings + å¤å± SiglipEncoderLayer + post_layernorm</code>ç»æãè¿æ ·æå¼ä»¥åï¼æ¢æ¹ä¾¿æéæ å°ï¼ä¹æ¹ä¾¿åç¬å¤ç patch å·ç§¯éååä½ç½®ç¼ç å¸¸éåã</p>
+<p><strong>Leapä¸­çå®ç°</strong></p>
+<pre><code class="language-Python">class SiglipVisionEmbeddings(Module):
+    def __init__(self, hidden_size, num_channels, patch_size, image_size):
+        super().__init__()
+        self.num_patches = (image_size // patch_size) ** 2
+        self.embed_dim = hidden_size
+        self.patch_embedding = PatchEmbedding(hidden_size, num_channels, patch_size)
+        self.position_embedding = PositionEmbedding(self.num_patches, hidden_size)
+        self.position_ids = torch.arange(self.num_patches).unsqueeze(0).contiguous()
+
+    def build(self, pixel_values):
+        self.patch_embedding.to("cpu", dtype=torch.float32)
+        patch_embeds = self.patch_embedding(pixel_values)
+        batch = pixel_values.type.shape[0]
+        embeddings = leap.reshape(patch_embeds, [batch, self.num_patches, self.embed_dim])
+        embeddings = leap.add(embeddings, self.position_embedding(self.position_ids))
+        return embeddings
+
+
+class SiglipVisionModel(Model):
+    def __init__(self, config):
+        super().__init__()
+        self.embeddings = SiglipVisionEmbeddings(...)
+        self.layers = nn.ModuleList([...])
+        self.post_layernorm = LayerNormSplit(config.hidden_size, eps=config.layer_norm_eps)
+
+    def build(self, pixel_values):
+        pixel_values = leap.transpose(pixel_values, dims=[0, 2, 3, 1])
+        hidden_states = self.embeddings(pixel_values)
+        for layer in self.layers:
+            hidden_states = layer(hidden_states)
+        hidden_states = self.post_layernorm(hidden_states)
+        return hidden_states
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;è¿éæå å¤æ¯æå¨éé SigLip æ¶å¿é¡»æç¡®å¤ççãç¬¬ä¸ï¼Leap ç<code>conv2d</code>è·¯å¾ä½¿ç¨çæ¯ NHWC æ°æ®æ ¼å¼ï¼å æ­¤å¨<code>SiglipVisionModel.build()</code>ééè¦åå¯¹è¾å¥å¾ååä¸æ¬¡<code>NCHW -&gt; NHWC</code>è½¬æ¢ãç¬¬äºï¼<code>PatchEmbedding</code>åé¨ä¼å¯¹è¾å¥åå·ç§¯æéååéåå¤çï¼å æ­¤å®ä¸æ¯ç®åå°æ<code>nn.Conv2d</code>æ¢ä¸ªåå­ï¼èæ¯çæ­£æ¿æäº patch æå½±çéåèè´£ãç¬¬ä¸ï¼ç±äºæ¬æçç®æ æ¯å®æè§è§ä¸»å¹²ç½ç»çéåç¼è¯ï¼èä¸æ¯å¤å» HuggingFace çå®æ´å¤å¤´æ± åå¤´ï¼æä»¥è¿éä»ä¿ç Vision Transformer Backbone åæåç<code>post_layernorm</code>è¾åºï¼ä¸åå®ç°<code>SiglipMultiheadAttentionPoolingHead</code>ã</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;æ­¤å¤ï¼ä¸ºäºè®©æè¿å¥ Leap ç SigLip å¯ä»¥çæ­£æ¥ä¸å·¥å·é¾æµç¨ï¼æè¿éè¦è¡¥é½æéæ å°åç¼è¯åè£ã<code>SiglipVision.load_model()</code>è´è´£æ HuggingFace checkpoint ä¸­çæéåæ å°å° Leap å®ç°å¯¹åºçæ¨¡ååï¼<code>SiglipApi</code>åè´è´£è¯»å<code>safetensors</code>ãæ§è¡å¾åé¢å¤çãè· calibrationï¼å¹¶æç»è°ç¨<code>compile()</code>çæ HBM æä»¶ãä¹å°±æ¯è¯´ï¼å®ææ¨¡åéæä¹åï¼çæ­£è®©æ¨¡åâè·èµ·æ¥âçå³é®å¨äºï¼ç½ç»ç»æãæéæ å°ãæ ¡åæ°æ®é¢å¤çåç¼è¯å¥å£ï¼è¿åé¨åå¿é¡»åæ¶é­ç¯ã</p>
+<h3 id="æ¨¡åæ³¨å">æ¨¡åæ³¨å</h3>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;å®æ<code>models/siglip</code>ä¸çç½ç»éæä¹åï¼è¿ä¸è½ç´æ¥éè¿<code>oellm_build</code>è°ç¨è¿å¥æ¨¡åãæ³è¦è®©å·¥å·é¾çæ­£è¯å«ææ°å¢ç SigLipï¼éè¦æå®æ³¨åå°<code>leap_llm/apis/model/model_factory.py</code>ä¸­ãè¿éç<code>model_factory</code>æ¬è´¨ä¸å°±æ¯æ´ä¸ª<code>oe-llm</code>å·¥å·é¾çæ¨¡åååä¸­å¿ï¼å½ä»¤è¡ä¼ å¥ç<code>--model_name</code>æç»é½ä¼å¨è¿éè¢«è§£ææå¯¹åºç API å®ä¾ã</p>
+<p><strong>(1)SigLip çæ³¨åå®ç°</strong></p>
+<pre><code class="language-Python">@register_model("siglip-so400m", ["nash-e", "nash-m", "nash-p"])
+def _build_siglip_so400m(args):
+    from leap_llm.apis.model.siglip import SiglipApi
+
+    return SiglipApi(
+        input_model_path=args.input_model_path,
+        output_model_path=args.output_model_path,
+        calib_image_path=args.calib_image_path,
+        device=args.device,
+        model_type="siglip-so400m",
+        core_num=args.vit_core_num,
+    )
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;è¿éçæ³¨åé»è¾å¹¶ä¸å¤æï¼ä½å®å³å®äº SigLip æ¯å¦è½çæ­£æ¥å¥æ´ä¸ªå·¥å·é¾ã<code>@register_model("siglip-so400m", ["nash-e", "nash-m", "nash-p"])</code>è¿ä¸è¡å®æäºä¸¤ä»¶äºï¼ç¬¬ä¸ï¼æå½ä»¤è¡æ¨¡åå<code>siglip-so400m</code>åæå»ºå½æ°ç»å®èµ·æ¥ï¼ç¬¬äºï¼å£°æè¿ä¸ªæ¨¡åæ¯æåªäº<code>march</code>ç®æ å¹³å°ãè¿æ ·å½ææ§è¡<code>oellm_build --model_name siglip-so400m</code>æ¶ï¼å·¥å·é¾å°±è½èªå¨æé åº<code>SiglipApi</code>å®ä¾ï¼èä¸æ¯æå®å½æä¸ä¸ªæªç¥æ¨¡åã</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;æ¥çå¨<code>oellm_build.py</code>éï¼å½ä»¤è¡åæ°ä¼åè¢«ç»ä¸è§£æï¼ç¶åéè¿<code>create_model_api(args.model_name, args)</code>ååå°åææ³¨åå¥½çæå»ºå½æ°ï¼æåè°ç¨<code>model.compile(**compile_kwargs)</code>è¿å¥å®éçéåç¼è¯æµç¨ã</p>
+<pre><code class="language-Python">model = create_model_api(args.model_name, args)
+if not model:
+    return
+model.compile(**compile_kwargs)
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ä»è®¾è®¡ä¸çï¼è¿ç§åæ³çå¥½å¤å¾ææ¾ï¼ç½ç»ç»æå®ç°ãæ ¡åé»è¾ãç¼è¯é»è¾é½æ¶æå¨<code>SiglipApi</code>åé¨ï¼è<code>oellm_build</code>åªè´è´£è°åº¦ï¼ä¸éè¦ä¸º SigLip é¢å¤åä¸å¥ç¹å¤é»è¾ãè¿æ ·åç»­å¦ææè¦ç»§ç»­å å«çè§è§æ¨¡åï¼åªéè¦éå¤âæ¨¡åå®ç° + APIåè£ + model_factoryæ³¨åâè¿ä¸å¥æµç¨å³å¯ã</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;å®ææ¨¡åæ³¨ååï¼SigLip çå®ééåå¥å£å°±è½å¨<code>leap_llm/apis/model/siglip.py</code>ä¸­ãè¿ä¸ªæä»¶è´è´£ä¸ä»¶äºï¼å è½½åå§æéãåå¤æ ¡åå¾çãä»¥åæ§è¡æ ¡ååç¼è¯ãä¹å°±æ¯è¯´ï¼<code>siglip.py</code>æ¯æç½ç»å®ç°åå·¥å·é¾æµç¨çæ­£è¿æ¥èµ·æ¥çé£ä¸å±ã</p>
+<p><strong>(2) æ ¡åæ°æ®é¢å¤ç</strong></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SigLip çè¾å¥é¢å¤çåæ®é LLM æ¾ç¶ä¸åï¼æä»¥æå¨ API ä¸­åç¬å®ç°äº<code>_load_siglip_image_data()</code>ãå®ä¼å¯¹è¾å¥å¾çæ§è¡<code>Resize -&gt; ToTensor -&gt; Normalize(mean=0.5, std=0.5)</code>ï¼ææ°æ®åæ¢å° SigLip Vision é¢è®­ç»æ¶ä½¿ç¨ç<code>[-1, 1]</code>åå¸ï¼åç»ç»æ<code>(1, 3, H, W)</code>æ ¼å¼ä¾æ ¡ååéªè¯ä½¿ç¨ã</p>
+<pre><code class="language-Python">def _load_siglip_image_data(calib_image_path=None, image_size=384):
+    transform = transforms.Compose([
+        transforms.Resize((image_size, image_size), interpolation=transforms.InterpolationMode.BICUBIC),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
+    ])
+
+    for img_path in image_files:
+        image = Image.open(img_path).convert("RGB")
+        pixel_values = transform(image).unsqueeze(0)
+        yield pixel_values
+</code></pre>
+<p><strong>(3) API åå§å</strong></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;å¨<code>SiglipApi.__init__()</code>ä¸­ï¼æåä»<code>safetensors</code>æ<code>pytorch_model.bin</code>è¯»åæéï¼åè°ç¨åé¢å®ç°å¥½ç<code>SiglipVision.load_model()</code>å®ææéæ å°ä¸æ¨¡åæé ãä¹ååææ ¡åå¾çä¸æ¬¡æ§é¢å è½½å°<code>self.calib_image_data</code>ä¸­ï¼ä¾åé¢ç calibration é¶æ®µä½¿ç¨ã</p>
+<pre><code class="language-Python">class SiglipApi:
+    def __init__(self, input_model_path, output_model_path, calib_image_path=None, ...):
+        checkpoint = {}
+        if os.path.exists(safetensors_path):
+            with safe_open(safetensors_path, framework="pt") as f:
+                for key in f.keys():
+                    checkpoint[key] = f.get_tensor(key)
+
+        self.vit_model = SiglipVision.load_model(input_model_path, checkpoint)
+        self.calib_image_data = list(
+            _load_siglip_image_data(
+                calib_image_path,
+                image_size=self.vit_model.config.image_size,
+            )
+        )
+</code></pre>
+<p><strong>(4) æ ¡åä¸ç¼è¯</strong></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;çæ­£çéåæµç¨éä¸­å¨<code>SiglipApi.compile()</code>éãè¿éåææ¨¡ååå°<code>compile_mode(False)</code>ï¼ç¨æµ®ç¹ååè·å®æ´ä¸ªæ ¡åéï¼è®©åä¸ªéåæ¨¡åæ¶éç»è®¡ä¿¡æ¯ï¼ç¶åååå<code>compile_mode(True)</code>ï¼èµ°<code>build()</code>è·¯å¾å¯¼åºå¹¶ç¼è¯ HBMã</p>
+<pre><code class="language-Python">def compile(self, **kwargs):
+    device = self.device if torch.cuda.is_available() else "cpu"
+    dtype = torch.float32
+
+    vit_module = self.vit_model
+    vit_module.set_model_device(device, dtype=dtype)
+    vit_module.set_compile_mode(False)
+
+    for image_pixel in self.calib_image_data:
+        vit_module.forward(image_pixel.to(device))
+
+    vit_module.set_model_device("cpu", dtype=torch.float16)
+    vit_module.set_compile_mode(True)
+    vit_module.compile(
+        dtype=leap.float16,
+        output_model_path=self.vit_file_name,
+        core_num=self.core_num,
+        **kwargs,
+    )
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;è¿ä¸æ®µåºæ¬å°±æ¯ SigLip éåç¼è¯çä¸»æµç¨ãå¶ä¸­æå³é®çæ¯ä¸¤æ¬¡æ¨¡å¼åæ¢ï¼</p>
+<ul>
+<li><code>set_compile_mode(False)</code>é¶æ®µèµ°çæ¯ PyTorch <code>forward()</code>ï¼ç®çæ¯æ¶ééåç»è®¡ä¿¡æ¯ã</li>
+<li><code>set_compile_mode(True)</code>é¶æ®µèµ°çæ¯ Leap <code>build()</code>ï¼ç®çæ¯å¯¼åºè®¡ç®å¾å¹¶çææç»é¨ç½²æ¨¡åã</li>
+</ul>
+<h3 id="å¼å§éå">å¼å§éå</h3>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;å®æäºä¸è¿°æææµç¨ä¹åï¼å¯¹åºå°å®éä½¿ç¨æ¶ï¼æä»¬åªéè¦éè¿<code>oellm_build</code>è°ç¨å³å¯,ä¾å¦ï¼</p>
+<pre><code class="language-Bash">oellm_build \
+  --model_name siglip-so400m \
+  --march nash-e \
+  --input_model_path /path/to/siglip-so400m-patch14-384 \
+  --output_model_path ./output/siglip
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;æ§è¡è¿æ¡å½ä»¤åï¼å·¥å·é¾ä¼èªå¨å®ææ¨¡ååå»ºãæ ¡åãå¯¼åºãMLIRè½¬æ¢ãHBOç¼è¯å HBM é¾æ¥ï¼æç»å¾å°æ¿ç«¯å¯é¨ç½²ç SigLip Vision æ¨¡åã</p>
+<p><img src="https://img2024.cnblogs.com/blog/3505969/202604/3505969-20260405152938089-1348227444.png" alt="image-20260405152936315" loading="lazy"></p>
+<h3 id="ç²¾åº¦éªè¯">ç²¾åº¦éªè¯</h3>
+<h4 id="pcæºç²¾åº¦éªè¯">PCæºç²¾åº¦éªè¯</h4>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;éåå®æåï¼ä¸ä¸æ­¥å°±æ¯éªè¯éåæ¨¡åä¸æµ®ç¹æ¨¡åä¹é´çè¾åºä¸è´æ§ã<code>oe-llm</code>å¨<code>leap_llm/apis/verifier_cli.py</code>å<code>leap_llm/apis/verifier/backends.py</code>ä¸­æä¾äºä¸å¥éç¨ verifierï¼æè¿éä¹æ SigLip æ¥å°äºè¿æ¡é¾è·¯ä¸­ã</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;é¦åï¼å¨<code>verifier_cli.py</code>ä¸­ææ SigLip å å¥äºæ¯æåè¡¨ï¼</p>
+<pre><code class="language-Python">SUPPORTED_MODELS = [
+    ...,
+    "siglip-so400m",
+]
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;åæ¶ï¼ç±äº SigLip æ¯çº¯è§è§æ¨¡åï¼ä¸èµ°ææ¬è¾å¥æµç¨ï¼æä»¥å¨ verifier ä¸­éè¦åç¬èµ°å¾åå è½½åæ¯ãè¿éç´æ¥å¤ç¨äºåé¢å¨<code>siglip.py</code>ä¸­å®ç°ç<code>_load_siglip_image_data()</code>ï¼ä¿è¯éååéªè¯é¶æ®µä½¿ç¨å®å¨ä¸è´çå¾åé¢å¤çæ¹å¼ã</p>
+<pre><code class="language-Python">if verifier_args.model_name in SIGLIP_MODELS:
+    image_loader = _load_siglip_image_data(verifier_args.input_image_path)
+else:
+    image_loader = load_image_data(verifier_args.input_image_path, max_num=1)
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;æ¥çå¨<code>verifier/backends.py</code>ä¸­ï¼ææ SigLip æ¥å¥å°äº Torch ä¾§æ¨¡åå è½½é»è¾ãå½æ¨¡ååå±äº<code>SIGLIP_MODELS</code>æ¶ï¼backend ä¼ç´æ¥å è½½æå®ç°ç<code>SiglipVision</code>ï¼å¹¶åå°æµ®ç¹æ¨çæ¨¡å¼ï¼</p>
+<pre><code class="language-Python">elif self.args.model_name in SIGLIP_MODELS:
+    siglip_ckpt = {}
+    with safe_open(sf_path, framework="pt") as f:
+        for key in f.keys():
+            siglip_ckpt[key] = f.get_tensor(key)
+
+    self.torch_vlm_model = SiglipVision.load_model(
+        self.args.model_dir, siglip_ckpt
+    )
+    self.torch_vlm_model.set_compile_mode(False)
+    self.torch_vlm_model.set_model_device(self.device, torch.float32)
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ç¶å verifier ä¼åå«è¿è¡ Torch æ¨¡ååéåæ¨¡åï¼æ¶éæç»è¾åºä»¥åä¸­é´å±ç»æãå¯¹ SigLip è¿ç§è§è§æ¨¡åæ¥è¯´ï¼æ ¸å¿æµç¨å°±æ¯ï¼</p>
+<ul>
+<li><code>run_vlm_torch()</code>è°ç¨æµ®ç¹ SigLip ç½ç»ï¼å¾å° PyTorch è¾åº</li>
+<li><code>run_vlm_bc()</code>æ<code>run_vlm_hbm()</code>è°ç¨éååç BC/HBM æ¨¡åï¼å¾å°é¨ç½²ä¾§è¾åº</li>
+<li><code>ComparisonReporter.compare_inference_results()</code>å¯¹ä¸¤ä¾§ç»æåéå±ææç»è¾åºç cosine å¯¹æ¯ï¼å¹¶çæ JSON/Excel æ¥å</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;å¦æåªæ³å¨ PC ä¸åéåå¾æç¼è¯äº§ç©çè¾åºæ¯å¯¹ï¼å¯ä»¥ç´æ¥è°ç¨ verifier å·¥å·ãä¾å¦ï¼</p>
+<pre><code class="language-Bash">python -m leap_llm.apis.verifier_cli \
+  --model_name siglip-so400m \
+  --model_dir /path/to/siglip-so400m-patch14-384 \
+  --compare_mode bc \
+  --quant_vlm_model_path ./output/siglip/siglip-so400m_vit_ptq.bc \
+  --input_image_path /path/to/calib/images
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;å¨è¿ç§æ¨¡å¼ä¸ï¼æ´éåæ£æ¥ BC å¾ä¸æµ®ç¹æ¨¡åä¹é´çç®å­çº§æå±çº§ä¸è´æ§ï¼ä¾¿äºåææ¯åªä¸å±å¼å§åºç°ç²¾åº¦æå¤±</p>
+<p><img src="https://img2024.cnblogs.com/blog/3505969/202604/3505969-20260405155143628-1623266173.png" alt="image-20260405155142171" loading="lazy"></p>
+<h4 id="æ¿ç«¯ç²¾åº¦éªè¯">æ¿ç«¯ç²¾åº¦éªè¯</h4>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;å¦æéè¦éªè¯æç»æ¿ç«¯é¨ç½²æ¨¡åçç²¾åº¦ï¼åå¯ä»¥ç´æ¥å¨<code>oellm_build</code>é¶æ®µå ä¸<code>--verifier</code>åæ°ã<code>oellm_build.py</code>å¨ç¼è¯å®æåä¼èªå¨æé <code>VerifierArgs</code>ï¼å¹¶æ ¹æ®<code>get_hbm_path()</code>è¿åçè·¯å¾æ SigLip è¯å«ä¸ºè§è§æ¨¡åï¼æçæå¥½ç HBM æä»¶ä¼ ç» verifierã</p>
+<pre><code class="language-Python">if hasattr(model, "get_hbm_path"):
+    paths = model.get_hbm_path()
+    if len(paths) == 1:
+        if "siglip" in args.model_name or "gemma4" in args.model_name:
+            hbm_vlm_model_path = paths[0]
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;å¯¹äº HBM æ¨¡å¼ï¼verifier åç«¯ä¼èµ°<code>run_vlm_hbm()</code>ï¼æè¾å¥å¾åè½¬æ HBM ä¾§è¦æ±çæ°æ®æ ¼å¼ï¼ç¶åéè¿è¿ç«¯æ¿å¡æ§è¡æ¨çï¼åæç»ææå PC ä¸ Torch è¾åºè¿è¡å¯¹æ¯ï¼</p>
+<pre><code class="language-Python">def run_vlm_hbm(self, image):
+    outputs = self._run_hbm_vlm_inference(image)
+    return outputs, None
+
+def _run_hbm_vlm_inference(self, image_input):
+    model_inputs = {"_input_0": image_input.cpu().type(torch.float16).numpy()}
+    res = self._get_hbm_infer_res(self._hbm_vlm_module, model_inputs)
+    return OrderedDict([(k, TensorInfo(v, name=k)) for k, v in res.items()])
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;å®éä½¿ç¨æ¶ï¼å¯ä»¥ç´æ¥è¿æ ·æ§è¡ï¼</p>
+<pre><code class="language-Bash">oellm_build \
+  --model_name siglip-so400m \
+  --march nash-e \
+  --input_model_path /path/to/siglip-so400m-patch14-384 \
+  --output_model_path ./output/siglip \
+  --calib_image_path /path/to/calib/images \
+  --verifier \
+  --remote_ip &lt;board_ip&gt; \
+  --username root \
+  --password &lt;password&gt; \
+  --remote_path /userdata/data/hbm_infer
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;æ§è¡å®æåï¼verifier ä¼èªå¨çæå¯¹æ¯æ¥åï¼è¿æ ·å°±å¯ä»¥åæ¶çå°æç»è¾åºçä¸è´æ§ï¼ä»¥åå¨ BC æ¨¡å¼ä¸è¿ä¸æ­¥ä¸é»æ¥çä¸­é´å±ç cosine ååï¼ä»èå¤æ­è¿æ¬¡ SigLip éåæ¯å¦è¾¾å°é¢æææã</p>
+<h2 id="ä¸rdkæ¿ç«¯æ§è½æµè¯">ä¸ãRDKæ¿ç«¯æ§è½æµè¯</h2>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;å®æ SigLip Vision æ¨¡åçéåç¼è¯ä¹åï¼æå°çæç<code>siglip-so400m_vit_ptq.hbm</code>é¨ç½²å° RDK æ¿ç«¯ï¼å¹¶ä½¿ç¨<code>hrt_model_exec perf</code>å¯¹æ¨¡åè¿è¡åçº¿ç¨æ§è½æµè¯ãæ¿ç«¯æ§è¡å½ä»¤å¦ä¸ï¼</p>
+<pre><code class="language-Bash">hrt_model_exec perf \
+  --thread_num 1 \
+  --model_file siglip-so400m_vit_ptq.hbm \
+  --frame_count 500 \
+  --profile-path .
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ä»æ¿ç«¯ç»ç«¯è¾åºç»æå¯ä»¥çå°ï¼æ¨¡åæåå è½½å¹¶å®æäºå®æ´ç perf æµè¯æµç¨ï¼æ²¡æåºç°ç®å­åéãæ¨¡åæ æ³æ§è¡æèè¾å¥è¾åºå¼å¸¸çé®é¢ãæ ¹æ®æªå¾ä¸­çæç»ç»è®¡ç»æï¼å¯ä»¥æ´çåºå¦ä¸æ§è½ææ ï¼</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center">ææ </th>
+<th style="text-align: center">ç»æ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center">Load model to DDR</td>
+<td style="text-align: center">1572.47 ms</td>
+</tr>
+<tr>
+<td style="text-align: center">Thread num</td>
+<td style="text-align: center">1</td>
+</tr>
+<tr>
+<td style="text-align: center">Frame count</td>
+<td style="text-align: center">500</td>
+</tr>
+<tr>
+<td style="text-align: center">Average latency</td>
+<td style="text-align: center">265.210 ms</td>
+</tr>
+<tr>
+<td style="text-align: center">Max latency</td>
+<td style="text-align: center">265.393 ms</td>
+</tr>
+<tr>
+<td style="text-align: center">Min latency</td>
+<td style="text-align: center">265.054 ms</td>
+</tr>
+<tr>
+<td style="text-align: center">FPS</td>
+<td style="text-align: center">3.770 FPS</td>
+</tr>
+</tbody>
+</table>
+<p><img src="https://img2024.cnblogs.com/blog/3505969/202604/3505969-20260405150106370-393295434.png" alt="download" loading="lazy"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ä¸å¾å±ç¤ºçæ¯æ¿ç«¯<code>hrt_model_exec perf</code>çå®éè¾åºç»æï¼å¯ä»¥çå°æ¨¡åå·²ç»æåå è½½å° DDR ä¸­ï¼å¹¶å®æäºå®æ´çæ§è½æµè¯ãæç»ç»è®¡ç»ææ¾ç¤ºï¼å½ååçº¿ç¨ä¸çå¹³åæ¶å»¶çº¦ä¸º<code>265.210 ms</code>ï¼ååçº¦ä¸º<code>3.770 FPS</code>ï¼è¯´æè¿çéååç SigLip Vision æ¨¡åå·²ç»å·å¤å¯ç¨çæ¿ç«¯æ¨çè½åã</p>
+<p><img src="https://img2024.cnblogs.com/blog/3505969/202604/3505969-20260405150112862-319005450.png" alt="download (1)" loading="lazy"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;å¦å¤ï¼ä»æèªå·±å¼åç<code>dtop</code><a href="https://www.cnblogs.com/SkyXZ/p/19097934" target="_blank">çæ§çé¢</a>ä¹å¯ä»¥è¿ä¸æ­¥ç¡®è®¤ï¼æ¨¡åè¿è¡æ¶ BPU å ç¨çå¤äºé«è´è½½ç¶æï¼å¯ä»¥çå° BPU åºæ¬è¢«æç»­ææ»¡ãè¿è¯´æè¿ç SigLip Vision æ¨¡åç¡®å®å·²ç»æåè¿è¡å¨æ¿ç«¯ BPU ä¸ï¼èä¸æ¯åçå¨ CPU ä¾§ååéæ§è¡ã</p>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-04-05 16:02">2026-04-05 16:02</span>&nbsp;
+<a href="https://www.cnblogs.com/SkyXZ">SkyXZ</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19823799);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19823799', targetLink: 'https://www.cnblogs.com/SkyXZ/p/19823799', title: 'RDK-OE-LLMå·¥å·é¾éåSigLipå¨æµç¨' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
     <title><![CDATA[ [A Primer Of CC and MC] 1. å¯¹äº Memory Consistency å Cache Coherence åå¶å³ç³»çä¸ç¹æè ]]></title>
     <link>https://www.cnblogs.com/SudosuBash/p/19823256</link>
     <guid>1da2889389bee41fbd85c9d58180a245</guid>
@@ -222,259 +1206,11 @@ Tick 1: mov [rip+&lt;var1&gt;], rbx ;L2
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-04-05 10:48">2026-04-05 10:47</span>&nbsp;
 <a href="https://www.cnblogs.com/formulahendry">formulahendry</a>&nbsp;
-éè¯»(<span id="post_view_count">23</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">74</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19823017);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19823017', targetLink: 'https://www.cnblogs.com/formulahendry/p/19823017', title: 'æå¼åç ACP Clientï¼è¢« LangChain å®æ¹æ¨èäºï¼è½»æ¾è¿ä¸ ClaudeãCodexãCopilotãOpenClaw ç­ä»»æ Agent' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ æµè°æ¬¡ä¸ä»£ä»£ç ç¼è¾å¨ Zedï¼Rust åçæ§è½ãGPU æ¸²æ ]]></title>
-    <link>https://www.cnblogs.com/deali/p/19822917</link>
-    <guid>eedda3bbd4bf9f980cffca6eeb4bf6e3</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/deali/p/19822917" title="åå¸äº 2026-04-05 10:12">
-    <span role="heading" aria-level="2">æµè°æ¬¡ä¸ä»£ä»£ç ç¼è¾å¨ Zedï¼Rust åçæ§è½ãGPU æ¸²æ</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h2 id="åè¨">åè¨</h2>
-<p>æå° IDEï¼å¤§å®¶æ³å°çé½æ¯ JetBrains å¨å®¶æ¡¶ãVSCode åå¶ä¸ä¼è¡çåã</p>
-<p>ä¸è¿è¿äºä¸»æµç IDE ä¹æ¯åå­å¤§æ·åç¬¨éçä»£åè¯ï¼æè¿æè¯ç¨äºä»¥åçãè½»éãé«æ§è½ä¸ºç¹è²ç Zedï¼æè§è¿æºæææçï¼æ¬æç®åä»ç»ä¸ä¸ Zedãåç»­ä¼æ´æ° AI åè½éç½®åæ´å¤ä½¿ç¨åºæ¯å®è·µã</p>
-<h2 id="å³äºzed">å³äºZed</h2>
-<p>Zed å¯¹å¤§é¨åäººæ¥è¯´ï¼å¯è½æ¯ä¸ªéççåè¯ãä¸è¿å®å¢éèæ¯éå¸¸ç¡¬æ ¸ï¼çè³å¯ä»¥è¯´ä»ä»¬æ¯ç°ä»£ä»£ç ç¼è¾å¨é¢åçééçº§äººç©ã</p>
-<h3 id="å¢é">å¢é</h3>
-<p>Zed çåå§å¢éï¼Zed Industriesï¼ä¸»è¦ç±ä¸ä½å¤§ä½¬ç»æï¼</p>
-<ul>
-<li><strong>Nathan Sobo (CEO)</strong>ï¼ä»æ¯ <strong>GitHub Atom ç¼è¾å¨çåå§äºº</strong>ãå¨ GitHub å·¥ä½æé´ï¼ä»ä¸»å¯¼äº Atom çå¼åï¼å¹¶åä¸äºåä½ç¼è¾ææ¯ï¼CRDTï¼çç ç©¶ã</li>
-<li><strong>Max Brunsfeld</strong>ï¼ä»æ¯ <strong>Tree-sitter</strong> çä½èãå¦æä½ ç¨è¿ç°ä»£ç¼è¾å¨ï¼ä½ ä¸å®å¬è¿ Tree-sitterï¼å®æ¯ç®åä¸»æµç¼è¾å¨ï¼åæ¬ VS CodeãNeovimï¼å®ç°ä¸æ»è¯­æ³é«äº®åä»£ç è§£æçæ ¸å¿ææ¯ã</li>
-<li><strong>Antonio Scandurra</strong>ï¼åæ ·æ¯ Atom å¢éçæ ¸å¿æåï¼ä¹æ¯åå¸å¼ç³»ç»åå®æ¶åä½é¢åçä¸å®¶ã</li>
-</ul>
-<h3 id="ä»ä»¬ä¸ºä»ä¹è¦å-zed">ä»ä»¬ä¸ºä»ä¹è¦å Zedï¼</h3>
-<p>ç®åè¯´å°±æ¯å½å¹´ä»ä»¬å¼åç Atom ç¼è¾å¨å¤ªæè¯äºï¼è½ç¶å¼å¯äºç½é¡µææ¯å¼åç¼è¾å¨çæ½®æµï¼ä½ Atom æ§è½å·®ãåå­å ç¨é«ï¼è¢«å¾®è½¯ç VSCode è¿ä¸ªåæ¥èææè·¯è¾¹ä¸æ¡ï¼ä¹å Atom ä¹è¢« GitHubï¼å½æ¶å·²è¢«å¾®è½¯æ¶è´­ï¼å®£å¸åè¿ã</p>
-<p>Zedå¢éæè¯å°åºäºæµè§å¨åæ ¸ï¼Electronï¼çç¼è¾å¨æ§è½ä¸éå¤ªä½ãäºæ¯å³å®<strong>å½»åºæå¼ HTML/JS</strong>ï¼ç¨åºå±ç Rust ä»é¶å¼å§åä¸ä¸ªæå¿«çç¼è¾å¨ã</p>
-<p>ä»ä»¬å¸æä»£ç ç¼è¾è½åæ¸¸æä¸æ ·ï¼æ¯ä¸å¸§é½ç± GPU æ¸²æï¼æ¶é¤ä»»ä½å¯æç¥çå»¶è¿ã</p>
-<p>å½åå¨å¼å Atom æ¶å°±æ³åâå¤äººå®æ¶ç¼ç¨âï¼ä½å¨æ§æ¶æä¸å¾é¾å®ç°ï¼æä»¥ Zed ä»ç¬¬ä¸è¡ä»£ç å¼å§å°±èèäºâå¤äººèæºâåè½ã</p>
-<h3 id="å°ç»">å°ç»</h3>
-<p>ç®åæ¥è¯´ï¼è¿æ¯ä¸ç¾¤æç¼è¾å¨çäººï¼å¨ç»åè¿ Atom çå¤±è´¥ä¸ç¶é¢åï¼å©ç¨ Rust è¿ç§é«æ§è½è¯­è¨ï¼è¯å¾å¨ AI æ¶ä»£éæ°å®ä¹å¼åå·¥å·è¯¥æçæ ·å­ã</p>
-<h2 id="å ä¸ªç¹æ§">å ä¸ªç¹æ§</h2>
-<p>Zed å®ç½å®£ä¼ çå ä¸ªå³é®ç¹æ§ï¼æ¬æç®ååæä¸ä¸ã</p>
-<h3 id="è¾å¥å»¶è¿">è¾å¥å»¶è¿</h3>
-<p>Zed å¨æ§è½å¯¹æ¯ä¸­å¼ºè°äºä¸ä¸ªææ ï¼<strong>æå¥å»¶è¿ï¼Insertion Latencyï¼</strong>ã</p>
-<p>Zed çå»¶è¿çº¦ä¸º 58msï¼è VS Code çº¦ä¸º 97msã è¿ç§å·®è·ç±»ä¼¼äºä» 60Hz å±å¹åæ¢å° 144Hz å±å¹ââæ²¡ç¨è¿æ¶ä¸è§å¾ï¼ç¨è¿ä¹åå°±åä¹åä¸å»äºã</p>
-<p>è¿æ¥æºäº Zed ç¬ç¹ç<strong>æ¸²ææ¨¡å¼</strong>ã ä¸åäºä¼ ç»åºç¨ä½¿ç¨ç³»ç»æ§ä»¶ï¼Retained æ¨¡å¼ï¼ï¼Zed ä½¿ç¨äºåºäº Vulkan åç«¯ç <strong>Immediate æ¨¡å¼</strong>ãå®æç¼è¾å¨å½æä¸ä¸ª 3D æ¸¸æï¼æ¯ä¸å¸§é½ç± GPU ç´æ¥æ¸²æãè½ç¶ GPU æ¸²æå¨å±é¨æ´æ°åºæ¯ä¸ï¼å¦åªæ¹å¨ä¸è¡ä»£ç ï¼ä¸ä¸å®æ»æ¯æ¯ CPU ä¼åç®æ³å¿«ï¼ä½å®å¸¦æ¥çä¸æ»å¨æåæä½çæ´ä½å»¶è¿ï¼ç¡®å®éæ°å®ä¹äºç¼åä»£ç çè§¦è§ã</p>
-<h3 id="è¯­æ³åæ">è¯­æ³åæ</h3>
-<p>ä¸ä¸ªä¼ç§çç¼è¾å¨ï¼ä¸ä»è¦å¿«ï¼è¿è¦âæâä½ çä»£ç ãZed çå¿«ï¼å¾å¤§ç¨åº¦ä¸å¾çäºå¶å¢éå¼åç <strong>Tree-sitter</strong> ââ è¿æ¯ä¸ä¸ªéç¨ç parserï¼è¯­æ³è§£æå¨ï¼çæå¨ã</p>
-<p>å¨ Tree-sitter ä¹åï¼å¤§å¤æ°ç¼è¾å¨ï¼åæ¬ VS Codeï¼ä»å¨ä½¿ç¨åºäºæ­£åå¹éç TextMate è§åãè¿ç§æ¹å¼åªè½å¤çåè¡ï¼ä¸å¨ä»£ç å­å¨è¯­æ³éè¯¯æ¶å¾å¾ä¼å¤±æã</p>
-<p>è Tree-sitter è½å¤å®æ¶æå»ºå®æ´çè¯­æ³æ ï¼æ¯æå¢éæ´æ°ãè¿æå³çæ è®ºæ¯ä»£ç é«äº®è¿æ¯èªå¨è¡¥å¨ï¼Zed é½è½å¨æ¯«ç§çº§ç»åºåç¡®åé¦ï¼çè³å¨ä½ çä»£ç åå°ä¸åãè¯­æ³ä¸å¢ä¹±æ¶ï¼å®ä¾ç¶è½ç²¾åè¯å«åºä»£ç é»è¾ã</p>
-<h3 id="åä½">åä½</h3>
-<p>é¤äºæè´çåæºä½éªï¼Zed è¿åç½®äºå¼ºå¤§çåä½åè½ãä¸åäºä¼ ç»çå±å¹å±äº«ï¼Zed åºäº <strong>CRDTï¼æ å²çªå¤å¶æ°æ®ç±»åï¼</strong> å®ç°äºçæ­£çå®æ¶å¤äººç¼è¾ã</p>
-<p>è½ç¶å®ç®åå¨ Remote åè½ï¼å¦è¿ç¨æå¡å¨å¼åï¼ä¸è¿æ æ³æ¼å¨ VS Code çå°ä½ï¼ä½å¶åçåä½çä½éªï¼ç¡®å®è®©å¢é Pair Programming åå¾åææªæçé¡ºçã</p>
-<h2 id="å°ç»-1">å°ç»</h2>
-<p>å¦ç½è¯´ï¼ç°é¶æ®µç Zed è¿æ æ³å®å¨æ¿ä»£ VS Codeã</p>
-<ul>
-<li><strong>çæå·®è·ï¼</strong> VS Code æ¥ææ°ä»¥ä¸è®¡çæä»¶ï¼è Zed çæä»¶åºæååèµ·æ­¥ã</li>
-<li><strong>åè½å®å¤åº¦ï¼</strong> å VS Code é£æ ·é¢ è¦æ§ç Remote å¼åæ¨¡å¼ï¼ç®åè¿æ¯æ²¡æå¯¹æçã</li>
-</ul>
-<p>Zed å¹¶ä¸ä¸å®è¦åä»£ä½ é£ä¸ªè£æ»¡äºå åä¸ªæä»¶ãéç½®å¤æç VS Codeãå½ä½ éè¦éè¯»æºç ãæéä¿®æ¹åä¸ªæä»¶ãæèæ³è¦è¿å¥çº¯ç²¹ç¼åç¶ææ¶ï¼Zed æ¯ä¸éçéæ©ã</p>
-<p>ä¸ä¸ç¯æç« ä¸­ï¼æä¼åäº«ä¸ä¸å¦ä½éç½® Zedï¼æé æèªå·±ç AI Code Agentã</p>
-<h2 id="åèèµæ">åèèµæ</h2>
-<ul>
-<li><a href="https://v2ex.com/t/1056672" target="_blank" rel="noopener nofollow">https://v2ex.com/t/1056672</a></li>
-<li><a href="https://www.youtube.com/watch?v=pJylXFAC87A" target="_blank" rel="noopener nofollow">https://www.youtube.com/watch?v=pJylXFAC87A</a></li>
-</ul>
-
-
-</div>
-<div id="MySignature" role="contentinfo">
-    å¾®ä¿¡å¬ä¼å·ï¼ãç¨åºè®¾è®¡å®éªå®¤ã
-ä¸æ³¨äºäºèç½ç­é¨æ°ææ¯æ¢ç´¢ä¸å¢éææ·å¼åå®è·µï¼åæ¬æ¶æè®¾è®¡ãæºå¨å­¦ä¹ ä¸æ°æ®åæç®æ³ãç§»å¨ç«¯å¼åãLinuxãWebååç«¯å¼åç­ï¼æ¬¢è¿ä¸èµ·æ¢è®¨ææ¯ï¼åäº«å­¦ä¹ å®è·µç»éªã
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-04-05 10:12">2026-04-05 10:12</span>&nbsp;
-<a href="https://www.cnblogs.com/deali">æ¦è¿Code</a>&nbsp;
-éè¯»(<span id="post_view_count">1</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19822917);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19822917', targetLink: 'https://www.cnblogs.com/deali/p/19822917', title: 'æµè°æ¬¡ä¸ä»£ä»£ç ç¼è¾å¨ Zedï¼Rust åçæ§è½ãGPU æ¸²æ' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ ç¨ç¡¬ä»¶éç¦»é»æ­ä¾åºé¾âçæ¯å¼âææ¯ï¼TEE è½åä»ä¹ï¼ä¸è½åä»ä¹ï¼ ]]></title>
-    <link>https://www.cnblogs.com/szdytom/p/19822211/tee-over-supply-chain</link>
-    <guid>d49133b715af34c36894bd446b6362de</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/szdytom/p/19822211/tee-over-supply-chain" title="åå¸äº 2026-04-05 01:07">
-    <span role="heading" aria-level="2">ç¨ç¡¬ä»¶éç¦»é»æ­ä¾åºé¾âçæ¯å¼âææ¯ï¼TEE è½åä»ä¹ï¼ä¸è½åä»ä¹ï¼</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>ï¼ä½¿ç¨AIæ´çåå®¹å¹¶ç¼ææ ¼å¼ï¼</p>
-<blockquote>
-<p>è¿æ AxiosãApifoxãLiteLLM ç­äºä»¶éä¸­çåï¼æ´é²äºä¸ä¸ªæ·±å±é®é¢ï¼æä»¬ä»¥ä¸ºä¿¡ä»»çæ¯å¼æºä»£ç ï¼å®éä¸ä¿¡ä»»çæ¯å¹³å°åå¼åèãTEE ææ¯æè®¸è½æç ´è¿ä¸ªå°å±ã</p>
-</blockquote>
-<h2 id="ä»çæ¯å¼ä¼ æ­çä¾åºé¾ææ¯çæ¬è´¨">ä»âçæ¯å¼ä¼ æ­âçä¾åºé¾ææ¯çæ¬è´¨</h2>
-<p>2026 å¹´å¼æ¥ä»¥æ¥ï¼ä¾åºé¾æ»å»å ä¹ä»¥âå¨æ´âçéåº¦å²å»å¼åèç¤¾åºï¼</p>
-<ul>
-<li><strong>Axios</strong>ï¼æ ¸å¿ç»´æ¤è NPM è´¦æ·è¢«ç¤¾å·¥ â åå¸ä¸¤ä¸ªæ¶æçæ¬ â éè¿ postinstall é©å­é¨ç½² RATã</li>
-<li><strong>Apifox</strong>ï¼CDN è¢«ç¯¡æ¹ â Electron å®¢æ·ç«¯å è½½æ¶æ JS â çªåå­è¯ãæ§è¡ç³»ç»å½ä»¤ã</li>
-<li><strong>LiteLLM</strong>ï¼CI æµæ°´çº¿ä»¤çæ³é² â PyPI åé¨çæ¬ â å©ç¨ <code>.pth</code> æä»¶æä¹åã</li>
-</ul>
-<p>ä»ç»çè¿äºäºä»¶ï¼å®ä»¬ä¸æ¯å­¤ç«çã<strong>æ»å»å·æææ¾çâçæ¯å¼ä¼ æ­âç¹å¾</strong>ï¼</p>
-<ol>
-<li>æ©æå©ç¨èå¼±ç LLM Agent æèªå¨åå·¥å·ï¼å¦æ¼æ´ç¾åºç OpenClaw ç­ï¼æ¹éçåå¼åèè´¦æ·ã</li>
-<li>çåå°çè´¦æ·ä¸­ï¼é¨åå±äºç­é¨åçç»´æ¤è â ç¨è¿äºè´¦æ·åå¸å¸¦åé¨çåã</li>
-<li>åé¨åä¸æ¦è¢«å®è£ï¼ç«å»çªåæ´å¤æºå¨ç NPM / PyPI / GitHub ä»¤ç â æ©å¤§ææé¢ã</li>
-<li>å¾ªç¯å¾å¤ï¼å½¢æèªæå¢æ®çä¾åºé¾è è«ã</li>
-</ol>
-<p><strong>æ ¹æ¬é®é¢ä¸æ¯æä¸ªæ¼æ´ï¼èæ¯æ´ä¸ªä¿¡ä»»æ¨¡åçéä½ã</strong></p>
-<h2 id="æä»¬çæ­£ä¿¡ä»»çæ¯ä»ä¹">æä»¬çæ­£ä¿¡ä»»çæ¯ä»ä¹ï¼</h2>
-<p>ç¤¾åºå¸¸è¯´âå¼æºä»£ç ç»å¾èµ·ç¤¾åºå®¡æ¥ï¼æä»¥å¼å¾ä¿¡ä»»âãä½ç°å®æ¯ï¼</p>
-<ul>
-<li>ä½ å®è£ä¸ä¸ª npm åæ¶ï¼å¹¶æ²¡æéªè¯å®æ¯å¦ççæ¥èªå¬å¼çæºç ä»åºã</li>
-<li>ä½ ä¿¡ä»»çæ¯ NPM å¹³å°æ²¡æä½æ¶ãå¼åèå¯é¥æ²¡æ³é²ãCI ç¯å¢æ²¡è¢«å¥ä¾µã</li>
-<li>æ¢å¥è¯è¯´ï¼ä½ ä¿¡ä»»çæ¯<strong>äººåå¹³å°ï¼èä¸æ¯ä»£ç æ¬èº«</strong>ã</li>
-</ul>
-<p>è¿ç§ä¿¡ä»»å¨åç¹è¢«çªç ´åå°±ä¼å½»åºå´©å¡ãæä»¬éè¦ä¸ç§<strong>ä¸ä¾èµå¹³å°åå¼åèè¯ä¿¡</strong>çéªè¯æ¹å¼ã</p>
-<h2 id="æ´ä½æè·¯tee-ä½ä¸ºå¯ä¿¡æå»ºéç¹">æ´ä½æè·¯ï¼TEE ä½ä¸ºâå¯ä¿¡æå»ºéç¹â</h2>
-<p><strong>å¯ä¿¡æ§è¡ç¯å¢ï¼TEEï¼</strong>ï¼å°¤å¶æ¯äºç«¯ç VM çº§ TEEï¼Intel TDX / AMD SEVâSNPï¼ï¼æä¾äºä¸ç§ç¡¬ä»¶éç¦»çâå®å¨é»çâï¼</p>
-<ul>
-<li>å¨ TEE ä¸­æå»ºè½¯ä»¶åï¼å¤çï¼åæ¬äºæå¡åãæä½ç³»ç»ãCI ç³»ç»ï¼æ æ³è¯»åæç¯¡æ¹åé¨æ§è¡ã</li>
-<li>æå»ºå®æåï¼TEE çæä¸ä¸ª<strong>å å¯ç attestation è¯æ</strong>ï¼åå®¹åå«ï¼
-<ul>
-<li>æå»ºäº§ç©çåå¸ï¼å¦ tarballãäºè¿å¶æä»¶ï¼</li>
-<li>æºä»£ç ä»åºç commit åå¸</li>
-<li>æå»ºç¯å¢æçº¹ï¼OSãç¼è¯å¨ãä¾èµçæ¬ç­ï¼å¦ docker ç digest ä¿¡æ¯ï¼</li>
-</ul>
-</li>
-<li>ä»»ä½äººé½å¯ä»¥éªè¯è¿ä¸ªè¯æï¼<strong>æ éä¿¡ä»»æå»ºè</strong>ï¼åªéä¿¡ä»» CPU ç¡¬ä»¶åäºæå¡åçæ ¹è¯ä¹¦ã</li>
-</ul>
-<div class="mermaid">sequenceDiagram
-    participant Dev as å¼åè
-    participant Git as æºç ä»åº (Git)
-    participant CI as CI ç³»ç» (å« TEE ç¯å¢)
-    participant TEE as TEE å®ä¾ (TDX/SEV-SNP)
-    participant Registry as åä»åº (npm/PyPI)
-    participant Client as å®¢æ·ç«¯ (åç®¡çå¨)
-
-    Dev-&gt;&gt;Git: 1. æ¨éä»£ç  + æ tag
-    Git-&gt;&gt;CI: 2. è§¦åæå»ºæµæ°´çº¿
-    CI-&gt;&gt;TEE: 3. å¯å¨ TEE å®ä¾ (Attestable Builds)
-    Note over TEE: ç¡¬ä»¶éç¦»ç¯å¢&lt;br/&gt;å¤çæ æ³è¯»å/ç¯¡æ¹
-    TEE-&gt;&gt;Git: 4. æåæå® commit æºç 
-    TEE-&gt;&gt;TEE: 5. æ§è¡æå»ºèæ¬ (ç¼è¯/æå)
-    TEE-&gt;&gt;TEE: 6. è®¡ç®äº§ç©åå¸ + è®°å½ç¯å¢æçº¹
-    TEE-&gt;&gt;TEE: 7. çæ Attestation è¯æ&lt;br/&gt;(äº§ç©åå¸, commit, ç¯å¢, æ¶é´æ³)
-    TEE-&gt;&gt;TEE: 8. ç¨ CPU ç¡¬ä»¶ç§é¥ç­¾åè¯æ
-    TEE-&gt;&gt;CI: 9. è¿åæå»ºäº§ç© + ç­¾ååçè¯æ
-    CI-&gt;&gt;Registry: 10. åå¸å + éå¸¦è¯æ (attestation)
-    Client-&gt;&gt;Registry: 11. è¯·æ±ä¸è½½å
-    Registry-&gt;&gt;Client: 12. è¿åå + è¯æ
-    Client-&gt;&gt;Client: 13. éªè¯è¯æç­¾å (ä¿¡ä»» CPU æ ¹è¯ä¹¦)
-    Client-&gt;&gt;Client: 14. æ ¸å¯¹äº§ç©åå¸æ¯å¦å¹é&lt;br/&gt;commit æ¯å¦å¬å¼å¯å®¡è®¡
-    alt éªè¯éè¿
-        Client-&gt;&gt;Client: 15. å®è£/ä½¿ç¨å
-    else éªè¯å¤±è´¥
-        Client-&gt;&gt;Client: 15. æç»å®è£ï¼åè­¦
-    end
-</div><p><strong>åºç¨å°ä¾åºé¾</strong>ï¼</p>
-<ul>
-<li>è¦æ±ææåï¼npmãPyPIãå®¹å¨éåç­ï¼å¿é¡»éå¸¦ TEE attestationã</li>
-<li>å®¢æ·ç«¯æåç®¡çå¨å¨å®è£åéªè¯è¯æï¼ä»£ç æ¯å¦ççæ¥èªå¬å¼çæºç  commitï¼ç¯å¢æ¯å¦å¹éã</li>
-<li>æ»å»èå³ä½¿çç¨è´¦æ·ãæ§å¶ CIãçè³é»æ npm æå¡å¨ï¼ä¹æ æ³ä¼ªé ä¸ä¸ªåæ³ç attestationï¼å ä¸ºéè¦ç¡¬ä»¶ç­¾åï¼ã</li>
-</ul>
-<h2 id="ä¸ç°ææ¹æ³çå¯¹æ¯">ä¸ç°ææ¹æ³çå¯¹æ¯</h2>
-<table>
-<thead>
-<tr>
-<th>æ¹æ³</th>
-<th>ä¼ç¹</th>
-<th>ç¼ºç¹</th>
-<th>TEE ç¸æ¯ä¹ä¸çä¼å¿</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>åç­¾åï¼å¦ Sigstoreï¼</strong></td>
-<td>çææçï¼éªè¯ç®å</td>
-<td>ä¿¡ä»»å¼åèå¯é¥ï¼å¯é¥æ³é²åå¤±æ</td>
-<td>ä¸ä¾èµå¯é¥ï¼ä¾èµç¡¬ä»¶ï¼æ³é²å¯é¥æ æ³ä¼ªé è¯æ</td>
-</tr>
-<tr>
-<td><strong>å¯éç°æå»ºï¼Reproducible Buildsï¼</strong></td>
-<td>å¯ç¬ç«éªè¯æºç âäº§ç©</td>
-<td>éå¤æ¹ç¬ç«æå»ºï¼ç°å®ä¸­å°æäººåï¼æ æ³é²å¾¡æå»ºç¯å¢è¢«ç¯¡æ¹</td>
-<td>åæ¹ TEE å³å¯è¯æç¯å¢æªè¢«ç¯¡æ¹ï¼ä¸æ¯å¤æ¹æå»ºä¾¿å®</td>
-</tr>
-<tr>
-<td><strong>SLSA æ¡æ¶</strong></td>
-<td>å®ä¹æ¸æ°çæå»ºå®æ´æ§çº§å«</td>
-<td>é«ç­çº§ï¼L3/L4ï¼ä¾èµå¹³å°éç¦»ï¼ä½å¹³å°æ¬èº«ä»å¯è¢«å¥ä¾µ</td>
-<td>TEE æä¾ç¡¬ä»¶çº§éç¦»ï¼å¯è¾¾å° SLSA L4 ä¸ä¸ä¿¡ä»»å¹³å°</td>
-</tr>
-</tbody>
-</table>
-<p><strong>TEE èªå·±çç¼ºç¹</strong>ï¼</p>
-<ul>
-<li>çæå ä¹ä¸ºé¶ï¼éè¦åç®¡çå¨ãCIãå®¢æ·ç«¯å¨é¨æ¹é ã</li>
-<li>ç¡¬ä»¶ä¾èµï¼å¿é¡»ä½¿ç¨æ¯æ TDX/SEVâSNP çäºå®ä¾ææ¬å° CPUã</li>
-<li>ææ¬ï¼æ¯æå»ºææ¬è¾é«ï¼å¯¹æµ·éå°åç´¯è®¡ææ¬å¯è§ã</li>
-<li>ä¸è½é²å¾¡æºç çº§åé¨ï¼XZ Utils ç±»æ»å»ï¼ã</li>
-</ul>
-<h2 id="å¯¹è¿æäºä»¶çç®è¦åæ">å¯¹è¿æäºä»¶çç®è¦åæ</h2>
-<h3 id="-litellmci-ä»¤çæ³é²--åå¸åé¨">â LiteLLMï¼CI ä»¤çæ³é² â åå¸åé¨ï¼</h3>
-<p><strong>TEE è½å®å¨é»æ­¢</strong>ï¼CI æå»ºè¿è¡å¨ TEE åï¼åå¸ä»¤çåªå¯¹ç¹å®åº¦éç TEE éæ¾ãæ»å»èå³ä½¿æ§å¶å®¿ä¸»æºï¼ä¹æ æ³çªåä»¤çæç¯¡æ¹æå»ºäº§ç©ã</p>
-<h3 id="-axiosnpm-è´¦æ·è¢«ç--åå¸æ¶æå">â Axiosï¼NPM è´¦æ·è¢«ç â åå¸æ¶æåï¼</h3>
-<p><strong>TEE è½é»æ­¢</strong>ï¼NPM è¦æ±éå¸¦ attestationãæ»å»èå¯ä»¥åå¸ï¼ä½æ æ³çæåæ³è¯æï¼å ä¸ºæºç ä»åºæªè¢«ç¯¡æ¹ï¼ãå®¢æ·ç«¯æç»å®è£æ è¯æçåã</p>
-<h3 id="ï¸-apifoxé­æº-electroncdn-ç¯¡æ¹">â ï¸ Apifoxï¼é­æº Electronï¼CDN ç¯¡æ¹ï¼</h3>
-<p><strong>TEE é¨åææ</strong>ï¼å¦æå®æ¹ä½¿ç¨ TEE æå»ºå¹¶ç­¾åï¼å®¢æ·ç«¯å¯éªè¯ç­¾åé²æ­¢ CDN ç¯¡æ¹ãä½é­æºæå³çç¨æ·æ æ³ç¬ç«éªè¯âæºç æ¯å¦æ¶æâï¼ä»¥åæ æ³é²å¾¡å®æ¹çå¯é¥æ³é²ï¼æç»ä»éä¿¡ä»»å®æ¹ãTEE ä¸è½è§£å³é­æºè½¯ä»¶çâä½æ¶âé®é¢ãä½æ¯è³å°å¯ä»¥é²æ­¢ä»£ç å¨æå»ºãååçæµç¨ä¸­åå°æ»å»ã</p>
-<h3 id="-xz-utilsç¤¾ä¼å·¥ç¨å­¦æ¤å¥æºç åé¨">â XZ Utilsï¼ç¤¾ä¼å·¥ç¨å­¦æ¤å¥æºç åé¨ï¼</h3>
-<p><strong>TEE æ è½ä¸ºå</strong>ï¼åé¨å¨æºä»£ç ä¸­ï¼TEE ä¼å¿ å®å°å°å¶æå»ºè¿äº§ç©å¹¶åºå·åæ³è¯æãè¦é²å¾¡æ­¤ç±»æ»å»ï¼éè¦<strong>æ´å¼ºçä»£ç å®¡æ¥æµç¨</strong>ã</p>
-<h2 id="å®è·µèé">å®è·µèé</h2>
-<p>CCS 2025 çè®ºæ <a href="https://arxiv.org/abs/2505.02521" target="_blank" rel="noopener nofollow">Attestable Builds: Compiling Verifiable Binaries on Untrusted Systems using Trusted Execution Environments</a> å·²ç»æåºäºä¸å¥ç¸å½å®æ´ç TEE æå»ºç³»ç»è®¾è®¡ï¼æä»¬ååèèçâå¯è¯ææå»ºâï¼Attestable Builds, A-Bsï¼è¿ä¸æ°èå¼å·²ç»å¨è¯¥æç®ä¸­å¾å°äºè¯¦ç»çç ç©¶ãè¯¥æç®å©ç¨ç°ä»£å¯ä¿¡æ§è¡ç¯å¢ï¼å¦ AWS Nitro EnclavesãAMD SEV-SNPï¼çå®æ´æ§ä¿æ¤ä¸è¿ç¨è¯æè½åï¼ç»ååµå¥æ²ç®±ï¼å¦ gVisorï¼ï¼å¨ä¸å¯ä¿¡çäºæå»ºæå¡ä¸­ç¡®ä¿äºè¿å¶ç¡®ç±æå®æºç å¿«ç§çæãä¸ä¼ ç»çå¯éç°æå»ºï¼Reproducible Buildsï¼ç¸æ¯ï¼A-Bs æ éä¿®æ¹é¡¹ç®æºç åæå»ºèæ¬ï¼ä»éå°ééç½®åæ´å³å¯æ¥å¥ç°æ CI/CD æµæ°´çº¿ï¼å¦ GitHub Actionsï¼ï¼å¹¶å¯æä¾è¿ä¹å³æ¶çéªè¯ï¼æ¾èéä½äºå·¥ç¨é¨æ§åæç»­ç»´æ¤ææ¬ã</p>
-<p>è®ºæè¿ä¸æ­¥ç»åºäºå®æ´çæ¶æè®¾è®¡ãå¨èæ¨¡åååºäº Tamarin çå½¢å¼åéªè¯ï¼è¯æå¶è½æµå¾¡æå»ºæå¡å¨ç¯¡æ¹ãè·¨ç§æ·æ»å»ãä»åºæ¬ºéªç­å¤ç§å¨èãååå®ç°è¯ä¼°æ¾ç¤ºï¼A-Bs çå¯å¨å¼éçº¦ 42 ç§ï¼é»è®¤éç½®ä¸æå»ºæ¶é¿å¢å çº¦ 14%ï¼ä¸è½æåç¼è¯ LLVM ClangãLinux åæ ¸ç­å¤æé¡¹ç®ä»¥åå¤ä¸ªé¾ä»¥éç°ç Debian è½¯ä»¶åãä½èè¿è®¨è®ºäº A-Bs ä¸ R-Bs çç»åæ¹æ¡ï¼å¯å®ç°âä»»æä¿¡ä»»âï¼any-trustï¼æ¨¡åï¼ä»¥åå°è¯ææ©å±å°æµè¯ç»æãéæåæç­éäºè¿å¶äº§ç©çåæ¯ãæ´ä½èè¨ï¼è¯¥å·¥ä½ä¸ºå¨ä¸å¯ä¿¡ç¯å¢ä¸­å»ºç«å¯éªè¯çæå»ºæµç¨æä¾äºå¡å®ä¸å¯è½å°çè§£å³æ¹æ¡ã</p>
-<p>ä»ç°å®è§åº¦æ¥çï¼è½ç¶ TEE ççæå°æªæçï¼ä½å¶æä¾çâç¡¬ä»¶çº§ä¿¡ä»»éâç¹æ§ç¡®å®è½å¨æ ¹æ¬ä¸æ¹åä¾åºé¾å®å¨çä¿¡ä»»æ¨¡åãå¨ç­æåï¼å¯è½éè¦åå¨å³é®ç»ä»¶ï¼å¦æ ¸å¿åºãåºç¡éåï¼ä¸è¯ç¹ï¼éæ­¥æ¨å¹¿å°æ´ä¸ªçæãåæ¶ï¼èèå°ææ¬é®é¢ï¼ä¹è®¸å¯ä»¥éç¨åå±ç­ç¥ï¼å¯¹äºé«ä¸è½½éï¼è¢«ä¾èµå¹¿æ³ï¼é£é©è¾é«ï¼å¦æ postinstall é©å­ï¼çåå¼ºå¶ä½¿ç¨ TEE è¯æï¼èå¯¹äºå°ä¼åååè®¸ä¼ ç»ç­¾åææ è¯æçæ¹å¼ã</p>
-<p>æå³è¿ç§é¢åå®è·µçåçº§ç­ç¥çè®¾è®¡åè¯ä¼°ï¼ä»¥åå¯¹åæä¸­æä»¬æåºçä¾åºé¾è è«çå¾ªç¯ä¼ æ­æ¨¡åçå»ºæ¨¡åæï¼å¯è½æ¯æªæ¥ç ç©¶çä¸ä¸ªæè¶£æ¹åãå¦æè½å¤ç¨çå® npm/PyPI ä¸è½½æ°æ®æ¨¡ææ»å»èçä¼ æ­è·¯å¾ï¼æ¾å°åçº§ç­ç¥çå¨ææ¬æ²çº¿åæ»å»é»æ­çä¹é´çæä½³å¹³è¡¡ç¹ï¼å°å¯¹æ¨å¨ TEE å¨ä¾åºé¾å®å¨ä¸­çå®éåºç¨å·æéè¦æä¹ã</p>
-<h2 id="å°ç»">å°ç»</h2>
-<p>ä¾åºé¾ææ¯çâçæ¯å¼ä¼ æ­âä¹æä»¥å¯æï¼æ¯å ä¸ºæ»å»èä¸æ¦çªç ´ä¸ä¸ªä¿¡ä»»ç¹ï¼å¯é¥ãCIãå¹³å°ï¼ï¼å°±è½å¿«éæ©æ£ãTEE å°ä¿¡ä»»ä»âäºº+å¹³å°âè¿ç§»å°âç¡¬ä»¶+å¬å¼ä»£ç âï¼<strong>åæ­äºè¿ç§ä¼ æ­é¾</strong>ãå®ä¸è½æ¿ä»£ä»£ç å®¡æ¥ï¼ä¹ä¸è½è§£å³ç¤¾ä¼å·¥ç¨å­¦ãä½è³å°ï¼å½æä»¬è¯´âè¿ä¸ªåæ¥èªå¼æºä»£ç âæ¶ï¼TEE è½è®©æä»¬<strong>çæ­£éªè¯è¿ä¸ç¹</strong>ï¼èä¸æ¯ä»ä»ç¸ä¿¡æä¸ªå¹³å°ä¸çæä¸ªå¼åèã</p>
-<p>å¨è¿ä¸æ¹é¢ï¼è½ç¶å·²ç»æäºçè®ºä¸çæ¹æ¡ååæ­¥çååå®ç°ï¼ä½è¦çæ­£è½å°ï¼è¿éè¦ç¤¾åºãå¹³å°åå¼åèçå±ååªåãæªæ¥çç ç©¶å¯ä»¥è¿ä¸æ­¥æ¢ç´¢å¦ä½å¨å®éçæä¸­æ¨å¹¿ TEE è¯æï¼å¦ä½è®¾è®¡åççåçº§ç­ç¥ï¼ä»¥åå¦ä½ç»åå¶ä»å®å¨æªæ½ï¼å¦ä»£ç å®¡æ¥ãè¡ä¸ºåæï¼å½¢æå¤å±é²å¾¡ä½ç³»ã</p>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.40347222222222223" data-date-updated="2026-04-05 10:48">2026-04-05 01:07</span>&nbsp;
-<a href="https://www.cnblogs.com/szdytom">æ¹èé</a>&nbsp;
-éè¯»(<span id="post_view_count">37</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19822211);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19822211', targetLink: 'https://www.cnblogs.com/szdytom/p/19822211/tee-over-supply-chain', title: 'ç¨ç¡¬ä»¶éç¦»é»æ­ä¾åºé¾âçæ¯å¼âææ¯ï¼TEE è½åä»ä¹ï¼ä¸è½åä»ä¹ï¼' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -2315,1161 +3051,89 @@ ros2 launch xsens_mti_ros2_driver xsens_mti_node.launch.py
     </description>
     </item>
 <item>
-    <title><![CDATA[ é¾è¯2k0300 - èµ°é©¬è§ç¢ç»ç¼ç å¨é©±å¨ç§»æ¤ ]]></title>
-    <link>https://www.cnblogs.com/zyly/p/19820444</link>
-    <guid>d9c9cfe7d11d1ac80ab013508554e6db</guid>
+    <title><![CDATA[ Threejs è§é¢èå ]]></title>
+    <link>https://www.cnblogs.com/flyfox1982/p/19823631</link>
+    <guid>f90a3957dccb7dc3e42de5a5cf1de70e</guid>
     <description>
     <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/zyly/p/19820444" title="åå¸äº 2026-04-04 10:34">
-    <span role="heading" aria-level="2">é¾è¯2k0300 - èµ°é©¬è§ç¢ç»ç¼ç å¨é©±å¨ç§»æ¤</span>
+        <h2 class="post-title">
+            <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/flyfox1982/p/19823631" title="åå¸äº 2026-04-05 14:58">
+    <span role="heading" aria-level="2">Threejs è§é¢èå</span>
     
 
 </a>
 
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>å¨ã<a href="https://www.cnblogs.com/zyly/p/19731118" target="_blank">é¾è¯<code>2k0300</code> - èµ°é©¬è§ç¢ç»ç¬¬<code>21</code>å±æºè½æ±½è½¦ç«èµè½¯ç¡¬ä»¶è®¾è®¡</a>ãä¸­æä»¬ä½¿ç¨äº<code>LQ_1024</code>çº¿æ¹å<code>mini</code>ç¼ç å¨ã</p>
-<h3 id="ä¸lq_1024çº¿æ¹åminiç¼ç å¨">ä¸ã<code>LQ_1024</code>çº¿æ¹å<code>mini</code>ç¼ç å¨</h3>
-<p>é¾é±ç§æ<code>mini</code>ç³»åç¼ç å¨å·æä»¥ä¸ç¹ç¹ï¼</p>
-<ul>
-<li>åè¾¨çæï¼<code>A/B</code>ç¸æ­£äº¤è¾åº<code>256</code>çº¿ã<code>A/B</code>ç¸æ­£äº¤è¾åº<code>1024</code>çº¿ãæ­¥è¿èå² + æ¹åè¾åº<code>512</code>çº¿ã......ï¼</li>
-<li>æè½¬éåº¦é«ï¼æé«è½¬éå¯è¾¾<code>10000rpm</code>ï¼</li>
-<li>å®½å¹¿çå·¥ä½æ¸©åº¦èå´ï¼<code>-40â ~ +125â</code>ã</li>
-<li>ææ°æ§å¥½ãæ¬äº§åéç¨éå°æ£æµææ¯ï¼å±äºæ æ¥è§¦æ£æµï¼ä¼ æå¨è¿è¡ä¸åç°å°æå¶å®æç©å½±åï¼å¾å¥½åæäºåºäºåå­¦æ£æµåççç¼ºç¹ï¼</li>
-<li>ä½ç§¯å°å·§ãç´å¾<code>Dï¼14mm</code>ãé«<code>Hï¼18mm</code>ãè½´å¾ï¼<code>3mm</code>ã</li>
-</ul>
-<p>å¦æä½ å¯¹ç¼ç å¨ä¸ç¹é½ä¸äºè§£çè¯å¯ä»¥ååèè¿ç¯æç« ï¼ã<a href="https://www.cnblogs.com/zyly/p/18708983" target="_blank"><code>STM32F103</code>éå°ç¼ç å¨æµé</a>ãã</p>
-<p>é¾é±ç§ææä¾çç¼ç å¨ï¼æå¸¦æ¹åè¾åºå¼èåä¸å¸¦æ¹åè¾åºå¼èä¸¤ç§ï¼è¿éæä½¿ç¨çæ¯æ­£äº¤<code>A/B</code>ç¸<code>1024</code>çº¿æ¹å<code>mini</code>ç¼ç å¨ï¼ä¹å°±æ¯è¯´æä½¿ç¨çè¿ä¸ªç¼ç å¨é¤äºæ<code>A/B</code>è¾åºå¼èå¤ï¼è¿æåç¬çæ¹åè¾åºå¼èï¼è¿æ ·æä»¬å°±ä¸ç¨éè¿<code>A/B</code>ç¸ä¿¡å·ååçååé¡ºåºæ¥å¤æ­è¿å¨æ¹åã</p>
-<img src="https://gitee.com/zyly2033/blog-pic/raw/master/20260404094558391.png" style="zoom: 50%">
-<h4 id="11-å·¥ä½åç">1.1 å·¥ä½åç</h4>
-<p>ç¼ç å¨ççº¿æ°ï¼æ¯è¯´ç¼ç å¨è½¬ä¸åè¾åºå¤å°ä¸ªèå²ï¼å¦æä¸ä¸ªç¼ç å¨æ¯<code>1024</code>çº¿ï¼è¯´æè¿ä¸ªç¼ç å¨è½¬ä¸åå¯¹åºçä¿¡å·çº¿ä¼è¾åº<code>1024</code>ä¸ªèå²ï¼<code>A/B</code>ä¸¤ç¸è½¬ä¸åååºçèå²æ°ä¸æ ·çï¼ä¸è¿å­å¨<code>90Â°</code>ç¸ä½å·®ã</p>
-<p>ç±äºæä½¿ç¨çç¼ç å¨å¸¦ææ¹åè¾åºå¼èï¼å æ­¤ï¼</p>
-<ul>
-<li>éè¿å¯¹<code>A</code>ç¸èå²è®¡æ°ï¼éè¿è¯»ååä½æ¶é´<code>t</code>çèå²ä¿¡å·çæ°éï¼å°±å¯ä»¥è®¡ç®åºè½¬éï¼</li>
-<li>éè¿å¤æ­æ¹åå¼èçé«ä½çµå¹³ï¼å°±å¯ä»¥ç¥éæ¯æ­£è½¬è¿æ¯åè½¬ã</li>
-</ul>
-<p>ç¼ç å¨ç çæè½¬ä¸å¨<code>A/B</code>ç¸è¾åºçèå²æ°ç®ä¸º<code>N</code>ï¼å¨æ¶é´<code>T</code>åç»è®¡å°çææèå²æ°ç®ä¸º<code>S</code>ï¼é£ä¹è½¬éä¸ºï¼</p>
-<p></p><div class="math display">\[n = \frac{S}{NT} \times 60
-\]</div><p></p><h4 id="12-ç¡¬ä»¶æ¥çº¿">1.2 ç¡¬ä»¶æ¥çº¿</h4>
-<p><img src="https://gitee.com/zyly2033/blog-pic/raw/master/20260326112336536.png?v=1774506573989?v=1774966964185?v=1775266541752" alt="img" style="zoom: 67%"><img src="https://gitee.com/zyly2033/blog-pic/raw/master/20260404093923123.png" style="zoom: 67%"></p>
-<h5 id="121-å·¦çµæºç¼ç å¨">1.2.1 å·¦çµæºç¼ç å¨</h5>
-<p>ç¼ç å¨ä¸å±å¼åº6ä¸ªå¼èï¼å·¦çµæºç¼ç å¨ä¸é¾è¯<code>2K0300</code>å¼åæ¿çè¿æ¥å³ç³»éä¸¥æ ¼å¯¹åºï¼è¿æ¥è¡¨å¦ä¸ï¼</p>
-<table>
-<thead>
-<tr>
-<th>å¼èç¼å·</th>
-<th>ç¼ç å¨å¼è</th>
-<th>å«ä¹</th>
-<th>è¿æ¥çé¾è¯GPIO</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>PIN1</td>
-<td>GND</td>
-<td>å¿é¡»å¯é æ¥å°ï¼å¦åå¯è½åºç°æ¾ç¤ºå¼å¸¸</td>
-<td>GND</td>
-</tr>
-<tr>
-<td>PIN2</td>
-<td>3.3~5V</td>
-<td>ç´æµä¾çµ</td>
-<td>3.3V</td>
-</tr>
-<tr>
-<td>PIN3</td>
-<td>A</td>
-<td>A ç¸è¾åºï¼CMOS çµå¹³</td>
-<td>GPIO67ï¼SPI2_CSï¼</td>
-</tr>
-<tr>
-<td>PIN4</td>
-<td>Dir</td>
-<td>æ¹åè¾åº</td>
-<td>GPIO72ï¼CAN2_RXï¼</td>
-</tr>
-<tr>
-<td>PIN5</td>
-<td>B</td>
-<td>B ç¸è¾åºï¼CMOS çµå¹³</td>
-<td>ââ</td>
-</tr>
-<tr>
-<td>PIN6</td>
-<td>nc</td>
-<td>æ¬ç©º</td>
-<td>ââ</td>
-</tr>
-</tbody>
-</table>
-<h5 id="122-å³çµæºç¼ç å¨">1.2.2 å³çµæºç¼ç å¨</h5>
-<p>å³çµæºç¼ç å¨ä¸é¾è¯<code>2K0300</code>å¼åæ¿çè¿æ¥å³ç³»éä¸¥æ ¼å¯¹åºï¼è¿æ¥è¡¨å¦ä¸ï¼</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>ç¼ç å¨å¼è</th>
-<th>å«ä¹</th>
-<th>è¿æ¥çé¾è¯GPIO</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>PIN1</td>
-<td>GND</td>
-<td>å¿é¡»å¯é æ¥å°ï¼å¦åå¯è½åºç°æ¾ç¤ºå¼å¸¸</td>
-<td>GND</td>
-</tr>
-<tr>
-<td>PIN2</td>
-<td>3.3~5V</td>
-<td>ç´æµä¾çµ</td>
-<td>3.3V</td>
-</tr>
-<tr>
-<td>PIN3</td>
-<td>A</td>
-<td>A ç¸è¾åºï¼CMOS çµå¹³</td>
-<td>GPIO64ï¼SPI2_CLKï¼</td>
-</tr>
-<tr>
-<td>PIN4</td>
-<td>Dir</td>
-<td>æ¹åè¾åº</td>
-<td>GPIO73ï¼CAN2_TXï¼</td>
-</tr>
-<tr>
-<td>PIN5</td>
-<td>B</td>
-<td>B ç¸è¾åºï¼CMOS çµå¹³</td>
-<td>ââ</td>
-</tr>
-<tr>
-<td>PIN6</td>
-<td>nc</td>
-<td>æ¬ç©º</td>
-<td>ââ</td>
-</tr>
-</tbody>
-</table>
-<p>å¨ä¸ä¸èã<a href="https://www.cnblogs.com/zyly/p/19803786" target="_blank">é¾è¯<code>2k0300</code> - èµ°é©¬è§ç¢ç»<code>PWM</code>é©±å¨ç§»æ¤</a>ãæä»¬è®²å°<code>GPIO64</code>å¯ä»¥å¤ç¨ä¸º<code>PWM0</code>ã<code>GPIO67</code>å¯ä»¥å¤ç¨ä¸º<code>PWM3</code>ã</p>
-<h4 id="13-pwmæ§å¶å¨èå²æµéåè½">1.3 <code>PWM</code>æ§å¶å¨èå²æµéåè½</h4>
-<p>ä½¿ç¨ç¼ç å¨ï¼éè¦ä½¿ç¨å°<code>2K0300</code>ç<code>PWM</code>æ§å¶å¨çèå²æµéåè½ï¼éè¿æ¥éæåã<a href="https://www.loongson.cn/uploads/images/2025060909243029508.%E9%BE%99%E8%8A%AF2K0300%E5%A4%84%E7%90%86%E5%99%A8%E7%94%A8%E6%88%B7%E6%89%8B%E5%86%8C_V1.01.pdf" target="_blank" rel="noopener nofollow">é¾è¯<code>2K0300</code>å¤çå¨ç¨æ·æå</a>ãã</p>
-<h5 id="131-è®¿é®å°ååå¼èå¤ç¨">1.3.1 è®¿é®å°ååå¼èå¤ç¨</h5>
-<p><code>PWM</code>æ§å¶å¨åé¨å¯å­å¨çç©çå°åææå¦ä¸ï¼</p>
-<table>
-<thead>
-<tr>
-<th>å°å</th>
-<th>è®¾å¤</th>
-<th>å¤æ³¨</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>0x1611_b000</td>
-<td>PWM0~3</td>
-<td>æ¯ä¸ª PWM å ç¨ 16B å¯å­å¨éç½®ç©ºé´ï¼<br>0x1611_b000-pwm0,<br>0x1611_b010-pwm1,<br>0x1611_b020-pwm2,<br>0x1611_b030-pwm3</td>
-</tr>
-</tbody>
-</table>
-<p>å¯¹äº<code>PWM</code>æ¨¡åï¼ä½¿ç¨æ¶è¦æ³¨æå°å¯¹åºçå¼èè®¾ç½®ä¸ºç¸åºçåè½ãä¸<code>PWM</code>ç¸å³çå¼èå¤ç¨è®¾ç½®å¯æ¥è¯¢<code>PWM</code>åè½å¼èå¤ç¨å³ç³»ï¼å¹¶éç½®ç¸åº<code>GPIO</code>å¼èå¤ç¨éç½®å¯å­å¨å®ç°ã</p>
-<h5 id="132-å¯å­å¨æè¿°">1.3.2 å¯å­å¨æè¿°</h5>
-<p>æ¯è·¯æ§å¶å¨å±æ5ä¸ªå¯å­å¨ï¼å·ä½æè¿°å¦ä¸ï¼</p>
-<table>
-<thead>
-<tr>
-<th>åç§°</th>
-<th>å°å</th>
-<th>å®½åº¦</th>
-<th>è®¿é®</th>
-<th>è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>low_buffer</td>
-<td>Base + 0x4</td>
-<td>32</td>
-<td>R/W</td>
-<td>ä½èå²ç¼å²å¯å­å¨</td>
-</tr>
-<tr>
-<td>full_buffer</td>
-<td>Base + 0x8</td>
-<td>32</td>
-<td>R/W</td>
-<td>èå²å¨æç¼å²å¯å­å¨</td>
-</tr>
-<tr>
-<td>CTRL</td>
-<td>Base + 0xC</td>
-<td>11</td>
-<td>R/W</td>
-<td>æ§å¶å¯å­å¨</td>
-</tr>
-</tbody>
-</table>
-<p>æ­¤å¤è¿æ<code>Low_level</code>å<code>full_pulse</code>å¯å­å¨ï¼è¿æ¯ä¸¤ä¸ªåé¨ç¡¬ä»¶è®¡æ°å¨ï¼å®ä»¬ä»¥ç³»ç»æ¶éä¸ºåºåè¿è¡èªå¢ï¼ç¨æ¥æµéæ¶é´é´éï¼</p>
-<ul>
-<li><code>Low_level</code> è®¡æ°å¨ï¼è´è´£æµéä½çµå¹³çæ¶é´ï¼</li>
-<li><code>full_pulse</code> è®¡æ°å¨ï¼è´è´£æµéä¸ä¸ªå®æ´èå²å¨æçæ¶é´ã</li>
-</ul>
-<p><code>low_buffer</code>å<code>full_buffer</code>å¯å­å¨ï¼è¿æ¯ä¸¤ä¸ªâå½±å­å¯å­å¨âï¼ç¼å²å¯å­å¨ï¼ãå½ç¹å®äºä»¶åçæ¶ï¼ç¡¬ä»¶ä¼ç«å»å°è®¡æ°å¨çå½åå¼âå¿«ç§âå¹¶å­å¥å¯¹åºçç¼å²å¯å­å¨ä¸­ï¼ä¾è½¯ä»¶è¯»åã</p>
-<h5 id="133-èå²æµé">1.3.3 èå²æµé</h5>
-<p>æ´ä¸ªæµéè¿ç¨æ¯ç±ç¡¬ä»¶èªå¨å®æçï¼é»è¾å¦ä¸ï¼</p>
-<p>â  åå§åä¸å¯å¨ï¼è®¾ç½®å¥½æ§å¶å¯å­å¨åï¼è®¡æ°å¨å¨ç³»ç»æ¶éé©±å¨ä¸å¼å§å·¥ä½ï¼</p>
-<p>â¡ ä¸æ¬¡å®æ´çèå²å¨ææµéï¼ä»ä¸è·³åå¼å§ï¼ï¼</p>
-<ul>
-<li>ä¸è·³åï¼é«-&gt;ä½ï¼è§¦åï¼
-<ul>
-<li>å½æ£æµå°ä¿¡å·ç±é«åä½ï¼ä¸éæ²¿ï¼æ¶ï¼æ¬è½®æµéå¼å§ï¼</li>
-<li>ç¡¬ä»¶ä¼å° <code>full_pulse</code> è®¡æ°å¨çå½åå¼ï¼å³ä¸ä¸ä¸ªå®æ´å¨æçé¿åº¦ï¼ä¼ éå° <code>full_buffer</code> å¯å­å¨ï¼</li>
-<li>ç¶åï¼å° <code>Low_level</code> å <code>full_pulse</code> è¿ä¸¤ä¸ªè®¡æ°å¨éç½®ä¸º1ï¼å¹¶å¼å§æ°ä¸è½®è®¡æ°ï¼</li>
-</ul>
-</li>
-<li>ä½çµå¹³æé´ï¼<code>Low_level</code> å <code>full_pulse</code> è®¡æ°å¨ä»<code>1</code>å¼å§åæ­¥èªå¢ï¼</li>
-<li>ä¸è·³åï¼ä½-&gt;é«ï¼è§¦åï¼
-<ul>
-<li>å½æ£æµå°ä¿¡å·ç±ä½åé«ï¼ä¸åæ²¿ï¼æ¶ï¼ä½çµå¹³é¶æ®µç»æï¼</li>
-<li>ç¡¬ä»¶å°æ­¤æ¶ <code>Low_level</code> è®¡æ°å¨çå¼ï¼å³ä½çµå¹³çæç»­æ¶é´ï¼ä¼ éå° <code>low_buffer</code> å¯å­å¨ï¼</li>
-<li><code>Low_level</code> è®¡æ°å¨è¢«éç½®ä¸º<code>1</code>ï¼ä½<code>full_pulse</code> è®¡æ°å¨ç»§ç»­èªå¢ï¼å ä¸ºå®è¿å¨æµéæ´ä¸ªå¨æï¼</li>
-</ul>
-</li>
-<li>ä¸ä¸ä¸ªä¸è·³åè§¦åï¼
-<ul>
-<li>å½åæ¬¡æ£æµå°ä¸éæ²¿æ¶ï¼è¡¨ç¤ºä¸ä¸ªå®æ´å¨æç»æï¼</li>
-<li>ç¡¬ä»¶å° <code>full_pulse</code> è®¡æ°å¨ï¼æ­¤æ¶å·²ç´¯å äºé«+ä½çµå¹³çæ¶é´ï¼çå¼å­å¥ <code>full_buffer</code>ï¼å¹¶éç½®è®¡æ°å¨ã</li>
-</ul>
-</li>
-</ul>
-<p>â¢ è¯»åç»æï¼</p>
-<ul>
-<li>ç»è¿ä¸¤ä¸ªå®æ´çèå²å¨æåï¼<code>low_buffer</code> å <code>full_buffer</code> ä¸­çæ°æ®æä¼ç¨³å®ä¸æ¥ï¼æä¸ºå¯é çæµéå¼ã</li>
-<li><code>low_buffer</code> çè®¡æ°å¼ä»£è¡¨ä½çµå¹³çæç»­æ¶é´ï¼ä»¥ç³»ç»æ¶éå¨ææ°ä¸ºåä½ï¼ï¼</li>
-<li><code>full_buffer</code> çè®¡æ°å¼ä»£è¡¨æ´ä¸ªèå²ä¿¡å·çå¨æï¼ä»¥ç³»ç»æ¶éå¨ææ°ä¸ºåä½ï¼ï¼</li>
-<li>å æ­¤ï¼é«çµå¹³æ¶é´ = <code>full_buffer</code> - <code>low_buffer</code>ã</li>
-</ul>
-<h5 id="134-æ¡ä¾">1.3.4 æ¡ä¾</h5>
-<p>åè®¾ç³»ç»æ¶éé¢çä¸º<code>1MHz</code>ï¼å³æ¯ä¸ªæ¶éå¨æä¸º<code>1</code>å¾®ç§ï¼ãä½ è¾å¥ä¸ä¸ªå¨æä¸º<code>200</code>å¾®ç§ï¼é«çµå¹³<code>50</code>å¾®ç§ãä½çµå¹³<code>150</code>å¾®ç§çæ¹æ³¢ï¼ä¸æ¬¡æµéæµç¨ç»æåï¼</p>
-<ul>
-<li><code>low_buffer</code> ä¸­è¯»åºçå¼åºä¸º<code>150</code> ï¼ä»£è¡¨<code>150</code>å¾®ç§çä½çµå¹³ï¼ï¼</li>
-<li><code>full_buffer</code> ä¸­è¯»åºçå¼åºä¸º<code>200</code> ï¼ä»£è¡¨200å¾®ç§çå®æ´å¨æï¼ï¼</li>
-</ul>
-<p>éè¿è®¡ç®å¯å¾ï¼é«çµå¹³æ¶é´ = <code>200 - 150 = 50</code>å¾®ç§ã</p>
-<h5 id="135-è½¬éè®¡ç®">1.3.5 è½¬éè®¡ç®</h5>
-<p>å·²ç¥åæ°ï¼</p>
-<ul>
-<li>ç³»ç»æ¶éé¢çï¼<code>f_clk</code> (<code>Hz</code>)ï¼</li>
-<li>ç¼ç å¨æ¯è½¬èå²æ°ï¼<code>PPR</code>ï¼</li>
-<li><code>full_buffer</code> å¯å­å¨çå¼ï¼<code>N</code>ï¼è¡¨ç¤ºä¸ä¸ªå®æ´èå²å¨æå¯¹åºçç³»ç»æ¶éå¨ææ°ï¼</li>
-</ul>
-<p>åèå²å¨æï¼</p>
-<p></p><div class="math display">\[T_{pulse} = \frac{N}{f_{clk}}
-\]</div><p></p><p>èå²é¢çè®¡ç®ï¼</p>
-<p></p><div class="math display">\[f_{pulse}= \frac{1}{T_{pluse}} = \frac{f_{clk}}{N} 
-\]</div><p></p><p>çµæºæ¯è½¬ä¸åäº§ç <code>PPR</code> ä¸ªèå²ï¼å æ­¤ï¼</p>
-<p></p><div class="math display">\[è½¬é RPM = \frac{f_{pulse}}{PPR} Ã 60 = \frac{60 \times f_{clk}}{N \times PPR} 
-\]</div><p></p><h5 id="136-pwmæ§å¶å¨æ¶éé¢ç">1.3.6 <code>PWM</code>æ§å¶å¨æ¶éé¢ç</h5>
-<p>é¾è¯<code>2K0300</code>ç<code>CPU</code>æ ¸å¿ä¸»é¢ä¸º<code>1GHz</code>ï¼ä½æ¯<code>PWM</code>æ§å¶å¨çæ¶éé¢çä¸º<code>200MHz</code>ï¼æä»¬éè¿å¤çå¨ç¨æ·æåå¯ä»¥è·åå°æ¶éç»æå¾ï¼</p>
-<p><img src="https://gitee.com/zyly2033/blog-pic/raw/master/202604050945900.png" alt="" loading="lazy"></p>
-<p>çåä¸»è¦ç±ä¸è·¯å¤é¨æ¶éè¾å¥ï¼<code>120MHz</code>åºå®é¢çæ¶éä½ä¸ºç³»ç»åèæ¶éè¾å¥ï¼ä¾çå<code>PLL</code>ä½¿ç¨ãè¯çåé¨å±æ<code>3</code>ä¸ªç¬ç«ç<code>PLL</code>ï¼å¶ä¸­æ¯ä¸ª<code>PLL</code>æå¤å¯ä»¥æä¾<code>3</code>ç»é¢çä¸ç¸äºä¾èµçæ¶éè¾åºï¼</p>
-<p>â  ä¸ä¸ª<code>NODE PLL</code>ç¨äºäº§ç<code>NODE</code>ã<code>GMAC</code>ã<code>I2S</code>æ¨¡åæ¶éï¼è¯¥æ¶éä¸ºè¯ççä¸»è¦æ¶éï¼åä¸ºä¸ç»é¢çæ¶éï¼</p>
-<ul>
-<li>ä¸è·¯ä¾<code>CPU</code>æ ¸ãäºçº§<code>Cache</code>ãä¸äºçº§äº¤åå¼å³ä»¥å<code>IO</code>å­ç½ç»ä½¿ç¨ï¼</li>
-<li>ä¸è·¯ä¾<code>GMAC</code>æ¨¡åä½¿ç¨ï¼</li>
-<li>ä¸è·¯ä¾<code>I2S</code>è®¾å¤æ§å¶å¨ä½¿ç¨ï¼</li>
-</ul>
-<p>â¡ ä¸ä¸ª<code>DDR PLL</code>åæ¶äº§ç<code>DDR</code>ã<code>NETWORK</code>ä»¥å<code>USB</code>ã<code>APB</code>ã<code>BOOT</code>ã<code>SDIO</code>ç­æ¨¡åçæ¶éï¼</p>
-<p>â¢ ä¸ä¸ª<code>PIX PLL</code>åæ¶äº§ç<code>DC</code>æ¾ç¤ºã<code>GMAC</code>æ§å¶å¨å¤ä»½çåé¨æ¶éã</p>
-<p><code>DDR PLL</code>è¾åºä¸ä¸ªæ¶éï¼åå«ä¸ºï¼</p>
-<p>â <code>ddr_pllclk</code>ç¨äºåå­æ§å¶å¨ï¼é¢çèå´ï¼<code>1.0GHz</code>ï¼</p>
-<p>â¡<code>network_pllclk</code>ç¨äº<code>NETWORK</code>æ¨¡åï¼é¢çèå´ï¼<code>500MHz</code>ï¼</p>
-<p>â¢ <code>dev_pllclk</code>ç¨ äº<code>USB</code> ã <code>APB</code> ï¼ é¤<code>SDIO</code>å¤å¶ä»<code>APB</code>ä½ é æ¥å£æ§å¶å¨ï¼åæ¬<code>UART</code>/<code>I2C</code>/<code>PWM</code>/<code>CAN</code>/<code>ADC</code>/<code>I2S</code>/<code>SPI2</code>/<code>SPI3</code>/<code>HPET</code>/<code>GPIO</code>/<code>TIMER</code>/<code>ENCRYPT</code>/<code>RTC/WDT</code> ï¼ã<code>BOOT</code>ï¼<code>Confbus</code>/<code>SPI0</code>/<code>SPI1</code>/<code>LocalIO</code>æ§å¶å¨ï¼ã<code>SDIO</code>ç­æ¨¡åï¼é¢çèå´ï¼<code>200MHz</code>ã</p>
-<p>ä»¥ä¸ä¸ä¸ªæ¶éå±ç¨ä¸ä¸ª<code>PLL</code>ï¼éè¿è®¾ç½®åèªç<code>divout</code>å¼æ¥å®ç°ä¸åçé¢çè¾åºãåæ ·å¨è°æ´å¶ä¸­ä¸ä¸ªæ¨¡åæ¶éæ¶ï¼å¦æå¯¹å¬ç¨<code>PLL</code>çåé¢ç³»æ°è¿è¡è°æ´ï¼éè¦æ³¨æå¯¹å¶ä»æ¶éçå½±åã</p>
-<p><img src="https://gitee.com/zyly2033/blog-pic/raw/master/202604050954520.png" alt="" loading="lazy"></p>
-<p><code>PWM</code>æ§å¶å¨ææ¥å¨<code>APB</code>æ»çº¿ä¸ï¼æ¶éé¢çæ¥èªæ¶é<code>dev_pllclk</code>ï¼æ¶éé¢çä¸º<code>200MHz</code>ï¼å½ç¶æä»¬ä¹å¯ä»¥éè¿ <code>clk_summary</code> æ¥çæ¶éæ ï¼</p>
-<pre><code class="language-shell">[root@LS-GD ~]# cat /sys/kernel/debug/clk/clk_summary
-                                 enable  prepare  protect                                duty  hardware                            connection
-   clock                          count    count    count        rate   accuracy phase  cycle    enable   consumer                         id
----------------------------------------------------------------------------------------------------------------------------------------------
- ref_clk                             1       1        0        120000000   0          0     50000      Y   deviceless                      ref_clk
-                                                                                                           clock-controller@0x16000400     ref_clk
-                                                                                                           deviceless                      no_connection_id
-    pix_pll_clk                      0       0        0        519272727   0          0     50000      Y      deviceless                      no_connection_id
-       gmacbp_clk                    0       0        0        4088761     0          0     50000      Y         deviceless                      no_connection_id
-       pix_clk                       0       0        0        4595333     0          0     50000      Y         deviceless                      no_connection_id
-    ddr_pll_clk                      1       1        0        1600000000  0          0     50000      Y      deviceless                      no_connection_id
-       devs_clk                      1       1        0        200000000   0          0     50000      Y         deviceless                      no_connection_id
-          sdio_clk                   0       0        0        200000000   0          0     50000      Y            deviceless                      no_connection_id
-          boot_clk                   0       0        0        200000000   0          0     50000      Y            deviceless                      no_connection_id
-          apb_clk                    3       4        0        200000000   0          0     50000      Y            syscon@0x16124000               no_connection_id
-                                                                                                                    16100800.serial                 no_connection_id
-                                                                                                                    16100400.serial                 no_connection_id
-                                                                                                                    16100000.serial                 no_connection_id
-                                                                                                                    deviceless                      no_connection_id
-          usb_clk                    0       0        0        200000000   0          0     50000      Y            deviceless                      no_connection_id
-       net_clk                       0       0        0        200000000   0          0     50000      Y         deviceless                      no_connection_id
-       ddr_clk                       0       0        0        800000000   0          0     50000      Y         deviceless                      no_connection_id
-    node_pll_clk                     0       0        0        2000000000  0          0     50000      Y      deviceless                      no_connection_id
-       i2s_clk                       0       0        0        100000000   0          0     50000      Y         deviceless                      no_connection_id
-       gmac_clk                      0       0        0        125000000   0          0     50000      Y         deviceless                      no_connection_id
-       iodma_clk                     0       0        0        1000000000  0          0     50000      Y         deviceless                      no_connection_id
-       scache_clk                    0       0        0        1000000000  0          0     50000      Y         deviceless                      no_connection_id
-       cpu_clk                       0       0        0        1000000000  0          0     50000      Y         deviceless                      cpu_clk
-                                                                                                                 deviceless                      no_connection_id
+        </h2>
+        <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h1 id="æ¥å­">æ¥å­</h1>
+<p>è¿ä¸ªæ¯ä¸ä¸ªå¬ä¼å·è¯»èå äºå¾®ä¿¡å¨è¯¢ï¼å¶å®è¿ç§è§é¢èåææ¯å¾å¤å¹´åå°±åè¿ã</p>
+<p>æ¯å¦åcesiumçï¼ä¹æå¾å¤æç« ä»ç»è§é¢èåã  ä¸è¿æçå¤§é¨åè§é¢çèåçææ¯ï¼æ¯ç¨ä¸ä¸ªé¿æ¹å½¢é¢çï¼ç¶åæè§é¢çº¹çæ¸²æå°è¿ä¸ªé¢çä¸ï¼ç¶åå å å°åºæ¯ä¸­ï¼è®°å¾å¥½å¤å¹´åä¸ä¸ªåäºå°±æ¯ç¨è¿ç§æè·¯å®ç°çãè¿ç§æ¹å¼çä¼ç¹å¨äºå®ç°æè·¯ç®åï¼èµæºæ¶èå°ã ç¼ºç¹æ¯åªè½ä»è§é¢æå°çè§åº¦å»çï¼ä»å¶ä»è§åº¦å°±ä¼é²é¦ã</p>
+<p>è¦å®ç°çæ­£çè§é¢èåï¼éè¦ä½¿ç¨æå½±çº¹çæ å°ã</p>
+<h1 id="æå½±çº¹çæ å°texture-projection"><font style="color: rgba(38, 39, 46, 1); background-color: rgba(247, 247, 247, 1)">æå½±çº¹çæ å°Texture Projection</font></h1>
+<p>æå½±çº¹çæ å°çåæ¥å°±æ¯ç±»ä¼¼äºç¨çæå½±ä»ªï¼æå¾åæå½±å°ä¸ç»´ç©ºé´çç©ä½è¡¨é¢ãä¸é¢æ¯æ¾çä¸å¼ å¾çèµæºï¼</p>
+
+<p><img alt="" loading="lazy" data-src="https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/39815a308c844ef39416cdbbe85ad7b0~tplv-73owjymdk6-jj-mark-v1:0:0:0:0:5o6Y6YeR5oqA5pyv56S-5Yy6IEAgSVRNYW7lvarlj5Q=:q75.awebp?policy=eyJ2bSI6MywidWlkIjoiMTU1NjU2NDE2NDQ4NDAyNCJ9&amp;rk3s=f64ab15b&amp;x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&amp;x-orig-expires=1775976803&amp;x-orig-sign=edqxm71u2OKCyDVSsfztDhO9pmU%3D" class="lazyload"></p>
+<p>å¨projector location æ¾ä¸ä¸ªæå½±æºï¼å°±å¯ä»¥æå¾åæå°å°æ¿é´ä¸­å¢ä¸ã æå³æè·¯åèï¼</p>
+<p><a href="https://tympanus.net/codrops/2020/01/07/playing-with-texture-projection-in-three-js/" target="_blank" rel="noopener nofollow">https://tympanus.net/codrops/2020/01/07/playing-with-texture-projection-in-three-js/</a></p>
+<h1 id="è§é¢çº¹ç">è§é¢çº¹ç</h1>
+<p>å¾ççº¹çå¤§å®¶é½æ¯è¾å±æ§ï¼è§é¢çº¹çå°±æ¯æè§é¢ä½ä¸ºçº¹ççè¾å¥æºï¼ç±äºè§é¢éè¦å®æ¶æ´æ°ï¼æä»¥éè¦å®æ¶ä¸ä¼ è§é¢åå®¹ã è¿ä¸åçåå®¹å¯ä»¥åèThreeçVedioTextureï¼å¨threeä¸­ï¼é¦åéè¿flv.js æ­æ¾è§é¢ï¼ç¶åæè§é¢åç´ vedioç»å°VedioTextureæ¢å¯å®ç°è§é¢çº¹çã</p>
+<h1 id="å®ç°æè·¯">å®ç°æè·¯</h1>
+<p>ä¸»è¦å®ç°æè·¯å¦ä¸ï¼å¨çå®æåæºæå¨ä½ç½®åæåï¼æ¨¡æä¸ä¸ªéè§æåå¤´ï¼Perspective Cameraï¼ï¼è¯¥æåå¤´çæå½±åºé´æ¯ æ¯ xy ä»å·¦å°å³ ä»ä¸å°ä¸-1 å°1ï¼ å¯ä»¥æåºé´è½¬æ¢æuvç©ºé´ï¼å¦ä¸ï¼</p>
+<pre><code class="language-javascript">vec2 projectUv = (vProjTexCoords.xy / vProjTexCoords.w) * 0.5 + 0.5;
 </code></pre>
-<p>ä» <code>clk_summary</code> è¾åºå¯ä»¥æ¸æ°å°çå°é¾è¯<code>2K0300</code>çå®æ´æ¶éæ ï¼æä»¬éç¹å³æ³¨ä¸ <code>PWM</code>æ§å¶å¨ç¸å³çæ¶éã<code>PWM</code>æ§å¶å¨ææ¥å¨<code>APB</code>æ»çº¿ä¸ï¼æ¶éæºæ¯<code>apb_clk</code>ï¼é¢çä¸º<code>200 MHz</code>ã</p>
-<h3 id="äºç¼ç å¨è®¾å¤é©±å¨">äºãç¼ç å¨è®¾å¤é©±å¨</h3>
-<h4 id="21-ç¼ç å¨é©±å¨">2.1 ç¼ç å¨é©±å¨</h4>
-<p>æ¥ä¸æ¥æä»¬å¨<code>driver</code>ç®å½ä¸åå»ºå­ç®å½<code>encoder_driver</code>ï¼</p>
-<pre><code class="language-shell">zhengyang@ubuntu:~$ cd /opt/2k0300/loongson_2k300_lib/driver
-zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/driver$ mkdir encoder_driver
-zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/encoder_driver$ cd encoder_driver
-</code></pre>
-<p>ç®å½ç»æå¦ä¸ï¼</p>
-<pre><code class="language-shell">zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/driver/encoder_driver$ tree .
-.
-âââ Makefile
-âââ encoder_driver.c
-</code></pre>
-<h5 id="211-encoder_driverc">2.1.1 <code>encoder_driver.c</code></h5>
-<p><code>encoder_driver.c</code>æºç å®ç°å¦ä¸ï¼</p>
-<pre><code class="language-c">#include &lt;linux/module.h&gt;
-#include &lt;linux/platform_device.h&gt;
-#include &lt;linux/of.h&gt;
-#include &lt;linux/of_gpio.h&gt;
-#include &lt;linux/io.h&gt;
-#include &lt;linux/miscdevice.h&gt;
-#include &lt;linux/fs.h&gt;
-#include &lt;linux/uaccess.h&gt;
-#include &lt;linux/pinctrl/consumer.h&gt;
-#include &lt;linux/err.h&gt;
-#include &lt;linux/bitops.h&gt;
-#include &lt;linux/clk.h&gt;
-#include &lt;linux/slab.h&gt;
-
-#define DEVICE_NAME "pulse_encoder"
-#define DRIVER_VERSION "2.0"
-
-/* å¯å­å¨å®ä¹ */
-#define PWM_ENCODER_LOW_BUFFER   0x04
-#define PWM_ENCODER_FULL_BUFFER  0x08
-#define PWM_ENCODER_CTRL         0x0C
-
-/* æ§å¶å¯å­å¨ä½å®ä¹ */
-#define PWM_ENCODER_EN           BIT(0)   /* è®¡æ°å¨ä½¿è½ */
-#define PWM_ENCODER_CAPTE        BIT(8)   /* æµéèå²ä½¿è½ (ç¼ç å¨æ¨¡å¼) */
-
-/* é»è®¤éç½® */
-#define DEFAULT_PPR              1024
-#define MAX_PPR                  100000
-#define MIN_PPR                  1
-#define DEFAULT_CLK_FREQ         200000000UL  /* 200 MHz */
-#define OVERFLOW_THRESHOLD       0xFFFFF000   /* æº¢åºè­¦åéå¼ */
-
-/* ioctl å½ä»¤ */
-#define ENCODER_IOC_MAGIC        'E'
-#define ENCODER_GET_COUNT        _IOR(ENCODER_IOC_MAGIC, 1, struct encoder_counts)
-#define ENCODER_GET_INFO         _IOR(ENCODER_IOC_MAGIC, 2, struct encoder_info)
-#define ENCODER_RESET_COUNT      _IO(ENCODER_IOC_MAGIC, 3)
-
-struct encoder_counts {
-    long long count;        /* èå²è®¡æ° (å·²è½¬æ¢ä¸º RPM) */
-    int direction;          /* æè½¬æ¹å (1: æ­£è½¬, -1: åè½¬) */
-    unsigned int raw_count; /* åå§è®¡æ°å¼ (è°è¯ç¨) */
-};
-
-struct encoder_info {
-    int ppr;                /* æ¯è½¬èå²æ° */
-    unsigned long clk_freq; /* æ¶éé¢ç */
-    unsigned int max_count; /* æå¤§è®¡æ°å¼ */
-};
-
-struct encoder_device {
-    void __iomem *base;      /* å®æ¶å¨å¯å­å¨åºå°å */
-    int dir_gpio;            /* æ¹åå¼è */
-    int ppr;                 /* ç¼ç å¨æ¯è½¬èå²æ° */
-    unsigned long clk_freq;  /* æ¶éé¢ç */
-    struct miscdevice miscdev;
-    struct device *dev;      /* è®¾å¤æéï¼ç¨äºæ¥å¿ */
-};
-
-/**
- * encoder_calc_rpm() - æ ¹æ®åå§è®¡æ°å¼è®¡ç®è½¬é
- * @enc: ç¼ç å¨è®¾å¤
- * @raw_count: ç¡¬ä»¶è®¡æ°å¼
- *
- * Return: è½¬é (RPM)
- */
-static long long encoder_calc_rpm(struct encoder_device *enc, u32 raw_count)
-{
-    unsigned long long temp;
-    
-    /* é²æ­¢é¤é¶åæº¢åº */
-    if (unlikely(raw_count == 0 || raw_count &gt; OVERFLOW_THRESHOLD)) {
-        dev_warn_ratelimited(enc-&gt;dev, "Invalid raw_count: %u\n", raw_count);
-        return 0;
-    }
-    
-    /* RPM = (60 * clk_freq) / (raw_count * ppr) */
-    temp = 60ULL * enc-&gt;clk_freq;
-    do_div(temp, raw_count);
-    do_div(temp, enc-&gt;ppr);
-    
-    return (long long)temp;
-}
-
-/**
- * encoder_read_raw() - è¯»åç¡¬ä»¶è®¡æ°å¼
- * @enc: ç¼ç å¨è®¾å¤
- * @raw_count: è¾åºåå§è®¡æ°å¼
- *
- * Return: 0 æåï¼è´æ°è¡¨ç¤ºéè¯¯
- */
-static int encoder_read_raw(struct encoder_device *enc, u32 *raw_count)
-{
-    u32 ctrl;
-    
-    if (unlikely(!enc || !raw_count))
-        return -EINVAL;
-    
-    /* æ£æ¥è®¡æ°å¨æ¯å¦æº¢åº */
-    ctrl = readl(enc-&gt;base + PWM_ENCODER_CTRL);
-    if (unlikely(ctrl &amp; BIT(6))) {  /* INT ä½ */
-        dev_warn_ratelimited(enc-&gt;dev, "Counter overflow detected\n");
-        /* æ¸é¤æº¢åºæ å¿ï¼å1æ¸é¤ï¼ */
-        writel(ctrl | BIT(6), enc-&gt;base + PWM_ENCODER_CTRL);
-        return -EOVERFLOW;
-    }
-    
-    *raw_count = readl(enc-&gt;base + PWM_ENCODER_FULL_BUFFER);
-    return 0;
-}
-
-/**
- * encoder_get_direction() - è·åæè½¬æ¹å
- * @enc: ç¼ç å¨è®¾å¤
- *
- * Return: 1 æ­£è½¬, -1 åè½¬
- */
-static int encoder_get_direction(struct encoder_device *enc)
-{
-    int val;
-    
-    if (unlikely(!enc))
-        return 1;
-    
-    val = gpio_get_value_cansleep(enc-&gt;dir_gpio);
-    return (val &gt; 0) ? 1 : -1;
-}
-
-/* ioctl å¤ç - éè¿ filp-&gt;private_data è·åè®¾å¤å®ä¾ */
-static long encoder_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
-{
-    struct encoder_device *enc = filp-&gt;private_data;
-    void __user *argp = (void __user *)arg;
-    unsigned long flags;
-    int ret = 0;
-    
-    if (unlikely(!enc))
-        return -ENODEV;
-    
-    switch (cmd) {
-    case ENCODER_GET_COUNT:
-    {
-        struct encoder_counts cnt = {0};
-        u32 raw_count;
-        
-        local_irq_save(flags);
-        ret = encoder_read_raw(enc, &amp;raw_count);
-        if (ret == 0) {
-            cnt.raw_count = raw_count;
-            cnt.direction = encoder_get_direction(enc);
-            cnt.count = encoder_calc_rpm(enc, raw_count);
-        }
-        local_irq_restore(flags);
-        
-        if (ret)
-            return ret;
-        
-        if (copy_to_user(argp, &amp;cnt, sizeof(cnt)))
-            return -EFAULT;
-        break;
-    }
-    
-    case ENCODER_GET_INFO:
-    {
-        struct encoder_info info = {
-            .ppr = enc-&gt;ppr,
-            .clk_freq = enc-&gt;clk_freq,
-            .max_count = OVERFLOW_THRESHOLD,
-        };
-        if (copy_to_user(argp, &amp;info, sizeof(info)))
-            return -EFAULT;
-        break;
-    }
-    
-    case ENCODER_RESET_COUNT:
-        /* éç½®è®¡æ°å¨ï¼éè¿éæ°éç½®å®ç° */
-        local_irq_save(flags);
-        writel(0, enc-&gt;base + PWM_ENCODER_CTRL);
-        writel(PWM_ENCODER_EN | PWM_ENCODER_CAPTE, enc-&gt;base + PWM_ENCODER_CTRL);
-        local_irq_restore(flags);
-        dev_info(enc-&gt;dev, "Counter reset\n");
-        break;
-    
-    default:
-        return -ENOTTY;
-    }
-    
-    return 0;
-}
-
-/* open å½æ°ï¼å°è®¾å¤å®ä¾ä¿å­å° filp-&gt;private_data */
-static int encoder_open(struct inode *inode, struct file *filp)
-{
-    struct miscdevice *miscdev = filp-&gt;private_data;
-    struct encoder_device *enc = container_of(miscdev, struct encoder_device, miscdev);
-    filp-&gt;private_data = enc;
-    return 0;
-}
-
-static const struct file_operations encoder_fops = {
-    .owner = THIS_MODULE,
-    .open = encoder_open,
-    .unlocked_ioctl = encoder_ioctl,
-};
-
-/* è·åæ¶éé¢ç */
-static int encoder_get_clk_freq(struct encoder_device *enc, struct platform_device *pdev)
-{
-    struct device_node *np = pdev-&gt;dev.of_node;
-    struct clk *clk;
-    u32 clk_freq = 0;
-    
-    /* ä¼åä»è®¾å¤æ è·å */
-    if (of_property_read_u32(np, "clock-frequency", &amp;clk_freq) == 0) {
-        enc-&gt;clk_freq = clk_freq;
-        dev_info(&amp;pdev-&gt;dev, "Using clock-frequency from DT: %lu Hz\n", enc-&gt;clk_freq);
-        return 0;
-    }
-    
-    /* å°è¯ä»æ¶éæ¡æ¶è·å */
-    clk = clk_get(&amp;pdev-&gt;dev, NULL);
-    if (!IS_ERR(clk)) {
-        enc-&gt;clk_freq = clk_get_rate(clk);
-        clk_put(clk);
-        dev_info(&amp;pdev-&gt;dev, "Using clock rate from clk API: %lu Hz\n", enc-&gt;clk_freq);
-        return 0;
-    }
-    
-    /* ä½¿ç¨é»è®¤å¼ */
-    enc-&gt;clk_freq = DEFAULT_CLK_FREQ;
-    dev_warn(&amp;pdev-&gt;dev, "Using default clock frequency: %lu Hz\n", enc-&gt;clk_freq);
-    return 0;
-}
-
-/* é©±å¨å¥å£ */
-static int encoder_probe(struct platform_device *pdev)
-{
-    struct device *dev = &amp;pdev-&gt;dev;
-    struct device_node *np = dev-&gt;of_node;
-    struct resource *res;
-    struct pinctrl *pinctrl;
-    struct encoder_device *enc;
-    char devname[32];
-    int ret;
-    
-    dev_info(dev, "Probing pulse encoder driver v%s\n", DRIVER_VERSION);
-    
-    /* 1. åéè®¾å¤ç»æä½ï¼æ¯ä¸ªå®ä¾ç¬ç«ï¼ */
-    enc = devm_kzalloc(dev, sizeof(*enc), GFP_KERNEL);
-    if (!enc)
-        return -ENOMEM;
-    
-    enc-&gt;dev = dev;
-    platform_set_drvdata(pdev, enc);  /* ä¿å­å° platform_device */
-    
-    /* 2. éç½® pinctrlï¼å¯éï¼å¤±è´¥ä¸è´å½ï¼ */
-    pinctrl = devm_pinctrl_get_select_default(dev);
-    if (IS_ERR(pinctrl)) {
-        dev_warn(dev, "Failed to get pinctrl: %ld, assuming already configured\n", 
-                 PTR_ERR(pinctrl));
-    }
-    
-    /* 3. è·åå¯å­å¨èµæº */
-    res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-    if (!res) {
-        dev_err(dev, "Missing memory resource\n");
-        return -ENOENT;
-    }
-    
-    /* 4. æ å°å¯å­å¨å°å */
-    enc-&gt;base = devm_ioremap(dev, res-&gt;start, resource_size(res));
-    if (!enc-&gt;base) {
-        dev_err(dev, "Failed to ioremap memory\n");
-        return -ENOMEM;
-    }
-    dev_dbg(dev, "Registers mapped at 0x%p (size=0x%llu)\n", 
-            enc-&gt;base, (unsigned long long)resource_size(res));
-    
-    /* 5. è·åæ¹å GPIO */
-    enc-&gt;dir_gpio = of_get_named_gpio(np, "dir-gpios", 0);
-    if (!gpio_is_valid(enc-&gt;dir_gpio)) {
-        dev_err(dev, "Invalid or missing dir-gpios\n");
-        return -EINVAL;
-    }
-    
-    ret = devm_gpio_request(dev, enc-&gt;dir_gpio, "encoder_dir");
-    if (ret) {
-        dev_err(dev, "Failed to request dir GPIO %d: %d\n", 
-                enc-&gt;dir_gpio, ret);
-        return ret;
-    }
-    
-    ret = gpio_direction_input(enc-&gt;dir_gpio);
-    if (ret) {
-        dev_err(dev, "Failed to set dir GPIO %d as input: %d\n", 
-                enc-&gt;dir_gpio, ret);
-        return ret;
-    }
-    dev_dbg(dev, "Direction GPIO %d configured\n", enc-&gt;dir_gpio);
-    
-    /* 6. è·å PPRï¼å¸¦èå´æ£æ¥ï¼ */
-    if (of_property_read_u32(np, "rotary-encoder,steps-per-period", &amp;enc-&gt;ppr) != 0)
-        enc-&gt;ppr = DEFAULT_PPR;
-    
-    if (enc-&gt;ppr &lt; MIN_PPR || enc-&gt;ppr &gt; MAX_PPR) {
-        dev_warn(dev, "Invalid PPR %u, clamping to [%d,%d]\n", 
-                 enc-&gt;ppr, MIN_PPR, MAX_PPR);
-        enc-&gt;ppr = clamp(enc-&gt;ppr, MIN_PPR, MAX_PPR);
-    }
-    dev_info(dev, "PPR = %d\n", enc-&gt;ppr);
-    
-    /* 7. è·åæ¶éé¢ç */
-    ret = encoder_get_clk_freq(enc, pdev);
-    if (ret)
-        dev_warn(dev, "Failed to get clock frequency, using default\n");
-    
-    /* 8. éç½®å®æ¶å¨ä¸ºç¼ç å¨æ¨¡å¼ */
-    writel(0, enc-&gt;base + PWM_ENCODER_CTRL);  /* åç¦ç¨ */
-    writel(PWM_ENCODER_EN | PWM_ENCODER_CAPTE, 
-           enc-&gt;base + PWM_ENCODER_CTRL);
-    dev_dbg(dev, "Timer configured in encoder mode\n");
-    
-    /* 9. åå»ºå¯ä¸çè®¾å¤åç§° */
-    const char *label = of_get_property(np, "label", NULL);
-    if (label)
-        snprintf(devname, sizeof(devname), "pulse_encoder_%s", label);
-    else
-        snprintf(devname, sizeof(devname), "pulse_encoder_%s", dev_name(dev));
-    
-    /* 10. æ³¨å misc è®¾å¤ */
-    enc-&gt;miscdev.minor = MISC_DYNAMIC_MINOR;
-    enc-&gt;miscdev.name = devname;
-    enc-&gt;miscdev.fops = &amp;encoder_fops;
-    
-    ret = misc_register(&amp;enc-&gt;miscdev);
-    if (ret) {
-        dev_err(dev, "Failed to register misc device: %d\n", ret);
-        /* æ¸çç¡¬ä»¶éç½® */
-        writel(0, enc-&gt;base + PWM_ENCODER_CTRL);
-        return ret;
-    }
-    
-    dev_info(dev, "Encoder driver loaded successfully, device /dev/%s (PPR=%d, clk=%luHz)\n",
-             devname, enc-&gt;ppr, enc-&gt;clk_freq);
-    return 0;
-}
-
-static void encoder_remove(struct platform_device *pdev)
-{
-    struct encoder_device *enc = platform_get_drvdata(pdev);
-    if (enc) {
-        misc_deregister(&amp;enc-&gt;miscdev);
-        writel(0, enc-&gt;base + PWM_ENCODER_CTRL);
-        dev_info(&amp;pdev-&gt;dev, "Encoder driver removed\n");
-    }
-}
-
-static const struct of_device_id encoder_of_match[] = {
-    { .compatible = "pulse-dir-encoder" },
-    { /* sentinel */ }
-};
-MODULE_DEVICE_TABLE(of, encoder_of_match);
-
-static struct platform_driver encoder_driver = {
-    .probe = encoder_probe,
-    .remove = encoder_remove,
-    .driver = {
-        .name = "pulse_dir_encoder",
-        .of_match_table = encoder_of_match,
-    },
-};
-
-module_platform_driver(encoder_driver);
-
-MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Your Name");
-MODULE_DESCRIPTION("Pulse/Direction Encoder Driver using PWM Timer (Multi-instance)");
-MODULE_VERSION(DRIVER_VERSION);
-</code></pre>
-<h5 id="212-makefile">2.1.2 <code>Makefile</code></h5>
-<pre><code class="language-makefile"># åæ ¸æºç è·¯å¾
-KERNELDIR ?= /opt/2k0300/build-2k0300/workspace/linux-6.12
-# å½åé©±å¨ç®å½
-PWD := $(shell pwd)
-# äº¤åç¼è¯å·¥å·é¾
-CROSS_COMPILE := loongarch64-linux-gnu-
-# æ¶æ
-ARCH := loongarch
-
-# æéæä»¶å¤¹
-BUILD_DIR := build
-KO_DIR:=ko
-SRC_DIR:=src
-
-
-# ç¼è¯ç®æ 
-obj-m := encoder.o
-encoder-y := encoder_driver.o \
-
-# ç¼è¯è§å
-ll: prepare compile move_files
-
-# æååå»ºç®å½
-prepare:
-	@mkdir -p $(BUILD_DIR) $(KO_DIR)
-	@echo "ð \033[32må·²åå»ºç®å½\033[0m"
-
-compile:
-	@echo "ð å¼å§ç¼è¯é©±å¨æ¨¡å"
-	# å³é®ï¼æå®åæ ¸è·¯å¾å¹¶ä¼ éæ­£ç¡®çç¼è¯åæ°
-	make -C $(KERNELDIR) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) M=$(PWD) modules
-
-# ç§»å¨æä»¶
-move_files:
-	# ç§»å¨ä¸­é´æä»¶ï¼.o/.mod.o/.mod.c/.cmdç­ï¼å°buildç®å½
-	@find . -type f \
-                -not -path "./$(BUILD_DIR)/*" -not -path "./$(KO_DIR)/*" \
-                \( -name '*.o' -o -name '*.mod.o' -o -name '*.mod.c' -o -name '.*.cmd' -o -name 'modules.order' -o -name 'Module.symvers' \) \
-                ! -name '*.ko' -exec mv -t $(BUILD_DIR)/ {} +                
-	# ç§»å¨ ko æ¨¡åå° ko ç®å½
-	@find . -type f \
-                -not -path "./$(BUILD_DIR)/*" -not -path "./$(KO_DIR)/*" \
-                -name '*.ko' -exec mv -t $(KO_DIR)/ {} +
-
-clean:
-	@echo "ð§¹ æ¸çç¼è¯äº§ç©"
-	make -C $(KERNELDIR) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) M=$(PWD) clean
-	rm -rf *.ko *.o *.mod.o *.mod.c *.symvers *.order .*.cmd .tmp_versions build ko
-</code></pre>
-<h4 id="22-æ°å¢è®¾å¤èç¹">2.2 æ°å¢è®¾å¤èç¹</h4>
-<pre><code class="language-shell">zhengyang@ubuntu:~$ cd /opt/2k0300/build-2k0300/workspace/linux-6.12
-</code></pre>
-<h5 id="221-encoder_leftencoder_right">2.2.1 <code>encoder_left</code>&amp;<code>encoder_right</code></h5>
-<p>ä¿®æ¹<code>arch/loongarch/boot/dts/ls2k300_99pi.dtsi</code>ï¼èç¹<code>/</code>æ°å¢å¦ä¸èç¹ï¼</p>
-<pre><code class="language-makefile">encoder_left {
-    compatible = "pulse-dir-encoder";
-    label = "left";
-    pinctrl-names = "default";
-    // è¯·æ ¹æ®ä½ çç¡¬ä»¶è¿æ¥ï¼æ­£ç¡®éç½®å¼èå¤ç¨
-    pinctrl-0 = &lt;&amp;pwm3_mux_m0&gt;;
-
-    // æ¹åå¼èï¼PIN4 (Dir) è¿æ¥å° GPIO72 (CAN2_RX)
-    dir-gpios = &lt;&amp;gpio 72 GPIO_ACTIVE_HIGH&gt;;
-
-    // å·¦çµæºç¼ç å¨çAç¸ä¿¡å·è¿æ¥å°PWMæ§å¶å¨
-    reg = &lt;0 0x1611b030 0 0x10&gt;;
-
-    // å¯éï¼ç¼ç å¨æ¯è½¬èå²æ° (PPR)ï¼åºç¨ç¨åºä¼ç¨å°
-    rotary-encoder,steps-per-period = &lt;1024&gt;;
-};
-
-encoder_right {
-    compatible = "pulse-dir-encoder";
-    label = "right";
-    pinctrl-names = "default";
-    // è¯·æ ¹æ®ä½ çç¡¬ä»¶è¿æ¥ï¼æ­£ç¡®éç½®å¼èå¤ç¨
-    pinctrl-0 = &lt;&amp;pwm0_mux_m0&gt;;
-
-    // æ¹åå¼èï¼PIN4 (Dir) è¿æ¥å° GPIO73 (CAN2_TX)
-    dir-gpios = &lt;&amp;gpio 73 GPIO_ACTIVE_HIGH&gt;;
-
-    // å·¦çµæºç¼ç å¨çAç¸ä¿¡å·è¿æ¥å°PWMæ§å¶å¨
-    reg = &lt;0 0x1611b000 0 0x10&gt;;
-
-    // å¯éï¼ç¼ç å¨æ¯è½¬èå²æ° (PPR)ï¼åºç¨ç¨åºä¼ç¨å°
-    rotary-encoder,steps-per-period = &lt;1024&gt;;
-};
-</code></pre>
-<h5 id="222-pwm0_mux_m0pwm3_mux_m0">2.2.2 <code>pwm0_mux_m0</code>&amp;<code>pwm3_mux_m0</code></h5>
-<p><code>pwm0_mux_m0</code>ã<code>pwm3_mux_m0</code>å®ä¹å¨<code>arch/loongarch/boot/dts/loongson-2k0300.dtsi</code>ï¼</p>
-<pre><code class="language-makefile">pinmux: pinmux@16000490 {
-	......
-    pwm0_pins: pwm0-pins {
-            pwm0_mux_m0: pinmux_G64_as_pwm0 {
-                    pinctrl-single,bits = &lt;0x10 0x00000001 0x00000003&gt;;
-            };
-            pwm0_mux_m1: pinmux_G86_as_pwm0 {
-                    pinctrl-single,bits = &lt;0x14 0x00002000 0x00003000&gt;;
-            };
-            pwm0_mux_m2: pinmux_G102_as_pwm0 {
-                    pinctrl-single,bits = &lt;0x18 0x00003000 0x00003000&gt;;
-            };
-    };
-    pwm3_pins: pwm3-pins {
-            pwm3_mux_m0: pinmux_G67_as_pwm3 {
-                    pinctrl-single,bits = &lt;0x10 0x00000040 0x000000c0&gt;;
-            };
-            pwm3_mux_m1: pinmux_G89_as_pwm3 {
-                    pinctrl-single,bits = &lt;0x14 0x00080000 0x000c0000&gt;;
-            };
-            pwm3_mux_m2: pinmux_G105_as_pwm3 {
-                    pinctrl-single,bits = &lt;0x18 0x000c0000 0x000c0000&gt;;
-            };
-    };
-	......
-}	
-</code></pre>
-<h3 id="ä¸åºç¨ç¨åº">ä¸ãåºç¨ç¨åº</h3>
-<p>æ¥ä¸æ¥æä»¬å¨<code>example</code>ç®å½ä¸åå»ºå­ç®å½<code>encoder_app</code>ï¼</p>
-<pre><code class="language-shell">zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/example$ mkdir encoder_app
-zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/example$ cd encoder_app
-</code></pre>
-<p>ç®å½ç»æå¦ä¸ï¼</p>
-<pre><code class="language-shell">zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/example/encoder_app$ tree .
-.
-âââ main.c
-âââ Makefile
-</code></pre>
-<h4 id="31-mainc">3.1 <code>main.c</code></h4>
-<pre><code class="language-c">#include &lt;stdio.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;fcntl.h&gt;
-#include &lt;unistd.h&gt;
-#include &lt;sys/ioctl.h&gt;
-#include &lt;string.h&gt;
-#include &lt;errno.h&gt;
-
-#define ENCODER_IOC_MAGIC 'E'
-#define ENCODER_GET_COUNT _IOR(ENCODER_IOC_MAGIC, 1, struct encoder_counts)
-#define ENCODER_GET_INFO  _IOR(ENCODER_IOC_MAGIC, 2, struct encoder_info)
-#define ENCODER_RESET_COUNT _IO(ENCODER_IOC_MAGIC, 3)
-
-struct encoder_counts {
-    long long count;        /* è½¬é (RPM) */
-    int direction;          /* æ¹å (1: æ­£è½¬, -1: åè½¬) */
-    unsigned int raw_count; /* åå§è®¡æ°å¼ (è°è¯ç¨) */
-};
-
-struct encoder_info {
-    int ppr;                /* æ¯è½¬èå²æ° */
-    unsigned long clk_freq; /* æ¶éé¢ç */
-    unsigned int max_count; /* æå¤§è®¡æ°å¼ */
-};
-
-static void print_usage(const char *prog)
-{
-    printf("Usage: %s [options]\n", prog);
-    printf("Options:\n");
-    printf("  -h, --help      Show this help\n");
-    printf("  -i, --info      Show encoder info\n");
-    printf("  -r, --reset     Reset encoder counter\n");
-    printf("  -s, --sample N  Set sample interval (ms), default 50\n");
-    printf("  -c, --count N   Number of samples, default infinite\n");
-}
-
-int main(int argc, char *argv[])
-{
-    int fd;
-    int sample_ms = 50;
-    int max_samples = -1;
-    int show_info = 0;
-    int reset_counter = 0;
-    int opt;
-    
-    /* ç®åå½ä»¤è¡åæ°è§£æ */
-    for (int i = 1; i &lt; argc; i++) {
-        if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0) {
-            print_usage(argv[0]);
-            return 0;
-        } else if (strcmp(argv[i], "-i") == 0 || strcmp(argv[i], "--info") == 0) {
-            show_info = 1;
-        } else if (strcmp(argv[i], "-r") == 0 || strcmp(argv[i], "--reset") == 0) {
-            reset_counter = 1;
-        } else if ((strcmp(argv[i], "-s") == 0 || strcmp(argv[i], "--sample") == 0) &amp;&amp; i+1 &lt; argc) {
-            sample_ms = atoi(argv[++i]);
-            if (sample_ms &lt;= 0) sample_ms = 50;
-        } else if ((strcmp(argv[i], "-c") == 0 || strcmp(argv[i], "--count") == 0) &amp;&amp; i+1 &lt; argc) {
-            max_samples = atoi(argv[++i]);
-        }
-    }
-    
-    /* æå¼è®¾å¤ */
-    fd = open("/dev/pulse_encoder_left", O_RDWR);
-    if (fd &lt; 0) {
-        fprintf(stderr, "Failed to open /dev/pulse_encoder_left: %s\n", strerror(errno));
-        fprintf(stderr, "Make sure the driver is loaded: insmod encoder_driver.ko\n");
-        return -1;
-    }
-    
-    /* æ¾ç¤ºç¼ç å¨ä¿¡æ¯ */
-    if (show_info) {
-        struct encoder_info info;
-        if (ioctl(fd, ENCODER_GET_INFO, &amp;info) == 0) {
-            printf("Encoder Info:\n");
-            printf("  PPR (pulses per revolution): %d\n", info.ppr);
-            printf("  Clock frequency: %lu Hz\n", info.clk_freq);
-            printf("  Max count: %u\n", info.max_count);
-        } else {
-            perror("ioctl GET_INFO");
-        }
-    }
-    
-    /* éç½®è®¡æ°å¨ */
-    if (reset_counter) {
-        if (ioctl(fd, ENCODER_RESET_COUNT) == 0) {
-            printf("Counter reset successfully\n");
-        } else {
-            perror("ioctl RESET_COUNT");
-        }
-    }
-    
-    /* å¦æåªæ¯æ¥çä¿¡æ¯æéç½®ï¼ä¸è¿è¡éæ · */
-    if (show_info || reset_counter) {
-        close(fd);
-        return 0;
-    }
-    
-    /* éæ ·å¾ªç¯ */
-    struct encoder_counts cnt;
-    long long last_count = 0;
-    int sample_count = 0;
-    
-    printf("Sampling encoder at %d ms intervals (Ctrl+C to stop)\n", sample_ms);
-    printf("%-10s %-10s %-10s %-10s %-10s\n", 
-           "Sample", "RPM", "Direction", "Raw", "Delta");
-    printf("--------------------------------------------------------\n");
-    
-    while (max_samples &lt; 0 || sample_count &lt; max_samples) {
-        if (ioctl(fd, ENCODER_GET_COUNT, &amp;cnt) &lt; 0) {
-            perror("ioctl GET_COUNT");
-            break;
-        }
-        
-        long long delta = cnt.count - last_count;
-        last_count = cnt.count;
-        
-        printf("%-10d %-10lld %-10d %-10u %-10lld\n", 
-               sample_count++, cnt.count, cnt.direction, 
-               cnt.raw_count, delta);
-        
-        usleep(sample_ms * 1000);
-    }
-    
-    close(fd);
-    return 0;
+<p>å¦æprojectUvå¨0~1åºå±ï¼åå¯ä»¥è·åè§é¢ä¸å¯¹åºçåç´ å¼ï¼å¦æä¸å¨è¯¥åºé´ï¼ç¨æ¨¡åæ¬èº«çè´´å¾é¢è²ã</p>
+<pre><code class="language-javascript">bool inTexture = (max(projectUv.x, projectUv.y) &lt;= 1.0 &amp;&amp; min(projectUv.x, projectUv.y) &gt;= 0.0);
+if (inTexture) {
+   // ç¡®ä¿éæ ·çè§é¢çº¹çææ
+      vec4 projectionColor = texture(projectionTexture, projectUv);
+      // åºç¨æå½±é¢è²
+      diffuseColor.rgb = projectionColor.rgb;
 }
 </code></pre>
-<h4 id="32-makefile">3.2 <code>Makefile</code></h4>
-<pre><code class="language-makefile">all:
-	loongarch64-linux-gnu-gcc -o main main.c
-clean:
-	rm -rf *.o main
+<h1 id="æ·±åº¦é®é¢">æ·±åº¦é®é¢</h1>
+<p>ä¸é¢çæè·¯æä¸ä¸ªç¼ºé·ï¼å°±æ¯æ²¡æèèæ·±åº¦é®æ¡çé®é¢ï¼æ¯å¦ä¸¤ä¸ªç©ä½AåBï¼ä»æåå¤´æå¨ä½ç½®åæåçè¿å»ï¼Aå¨åé¢ï¼Bå¨åé¢ï¼è¿ä¸ªæ¶åBæ¯è¢«Aé®æ¡äºï¼åºäºè¿ä¸ªéçï¼è§é¢ä¸åºè¯¥æå½±å°Bç©ä½çè¡¨é¢ä¸ã å¦ä½è§£å³è¿ä¸ªé®é¢ï¼</p>
+<p>å¦æçæé´å½±çåçï¼å¶å®å°±æ¯è¾å¥½è§£å³ã è§£å³åæ³å°±æ¯ä»æåå¤´çä½ç½®åæåç¨æ·±åº¦æè´¨æ¸²æä¸éåºæ¯ï¼è·å¾ä¸å¼ æ·±åº¦å¾ï¼ç¶åå¨å®éæ¸²æçæ¶åï¼æ¯è¾å½åçåç¦»æåå¤´æ·±åº¦åæ·±åº¦å¾ä¿å­æ·±åº¦ï¼å¦æå¤§äºï¼åæ¯è¢«é®æ¡çï¼ä»£ç é»è¾å¦ä¸ï¼</p>
+<pre><code class="language-javascript">// è®¡ç®å½åçæ®µå¨æå½±ç©ºé´ä¸­çæ ååè®¾å¤åæ æ·±åº¦
+float currentDepthNDC = (vProjTexCoords.z / vProjTexCoords.w) * 0.5 + 0.5;
+// è½¬æ¢ä¸ºçº¿æ§æ·±åº¦ç¨äºæ¯è¾
+float currentLinearDepth = linearizeDepth(currentDepthNDC);
+// ä»æ·±åº¦å¾ä¸­éæ ·æ·±åº¦å¼
+vec4 depthSample = texture(depthTexture, projectUv);
+float storedDepth = unpackDepth(depthSample);
+// è½¬æ¢å­å¨çæ·±åº¦ä¸ºçº¿æ§æ·±åº¦
+float storedLinearDepth = linearizeDepth(storedDepth);
+// æ·»å ä¸ä¸ªä¸æ·±åº¦ç¸å³çåå·®ä»¥é¿åz-fighting
+float bias = 0.01 * currentLinearDepth; // æ·±åº¦è¶å¤§ï¼åå·®è¶å°
+// åªæå½å½åçæ®µæ¯ææ¥è¿æå½±ç¸æºçè¡¨é¢æ¶ï¼æåºç¨æå½±
+if (currentLinearDepth &lt; storedLinearDepth + bias) {
+  
+}
 </code></pre>
-<h4 id="33-ç¼è¯åºç¨ç¨åº">3.3 ç¼è¯åºç¨ç¨åº</h4>
-<pre><code class="language-shell">zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/example/encoder_app$ make
-loongarch64-linux-gnu-gcc -o main main.c
-zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/example/encoder_app$ ll
--rwxrwxr-x 1 zhengyang zhengyang 20680  4æ  4 11:02 main*
--rw-rw-r-- 1 zhengyang zhengyang   863  4æ  4 11:01 main.c
--rw-rw-r-- 1 zhengyang zhengyang    71  4æ  4 11:02 Makefile
-</code></pre>
-<h3 id="åæµè¯">åãæµè¯</h3>
-<h4 id="41-ç§å½è®¾å¤æ ">4.1 ç§å½è®¾å¤æ </h4>
-<h5 id="411-ç¼è¯è®¾å¤æ ">4.1.1 ç¼è¯è®¾å¤æ </h5>
-<p>å¦æéè¦åç¬ç¼è¯è®¾å¤æ ï¼å¨<code>linux</code>åæ ¸æ ¹ç®å½æ§è¡å¦ä¸å½ä»¤ï¼</p>
-<pre><code class="language-shell">zhengyang@ubuntu:~$ cd /opt/2k0300/build-2k0300/workspace/linux-6.12
-zhengyang@ubuntu:/opt/2k0300/build-2k0300/workspace/linux-6.12$ source ../set_env.sh &amp;&amp; make arch/loongarch/boot/dts/ls2k300_99pi_wifi.dts  dtbs V=1
-</code></pre>
-<h5 id="412-æ´æ°è®¾å¤æ ">4.1.2 æ´æ°è®¾å¤æ </h5>
-<p>å°è®¾å¤æ æ·è´å°ä¹ä¹æ´¾ç<code>/opt</code>ç®å½ï¼</p>
-<pre><code class="language-shell">zhengyang@ubuntu:/opt/2k0300/build-2k0300/workspace/linux-6.12$ scp arch/loongarch/boot/dts/ls2k300_99pi_wifi.dtb root@172.23.34.188:/opt
-</code></pre>
-<p>å¨ä¹ä¹æ´¾ä½¿ç¨<code>dd</code>å½ä»¤ç§åè®¾å¤æ å°<code>SPI Nor Flash</code>ç<code>dtb</code>ååºï¼</p>
-<pre><code class="language-shell">[root@LS-GD opt]# dd if=/opt/ls2k300_99pi_wifi.dtb of=/dev/mtdblock3 bs=1
-22124+0 records in
-22124+0 records out
-22124 bytes (22 kB, 22 KiB) copied, 0.500342 s, 44.2 kB/s
+<p>æ³¨æç±äºç²¾åº¦é®é¢ï¼éè¦è®¾ç½®ä¸ä¸ªåç§»å¼biasã</p>
+<p>æç»æå½±çææå¦ä¸ï¼</p>
 
-[root@LS-GD opt]# reboot
-</code></pre>
-<h4 id="42-å®è£é©±å¨">4.2 å®è£é©±å¨</h4>
-<p>ç±äºæä»¬å¹¶æ²¡æå°é©±å¨æºç æ¾å°åæ ¸ä¸­ï¼å æ­¤éè¦åç¬ç¼è¯å®è£ã</p>
-<h5 id="421-ç¼è¯é©±å¨">4.2.1 ç¼è¯é©±å¨</h5>
-<p><code>ubuntu</code>å®¿ä¸»æ¥éæ°ç¼è¯é©±å¨ï¼</p>
-<pre><code class="language-shell">hengyang@ubuntu:~$ cd /opt/2k0300/loongson_2k300_lib/driver/encoder_driver
-zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/driver/encoder_driver$ make
-ð å·²åå»ºç®å½
-ð å¼å§ç¼è¯é©±å¨æ¨¡å
-# å³é®ï¼æå®åæ ¸è·¯å¾å¹¶ä¼ éæ­£ç¡®çç¼è¯åæ°
-make -C /opt/2k0300/build-2k0300/workspace/linux-6.12 ARCH=loongarch CROSS_COMPILE=loongarch64-linux-gnu- M=/opt/2k0300/loongson_2k300_lib/driver/encoder_driver modules
-make[1]: è¿å¥ç®å½â/opt/2k0300/build-2k0300/workspace/linux-6.12â
-  CC [M]  /opt/2k0300/loongson_2k300_lib/driver/encoder_driver/encoder_driver.o
-  LD [M]  /opt/2k0300/loongson_2k300_lib/driver/encoder_driver/encoder.o
-  MODPOST /opt/2k0300/loongson_2k300_lib/driver/encoder_driver/Module.symvers
-  CC [M]  /opt/2k0300/loongson_2k300_lib/driver/encoder_driver/encoder.mod.o
-  CC [M]  /opt/2k0300/loongson_2k300_lib/driver/encoder_driver/.module-common.o
-  LD [M]  /opt/2k0300/loongson_2k300_lib/driver/encoder_driver/encoder.ko
-make[1]: ç¦»å¼ç®å½â/opt/2k0300/build-2k0300/workspace/linux-6.12â
-# ç§»å¨ä¸­é´æä»¶ï¼.o/.mod.o/.mod.c/.cmdç­ï¼å°buildç®å½
-# ç§»å¨ ko æ¨¡åå° ko ç®å½
-
-zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/driver/encoder_driver$ scp  ./ko/encoder.ko root@172.23.34.188:/opt
-</code></pre>
-<h5 id="422-å®è£é©±å¨">4.2.2 å®è£é©±å¨</h5>
-<p>ä¹ä¹æ´¾å®è£é©±å¨ï¼</p>
-<pre><code class="language-shell">[root@LS-GD opt]# ls encoder.ko -l
--rw-r--r-- 1 root root 21104 Jul 24 22:23 encoder.ko
-
-[root@LS-GD opt]# insmod encoder.ko
-
-[root@LS-GD opt]# lsmod
-Module                  Size  Used by
-encoder                65536  0
-</code></pre>
-<p>æ¥çåæ ¸è¾åºä¿¡æ¯ï¼</p>
-<pre><code class="language-shell">[root@LS-GD opt]# dmesg
-......
-[   82.115537] pulse_dir_encoder 1611b030.encoder_left: Probing pulse encoder driver v2.0
-[   82.123582] pulse_dir_encoder 1611b030.encoder_left: PPR = 1024
-[   82.130708] pulse_dir_encoder 1611b030.encoder_left: Using default clock frequency: 200000000 Hz
-[   82.139868] pulse_dir_encoder 1611b030.encoder_left: Encoder driver loaded successfully, device /dev/pulse_encoder_left (PPR=1024, clk=200000000Hz)
-[   82.167486] pulse_dir_encoder 1611b000.encoder_right: Probing pulse encoder driver v2.0
-[   82.193178] pulse_dir_encoder 1611b000.encoder_right: PPR = 1024
-[   82.202332] pulse_dir_encoder 1611b000.encoder_right: Using default clock frequency: 200000000 Hz
-[   82.214096] pulse_dir_encoder 1611b000.encoder_right: Encoder driver loaded successfully, device /dev/pulse_encoder_right (PPR=1024, clk=200000000Hz)
-</code></pre>
-<h5 id="423-å¯å¨å è½½">4.2.3 å¯å¨å è½½</h5>
-<p>å¦æå¸æç³»ç»å¯å¨èªå¨å è½½è¯¥é©±å¨ï¼æä»¬éè¦å°é©±å¨æ·è´å°<code>/usr/lib/modules/6.12.0.lsgd+/</code>ï¼</p>
-<pre><code class="language-shell">[root@LS-GD ~]# mkdir -p /usr/lib/modules/$(uname -r)/
-[root@LS-GD ~]# cd /usr/lib/modules/$(uname -r)/
-[root@LS-GD 6.12.0.lsgd+]#
-</code></pre>
-<p>åæ ¸å¯å¨çæ¶åï¼ä½¿ç¨<code>/sbin/modprobe</code>å è½½<code>/lib/modules/{uname -r}</code>ä¸é¢çæ¨¡åï¼<code>modules.order</code>æä»¶æå®äºæ¨¡åçå è½½é¡ºåºï¼å æ­¤æä»¬éè¦æ·è´ä»¥ä¸æä»¶å°ä¹ä¹æ´¾ï¼</p>
-<pre><code class="language-shell">zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/driver/encoder_driver$ scp  ./ko/encoder.ko root@172.23.34.188:/usr/lib/modules/6.12.0.lsgd+
-</code></pre>
-<p>æ­¤æ¶å¼åæ¿<code>/usr/lib/modules/6.12.0.lsgd+</code>è·¯å¾ä¸ï¼</p>
-<pre><code class="language-shell">[root@LS-GD 6.12.0.lsgd+]# ls -l
--rw-r--r-- 1 root root 21104 Jul 24 22:55 encoder.ko
--rw-r--r-- 1 root root 11944 Jul 24 22:54 modules.builtin
--rw-r--r-- 1 root root    63 Jul 24 22:56 modules.order
-
-[root@LS-GD 6.12.0.lsgd+]# touch modules.builtin   
-[root@LS-GD 6.12.0.lsgd+]# vi modules.order
-encoder.ko
-</code></pre>
-<p>éè¦å¨å è½½æ¨¡åä¹åå»ºç«è¯¥æ¨¡åçä¾èµå³ç³»ï¼ä¹å³å¿é¡»ç¨<code>depmod</code>æ¥æ´æ°ä¸ä¸<code>/lib/modules/$(uname -r)/modules.dep</code>æä»¶ï¼</p>
-<pre><code class="language-shell">[root@LS-GD 6.12.0.lsgd+]# depmod -a
-depmod: WARNING: could not open modules.builtin.modinfo at /lib/modules/6.12.0.lsgd+: No such file or directory
-[root@LS-GD 6.12.0.lsgd+]# ls -l
-total 30
--rw-r--r-- 1 root root 21104 Jul 24  2024 encoder.ko
--rw-r--r-- 1 root root   127 Jul 24 20:53 modules.alias
--rw-r--r-- 1 root root    83 Jul 24 20:53 modules.alias.bin
--rw-r--r-- 1 root root     0 Jul 24 20:52 modules.builtin
--rw-r--r-- 1 root root     0 Jul 24 20:53 modules.builtin.alias.bin
--rw-r--r-- 1 root root    12 Jul 24 20:53 modules.builtin.bin
--rw-r--r-- 1 root root    12 Jul 24 20:53 modules.dep
--rw-r--r-- 1 root root    45 Jul 24 20:53 modules.dep.bin
--rw-r--r-- 1 root root     0 Jul 24 20:53 modules.devname
--rw-r--r-- 1 root root    11 Jul 24 20:52 modules.order
--rw-r--r-- 1 root root    55 Jul 24 20:53 modules.softdep
--rw-r--r-- 1 root root    49 Jul 24 20:53 modules.symbols
--rw-r--r-- 1 root root    12 Jul 24 20:53 modules.symbols.bin
-</code></pre>
-<p>æä»¬éæ°ä¹ä¹æ´¾å¼åæ¿ï¼åæ ¸è¾åºç¸å³æ¥å¿å¦ä¸ï¼</p>
-<pre><code class="language-shell">[root@LS-GD ~]# dmesg | grep encoder
-[   17.372939] encoder: loading out-of-tree module taints kernel.
-[   17.513670] pulse_dir_encoder 1611b030.encoder_left: Probing pulse encoder driver v2.0
-[   17.671224] pulse_dir_encoder 1611b030.encoder_left: PPR = 1024
-[   17.761069] pulse_dir_encoder 1611b030.encoder_left: Using default clock frequency: 200000000 Hz
-[   17.962302] pulse_dir_encoder 1611b030.encoder_left: Encoder driver loaded successfully, device /dev/pulse_encoder_left (PPR=1024, clk=200000000Hz)
-[   18.270242] pulse_dir_encoder 1611b000.encoder_right: Probing pulse encoder driver v2.0
-[   18.388887] pulse_dir_encoder 1611b000.encoder_right: PPR = 1024
-[   18.521058] pulse_dir_encoder 1611b000.encoder_right: Using default clock frequency: 200000000 Hz
-[   18.771180] pulse_dir_encoder 1611b000.encoder_right: Encoder driver loaded successfully, device /dev/pulse_encoder_right (PPR=1024, clk=200000000Hz)
-
-[root@LS-GD ~]# ls /dev/pulse_encoder_* -l
-crw------- 1 root root 10, 125 Jul 24 20:49 /dev/pulse_encoder_left
-crw------- 1 root root 10, 124 Jul 24 20:49 /dev/pulse_encoder_right
-</code></pre>
-<h4 id="43-åºç¨ç¨åºæµè¯">4.3 åºç¨ç¨åºæµè¯</h4>
-<p>è¿éå¢ææç®åèã<a href="https://www.cnblogs.com/zyly/p/19803786" target="_blank">é¾è¯<code>2k0300</code> - èµ°é©¬è§ç¢ç»<code>PWM</code>é©±å¨ç§»æ¤</a>ãéç½®<code>GPIO65</code>å¼èè¾åºé¢ç<code>20KHz</code>ãå ç©ºæ¯<code>50%</code>ç<code>PWM</code>ä¿¡å·ï¼ç¶åéè¿<code>GPIO67</code>å¼èå»æµé<code>PWM</code>ä¿¡å·çå¨æã</p>
-<h5 id="431-pmwä¿¡å·è¾åº">4.3.1 <code>PMW</code>ä¿¡å·è¾åº</h5>
-<p>å<code>pwmchip0/export</code>æä»¶åå¥<code>0</code>ï¼å¯¼åº<code>PWM</code>ééï¼</p>
-<pre><code class="language-shell">[root@LS-GD ~]# echo 0 &gt; /sys/class/pwm/pwmchip0/export
-</code></pre>
-<p>è®¾ç½®<code>pwm0</code>è¾åºé¢ç<code>20KHz</code>ï¼å¦<code>20kHz</code> â <code>50000ns</code>ï¼ï¼å ç©ºæ¯<code>50%</code>ï¼<code>50%</code> â <code>25000ns</code>ï¼ï¼ææ§ä¸ºæ­£ææ§ï¼</p>
-<pre><code class="language-shell">[root@LS-GD ~]# echo 50000 &gt; /sys/class/pwm/pwmchip0/pwm0/period
-[root@LS-GD ~]# echo 25000 &gt; /sys/class/pwm/pwmchip0/pwm0/duty_cycle
-[root@LS-GD ~]# echo normal &gt; /sys/class/pwm/pwmchip0/pwm0/polarity
-[root@LS-GD ~]# cat /sys/class/pwm/pwmchip0/pwm0/enable
-0
-[root@LS-GD ~]# echo 1 &gt; /sys/class/pwm/pwmchip0/pwm0/enable
-</code></pre>
-<h5 id="432-èå²æµé">4.3.2 èå²æµé</h5>
-<p>æä»¬å°<code>GPIO65</code>å<code>GPIO67</code>éè¿æé¦çº¿è¿æ¥èµ·æ¥ï¼æ¥çæä»¬è¿è¡æµè¯ï¼</p>
-<pre><code class="language-shell">[root@LS-GD opt]# scp zhengyang@172.23.34.187:/opt/2k0300/loongson_2k300_lib/example/encoder_app/main /opt
-
-# è¿è¡ï¼åºæ¬æ¨¡å¼ï¼
-[root@LS-GD opt]# ./main
-Sampling encoder at 50 ms intervals (Ctrl+C to stop)
-Sample     RPM        Direction  Raw        Delta
---------------------------------------------------------
-0          1171       -1         10000      1171
-1          1171       -1         10000      0
-2          1171       -1         10000      0
-3          1171       -1         10000      0
-4          1171       -1         10000      0
-5          1171       -1         10000      0
-6          1171       -1         10000      0
-
-# è¿è¡ï¼æ¾ç¤ºè¯¦ç»ä¿¡æ¯ï¼
-[root@LS-GD opt]# ./main -i
-Encoder Info:
-  PPR (pulses per revolution): 1024
-  Clock frequency: 200000000 Hz
-  Max count: 4294963200
-</code></pre>
-<p>è¿é<code>Raw</code>è¾åºä¸ºä»ä¹æ¯<code>10000</code>å¢ï¼</p>
-<p><code>PWM</code>è¾åºå¨æä¸º<code>50000 ns</code>ï¼ç¡¬ä»¶æµéå°ç <code>full_buffer = 10000</code>ï¼</p>
-<p></p><div class="math display">\[çè®ºå¨æè®¡æ° = 50000 ns Ã (200 MHz / 1e9) = 50000 Ã 0.2 = 10000 
-\]</div><p></p><p><strong>åèæç« </strong></p>
-<p><strong>[1] é¾é±ç§æ<code>Mini</code>ç¼ç å¨<code>.pdf</code></strong></p>
-<p><strong>[2] <a href="https://www.loongson.cn/uploads/images/2025060909245168407.%E9%BE%99%E8%8A%AF2K0300%E5%A4%84%E7%90%86%E5%99%A8%E6%95%B0%E6%8D%AE%E6%89%8B%E5%86%8C_V1.01.pdf" target="_blank" rel="noopener nofollow">é¾è¯<code>2K0300</code>æ°æ®æå</a></strong></p>
-<p><strong>[3] <a href="https://www.loongson.cn/uploads/images/2025060909243029508.%E9%BE%99%E8%8A%AF2K0300%E5%A4%84%E7%90%86%E5%99%A8%E7%94%A8%E6%88%B7%E6%89%8B%E5%86%8C_V1.01.pdf" target="_blank" rel="noopener nofollow">é¾è¯<code>2K0300</code>å¤çå¨ç¨æ·æå</a></strong></p>
+<p><img alt="" loading="lazy" data-src="https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/ab4e1456cd08433cb031bfb0c330bb31~tplv-73owjymdk6-jj-mark-v1:0:0:0:0:5o6Y6YeR5oqA5pyv56S-5Yy6IEAgSVRNYW7lvarlj5Q=:q75.awebp?policy=eyJ2bSI6MywidWlkIjoiMTU1NjU2NDE2NDQ4NDAyNCJ9&amp;rk3s=f64ab15b&amp;x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&amp;x-orig-expires=1775976803&amp;x-orig-sign=chxx4ROaUJqlQuGEU%2BhsOcP%2F%2Bzo%3D" class="lazyload"></p>
+<h1 id="å¤è§é¢èå">å¤è§é¢èå</h1>
+<p>åé¢ä»ç»çæ¯ä¸ä¸ªæåå¤´çæåµï¼å¦ææ¯å¤ä¸ªæåå¤´çæåµï¼å°±è¦å¤æä¸äºï¼ä¸è¿åºæ¬åæ¥æ¯ä¸æ ·çã å°±æ¯è¦å¢å å¤ä¸ªéè§æå½±Cameraçé»è¾åå¤ä¸ªè§é¢çº¹çã æ­¤å¤ä¸åè¯¦è¿°ã</p>
+<h1 id="æ»ç»">æ»ç»</h1>
+<p>æ¬æç®è¿°äºè§é¢èåçåºæ¬åç ï¼æå´è¶£çå¯ä»¥è®¨è®ºã<strong><font style="color: rgba(1, 1, 1, 1)">æåï¼å³æ³¨å¬å·âITManå½ªåâ å¯ä»¥æ·»å ä½èå¾®ä¿¡è¿è¡äº¤æµï¼åæ¶æ¶å°æ´å¤æä»·å¼çæç« ã</font></strong></p>
 
 
 </div>
 <div class="clear"></div>
 
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="1.0402777777777779" data-date-updated="2026-04-05 11:32">2026-04-04 10:34</span>&nbsp;
-<a href="https://www.cnblogs.com/zyly">å¤§å¥¥ç¹æ¼æå°æªå½</a>&nbsp;
-éè¯»(<span id="post_view_count">35</span>)&nbsp;
+        <p class="postfoot">
+            posted on 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-04-05 14:58">2026-04-05 14:58</span>&nbsp;
+<a href="https://www.cnblogs.com/flyfox1982">ITmanå½ªå</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19820444);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19820444', targetLink: 'https://www.cnblogs.com/zyly/p/19820444', title: 'é¾è¯2k0300 - èµ°é©¬è§ç¢ç»ç¼ç å¨é©±å¨ç§»æ¤' })">ä¸¾æ¥</a>
-</div>
-         ]]>
+<a href="javascript:void(0)" onclick="AddToWz(19823631);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19823631', targetLink: 'https://www.cnblogs.com/flyfox1982/p/19823631', title: 'Threejs è§é¢èå' })">ä¸¾æ¥</a>
+
+        </p>
+     ]]>
     </description>
     </item>
         </channel>
