@@ -3,12 +3,445 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-04-05T12:45:36.659Z</lastBuildDate>
+        <lastBuildDate>2026-04-05T16:32:26.824Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
+    <title><![CDATA[ å¼åå®æï¼asp.net core + ef core å®ç°å¨æå¯æ©å±çåé¡µæ¹æ¡ ]]></title>
+    <link>https://www.cnblogs.com/denglei1024/p/19824539</link>
+    <guid>c020b88ce7943870dfcb0fa89a324e34</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/denglei1024/p/19824539" title="åå¸äº 2026-04-05 23:19">
+    <span role="heading" aria-level="2">å¼åå®æï¼asp.net core + ef core å®ç°å¨æå¯æ©å±çåé¡µæ¹æ¡</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h2 id="å¼è¨">å¼è¨</h2>
+<p>æ¬¢è¿éè¯»ï¼è¿ç¯æç« ä¸»è¦é¢ååçº§å¼åèã</p>
+<p>å¨å¼å§ä¹åï¼åé®ä½ ä¸ä¸ªé®é¢ï¼ä½ åçç³»ç»ï¼æ¯ä¸æ¯æ¯æ¬¡å¢å ä¸ä¸ªæ¥è¯¢æ¡ä»¶æèæåºå­æ®µï¼é½è¦å»è¯·æ±åæ°å¯¹è±¡éå ä¸ä¸ªå±æ§ï¼ç¶ååè·å»æ¹ EF Core çæ¥è¯¢é»è¾ï¼</p>
+<p>å¦ææ¯ï¼é£è¿ç¯æç« åºè¯¥å¯¹ä½ æç¨ãæä¼å¸¦ä½ åä¸ä¸ªç»ä¸çãæ©å±èµ·æ¥ä¸é£ä¹éº»ç¦çåé¡µæ¥è¯¢æ¹æ¡ãæ´ä½æè·¯æ¯åä»¶äºï¼â<strong>ç»ä¸å¥åãç»ä¸åºåãå¨ææåºãå¨æè¿æ»¤</strong>âã</p>
+<hr>
+<h2 id="ç»ä¸è¯·æ±åæ°">ç»ä¸è¯·æ±åæ°</h2>
+<p>åå®ä¹ä¸ä¸ªå¬å±ç <code>QueryParameters</code> è§£å³è¿ä¸ªé®é¢ï¼</p>
+<pre><code class="language-csharp">public class QueryParameters
+{
+    private const int MaxPageSize = 100;
+    private int _pageSize = 10;
+
+    public int PageNumber { get; set; } = 1;
+
+    // éå¶æå¤§å¼ï¼é²æ­¢åç«¯ä¼ ä¸ä¸ªå¾å¤§æ°å¼ææ°æ®åºæå´©äº
+    public int PageSize
+    {
+        get =&gt; _pageSize;
+        set =&gt; _pageSize = value &gt; MaxPageSize ? MaxPageSize : value;
+    }
+
+    // æ¯æå¤å­æ®µæåºï¼æ ¼å¼ï¼"name desc,price asc"
+    public string? SortBy { get; set; }
+
+    // éç¨å³é®è¯æç´¢
+    public string? Search { get; set; }
+
+    // å¨æè¿æ»¤æ¡ä»¶
+    public List&lt;FilterItem&gt; Filters { get; set; } = [];
+
+    // è¦è¿åçå­æ®µï¼éå·åéï¼"id,name,price"ï¼ä¸ä¼ åè¿åå¨é¨
+    public string? Fields { get; set; }
+}
+</code></pre>
+<p>ASP.NET Core çæ¨¡åç»å®ä¼èªå¨æ query string æ å°å°è¿ä¸ªå¯¹è±¡ï¼ä¸éè¦æå¨è§£æãåç»­å¦ææä¸ªæ¥å£æé¢å¤åæ°ï¼ç»§æ¿å®å å­æ®µå°±è¡ï¼ä¸ç¨æ¯æ¬¡ä»å¤´å®ä¹ã</p>
+<hr>
+<h2 id="ç»ä¸ååºåè£å¨">ç»ä¸ååºåè£å¨</h2>
+<p>è¿åå¼ä¹ç»ä¸ä¸ä¸ï¼æåé¡µä¿¡æ¯åæ°æ®æ¾å¨ä¸èµ·ï¼è°ç¨æ¹å°±ä¸ç¨èªå·±æ¼äºï¼</p>
+<pre><code class="language-csharp">public class PagedResponse&lt;T&gt;
+{
+    // IReadOnlyList é²æ­¢å¤é¨éæä¿®æ¹éå
+    public IReadOnlyList&lt;T&gt; Data { get; init; } = [];
+
+    public int PageNumber { get; init; }
+    public int PageSize { get; init; }
+    public int TotalRecords { get; init; }
+
+    public int TotalPages =&gt; (int)Math.Ceiling(TotalRecords / (double)PageSize);
+    public bool HasNextPage =&gt; PageNumber &lt; TotalPages;
+    public bool HasPreviousPage =&gt; PageNumber &gt; 1;
+}
+</code></pre>
+<p>Data æ¯ä»»æç±»åçéåï¼ç¨ <code>IReadOnlyList</code> é²æ­¢è¢«æå¤ä¿®æ¹ã<code>TotalPages</code>ã<code>HasNextPage</code> å <code>HasPreviousPage</code> ä¸ä¸ªæ¯è®¡ç®å±æ§ï¼ä¸éè¦åç¬èµå¼ã</p>
+<hr>
+<h2 id="æ©å±æ¹æ³">æ©å±æ¹æ³</h2>
+<p>æåé¡µãæåºãè¿æ»¤é½åæ <code>IQueryable&lt;T&gt;</code> çæ©å±æ¹æ³ï¼ç¨èµ·æ¥åé¾å¼è°ç¨ï¼è°ç¨çå°æ¹çèµ·æ¥ä¼å¾å¹²åã</p>
+<h3 id="åé¡µ">åé¡µ</h3>
+<pre><code class="language-csharp">public static IQueryable&lt;T&gt; ApplyPagination&lt;T&gt;(
+    this IQueryable&lt;T&gt; query,
+    int pageNumber,
+    int pageSize)
+{
+    return query
+        .Skip((pageNumber - 1) * pageSize)
+        .Take(pageSize);
+}
+</code></pre>
+<h3 id="å¨ææåº">å¨ææåº</h3>
+<p>è§£æ <code>"name desc,price asc"</code> è¿æ ·çå­ç¬¦ä¸²ï¼å¨æçææåºè¡¨è¾¾å¼ãç¨åå°å°±è½åå°ï¼ä¸éè¦é¢å¤çåºï¼</p>
+<pre><code class="language-csharp">public static IQueryable&lt;T&gt; ApplySort&lt;T&gt;(
+    this IQueryable&lt;T&gt; query,
+    string? sortBy)
+{
+    if (string.IsNullOrWhiteSpace(sortBy))
+        return query;
+
+    var orderParams = sortBy.Split(',', StringSplitOptions.RemoveEmptyEntries);
+    var isFirst = true;
+
+    foreach (var param in orderParams)
+    {
+        var parts = param.Trim().Split(' ');
+        var propertyName = parts[0];
+        var isDesc = parts.Length &gt; 1
+            &amp;&amp; parts[1].Equals("desc", StringComparison.OrdinalIgnoreCase);
+
+        // ç¨åå°æ¾å±æ§ï¼æ¾ä¸å°å°±è·³è¿ï¼é¿åæå¼å¸¸
+        var prop = typeof(T).GetProperty(
+            propertyName,
+            BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+
+        if (prop == null) continue;
+
+        // æå»ºè¡¨è¾¾å¼æ ï¼x =&gt; x.PropertyName
+        var paramExpr = Expression.Parameter(typeof(T), "x");
+        var body = Expression.Property(paramExpr, prop);
+        var lambda = Expression.Lambda(body, paramExpr);
+
+        var methodName = isFirst
+            ? (isDesc ? "OrderByDescending" : "OrderBy")
+            : (isDesc ? "ThenByDescending" : "ThenBy");
+
+        var method = typeof(Queryable).GetMethods()
+            .First(m =&gt; m.Name == methodName &amp;&amp; m.GetParameters().Length == 2)
+            .MakeGenericMethod(typeof(T), prop.PropertyType);
+
+        query = (IQueryable&lt;T&gt;)method.Invoke(null, [query, lambda])!;
+        isFirst = false;
+    }
+
+    return query;
+}
+</code></pre>
+<blockquote>
+<p>ä¹å¯ä»¥èè <code>System.Linq.Dynamic.Core</code> è¿ä¸ªåºã</p>
+</blockquote>
+<h3 id="å¨æè¿æ»¤">å¨æè¿æ»¤</h3>
+<p>è¿æ¯æ©å±æ§æå¼ºçä¸åãåç«¯ä¼ å­æ®µå + æä½ç¬¦ + å¼ï¼åç«¯ç¨è¡¨è¾¾å¼æ å¨ææ¼ Where æ¡ä»¶ï¼ä¸éè¦æ¯å ä¸ä¸ªç­éé¡¹å°±æ¹åç«¯ä»£ç ã</p>
+<p>åå®ä¹è¿æ»¤æ¡ä»¶çæ°æ®ç»æï¼</p>
+<pre><code class="language-csharp">public class FilterItem
+{
+    // å­æ®µåï¼å¯¹åºå®ä½å±æ§ï¼ä¸åºåå¤§å°å
+    public string Field { get; set; } = string.Empty;
+
+    // æä½ç¬¦ï¼eqãneqãcontainsãstartswithãendswithã
+    //         gtãgteãltãlteãbetweenãinãisnullãisnotnull
+    public string Op { get; set; } = "eq";
+
+    // å¼ï¼between ç¨éå·åéä¸¤ä¸ªå¼ï¼in ç¨éå·åéå¤ä¸ªå¼
+    public string? Value { get; set; }
+}
+</code></pre>
+<p>ç¶åå®ç°è¿æ»¤æ©å±æ¹æ³ï¼</p>
+<pre><code class="language-csharp">public static IQueryable&lt;T&gt; ApplyFilters&lt;T&gt;(
+    this IQueryable&lt;T&gt; query,
+    IEnumerable&lt;FilterItem&gt; filters)
+{
+    foreach (var filter in filters)
+    {
+        var prop = typeof(T).GetProperty(
+            filter.Field,
+            BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+
+        // æ¾ä¸å°å±æ§ï¼æèæ²¡æ [Filterable] æ è®°ï¼å°±è·³è¿
+        if (prop == null || !prop.IsDefined(typeof(FilterableAttribute), false))
+            continue;
+
+        var param = Expression.Parameter(typeof(T), "x");
+        var member = Expression.Property(param, prop);
+
+        Expression? condition = null;
+
+        switch (filter.Op.ToLower())
+        {
+            case "eq":
+                condition = Expression.Equal(member, ParseConstant(filter.Value, prop.PropertyType));
+                break;
+
+            case "neq":
+                condition = Expression.NotEqual(member, ParseConstant(filter.Value, prop.PropertyType));
+                break;
+
+            case "gt":
+                condition = Expression.GreaterThan(member, ParseConstant(filter.Value, prop.PropertyType));
+                break;
+
+            case "gte":
+                condition = Expression.GreaterThanOrEqual(member, ParseConstant(filter.Value, prop.PropertyType));
+                break;
+
+            case "lt":
+                condition = Expression.LessThan(member, ParseConstant(filter.Value, prop.PropertyType));
+                break;
+
+            case "lte":
+                condition = Expression.LessThanOrEqual(member, ParseConstant(filter.Value, prop.PropertyType));
+                break;
+
+            case "contains":
+                condition = Expression.Call(
+                    member,
+                    typeof(string).GetMethod("Contains", [typeof(string)])!,
+                    Expression.Constant(filter.Value ?? string.Empty));
+                break;
+
+            case "startswith":
+                condition = Expression.Call(
+                    member,
+                    typeof(string).GetMethod("StartsWith", [typeof(string)])!,
+                    Expression.Constant(filter.Value ?? string.Empty));
+                break;
+
+            case "endswith":
+                condition = Expression.Call(
+                    member,
+                    typeof(string).GetMethod("EndsWith", [typeof(string)])!,
+                    Expression.Constant(filter.Value ?? string.Empty));
+                break;
+
+            case "between":
+                // value æ ¼å¼ï¼"10,100"
+                var rangeParts = filter.Value?.Split(',') ?? [];
+                if (rangeParts.Length == 2)
+                {
+                    var lower = ParseConstant(rangeParts[0].Trim(), prop.PropertyType);
+                    var upper = ParseConstant(rangeParts[1].Trim(), prop.PropertyType);
+                    condition = Expression.AndAlso(
+                        Expression.GreaterThanOrEqual(member, lower),
+                        Expression.LessThanOrEqual(member, upper));
+                }
+                break;
+
+            case "in":
+                // value æ ¼å¼ï¼"1,2,3"ï¼æå¤å 50 ä¸ªï¼é²æ­¢ OR é¾è¿é¿
+                var inValues = filter.Value?.Split(',').Take(50)
+                    .Select(v =&gt; ParseConstant(v.Trim(), prop.PropertyType))
+                    .ToList() ?? [];
+
+                if (inValues.Count &gt; 0)
+                {
+                    condition = inValues
+                        .Select(v =&gt; (Expression)Expression.Equal(member, v))
+                        .Aggregate(Expression.OrElse);
+                }
+                break;
+
+            case "isnull":
+                condition = Expression.Equal(member, Expression.Constant(null, prop.PropertyType));
+                break;
+
+            case "isnotnull":
+                condition = Expression.NotEqual(member, Expression.Constant(null, prop.PropertyType));
+                break;
+        }
+
+        if (condition == null) continue;
+
+        var lambda = Expression.Lambda&lt;Func&lt;T, bool&gt;&gt;(condition, param);
+        query = query.Where(lambda);
+    }
+
+    return query;
+}
+
+// æå­ç¬¦ä¸²å¼è½¬æå¯¹åºç±»åçå¸¸éè¡¨è¾¾å¼
+private static ConstantExpression ParseConstant(string? value, Type targetType)
+{
+    var underlyingType = Nullable.GetUnderlyingType(targetType) ?? targetType;
+
+    if (value == null)
+        return Expression.Constant(null, targetType);
+
+    var converted = Convert.ChangeType(value, underlyingType);
+    return Expression.Constant(converted, targetType);
+}
+</code></pre>
+<blockquote>
+<p><code>contains/startswith/endswith</code> åºå¯¹å­ç¬¦ä¸²ï¼<code>gt/lt/between</code> åºå¯¹å¯¹æ°å¼åæ¥æãç±»åä¸å¹éæ¶ä¼æå¼å¸¸ï¼çäº§ä»£ç éå¯ä»¥å¨è¿éå  try-catchï¼æè·åæ ¹æ®æåµè¿è¡å¤çã</p>
+</blockquote>
+<hr>
+<h2 id="å¨æè¿åå­æ®µ">å¨æè¿åå­æ®µ</h2>
+<p>ææ¶ååè¡¨é¡µåªéè¦ <code>id</code> å <code>name</code>ï¼è¯¦æé¡µæéè¦å¨éå­æ®µãä¸å¶åä¸¤ä¸ªæ¥å£ï¼ä¸å¦è®©åç«¯èªå·±è¯´æ³è¦åªäºå­æ®µï¼æç»åçé¡¹ç®é½æ¯åç«¯å®ä¹å¥½ç»åç«¯åï¼ä¸æ¯åæ®µèªå·±æ¿ï¼åæ®µèªå·±ä¹ä¸æ³æ¿ï¼ã</p>
+<p>æè·¯æ¯ï¼æ¥åºå®æ´çå®ä½ï¼ç¶åç¨åå°ææå®å­æ®µæåæå­å¸è¿åï¼JSON åºåååå°±åªæè¿äºå­æ®µã</p>
+<pre><code class="language-csharp">public static class FieldSelectorExtensions
+{
+    public static IDictionary&lt;string, object?&gt; SelectFields&lt;T&gt;(
+        this T obj,
+        IEnumerable&lt;string&gt; fields)
+    {
+        var result = new Dictionary&lt;string, object?&gt;(StringComparer.OrdinalIgnoreCase);
+        var props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+        foreach (var fieldName in fields)
+        {
+            var prop = props.FirstOrDefault(p =&gt;
+                p.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
+
+            if (prop != null)
+                result[prop.Name] = prop.GetValue(obj);
+        }
+
+        return result;
+    }
+
+    public static IEnumerable&lt;IDictionary&lt;string, object?&gt;&gt; SelectFields&lt;T&gt;(
+        this IEnumerable&lt;T&gt; items,
+        string? fields)
+    {
+        if (string.IsNullOrWhiteSpace(fields))
+        {
+            var allProps = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Select(p =&gt; p.Name);
+            return items.Select(item =&gt; item.SelectFields(allProps));
+        }
+
+        var fieldList = fields
+            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+            .Select(f =&gt; f.Trim());
+
+        return items.Select(item =&gt; item.SelectFields(fieldList));
+    }
+}
+</code></pre>
+<hr>
+<h2 id="å®å¨æ§å­æ®µç½åå">å®å¨æ§ï¼å­æ®µç½åå</h2>
+<p>å¨æè¿æ»¤åå¨æè¿åå­æ®µåè½å¾æ¹ä¾¿ï¼ä½ä¸æ¯ææå­æ®µé½è¯¥æ´é²åºå»ï¼æ¯å¦å¯ç ãè¯ä»¶å·ãå®¢æ·å§åè¿ç±»ãç¨ä¸ä¸ªèªå®ä¹ Attribute æ¥æ è®°åªäºå­æ®µåè®¸å¤é¨æä½ï¼</p>
+<pre><code class="language-csharp">[AttributeUsage(AttributeTargets.Property)]
+public class FilterableAttribute : Attribute { }
+
+public class Product
+{
+    public int Id { get; set; }
+
+    [Filterable]
+    public string Name { get; set; } = string.Empty;
+
+    [Filterable]
+    public decimal Price { get; set; }
+
+    [Filterable]
+    public int Stock { get; set; }
+
+    // ä¸å  [Filterable]ï¼å¤é¨æ æ³éè¿ filters åæ°è¿æ»¤è¿ä¸ªå­æ®µ
+    public string InternalRemark { get; set; } = string.Empty;
+}
+</code></pre>
+<p><code>ApplyFilters</code> éå·²ç»å äºè¿ä¸ªæ£æ¥ï¼<code>prop.IsDefined(typeof(FilterableAttribute), false)</code>ï¼ï¼æ¾å°å±æ§ä¹åä¼åéªè¯æ è®°ï¼æ²¡æå°±è·³è¿ãä¹å¯ä»¥åçæ¥è®¾è®¡ï¼å ä¸ä¸ª <code>FilterIgnore</code> ç¹æ§ï¼æ£æ¥çå°æ¹åç¸åºçè°æ´ã</p>
+<hr>
+<h2 id="æ¥å°-controller-é">æ¥å° Controller é</h2>
+<p>æäºè¿äºæ©å±æ¹æ³ï¼Controller éçé»è¾å°±å¾å¹³ï¼</p>
+<pre><code class="language-csharp">[HttpGet]
+public async Task&lt;ActionResult&gt; GetProducts([FromQuery] QueryParameters parameters)
+{
+    var query = _context.Products.AsQueryable();
+
+    // å¨æè¿æ»¤
+    if (parameters.Filters.Count &gt; 0)
+        query = query.ApplyFilters(parameters.Filters);
+
+    // åç®æ»æ°ï¼å¿é¡»å¨åé¡µä¹åï¼
+    var totalRecords = await query.CountAsync();
+
+    // æåº + åé¡µ
+    var items = await query
+        .ApplySort(parameters.SortBy)
+        .ApplyPagination(parameters.PageNumber, parameters.PageSize)
+        .Select(p =&gt; new ProductDto
+        {
+            Id = p.Id,
+            Name = p.Name,
+            Price = p.Price,
+            Stock = p.Stock
+        })
+        .ToListAsync();
+
+    // æéè¿åå­æ®µ
+    var data = items.SelectFields(parameters.Fields).ToList();
+
+    return Ok(new
+    {
+        data,
+        pageNumber = parameters.PageNumber,
+        pageSize = parameters.PageSize,
+        totalRecords,
+        totalPages = (int)Math.Ceiling(totalRecords / (double)parameters.PageSize),
+        hasNextPage = parameters.PageNumber &lt; (int)Math.Ceiling(totalRecords / (double)parameters.PageSize),
+        hasPreviousPage = parameters.PageNumber &gt; 1
+    });
+}
+</code></pre>
+<p>åç«¯è¯·æ±ç¤ºä¾ï¼</p>
+<pre><code># æ¥ä»·æ ¼å¨ 100-500 ä¹é´ãåå­åå«"ææº"ï¼åªè¿å id å nameï¼æä»·æ ¼ååº
+GET /api/products
+  ?filters[0].field=price&amp;filters[0].op=between&amp;filters[0].value=100,500
+  &amp;filters[1].field=name&amp;filters[1].op=contains&amp;filters[1].value=ææº
+  &amp;fields=id,name
+  &amp;sortBy=price asc
+  &amp;pageNumber=1&amp;pageSize=20
+</code></pre>
+<p>è¿åç»æï¼</p>
+<pre><code class="language-json">{
+  "data": [
+    { "Id": 1, "Name": "iPhone 16" },
+    { "Id": 2, "Name": "å°ç±³ 15" }
+  ],
+  "pageNumber": 1,
+  "pageSize": 20,
+  "totalRecords": 2,
+  "totalPages": 1,
+  "hasNextPage": false,
+  "hasPreviousPage": false
+}
+</code></pre>
+<hr>
+<p>okï¼ä½ å­¦ä¼äºåï¼</p>
+
+
+</div>
+<div id="MySignature" role="contentinfo">
+    <p>æ¬ææ¥èªåå®¢å­ï¼ä½èï¼<a href="https://www.cnblogs.com/denglei1024/" target="_blank">éç£Lei</a>ï¼è½¬è½½è¯·æ³¨æåæé¾æ¥ï¼<a href="https://www.cnblogs.com/denglei1024/p/19824539" target="_blank">https://www.cnblogs.com/denglei1024/p/19824539</a></p>
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-04-05 23:20">2026-04-05 23:19</span>&nbsp;
+<a href="https://www.cnblogs.com/denglei1024">éç£Lei</a>&nbsp;
+éè¯»(<span id="post_view_count">8</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19824539);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19824539', targetLink: 'https://www.cnblogs.com/denglei1024/p/19824539', title: 'å¼åå®æï¼asp.net core + ef core å®ç°å¨æå¯æ©å±çåé¡µæ¹æ¡' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
     <title><![CDATA[ è®°ä¸æ¬¡ç­ä¿¡è½°ç¸æ¼æ´ | æ·»æ´ä¸å ç« ]]></title>
     <link>https://www.cnblogs.com/xize766/p/19824169/vul-1</link>
     <guid>3c0f55824ffd2336cd75c5922d9e2e10</guid>
@@ -1289,7 +1722,7 @@ Tick 1: mov [rip+&lt;var1&gt;], rbx ;L2
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0.005555555555555556" data-date-updated="2026-04-05 12:15">2026-04-05 12:07</span>&nbsp;
 <a href="https://www.cnblogs.com/SudosuBash">SudosuBash</a>&nbsp;
-éè¯»(<span id="post_view_count">1</span>)&nbsp;
+éè¯»(<span id="post_view_count">37</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19823256);return false;">æ¶è</a>&nbsp;
@@ -1349,11 +1782,259 @@ Tick 1: mov [rip+&lt;var1&gt;], rbx ;L2
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-04-05 10:48">2026-04-05 10:47</span>&nbsp;
 <a href="https://www.cnblogs.com/formulahendry">formulahendry</a>&nbsp;
-éè¯»(<span id="post_view_count">74</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
+éè¯»(<span id="post_view_count">112</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19823017);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19823017', targetLink: 'https://www.cnblogs.com/formulahendry/p/19823017', title: 'æå¼åç ACP Clientï¼è¢« LangChain å®æ¹æ¨èäºï¼è½»æ¾è¿ä¸ ClaudeãCodexãCopilotãOpenClaw ç­ä»»æ Agent' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ æµè°æ¬¡ä¸ä»£ä»£ç ç¼è¾å¨ Zedï¼Rust åçæ§è½ãGPU æ¸²æ ]]></title>
+    <link>https://www.cnblogs.com/deali/p/19822917</link>
+    <guid>eedda3bbd4bf9f980cffca6eeb4bf6e3</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/deali/p/19822917" title="åå¸äº 2026-04-05 10:12">
+    <span role="heading" aria-level="2">æµè°æ¬¡ä¸ä»£ä»£ç ç¼è¾å¨ Zedï¼Rust åçæ§è½ãGPU æ¸²æ</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h2 id="åè¨">åè¨</h2>
+<p>æå° IDEï¼å¤§å®¶æ³å°çé½æ¯ JetBrains å¨å®¶æ¡¶ãVSCode åå¶ä¸ä¼è¡çåã</p>
+<p>ä¸è¿è¿äºä¸»æµç IDE ä¹æ¯åå­å¤§æ·åç¬¨éçä»£åè¯ï¼æè¿æè¯ç¨äºä»¥åçãè½»éãé«æ§è½ä¸ºç¹è²ç Zedï¼æè§è¿æºæææçï¼æ¬æç®åä»ç»ä¸ä¸ Zedãåç»­ä¼æ´æ° AI åè½éç½®åæ´å¤ä½¿ç¨åºæ¯å®è·µã</p>
+<h2 id="å³äºzed">å³äºZed</h2>
+<p>Zed å¯¹å¤§é¨åäººæ¥è¯´ï¼å¯è½æ¯ä¸ªéççåè¯ãä¸è¿å®å¢éèæ¯éå¸¸ç¡¬æ ¸ï¼çè³å¯ä»¥è¯´ä»ä»¬æ¯ç°ä»£ä»£ç ç¼è¾å¨é¢åçééçº§äººç©ã</p>
+<h3 id="å¢é">å¢é</h3>
+<p>Zed çåå§å¢éï¼Zed Industriesï¼ä¸»è¦ç±ä¸ä½å¤§ä½¬ç»æï¼</p>
+<ul>
+<li><strong>Nathan Sobo (CEO)</strong>ï¼ä»æ¯ <strong>GitHub Atom ç¼è¾å¨çåå§äºº</strong>ãå¨ GitHub å·¥ä½æé´ï¼ä»ä¸»å¯¼äº Atom çå¼åï¼å¹¶åä¸äºåä½ç¼è¾ææ¯ï¼CRDTï¼çç ç©¶ã</li>
+<li><strong>Max Brunsfeld</strong>ï¼ä»æ¯ <strong>Tree-sitter</strong> çä½èãå¦æä½ ç¨è¿ç°ä»£ç¼è¾å¨ï¼ä½ ä¸å®å¬è¿ Tree-sitterï¼å®æ¯ç®åä¸»æµç¼è¾å¨ï¼åæ¬ VS CodeãNeovimï¼å®ç°ä¸æ»è¯­æ³é«äº®åä»£ç è§£æçæ ¸å¿ææ¯ã</li>
+<li><strong>Antonio Scandurra</strong>ï¼åæ ·æ¯ Atom å¢éçæ ¸å¿æåï¼ä¹æ¯åå¸å¼ç³»ç»åå®æ¶åä½é¢åçä¸å®¶ã</li>
+</ul>
+<h3 id="ä»ä»¬ä¸ºä»ä¹è¦å-zed">ä»ä»¬ä¸ºä»ä¹è¦å Zedï¼</h3>
+<p>ç®åè¯´å°±æ¯å½å¹´ä»ä»¬å¼åç Atom ç¼è¾å¨å¤ªæè¯äºï¼è½ç¶å¼å¯äºç½é¡µææ¯å¼åç¼è¾å¨çæ½®æµï¼ä½ Atom æ§è½å·®ãåå­å ç¨é«ï¼è¢«å¾®è½¯ç VSCode è¿ä¸ªåæ¥èææè·¯è¾¹ä¸æ¡ï¼ä¹å Atom ä¹è¢« GitHubï¼å½æ¶å·²è¢«å¾®è½¯æ¶è´­ï¼å®£å¸åè¿ã</p>
+<p>Zedå¢éæè¯å°åºäºæµè§å¨åæ ¸ï¼Electronï¼çç¼è¾å¨æ§è½ä¸éå¤ªä½ãäºæ¯å³å®<strong>å½»åºæå¼ HTML/JS</strong>ï¼ç¨åºå±ç Rust ä»é¶å¼å§åä¸ä¸ªæå¿«çç¼è¾å¨ã</p>
+<p>ä»ä»¬å¸æä»£ç ç¼è¾è½åæ¸¸æä¸æ ·ï¼æ¯ä¸å¸§é½ç± GPU æ¸²æï¼æ¶é¤ä»»ä½å¯æç¥çå»¶è¿ã</p>
+<p>å½åå¨å¼å Atom æ¶å°±æ³åâå¤äººå®æ¶ç¼ç¨âï¼ä½å¨æ§æ¶æä¸å¾é¾å®ç°ï¼æä»¥ Zed ä»ç¬¬ä¸è¡ä»£ç å¼å§å°±èèäºâå¤äººèæºâåè½ã</p>
+<h3 id="å°ç»">å°ç»</h3>
+<p>ç®åæ¥è¯´ï¼è¿æ¯ä¸ç¾¤æç¼è¾å¨çäººï¼å¨ç»åè¿ Atom çå¤±è´¥ä¸ç¶é¢åï¼å©ç¨ Rust è¿ç§é«æ§è½è¯­è¨ï¼è¯å¾å¨ AI æ¶ä»£éæ°å®ä¹å¼åå·¥å·è¯¥æçæ ·å­ã</p>
+<h2 id="å ä¸ªç¹æ§">å ä¸ªç¹æ§</h2>
+<p>Zed å®ç½å®£ä¼ çå ä¸ªå³é®ç¹æ§ï¼æ¬æç®ååæä¸ä¸ã</p>
+<h3 id="è¾å¥å»¶è¿">è¾å¥å»¶è¿</h3>
+<p>Zed å¨æ§è½å¯¹æ¯ä¸­å¼ºè°äºä¸ä¸ªææ ï¼<strong>æå¥å»¶è¿ï¼Insertion Latencyï¼</strong>ã</p>
+<p>Zed çå»¶è¿çº¦ä¸º 58msï¼è VS Code çº¦ä¸º 97msã è¿ç§å·®è·ç±»ä¼¼äºä» 60Hz å±å¹åæ¢å° 144Hz å±å¹ââæ²¡ç¨è¿æ¶ä¸è§å¾ï¼ç¨è¿ä¹åå°±åä¹åä¸å»äºã</p>
+<p>è¿æ¥æºäº Zed ç¬ç¹ç<strong>æ¸²ææ¨¡å¼</strong>ã ä¸åäºä¼ ç»åºç¨ä½¿ç¨ç³»ç»æ§ä»¶ï¼Retained æ¨¡å¼ï¼ï¼Zed ä½¿ç¨äºåºäº Vulkan åç«¯ç <strong>Immediate æ¨¡å¼</strong>ãå®æç¼è¾å¨å½æä¸ä¸ª 3D æ¸¸æï¼æ¯ä¸å¸§é½ç± GPU ç´æ¥æ¸²æãè½ç¶ GPU æ¸²æå¨å±é¨æ´æ°åºæ¯ä¸ï¼å¦åªæ¹å¨ä¸è¡ä»£ç ï¼ä¸ä¸å®æ»æ¯æ¯ CPU ä¼åç®æ³å¿«ï¼ä½å®å¸¦æ¥çä¸æ»å¨æåæä½çæ´ä½å»¶è¿ï¼ç¡®å®éæ°å®ä¹äºç¼åä»£ç çè§¦è§ã</p>
+<h3 id="è¯­æ³åæ">è¯­æ³åæ</h3>
+<p>ä¸ä¸ªä¼ç§çç¼è¾å¨ï¼ä¸ä»è¦å¿«ï¼è¿è¦âæâä½ çä»£ç ãZed çå¿«ï¼å¾å¤§ç¨åº¦ä¸å¾çäºå¶å¢éå¼åç <strong>Tree-sitter</strong> ââ è¿æ¯ä¸ä¸ªéç¨ç parserï¼è¯­æ³è§£æå¨ï¼çæå¨ã</p>
+<p>å¨ Tree-sitter ä¹åï¼å¤§å¤æ°ç¼è¾å¨ï¼åæ¬ VS Codeï¼ä»å¨ä½¿ç¨åºäºæ­£åå¹éç TextMate è§åãè¿ç§æ¹å¼åªè½å¤çåè¡ï¼ä¸å¨ä»£ç å­å¨è¯­æ³éè¯¯æ¶å¾å¾ä¼å¤±æã</p>
+<p>è Tree-sitter è½å¤å®æ¶æå»ºå®æ´çè¯­æ³æ ï¼æ¯æå¢éæ´æ°ãè¿æå³çæ è®ºæ¯ä»£ç é«äº®è¿æ¯èªå¨è¡¥å¨ï¼Zed é½è½å¨æ¯«ç§çº§ç»åºåç¡®åé¦ï¼çè³å¨ä½ çä»£ç åå°ä¸åãè¯­æ³ä¸å¢ä¹±æ¶ï¼å®ä¾ç¶è½ç²¾åè¯å«åºä»£ç é»è¾ã</p>
+<h3 id="åä½">åä½</h3>
+<p>é¤äºæè´çåæºä½éªï¼Zed è¿åç½®äºå¼ºå¤§çåä½åè½ãä¸åäºä¼ ç»çå±å¹å±äº«ï¼Zed åºäº <strong>CRDTï¼æ å²çªå¤å¶æ°æ®ç±»åï¼</strong> å®ç°äºçæ­£çå®æ¶å¤äººç¼è¾ã</p>
+<p>è½ç¶å®ç®åå¨ Remote åè½ï¼å¦è¿ç¨æå¡å¨å¼åï¼ä¸è¿æ æ³æ¼å¨ VS Code çå°ä½ï¼ä½å¶åçåä½çä½éªï¼ç¡®å®è®©å¢é Pair Programming åå¾åææªæçé¡ºçã</p>
+<h2 id="å°ç»-1">å°ç»</h2>
+<p>å¦ç½è¯´ï¼ç°é¶æ®µç Zed è¿æ æ³å®å¨æ¿ä»£ VS Codeã</p>
+<ul>
+<li><strong>çæå·®è·ï¼</strong> VS Code æ¥ææ°ä»¥ä¸è®¡çæä»¶ï¼è Zed çæä»¶åºæååèµ·æ­¥ã</li>
+<li><strong>åè½å®å¤åº¦ï¼</strong> å VS Code é£æ ·é¢ è¦æ§ç Remote å¼åæ¨¡å¼ï¼ç®åè¿æ¯æ²¡æå¯¹æçã</li>
+</ul>
+<p>Zed å¹¶ä¸ä¸å®è¦åä»£ä½ é£ä¸ªè£æ»¡äºå åä¸ªæä»¶ãéç½®å¤æç VS Codeãå½ä½ éè¦éè¯»æºç ãæéä¿®æ¹åä¸ªæä»¶ãæèæ³è¦è¿å¥çº¯ç²¹ç¼åç¶ææ¶ï¼Zed æ¯ä¸éçéæ©ã</p>
+<p>ä¸ä¸ç¯æç« ä¸­ï¼æä¼åäº«ä¸ä¸å¦ä½éç½® Zedï¼æé æèªå·±ç AI Code Agentã</p>
+<h2 id="åèèµæ">åèèµæ</h2>
+<ul>
+<li><a href="https://v2ex.com/t/1056672" target="_blank" rel="noopener nofollow">https://v2ex.com/t/1056672</a></li>
+<li><a href="https://www.youtube.com/watch?v=pJylXFAC87A" target="_blank" rel="noopener nofollow">https://www.youtube.com/watch?v=pJylXFAC87A</a></li>
+</ul>
+
+
+</div>
+<div id="MySignature" role="contentinfo">
+    å¾®ä¿¡å¬ä¼å·ï¼ãç¨åºè®¾è®¡å®éªå®¤ã
+ä¸æ³¨äºäºèç½ç­é¨æ°ææ¯æ¢ç´¢ä¸å¢éææ·å¼åå®è·µï¼åæ¬æ¶æè®¾è®¡ãæºå¨å­¦ä¹ ä¸æ°æ®åæç®æ³ãç§»å¨ç«¯å¼åãLinuxãWebååç«¯å¼åç­ï¼æ¬¢è¿ä¸èµ·æ¢è®¨ææ¯ï¼åäº«å­¦ä¹ å®è·µç»éªã
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-04-05 10:12">2026-04-05 10:12</span>&nbsp;
+<a href="https://www.cnblogs.com/deali">æ¦è¿Code</a>&nbsp;
+éè¯»(<span id="post_view_count">82</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19822917);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19822917', targetLink: 'https://www.cnblogs.com/deali/p/19822917', title: 'æµè°æ¬¡ä¸ä»£ä»£ç ç¼è¾å¨ Zedï¼Rust åçæ§è½ãGPU æ¸²æ' })">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ ç¨ç¡¬ä»¶éç¦»é»æ­ä¾åºé¾âçæ¯å¼âææ¯ï¼TEE è½åä»ä¹ï¼ä¸è½åä»ä¹ï¼ ]]></title>
+    <link>https://www.cnblogs.com/szdytom/p/19822211/tee-over-supply-chain</link>
+    <guid>d49133b715af34c36894bd446b6362de</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/szdytom/p/19822211/tee-over-supply-chain" title="åå¸äº 2026-04-05 01:07">
+    <span role="heading" aria-level="2">ç¨ç¡¬ä»¶éç¦»é»æ­ä¾åºé¾âçæ¯å¼âææ¯ï¼TEE è½åä»ä¹ï¼ä¸è½åä»ä¹ï¼</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>ï¼ä½¿ç¨AIæ´çåå®¹å¹¶ç¼ææ ¼å¼ï¼</p>
+<blockquote>
+<p>è¿æ AxiosãApifoxãLiteLLM ç­äºä»¶éä¸­çåï¼æ´é²äºä¸ä¸ªæ·±å±é®é¢ï¼æä»¬ä»¥ä¸ºä¿¡ä»»çæ¯å¼æºä»£ç ï¼å®éä¸ä¿¡ä»»çæ¯å¹³å°åå¼åèãTEE ææ¯æè®¸è½æç ´è¿ä¸ªå°å±ã</p>
+</blockquote>
+<h2 id="ä»çæ¯å¼ä¼ æ­çä¾åºé¾ææ¯çæ¬è´¨">ä»âçæ¯å¼ä¼ æ­âçä¾åºé¾ææ¯çæ¬è´¨</h2>
+<p>2026 å¹´å¼æ¥ä»¥æ¥ï¼ä¾åºé¾æ»å»å ä¹ä»¥âå¨æ´âçéåº¦å²å»å¼åèç¤¾åºï¼</p>
+<ul>
+<li><strong>Axios</strong>ï¼æ ¸å¿ç»´æ¤è NPM è´¦æ·è¢«ç¤¾å·¥ â åå¸ä¸¤ä¸ªæ¶æçæ¬ â éè¿ postinstall é©å­é¨ç½² RATã</li>
+<li><strong>Apifox</strong>ï¼CDN è¢«ç¯¡æ¹ â Electron å®¢æ·ç«¯å è½½æ¶æ JS â çªåå­è¯ãæ§è¡ç³»ç»å½ä»¤ã</li>
+<li><strong>LiteLLM</strong>ï¼CI æµæ°´çº¿ä»¤çæ³é² â PyPI åé¨çæ¬ â å©ç¨ <code>.pth</code> æä»¶æä¹åã</li>
+</ul>
+<p>ä»ç»çè¿äºäºä»¶ï¼å®ä»¬ä¸æ¯å­¤ç«çã<strong>æ»å»å·æææ¾çâçæ¯å¼ä¼ æ­âç¹å¾</strong>ï¼</p>
+<ol>
+<li>æ©æå©ç¨èå¼±ç LLM Agent æèªå¨åå·¥å·ï¼å¦æ¼æ´ç¾åºç OpenClaw ç­ï¼æ¹éçåå¼åèè´¦æ·ã</li>
+<li>çåå°çè´¦æ·ä¸­ï¼é¨åå±äºç­é¨åçç»´æ¤è â ç¨è¿äºè´¦æ·åå¸å¸¦åé¨çåã</li>
+<li>åé¨åä¸æ¦è¢«å®è£ï¼ç«å»çªåæ´å¤æºå¨ç NPM / PyPI / GitHub ä»¤ç â æ©å¤§ææé¢ã</li>
+<li>å¾ªç¯å¾å¤ï¼å½¢æèªæå¢æ®çä¾åºé¾è è«ã</li>
+</ol>
+<p><strong>æ ¹æ¬é®é¢ä¸æ¯æä¸ªæ¼æ´ï¼èæ¯æ´ä¸ªä¿¡ä»»æ¨¡åçéä½ã</strong></p>
+<h2 id="æä»¬çæ­£ä¿¡ä»»çæ¯ä»ä¹">æä»¬çæ­£ä¿¡ä»»çæ¯ä»ä¹ï¼</h2>
+<p>ç¤¾åºå¸¸è¯´âå¼æºä»£ç ç»å¾èµ·ç¤¾åºå®¡æ¥ï¼æä»¥å¼å¾ä¿¡ä»»âãä½ç°å®æ¯ï¼</p>
+<ul>
+<li>ä½ å®è£ä¸ä¸ª npm åæ¶ï¼å¹¶æ²¡æéªè¯å®æ¯å¦ççæ¥èªå¬å¼çæºç ä»åºã</li>
+<li>ä½ ä¿¡ä»»çæ¯ NPM å¹³å°æ²¡æä½æ¶ãå¼åèå¯é¥æ²¡æ³é²ãCI ç¯å¢æ²¡è¢«å¥ä¾µã</li>
+<li>æ¢å¥è¯è¯´ï¼ä½ ä¿¡ä»»çæ¯<strong>äººåå¹³å°ï¼èä¸æ¯ä»£ç æ¬èº«</strong>ã</li>
+</ul>
+<p>è¿ç§ä¿¡ä»»å¨åç¹è¢«çªç ´åå°±ä¼å½»åºå´©å¡ãæä»¬éè¦ä¸ç§<strong>ä¸ä¾èµå¹³å°åå¼åèè¯ä¿¡</strong>çéªè¯æ¹å¼ã</p>
+<h2 id="æ´ä½æè·¯tee-ä½ä¸ºå¯ä¿¡æå»ºéç¹">æ´ä½æè·¯ï¼TEE ä½ä¸ºâå¯ä¿¡æå»ºéç¹â</h2>
+<p><strong>å¯ä¿¡æ§è¡ç¯å¢ï¼TEEï¼</strong>ï¼å°¤å¶æ¯äºç«¯ç VM çº§ TEEï¼Intel TDX / AMD SEVâSNPï¼ï¼æä¾äºä¸ç§ç¡¬ä»¶éç¦»çâå®å¨é»çâï¼</p>
+<ul>
+<li>å¨ TEE ä¸­æå»ºè½¯ä»¶åï¼å¤çï¼åæ¬äºæå¡åãæä½ç³»ç»ãCI ç³»ç»ï¼æ æ³è¯»åæç¯¡æ¹åé¨æ§è¡ã</li>
+<li>æå»ºå®æåï¼TEE çæä¸ä¸ª<strong>å å¯ç attestation è¯æ</strong>ï¼åå®¹åå«ï¼
+<ul>
+<li>æå»ºäº§ç©çåå¸ï¼å¦ tarballãäºè¿å¶æä»¶ï¼</li>
+<li>æºä»£ç ä»åºç commit åå¸</li>
+<li>æå»ºç¯å¢æçº¹ï¼OSãç¼è¯å¨ãä¾èµçæ¬ç­ï¼å¦ docker ç digest ä¿¡æ¯ï¼</li>
+</ul>
+</li>
+<li>ä»»ä½äººé½å¯ä»¥éªè¯è¿ä¸ªè¯æï¼<strong>æ éä¿¡ä»»æå»ºè</strong>ï¼åªéä¿¡ä»» CPU ç¡¬ä»¶åäºæå¡åçæ ¹è¯ä¹¦ã</li>
+</ul>
+<div class="mermaid">sequenceDiagram
+    participant Dev as å¼åè
+    participant Git as æºç ä»åº (Git)
+    participant CI as CI ç³»ç» (å« TEE ç¯å¢)
+    participant TEE as TEE å®ä¾ (TDX/SEV-SNP)
+    participant Registry as åä»åº (npm/PyPI)
+    participant Client as å®¢æ·ç«¯ (åç®¡çå¨)
+
+    Dev-&gt;&gt;Git: 1. æ¨éä»£ç  + æ tag
+    Git-&gt;&gt;CI: 2. è§¦åæå»ºæµæ°´çº¿
+    CI-&gt;&gt;TEE: 3. å¯å¨ TEE å®ä¾ (Attestable Builds)
+    Note over TEE: ç¡¬ä»¶éç¦»ç¯å¢&lt;br/&gt;å¤çæ æ³è¯»å/ç¯¡æ¹
+    TEE-&gt;&gt;Git: 4. æåæå® commit æºç 
+    TEE-&gt;&gt;TEE: 5. æ§è¡æå»ºèæ¬ (ç¼è¯/æå)
+    TEE-&gt;&gt;TEE: 6. è®¡ç®äº§ç©åå¸ + è®°å½ç¯å¢æçº¹
+    TEE-&gt;&gt;TEE: 7. çæ Attestation è¯æ&lt;br/&gt;(äº§ç©åå¸, commit, ç¯å¢, æ¶é´æ³)
+    TEE-&gt;&gt;TEE: 8. ç¨ CPU ç¡¬ä»¶ç§é¥ç­¾åè¯æ
+    TEE-&gt;&gt;CI: 9. è¿åæå»ºäº§ç© + ç­¾ååçè¯æ
+    CI-&gt;&gt;Registry: 10. åå¸å + éå¸¦è¯æ (attestation)
+    Client-&gt;&gt;Registry: 11. è¯·æ±ä¸è½½å
+    Registry-&gt;&gt;Client: 12. è¿åå + è¯æ
+    Client-&gt;&gt;Client: 13. éªè¯è¯æç­¾å (ä¿¡ä»» CPU æ ¹è¯ä¹¦)
+    Client-&gt;&gt;Client: 14. æ ¸å¯¹äº§ç©åå¸æ¯å¦å¹é&lt;br/&gt;commit æ¯å¦å¬å¼å¯å®¡è®¡
+    alt éªè¯éè¿
+        Client-&gt;&gt;Client: 15. å®è£/ä½¿ç¨å
+    else éªè¯å¤±è´¥
+        Client-&gt;&gt;Client: 15. æç»å®è£ï¼åè­¦
+    end
+</div><p><strong>åºç¨å°ä¾åºé¾</strong>ï¼</p>
+<ul>
+<li>è¦æ±ææåï¼npmãPyPIãå®¹å¨éåç­ï¼å¿é¡»éå¸¦ TEE attestationã</li>
+<li>å®¢æ·ç«¯æåç®¡çå¨å¨å®è£åéªè¯è¯æï¼ä»£ç æ¯å¦ççæ¥èªå¬å¼çæºç  commitï¼ç¯å¢æ¯å¦å¹éã</li>
+<li>æ»å»èå³ä½¿çç¨è´¦æ·ãæ§å¶ CIãçè³é»æ npm æå¡å¨ï¼ä¹æ æ³ä¼ªé ä¸ä¸ªåæ³ç attestationï¼å ä¸ºéè¦ç¡¬ä»¶ç­¾åï¼ã</li>
+</ul>
+<h2 id="ä¸ç°ææ¹æ³çå¯¹æ¯">ä¸ç°ææ¹æ³çå¯¹æ¯</h2>
+<table>
+<thead>
+<tr>
+<th>æ¹æ³</th>
+<th>ä¼ç¹</th>
+<th>ç¼ºç¹</th>
+<th>TEE ç¸æ¯ä¹ä¸çä¼å¿</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>åç­¾åï¼å¦ Sigstoreï¼</strong></td>
+<td>çææçï¼éªè¯ç®å</td>
+<td>ä¿¡ä»»å¼åèå¯é¥ï¼å¯é¥æ³é²åå¤±æ</td>
+<td>ä¸ä¾èµå¯é¥ï¼ä¾èµç¡¬ä»¶ï¼æ³é²å¯é¥æ æ³ä¼ªé è¯æ</td>
+</tr>
+<tr>
+<td><strong>å¯éç°æå»ºï¼Reproducible Buildsï¼</strong></td>
+<td>å¯ç¬ç«éªè¯æºç âäº§ç©</td>
+<td>éå¤æ¹ç¬ç«æå»ºï¼ç°å®ä¸­å°æäººåï¼æ æ³é²å¾¡æå»ºç¯å¢è¢«ç¯¡æ¹</td>
+<td>åæ¹ TEE å³å¯è¯æç¯å¢æªè¢«ç¯¡æ¹ï¼ä¸æ¯å¤æ¹æå»ºä¾¿å®</td>
+</tr>
+<tr>
+<td><strong>SLSA æ¡æ¶</strong></td>
+<td>å®ä¹æ¸æ°çæå»ºå®æ´æ§çº§å«</td>
+<td>é«ç­çº§ï¼L3/L4ï¼ä¾èµå¹³å°éç¦»ï¼ä½å¹³å°æ¬èº«ä»å¯è¢«å¥ä¾µ</td>
+<td>TEE æä¾ç¡¬ä»¶çº§éç¦»ï¼å¯è¾¾å° SLSA L4 ä¸ä¸ä¿¡ä»»å¹³å°</td>
+</tr>
+</tbody>
+</table>
+<p><strong>TEE èªå·±çç¼ºç¹</strong>ï¼</p>
+<ul>
+<li>çæå ä¹ä¸ºé¶ï¼éè¦åç®¡çå¨ãCIãå®¢æ·ç«¯å¨é¨æ¹é ã</li>
+<li>ç¡¬ä»¶ä¾èµï¼å¿é¡»ä½¿ç¨æ¯æ TDX/SEVâSNP çäºå®ä¾ææ¬å° CPUã</li>
+<li>ææ¬ï¼æ¯æå»ºææ¬è¾é«ï¼å¯¹æµ·éå°åç´¯è®¡ææ¬å¯è§ã</li>
+<li>ä¸è½é²å¾¡æºç çº§åé¨ï¼XZ Utils ç±»æ»å»ï¼ã</li>
+</ul>
+<h2 id="å¯¹è¿æäºä»¶çç®è¦åæ">å¯¹è¿æäºä»¶çç®è¦åæ</h2>
+<h3 id="-litellmci-ä»¤çæ³é²--åå¸åé¨">â LiteLLMï¼CI ä»¤çæ³é² â åå¸åé¨ï¼</h3>
+<p><strong>TEE è½å®å¨é»æ­¢</strong>ï¼CI æå»ºè¿è¡å¨ TEE åï¼åå¸ä»¤çåªå¯¹ç¹å®åº¦éç TEE éæ¾ãæ»å»èå³ä½¿æ§å¶å®¿ä¸»æºï¼ä¹æ æ³çªåä»¤çæç¯¡æ¹æå»ºäº§ç©ã</p>
+<h3 id="-axiosnpm-è´¦æ·è¢«ç--åå¸æ¶æå">â Axiosï¼NPM è´¦æ·è¢«ç â åå¸æ¶æåï¼</h3>
+<p><strong>TEE è½é»æ­¢</strong>ï¼NPM è¦æ±éå¸¦ attestationãæ»å»èå¯ä»¥åå¸ï¼ä½æ æ³çæåæ³è¯æï¼å ä¸ºæºç ä»åºæªè¢«ç¯¡æ¹ï¼ãå®¢æ·ç«¯æç»å®è£æ è¯æçåã</p>
+<h3 id="ï¸-apifoxé­æº-electroncdn-ç¯¡æ¹">â ï¸ Apifoxï¼é­æº Electronï¼CDN ç¯¡æ¹ï¼</h3>
+<p><strong>TEE é¨åææ</strong>ï¼å¦æå®æ¹ä½¿ç¨ TEE æå»ºå¹¶ç­¾åï¼å®¢æ·ç«¯å¯éªè¯ç­¾åé²æ­¢ CDN ç¯¡æ¹ãä½é­æºæå³çç¨æ·æ æ³ç¬ç«éªè¯âæºç æ¯å¦æ¶æâï¼ä»¥åæ æ³é²å¾¡å®æ¹çå¯é¥æ³é²ï¼æç»ä»éä¿¡ä»»å®æ¹ãTEE ä¸è½è§£å³é­æºè½¯ä»¶çâä½æ¶âé®é¢ãä½æ¯è³å°å¯ä»¥é²æ­¢ä»£ç å¨æå»ºãååçæµç¨ä¸­åå°æ»å»ã</p>
+<h3 id="-xz-utilsç¤¾ä¼å·¥ç¨å­¦æ¤å¥æºç åé¨">â XZ Utilsï¼ç¤¾ä¼å·¥ç¨å­¦æ¤å¥æºç åé¨ï¼</h3>
+<p><strong>TEE æ è½ä¸ºå</strong>ï¼åé¨å¨æºä»£ç ä¸­ï¼TEE ä¼å¿ å®å°å°å¶æå»ºè¿äº§ç©å¹¶åºå·åæ³è¯æãè¦é²å¾¡æ­¤ç±»æ»å»ï¼éè¦<strong>æ´å¼ºçä»£ç å®¡æ¥æµç¨</strong>ã</p>
+<h2 id="å®è·µèé">å®è·µèé</h2>
+<p>CCS 2025 çè®ºæ <a href="https://arxiv.org/abs/2505.02521" target="_blank" rel="noopener nofollow">Attestable Builds: Compiling Verifiable Binaries on Untrusted Systems using Trusted Execution Environments</a> å·²ç»æåºäºä¸å¥ç¸å½å®æ´ç TEE æå»ºç³»ç»è®¾è®¡ï¼æä»¬ååèèçâå¯è¯ææå»ºâï¼Attestable Builds, A-Bsï¼è¿ä¸æ°èå¼å·²ç»å¨è¯¥æç®ä¸­å¾å°äºè¯¦ç»çç ç©¶ãè¯¥æç®å©ç¨ç°ä»£å¯ä¿¡æ§è¡ç¯å¢ï¼å¦ AWS Nitro EnclavesãAMD SEV-SNPï¼çå®æ´æ§ä¿æ¤ä¸è¿ç¨è¯æè½åï¼ç»ååµå¥æ²ç®±ï¼å¦ gVisorï¼ï¼å¨ä¸å¯ä¿¡çäºæå»ºæå¡ä¸­ç¡®ä¿äºè¿å¶ç¡®ç±æå®æºç å¿«ç§çæãä¸ä¼ ç»çå¯éç°æå»ºï¼Reproducible Buildsï¼ç¸æ¯ï¼A-Bs æ éä¿®æ¹é¡¹ç®æºç åæå»ºèæ¬ï¼ä»éå°ééç½®åæ´å³å¯æ¥å¥ç°æ CI/CD æµæ°´çº¿ï¼å¦ GitHub Actionsï¼ï¼å¹¶å¯æä¾è¿ä¹å³æ¶çéªè¯ï¼æ¾èéä½äºå·¥ç¨é¨æ§åæç»­ç»´æ¤ææ¬ã</p>
+<p>è®ºæè¿ä¸æ­¥ç»åºäºå®æ´çæ¶æè®¾è®¡ãå¨èæ¨¡åååºäº Tamarin çå½¢å¼åéªè¯ï¼è¯æå¶è½æµå¾¡æå»ºæå¡å¨ç¯¡æ¹ãè·¨ç§æ·æ»å»ãä»åºæ¬ºéªç­å¤ç§å¨èãååå®ç°è¯ä¼°æ¾ç¤ºï¼A-Bs çå¯å¨å¼éçº¦ 42 ç§ï¼é»è®¤éç½®ä¸æå»ºæ¶é¿å¢å çº¦ 14%ï¼ä¸è½æåç¼è¯ LLVM ClangãLinux åæ ¸ç­å¤æé¡¹ç®ä»¥åå¤ä¸ªé¾ä»¥éç°ç Debian è½¯ä»¶åãä½èè¿è®¨è®ºäº A-Bs ä¸ R-Bs çç»åæ¹æ¡ï¼å¯å®ç°âä»»æä¿¡ä»»âï¼any-trustï¼æ¨¡åï¼ä»¥åå°è¯ææ©å±å°æµè¯ç»æãéæåæç­éäºè¿å¶äº§ç©çåæ¯ãæ´ä½èè¨ï¼è¯¥å·¥ä½ä¸ºå¨ä¸å¯ä¿¡ç¯å¢ä¸­å»ºç«å¯éªè¯çæå»ºæµç¨æä¾äºå¡å®ä¸å¯è½å°çè§£å³æ¹æ¡ã</p>
+<p>ä»ç°å®è§åº¦æ¥çï¼è½ç¶ TEE ççæå°æªæçï¼ä½å¶æä¾çâç¡¬ä»¶çº§ä¿¡ä»»éâç¹æ§ç¡®å®è½å¨æ ¹æ¬ä¸æ¹åä¾åºé¾å®å¨çä¿¡ä»»æ¨¡åãå¨ç­æåï¼å¯è½éè¦åå¨å³é®ç»ä»¶ï¼å¦æ ¸å¿åºãåºç¡éåï¼ä¸è¯ç¹ï¼éæ­¥æ¨å¹¿å°æ´ä¸ªçæãåæ¶ï¼èèå°ææ¬é®é¢ï¼ä¹è®¸å¯ä»¥éç¨åå±ç­ç¥ï¼å¯¹äºé«ä¸è½½éï¼è¢«ä¾èµå¹¿æ³ï¼é£é©è¾é«ï¼å¦æ postinstall é©å­ï¼çåå¼ºå¶ä½¿ç¨ TEE è¯æï¼èå¯¹äºå°ä¼åååè®¸ä¼ ç»ç­¾åææ è¯æçæ¹å¼ã</p>
+<p>æå³è¿ç§é¢åå®è·µçåçº§ç­ç¥çè®¾è®¡åè¯ä¼°ï¼ä»¥åå¯¹åæä¸­æä»¬æåºçä¾åºé¾è è«çå¾ªç¯ä¼ æ­æ¨¡åçå»ºæ¨¡åæï¼å¯è½æ¯æªæ¥ç ç©¶çä¸ä¸ªæè¶£æ¹åãå¦æè½å¤ç¨çå® npm/PyPI ä¸è½½æ°æ®æ¨¡ææ»å»èçä¼ æ­è·¯å¾ï¼æ¾å°åçº§ç­ç¥çå¨ææ¬æ²çº¿åæ»å»é»æ­çä¹é´çæä½³å¹³è¡¡ç¹ï¼å°å¯¹æ¨å¨ TEE å¨ä¾åºé¾å®å¨ä¸­çå®éåºç¨å·æéè¦æä¹ã</p>
+<h2 id="å°ç»">å°ç»</h2>
+<p>ä¾åºé¾ææ¯çâçæ¯å¼ä¼ æ­âä¹æä»¥å¯æï¼æ¯å ä¸ºæ»å»èä¸æ¦çªç ´ä¸ä¸ªä¿¡ä»»ç¹ï¼å¯é¥ãCIãå¹³å°ï¼ï¼å°±è½å¿«éæ©æ£ãTEE å°ä¿¡ä»»ä»âäºº+å¹³å°âè¿ç§»å°âç¡¬ä»¶+å¬å¼ä»£ç âï¼<strong>åæ­äºè¿ç§ä¼ æ­é¾</strong>ãå®ä¸è½æ¿ä»£ä»£ç å®¡æ¥ï¼ä¹ä¸è½è§£å³ç¤¾ä¼å·¥ç¨å­¦ãä½è³å°ï¼å½æä»¬è¯´âè¿ä¸ªåæ¥èªå¼æºä»£ç âæ¶ï¼TEE è½è®©æä»¬<strong>çæ­£éªè¯è¿ä¸ç¹</strong>ï¼èä¸æ¯ä»ä»ç¸ä¿¡æä¸ªå¹³å°ä¸çæä¸ªå¼åèã</p>
+<p>å¨è¿ä¸æ¹é¢ï¼è½ç¶å·²ç»æäºçè®ºä¸çæ¹æ¡ååæ­¥çååå®ç°ï¼ä½è¦çæ­£è½å°ï¼è¿éè¦ç¤¾åºãå¹³å°åå¼åèçå±ååªåãæªæ¥çç ç©¶å¯ä»¥è¿ä¸æ­¥æ¢ç´¢å¦ä½å¨å®éçæä¸­æ¨å¹¿ TEE è¯æï¼å¦ä½è®¾è®¡åççåçº§ç­ç¥ï¼ä»¥åå¦ä½ç»åå¶ä»å®å¨æªæ½ï¼å¦ä»£ç å®¡æ¥ãè¡ä¸ºåæï¼å½¢æå¤å±é²å¾¡ä½ç³»ã</p>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0.40347222222222223" data-date-updated="2026-04-05 10:48">2026-04-05 01:07</span>&nbsp;
+<a href="https://www.cnblogs.com/szdytom">æ¹èé</a>&nbsp;
+éè¯»(<span id="post_view_count">72</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19822211);return false;">æ¶è</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19822211', targetLink: 'https://www.cnblogs.com/szdytom/p/19822211/tee-over-supply-chain', title: 'ç¨ç¡¬ä»¶éç¦»é»æ­ä¾åºé¾âçæ¯å¼âææ¯ï¼TEE è½åä»ä¹ï¼ä¸è½åä»ä¹ï¼' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -2486,709 +3167,6 @@ msf post(multi/recon/local_exploit_suggester) &gt;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19821796);return false;">æ¶è</a>&nbsp;
 <a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19821796', targetLink: 'https://www.cnblogs.com/Can-daydayup/p/19821796', title: 'ä¸ä¸ªåºäº .NET Core + Vue3 æå»ºçå¼æºå¨æ å¹³å° Admin ç³»ç»' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ ç¨åºåçåä¸å°å·¥å· - å¼æºé¡¹ç®èªè-WeCreate ]]></title>
-    <link>https://www.cnblogs.com/uoky/p/19821366</link>
-    <guid>50867d04199662f72b29001459faa0d2</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/uoky/p/19821366" title="åå¸äº 2026-04-04 17:11">
-    <span role="heading" aria-level="2">ç¨åºåçåä¸å°å·¥å· - å¼æºé¡¹ç®èªè-WeCreate</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
-<div style="margin: 0 auto; font-family: &quot;Segoe UI&quot;, &quot;Microsoft YaHei&quot;, sans-serif; background: linear-gradient(135deg, rgba(102, 126, 234, 1) 0, rgba(118, 75, 162, 1) 100%); padding: 30px; border-radius: 15px"> 
-<div style="background: rgba(255, 255, 255, 1); padding: 25px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); border-left: 5px solid rgba(102, 126, 234, 1)">
-<h2 style="color: rgba(102, 126, 234, 1); font-size: 1.5em; margin: 0 0 15px">â ç¢ç¢å¿µï¼ä»¥åçµææ¥æº</h2>
-<p style="color: rgba(51, 51, 51, 1); font-size: 16px; line-height: 1.8; margin: 10px 0; text-indent: 2em">æè¿ä¸ç´æ³åä¸ï¼ç¶èæ²¡ææ¾å°éæ±ï¼äºæ¯ï¼æå°±æä¸ºäºèªå·±çç¨æ·ï¼<strong>å¦æè¯¸ä½æåä½ï¼ä¹å¯ä»¥æ¾æ</strong></p>
-<p style="color: rgba(51, 51, 51, 1); font-size: 16px; line-height: 1.8; margin: 10px 0; text-indent: 2em"><span style="text-decoration: line-through"><em>æè¿æ¢¦éé½å¨æ³åä¸çäºæï¼ç¶èäºå®ä¸ä¸¾æ­¥ç»´è°ï¼ä¸»è¦æ¯æ²¡æè¶³å¤çmoneyï¼åä¸å¤±è´¥æåè¥¿åé£çé£é©ï¼</em></span></p>
-<p style="color: rgba(51, 51, 51, 1); font-size: 16px; line-height: 1.8; margin: 10px 0; text-indent: 2em"><span style="text-decoration: line-through"><em>æä¼°è®¡å¨åº§çåä½é½æ¯ç¨åºåï¼è¿ä¸å¥åºç¨æ³é¨ç½²ï¼ä¹æ¯ååéçäºæ</em></span></p>
-<p style="color: rgba(51, 51, 51, 1); font-size: 16px; line-height: 1.8; margin: 10px 0; text-indent: 2em">æå¦ä½è¾å©ä¸ä½ç¨åºåï¼æï¼åä¸ï¼</p>
-</div>
-
-<div style="background: rgba(255, 255, 255, 1); padding: 25px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); border-left: 5px solid rgba(102, 126, 234, 1)">
-<h2 style="color: rgba(102, 126, 234, 1); font-size: 1.5em; margin: 0 0 15px">â åä¸ççè§£ï¼çº¯å±ä¸ªäººè§ç¹ï¼</h2>
-<p style="color: rgba(51, 51, 51, 1); font-size: 16px; line-height: 1.8; margin: 10px 0; text-indent: 2em">å·²ç¥åä¸ï¼å¶å®å°±æ¯åä¸è¥¿ï¼æ è®ºæ¯åæå¡ãåäº§åè¿æ¯åå¶å®çã</p>
-<p style="color: rgba(51, 51, 51, 1); font-size: 16px; line-height: 1.8; margin: 10px 0; text-indent: 2em">ä¸ä¸ªç±èµæ·±ç¨åºååä¸äº§ççå¬å¸ï¼å¶å®æéè¦çè¿æ¯éå®ãåªä¸è¿åæï¼ç¨åºåå°±æ¯éå®ï¼è¦æèªå·±çä¸è¥¿ååºå»ã</p>
-<p style="color: rgba(51, 51, 51, 1); font-size: 16px; line-height: 1.8; margin: 10px 0; text-indent: 2em">ä½æ¯å ä¸ºåªæä¸ä¸ªæ ¸å¿ï¼ä¹æ²¡æä»ä¹èµéå»èè¯·å«äººï¼å°¤å¶æ¯åä¸éè¦æèµï¼æèµå°±æå¾é«çé£é©äºé±ã</p>
-<p style="color: rgba(51, 51, 51, 1); font-size: 16px; line-height: 1.8; margin: 10px 0; text-indent: 2em"><span style="text-decoration: line-through"><em>æ²¡æè¶³å¤çèµäº§ï¼åä¸å°±åæ¯éè</em></span></p>
-</div>
-
-<div style="background: linear-gradient(135deg, rgba(255, 234, 167, 1) 0, rgba(253, 203, 110, 1) 100%); border-left: 5px solid rgba(225, 112, 85, 1); padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1)">
-<p style="color: rgba(45, 52, 54, 1); font-weight: 500; margin: 8px 0">ð¼ åå¦ä¸ä¸ªæå°çå¬å¸ï¼éè¦çæ¯ä¸¤ä¸ªè§è²ï¼ä¸ä¸ªåä¸è¥¿ï¼ä¸ä¸ªçäº§ä¸è¥¿ï¼è´¢å¡ä¹ç±»çæ²¡ç®ä¸ï¼æ®è¯´å¨AIçå¸®å©ä¸ï¼ä¸ªäººå¬å¸å¯ä»¥èªè¡å¤çå®æï¼ã</p>
-<p style="color: rgba(45, 52, 54, 1); font-weight: 500; margin: 8px 0">å¦ææ¯ä¸äººå¬å¸ï¼å°¤å¶æ¯åç¬ç«ç½ç»å°äº§åçå¬å¸ãç¨åºåä½ä¸ºå¯ä¸ä¸ä¸ªäººå»åä¸è¥¿ï¼é£ä¹å°±è¿éè¦æä¸ä¸ªè§è²ç«å¨çäº§ä¸è¥¿çå®ä½ä¸ã</p>
-</div>
-
-<div style="background: rgba(255, 255, 255, 1); padding: 25px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); border-left: 5px solid rgba(102, 126, 234, 1)">
-<h2 style="color: rgba(102, 126, 234, 1); font-size: 1.5em; margin: 0 0 15px">â WeCreate ä»ç»</h2>
-<p style="color: rgba(51, 51, 51, 1); font-size: 16px; line-height: 1.8; margin: 10px 0; text-indent: 2em">åºäºè¿ä¸ªçµæï¼ WeCreate å¼æºé¡¹ç®å°±è¯çäºï¼ä¸ä¸ªå©å¥½èµæ·±ç¨åºååä¸çé¡¹ç®</p>
-<p style="color: rgba(51, 51, 51, 1); font-size: 16px; line-height: 1.8; margin: 10px 0; text-indent: 2em">ä¸ºä»ä¹æ¯<strong>å©å¥½</strong>èµæ·±ç¨åºåï¼å ä¸ºä¸äºäººç´æ¥ä½¿ç¨AIåé¡¹ç®ï¼å¯è½ä¼è±å¾å¤æ¶é´å»å®¡æ ¸ä»£ç ï¼å¯¹äºAIäº§ççä»£ç åè½æä¸ç§é¾éè§è±çæè§ï¼å¾èã</p>
-<p style="color: rgba(51, 51, 51, 1); font-size: 16px; line-height: 1.8; margin: 10px 0; text-indent: 2em">ä½èµæ·±ç¨åºåï¼å¯¹äºèªå·±çæçé¡¹ç®ï¼ç®ç´æ¯ä¸è¦å¤ªçæï¼è¶³å¤å®å¤ï¼é¿è¿åçæç¤ºè¯ï¼ä»¥åçAIçæèè¿ç¨ï¼å¦æAIå¸¦äººæè½¬ï¼èµæ·±ç¨åºåå¾å¥½çåºæ¥ï¼ç¶åç«å»æ¢æ¹åã</p>
-<p style="color: rgba(51, 51, 51, 1); font-size: 16px; line-height: 1.8; margin: 10px 0; text-indent: 2em">æ´ä¸ªé¡¹ç®æ¬è´¨å°±æ¯ä¸ä¸ª<strong>åºäºProjectç</strong><strong>CLIè°ç¨ç®¡çå·¥å·ï¼</strong>åè½è¯´èµ·æ¥ä¹å¾ç®åï¼</p>
-<div style="background: rgba(248, 249, 250, 1); padding: 15px; border-radius: 8px; margin: 15px 0">
-<div style="padding: 10px 15px; margin: 10px 0; background: rgba(255, 255, 255, 1); border-radius: 6px; border-left: 3px solid rgba(102, 126, 234, 1); color: rgba(45, 52, 54, 1)">â è°ç¨ç¬ç« CLI å·¥å·ï¼å®ç°ç¨æ·éæ±</div>
-<div style="padding: 10px 15px; margin: 10px 0; background: rgba(255, 255, 255, 1); border-radius: 6px; border-left: 3px solid rgba(102, 126, 234, 1); color: rgba(45, 52, 54, 1)">â åºäº git ç®¡çé¡¹ç®ï¼ä¸ªäººæ´¾å·¥åä»»å¡/å¤ä»»å¡ç» CLI</div>
-<div style="padding: 10px 15px; margin: 10px 0; background: rgba(255, 255, 255, 1); border-radius: 6px; border-left: 3px solid rgba(102, 126, 234, 1); color: rgba(45, 52, 54, 1)">â CLI èªè¡å®ç°ï¼èªè¡æ´çè®°å¿ï¼èªè¡è¯å</div>
-<div style="padding: 10px 15px; margin: 10px 0; background: rgba(255, 255, 255, 1); border-radius: 6px; border-left: 3px solid rgba(102, 126, 234, 1); color: rgba(45, 52, 54, 1)">âï¸ éè¦å¨ç³»ç»éç½®ä¸­å¼å¯è®°å¿åè½ï¼èªè¡æ´çè®°å¿ï¼èªè¡è¯åï¼ï¼ä¼é¢å¤æ¶è tokenï¼ï¼å¼å¯è®°å¿åè½åï¼é¡¹ç®çè®°å¿æä»¶ï¼ä¹å¯ä»¥å¯¼åºæèè¦ç</div>
-</div>
-</div>
-
-<div style="background: linear-gradient(135deg, rgba(144, 175, 184, 1) 0, rgba(255, 46, 52, 1) 100%); color: rgba(255, 255, 255, 1); padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2)"><strong style="display: block; margin-bottom: 10px; font-size: 1.2em">åºäºé«æéCLIçæä½é£é©æç¤º</strong>
-<p style="color: rgba(255, 255, 255, 1); margin: 8px 0">ç±äºè¿ä¸ªé¡¹ç®æ¯ç¸å½äºæçµèä¸­çç¹å®å·¥ä½ç®å½å¨äº¤ç± CLI æä½ï¼<strong>é£é©</strong>æ§ç¸å¯¹å¾é«ï¼ä½æ¯<strong>æ²¡æ OpenClaw é£ä¹é«</strong>ã</p>
-<p style="color: rgba(255, 255, 255, 1); margin: 8px 0">å»ºè®®èªè¡æ­å»ºæ¬å° Git ä»åºï¼ä¸ä¸è¦å¨å¬ç½ä¸å¼æ¾è®¿é®ã</p>
-<p style="color: rgba(255, 255, 255, 1); margin: 8px 0">æ¿ä¸ªä¸ç¨çæ§çµèï¼ç§ç½ï¼æèå®å¨åéçå±åç½ä½¿ç¨å³å¯ï¼ä¸è¦ç»ä¸ä¿¡ä»»çäººç¨ï¼æå¥½åªèªå·±ç¨ï¼éè¦æ´çéæ±ï¼ä¸ä¼ å³å¯ï¼å¶å®çæ¶é´èªå·±åå¶å®çã</p>
-<p style="color: rgba(255, 255, 255, 1); margin: 8px 0">è¿æ¯ç¢ç¢å¿µä¸ä¸ï¼æç¤ºè¯æ³¨å¥å¾å±é©ï¼æä»¥è¿ä¸ªè¾å¥è¦ææ§å¨èªå·±æéã</p>
-</div>
-
-<div style="background: rgba(255, 255, 255, 1); padding: 25px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); border-left: 5px solid rgba(102, 126, 234, 1)">
-<h2 style="color: rgba(102, 126, 234, 1); font-size: 1.5em; margin: 0 0 15px">â çé¢å±ç¤º</h2>
-<div style="background: rgba(255, 255, 255, 1); border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); margin: 20px 0"><img src="https://img2024.cnblogs.com/blog/2115870/202604/2115870-20260404152203878-2103838641.png" alt="é¡¹ç®ä¸»çé¢" style="width: 100%; height: auto; display: block">
-<div style="padding: 15px; background: rgba(248, 249, 250, 1); color: rgba(102, 102, 102, 1); font-size: 14px; text-align: center">ð¸ æµè¯æªå¾ä¸­çåå®¹ï¼æ¯æéä¾¿åç</div>
-</div>
-<p style="color: rgba(51, 51, 51, 1); font-size: 16px; line-height: 1.8; margin: 10px 0; text-indent: 2em">æ´¾åä»»å¡åï¼åä»»å¡ï¼å¯ç´æ¥å¨æ§è¡ç»æä¸­çå°å®æ¶çæ§è¡æ­¥éª¤ï¼å¯ä»¥æå¨è¾å¥ï¼å¯ä»¥ç´æ¥ä¸ä¼ æä»¶ï¼æ¯æåä»»å¡ï¼å¤ä»»å¡æ´¾é</p>
-<div style="background: rgba(255, 255, 255, 1); border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); margin: 20px 0"><img src="https://img2024.cnblogs.com/blog/2115870/202604/2115870-20260404155404559-1796734004.png" alt="ä»»å¡æ§è¡çé¢" style="width: 100%; height: auto; display: block"></div>
-<p style="color: rgba(51, 51, 51, 1); font-size: 16px; line-height: 1.8; margin: 10px 0; text-indent: 2em">å¯ä»¥å¨æ§è¡è®°å½ä¸­ï¼çå°è¯¦æ</p>
-<div style="background: rgba(255, 255, 255, 1); border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); margin: 20px 0"><img src="https://img2024.cnblogs.com/blog/2115870/202604/2115870-20260404155543028-2105305030.png" alt="æ§è¡è®°å½è¯¦æ" style="width: 100%; height: auto; display: block"></div>
-<p style="color: rgba(51, 51, 51, 1); font-size: 16px; line-height: 1.8; margin: 10px 0; text-indent: 2em">è¯¦æä¸­ï¼ä¼è®°å½è¾å¥è¾åº</p>
-<p><img src="https://img2024.cnblogs.com/blog/2115870/202604/2115870-20260404165025609-1326737204.png" alt="image" loading="lazy"></p>
-</div>
-<div style="background: linear-gradient(135deg, rgba(102, 126, 234, 1) 0, rgba(118, 75, 162, 1) 100%); padding: 25px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3)">
-<h2 style="color: rgba(255, 255, 255, 1); font-size: 1.5em; margin: 0 0 15px; display: flex; align-items: center"><span style="margin-right: 10px">ð</span> GitHub ä»åºå°å</h2>
-<div style="background: rgba(255, 255, 255, 0.95); padding: 15px 20px; border-radius: 8px; display: inline-block; transition: all 0.3s ease; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1)"><a style="color: rgba(102, 126, 234, 1); font-size: 16px; text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 8px" href="https://github.com/UokyI/wecreate.git" target="_blank" rel="noopener nofollow"> https://github.com/UokyI/wecreate.git </a></div>
-<p style="color: rgba(255, 255, 255, 0.9); font-size: 14px; margin: 15px 0 0; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.3)">ð¡ ç¹å»é¾æ¥å³å¯è®¿é®é¡¹ç®ä»åºï¼æ¬¢è¿ Star â­ åè´¡ç®ä»£ç ï¼</p>
-</div>
-</div>
-
-</div>
-<div id="MySignature" role="contentinfo">
-    <div id="MySignature" role="contentinfo">
-    <div>    
-    <p style="border-top: #e0e0e0 1px dashed; border-right: #e0e0e0 1px dashed; border-bottom: #e0e0e0 1px dashed; border-left: #e0e0e0 1px dashed; padding-top: 5px; padding-right: 10px; padding-bottom: 10px; padding-left: 150px; background: url(https://images.cnblogs.com/cnblogs_com/uoky/1926026/o_260106004435_zs.png) #e5f1f4 no-repeat 1% 50%; background-size:130px 130px;font-family: å¾®è½¯éé»; font-size: 13px" id="PSignature">
-    <br>
-    ä½èï¼<a href="https://zehong.tech" target="_blank"></a><a href="https://www.cnblogs.com/uoky/" target="_blank">äººé´æ¥é£æ</a>
-
-    <br>
-    <strong>æ«æå·¦ä¾§çäºç»´ç å¯ä»¥èµèµ</strong>
-    <br>
-
-    <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh"><img alt="ç¥è¯å±äº«è®¸å¯åè®®" style="border-width: 0" src="https://licensebuttons.net/l/by-nc-nd/4.0/88x31.png"></a><br>æ¬ä½åéç¨<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh">ç½²å-éåä¸æ§ä½¿ç¨-ç¦æ­¢æ¼ç» 4.0 å½é </a>è¿è¡è®¸å¯ã
-    
-</p></div>
-</div>
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.10069444444444445" data-date-updated="2026-04-04 19:36">2026-04-04 17:11</span>&nbsp;
-<a href="https://www.cnblogs.com/uoky">äººé´æ¥é£æ</a>&nbsp;
-éè¯»(<span id="post_view_count">311</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19821366);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19821366', targetLink: 'https://www.cnblogs.com/uoky/p/19821366', title: 'ç¨åºåçåä¸å°å·¥å· - å¼æºé¡¹ç®èªè-WeCreate' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ æ·±åº¦å­¦ä¹ è¿é¶ï¼ä¸ï¼Transformer Block ]]></title>
-    <link>https://www.cnblogs.com/Goblinscholar/p/19821451</link>
-    <guid>a6750248a3f23c2dc656a1b45aa5baed</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/Goblinscholar/p/19821451" title="åå¸äº 2026-04-04 17:03">
-    <span role="heading" aria-level="2">æ·±åº¦å­¦ä¹ è¿é¶ï¼ä¸ï¼Transformer Block</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>å¨<a href="https://www.cnblogs.com/Goblinscholar/p/19811074" target="_blank">ä¸ä¸ç¯</a>æä»¬å·²ç»å®æäºå¤å¤´èªæ³¨æåæºå¶çåå®¹ï¼å¹¶ç¥éäºå®æ¯ Transformer Block ä¸­çä¸ä¸ªå­æ¨¡åã</p>
-<p>Transformer Block æ¯ Transformer æ¨¡åçæ ¸å¿è®¡ç®ååï¼å®ä¸ä»åé å¹¶åºç¨äºå¤å¤´èªæ³¨æåæºå¶ï¼è¿ç»åäºæ®å·®å­¦ä¹ ãå½ä¸åç­å¤é¨ææ¯ã</p>
-<p><strong>åç®åæ¦æ¬ä¸ä¸ Transformer Block çæ´ä½ä¼ æ­å¦ä¸ï¼</strong></p>
-<p></p><div class="math display">\[\mathbf{X} \rightarrow \mathrm{Multi\text{-}Head\ Attention} \rightarrow \mathrm{Add\ \&amp;\ Norm} \rightarrow \mathrm{FFN} \rightarrow \mathrm{Add\ \&amp;\ Norm} \rightarrow \mathbf{Y}
-\]</div><p></p><p><img src="https://img2024.cnblogs.com/blog/3708248/202604/3708248-20260404165927789-605199879.png" alt="image.png" loading="lazy"></p>
-<p>æ¥ä¸æ¥æä»¬éæ­¥æè§£è¿ä¸ªè¿ç¨ã</p>
-<h1 id="1ä½ç½®ç¼ç positional-encoding-pe">1.ä½ç½®ç¼ç ï¼Positional Encoding, PEï¼</h1>
-<p>å¨å¼å§ Transformer Block ä¹åï¼é¦åè¦è¯´æçæ¯å®çè¾å¥ç»èã<br>
-å¨åé¢çèªæ³¨æåæºå¶ä¸­ï¼æä»¬äºè§£äºèªæ³¨æåç¸å¯¹ RNN å®ç°äºä¿¡æ¯å³èé´çå¨å±å»ºæ¨¡ãå¹¶è¡å»ºæ¨¡ã</p>
-<p>ä½å®éä¸ï¼å¶å¹¶éåå¨åç¾ï¼ä¸ä¸ªå³é®çé®é¢å¨äºï¼<strong>èªæ³¨æåæ¬èº«å¹¶ä¸è½éå¼å»ºæ¨¡åºåçé¡ºåºä¿¡æ¯ã</strong></p>
-<p>åæ³ RNN ï¼å®çè®¡ç®æ¯ææ¶é´æ­¥éå½çï¼</p>
-<p></p><div class="math display">\[\mathbf{h}_t = f(\mathbf{x}_t, \mathbf{h}_{t-1})  
-\]</div><p></p><p>å³é®ç¹å¨äºä¿¡æ¯æ¯<strong>ææ¶é´é¡ºåºä¸å±å±ä¼ éç</strong>ï¼è¿æå³çè¾å¥é¡ºåºä¸è½æä¹±ï¼ä¹å°±æ¯è¯´æ¨¡åæ¬èº«å°±âç¥éâè°å¨åãè°å¨åï¼é¡ºåºæ¯éè¿è®¡ç®è·¯å¾èªç¶ä½ç°çã</p>
-<p>èTransformer ç Attention æ¯è¿æ ·çï¼</p>
-<p></p><div class="math display">\[\mathrm{Attention}(Q,K,V)=\mathrm{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V  
-\]</div><p></p><p>ææ token åæ¶åä¸è®¡ç®ï¼æ²¡æâååå¤çé¡ºåºâçç»æçº¦æã<br>
-<strong>ä¹å°±æ¯è¯´ï¼å¨åå§çè¯åµå¥é»è¾ä¸­ï¼æä»¬è½ç¶å¯ä»¥éè¿æ³¨æåè®¡ç®å¾å° token é´çç¸å³æ§ï¼ä½è¿ä¸ªç¸å³æ§éæ¯ä¸åæ¬é¡ºåºæåçã</strong></p>
-<blockquote>
-<p><strong>é¤éæä»¬æ³åæ³æä¸ä¸ªåºåä¸­çé¡ºåºä¿¡æ¯ä¹å å¥æ¯ä¸ª token çè¯åéä¸­ã</strong></p>
-</blockquote>
-<p>è¿å°±æ¯ä½ç½®ç¼ç çç±æ¥ã<br>
-äºæ¯ï¼Transformer åè®ºææåºäºä¸ç§ä½ç½®ç¼ç æºå¶ï¼å°ä½ç½®ä¿¡æ¯æ¾å¼æ³¨å¥å°è¾å¥è¡¨ç¤ºä¸­ã<br>
-å¶å·ä½åæ³æ¯ï¼å¯¹æ¯ä¸ª token çè¯åé <span class="math inline">\(\mathbf{E}_{embedding}\)</span>ï¼å å¥ä¸ä¸ªä¸å¶ä½ç½®ç¸å³çåé <span class="math inline">\(\mathbf{E}_{pos}\)</span>ï¼ä»èå¾å°æç»è¾å¥è¡¨ç¤ºï¼</p>
-<p></p><div class="math display">\[\mathbf{X}_{input} = \mathbf{E}_{embedding} + \mathbf{E}_{pos}  
-\]</div><p></p><p>å¶ä¸­ <span class="math inline">\(\mathbf{E}_{pos}\)</span> å³ä¸ºä½ç½®ç¼ç ã<br>
-åæä¸­è®¾è®¡äºä¸ç§<strong>åºäºæ­£å¼¦åä½å¼¦å½æ°çåºå®ä½ç½®ç¼ç æ¹æ³</strong>å¦ä¸ï¼<br>
-å¯¹äºä½ç½® <span class="math inline">\(pos\)</span> åç»´åº¦ç´¢å¼ <span class="math inline">\(i\)</span>ï¼å¶å®ä¹å¦ä¸ï¼</p>
-<p></p><div class="math display">\[PE(pos, 2i) = \sin\left(\frac{pos}{10000^{2i/d}}\right)  
-\]</div><p></p><p></p><div class="math display">\[PE(pos, 2i+1) = \cos\left(\frac{pos}{10000^{2i/d}}\right)  
-\]</div><p></p><p>å¶ä¸­ï¼</p>
-<ol>
-<li><span class="math inline">\(pos\)</span> è¡¨ç¤º token å¨åºåä¸­çä½ç½®ï¼ä» 0 å¼å§ï¼ã</li>
-<li><span class="math inline">\(d\)</span> è¡¨ç¤º embedding çç»´åº¦ã</li>
-<li><span class="math inline">\(i\)</span> è¡¨ç¤ºç»´åº¦ç´¢å¼ã</li>
-</ol>
-<p>å¬å¼çèµ·æ¥ç¥æ¾å¤æï¼æä»¬ä¸¾ä¸ªä¾å­ï¼åå®ä¿¡æ¯å¦ä¸ï¼</p>
-<ol>
-<li>åºåï¼æ / ç± / ä½ </li>
-<li>ä½ç½®ï¼<span class="math inline">\(pos = 0, 1, 2\)</span></li>
-<li>ç»´åº¦ï¼<span class="math inline">\(d = 3\)</span></li>
-</ol>
-<p>æ³¨æï¼å®éå®ç°ä¸­è¯åéç»´åº¦éå¸¸ä¸ºå¶æ°ï¼è¿éç®åæ¥æ¼ç¤ºï¼è®¡ç®è¿ç¨å¦ä¸ï¼</p>
-<table>
-<thead>
-<tr>
-<th>ä½ç½® pos</th>
-<th>token</th>
-<th>ç»´åº¦</th>
-<th>è®¡ç®å¬å¼</th>
-<th>æ°å¼</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>0</td>
-<td>æ</td>
-<td>PEâ</td>
-<td><span class="math inline">\(\sin\left(\frac{0}{10000^{2\cdot 0/3}}\right)\)</span></td>
-<td><span class="math inline">\(0\)</span></td>
-</tr>
-<tr>
-<td>0</td>
-<td>æ</td>
-<td>PEâ</td>
-<td><span class="math inline">\(\cos\left(\frac{0}{10000^{2\cdot 0/3}}\right)\)</span></td>
-<td><span class="math inline">\(1\)</span></td>
-</tr>
-<tr>
-<td>0</td>
-<td>æ</td>
-<td>PEâ</td>
-<td><span class="math inline">\(\sin\left(\frac{0}{10000^{2\cdot 1/3}}\right)\)</span></td>
-<td><span class="math inline">\(0\)</span></td>
-</tr>
-<tr>
-<td>1</td>
-<td>ç±</td>
-<td>PEâ</td>
-<td><span class="math inline">\(\sin\left(\frac{1}{10000^{2\cdot 0/3}}\right)\)</span></td>
-<td><span class="math inline">\(\sin(1) \approx 0.84\)</span></td>
-</tr>
-<tr>
-<td>1</td>
-<td>ç±</td>
-<td>PEâ</td>
-<td><span class="math inline">\(\cos\left(\frac{1}{10000^{2\cdot 0/3}}\right)\)</span></td>
-<td><span class="math inline">\(\cos(1) \approx 0.54\)</span></td>
-</tr>
-<tr>
-<td>1</td>
-<td>ç±</td>
-<td>PEâ</td>
-<td><span class="math inline">\(\sin\left(\frac{1}{10000^{2\cdot 1/3}}\right)\)</span></td>
-<td><span class="math inline">\(\approx 0.00215\)</span></td>
-</tr>
-<tr>
-<td>2</td>
-<td>ä½ </td>
-<td>PEâ</td>
-<td><span class="math inline">\(\sin\left(\frac{2}{10000^{2\cdot 0/3}}\right)\)</span></td>
-<td><span class="math inline">\(\sin(2) \approx 0.91\)</span></td>
-</tr>
-<tr>
-<td>2</td>
-<td>ä½ </td>
-<td>PEâ</td>
-<td><span class="math inline">\(\cos\left(\frac{2}{10000^{2\cdot 0/3}}\right)\)</span></td>
-<td><span class="math inline">\(\cos(2) \approx -0.42\)</span></td>
-</tr>
-<tr>
-<td>2</td>
-<td>ä½ </td>
-<td>PEâ</td>
-<td><span class="math inline">\(\sin\left(\frac{2}{10000^{2\cdot 1/3}}\right)\)</span></td>
-<td><span class="math inline">\(\approx 0.00431\)</span></td>
-</tr>
-</tbody>
-</table>
-<p>æç»å¾å°ä¸ä¸ª token ç PE ï¼</p>
-<p></p><div class="math display">\[\mathbf{E}_{pos}(0) = [0,\ 1,\ 0]  
-\]</div><p></p><p></p><div class="math display">\[\mathbf{E}_{pos}(1) \approx [0.84,\ 0.54,\ 0.00215]  
-\]</div><p></p><p></p><div class="math display">\[\mathbf{E}_{pos}(2) \approx [0.91,\ -0.42,\ 0.00431]  
-\]</div><p></p><p>ç°å¨ï¼æä»¬åæ¥çè§£ä¸ä¸è¿ç§è®¾è®¡æè·¯ï¼è¿å¶å®æ¶åä¸äºä¿¡å·å¤ççç¥è¯ï¼</p>
-<p>ä»æ¬è´¨ä¸çï¼æ­£å¼¦åä½å¼¦å½æ°å¯ä»¥è¢«è§ä¸ºä¸ç§<strong>å¨æä¿¡å·</strong>ãå½æä»¬ç¨ä¸åé¢ççæ­£å¼¦/ä½å¼¦å½æ°å»å¯¹åä¸ä¸ªä½ç½®è¿è¡ç¼ç æ¶ï¼ç¸å½äºå¨å¤ä¸ªâé¢çééâä¸å¯¹è¯¥ä½ç½®è¿è¡æå½±ã<br>
-èä¸åé¢çå°±æ¯éè¿ææ°ç¼©æ¾é¡¹ <span class="math inline">\(10000^{2i/d}\)</span> æ¥å®ç°çï¼èåæ¶ä½¿ç¨æ­£å¼¦åä½å¼¦ä¹è½é¿åä¸åçé¢çå¯è½å¾å°ç¸åçå¼çæåµã</p>
-<p>èä¸ï¼<strong>ä¸åä½ç½®ä¹é´çâè·ç¦»ä¿¡æ¯âï¼å¯ä»¥å¨è¿äºå¨æå½æ°çç¸ä½å·®ä¸­ä½ç°åºæ¥ã</strong> è¿æ ·ï¼ä½ç½®ä¹é´çç¸å¯¹å³ç³»å°±å¯ä»¥è¢«éå¼è¡¨è¾¾ã<br>
-<img src="https://img2024.cnblogs.com/blog/3708248/202604/3708248-20260404165754140-1085467674.png" alt="image.png" loading="lazy"></p>
-<p>éè¿ PE çè®¾è®¡ï¼æä»¬å°±å®åäºå¯¹è¾å¥æ°æ®çé¡ºåºä¿¡æ¯çå»ºæ¨¡ã<br>
-å¨æ´è¿çç ç©¶ä¸­ï¼å¯¹ PE çè·åæ¹æ³ä¹å¨ä¸æ­å°åæ°åå±ï¼ä¸ä¸ªå¾å®¹ææ³å°çæ¹åå°±æ¯å¯å­¦ä¹ ä½ç½®ç¼ç ï¼æä»¬ä¹ååè¯¦ç»å±å¼ã</p>
-<h1 id="2-attention-å">2. Attention å</h1>
-<h2 id="21-å¤å¤´èªæ³¨æåå­å±">2.1 å¤å¤´èªæ³¨æåå­å±</h2>
-<p>å¯¹äºç»è¿åµå¥å±ãæ³¨å¥ PE åçåºåä¿¡æ¯ <span class="math inline">\(\mathbf{X}\)</span> ï¼åéåï¼ï¼å®å¨ Transformer Block ä¸­ç<strong>ç¬¬ä¸æ­¥</strong>å°±æ¯åºç¨å¤å¤´æ³¨æåæºå¶è¿è¡ä¿¡æ¯å¢å¼ºã<br>
-è¿ä¸é¨åæä»¬å·²ç»è¯¦ç»å±å¼è¿ï¼å¶ä½ç¨æ¯ï¼<strong>å¨åºååé¨å»ºæ¨¡ä»»æä½ç½®ä¹é´çä¾èµå³ç³»ï¼å®ç°å¨å±ä¿¡æ¯äº¤äºã</strong></p>
-<p>æ¬æ¬¡çè¾å¥ä¸è¾åºä¿æç»´åº¦ä¸è´ï¼å¦ä¸ï¼</p>
-<p></p><div class="math display">\[\mathbf{X} \in \mathbb{R}^{n \times d} \rightarrow \mathbf{Z} \in \mathbb{R}^{n \times d}  
-\]</div><p></p><p>è¿ç§è®¾è®¡æ¹ä¾¿äºä¸é¢çæ®å·®å­¦ä¹ ã</p>
-<h2 id="22-æ®å·®è¿æ¥">2.2 æ®å·®è¿æ¥</h2>
-<p><strong>Attention åå°è¿éå¹¶æ²¡æç»æï¼Transformer Block å¨æ¯ä¸ªå­å±è¿å¢å äºæ®å·®è¿æ¥åå½ä¸åçæ­¥éª¤ã</strong><br>
-å±å¼æ¥è¯´ï¼é¦åå¯¹äºæ³¨æåå­å±çè¾åº <span class="math inline">\(\mathbf{Z}\)</span> ï¼æä»¬ç´æ¥æå®åè¾å¥ <span class="math inline">\(\mathbf{X}\)</span> ç¸å ï¼</p>
-<p></p><div class="math display">\[\mathbf{Z}+\mathbf{X}
-\]</div><p></p><p>è¿æ¶åå°æ®å·®å­¦ä¹ çåºæ¬åçï¼æä»¬å¨å¾æ©ä¹åææä»ç»ï¼<a href="https://www.cnblogs.com/Goblinscholar/p/19359236" target="_blank">æ®å·®ç½ç»</a><br>
-<strong>åç®åæ¦è¿°ä¸ä¸ï¼æä»¬ç¥é <span class="math inline">\(\mathbf{Z}\)</span> æ¯ç±å¯å­¦ä¹ çåæ°å³å®çï¼èè¿ç§å¯¹è¾åºçå»ºæ¨¡æ¹å¼ä¼è®©å­¦ä¹ ç®æ ä» âç´æ¥å­¦ä¹ ä»è¾å¥å°è¾åºçæ å°â è½¬åä¸º âå­¦ä¹ å¨è¾å¥åºç¡ä¸çæ¹åéâï¼ä»èæ¹åæ¢¯åº¦ç°è±¡ï¼æ¯ææ´æ·±å±çç½ç»ã</strong></p>
-<h2 id="23-layernorm">2.3 LayerNorm</h2>
-<p>ç¶åï¼ä¸ä¸æ­¥å¤çå°±æ¯å½ä¸åï¼</p>
-<p></p><div class="math display">\[\mathbf{X}_{norm} = \mathrm{LayerNorm}(\mathbf{Z}+\mathbf{X})  
-\]</div><p></p><p>åæ ·å¨åé¢ç<a href="https://www.cnblogs.com/Goblinscholar/p/19581510" target="_blank">å´æ©è¾¾æ·±åº¦å­¦ä¹ </a>åå®¹ä¸­ï¼æä»¬ä»ç»è¿<a href="https://www.cnblogs.com/Goblinscholar/p/19186772" target="_blank">å½ä¸å</a>çåºæ¬åå®¹ï¼å¹¶å¨æ­¤åºç¡ä¸æå±äº<a href="https://www.cnblogs.com/Goblinscholar/p/19232083" target="_blank">Batch Norm</a>ã</p>
-<p><strong>èè¿éç LayerNorm å Batch Norm å¶å®åªæ¯æ°æ®çéæ©æ¹åä¸åã</strong><br>
-å¬å¼å¦ä¸ï¼</p>
-<p></p><div class="math display">\[\mathrm{LN}(\mathbf{x}) = \frac{\mathbf{x} - \mu}{\sigma} \cdot \gamma + \beta  
-\]</div><p></p><p>å¶ä¸­ï¼</p>
-<ul>
-<li><span class="math inline">\(\mu\)</span> æ¯åå¼</li>
-<li><span class="math inline">\(\sigma\)</span> æ¯æ åå·®</li>
-<li><span class="math inline">\(\gamma, \beta\)</span> ä¸ºå¯å­¦ä¹ åæ°</li>
-</ul>
-<p>æ¾ç¶ï¼ä¸åäº Batch Norm å¯¹ä¸æ¹æ¬¡æ ·æ¬çéä¸ªç¹å¾åå½ä¸åï¼<strong>LayerNorm æ¯å¯¹æ¯ä¸ªæ ·æ¬èªèº«çææç¹å¾åå½ä¸åã</strong></p>
-<p>æ¥ç®åä¸¾ä¸ªä¾å­ï¼</p>
-<p>åè®¾æä»¬æå¦ä¸ç¹å¾åéï¼è®¾ <span class="math inline">\(d=4\)</span>ï¼ï¼</p>
-<p></p><div class="math display">\[\mathbf{x} = [2,4,6, 8]  
-\]</div><p></p><p>è®¡ç®åå¼åæ åå·®å¦ä¸ï¼</p>
-<p></p><div class="math display">\[\mu = \frac{2 + 4 + 6 + 8}{4} = 5  
-\]</div><p></p><p></p><div class="math display">\[\sigma = \sqrt{\frac{(2-5)^2 + (4-5)^2 + (6-5)^2 + (8-5)^2}{4}} = \sqrt{5}  
-\]</div><p></p><p>ä»£å¥è®¡ç®ï¼</p>
-<p></p><div class="math display">\[\hat{\mathbf{x}} = \left[\frac{2-5}{\sqrt{5}}, \frac{4-5}{\sqrt{5}}, \frac{6-5}{\sqrt{5}},\frac{8-5}{\sqrt{5}}\right]  
-\]</div><p></p><p>ç°å¨ï¼è¯¥åéåå¼ä¸º <span class="math inline">\(0\)</span>ï¼æ¹å·®ä¸º <span class="math inline">\(1\)</span> ã<br>
-æ¥ä¸æ¥åéè¿å­¦ä¹ å¹³ç§»åç¼©æ¾åæ° <span class="math inline">\(\gamma, \beta\)</span>ï¼</p>
-<p></p><div class="math display">\[\mathbf{y} = \hat{\mathbf{x}} \cdot \gamma + \beta  
-\]</div><p></p><p>è¿ä¸æ­¥çä½ç¨æ¯ï¼<strong>å¨å®ææ ååä¹åï¼è®©æ¨¡ååç¹åå­¦ä¹ âä»ä¹æ ·çåå¸æ¯æåéçâã</strong></p>
-<p>å¯ä»¥è¿æ ·çè§£ LayerNorm çä½ç¨ï¼ <strong>å®å¯ä»¥ä¿æç¹å¾çç¸å¯¹ç»æï¼åæ¶å°æ´ä½æ°å¼å°ºåº¦å½ä¸å°ç¨³å®èå´ã</strong><br>
-è¿æ ·åä½¿å¾æ¯ä¸ä¸ª token çè¡¨ç¤ºé½è¢«æåå°ä¸ä¸ªç¨³å®çæ°å¼èå´ï¼ä»èé¿åå¨æ·±å±ç½ç»ä¸­åºç°æ°å¼åå¸ä¸æ­åç§»çé®é¢ã</p>
-<p>ä½ å¯è½è¿æè¿æ ·ä¸ä¸ªé®é¢ï¼</p>
-<blockquote>
-<p><strong>ä¸ºä»ä¹ä¸ç¨ Batch Norm ï¼</strong></p>
-</blockquote>
-<p>è¿ä¾¿æ¯éå¯¹é®é¢çç¹åæå¨ï¼<br>
-<strong>å¨è¿éï¼æéè¦çåå æ¯æ³¨æåè®¡ç®åè¯åµå¥æ¬èº«é½ä¼å¯¼è´æ¯ä¸ª token çåå¸é½ä¸åï¼ç¨ BatchNorm å¼ºè¡å¯¹é½åèä¼ç ´åä¿¡æ¯ã</strong></p>
-<p>åæ ·ä¸¾ä¸ªç®åä¾å­æ¥è¯´æï¼</p>
-<p>åè®¾æä¸å¥è¯ï¼âç« å é±¼âï¼åä¸ä¸ª token ç»è¿æ³¨æååå¯è½ä¼åºç°è¿ç§æåµï¼</p>
-<ol>
-<li>ç«å³æ³¨âåâï¼<span class="math inline">\(\mathbf{z}_1 = [0.1, 0.2, 0.1, 0.2]\)</span> ï¼æ¯è¾å¹³ç¼ã</li>
-<li>åå³æ³¨âç«âåâé±¼âï¼<span class="math inline">\(\mathbf{z}_2 = [10, 0.5, 0.3, 0.2]\)</span> ï¼æä¸ç»´ç¹å«å¤§ã</li>
-<li>é±¼å³æ³¨âåâï¼<span class="math inline">\(\mathbf{z}_3 = [-3, -2, -1, 0]\)</span>  ï¼æ´ä½åè´ã</li>
-</ol>
-<p>ä¹å°±æ¯è¯´ï¼<strong>æ¯ä¸ª token çâç¹å¾åå¸âå®å¨ä¸åã</strong></p>
-<p>èè¿å°±æ¯å³é®ç¹ï¼<strong>BatchNorm çåè®¾æ¯ï¼ä¸åæ ·æ¬çåä¸ç»´åº¦ï¼åºè¯¥æç±»ä¼¼åå¸ãä½å¨è¿éä¸å token çåå¸æ¬æ¥å°±åºè¯¥ä¸åï¼</strong><br>
-å ä¸ºæ¯ä¸ª token è¡¨è¾¾ä¸åè¯­ä¹ï¼èæ³¨æåè®©å®ä»¬å·®å¼æ´å¤§ãå¦æç¨ BatchNorm å¼ºè¡æå®ä»¬ææä¸æ · ï¼åèç ´åè¯­ä¹å·®å¼ã<br>
-æ­¤å¤ï¼åºåæ°æ®çé¿åº¦ä¸åºå®ãBatchNorm ä¾èµæ¹æ¬¡å¤§å°ç­å ç´ ä¹ä¼äº§çè´é¢å½±åã</p>
-<p>è¿ä¾¿æ¯ Attention å çå¨é¨é»è¾ï¼åæä¸ä¸ªæ»ä½å¬å¼å¦ä¸ï¼</p>
-<p></p><div class="math display">\[\mathbf{X}_{out} = \mathrm{LayerNorm}\left(\mathbf{X} + \mathrm{MultiHead}(\mathbf{X})\right)  
-\]</div><p></p><p><img src="https://img2024.cnblogs.com/blog/3708248/202604/3708248-20260404165503184-1857432040.png" alt="image.png" loading="lazy"></p>
-<h1 id="3-åé¦ç¥ç»ç½ç»-ffn">3. åé¦ç¥ç»ç½ç» FFN</h1>
-<p>ç»è¿Attention åå®æä¿¡æ¯å¢å¼ºåï¼ä¸ä¸æ­¥å°±æ¯å°±æ¯è¾å¥ä¸ä¸ªå°ååé¦ç½ç»è¿è¡è®¡ç®ï¼è¿éæä¾çå°±æ¯<strong>éçº¿æ§åæ¢ãéæç¹å¾</strong>çé»è¾ã</p>
-<p>å½¢å¼ä¸ï¼FFN éå¸¸ç±ä¸¤å±çº¿æ§åæ¢å ä¸ä¸ªæ¿æ´»å½æ°ææï¼</p>
-<p></p><div class="math display">\[\mathrm{FFN}(\mathbf{X}) = \max(0, \mathbf{X}\mathbf{W}_1 + \mathbf{b}_1)\mathbf{W}_2 + \mathbf{b}_2  
-\]</div><p></p><p>å¶ä¸­çç»´åº¦è®¾è®¡è¾ä¸ºå³é®ï¼</p>
-<ol>
-<li><span class="math inline">\(\mathbf{W}_1 \in \mathbb{R}^{d \times d_{ff}}\)</span>ã <span class="math inline">\(\mathbf{W}_2 \in \mathbb{R}^{d_{ff} \times d}\)</span>ã</li>
-<li><span class="math inline">\(d_{ff}\)</span> éå¸¸è¿å¤§äº <span class="math inline">\(d\)</span>ï¼å¨åæä¸­è®¾è®¡ä¸º <span class="math inline">\(4d\)</span> ã</li>
-</ol>
-<p>å¶å·ä½ä¼ æ­è¿ç¨å¦ä¸ï¼<br>
-<img src="https://img2024.cnblogs.com/blog/3708248/202604/3708248-20260404165501481-1023043394.png" alt="image.png" loading="lazy"><br>
-<strong>å¨è¿éï¼ä½ ä¼åç° FFN å¨åºåé´å¶å®æ²¡æä»»ä½ä¿¡æ¯äº¤äºï¼å¶åæ¢ãå»ºæ¨¡å®å¨å±éäºåä¸ª tokenï¼å æ­¤å¿é¡»ä¸æ³¨æåæºå¶éåä½¿ç¨ã</strong></p>
-<p>åæ ·å°ï¼å¨å®æ FFN ä¼ æ­å¾å°è¾åºåï¼ä¹è¦è¿è¡æ®å·®è¿æ¥åå½ä¸åã</p>
-<p></p><div class="math display">\[\mathbf{Y} = \mathrm{LayerNorm}(\mathbf{X}_{out} + \mathrm{FFN}(\mathbf{X}_{out}))  
-\]</div><p></p><p>è³æ­¤ï¼å°±å®æäº Transformer Block çå¨é¨è®¡ç®ï¼å¨å®éæ¨¡åä¸­ï¼è¿æ ·ç Block ä¼è¢«å å å¤å±ï¼ä»èéæ­¥æåæ¨¡åå¯¹å¤æç»æåé¿è·ç¦»ä¾èµçå»ºæ¨¡è½åã</p>
-<h1 id="4post-norm-å-pre-norm">4.Post-Norm å Pre-Norm</h1>
-<p>å¨è¿éå¼å¾è¡¥åçä¸ç¹å³äº Post-Norm å Pre-Normï¼æä»¬åæ Transformer Block çä¸¤ä¸ªæ ¸å¿å¬å¼åæä¸éï¼</p>
-<p></p><div class="math display">\[\mathbf{X}_{out} = \mathrm{LayerNorm}\left(\mathbf{X} + \mathrm{MultiHead}(\mathbf{X})\right)  
-\]</div><p></p><p></p><div class="math display">\[\mathbf{Y} = \mathrm{LayerNorm}(\mathbf{X}_{out} + \mathrm{FFN}(\mathbf{X}_{out}))  
-\]</div><p></p><p>è¿éï¼ä¹æ¯åè®ºæçé»è¾æ¯ï¼<strong>åè®¡ç®ï¼åå¯¹ç»æå½ä¸åã</strong><br>
-è¿ç§ç»æéå¸¸è¢«ç§°ä¸º <strong>Post-Normï¼åå½ä¸åï¼ç»æ</strong>ï¼ä¹å°±æ¯æ¯ä¸ä¸ªå­å±ï¼Attention æ FFNï¼é½åå®æèªèº«çè®¡ç®ï¼åä¸è¾å¥è¿è¡æ®å·®ç¸å ï¼æåç»ä¸è¿è¡å½ä¸åå¤çã</p>
-<p>ç¶èï¼å¨åç»­ç ç©¶å®è·µä¸­ï¼åç°äºè¿ç§ç»æå¨<strong>å±æ°è¾æ·±æ¶å®¹æåºç°è®­ç»ä¸ç¨³å®çé®é¢</strong>ï¼äºæ¯æåºäºå¦ä¸ç§æ´å¸¸ç¨çåä½ï¼<strong>Pre-Normï¼åå½ä¸åï¼ç»æ</strong>ã<br>
-å¶å¯¹åºå½¢å¼ä¸ºï¼</p>
-<p></p><div class="math display">\[\mathbf{X}_{out} = \mathbf{X} + \mathrm{MultiHead}(\mathrm{LayerNorm}(\mathbf{X}))  
-\]</div><p></p><p></p><div class="math display">\[\mathbf{Y} = \mathbf{X}_{out} + \mathrm{FFN}(\mathrm{LayerNorm}(\mathbf{X}_{out}))  
-\]</div><p></p><p>å¯ä»¥çå°ï¼å¶ååå¨äºï¼<strong>åå¯¹è¾å¥è¿è¡å½ä¸åï¼åéå¥å­å±è®¡ç®ï¼æååè¿è¡æ®å·®è¿æ¥ã</strong></p>
-<p>å¶æ´ç¨³å®çåå ä»å¨æ¢¯åº¦ä¼ æ­çé»è¾ä¸ï¼<br>
-æä»¬è®¾è®¡æ®å·®è¿æ¥ï¼å½¢ææç­æ å°ï¼è®©æ¢¯åº¦å¯ä»¥ç»è¿å­å±è®¡ç®ç´æ¥ä¼ æ­ï¼ä»èä¿è¯äºæ·±å±ç½ç»ä¸­çç¨³å®æ§ã<br>
-èå¨ Post-Norm ä¸­ï¼LayerNorm ä½äºæ®å·®è¿æ¥åï¼ä¹å°±æ¯<strong>æ¢¯åº¦ä¼ æ­å¿é¡»åç»è¿å½ä¸å</strong>ï¼è¿å¯¼è´å¶å¨å¤å±å å æ¶æ´å®¹æåçç¼©æ¾ä¸æ°å¨ï¼ä»èå½±åè®­ç»ç¨³å®æ§ï¼ç¸æ¯ä¹ä¸ï¼Pre-Norm é¿åäºè¿ä¸é®é¢ï¼ä¿çäºç´è¿çæ®å·®è·¯å¾ã<br>
-<strong>å æ­¤å¨å®éå·¥ç¨ä¸­ï¼æ´å¸¸è§çæ¯ Pre-Norm ç»æã</strong></p>
-<p>è³æ­¤ï¼æä»¬å·²ç»å®æ´æå»ºäº Transformer çåºæ¬è®¡ç®ååï¼å¨ä¸ä¸ç¯ä¸­ï¼å°±å¯ä»¥è¾ä¸æ»å°è¿å¥ Transformer çæ´ä½ç»æäºã</p>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.003472222222222222" data-date-updated="2026-04-04 17:08">2026-04-04 17:03</span>&nbsp;
-<a href="https://www.cnblogs.com/Goblinscholar">å¥å¸æå­¦è</a>&nbsp;
-éè¯»(<span id="post_view_count">58</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19821451);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19821451', targetLink: 'https://www.cnblogs.com/Goblinscholar/p/19821451', title: 'æ·±åº¦å­¦ä¹ è¿é¶ï¼ä¸ï¼Transformer Block' })">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ åºäº RO2 humble éç½® robosense Helios 32ï¼éè¾ï¼ & xsense mti 300 ]]></title>
-    <link>https://www.cnblogs.com/zylyehuo/p/19818935</link>
-    <guid>870dfa991f06f7aaf96097e9616f59f2</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/zylyehuo/p/19818935" title="åå¸äº 2026-04-04 16:53">
-    <span role="heading" aria-level="2">åºäº RO2 humble éç½® robosense Helios 32ï¼éè¾ï¼ &amp; xsense mti 300</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<blockquote>
-<p>åå®¢å°åï¼<a href="https://www.cnblogs.com/zylyehuo/" target="_blank">https://www.cnblogs.com/zylyehuo/</a></p>
-</blockquote>
-<blockquote>
-<p>é·è¾¾åå·ï¼robosense Helios 32ï¼éè¾ï¼</p>
-</blockquote>
-<blockquote>
-<p>IMU åå·ï¼xsense mti 300</p>
-</blockquote>
-<blockquote>
-<p>ä½¿ç¨ç¯å¢ï¼ RO2 humble</p>
-</blockquote>
-<blockquote>
-<p>é¦åå°é·è¾¾ä»¥å IMU é½è¿æ¥å°çµèä¸</p>
-</blockquote>
-<p><img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260403215257490-64281046.jpg" alt="89b18efddb314f927575a6029758a2dd" loading="lazy"></p>
-<h1 id="éç½®-robosense-helios-32éè¾">éç½® robosense Helios 32ï¼éè¾ï¼</h1>
-<h2 id="æ¥çé·è¾¾-ip-å°å">æ¥çé·è¾¾ IP å°å</h2>
-<blockquote>
-<p>å®è£è¾å©å·¥å·</p>
-</blockquote>
-<pre><code class="language-bash">sudo apt install wireshark-qt
-
-</code></pre>
-<p><img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260403215509878-316521053.jpg" alt="Snipaste_2026-04-03_20-46-38" loading="lazy"></p>
-<blockquote>
-<p>å¯å¨è¾å©å·¥å·</p>
-</blockquote>
-<pre><code class="language-bash">sudo wireshark
-
-</code></pre>
-<p><img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260403215435947-1962078598.png" alt="image" loading="lazy"><br>
-<img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260403215340913-1792424499.jpg" alt="Snipaste_2026-04-03_20-51-27" loading="lazy"></p>
-<blockquote>
-<p>è®°å½ä¸ Who å Tell åé¢ç IP å°å</p>
-</blockquote>
-<blockquote>
-<p>Who æ¯è¦ç»çµèè®¾ç½®ç IP å°å</p>
-</blockquote>
-<blockquote>
-<p>Tell æ¯é·è¾¾èªèº«ç IP å°å</p>
-</blockquote>
-<h2 id="å¨ç½é¡µä¸­è®¿é®é·è¾¾-ip-å°å">å¨ç½é¡µä¸­è®¿é®é·è¾¾ IP å°å</h2>
-<p><img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260403215554052-2107785323.jpg" alt="Snipaste_2026-04-03_20-54-01" loading="lazy"><br>
-<img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260403215619270-1267138382.jpg" alt="Snipaste_2026-04-03_21-32-27" loading="lazy"></p>
-<blockquote>
-<p>è®°å½ä¸è¿äºéç½®</p>
-</blockquote>
-<h2 id="ä¸ºçµèéç½®-ip-å°å">ä¸ºçµèéç½® IP å°å</h2>
-<p><img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260403215737352-758001432.jpg" alt="Snipaste_2026-04-03_21-26-18" loading="lazy"><br>
-<img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260403215853260-1540757107.jpg" alt="Snipaste_2026-04-03_21-26-29" loading="lazy"></p>
-<h2 id="æµè¯çµèè½å¦-ping-éé·è¾¾">æµè¯çµèè½å¦ ping éé·è¾¾</h2>
-<p><img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260403215724627-268488819.jpg" alt="Snipaste_2026-04-03_20-54-39" loading="lazy"></p>
-<h1 id="éç½®-xsense-mti-300">éç½® xsense mti 300</h1>
-<blockquote>
-<p>ä¸º IMU ç USB æ¥å£èµäºæé</p>
-</blockquote>
-<p><img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260403215655048-1331253839.jpg" alt="Snipaste_2026-04-03_21-44-32" loading="lazy"></p>
-<pre><code class="language-bash">ls /dev/tty  # åå» Tab é®
-
-sudo chmod 777 /dev/ttyUSB0
-
-</code></pre>
-<h1 id="ä¸è½½å¹¶ç¼è¯é©±å¨åè½å">ä¸è½½å¹¶ç¼è¯é©±å¨åè½å</h1>
-<p><img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260404162133075-1963236297.jpg" alt="Snipaste_2026-04-04_10-24-32" loading="lazy"></p>
-<h2 id="ä¸è½½å¹¶ç¼è¯é·è¾¾é©±å¨åè½å">ä¸è½½å¹¶ç¼è¯é·è¾¾é©±å¨åè½å</h2>
-<pre><code class="language-bash">sudo apt install libpcap-dev libyaml-cpp-dev
-
-sudo apt-get update
-
-</code></pre>
-<pre><code class="language-bash">mkdir -p driver_ws/src
-
-cd driver_ws/src
-
-git clone https://github.com/RoboSense-LiDAR/rslidar_sdk.git
-
-cd rslidar_sdk
-
-git submodule init
-
-git submodule update
-
-</code></pre>
-<pre><code class="language-bash">cd driver_ws/src
-
-git clone https://github.com/RoboSense-LiDAR/rslidar_msg.git
-
-</code></pre>
-<pre><code class="language-bash">cd driver_ws
-
-colcon build
-
-</code></pre>
-<h2 id="ä¸è½½å¹¶ç¼è¯-imu-é©±å¨åè½å">ä¸è½½å¹¶ç¼è¯ IMU é©±å¨åè½å</h2>
-<blockquote>
-<p><a href="https://github.com/xsenssupport/Xsens_MTi_ROS_Driver_and_Ntrip_Client/tree/ros2" target="_blank" rel="noopener nofollow">åèææ¡£</a></p>
-</blockquote>
-<pre><code class="language-bash">cd /home/zylyehuo/Downloads
-
-git clone --branch ros2 https://github.com/xsenssupport/Xsens_MTi_ROS_Driver_and_Ntrip_Client.git
-
-</code></pre>
-<p><img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260404162513383-279163388.png" alt="image" loading="lazy"></p>
-<blockquote>
-<p>å°ä¸è½½ä¸æ¥çé¡¹ç®ä¸­ç ros2 é©±å¨å¤å¶å°å·¥ä½ç©ºé´ç src è·¯å¾ä¸</p>
-</blockquote>
-<p><img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260404162743411-1986897687.png" alt="image" loading="lazy"></p>
-<pre><code class="language-bash">sudo apt install ros-$ROS_DISTRO-nmea-msgs
-
-sudo apt install ros-$ROS_DISTRO-mavros-msgs
-
-</code></pre>
-<p><img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260404163957873-1744538125.png" alt="image" loading="lazy"></p>
-<pre><code class="language-bash">cd driver_ws/src
-
-sudo chmod -R o+rw xsens_mti_ros2_driver/
-
-cd ..
-
-pushd src/xsens_mti_ros2_driver/lib/xspublic &amp;&amp; make &amp;&amp; popd
-
-colcon build
-
-</code></pre>
-<h1 id="æµè¯">æµè¯</h1>
-<h2 id="é·è¾¾ä¸-imu-æ¶é´åæ­¥">é·è¾¾ä¸ IMU æ¶é´åæ­¥</h2>
-<p><img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260404152510776-1935209633.png" alt="image" loading="lazy"><br>
-<img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260404152651169-634843506.png" alt="image" loading="lazy"></p>
-<pre><code class="language-bash">sudo ptp4l -m -i enp11s0 -S
-
-</code></pre>
-<h2 id="æµè¯-robosense-helios-32éè¾">æµè¯ robosense Helios 32ï¼éè¾ï¼</h2>
-<p><img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260403214750765-1864905574.jpg" alt="2b177cbb8d1d307de3ca44f422b220f4" loading="lazy"></p>
-<h3 id="ä¿®æ¹-configyaml-éç½®æä»¶">ä¿®æ¹ config.yaml éç½®æä»¶</h3>
-<blockquote>
-<p>ä¸é·è¾¾ç½é¡µä¸è®°å½çéç½®åæ°ç¸å¯¹åº</p>
-</blockquote>
-<p><img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260403220037143-1054980113.jpg" alt="Snipaste_2026-04-03_21-49-15" loading="lazy"></p>
-<pre><code class="language-yaml">common:
-  msg_source: 1                         # 0: not use Lidar
-                                        # 1: packet message comes from online Lidar
-                                        # 2: packet message comes from ROS or ROS2
-                                        # 3: packet message comes from Pcap file
-  send_packet_ros: false                # true: Send packets through ROS or ROS2(Used to record packet)
-  send_point_cloud_ros: true            # true: Send point cloud through ROS or ROS2
-lidar:
-  - driver:
-      lidar_type: RSHELIOS  # RSM1             #  LiDAR type - RS16, RS32, RSBP, RSAIRY, RSHELIOS, RSHELIOS_16P, RS128, RS80, RS48, RSP128, RSP80, RSP48, 
-                                   #               RSM1, RSM1_JUMBO, RSM2, RSM3, RSE1, RSMX.
-                                   
-      msop_port: 6698  # 6699              #  Msop port of lidar
-      difop_port: 7789  # 7788             #  Difop port of lidar
-      imu_port: 0                  #  IMU port of lidar(only for RSAIRY, RSE1), 0 means no imu.
-                                   #  If you want to use IMU, please first set ENABLE_IMU_DATA_PARSE to ON in CMakeLists.txt 
-      user_layer_bytes: 0          #  Bytes of user layer. thers is no user layer if it is 0         
-      tail_layer_bytes: 0          #  Bytes of tail layer. thers is no tail layer if it is 0
-
-
-      min_distance: 0.2            #  Minimum distance of point cloud
-      max_distance: 200            #  Maximum distance of point cloud
-      use_lidar_clock: true        #  true--Use the lidar clock as the message timestamp
-                                   #  false-- Use the system clock as the timestamp
-      dense_points: false          #  true: discard NAN points; false: reserve NAN points
-      
-      ts_first_point: true         #  true: time-stamp point cloud with the first point; false: with the last point;   
-                                   #  these parameters are used from mechanical lidar
-
-      start_angle: 0               #  Start angle of point cloud
-      end_angle: 360               #  End angle of point cloud
-
-                                   #  When msg_source is 3, the following parameters will be used
-      pcap_repeat: true            #  true: The pcap bag will repeat play   
-      pcap_rate: 1.0               #  Rate to read the pcap file
-      pcap_path: /home/robosense/lidar.pcap #The path of pcap file
-
-    ros:
-      ros_frame_id: rslidar                           #Frame id of packet message and point cloud message
-      ros_recv_packet_topic: /rslidar_packets          #Topic used to receive lidar packets from ROS
-      ros_send_packet_topic: /rslidar_packets          #Topic used to send lidar packets through ROS
-      ros_send_imu_data_topic: /rslidar_imu_data         #Topic used to send imu data through ROS
-      ros_send_point_cloud_topic: /rslidar_points      #Topic used to send point cloud through ROS
-      ros_queue_length: 100                            #Topic QoS history depth
-
-</code></pre>
-<h3 id="å¯å¨-launch-æä»¶è¿è¡æµè¯">å¯å¨ launch æä»¶è¿è¡æµè¯</h3>
-<p><img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260403214759510-1132784811.jpg" alt="Snipaste_2026-04-03_21-47-16" loading="lazy"><br>
-<img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260403215918962-1381238709.jpg" alt="Snipaste_2026-04-03_21-30-42" loading="lazy"></p>
-<pre><code class="language-bash">cd driver_ws
-
-source install/setup.bash
-
-ros2 launch rslidar_sdk humble_start.py
-
-</code></pre>
-<h3 id="tipséè¾é·è¾¾å¯ä»¥éæ©ç¹çç±»å">Tipsï¼éè¾é·è¾¾å¯ä»¥éæ©ç¹çç±»å</h3>
-<blockquote>
-<p>åèé¾æ¥ï¼<a href="https://www.codeleading.com/article/92325088976/" target="_blank" rel="noopener nofollow">éè¾èåé·è¾¾ææ°é©±å¨å®è£ï¼åå«ringåtimestampï¼è¿è¡lio-sam</a></p>
-</blockquote>
-<p><img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260404165848938-136739009.png" alt="image" loading="lazy"><br>
-<img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260404165905663-971979985.png" alt="image" loading="lazy"></p>
-<blockquote>
-<p>ä¿å­å¥½ä¹åï¼éæ°ç¼è¯å³å¯</p>
-</blockquote>
-<h2 id="æµè¯-xsense-mti-300">æµè¯ xsense mti 300</h2>
-<h3 id="åºäº-mtè½¯ä»¶å¥æµè¯">åºäº MTè½¯ä»¶å¥æµè¯</h3>
-<h4 id="1å®è£ä¾èµ">1.å®è£ä¾èµ</h4>
-<h5 id="å®è£-libdouble-conversion1">å®è£ libdouble-conversion1</h5>
-<pre><code class="language-bash">wget http://archive.ubuntu.com/ubuntu/pool/main/d/double-conversion/libdouble-conversion1_2.0.1-4ubuntu1_amd64.deb
-
-sudo dpkg -i libdouble-conversion1_2.0.1-4ubuntu1_amd64.deb
-
-</code></pre>
-<h5 id="å®è£-libicu60">å®è£ libicu60</h5>
-<pre><code class="language-bash">wget http://security.ubuntu.com/ubuntu/pool/main/i/icu/libicu60_60.2-3ubuntu3.2_amd64.deb
-
-sudo dpkg -i libicu60_60.2-3ubuntu3.2_amd64.deb
-
-</code></pre>
-<h4 id="2mtè½¯ä»¶å¥ä¸è½½">2.MTè½¯ä»¶å¥ä¸è½½</h4>
-<blockquote>
-<p><a href="https://www.xsens.com/support/software-documentation" target="_blank" rel="noopener nofollow">ä¸è½½é¾æ¥</a></p>
-</blockquote>
-<p><img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260404161236808-273494682.jpg" alt="Snipaste_2026-04-04_09-39-40" loading="lazy"><br>
-<img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260404161248161-1419104572.jpg" alt="Snipaste_2026-04-04_09-40-23" loading="lazy"></p>
-<h4 id="3æ§è¡shæä»¶">3.æ§è¡.shæä»¶</h4>
-<blockquote>
-<p>å°åæä¸è½½çåç¼©æä»¶æå¨è§£åï¼å¹¶å°ä¸å±æä¸ä¸ªæä»¶éè¦è§£åï¼å¤§æä»¶è§£ååï¼ç¹è¿å»è¿æä¸¤ä¸ªæä»¶éè¦è§£åï¼è§£åå®åå°åç¼©åå äºèçåå­ã</p>
-</blockquote>
-<p><img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260404161301686-547797491.jpg" alt="Snipaste_2026-04-04_11-53-47" loading="lazy"><br>
-<img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260404161310802-482233311.jpg" alt="Snipaste_2026-04-04_11-54-23" loading="lazy"></p>
-<pre><code class="language-bash">./mtsdk_linux-x64_2022.0.sh 
-
-</code></pre>
-<blockquote>
-<p>è¥æ¥éâuudecondâï¼æ§è¡ä»¥ä¸å®è£å½ä»¤</p>
-</blockquote>
-<pre><code class="language-bash">sudo apt-get update -y
- 
-sudo apt-get install -y sharutils
-
-</code></pre>
-<h4 id="4æå¼mt-managerçé¢">4.æå¼MT Managerçé¢</h4>
-<blockquote>
-<p>æå¼å°ä»¥ä¸è·¯å¾çæä»¶ï¼</p>
-</blockquote>
-<blockquote>
-<p>MT_Software_Suite_linuxx64_2022.0_b7085_r119802/MT_Software_Suite_linux-x64_2022.0/mtmanager_linux-x64_2022.0/mtmanager/linux-x64/bin</p>
-</blockquote>
-<blockquote>
-<p>ç¶åå³é®æå¼ç»ç«¯ï¼æ§è¡å¦ä¸å½ä»¤</p>
-</blockquote>
-<pre><code class="language-bash">./mtmanager
-
-</code></pre>
-<p><img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260404160941463-946339641.png" alt="image" loading="lazy"><br>
-<img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260404163322811-1811793312.png" alt="image" loading="lazy"><br>
-<img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260404163344465-831832755.png" alt="image" loading="lazy"><br>
-<img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260404162932158-1953368151.png" alt="image" loading="lazy"><br>
-<img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260404163251978-58869825.png" alt="image" loading="lazy"></p>
-<blockquote>
-<p>è®°ä½è¿æ­¥è®¾ç½®çæ³¢ç¹ç</p>
-</blockquote>
-<h3 id="è¿è¡-launch-æä»¶æµè¯-imu--èç¹æ°æ®">è¿è¡ launch æä»¶æµè¯ IMU  èç¹æ°æ®</h3>
-<pre><code class="language-bash">lsusb
-
-</code></pre>
-<blockquote>
-<p>çå°Xscens ******</p>
-</blockquote>
-<p><img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260404164153905-1772971375.png" alt="image" loading="lazy"></p>
-<pre><code class="language-bash">ls -l /dev/tty  # åå» Tab é®
-</code></pre>
-<blockquote>
-<p>çå°/dev/ttyUSB0</p>
-</blockquote>
-<p><img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260404164318022-739960187.png" alt="image" loading="lazy"></p>
-<pre><code class="language-bash">sudo chmod 777 /dev/ttyUSB0
-
-</code></pre>
-<p><img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260404164420845-1981456181.png" alt="image" loading="lazy"></p>
-<pre><code class="language-bash">groups
- 
-sudo usermod -G dialout -a $USER
- 
-newgrp dialout
-
-</code></pre>
-<h4 id="åçº¯åå¸imuçèç¹æ°æ®">åçº¯åå¸IMUçèç¹æ°æ®</h4>
-<p><img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260404164918560-237261182.png" alt="image" loading="lazy"></p>
-<pre><code class="language-bash">cd driver_ws
-
-source install/setup.bash
-        
-ros2 launch xsens_mti_ros2_driver xsens_mti_node.launch.py
-</code></pre>
-<h4 id="å¨-rviz-ä¸­å¯è§å-imu-æ°æ®">å¨ rviz ä¸­å¯è§å IMU æ°æ®</h4>
-<p><img src="https://img2024.cnblogs.com/blog/3071480/202604/3071480-20260404165146719-106698068.jpg" alt="f777b6ee5b667095b47090e333174a9b" loading="lazy"></p>
-<pre><code class="language-bash">ros2 launch xsens_mti_ros2_driver display.launch.py
-
-</code></pre>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.2638888888888889" data-date-updated="2026-04-04 23:13">2026-04-04 16:53</span>&nbsp;
-<a href="https://www.cnblogs.com/zylyehuo">zylyehuo</a>&nbsp;
-éè¯»(<span id="post_view_count">28</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19818935);return false;">æ¶è</a>&nbsp;
-<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19818935', targetLink: 'https://www.cnblogs.com/zylyehuo/p/19818935', title: 'åºäº RO2 humble éç½® robosense Helios 32ï¼éè¾ï¼ &amp;amp; xsense mti 300' })">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
