@@ -3,20 +3,20 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-04-07T16:51:43.733Z</lastBuildDate>
+        <lastBuildDate>2026-04-07T20:41:43.479Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
-    <title><![CDATA[ Postgres - Listen/Notifyæå»ºè½»éçº§åå¸è®¢éç³»ç» ]]></title>
-    <link>https://www.cnblogs.com/XY-Heruo/p/19832406</link>
-    <guid>fc86a3a99430cd59751c71f1f94b9799</guid>
+    <title><![CDATA[ å¹²è´§ï¼Ubuntu å¿«éé¨ç½² Cloudreve ï¼æé å¨åè½ç§æäºç ]]></title>
+    <link>https://www.cnblogs.com/ywzk/p/19832040</link>
+    <guid>9db3ef64ad020f30511fdbcbe7cf4254</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/XY-Heruo/p/19832406" title="åå¸äº 2026-04-07 23:29">
-    <span role="heading" aria-level="2">Postgres - Listen/Notifyæå»ºè½»éçº§åå¸è®¢éç³»ç»</span>
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/ywzk/p/19832040" title="åå¸äº 2026-04-07 21:36">
+    <span role="heading" aria-level="2">å¹²è´§ï¼Ubuntu å¿«éé¨ç½² Cloudreve ï¼æé å¨åè½ç§æäºç</span>
     
 
 </a>
@@ -26,610 +26,148 @@
             <div class="postBody">
                     <div id="cnblogs_post_description" style="display: none">
         
-        ä»ç»Postgresä¸­çListen/Notifyæºå¶ï¼ä»¥åå¦ä½å¨Pythonä¸­åºç¨
+        å¨æ°æ®å­å¨éæ±æ¥çå¢é¿çä»å¤©ï¼æ¥æä¸ä¸ªæ¢ç¾è§åå¼ºå¤§çç§æäºçå·²æä¸ºè®¸å¤ææ¯ç±å¥½èçæ éãCloudreve å­åå¶è½»éåãæ¯æå¤å­å¨ç­ç¥ä»¥ååºè²ç UI è®¾è®¡ï¼å§ç»æ¯èªå»ºäºççé¦éã
+ä»å¤©ï¼æä»¬å°åºäºææ°ç Ubuntu 24.04 (Noble Numbat) ç³»ç»ï¼æææå¸¦ä½ å®æ Cloudreve v4.15.0 çå®è£ãèªå¯å¨éç½®å TLS å®å¨å å¯ã
     </div>
 <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h2 id="æ¦è¿°">æ¦è¿°</h2>
-<p>ååè®¾è®¡ä¸ä¸ªåé¨ç³»ç»çæ¶æ¯æ¨¡ååç¼å­æ¨¡åæ¶ï¼åªæä¸ä¸ªPostgresä¾èµãæ³çæ²¡å¤å¤§ç¨æ·éï¼æ²¡å¿è¦é¢å¤å®è£Redisï¼å¾å¢è¿ç»´å·¥å¤«ãç¼å­å¥½è§£å³ï¼éä¸ªUNLOGGEDè¡¨å³å¯ãå­å­å§å§ç¢ç£¨æä¹ç¨æ°æ®è¡¨å®ç°æ¶æ¯çæ¶åï¼åç°PostgreSQL æä¾äºåç½®å½ä»¤ <code>LISTEN</code> å <code>NOTIFY</code>ï¼ç¨äºå¨æ°æ®åºæå¡å¨åè¿æ¥çå®¢æ·ç«¯ä¹é´å®ç°å¼æ­¥éä¿¡ãè¿ä¸ª PostgreSQL ç¹æçæ©å±åè½ä½¿å¾æ°æ®åºå¯ä»¥ä½ä¸ºä¸ä¸ªè½»éçº§çæ¶æ¯éåï¼MQï¼ç³»ç»ä½¿ç¨ï¼åè®¸åºç¨ç¨åºä»æ°æ®åºä¸­çæäºä»¶ï¼å¹¶ç±å¶ä»å®¢æ·ç«¯å®æ¶ååºãäºæ¯ä¸æå³åï¼ä¸æä½éªä¸ä¸ã</p>
-<h3 id="æ ¸å¿ç¹æ§">æ ¸å¿ç¹æ§</h3>
-<ul>
-<li><strong>è½»éçº§å®ç°</strong>ï¼æ éé¢å¤çæ¶æ¯ä¸­é´ä»¶ï¼ç´æ¥å©ç¨ PostgreSQL åç½®åè½</li>
-<li><strong>å¼æ­¥éä¿¡</strong>ï¼æ¯æåå¸-è®¢éæ¨¡å¼ï¼å®ç°è§£è¦çç»ä»¶éä¿¡</li>
-<li><strong>åå­é«æ</strong>ï¼ééï¼Channelï¼æ¯çº¯åå­å¯¹è±¡ï¼ä¸å ç¨ç£çç©ºé´</li>
-<li><strong>é¶éç½®</strong>ï¼æ éé¢ååå»ºæç®¡çééï¼éç¨éå»º</li>
-</ul>
-<h3 id="éç¨åºæ¯">éç¨åºæ¯</h3>
+<p>å¨æ°æ®å­å¨éæ±æ¥çå¢é¿çä»å¤©ï¼æ¥æä¸ä¸ªæ¢ç¾è§åå¼ºå¤§çç§æäºçå·²æä¸ºè®¸å¤ææ¯ç±å¥½èçæ éã<strong>Cloudreve</strong> å­åå¶è½»éåãæ¯æå¤å­å¨ç­ç¥ä»¥ååºè²ç UI è®¾è®¡ï¼å§ç»æ¯èªå»ºäºççé¦éã</p>
+<p>ä»å¤©ï¼æä»¬å°åºäºææ°ç <strong>Ubuntu 24.04 (Noble Numbat)</strong> ç³»ç»ï¼æææå¸¦ä½ å®æ <strong>Cloudreve v4.15.0</strong> çå®è£ãèªå¯å¨éç½®å TLS å®å¨å å¯ã</p>
+<hr>
+<h2 id="ä¸-å¿«éå®è£">ä¸ã å¿«éå®è£</h2>
+<p>Cloudreve éç¨åæä»¶ååï¼é¨ç½²è¿ç¨æå¶é«æã</p>
+<h3 id="1-åå»ºå·¥ä½ç®å½">1. åå»ºå·¥ä½ç®å½</h3>
+<p>å»ºè®®å°ç¨åºå­æ¾å¨ <code>/opt</code> ç®å½ä¸è¿è¡ç»ä¸ç®¡çï¼</p>
+<p>Bash</p>
+<pre><code class="language-plain">sudo mkdir -p /opt/cloudreve
+cd /opt/cloudreve
+</code></pre>
+<h3 id="2-ä¸è½½ææ°-v4150-ä¸»ç¨åº">2. ä¸è½½ææ° v4.15.0 ä¸»ç¨åº</h3>
+<p>ä»å®æ¹ GitHub è·åææ°çæ¬ï¼ä»¥å¸¸è§ç 64 ä½ Linux æ¶æä¸ºä¾ï¼ï¼</p>
+<p>Bash</p>
+<pre><code class="language-plain">sudo wget https://github.com/cloudreve/Cloudreve/releases/download/4.15.0/cloudreve_4.15.0_linux_amd64.tar.gz
+sudo tar -zxvf cloudreve_4.15.0_linux_amd64.tar.gz
+sudo chmod +x cloudreve
+</code></pre>
+<h3 id="3-é¦æ¬¡å¯å¨">3. é¦æ¬¡å¯å¨</h3>
+<p><strong>å³é®æ­¥éª¤ï¼</strong> æ§è¡ä¸æ¹å½ä»¤è¿è¡åå§åãç¨åºä¼éæºçæ<strong>ç®¡çåè´¦å·ä¸å¯ç </strong>ã</p>
+<blockquote>
+<p><strong>æ³¨æï¼</strong> v4 çæ¬çè´¦å·ä¿¡æ¯ä»å¨é¦æ¬¡å¯å¨æ¶æ¾ç¤ºä¸æ¬¡ï¼è¯·å¡å¿æç§æè®°å½ï¼è¥éè¿éå é¤ <code>cloudreve.db</code> éæ°åå§åã</p>
+</blockquote>
+<p>Bash</p>
+<pre><code class="language-plain">./cloudreve
+</code></pre>
+<p>è®°å½å®æåï¼æ <code>Ctrl+C</code> åæ­¢ç¨åºã</p>
+<hr>
+<h2 id="äº-éç½®-systemd-å¼æºèªå¯">äºã éç½® Systemd å¼æºèªå¯</h2>
+<p>ä¸ºäºè®©äºçå¨æå¡å¨éå¯åè½èªå¨è¿è¡ï¼æä»¬éè¦å°å¶æ³¨åä¸ºç³»ç»æå¡ã</p>
 <ol>
-<li><strong>å®æ¶ä»ªè¡¨ç</strong>ï¼æ°æ®åæ´æ¶å®æ¶æ¨éæ´æ°</li>
-<li><strong>ç¼å­å¤±æ</strong>ï¼æ°æ®æ´æ°æ¶éç¥ç¼å­å±å·æ°</li>
-<li><strong>æ°æ®å®¡è®¡</strong>ï¼è·è¸ªéè¦æ°æ®åæ´äºä»¶</li>
-<li><strong>ä»»å¡è°åº¦</strong>ï¼æå»ºç®åçåå¸å¼ä»»å¡éå</li>
-<li><strong>äºä»¶é©±å¨æ¶æ</strong>ï¼å®ç°å¾®æå¡é´çäºä»¶éä¿¡</li>
+<li><strong>åå»ºæå¡æä»¶</strong>ï¼</li>
 </ol>
-<h3 id="ééchannelæºå¶">ééï¼Channelï¼æºå¶</h3>
-<p><strong>éè¦ç¹æ§</strong>ï¼</p>
+<p>Bash</p>
+<pre><code class="language-plain">sudo nano /etc/systemd/system/cloudreve.service
+</code></pre>
+<ol start="2">
+<li><strong>å¡«å¥éç½®åå®¹</strong>ï¼</li>
+</ol>
+<p>Ini, TOML</p>
+<pre><code class="language-plain">[Unit]
+Description=Cloudreve
+Documentation=https://docs.cloudreve.org
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/cloudreve
+ExecStart=/opt/cloudreve/cloudreve
+Restart=on-abnormal
+RestartSec=5s
+KillMode=mixed
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+<ol start="3">
+<li><strong>æ¿æ´»æå¡</strong>ï¼</li>
+</ol>
+<p>Bash</p>
+<pre><code class="language-plain">sudo systemctl daemon-reload
+sudo systemctl enable cloudreve  # è®¾ç½®å¼æºå¯å¨
+sudo systemctl start cloudreve   # ç«å³å¯å¨
+</code></pre>
+<hr>
+<h2 id="ä¸-éç½®-tls-å å¯ç´è¿-https">ä¸ã éç½® TLS å å¯ï¼ç´è¿ HTTPSï¼</h2>
+<p>ä¸ºäºç¡®ä¿å¨å¬å±ç½ç»ä¸è®¿é®çå®å¨æ§ï¼å»ºè®®ç´æ¥å¼å¯ TLSã</p>
+<h3 id="1-åå¤è¯ä¹¦æä»¶">1. åå¤è¯ä¹¦æä»¶</h3>
+<p>å°ä½ ååå¯¹åºçè¯ä¹¦ï¼<code>.crt</code> / <code>.pem</code>ï¼åç§é¥ï¼<code>.key</code>ï¼ä¸ä¼ è³æå¡å¨ãå»ºè®®è·¯å¾ï¼<code>/opt/cloudreve/certs/</code>ã</p>
+<h3 id="2-ä¿®æ¹-confini-éç½®æä»¶">2. ä¿®æ¹ <code>conf.ini</code> éç½®æä»¶</h3>
+<p>Bash</p>
+<pre><code class="language-plain">sudo nano /opt/cloudreve/data/conf.ini
+</code></pre>
+<p>å¨éç½®ä¸­å å¥ä»¥ä¸å­æ®µï¼å¦å·²å­å¨åä¿®æ¹ï¼ï¼</p>
+<p>Ini, TOML</p>
+<pre><code class="language-plain">[System]
+; ä¿®æ¹çå¬ç«¯å£ä¸º HTTPS æ åç«¯å£ 443
+Listen = :443
+
+[SSL]
+; å¼å¯ SSL
+SSL = true
+; è¯ä¹¦ç»å¯¹è·¯å¾
+CertPath = /opt/cloudreve/certs/fullchain.pem
+; ç§é¥ç»å¯¹è·¯å¾
+KeyPath = /opt/cloudreve/certs/privkey.key
+</code></pre>
+<h3 id="3-ç¹å«è¯´æ">3. ç¹å«è¯´æ</h3>
 <ul>
-<li>Channel æ¯çº¯åå­å¯¹è±¡ï¼é <code>LISTEN</code> å½ä»¤éå¼åå»º</li>
-<li>å½ææçå¬ä¼è¯æ­å¼ææ§è¡ <code>UNLISTEN</code> æ¶èªå¨åæ¶</li>
-<li>æ éæå¨åå»ºæå é¤ééï¼ä¹ä¸æ¯ææ­¤æä½</li>
+<li><strong>é«æéç«¯å£</strong>ï¼ç±äº 443 å±äºç¹æç«¯å£ï¼è¯·ç¡®ä¿è¿è¡ Cloudreve çç¨æ·æ¥æç¸åºæéï¼æä½¿ç¨ <code>sudo</code> è¿è¡æå¡ã</li>
+<li><strong>æ¾è¡é²ç«å¢</strong>ï¼</li>
+<li>Bash</li>
 </ul>
-<h3 id="æ¶æ¯ä¼ éæ¨¡å">æ¶æ¯ä¼ éæ¨¡å</h3>
-<p>PostgreSQL ç <code>NOTIFY</code> éç¨å¸åç <strong>"æ çå¬å³ä¸¢å¼"</strong> æºå¶ï¼</p>
+<pre><code class="language-plain">sudo ufw allow 443/tcp
+</code></pre>
+<hr>
+<h2 id="å-è®¿é®æ¹å¼">åã è®¿é®æ¹å¼</h2>
+<h3 id="1-æµè§å¨ç´æ¥è®¿é®">1. æµè§å¨ç´æ¥è®¿é®</h3>
+<p>ç´æ¥éè¿IPæèååè®¿é®ï¼ç¶åæ³¨åè´¦å·å³å¯ã</p>
+<p><img alt="261e80b2-3a54-4fb3-8206-eb4d380ac28b" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3412427/202604/3412427-20260407213537185-436888398.png" class="lazyload"></p>
+<p><img alt="ä¸è½½ (1)" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3412427/202604/3412427-20260407213544046-1790031160.png" class="lazyload"></p>
+<p><img alt="ä¸è½½ (2)" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3412427/202604/3412427-20260407213550644-218719255.png" class="lazyload"></p>
+<h3 id="2-éè¿webdavæè½½å°æ¬å°">2. éè¿WebDAVæè½½å°æ¬å°</h3>
+<p><img alt="ä¸è½½ (3)" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3412427/202604/3412427-20260407213527272-1498127439.png" class="lazyload"></p>
+<h3 id="3-ç¨ææºappè®¿é®">3. ç¨ææºappè®¿é®</h3>
+<p>æ³¨æéè¦å°è®¿é®å°ååå¸å°å¬ç½ï¼åæ¶å¼å¯SSLãææºä¸è½½appï¼æ«æç»å®è®¾å¤å³å¯ã</p>
+<p><img alt="ScreenShot_2026-04-07_211553_239" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3412427/202604/3412427-20260407213514083-1745283171.png" class="lazyload"></p>
+<p>å¶ä»äº®ç¹åè½</p>
+<h3 id="-æè´çå­å¨çµæ´»æ§">ð¾ æè´çå­å¨çµæ´»æ§</h3>
+<p>å¨âç®¡çé¢æ¿ - å­å¨ç­ç¥âä¸­ï¼ä½ å¯ä»¥è½»æ¾æè½½ï¼</p>
 <ul>
-<li>æ²¡æçå¬èæ¶ï¼æ¶æ¯ä¸ä¼å¥é</li>
-<li>ä¸å ç¨ç£çç©ºé´</li>
-<li>ä¸æ¶èæä¹ååå­</li>
-<li>æ¶æ¯ä»å¨å­å¨æ´»è·çå¬èæ¶ä¼ é</li>
+<li><strong>æ¬å°å­å¨</strong>ï¼éåå°å®¶éç NAS ç¡¬çææå¡å¨å¤§å®¹éååºä½ä¸ºä¸»å­å¨ã</li>
+<li><strong>å¯¹è±¡å­å¨</strong>ï¼åçæ¯æé¿éäº OSSãè¾è®¯äº COSãä¸çãS3 ç­ã</li>
+<li><strong>ç¬¬ä¸æ¹ç½ç</strong>ï¼éè¿ WebDAV åè®®ï¼ä½ å¯ä»¥å° <strong>Alist</strong> ä¸­æè½½çåç§ç½çèµæºæ ç¼å¼å¥å° Cloudreve ä¸­ã</li>
 </ul>
-<h2 id="åºç¡ä½¿ç¨">åºç¡ä½¿ç¨</h2>
-<h3 id="psql-å½ä»¤è¡ç¤ºä¾">psql å½ä»¤è¡ç¤ºä¾</h3>
-<pre><code class="language-sql">-- çå¬æå®éé
-LISTEN task_channel;
+<h3 id="-ç¦»çº¿ä¸è½½ç¥å¨">ð¥ ç¦»çº¿ä¸è½½ç¥å¨</h3>
+<p>å¨æå¡å¨ç«¯å®è£ <strong>Aria2</strong> åï¼ä½ å¯ä»¥å¨ Cloudreve ä¸­ç´æ¥æäº¤ç£åé¾æ¥æç§å­ãæå¡å¨ä¼éé»ä¸è½½å¹¶èªå¨ä¸ä¼ å°ä½ æå®çå­å¨ç­ç¥ä¸­ï¼å®ç°âäººå¨å¤é¢ï¼çå¨äºç«¯âã</p>
+<h3 id="ï¸-å¼ºå¤§çå¤åªä½ç®¡ç">ð¼ï¸ å¼ºå¤§çå¤åªä½ç®¡ç</h3>
+<p>v4.15.0 å¨åªä½å¤çä¸æ´å ç¨³å¥ãå®æ¯ææµ·éç§ççç¼©ç¥å¾çæãè§é¢æµåªä½å¨çº¿ç¹æ­ï¼çè³æ¯æå¤ç§åå¬ææ¡£çå¨çº¿é¢è§ï¼éå¸¸éåä½ä¸ºå®¶åº­å½±é³ä¸­å¿æåä½ç½çã</p>
+<hr>
+<h2 id="ç»è¯­">ç»è¯­</h2>
+<p>Cloudreve ä¸ä»æ¯ä¸ä¸ªå­å¨å·¥å·ï¼æ´æ¯ä¸ä¸ªé«æçæ°æ®è°åº¦ä¸­å¿ãéè¿ç®åçé¨ç½²ï¼ä½ å°±è½å¨ Ubuntu 24.04 ä¸äº«åå°ä¸æ»çç§æäºä½éªã</p>
+<p><strong>å¿«å»å¨ææ­å»ºå±äºä½ çâæ°å­å ¡åâå§ï¼</strong></p>
+<hr>
+<p><em>ð¡ ææ¯å°è´´å£«ï¼å¦æéå°æ°æ®åºæ§è½ç¶é¢ï¼å»ºè®®å¨éç½®æä»¶ä¸­å°é»è®¤ç SQLite è¿ç§»è³ MySQLï¼ä¼ææ´ä½³çååºéåº¦ã</em></p>
 
--- åééåéæ¶æ¯
-NOTIFY task_channel, '123456';
 
--- åæ¶çå¬ææéé
-UNLISTEN *;
-
--- æ¥çå½åçå¬çéé
-SELECT pg_listening_channels();
-
--- æ¥çç³»ç»éç¥ç¶æ
-SELECT * FROM pg_stat_activity WHERE backend_type = 'client backend';
-</code></pre>
-<h3 id="å¨ææ¶æ¯çæ">å¨ææ¶æ¯çæ</h3>
-<p>æ åç <code>NOTIFY</code> å½ä»¤è¦æ±æ¶æ¯åå®¹å¿é¡»æç¡®æå®ï¼ä¸æ¯æå¨æå­ç¬¦ä¸²æ¼æ¥ãä½å¯ä»¥ä½¿ç¨ <code>pg_notify()</code> å½æ°æ¥çæå¨æéç¥ï¼</p>
-<pre><code class="language-sql">-- ä½¿ç¨ pg_notify å½æ°æ¯æå¨ææ¶æ¯
-SELECT pg_notify('my_channel', 'Hello, ' || 'World!');
-
--- å¸¦åæ°çå¨ææ¶æ¯
-SELECT pg_notify('audit_channel', 'User ' || current_user || ' logged in at ' || now()::text);
-</code></pre>
-<h2 id="python-å®ç°ç¤ºä¾">Python å®ç°ç¤ºä¾</h2>
-<h3 id="é¡¹ç®ç»æ">é¡¹ç®ç»æ</h3>
-<pre><code>âââ main.py              # æ ¸å¿å®ç°ï¼TaskWorker å TaskProducer
-âââ conf/
-â   âââ config.toml     # éç½®æä»¶
-âââ pkg/
-    âââ config/         # éç½®ç®¡çæ¨¡å
-</code></pre>
-<h3 id="å®è£ä¾èµ">å®è£ä¾èµ</h3>
-<pre><code class="language-shell">uv add "psycopg[binary,pool]&gt;=3.3.3"
-</code></pre>
-<h3 id="éç½®ç®¡ç">éç½®ç®¡ç</h3>
-<p>é¦åï¼éè¿éç½®æä»¶ç®¡çæ°æ®åºè¿æ¥åééè®¾ç½®ï¼</p>
-<pre><code class="language-toml"># conf/config.toml
-[database.postgres]
-host = "127.0.0.1"
-port = 5432
-user = "username"
-password = "password"
-dbname = "database_name"
-pool_min_size = 2
-pool_max_size = 10
-channel = "task_channel"  # é»è®¤ééåç§°
-</code></pre>
-<p>éç½®æ¨¡åçä»£ç ç¤ºä¾ï¼<code>pkg/config/config.py</code></p>
-<pre><code class="language-python">import tomllib
-from typing import Any, Dict
-
-
-class BaseConfig:
-    def __init__(self, cfg_file: str):
-        self._cfg_file = cfg_file
-        self._data: Dict[str, Any] = {}
-        self._load_config()
-
-    def _load_config(self) -&gt; None:
-        if self._data:
-            return
-
-        try:
-            with open(self._cfg_file, "rb") as f:
-                self._data = tomllib.load(f)
-        except FileNotFoundError:
-            raise RuntimeError(f"éç½®æä»¶ä¸å­å¨: {self._cfg_file}")
-        except Exception as e:
-            raise RuntimeError(f"å è½½éç½®æä»¶å¤±è´¥: {e}")
-
-
-class PostgresConfigMixin(BaseConfig):
-    def postgres_host(self) -&gt; str:
-        return self._data.get("database", {}).get("postgres", {}).get("host", "")
-
-    def postgres_port(self) -&gt; int:
-        return self._data.get("database", {}).get("postgres", {}).get("port", 5432)
-
-    def postgres_user(self) -&gt; str:
-        return self._data.get("database", {}).get("postgres", {}).get("user", "")
-
-    def postgres_password(self) -&gt; str:
-        return self._data.get("database", {}).get("postgres", {}).get("password", "")
-
-    def postgres_dbname(self) -&gt; str:
-        return self._data.get("database", {}).get("postgres", {}).get("dbname", "")
-
-    def postgres_pool_min_size(self) -&gt; int:
-        return (
-            self._data.get("database", {}).get("postgres", {}).get("pool_min_size", 2)
-        )
-
-    def postgres_pool_max_size(self) -&gt; int:
-        return (
-            self._data.get("database", {}).get("postgres", {}).get("pool_max_size", 10)
-        )
-
-    def postgres_channel(self) -&gt; str:
-        return (
-            self._data.get("database", {})
-            .get("postgres", {})
-            .get("channel", "default_channel")
-        )
-
-    def get_postgres_dsn(self, hide_password: bool = False) -&gt; str:
-        """è·åPostgreSQLè¿æ¥DSN"""
-        password = self.postgres_password()
-        if hide_password and password:
-            password = "***"
-
-        # psycopg3 ä½¿ç¨æ åç PostgreSQL è¿æ¥å­ç¬¦ä¸²æ ¼å¼
-        return (
-            f"postgresql://{self.postgres_user()}:{password}@"
-            f"{self.postgres_host()}:{self.postgres_port()}/{self.postgres_dbname()}"
-        )
-
-
-class LLMConfigMixin(BaseConfig):
-    """LLMéç½®Mixin"""
-
-    def llm_model(self) -&gt; str:
-        return self._data.get("llm", {}).get("model", "")
-
-    def llm_base_url(self) -&gt; str:
-        return self._data.get("llm", {}).get("base_url", "")
-
-    def llm_api_key(self) -&gt; str:
-        return self._data.get("llm", {}).get("api_key", "")
-
-
-class Config(PostgresConfigMixin, LLMConfigMixin):
-    def __init__(self, cfg_file: str = "conf/config.toml"):
-        super().__init__(cfg_file)
-
-    def reload(self) -&gt; None:
-        """éæ°å è½½éç½®"""
-        self._data = {}  # æ¸ç©ºæ°æ®
-        self._load_config()
-
-</code></pre>
-<h3 id="æ ¸å¿ç»ä»¶å®ç°">æ ¸å¿ç»ä»¶å®ç°</h3>
-<h4 id="1-ä»»å¡æ¶è´¹ètaskworker">1. ä»»å¡æ¶è´¹èï¼TaskWorkerï¼</h4>
-<p><code>TaskWorker</code> è´è´£çå¬æå®ééå¹¶å¤çæ¥æ¶å°çä»»å¡ï¼</p>
-<pre><code class="language-python"># main.py - TaskWorker ç±»æ ¸å¿é¨å
-import asyncio
-import json
-import signal
-from typing import Set
-
-from psycopg import AsyncConnection, Notify, sql
-from psycopg_pool import AsyncConnectionPool
-
-from pkg.config import cfg
-
-MAX_CONCURRENCY = 10
-
-
-class TaskWorker:
-    def __init__(self, dsn: str, channel: str):
-        self._dsn = dsn
-        self.channel = channel
-        self.pool: AsyncConnectionPool | None = None
-        self.listener_conn: AsyncConnection | None = None
-        self.sem = asyncio.Semaphore(MAX_CONCURRENCY)
-        self.active_tasks: Set[asyncio.Task] = set()
-
-    async def start(self) -&gt; None:
-        self.pool = AsyncConnectionPool(
-            self._dsn,
-            min_size=cfg.postgres_pool_min_size(),
-            max_size=cfg.postgres_pool_max_size(),
-            open=False,  # å»¶è¿æå¼, é¿åé»å¡
-        )
-        await self.pool.open()
-
-        # ç¬ç«çå¬è¿æ¥ï¼é²æ­¢ LISTEN ç¶æéè¿æ¥åæ¶ä¸¢å¤±
-        self.listener_conn = await AsyncConnection.connect(self._dsn, autocommit=True)
-        await self.listener_conn.execute(
-            sql.SQL("LISTEN {}").format(sql.Identifier(self.channel))
-        )
-        print(f"Listening on channel: {self.channel}")
-
-        try:
-            async for notify in self.listener_conn.notifies():
-                if notify.channel == self.channel and notify.payload:
-                    await self._dispatch_task(notify)
-        except asyncio.CancelledError:
-            print("Listener cancelled")
-        except Exception as e:
-            print(f"Listener error: {e}")
-        finally:
-            await self.stop()
-
-    async def _dispatch_task(self, notify: Notify) -&gt; None:
-        """æ¥æ¶éç¥å¹¶ååä»»å¡"""
-        task_info = notify.payload.strip()
-        try:
-            task_data = json.loads(task_info)  # åè®¾ payload æ¯ JSON æ ¼å¼çå­ç¬¦ä¸²
-            print(f"Received task notification: {task_data}")
-        except json.JSONDecodeError:
-            task_data = {"task_id": task_info}  # å¦æä¸æ¯ JSON æ ¼å¼ï¼ä½¿ç¨åå§å­ç¬¦ä¸²
-            print(f"Received non-JSON task notification: {task_data}")
-        except Exception as e:
-            print(f"Invalid task ID received: {task_info}")
-            return
-
-        if not isinstance(task_data, dict) or "task_id" not in task_data:
-            print(
-                f"Missing task_id in notification: {task_data}, or task_data is not a dict"
-            )
-            return
-
-        task = asyncio.create_task(self._process_task(task_data))
-        self.active_tasks.add(task)
-        task.add_done_callback(self.active_tasks.discard)
-
-    async def _process_task(self, task_data: dict) -&gt; None:
-        """æ§è¡ä¸å¡é»è¾"""
-        if not self.pool:
-            raise RuntimeError("Connection pool is not initialized")
-        async with self.sem:
-            async with self.pool.connection() as conn:
-                try:
-                    await self._execute_business(task_data)
-
-                    print(f"&lt;= Task {task_data['task_id']} completed successfully")
-                except Exception as e:
-                    print(f"Error processing task {task_data['task_id']}: {e}")
-                    # è¿éå¯ä»¥æ·»å éè¯é»è¾æéè¯¯è®°å½
-                    await self._log_failure(conn, task_data["task_id"], str(e))
-
-    async def _execute_business(self, task_data: dict) -&gt; None:
-        """æ§è¡ä¸å¡é»è¾"""
-        print(f"&lt;= Processing task {task_data}...")
-        await asyncio.sleep(5)  # æ¨¡æèæ¶æä½
-        print(f"&lt;= Task {task_data} done.")
-
-    async def _log_failure(self, conn: AsyncConnection, task_id: int, error_msg: str):
-        """è®°å½å¤±è´¥æ¥å¿"""
-        try:
-            # è®°å½å¤±è´¥æ¥å¿å°ç¬ç«è¡¨ï¼ä¾¿äºåç»­éè¯æåè­¦
-            print(f"Logging failure for task {task_id}: {error_msg}")
-        except Exception as e:
-            print(f"Failed to log error for task {task_id}: {e}")
-
-    async def stop(self) -&gt; None:
-        print("Stopping TaskWorker...")
-        if self.active_tasks:
-            await asyncio.gather(*self.active_tasks, return_exceptions=True)
-
-        if self.listener_conn:
-            await self.listener_conn.close()
-
-        if self.pool:
-            await self.pool.close()
-
-        print("TaskWorker stopped gracefully.")
-</code></pre>
-<h4 id="2-ä»»å¡åå¸ètaskpublisher">2. ä»»å¡åå¸èï¼TaskPublisherï¼</h4>
-<p><code>TaskPublisher</code> è´è´£åééåå¸ä»»å¡æ¶æ¯ï¼</p>
-<pre><code class="language-python"># main.py - TaskPublisher ç±»
-class TaskPublisher:
-    def __init__(self, dsn: str):
-        self._dsn = dsn
-        self._pool: AsyncConnectionPool | None = None
-
-    async def start(self):
-        if not self._pool:
-            self._pool = AsyncConnectionPool(
-                self._dsn,
-                min_size=cfg.postgres_pool_min_size(),
-                max_size=cfg.postgres_pool_max_size(),
-                open=False,  # å»¶è¿æå¼, é¿åé»å¡
-            )
-            await self._pool.open()
-        print("TaskPublisher started.")
-
-    async def publish(self, channel: str, payload: dict):
-        if not self._pool:
-            raise RuntimeError("Connection pool is not initialized")
-
-        async with self._pool.connection() as conn:
-            try:
-                payload_str = json.dumps(
-                    payload, default=str
-                )  # å° dict è½¬æ¢ä¸º JSON å­ç¬¦ä¸²
-                await conn.execute(
-                    sql.SQL("NOTIFY {}, {}").format(
-                        sql.Identifier(channel), sql.Literal(payload_str)
-                    )
-                )
-                print(f"=&gt; Published task to channel {channel}: {payload_str}")
-                return True
-            except Exception as e:
-                print(f"Failed to publish task to channel {channel}: {e}")
-                return False
-
-    async def publish_batch(self, channel: str, payloads: list[dict]):
-        if not self._pool:
-            raise RuntimeError("Connection pool is not initialized")
-
-        count = 0
-
-        async with self._pool.connection() as conn:
-            for payload in payloads:
-                try:
-                    payload_str = json.dumps(payload, default=str)
-                    await conn.execute(
-                        sql.SQL("NOTIFY {}, {}").format(
-                            sql.Identifier(channel), sql.Literal(payload_str)
-                        )
-                    )
-                    print(f"=&gt; Published task to channel {channel}: {payload_str}")
-                    count += 1
-                except Exception as e:
-                    print(f"Failed to publish batch tasks to channel {channel}: {e}")
-        return count
-
-    async def stop(self):
-        if self._pool:
-            await self._pool.close()
-        print("TaskPublisher stopped.")
-
-    async def __aenter__(self):
-        await self.start()
-        return self
-
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        await self.stop()
-</code></pre>
-<h3 id="è°ç¨æ¼ç¤º">è°ç¨æ¼ç¤º</h3>
-<p>ä»¥ä¸æ¯<code>main.py</code>ä¸­çæ¼ç¤ºé¨åï¼</p>
-<pre><code class="language-python"># main.py
-async def run_worker():
-    worker = TaskWorker(cfg.get_postgres_dsn(), cfg.postgres_channel())
-    task = asyncio.create_task(worker.start())
-    return task
-
-
-async def run_publisher():
-    async with TaskPublisher(cfg.get_postgres_dsn()) as publisher:
-        for i in range(1, 11):
-            payload = {"task_id": i, "data": f"Task data {i}"}
-            await publisher.publish(cfg.postgres_channel(), payload)
-            await asyncio.sleep(0.5)  # æ¨¡æåå¸é´é
-
-
-async def main():
-    # worker = TaskWorker(cfg.get_postgres_dsn(), cfg.postgres_channel())
-    # loop = asyncio.get_running_loop()
-    # stop_evt = asyncio.Event()
-
-    # for sig in (signal.SIGINT, signal.SIGTERM):
-    #     loop.add_signal_handler(sig, stop_evt.set)
-
-    # listen_task = asyncio.create_task(worker.start())
-
-    # await stop_evt.wait()
-    # print("Shutdown signal received, stopping worker...")
-    # listen_task.cancel()
-    # await listen_task
-
-    worker_task = await run_worker()
-    await asyncio.sleep(2)  # ç¡®ä¿ worker å·²ç»å¯å¨å¹¶çå¬
-
-    await run_publisher()  # åå¸ä»»å¡
-    print("All tasks published successfully.")
-
-    await asyncio.sleep(30)  # ç­å¾ worker å¤çå®ä»»å¡
-
-    worker_task.cancel()  # åæ­¢ worker
-
-    try:
-        await worker_task
-    except asyncio.CancelledError:
-        pass
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
-</code></pre>
-<h2 id="ä½¿ç¨åºæ¯æ©å±">ä½¿ç¨åºæ¯æ©å±</h2>
-<h3 id="åºæ¯ä¸å®æ¶æ°æ®åæ­¥">åºæ¯ä¸ï¼å®æ¶æ°æ®åæ­¥</h3>
-<pre><code class="language-python">async def sync_data_change(self, table_name: str, record_id: str, operation: str):
-    """æ°æ®åæ´æ¶åéåæ­¥éç¥"""
-    message = f"{table_name}:{record_id}:{operation}"
-    await self.publish("data_sync_channel", message)
-</code></pre>
-<h3 id="åºæ¯äºåå¸å¼ééç¥">åºæ¯äºï¼åå¸å¼ééç¥</h3>
-<pre><code class="language-python">async def notify_lock_release(self, lock_name: str):
-    """ééæ¾æ¶éç¥ç­å¾è"""
-    await self.publish("distributed_lock_channel", f"RELEASE:{lock_name}")
-</code></pre>
-<h3 id="åºæ¯ä¸ç¼å­å¤±æå¹¿æ­">åºæ¯ä¸ï¼ç¼å­å¤±æå¹¿æ­</h3>
-<pre><code class="language-python">async def invalidate_cache(self, cache_key: str):
-    """ç¼å­å¤±ææ¶å¹¿æ­éç¥"""
-    await self.publish("cache_invalidation_channel", cache_key)
-</code></pre>
-<h2 id="æ³¨æäºé¡¹">æ³¨æäºé¡¹</h2>
-<h3 id="ææ¯éå¶">ææ¯éå¶</h3>
-<ol>
-<li><strong>æ¶æ¯å¤§å°</strong>ï¼NOTIFY æ¶æ¯æå¤§ä¸º 8000 å­è</li>
-<li><strong>æ æä¹å</strong>ï¼æ¶æ¯ä¸æä¹åï¼éå¯åä¸¢å¤±</li>
-<li><strong>æ ç¡®è®¤æºå¶</strong>ï¼åéæ¹æ æ³ç¥éæ¶æ¯æ¯å¦è¢«æ¥æ¶</li>
-<li><strong>æ é¡ºåºä¿è¯</strong>ï¼æ¶æ¯å¯è½ä¸æåéé¡ºåºå°è¾¾</li>
-</ol>
-<h3 id="çäº§ç¯å¢å»ºè®®">çäº§ç¯å¢å»ºè®®</h3>
-<ol>
-<li><strong>çæ§åè­¦</strong>ï¼å®ç°ééçå¬ç¶æçæ§</li>
-<li><strong>éè¯¯å¤ç</strong>ï¼æ·»å å®åçéè¯¯å¤çåæ¥å¿è®°å½</li>
-<li><strong>å¤ä»½æºå¶</strong>ï¼éè¦æ¶æ¯åºæå¤ä»½å­å¨</li>
-<li><strong>æ§è½æµè¯</strong>ï¼å¨é«è´è½½ä¸æµè¯ç³»ç»è¡¨ç°</li>
-</ol>
-<h2 id="è¡¥å">è¡¥å</h2>
-<h3 id="asyncpgç">asyncpgç</h3>
-<p><code>asyncpg</code>æ¯pythonè¿æ¥postgresççº¯å¼æ­¥é©±å¨ï¼æ§è½æ´å¥½</p>
-<p>å®è£</p>
-<pre><code class="language-shell">uv add asyncpg
-</code></pre>
-<p>ä»£ç ç¤ºä¾ï¼</p>
-<pre><code class="language-python">import asyncio
-import signal
-from typing import Set
-
-import asyncpg
-
-from pkg.config import cfg
-
-MAX_CONCURRENT_TASKS = 5  # æå¤§å¹¶åä»»å¡æ°
-
-
-class TaskWorker:
-    def __init__(self, dsn: str, channel: str):
-        self._dsn = dsn
-        self._channel = channel
-        self._pool: asyncpg.Pool | None = None
-        self._listener_conn: asyncpg.Connection | None = None
-        self._sem = asyncio.Semaphore(MAX_CONCURRENT_TASKS)
-        self._active_tasks: Set[asyncio.Task] = set()
-
-    async def start(self):
-        """å¯å¨çå¬å¨"""
-        if not self._pool:
-            self._pool = await asyncpg.create_pool(
-                dsn=self._dsn,
-                min_size=cfg.postgres_pool_min_size(),
-                max_size=cfg.postgres_pool_max_size(),
-            )
-
-        # åå»ºä¸ç¨è¿æ¥ç¨äºçå¬
-        if not self._listener_conn:
-            self._listener_conn = await asyncpg.connect(dsn=self._dsn)
-            await self._listener_conn.add_listener(self._channel, self._on_notify)
-            print(f"Listening on channel: {self._channel}")
-
-        try:
-            # ä¿æçå¬ç¶æ
-            await asyncio.Future()
-        except asyncio.CancelledError:
-            pass
-        finally:
-            await self.stop()
-
-    async def _on_notify(
-        self, conn: asyncpg.Connection, pid: int, channel: str, payload: str
-    ):
-        """æ¶å° NOTIFY æ¶çåè°å½æ°"""
-        if not payload:
-            return
-
-        task_id = payload.strip()
-        print(f"Received notification: {task_id} on channel: {channel}")
-
-        # æäº¤å°äºä»¶å¾ªç¯ï¼å¸¦å¹¶åéå¶
-        task = asyncio.create_task(self._handle_task(task_id))
-        self._active_tasks.add(task)
-        task.add_done_callback(self._active_tasks.discard)
-
-    async def _handle_task(self, task_id: str):
-        """ä»»å¡å¤çæ ¸å¿é»è¾"""
-        if not self._pool:
-            raise RuntimeError("æ°æ®åºè¿æ¥æ± æªåå§å")
-        async with self._sem:  # å¹¶åæ§å¶
-            async with self._pool.acquire() as conn:
-                try:
-                    # 1. æ§è¡ä¸å¡é»è¾
-                    await self._execute_business_logic(task_id)
-
-                    # 2. æ´æ°ä»»å¡ç¶æï¼ç¤ºä¾ï¼
-                    print(f"Task {task_id} completed successfully.")
-
-                except Exception as e:
-                    print(f"Task {task_id} failed: {e}")
-                    await self._log_failure(task_id, str(e))
-
-    async def _execute_business_logic(self, task_id: str):
-        """æ¨¡æä¸å¡é»è¾å¤ç"""
-        print(f"Processing task {task_id}...")
-        await asyncio.sleep(5)  # æ¨¡æèæ¶æä½
-        print(f"Task {task_id} completed.")
-
-    async def _log_failure(self, task_id: str, error: str):
-        """è®°å½å¤±è´¥æ¥å¿"""
-        print(f"Task {task_id} failure logged: {error}")
-        # å®éé¡¹ç®ä¸­å¯è®°å½å°æ°æ®åº
-
-    async def stop(self):
-        """ä¼éå³é­"""
-        print("Shutting down gracefully...")
-
-        # ç­å¾æ­£å¨è¿è¡çä»»å¡å®æ
-        if self._active_tasks:
-            await asyncio.gather(*self._active_tasks, return_exceptions=True)
-
-        # æ¸çèµæº
-        if self._listener_conn:
-            await self._listener_conn.remove_listener(self._channel, self._on_notify)
-            await self._listener_conn.close()
-
-        if self._pool:
-            await self._pool.close()
-
-        print("Shutdown complete.")
-
-
-async def main():
-    worker = TaskWorker(cfg.get_postgres_dsn(), cfg.postgres_channel())
-    loop = asyncio.get_running_loop()
-    stop_evt = asyncio.Event()
-
-    # æ³¨åä¿¡å·å¤çå¨ï¼ä¼éå³é­
-    for sig in (signal.SIGINT, signal.SIGTERM):
-        loop.add_signal_handler(sig, stop_evt.set)
-
-    # å¯å¨çå¬å¨
-    listen_task = asyncio.create_task(worker.start())
-
-    # ç­å¾åæ­¢äºä»¶
-    await stop_evt.wait()
-    print("Shutdown signal received, stopping worker...")
-
-    # åæ¶çå¬ä»»å¡å¹¶ç­å¾å®æ
-    listen_task.cancel()
-    await listen_task
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
-
-</code></pre>
-
-
-</div>
-<div id="MySignature" role="contentinfo">
-    <p>æ¬ææ¥èªåå®¢å­ï¼ä½èï¼<a href="https://www.cnblogs.com/XY-Heruo/" target="_blank">è±ééä½ç°</a>ï¼è½¬è½½è¯·æ³¨æåæé¾æ¥ï¼<a href="https://www.cnblogs.com/XY-Heruo/p/19832406" target="_blank">https://www.cnblogs.com/XY-Heruo/p/19832406</a></p>
 </div>
 <div class="clear"></div>
 
             </div>
             <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-04-07 23:30">2026-04-07 23:29</span>&nbsp;
-<a href="https://www.cnblogs.com/XY-Heruo">è±ééä½ç°</a>&nbsp;
-éè¯»(<span id="post_view_count">4</span>)&nbsp;
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-04-07 21:37">2026-04-07 21:36</span>&nbsp;
+<a href="https://www.cnblogs.com/ywzk">è¿ç»´æºåº</a>&nbsp;
+éè¯»(<span id="post_view_count">21</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19832406);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FXY-Heruo%2Fp%2F19832406&amp;targetId=19832406&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+<a href="javascript:void(0)" onclick="AddToWz(19832040);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fywzk%2Fp%2F19832040&amp;targetId=19832040&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -3862,146 +3400,793 @@ Example Untrained Model Prediction: tensor([[0, 3, 6, 9, 3, 6, 9, 3, 6, 9]])
     </description>
     </item>
 <item>
-    <title><![CDATA[ æ·±åº¦è§£æClaude Code 51ä¸è¡æºç èåçè®¾è®¡å®ç° ]]></title>
-    <link>https://www.cnblogs.com/laoqing/p/19829999</link>
-    <guid>7836a86ca4859864fc5337781982ae29</guid>
+    <title><![CDATA[ å°åºæ¯æå¨ä¸ç­ï¼è¿æ¯ OpenClaw å¨ä¸ç­ï¼ ]]></title>
+    <link>https://www.cnblogs.com/zh94/p/19832233</link>
+    <guid>1f18467a9c73619c88c3abe898e94e3b</guid>
     <description>
     <![CDATA[ 
-		<h1 class="postTitle">
-			<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/laoqing/p/19829999" title="åå¸äº 2026-04-07 14:33">
-    <span role="heading" aria-level="2">æ·±åº¦è§£æClaude Code 51ä¸è¡æºç èåçè®¾è®¡å®ç°</span>
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/zh94/p/19832233" title="åå¸äº 2026-04-08 01:14">
+    <span role="heading" aria-level="2">å°åºæ¯æå¨ä¸ç­ï¼è¿æ¯ OpenClaw å¨ä¸ç­ï¼</span>
     
 
 </a>
 
-		</h1>
-		<div class="clear"></div>
-		<div class="postBody">
-			<div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
-æè¿åçäºä¸ä»¶éå¸¸å¤§çäºæï¼å¨çæå¼ºçAIç¼ç¨å·¥å·Claude Codeï¼å ä¸ºAnthropicçä¸ä¸ªä½çº§å¤±è¯¯ââæånpmåçæ¶åå¿äºå source&nbsp;mapæä»¶ââ51ä¸è¡æºä»£ç ï¼å¨é¨æ´é²å¨äºèç½ä¸ã
-<p>å ä¸ªå°æ¶ä¹åï¼ä»£ç å°±è¢«å¨ä¸ççå¼åèä¸è½½ãéåãæè§£ãAnthropicç´§æ¥ä¸æ¶äºåï¼ä½äºèç½æ²¡æå é¤é®ãå ä¸º Claude Code æå¤æ³é²äº source mapï¼è¿æ¬¾è¢«æ æ°å¼åèæ§ä¸ç¥åçæå¼ºç»ç«¯ AIï¼ç¬¬ä¸æ¬¡æèªå·±çåé¨éª¨æ¶æ´é²å¨èåç¯ä¸ã</p>
-<p>ä¸æ¬¾é¡¶çº§ AI Coding äº§åï¼çæ­£çæ¤åæ²³å°åºä¿®å¨åªéãä¸æ¯åçº¯å·è¡¥å¨åç¡®çï¼ä¸æ¯ååä¸ä¸ª IDE æä»¶ï¼èæ¯å´ç»æ¨¡åæ­åºä¸æ´å¥è¿è¡æ¶ç³»ç»ã</p>
-<div class="dpu8C   ">
-<p>Claude Code çåºå±æ¯ä¸æ´å¥åå±ç³»ç»</p>
-</div>
-<div class="dpu8C   ">
-<p>Claude Code ä¸æ¯ä¸ä¸ªåçº¯è°ç¨å¤§æ¨¡åçå½ä»¤è¡å·¥å·ï¼èæ¯ä¸å¥åå±è®¾è®¡çå®æ´ç³»ç»ã</p>
-</div>
-<p>&nbsp;<img alt="image" loading="lazy" style="display: block; margin-left: auto; margin-right: auto" data-src="https://img2024.cnblogs.com/blog/1200756/202604/1200756-20260407134949993-975933155.png" class="lazyload"></p>
-<p><strong><em>æä¸é¢æ¯ç¨æ·çå°çç»ç«¯çé¢ï¼ä¸­é´æ¯å½ä»¤åå·¥å·å±ï¼è´è´£æåç§è½åæ´é²ç»æ¨¡åï¼åå¾ä¸æ¯æ¥è¯¢å¤çå¼æï¼è´è´£æµå¼è°ç¨ãå·¥å·è°åº¦ãéè¯æ¢å¤åä¸ä¸æåç¼©ï¼ç¸å½äºæ´ä¸ªç³»ç»çå¤§èï¼ä¸é¢è¿ææå¡å±ï¼å¤çè®¤è¯ãæä»¶ãç¶æç®¡çååæï¼æåºå±åæ¯æä»¶ç³»ç»ãGitãéç½®ãæéåå®å¨å­å¨è¿äºåºç¡è®¾æ½ã</em></strong></p>
-<p>ä»£ç ç®å½ä¹éå¸¸éï¼ä¸»å¥å£ãæ¥è¯¢å¼æãå·¥å·æ³¨åè¡¨ã100 å¤ä¸ª slash commandsã146 ä¸ª UI ç»ä»¶ãèªç  terminal frameworkã85+ hooksã330+ utilsãå¤æºè½ä½åè°ãè¿ç¨ç®¡çãä»»å¡ç³»ç»ãè¿ç§»ç³»ç»ï¼å ä¹æä¸ä¸ªç°ä»£å¤æåºç¨è¯¥æçå±å¨éºé½äºã</p>
-<p><img alt="image" loading="lazy" style="display: block; margin-left: auto; margin-right: auto" data-src="https://img2024.cnblogs.com/blog/1200756/202604/1200756-20260407135302897-1168261298.png" class="lazyload"></p>
-<div class="dpu8C   ">
-<p>è¿æå³çï¼Claude Code çæè·¯ä»ä¸å¼å§å°±æ¯æ AI ä½ä¸ºç³»ç»ä¸­å¿ï¼åå´ç»å®éå»ºä¸å¥ç»ç«¯äº¤äºãæ§è¡ãå®å¨åæ©å±æ¡æ¶ã</p>
-</div>
-<div class="dpu8C   ">
-<p>å®ä¸æ¯ä¸ä¸ª prompt wrapperï¼èæ¯ä¸ä¸ªææ¨¡åãå·¥å·ãç¶æãä¸ä¸æå UI é½ç»ä¸èµ·æ¥çå·¥ç¨äº§åã</p>
-<div class="dpu8C   ">
-<p>Claude Code ççæ­£å¤§èï¼æ¯å®ç Query Engineã</p>
-</div>
-<div class="dpu8C   ">
-<p><span>æºç éï¼è¿å¥ç³»ç»åæä¸¤å±ï¼</span><span>QueryEngine.ts</span><span>è´è´£ä¼è¯çº§ç¼æï¼</span><span>query.ts</span><span>è´è´£éååç¶ææºãåèç®¡çç³»ç»ä¸ä¸æãæ¶æ¯æä¹åãAPI è°ç¨ãæéç»è®¡åææ¬ç´¯è®¡ï¼åèåæ¯ä¸ä¸ª&nbsp;</span><span>while(true)</span><span>çå¼¹æ§å¾ªç¯ï¼åå¹¶è¡é¢åè®°å¿å skillsï¼ååæ¶æ¯åç¼©ï¼ç¶åæµå¼è°ç¨ APIï¼å¤çéè¯¯ï¼æ§è¡å·¥å·ï¼åå¤æ­è¦ä¸è¦ compactãcollapseãç»­ tokenãæèç»§ç»­ä¸ä¸è½®ã</span></p>
-<p><img alt="image" loading="lazy" style="display: block; margin-left: auto; margin-right: auto" data-src="https://img2024.cnblogs.com/blog/1200756/202604/1200756-20260407135452550-1517167104.png" class="lazyload"></p>
-<div class="dpu8C   ">
-<p>è¿å¥è®¾è®¡ææææçä¸ç¹æ¯ï¼Claude Code å¹¶ä¸æâä¸æ¬¡æé®âçè§£æä¸æ¬¡ç®åè¯·æ±ï¼èæ¯çè§£æä¸ä¸ªå¯è½ä¸æ­æ¢å¤ãè½¬åãè¡¥æ§è¡ãç»­ä¸ä¸æçé¿çå½å¨æä»»å¡ã</p>
-</div>
-<div class="dpu8C   ">
-<p>ä¹å°±æ¯è¯´ï¼å®ä¸æ¯âé®ä¸æ¬¡ãç­ä¸æ¬¡âçæ¨¡åè°ç¨å¨ï¼èæ¯âä»»å¡é©±å¨åååå¼æâã</p>
-</div>
-<div class="dpu8C   ">
-<p>æ¯å¦å½æ¨¡åè¾åº token å¿«èå°½ï¼ä½ä»»å¡è¿æ²¡åå®æ¶ï¼å®ä¸ä¼ç²æ´åä½ï¼èæ¯æ³¨å¥ä¸æ¡éå½¢åæ¶æ¯ï¼è¦æ±æ¨¡åâç´æ¥ç»§ç»­ï¼ä¸è¦éæ­ï¼ä¸è¦åé¡¾âï¼ç¶åæååèªç¶ç»­ä¸å»ï¼å¦æä¸ä¸æå¤ªé¿ï¼å°±åå staged collapseï¼ä¸å¤å reactive compactï¼å¦ææµå¼è¯·æ±ä¸­éææï¼å°±å°è¯éåéæµå¼ï¼å¦ææ¨¡åè¿è½½ï¼è¿ä¼åéå°å¤ç¨æ¨¡åãæ´ä¸ªè¿ç¨çç®æ é½ä¸æ¯âä¸¥æ ¼éµå®åæ¬¡è¯·æ±è¾¹çâï¼èæ¯âå°½å¯è½è®©ä»»å¡å®æï¼èä¸æ¯ææ¥éæç»ç¨æ·âã</p>
-</div>
-<div class="dpu8C   ">
-<p>è¿å¶å®éå¸¸åç°ä»£æµè§å¨ææ°æ®åºçæè·¯ï¼</p>
-</div>
-<div class="dpu8C   ">
-<p>ç¨æ·çå°çæ¯ä¸ä¸ªæµççè¿ç»­ä½éªï¼åºå±åå¨ä¸ååå®¹éãåéåæ¢å¤ã</p>
-</div>
-<div class="dpu8C   ">
-<p>60 å¤ä¸ªå·¥å·ï¼è¢«ç»ä¸æä¸ä¸ªæ¥å£</p>
-</div>
-<div class="dpu8C   ">
-<p>Claude Code å¼ºçå°æ¹æ¯å®è½æå·¥å·ç³»ç»åæä¸ä¸ªä¸è´ãå¯è°åº¦ãå¯æ¸²æãå¯æ§æéçç»ä¸å±ã</p>
-</div>
-<div class="dpu8C   ">
-<p>å¨æºç éï¼æ¯ä¸ªå·¥å·é½éµå¾ªåä¸å¥æ¥å£ï¼åå­ãæè¿°ãé¢å¤ promptãè¾å¥ schemaãè°ç¨é»è¾ãæéæ£æ¥ãè¾å¥æ ¡éªãå¹¶åå®å¨å¤æ­ï¼ä»¥ååå± UI æ¸²ææ¹æ³ââå·¥å·å¼å§ãå·¥å·è¿åº¦ãå·¥å·ç»æãå·¥å·æ¥éãä¹å°±æ¯è¯´ï¼å¨ Claude Code çæ¥ï¼Bashãæä»¶ç¼è¾ãgrepãLSPãWeb æç´¢ãAgent è°åº¦ï¼æ¬è´¨ä¸é½åªæ¯ç»ä¸å·¥å·åè®®ä¸çä¸åå®ç°ã</p>
-</div>
-<div class="dpu8C   ">
-<p>è¿ç§æ½è±¡å¸¦æ¥çæå¤§å¥½å¤ï¼æ¯ç³»ç»å¯ä»¥çæ­£æâå·¥å·è½åâèä¸æ¯âå·¥å·æ¥æºâå»è°åº¦ã</p>
-<p><strong><em>Anthropicæä¸æå¿çï¼æ°æ°æ¯è¿51ä¸è¡ä»£ç ã</em></strong></p>
-<p><strong><em>ä»ä»¬çæ­£çæ¤åæ²³ï¼æ¯ä»£ç èåé£å¥ç¨èªç¶è¯­è¨åæçæä»¤ä½ç³»ââä»¥åè¿å¥ä½ç³»éèççäº§åå²å­¦ã</em></strong></p>
-<p><strong><em>é£ä¹ Claude Code ç©¶ç«æ¯æä¹åçå¢ï¼è¿ç¯æ·±åº¦åææç« åºäºç§æåä¸» Sathwick å¯¹ Claude Code æºç åæ¶æçéåè§£åï¼ä¸ºä½ è¿åè¿æ¬¾äº§åä¹æä»¥è½éç»´æå»çåå¹ã</em></strong></p>
-</div>
-</div>
-</div>
-<p><strong>ä¸ãAIä¸æ¯æ²¡æè®°å¿ï¼èæ¯ä½ æ²¡ç»å®è®¾è®¡è®°å¿</strong></p>
-<p>å¾å¤äººè§å¾AI"è®°æ§å·®"ââèäºåå¤©ï¼ä¸æ¬¡è§é¢å¨å¿äºã</p>
-<p><span>ä½æ¯çå®Claude Codeçè®°å¿ç³»ç»ï¼æåç°è¿æ ¹æ¬ä¸æ¯å¤§æ¨¡åçé®é¢ï¼æ¯</span><span>äº§åè®¾è®¡</span><span>çé®é¢ã</span></p>
-<p>Claude Codeæè®°å¿åæäº4ç§ç±»åï¼</p>
-<p><span>ç¬¬ä¸ç§å«"ç¨æ·è®°å¿"</span><span>ââä½ æ¯è°ãä½ æé¿ä»ä¹ãä½ åæ¬¢ä»ä¹æ¹å¼æ²éãä¸ä¸ªèµæ·±å·¥ç¨å¸åä¸ä¸ªç¼ç¨å°ç½ï¼AIåºè¯¥ç¨å®å¨ä¸åçæ¹å¼è·ä½ åä½ã</span></p>
-<p><span>ç¬¬äºç§å«"åé¦è®°å¿"</span><span>ââä½ çº æ­£è¿å®ä»ä¹ãä½ è¯´è¿"å«ç»æåæ»ç»"ï¼å®å°±è®°ä½äºï¼ä¸æ¬¡ä¸åç¯ãèä¸ä¸åè®°çº æ­£ï¼è¿è®°è®¤å¯ââä½ è¯´"å¯¹ï¼å°±è¿æ ·"ï¼å®ä¹è®°ä¸æ¥ï¼ç¥éè¿æ¡è·¯æ¯å¯¹çã</span></p>
-<p><span>ç¬¬ä¸ç§å«"é¡¹ç®è®°å¿"</span><span><span><span><span>ââå½åå¨åä»ä¹ãè°è´è´£ä»ä¹ã</span></span></span><span><span><span>deadline</span></span></span><span><span><span>æ¯ä»ä¹æ¶åã</span></span></span></span></p>
-<p><span>ç¬¬åç§å«"åèè®°å¿"</span><span>ââåªéè½æ¾å°ä»ä¹èµæï¼Jiraå¨åªãçæ§å¤§çå¨åªã</span></p>
-<p><img alt="image" loading="lazy" style="display: block; margin-left: auto; margin-right: auto" data-src="https://img2024.cnblogs.com/blog/1200756/202604/1200756-20260407132445585-247857802.png" class="lazyload"></p>
-<p>&nbsp;<span>å®ç¨ä¸ä¸ªå°æ¨¡åæ¥å½"è®°å¿æ£ç´¢å"ãä½ æ¯è¯´ä¸å¥è¯ï¼å°æ¨¡ååæ¿çä½ çé®é¢å»ç¿»è®°å¿åºï¼æå¤æ5æ¡æç¸å³çï¼åç»å¤§æ¨¡åãå¤§æ¨¡åä¸æµªè´¹</span><span>ç®å</span><span>æç´¢ï¼åªè´è´£æèã</span></p>
-<p>æ´ç çæ¯ï¼å®è¿æä¸ä¸ª"åå°è®°å¿æåAgent"ââä½ ä»¬å¨èå¤©çæ¶åï¼åå°æå¦ä¸ä¸ªAIå¨é»é»åæå¯¹è¯ï¼æå¼å¾è®°ä½çä¸è¥¿æååºæ¥å­å¥½ãä½ é½ä¸ç¥éï¼å®å·²ç»å¸®ä½ è®°ä¸äºã</p>
-<p>æºç éæä¸æ®µPromptï¼ä¸é¨æè¿ä¸ªåå°Agentæä¹å¤æ­è¯¥è®°ä»ä¹ï¼<strong>åªè®°é£äºæ æ³ä»ä»£ç åGitåå²ä¸­æ¨å¯¼åºæ¥çä¿¡æ¯ãä»£ç æ¨¡å¼ãæ¶æãæä»¶ç»æââè¿äºä¸ç¨è®°ï¼grepä¸ä¸å°±æäºãè¦è®°çæ¯äººçåå¥½ãäººçå³ç­ãäººçåé¦ã</strong></p>
-<p>ä¸ºä»ä¹å¤§å®¶æ»è¯´é¾è¾å¤ªèé±ï¼Claude Codeå´å¯ä»¥200ç¾éä¸ä¸ªæéä¾¿ç¨ï¼æ²¡æå¥½çè®°å¿ç³»ç»ï¼æ¯æ¬¡å¯¹è¯é½è¦æææä¸ä¸æéæ°åä¸éï¼tokenç§å¾å¿«ï¼è¿ä¸åç¡®ãè¿å¥è®°å¿ç³»ç»ï¼å¾å¯è½å°±æ¯å³é®å·®å¼ã</p>
-<p><span><strong>è®°å¿ç³»ç»ææ¯AIäº§åçæ¤åæ²³ãæ¨¡åå¤§å®¶é½è½è°API</strong><span><span><strong>ï¼ä½ä½ çAIè½ä¸è½è®°ä½ç¨æ·ãè¶ç¨è¶æç¨æ·ï¼è¿ææ¯çæ­£çç«äºå£å</strong>ã</span></span></span></p>
-<p><strong>äºãç®¡AIåç®¡äººï¼å±ç¶ä¸æ¨¡ä¸æ ·</strong></p>
-<p>Claude Codeæä¸ä¸ª"Coordinatoræ¨¡å¼"ââä¸ä¸ªAIå½é¡¹ç®ç»çï¼ç®¡ä¸ç¾¤AI workerå¹²æ´»ãç ç©¶ãåä»£ç ãæµè¯ãéªè¯ï¼å¨ç±workerå®æï¼Coordinatorè´è´£æä»»å¡ãæ´¾æ´»ãéªæ¶ã</p>
-<p>ç®¡çé»è¾ä¸æ¯åå¨ä»£ç éçï¼æ¯åå¨Promptéçã370è¡èªç¶è¯­è¨ï¼å°±æ¯ä¸ä¸ªå®æ´çé¡¹ç®ç®¡çæåã</p>
-<p><img alt="image" loading="lazy" style="display: block; margin-left: auto; margin-right: auto" data-src="https://img2024.cnblogs.com/blog/1200756/202604/1200756-20260407140409320-330652268.png" class="lazyload"></p>
-<p><strong>å³äºæ´¾æ´»ï¼</strong></p>
-<p>&nbsp;<span><span><span>æ°¸è¿ä¸è¦å'æ ¹æ®ä½ çåç°å»ä¿®å¤è¿ä¸ªbug'ãè¿ç§è¯æ¯å¨æçè§£å</span></span></span><span><span><span>å¤å</span></span></span><span><span><span>ç»ä¸å±ãä½ å¿é¡»èªå·±çè§£äºç ç©¶ç»æï¼ç¶ååæ¸æ¥ï¼æ¹åªä¸ªæä»¶ãç¬¬å è¡ãä¸ºä»ä¹æ¹ãæ¹æä»ä¹ã</span></span></span></p>
-<p><strong>å³äºéªæ¶ï¼</strong></p>
-<p><span><span><span>ä¸è¦æ©¡ç®å¾ç« å¼å°éªæ¶å·¥ä½ãéªæ¶æå³çè¯æä»£ç è½ç¨ï¼ä¸æ¯ç¡®è®¤ä»£ç å­å¨ãè¦è·æµè¯ãæ¥ç±»åãè¯è¾¹çæåµãå¦æä»ä¹çèµ·æ¥ä¸å¯¹ï¼è¦æ·±æï¼ä¸è¦è½»ææ·¡åè¯´'åºè¯¥æ²¡å³ç³»ã</span></span></span></p>
-<p>æ°¸è¿ä¸è¦æçè§£åå¤åç»ä¸å±ã<span><span><span><span>AIæ¶ä»£æéè¦çè½åä¸æ¯åä»£ç ï¼æ¯åæä»¤ãåæä»¤å°±æ¯åç®¡çã</span></span></span></span><span>&nbsp;ä½ è½ä¸è½æä»»å¡è¯´æ¸æ¥ãè¯´åç¡®ãè¯´å®æ´ï¼å³å®äºä½ æä¸çAIï¼åäººï¼è½ä¸è½æäºåå¯¹ã</span></p>
-<p><strong>ä¸ãå®å¨ä¸æ¯å ä¸ªç¡®è®¤æé®</strong></p>
-<p>Claude Codeçå®å¨ç³»ç»æå¤åæ§ï¼</p>
-<p>æ¯ä¸æ¡å½ä»¤ï¼è¦ç»è¿23éå®å¨æ£æ¥ã</p>
-<p><img alt="image" loading="lazy" style="display: block; margin-left: auto; margin-right: auto" data-src="https://img2024.cnblogs.com/blog/1200756/202604/1200756-20260407140936365-1185869729.png" class="lazyload"></p>
-<p><span>å®æä¸ä¸ªæ¨¡åï¼åå­å°±å«</span><span><span><span><span>"</span></span></span><span><span><span>YOLO</span></span></span><span><span><span>åç±»å¨</span></span></span><span><span><span>"</span></span></span></span><span>ââYou Only Live Onceã</span></p>
-<p>å¹²ä»ä¹çï¼ç¨AIæ¥å¤æ­"è¿ä¸ªæä½è¯¥ä¸è¯¥èªå¨æ¾è¡"ã1500è¡ä»£ç ï¼å°±å¹²è¿ä¸ä»¶äºã</p>
-<p>å®ä¸æ¯ç®åçé»ç½ååï¼èæ¯æå¯¹è¯ä¸ä¸æãç¨æ·éç½®ãæä½åå®¹å¨é¨æç»AIæ¨¡åï¼è®©æ¨¡åå¤æ­é£é©ç­çº§ãä½é£é©èªå¨æ¾è¡ï¼é«é£é©å¼¹ç¡®è®¤ï¼æé«é£é©ç´æ¥æ¦æªã</p>
-<p><span>çæ­£çå®å¨ï¼æ¯ä»ç³»ç»å±é¢è®¾è®¡çï¼ä¸æ¯äº¡ç¾è¡¥ç¢ï¼ä¸æ¯å ä¸ªæé®ã</span></p>
-<p><span><strong>åãTokenå°±æ¯é±ââAIäº§åçéèæåº</strong></span></p>
-<p>ä½ ä»¥ä¸ºé¡¶çº§AIå¬å¸ä¸å·®é±ï¼ççå®æºç éé£äºçé±ççè¿¹ã</p>
-<p><span>Claude Codeè¿½è¸ªäº</span><span>14ç§ç¼å­å¤±æçåå </span><span>ãæä¸ä¸ªå½æ°åå­å°±å«</span><span>DANGEROUS_æªç¼å­ç³»ç»æç¤ºåº</span><span>ââæææ¯ï¼ç¢°è¿ä¸ªå°æ¹ä¹åä½ å¾æ³æ¸æ¥ï¼æ¹äºç¼å­å°±ç¸äºã</span></p>
-<p>ä¸ºäºä¿æ¤ç¼å­ï¼Claude CodeæAgentåè¡¨ä»å·¥å·æè¿°éç§»å°äºå¯¹è¯æ¶æ¯éââå°±è¿ä¸ä¸ªä¼åï¼çäºå¨å¹³å°ç¼å­åå»ºTokenç10.2%ã</p>
-<p>&nbsp;</p>
-<p><img alt="image" loading="lazy" style="display: block; margin-left: auto; margin-right: auto" data-src="https://img2024.cnblogs.com/blog/1200756/202604/1200756-20260407141525449-1616051817.png" class="lazyload"></p>
-<p>è¿æä¸ä¸ªæ´çççï¼æºç æ³¨éåçââæ¯å¤©25ä¸æ¬¡æ æAPIè°ç¨ãä¿®å¤æ¹æ¡ï¼3è¡ä»£ç ï¼å ä¸ªè®¡æ°å¨ï¼è¿ç»­å¤±è´¥3æ¬¡å°±åæ­¢éè¯ã</p>
-<p><span>3è¡ä»£ç ï¼ä¸å¤©ç25ä¸æ¬¡è°ç¨ã</span></p>
-<p><span>å¨AIæ¶ä»£ï¼ç¼å­ç­ç¥ä¸æ¯ææ¯ç»èï¼æ¯è´¢å¡é®é¢ã</span><span>&nbsp;æ¯ä¸ä¸ªTokené½æ¯é±ï¼ç§é±éåº¦ä¼è¶åºä½ çæ³è±¡ã</span></p>
-<p><strong>äºãèå¨æºç éçç§å¯æ­¦å¨</strong></p>
-<p><strong><span>æºç éæä¸ªå«</span><span>KAIROS</span><span><span><span><span>çåè½ââAIå¯ä»¥7Ã24å°æ¶å¨åå°è¿è¡ï¼èªå·±è®¾å®æ¶ä»»å¡ï¼èªå·±çå¬GitHubäºä»¶ï¼æ¯å¦æäººæäºPRã</span></span></span><span><span><span>CI</span></span></span><span><span><span>è·å®äºï¼ï¼ä¸»å¨ç»ä½ åæ¨ééç¥ï¼æ¯å¤©è¿èªå¨å"è®°å¿è¸é¦"ââæä¸å¤©å­¦å°çä¸è¥¿æ´çå½æ¡£ã</span></span></span></span></strong></p>
-<p><img alt="image" loading="lazy" style="display: block; margin-left: auto; margin-right: auto" data-src="https://img2024.cnblogs.com/blog/1200756/202604/1200756-20260407142933935-2019560433.png" class="lazyload"></p>
-<p>&nbsp;</p>
-<p>è¿å·²ç»ä¸æ¯ç¼ç¨å·¥å·äºï¼è¿æ¯ä¸ä¸ªAIæä½ç³»ç»çéå½¢ã</p>
-<p><strong>å­ãè¿æåè¸é¦æºå¶ââå¦ææäººå·å½Claude CodeçAPIæµéæ³æ¿å»è®­ç»èªå·±çæ¨¡åï¼å®ä¼å¾è¯·æ±éæ³¨å¥åçå·¥å·å®ä¹ï¼æ±¡æä½ çè®­ç»æ°æ®ãç¨ææ¯ææ®µåå·å¸ã</strong></p>
-<p><span>æé­å¹»çæ¯</span><span>"Undercover Mode"éèº«æ¨¡å¼</span><span>ââAnthropicçå·¥ç¨å¸ç¨AIåå¼æºä»£ç æ¶ï¼AIä¼èªå¨éèææAIçè¿¹ï¼commit messageåå¾è·äººåçä¸æ¨¡ä¸æ ·ãæºç éæä¸å¥æ³¨éï¼</span><span>"There is NO force-OFF"</span><span><span><span><span>ââè¿ä¸ªåè½æ²¡æå¼ºå¶å³é­ç</span></span></span><span><span><span>å¼å³</span></span></span><span><span><span>ã</span></span></span></span></p>
-<p><span>Claude Codeçæ ¸å¿ä¸æ¯ä»£ç ï¼æ¯Promptã</span></p>
-<p><span>å®ææ ¸å¿ç"</span><span>ç®æ³</span><span>"æ¯é£äºç¨èªç¶è¯­è¨åçç®¡çæä»¤ââæä¹æä»»å¡ãæä¹æ´¾æ´»ãæä¹éªæ¶ãæä¹è®°ä½ç¨æ·ãæä¹ä¿æ¤å®å¨ãè¿äºæä»¤ï¼ä»»ä½ä¸ä¸ªå¥½çç®¡çèçäºé½ä¼è§å¾"è¿ä¸å°±æ¯æå¹²çäºå"ã</span></p>
-<p>&nbsp;</p>
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>æç°å¨è¿ä¸äºä¸ç§å¾ç¦»è°±ççæ´»ã</p>
+<p>é£ä¹¦æéæå¡«å·¥æ¶ââå°é¾è¾èªå·±ä¸ç³»ç»æå·¥æ¶å¡«äºã</p>
+<p>èæ¿å¨ç¾¤éæ´¾æ´»ââå°é¾è¾èªå·±æ¥å®ï¼å¼å§ä¸»å¨å·¥ä½äºã</p>
+<p>åäº@æé®ä¸ªé®é¢ââå°é¾è¾è¯»å°éç¥ï¼èªå·±å»æ¥äºèµæï¼æç­æ¡ç©åå»äºã</p>
+<p>ææ¶åæé½ææï¼å°åºæ¯æå¨ä¸ç­ï¼è¿æ¯å°é¾è¾å¨ä¸ç­ï¼</p>
+<p>ä»å¤©è¿ç¯æç« ï¼å°±è·å¤§å®¶åäº«ä¸ä¸ï¼æå°åºæ¯æä¹åå°çã</p>
+<hr>
+<p>åè¯´ç»è®ºã</p>
+<p>æç°å¨æä¸ä¸ª 24 å°æ¶å¨çº¿ç AI Agentï¼åå«æ¯ï¼</p>
+<ul>
+<li>
+<p>è½¯ä»¶å°é¾è¾ OpenClawï¼24 å°æ¶å¹²æ´»çä¸»å</p>
+</li>
+<li>
+<p>Claude Codeï¼ç»å°é¾è¾"ä¿®èº«ä½"çåå¤ä¿é</p>
+</li>
+<li>
+<p>YoooClawï¼å°é¾è¾ OpenClaw å¨ææºç«¯çä»£ç</p>
+</li>
+</ul>
+<p>è¿ä¸ä¸ªä¸è¥¿ä¸²å¨ä¸èµ·ï¼å½¢æäºä¸ä¸ªèªå¨é­ç¯ã</p>
+<p>å¬èµ·æ¥å¾çä¹ï¼</p>
+<p>å«æ¥ï¼ä¸å±ä¸å±ç»ä½ è®²ã</p>
+<hr>
+<h1 id="openclaw--24-å°æ¶å¹²æ´»çä¸»å">OpenClaw â 24 å°æ¶å¹²æ´»çä¸»å</h1>
+<p>å°é¾è¾çåºç¡ç¥è¯è¿éå°±ä¸å¤è¯´äºï¼æå´è¶£çå¯ä»¥çæä¹åçæç« ã</p>
+<p>OpenClaw ç®åå°±æ¯æçä¸»åå¹²æ´»å·¥å·ã</p>
+<p>éè¦å¹²ä»ä¹æ´»ï¼ç´æ¥ææ¥å®å°±è¡ã</p>
+<p>ä½æ¯ã</p>
+<p>ç¨è¿çæåä¸å®ç¥éä¸ä¸ªçç¹ï¼</p>
+<p><strong>ä½ è®©å°é¾è¾å¹²æ´»æ²¡é®é¢ï¼ä½è®©å®èªå·±æ¹èªå·±çéç½®ï¼å®å¤§æ¦çä¼æèªå·±ææ­»ã</strong></p>
+<p>æ¯å¦è®©å®èªå·±ç»èªå·±éä¸ä¸ª Agent åèº«ï¼æ¹å®éç½®æä»¶åéå¯ã</p>
+<p>å®äºï¼éå¯ä¸èµ·æ¥äºã</p>
+<p>å ä¸ºå®å¯¹èªå·±æä¹éç½®èªå·±ï¼æ ¹æ¬å°±æ²¡æè¶³å¤çäºè§£ã</p>
+<p>å°±åä½ è®©ä¸ä¸ªå¤ç§å»çç»èªå·±åææ¯ï¼çè®ºä¸å¯ä»¥ï¼å®éä¸å¤§æ¦çåºäºã</p>
+<p>æä¹åï¼</p>
+<hr>
+<h1 id="claude-code--å°é¾è¾ä¿®èº«ä½çåå¤ä¿é">Claude Code â å°é¾è¾"ä¿®èº«ä½"çåå¤ä¿é</h1>
+<p>æçæ¹æ¡æ¯ï¼</p>
+<p>ç¨ Claude Code æå¼ OpenClaw çå·¥ä½ç®å½ã</p>
+<p>ææå³äº OpenClaw çéç½®åæ´ï¼å¨é¨äº¤ç» Claude Code æ¥åã</p>
+<p>Claude Code æ¹å®éç½®åï¼èªå¨éå¯ OpenClawã</p>
+<p>å¦æéå¯å¤±è´¥ï¼</p>
+<p>å®èªå·±ä¿®å¤ï¼ç´å°ä¿®å®ä¸ºæ­¢ã</p>
+<p>å®ç¾ã</p>
+<p><img src="https://img2024.cnblogs.com/blog/1104472/202604/1104472-20260407224358357-2044003467.jpg" alt="å¾ç" loading="lazy"></p>
+<p>ä¸é¢è¿ä¸ªå°±æ¯æ.openclawç®å½ä¸æ¾çåå®¹ï¼å¶ä¸­ CLAUDE.md å°±æ¯ç» Claude æ¯æ¬¡è¿è¡æ¶è¯»åçç³»ç»æç¤ºè¯ã</p>
+<p>è openclaw-source åæ¯ OpenClaw çæºç ã</p>
+<p>Claude Code ä¼èªå¨è¿è¡æ¬å°æºç çå­¦ä¹ åè¿è¡éç½®çåæ´ï¼éå¸¸ç¨³ï¼</p>
+<p>ä½è¿å°±å¤äºåï¼</p>
+<p>è¿è¿ä¸å¤ã</p>
+<hr>
+<h1 id="happy--éæ¶éå°è¿ç¨ææ¥">Happy â éæ¶éå°è¿ç¨ææ¥</h1>
+<p>æ°çé®é¢æ¥äºã</p>
+<p>ææ³ææ¥ OpenClaw å¹²æ´»çæ¶åï¼å¯ä»¥éæ¶éå°åå®å¯¹è¯ã</p>
+<p>ä½æ¯æäººå¨å¤é¢ï¼æ³åæ´ OpenClaw çéç½®ï¼æ²¡æ³ç¨ Claude Code æä¹åï¼</p>
+<p>è¿éå°±æä¸ä¸ªé¡¶çº§ç©æ³ã</p>
+<p><strong>Happy</strong>ï¼<a href="https://github.com/slopus/happy%EF%BC%89%E6%98%AF%E4%B8%80%E4%B8%AA%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE%E3%80%82" target="_blank" rel="noopener nofollow">https://github.com/slopus/happyï¼æ¯ä¸ä¸ªå¼æºé¡¹ç®ã</a></p>
+<p>æ¯çè¿ä¸ªé¡¹ç®çåå­å°±å«åï¼Happyï¼ççå¾ Happyï¼ååã</p>
+<p>å®è£ä¹åï¼å¯ä»¥ç´æ¥å¨ææºä¸è¿ç¨æä½ Claude Codeã</p>
+<p>æä½é¡µé¢é¿è¿ä¸ªæ ·å­ï¼</p>
+<p><img src="https://img2024.cnblogs.com/blog/1104472/202604/1104472-20260407224359173-185110170.jpg" alt="å¾ç" loading="lazy"></p>
+<p><img src="https://img2024.cnblogs.com/blog/1104472/202604/1104472-20260407224400240-1044812066.jpg" alt="å¾ç" loading="lazy"></p>
+<p>è¿æå³çä»ä¹ï¼</p>
+<p>æå¨å°éä¸ãå¨åå¡é¦ãå¨åºä¸ï¼é½è½è¿ç¨ææ¥ Claude Codeï¼è®©å®ç»å°é¾è¾å¢å æ°è½åãè£æä»¶ãæ¹éç½®ã</p>
+<p>éè¦å¹²æ´»çæ¶åï¼æææ¥ OpenClawã</p>
+<p>OpenClaw éè¦ç¼ç çæ¶åï¼å®ææ¥ Claude Codeã</p>
+<p>é­ç¯äºææ²¡æï¼åå¼ä»¬ã</p>
+<p>ä½ä½ ä»¥ä¸ºè¿å°±ç»æäºï¼</p>
+<p>éç¹æ¥äºã</p>
+<hr>
+<h1 id="yoooclaw--ç»æèªé­ç¯">YoooClaw â ç»æèªé­ç¯</h1>
+<p>ææ¥å¸¸è¿æä¸ä¸ªçç¹ï¼</p>
+<p>ææºæ¶å°å¾åæéåï¼æè¿å¾èªå·±ç¿»è¯æäººè¯ï¼äº¤ç»å°é¾è¾å»å¹²æ´»ã</p>
+<p>è½ä¸è½è®©å°é¾è¾èªå·±æ¥æ´»ãèªå·±å¹²ï¼</p>
+<p>äºæ¯æç»ææºè£äºä¸ä¸ªè½¯ä»¶ï¼<strong>YoooClaw</strong></p>
+<p>ï¼ç®åè¿å¨åæµä¸­ï¼é¢è®¡ 4 æä¸­æ¬æ­£å¼ä¸çº¿ï¼æå´è¶£çå¯ä»¥åå³æ³¨ä¸æ³¢ï¼</p>
+<p><img src="https://img2024.cnblogs.com/blog/1104472/202604/1104472-20260407224400894-260004149.jpg" alt="å¾ç" loading="lazy"></p>
+<p>è¿ä¸ªè½¯ä»¶ç»äºã</p>
+<p>å®å¯ä»¥è¯»åæææºä¸çæææªè¯»éç¥ï¼ç¶åæéç¥è½¬åç»äºç«¯ç OpenClawã</p>
+<p>OpenClaw æ¥å°éç¥åï¼èªå·±å¤æ­è¯¥å¹²åï¼ç¶åç´æ¥å¹²ã</p>
+<p>è¿ä¸ªåºæ¯éå¸¸ Niceï¼æä¸¾ä¸ªä¾å­ï¼</p>
+<p>ææ¯å¤©ææºéé¢çæªè¯»éç¥æå¾å¤ï¼ååä»å¤©ä¸åçæªè¯»éç¥å°±æ 31 ä¸ªã</p>
+<p>åªè¦ç¹å»ä¸é®åè¾ï¼YoooClaw å°±ä¼èªå¨å°ææºçæªè¯»éç¥å¨é¨è¿è¡æååæ»ç»ã</p>
+<p><img src="https://img2024.cnblogs.com/blog/1104472/202604/1104472-20260407224401551-143487720.jpg" alt="å¾ç" loading="lazy"></p>
+<p><img src="https://img2024.cnblogs.com/blog/1104472/202604/1104472-20260407224402221-993955183.jpg" alt="å¾ç" loading="lazy"></p>
+<p>å¯¹äºä¸äºä¿¡ç¨å¡è¿æ¬¾ï¼å¿«éå¾åä»¶è¿äºåºæ¯ï¼å¯ççå¤ªèæäºã</p>
+<p>ä¸ç¶æè¿è¦ä¸ä¸ªä¸ä¸ªç¿»æªè¯»éç¥æ¥ç¡®å®ä»å¤©è¿æåªäºäºææ²¡åï¼ççå¾ç¦ã</p>
+<p>é¤æ­¤ä¹å¤ï¼å ä¸º&nbsp;YoooClaw æ¬èº«å¯ä»¥è·åæçæææªè¯»æ¶æ¯ã</p>
+<p>æä»¥æå¯ä»¥éå¯¹å³é®éç¥è¿è¡éç½®ã</p>
+<p>å½é£ä¹¦æéæ OA å·¥æ¶æªå¡«åï¼æ­¤æ¶ YoooClaw è¯»å°è¿æ¡éç¥ï¼ä¼èªå¨è½¬åç»äºç«¯ç OpenClawã</p>
+<p>OpenClaw åèªå·±ç»å½å·¥æ¶ç³»ç»ï¼æå·¥æ¶ç»å¡«äºã</p>
+<p>å¨ç¨æä¸ä¸ªå­æ²¡æï¼ååã</p>
+<p>YoooClaw ä½ä¸ºæçäºä»¶è§¦åç«¯æ¥ push å°é¾è¾æ¥å¹²æ´»ï¼ççç½æ­ªæ­ªã</p>
+<p>ç±»ä¼¼äº OpenClaw æ¬èº«æ¯å¨äºç«¯ï¼ä»æ²¡åæ³æ¥è§¦ä½ æéè¦çææºè®¾å¤ä¿¡æ¯ã</p>
+<p>ä½æ¯ YoooClaw åå¼¥è¡¥äºè¿ä¸ç¯ï¼è®©æç OpenClaw ç´æ¥åææºç«¯æ¶æ¯è¿è¡äºæéã</p>
+<p>é¤æ­¤ä¹å¤ï¼YoooClaw ç±äºæ¯ææºç«¯çè®¾å¤ï¼æä»¥è¿æ¯æä½¿ç¨ç¡¬ä»¶å°å¡çï¼ç´æ¥æ¥è¿è¡å½é³æ»ç»ï¼å¹¶ä¸¢ç»å°é¾è¾å»æ§è¡åç»­çå·¥ä½æµã</p>
+<p>å¯ç©æ§éå¸¸å¤ï¼ç­æåç»­æ¢ç´¢å®ï¼å°æ¶åç»å¤§å®¶ç»ç»éæ¥ã</p>
+<hr>
+<h1 id="æåè¯´ä¸¤å¥">æåè¯´ä¸¤å¥</h1>
+<p>å¾å¤äººé®æï¼å°é¾è¾å°åºè½å¹²åï¼</p>
+<p>æè§å¾è¿ä¸ªé®é¢æ¬èº«å°±é®åäºã</p>
+<p>ä¸æ¯å°é¾è¾è½å¹²åï¼æ¯ä½ æ¿æè®©å®å¸®ä½ å¹²åã</p>
+<p>3 æä»½å°é¾è¾ç­åº¦æé«çæ¶åï¼å¨ç½é½å¨å´è§ï¼é½å¨è®¨è®º"å®ä¼ä¸ä¼æ¿ä»£æ"ã</p>
+<p>ç°å¨ç­åº¦è¿äºï¼å´è§çäººæ£äºã</p>
+<p>ä½çä¸æ¥çäººï¼å¼å§åç°å®çæ­£çä»·å¼ã</p>
+<p>ä¸æ¯é£äºè±éè¡å¨çæ¼ç¤ºè§é¢ï¼èæ¯åä»å¤©è¿æ ·ã</p>
+<p>å®å®ééå°å¸®ä½ æå·¥æ¶å¡«äºï¼ææ¥æ¥åäºï¼ææ´»å¿å¹²äºã</p>
+<p><strong>è¿ææ¯ AI è¯¥æçæ ·å­ï¼ä¸æ¯æ¿ä»£ä½ ï¼èæ¯å®éå°ç«å¨ä½ èº«åå¸®ä½ å¹²äºã</strong></p>
+<p>è³äºä»å¤©åäº«çè¿å¥ä½ç³»ï¼æä¸æ¸æ¥çå¯ä»¥è¯è®ºåºåè¯æï¼æä»¬è¯è®ºåºè§ï¼</p>
+<p>è¶æ¯å¨è¿ç§å¹³æ·¡æï¼è¶æ¯æ®éäººæ²æ·èªå·±çå¥½æ¶åã</p>
+<p><strong>çäºå¾å¤åå®¹ï¼ä½ä»ç¶è¿æ²¡ç¨è¿å°é¾è¾çæåï¼ä¸å¦¨äº²èªå»è¯ä¸è¯ã</strong></p>
+<p><strong>æ¯ç«ç°å¨åä¸ªå¤§åé½æ¨åºäºä¸åå½¢æçå°é¾è¾ï¼å¤§å®¶çå¯éé¢å¤äºå¾å¤ã</strong></p>
+<p>ä»å¹´å¿ç¶æ¯Agent åå¹´ï¼æ²¡å¾è·äºï¼å¤§å®¶ä¸èµ·å æ²¹åï¼</p>
+
 
 </div>
 <div id="MySignature" role="contentinfo">
-    ä½èçååæç« ï¼è½¬è½½é¡»æ³¨æåºå¤ãååæç« å½ä½èææï¼æ¬¢è¿è½¬è½½ï¼ä½æ¯ä¿ççæãå¯¹äºè½¬è½½äºåä¸»çååæç« ï¼ä¸æ æ³¨åºå¤çï¼ä½èå°ä¾æ³è¿½ç©¶çæï¼è¯·å°éä½èçææã
+    <br>
+<fieldset style="padding: 10px; margin: 10px; background-color: #fff; width: 850px; border: 1px solid black; font-size: blod">
+<p><span style="color: black">çæå£°æ</span></p>
+<hr style="color: black">
+<p><span style="color: black">ä½èï¼éå¬é</span></p>
+<p><span style="color: black">åºå¤ï¼</span><a style="color: black" href="https://www.cnblogs.com/zh94/" target="_blank">éå¬éçææ¯åå®¢--https://www.cnblogs.com/zh94/</a></p>
+<p><span style="color: black">æ¨çæ¯ææ¯å¯¹åä¸»æå¤§çé¼å±ï¼æè°¢æ¨çè®¤çéè¯»ã</span></p>
+<p><span style="color: black">æ¬æçæå½ä½èææï¼æ¬¢è¿è½¬è½½ï¼ä½æªç»ä½èåæå¿é¡»ä¿çæ­¤æ®µå£°æï¼ä¸å¨æç« é¡µé¢ææ¾ä½ç½®ç»åºåæè¿æ¥ï¼å¦åä¿çä»»ä½è¿½ç©¶æ³å¾è´£ä»»çæå©ã</span></p>
+</fieldset>
+
+<div style="padding: 10px; margin: 10px; background-color: #fff; width: 850px; border: 0px solid black; font-size: blod">
+     <img src="https://images.cnblogs.com/cnblogs_com/zh94/1586631/o_211225012748_weixin_saoma.png">&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://images.cnblogs.com/cnblogs_com/zh94/1586631/o_211225012748_weixin_saoma.png">
+</div>
 </div>
 <div class="clear"></div>
 
-		</div>
-		<div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.002777777777777778" data-date-updated="2026-04-07 14:37">2026-04-07 14:33</span>&nbsp;
-<a href="https://www.cnblogs.com/laoqing">å¼ æ°¸æ¸</a>&nbsp;
-éè¯»(<span id="post_view_count">122</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">2</span>)&nbsp;
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-04-08 01:14">2026-04-08 01:14</span>&nbsp;
+<a href="https://www.cnblogs.com/zh94">è´¾åæ¯çå¹³è¡ä¸ç</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19829999);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Flaoqing%2Fp%2F19829999&amp;targetId=19829999&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+<a href="javascript:void(0)" onclick="AddToWz(19832233);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fzh94%2Fp%2F19832233&amp;targetId=19832233&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
-	 ]]>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ Postgres - Listen/Notifyæå»ºè½»éçº§åå¸è®¢éç³»ç» ]]></title>
+    <link>https://www.cnblogs.com/XY-Heruo/p/19832406</link>
+    <guid>fc86a3a99430cd59751c71f1f94b9799</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/XY-Heruo/p/19832406" title="åå¸äº 2026-04-07 23:29">
+    <span role="heading" aria-level="2">Postgres - Listen/Notifyæå»ºè½»éçº§åå¸è®¢éç³»ç»</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                    <div id="cnblogs_post_description" style="display: none">
+        
+        ä»ç»Postgresä¸­çListen/Notifyæºå¶ï¼ä»¥åå¦ä½å¨Pythonä¸­åºç¨
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h2 id="æ¦è¿°">æ¦è¿°</h2>
+<p>ååè®¾è®¡ä¸ä¸ªåé¨ç³»ç»çæ¶æ¯æ¨¡ååç¼å­æ¨¡åæ¶ï¼åªæä¸ä¸ªPostgresä¾èµãæ³çæ²¡å¤å¤§ç¨æ·éï¼æ²¡å¿è¦é¢å¤å®è£Redisï¼å¾å¢è¿ç»´å·¥å¤«ãç¼å­å¥½è§£å³ï¼éä¸ªUNLOGGEDè¡¨å³å¯ãå­å­å§å§ç¢ç£¨æä¹ç¨æ°æ®è¡¨å®ç°æ¶æ¯çæ¶åï¼åç°PostgreSQL æä¾äºåç½®å½ä»¤ <code>LISTEN</code> å <code>NOTIFY</code>ï¼ç¨äºå¨æ°æ®åºæå¡å¨åè¿æ¥çå®¢æ·ç«¯ä¹é´å®ç°å¼æ­¥éä¿¡ãè¿ä¸ª PostgreSQL ç¹æçæ©å±åè½ä½¿å¾æ°æ®åºå¯ä»¥ä½ä¸ºä¸ä¸ªè½»éçº§çæ¶æ¯éåï¼MQï¼ç³»ç»ä½¿ç¨ï¼åè®¸åºç¨ç¨åºä»æ°æ®åºä¸­çæäºä»¶ï¼å¹¶ç±å¶ä»å®¢æ·ç«¯å®æ¶ååºãäºæ¯ä¸æå³åï¼ä¸æä½éªä¸ä¸ã</p>
+<h3 id="æ ¸å¿ç¹æ§">æ ¸å¿ç¹æ§</h3>
+<ul>
+<li><strong>è½»éçº§å®ç°</strong>ï¼æ éé¢å¤çæ¶æ¯ä¸­é´ä»¶ï¼ç´æ¥å©ç¨ PostgreSQL åç½®åè½</li>
+<li><strong>å¼æ­¥éä¿¡</strong>ï¼æ¯æåå¸-è®¢éæ¨¡å¼ï¼å®ç°è§£è¦çç»ä»¶éä¿¡</li>
+<li><strong>åå­é«æ</strong>ï¼ééï¼Channelï¼æ¯çº¯åå­å¯¹è±¡ï¼ä¸å ç¨ç£çç©ºé´</li>
+<li><strong>é¶éç½®</strong>ï¼æ éé¢ååå»ºæç®¡çééï¼éç¨éå»º</li>
+</ul>
+<h3 id="éç¨åºæ¯">éç¨åºæ¯</h3>
+<ol>
+<li><strong>å®æ¶ä»ªè¡¨ç</strong>ï¼æ°æ®åæ´æ¶å®æ¶æ¨éæ´æ°</li>
+<li><strong>ç¼å­å¤±æ</strong>ï¼æ°æ®æ´æ°æ¶éç¥ç¼å­å±å·æ°</li>
+<li><strong>æ°æ®å®¡è®¡</strong>ï¼è·è¸ªéè¦æ°æ®åæ´äºä»¶</li>
+<li><strong>ä»»å¡è°åº¦</strong>ï¼æå»ºç®åçåå¸å¼ä»»å¡éå</li>
+<li><strong>äºä»¶é©±å¨æ¶æ</strong>ï¼å®ç°å¾®æå¡é´çäºä»¶éä¿¡</li>
+</ol>
+<h3 id="ééchannelæºå¶">ééï¼Channelï¼æºå¶</h3>
+<p><strong>éè¦ç¹æ§</strong>ï¼</p>
+<ul>
+<li>Channel æ¯çº¯åå­å¯¹è±¡ï¼é <code>LISTEN</code> å½ä»¤éå¼åå»º</li>
+<li>å½ææçå¬ä¼è¯æ­å¼ææ§è¡ <code>UNLISTEN</code> æ¶èªå¨åæ¶</li>
+<li>æ éæå¨åå»ºæå é¤ééï¼ä¹ä¸æ¯ææ­¤æä½</li>
+</ul>
+<h3 id="æ¶æ¯ä¼ éæ¨¡å">æ¶æ¯ä¼ éæ¨¡å</h3>
+<p>PostgreSQL ç <code>NOTIFY</code> éç¨å¸åç <strong>"æ çå¬å³ä¸¢å¼"</strong> æºå¶ï¼</p>
+<ul>
+<li>æ²¡æçå¬èæ¶ï¼æ¶æ¯ä¸ä¼å¥é</li>
+<li>ä¸å ç¨ç£çç©ºé´</li>
+<li>ä¸æ¶èæä¹ååå­</li>
+<li>æ¶æ¯ä»å¨å­å¨æ´»è·çå¬èæ¶ä¼ é</li>
+</ul>
+<h2 id="åºç¡ä½¿ç¨">åºç¡ä½¿ç¨</h2>
+<h3 id="psql-å½ä»¤è¡ç¤ºä¾">psql å½ä»¤è¡ç¤ºä¾</h3>
+<pre><code class="language-sql">-- çå¬æå®éé
+LISTEN task_channel;
+
+-- åééåéæ¶æ¯
+NOTIFY task_channel, '123456';
+
+-- åæ¶çå¬ææéé
+UNLISTEN *;
+
+-- æ¥çå½åçå¬çéé
+SELECT pg_listening_channels();
+
+-- æ¥çç³»ç»éç¥ç¶æ
+SELECT * FROM pg_stat_activity WHERE backend_type = 'client backend';
+</code></pre>
+<h3 id="å¨ææ¶æ¯çæ">å¨ææ¶æ¯çæ</h3>
+<p>æ åç <code>NOTIFY</code> å½ä»¤è¦æ±æ¶æ¯åå®¹å¿é¡»æç¡®æå®ï¼ä¸æ¯æå¨æå­ç¬¦ä¸²æ¼æ¥ãä½å¯ä»¥ä½¿ç¨ <code>pg_notify()</code> å½æ°æ¥çæå¨æéç¥ï¼</p>
+<pre><code class="language-sql">-- ä½¿ç¨ pg_notify å½æ°æ¯æå¨ææ¶æ¯
+SELECT pg_notify('my_channel', 'Hello, ' || 'World!');
+
+-- å¸¦åæ°çå¨ææ¶æ¯
+SELECT pg_notify('audit_channel', 'User ' || current_user || ' logged in at ' || now()::text);
+</code></pre>
+<h2 id="python-å®ç°ç¤ºä¾">Python å®ç°ç¤ºä¾</h2>
+<h3 id="é¡¹ç®ç»æ">é¡¹ç®ç»æ</h3>
+<pre><code>âââ main.py              # æ ¸å¿å®ç°ï¼TaskWorker å TaskProducer
+âââ conf/
+â   âââ config.toml     # éç½®æä»¶
+âââ pkg/
+    âââ config/         # éç½®ç®¡çæ¨¡å
+</code></pre>
+<h3 id="å®è£ä¾èµ">å®è£ä¾èµ</h3>
+<pre><code class="language-shell">uv add "psycopg[binary,pool]&gt;=3.3.3"
+</code></pre>
+<h3 id="éç½®ç®¡ç">éç½®ç®¡ç</h3>
+<p>é¦åï¼éè¿éç½®æä»¶ç®¡çæ°æ®åºè¿æ¥åééè®¾ç½®ï¼</p>
+<pre><code class="language-toml"># conf/config.toml
+[database.postgres]
+host = "127.0.0.1"
+port = 5432
+user = "username"
+password = "password"
+dbname = "database_name"
+pool_min_size = 2
+pool_max_size = 10
+channel = "task_channel"  # é»è®¤ééåç§°
+</code></pre>
+<p>éç½®æ¨¡åçä»£ç ç¤ºä¾ï¼<code>pkg/config/config.py</code></p>
+<pre><code class="language-python">import tomllib
+from typing import Any, Dict
+
+
+class BaseConfig:
+    def __init__(self, cfg_file: str):
+        self._cfg_file = cfg_file
+        self._data: Dict[str, Any] = {}
+        self._load_config()
+
+    def _load_config(self) -&gt; None:
+        if self._data:
+            return
+
+        try:
+            with open(self._cfg_file, "rb") as f:
+                self._data = tomllib.load(f)
+        except FileNotFoundError:
+            raise RuntimeError(f"éç½®æä»¶ä¸å­å¨: {self._cfg_file}")
+        except Exception as e:
+            raise RuntimeError(f"å è½½éç½®æä»¶å¤±è´¥: {e}")
+
+
+class PostgresConfigMixin(BaseConfig):
+    def postgres_host(self) -&gt; str:
+        return self._data.get("database", {}).get("postgres", {}).get("host", "")
+
+    def postgres_port(self) -&gt; int:
+        return self._data.get("database", {}).get("postgres", {}).get("port", 5432)
+
+    def postgres_user(self) -&gt; str:
+        return self._data.get("database", {}).get("postgres", {}).get("user", "")
+
+    def postgres_password(self) -&gt; str:
+        return self._data.get("database", {}).get("postgres", {}).get("password", "")
+
+    def postgres_dbname(self) -&gt; str:
+        return self._data.get("database", {}).get("postgres", {}).get("dbname", "")
+
+    def postgres_pool_min_size(self) -&gt; int:
+        return (
+            self._data.get("database", {}).get("postgres", {}).get("pool_min_size", 2)
+        )
+
+    def postgres_pool_max_size(self) -&gt; int:
+        return (
+            self._data.get("database", {}).get("postgres", {}).get("pool_max_size", 10)
+        )
+
+    def postgres_channel(self) -&gt; str:
+        return (
+            self._data.get("database", {})
+            .get("postgres", {})
+            .get("channel", "default_channel")
+        )
+
+    def get_postgres_dsn(self, hide_password: bool = False) -&gt; str:
+        """è·åPostgreSQLè¿æ¥DSN"""
+        password = self.postgres_password()
+        if hide_password and password:
+            password = "***"
+
+        # psycopg3 ä½¿ç¨æ åç PostgreSQL è¿æ¥å­ç¬¦ä¸²æ ¼å¼
+        return (
+            f"postgresql://{self.postgres_user()}:{password}@"
+            f"{self.postgres_host()}:{self.postgres_port()}/{self.postgres_dbname()}"
+        )
+
+
+class LLMConfigMixin(BaseConfig):
+    """LLMéç½®Mixin"""
+
+    def llm_model(self) -&gt; str:
+        return self._data.get("llm", {}).get("model", "")
+
+    def llm_base_url(self) -&gt; str:
+        return self._data.get("llm", {}).get("base_url", "")
+
+    def llm_api_key(self) -&gt; str:
+        return self._data.get("llm", {}).get("api_key", "")
+
+
+class Config(PostgresConfigMixin, LLMConfigMixin):
+    def __init__(self, cfg_file: str = "conf/config.toml"):
+        super().__init__(cfg_file)
+
+    def reload(self) -&gt; None:
+        """éæ°å è½½éç½®"""
+        self._data = {}  # æ¸ç©ºæ°æ®
+        self._load_config()
+
+</code></pre>
+<h3 id="æ ¸å¿ç»ä»¶å®ç°">æ ¸å¿ç»ä»¶å®ç°</h3>
+<h4 id="1-ä»»å¡æ¶è´¹ètaskworker">1. ä»»å¡æ¶è´¹èï¼TaskWorkerï¼</h4>
+<p><code>TaskWorker</code> è´è´£çå¬æå®ééå¹¶å¤çæ¥æ¶å°çä»»å¡ï¼</p>
+<pre><code class="language-python"># main.py - TaskWorker ç±»æ ¸å¿é¨å
+import asyncio
+import json
+import signal
+from typing import Set
+
+from psycopg import AsyncConnection, Notify, sql
+from psycopg_pool import AsyncConnectionPool
+
+from pkg.config import cfg
+
+MAX_CONCURRENCY = 10
+
+
+class TaskWorker:
+    def __init__(self, dsn: str, channel: str):
+        self._dsn = dsn
+        self.channel = channel
+        self.pool: AsyncConnectionPool | None = None
+        self.listener_conn: AsyncConnection | None = None
+        self.sem = asyncio.Semaphore(MAX_CONCURRENCY)
+        self.active_tasks: Set[asyncio.Task] = set()
+
+    async def start(self) -&gt; None:
+        self.pool = AsyncConnectionPool(
+            self._dsn,
+            min_size=cfg.postgres_pool_min_size(),
+            max_size=cfg.postgres_pool_max_size(),
+            open=False,  # å»¶è¿æå¼, é¿åé»å¡
+        )
+        await self.pool.open()
+
+        # ç¬ç«çå¬è¿æ¥ï¼é²æ­¢ LISTEN ç¶æéè¿æ¥åæ¶ä¸¢å¤±
+        self.listener_conn = await AsyncConnection.connect(self._dsn, autocommit=True)
+        await self.listener_conn.execute(
+            sql.SQL("LISTEN {}").format(sql.Identifier(self.channel))
+        )
+        print(f"Listening on channel: {self.channel}")
+
+        try:
+            async for notify in self.listener_conn.notifies():
+                if notify.channel == self.channel and notify.payload:
+                    await self._dispatch_task(notify)
+        except asyncio.CancelledError:
+            print("Listener cancelled")
+        except Exception as e:
+            print(f"Listener error: {e}")
+        finally:
+            await self.stop()
+
+    async def _dispatch_task(self, notify: Notify) -&gt; None:
+        """æ¥æ¶éç¥å¹¶ååä»»å¡"""
+        task_info = notify.payload.strip()
+        try:
+            task_data = json.loads(task_info)  # åè®¾ payload æ¯ JSON æ ¼å¼çå­ç¬¦ä¸²
+            print(f"Received task notification: {task_data}")
+        except json.JSONDecodeError:
+            task_data = {"task_id": task_info}  # å¦æä¸æ¯ JSON æ ¼å¼ï¼ä½¿ç¨åå§å­ç¬¦ä¸²
+            print(f"Received non-JSON task notification: {task_data}")
+        except Exception as e:
+            print(f"Invalid task ID received: {task_info}")
+            return
+
+        if not isinstance(task_data, dict) or "task_id" not in task_data:
+            print(
+                f"Missing task_id in notification: {task_data}, or task_data is not a dict"
+            )
+            return
+
+        task = asyncio.create_task(self._process_task(task_data))
+        self.active_tasks.add(task)
+        task.add_done_callback(self.active_tasks.discard)
+
+    async def _process_task(self, task_data: dict) -&gt; None:
+        """æ§è¡ä¸å¡é»è¾"""
+        if not self.pool:
+            raise RuntimeError("Connection pool is not initialized")
+        async with self.sem:
+            async with self.pool.connection() as conn:
+                try:
+                    await self._execute_business(task_data)
+
+                    print(f"&lt;= Task {task_data['task_id']} completed successfully")
+                except Exception as e:
+                    print(f"Error processing task {task_data['task_id']}: {e}")
+                    # è¿éå¯ä»¥æ·»å éè¯é»è¾æéè¯¯è®°å½
+                    await self._log_failure(conn, task_data["task_id"], str(e))
+
+    async def _execute_business(self, task_data: dict) -&gt; None:
+        """æ§è¡ä¸å¡é»è¾"""
+        print(f"&lt;= Processing task {task_data}...")
+        await asyncio.sleep(5)  # æ¨¡æèæ¶æä½
+        print(f"&lt;= Task {task_data} done.")
+
+    async def _log_failure(self, conn: AsyncConnection, task_id: int, error_msg: str):
+        """è®°å½å¤±è´¥æ¥å¿"""
+        try:
+            # è®°å½å¤±è´¥æ¥å¿å°ç¬ç«è¡¨ï¼ä¾¿äºåç»­éè¯æåè­¦
+            print(f"Logging failure for task {task_id}: {error_msg}")
+        except Exception as e:
+            print(f"Failed to log error for task {task_id}: {e}")
+
+    async def stop(self) -&gt; None:
+        print("Stopping TaskWorker...")
+        if self.active_tasks:
+            await asyncio.gather(*self.active_tasks, return_exceptions=True)
+
+        if self.listener_conn:
+            await self.listener_conn.close()
+
+        if self.pool:
+            await self.pool.close()
+
+        print("TaskWorker stopped gracefully.")
+</code></pre>
+<h4 id="2-ä»»å¡åå¸ètaskpublisher">2. ä»»å¡åå¸èï¼TaskPublisherï¼</h4>
+<p><code>TaskPublisher</code> è´è´£åééåå¸ä»»å¡æ¶æ¯ï¼</p>
+<pre><code class="language-python"># main.py - TaskPublisher ç±»
+class TaskPublisher:
+    def __init__(self, dsn: str):
+        self._dsn = dsn
+        self._pool: AsyncConnectionPool | None = None
+
+    async def start(self):
+        if not self._pool:
+            self._pool = AsyncConnectionPool(
+                self._dsn,
+                min_size=cfg.postgres_pool_min_size(),
+                max_size=cfg.postgres_pool_max_size(),
+                open=False,  # å»¶è¿æå¼, é¿åé»å¡
+            )
+            await self._pool.open()
+        print("TaskPublisher started.")
+
+    async def publish(self, channel: str, payload: dict):
+        if not self._pool:
+            raise RuntimeError("Connection pool is not initialized")
+
+        async with self._pool.connection() as conn:
+            try:
+                payload_str = json.dumps(
+                    payload, default=str
+                )  # å° dict è½¬æ¢ä¸º JSON å­ç¬¦ä¸²
+                await conn.execute(
+                    sql.SQL("NOTIFY {}, {}").format(
+                        sql.Identifier(channel), sql.Literal(payload_str)
+                    )
+                )
+                print(f"=&gt; Published task to channel {channel}: {payload_str}")
+                return True
+            except Exception as e:
+                print(f"Failed to publish task to channel {channel}: {e}")
+                return False
+
+    async def publish_batch(self, channel: str, payloads: list[dict]):
+        if not self._pool:
+            raise RuntimeError("Connection pool is not initialized")
+
+        count = 0
+
+        async with self._pool.connection() as conn:
+            for payload in payloads:
+                try:
+                    payload_str = json.dumps(payload, default=str)
+                    await conn.execute(
+                        sql.SQL("NOTIFY {}, {}").format(
+                            sql.Identifier(channel), sql.Literal(payload_str)
+                        )
+                    )
+                    print(f"=&gt; Published task to channel {channel}: {payload_str}")
+                    count += 1
+                except Exception as e:
+                    print(f"Failed to publish batch tasks to channel {channel}: {e}")
+        return count
+
+    async def stop(self):
+        if self._pool:
+            await self._pool.close()
+        print("TaskPublisher stopped.")
+
+    async def __aenter__(self):
+        await self.start()
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.stop()
+</code></pre>
+<h3 id="è°ç¨æ¼ç¤º">è°ç¨æ¼ç¤º</h3>
+<p>ä»¥ä¸æ¯<code>main.py</code>ä¸­çæ¼ç¤ºé¨åï¼</p>
+<pre><code class="language-python"># main.py
+async def run_worker():
+    worker = TaskWorker(cfg.get_postgres_dsn(), cfg.postgres_channel())
+    task = asyncio.create_task(worker.start())
+    return task
+
+
+async def run_publisher():
+    async with TaskPublisher(cfg.get_postgres_dsn()) as publisher:
+        for i in range(1, 11):
+            payload = {"task_id": i, "data": f"Task data {i}"}
+            await publisher.publish(cfg.postgres_channel(), payload)
+            await asyncio.sleep(0.5)  # æ¨¡æåå¸é´é
+
+
+async def main():
+    # worker = TaskWorker(cfg.get_postgres_dsn(), cfg.postgres_channel())
+    # loop = asyncio.get_running_loop()
+    # stop_evt = asyncio.Event()
+
+    # for sig in (signal.SIGINT, signal.SIGTERM):
+    #     loop.add_signal_handler(sig, stop_evt.set)
+
+    # listen_task = asyncio.create_task(worker.start())
+
+    # await stop_evt.wait()
+    # print("Shutdown signal received, stopping worker...")
+    # listen_task.cancel()
+    # await listen_task
+
+    worker_task = await run_worker()
+    await asyncio.sleep(2)  # ç¡®ä¿ worker å·²ç»å¯å¨å¹¶çå¬
+
+    await run_publisher()  # åå¸ä»»å¡
+    print("All tasks published successfully.")
+
+    await asyncio.sleep(30)  # ç­å¾ worker å¤çå®ä»»å¡
+
+    worker_task.cancel()  # åæ­¢ worker
+
+    try:
+        await worker_task
+    except asyncio.CancelledError:
+        pass
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+</code></pre>
+<h2 id="ä½¿ç¨åºæ¯æ©å±">ä½¿ç¨åºæ¯æ©å±</h2>
+<h3 id="åºæ¯ä¸å®æ¶æ°æ®åæ­¥">åºæ¯ä¸ï¼å®æ¶æ°æ®åæ­¥</h3>
+<pre><code class="language-python">async def sync_data_change(self, table_name: str, record_id: str, operation: str):
+    """æ°æ®åæ´æ¶åéåæ­¥éç¥"""
+    message = f"{table_name}:{record_id}:{operation}"
+    await self.publish("data_sync_channel", message)
+</code></pre>
+<h3 id="åºæ¯äºåå¸å¼ééç¥">åºæ¯äºï¼åå¸å¼ééç¥</h3>
+<pre><code class="language-python">async def notify_lock_release(self, lock_name: str):
+    """ééæ¾æ¶éç¥ç­å¾è"""
+    await self.publish("distributed_lock_channel", f"RELEASE:{lock_name}")
+</code></pre>
+<h3 id="åºæ¯ä¸ç¼å­å¤±æå¹¿æ­">åºæ¯ä¸ï¼ç¼å­å¤±æå¹¿æ­</h3>
+<pre><code class="language-python">async def invalidate_cache(self, cache_key: str):
+    """ç¼å­å¤±ææ¶å¹¿æ­éç¥"""
+    await self.publish("cache_invalidation_channel", cache_key)
+</code></pre>
+<h2 id="æ³¨æäºé¡¹">æ³¨æäºé¡¹</h2>
+<h3 id="ææ¯éå¶">ææ¯éå¶</h3>
+<ol>
+<li><strong>æ¶æ¯å¤§å°</strong>ï¼NOTIFY æ¶æ¯æå¤§ä¸º 8000 å­è</li>
+<li><strong>æ æä¹å</strong>ï¼æ¶æ¯ä¸æä¹åï¼éå¯åä¸¢å¤±</li>
+<li><strong>æ ç¡®è®¤æºå¶</strong>ï¼åéæ¹æ æ³ç¥éæ¶æ¯æ¯å¦è¢«æ¥æ¶</li>
+<li><strong>æ é¡ºåºä¿è¯</strong>ï¼æ¶æ¯å¯è½ä¸æåéé¡ºåºå°è¾¾</li>
+</ol>
+<h3 id="çäº§ç¯å¢å»ºè®®">çäº§ç¯å¢å»ºè®®</h3>
+<ol>
+<li><strong>çæ§åè­¦</strong>ï¼å®ç°ééçå¬ç¶æçæ§</li>
+<li><strong>éè¯¯å¤ç</strong>ï¼æ·»å å®åçéè¯¯å¤çåæ¥å¿è®°å½</li>
+<li><strong>å¤ä»½æºå¶</strong>ï¼éè¦æ¶æ¯åºæå¤ä»½å­å¨</li>
+<li><strong>æ§è½æµè¯</strong>ï¼å¨é«è´è½½ä¸æµè¯ç³»ç»è¡¨ç°</li>
+</ol>
+<h2 id="è¡¥å">è¡¥å</h2>
+<h3 id="asyncpgç">asyncpgç</h3>
+<p><code>asyncpg</code>æ¯pythonè¿æ¥postgresççº¯å¼æ­¥é©±å¨ï¼æ§è½æ´å¥½</p>
+<p>å®è£</p>
+<pre><code class="language-shell">uv add asyncpg
+</code></pre>
+<p>ä»£ç ç¤ºä¾ï¼</p>
+<pre><code class="language-python">import asyncio
+import signal
+from typing import Set
+
+import asyncpg
+
+from pkg.config import cfg
+
+MAX_CONCURRENT_TASKS = 5  # æå¤§å¹¶åä»»å¡æ°
+
+
+class TaskWorker:
+    def __init__(self, dsn: str, channel: str):
+        self._dsn = dsn
+        self._channel = channel
+        self._pool: asyncpg.Pool | None = None
+        self._listener_conn: asyncpg.Connection | None = None
+        self._sem = asyncio.Semaphore(MAX_CONCURRENT_TASKS)
+        self._active_tasks: Set[asyncio.Task] = set()
+
+    async def start(self):
+        """å¯å¨çå¬å¨"""
+        if not self._pool:
+            self._pool = await asyncpg.create_pool(
+                dsn=self._dsn,
+                min_size=cfg.postgres_pool_min_size(),
+                max_size=cfg.postgres_pool_max_size(),
+            )
+
+        # åå»ºä¸ç¨è¿æ¥ç¨äºçå¬
+        if not self._listener_conn:
+            self._listener_conn = await asyncpg.connect(dsn=self._dsn)
+            await self._listener_conn.add_listener(self._channel, self._on_notify)
+            print(f"Listening on channel: {self._channel}")
+
+        try:
+            # ä¿æçå¬ç¶æ
+            await asyncio.Future()
+        except asyncio.CancelledError:
+            pass
+        finally:
+            await self.stop()
+
+    async def _on_notify(
+        self, conn: asyncpg.Connection, pid: int, channel: str, payload: str
+    ):
+        """æ¶å° NOTIFY æ¶çåè°å½æ°"""
+        if not payload:
+            return
+
+        task_id = payload.strip()
+        print(f"Received notification: {task_id} on channel: {channel}")
+
+        # æäº¤å°äºä»¶å¾ªç¯ï¼å¸¦å¹¶åéå¶
+        task = asyncio.create_task(self._handle_task(task_id))
+        self._active_tasks.add(task)
+        task.add_done_callback(self._active_tasks.discard)
+
+    async def _handle_task(self, task_id: str):
+        """ä»»å¡å¤çæ ¸å¿é»è¾"""
+        if not self._pool:
+            raise RuntimeError("æ°æ®åºè¿æ¥æ± æªåå§å")
+        async with self._sem:  # å¹¶åæ§å¶
+            async with self._pool.acquire() as conn:
+                try:
+                    # 1. æ§è¡ä¸å¡é»è¾
+                    await self._execute_business_logic(task_id)
+
+                    # 2. æ´æ°ä»»å¡ç¶æï¼ç¤ºä¾ï¼
+                    print(f"Task {task_id} completed successfully.")
+
+                except Exception as e:
+                    print(f"Task {task_id} failed: {e}")
+                    await self._log_failure(task_id, str(e))
+
+    async def _execute_business_logic(self, task_id: str):
+        """æ¨¡æä¸å¡é»è¾å¤ç"""
+        print(f"Processing task {task_id}...")
+        await asyncio.sleep(5)  # æ¨¡æèæ¶æä½
+        print(f"Task {task_id} completed.")
+
+    async def _log_failure(self, task_id: str, error: str):
+        """è®°å½å¤±è´¥æ¥å¿"""
+        print(f"Task {task_id} failure logged: {error}")
+        # å®éé¡¹ç®ä¸­å¯è®°å½å°æ°æ®åº
+
+    async def stop(self):
+        """ä¼éå³é­"""
+        print("Shutting down gracefully...")
+
+        # ç­å¾æ­£å¨è¿è¡çä»»å¡å®æ
+        if self._active_tasks:
+            await asyncio.gather(*self._active_tasks, return_exceptions=True)
+
+        # æ¸çèµæº
+        if self._listener_conn:
+            await self._listener_conn.remove_listener(self._channel, self._on_notify)
+            await self._listener_conn.close()
+
+        if self._pool:
+            await self._pool.close()
+
+        print("Shutdown complete.")
+
+
+async def main():
+    worker = TaskWorker(cfg.get_postgres_dsn(), cfg.postgres_channel())
+    loop = asyncio.get_running_loop()
+    stop_evt = asyncio.Event()
+
+    # æ³¨åä¿¡å·å¤çå¨ï¼ä¼éå³é­
+    for sig in (signal.SIGINT, signal.SIGTERM):
+        loop.add_signal_handler(sig, stop_evt.set)
+
+    # å¯å¨çå¬å¨
+    listen_task = asyncio.create_task(worker.start())
+
+    # ç­å¾åæ­¢äºä»¶
+    await stop_evt.wait()
+    print("Shutdown signal received, stopping worker...")
+
+    # åæ¶çå¬ä»»å¡å¹¶ç­å¾å®æ
+    listen_task.cancel()
+    await listen_task
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+
+</code></pre>
+
+
+</div>
+<div id="MySignature" role="contentinfo">
+    <p>æ¬ææ¥èªåå®¢å­ï¼ä½èï¼<a href="https://www.cnblogs.com/XY-Heruo/" target="_blank">è±ééä½ç°</a>ï¼è½¬è½½è¯·æ³¨æåæé¾æ¥ï¼<a href="https://www.cnblogs.com/XY-Heruo/p/19832406" target="_blank">https://www.cnblogs.com/XY-Heruo/p/19832406</a></p>
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-04-07 23:30">2026-04-07 23:29</span>&nbsp;
+<a href="https://www.cnblogs.com/XY-Heruo">è±ééä½ç°</a>&nbsp;
+éè¯»(<span id="post_view_count">4</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19832406);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FXY-Heruo%2Fp%2F19832406&amp;targetId=19832406&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
     </description>
     </item>
 <item>
@@ -4188,170 +4373,6 @@ Example Untrained Model Prediction: tensor([[0, 3, 6, 9, 3, 6, 9, 3, 6, 9]])
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19832131);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fwmyskxz%2Fp%2F19832131&amp;targetId=19832131&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ å¹²è´§ï¼Ubuntu å¿«éé¨ç½² Cloudreve ï¼æé å¨åè½ç§æäºç ]]></title>
-    <link>https://www.cnblogs.com/ywzk/p/19832040</link>
-    <guid>9db3ef64ad020f30511fdbcbe7cf4254</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/ywzk/p/19832040" title="åå¸äº 2026-04-07 21:36">
-    <span role="heading" aria-level="2">å¹²è´§ï¼Ubuntu å¿«éé¨ç½² Cloudreve ï¼æé å¨åè½ç§æäºç</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                    <div id="cnblogs_post_description" style="display: none">
-        
-        å¨æ°æ®å­å¨éæ±æ¥çå¢é¿çä»å¤©ï¼æ¥æä¸ä¸ªæ¢ç¾è§åå¼ºå¤§çç§æäºçå·²æä¸ºè®¸å¤ææ¯ç±å¥½èçæ éãCloudreve å­åå¶è½»éåãæ¯æå¤å­å¨ç­ç¥ä»¥ååºè²ç UI è®¾è®¡ï¼å§ç»æ¯èªå»ºäºççé¦éã
-ä»å¤©ï¼æä»¬å°åºäºææ°ç Ubuntu 24.04 (Noble Numbat) ç³»ç»ï¼æææå¸¦ä½ å®æ Cloudreve v4.15.0 çå®è£ãèªå¯å¨éç½®å TLS å®å¨å å¯ã
-    </div>
-<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>å¨æ°æ®å­å¨éæ±æ¥çå¢é¿çä»å¤©ï¼æ¥æä¸ä¸ªæ¢ç¾è§åå¼ºå¤§çç§æäºçå·²æä¸ºè®¸å¤ææ¯ç±å¥½èçæ éã<strong>Cloudreve</strong> å­åå¶è½»éåãæ¯æå¤å­å¨ç­ç¥ä»¥ååºè²ç UI è®¾è®¡ï¼å§ç»æ¯èªå»ºäºççé¦éã</p>
-<p>ä»å¤©ï¼æä»¬å°åºäºææ°ç <strong>Ubuntu 24.04 (Noble Numbat)</strong> ç³»ç»ï¼æææå¸¦ä½ å®æ <strong>Cloudreve v4.15.0</strong> çå®è£ãèªå¯å¨éç½®å TLS å®å¨å å¯ã</p>
-<hr>
-<h2 id="ä¸-å¿«éå®è£">ä¸ã å¿«éå®è£</h2>
-<p>Cloudreve éç¨åæä»¶ååï¼é¨ç½²è¿ç¨æå¶é«æã</p>
-<h3 id="1-åå»ºå·¥ä½ç®å½">1. åå»ºå·¥ä½ç®å½</h3>
-<p>å»ºè®®å°ç¨åºå­æ¾å¨ <code>/opt</code> ç®å½ä¸è¿è¡ç»ä¸ç®¡çï¼</p>
-<p>Bash</p>
-<pre><code class="language-plain">sudo mkdir -p /opt/cloudreve
-cd /opt/cloudreve
-</code></pre>
-<h3 id="2-ä¸è½½ææ°-v4150-ä¸»ç¨åº">2. ä¸è½½ææ° v4.15.0 ä¸»ç¨åº</h3>
-<p>ä»å®æ¹ GitHub è·åææ°çæ¬ï¼ä»¥å¸¸è§ç 64 ä½ Linux æ¶æä¸ºä¾ï¼ï¼</p>
-<p>Bash</p>
-<pre><code class="language-plain">sudo wget https://github.com/cloudreve/Cloudreve/releases/download/4.15.0/cloudreve_4.15.0_linux_amd64.tar.gz
-sudo tar -zxvf cloudreve_4.15.0_linux_amd64.tar.gz
-sudo chmod +x cloudreve
-</code></pre>
-<h3 id="3-é¦æ¬¡å¯å¨">3. é¦æ¬¡å¯å¨</h3>
-<p><strong>å³é®æ­¥éª¤ï¼</strong> æ§è¡ä¸æ¹å½ä»¤è¿è¡åå§åãç¨åºä¼éæºçæ<strong>ç®¡çåè´¦å·ä¸å¯ç </strong>ã</p>
-<blockquote>
-<p><strong>æ³¨æï¼</strong> v4 çæ¬çè´¦å·ä¿¡æ¯ä»å¨é¦æ¬¡å¯å¨æ¶æ¾ç¤ºä¸æ¬¡ï¼è¯·å¡å¿æç§æè®°å½ï¼è¥éè¿éå é¤ <code>cloudreve.db</code> éæ°åå§åã</p>
-</blockquote>
-<p>Bash</p>
-<pre><code class="language-plain">./cloudreve
-</code></pre>
-<p>è®°å½å®æåï¼æ <code>Ctrl+C</code> åæ­¢ç¨åºã</p>
-<hr>
-<h2 id="äº-éç½®-systemd-å¼æºèªå¯">äºã éç½® Systemd å¼æºèªå¯</h2>
-<p>ä¸ºäºè®©äºçå¨æå¡å¨éå¯åè½èªå¨è¿è¡ï¼æä»¬éè¦å°å¶æ³¨åä¸ºç³»ç»æå¡ã</p>
-<ol>
-<li><strong>åå»ºæå¡æä»¶</strong>ï¼</li>
-</ol>
-<p>Bash</p>
-<pre><code class="language-plain">sudo nano /etc/systemd/system/cloudreve.service
-</code></pre>
-<ol start="2">
-<li><strong>å¡«å¥éç½®åå®¹</strong>ï¼</li>
-</ol>
-<p>Ini, TOML</p>
-<pre><code class="language-plain">[Unit]
-Description=Cloudreve
-Documentation=https://docs.cloudreve.org
-After=network.target
-
-[Service]
-WorkingDirectory=/opt/cloudreve
-ExecStart=/opt/cloudreve/cloudreve
-Restart=on-abnormal
-RestartSec=5s
-KillMode=mixed
-
-[Install]
-WantedBy=multi-user.target
-</code></pre>
-<ol start="3">
-<li><strong>æ¿æ´»æå¡</strong>ï¼</li>
-</ol>
-<p>Bash</p>
-<pre><code class="language-plain">sudo systemctl daemon-reload
-sudo systemctl enable cloudreve  # è®¾ç½®å¼æºå¯å¨
-sudo systemctl start cloudreve   # ç«å³å¯å¨
-</code></pre>
-<hr>
-<h2 id="ä¸-éç½®-tls-å å¯ç´è¿-https">ä¸ã éç½® TLS å å¯ï¼ç´è¿ HTTPSï¼</h2>
-<p>ä¸ºäºç¡®ä¿å¨å¬å±ç½ç»ä¸è®¿é®çå®å¨æ§ï¼å»ºè®®ç´æ¥å¼å¯ TLSã</p>
-<h3 id="1-åå¤è¯ä¹¦æä»¶">1. åå¤è¯ä¹¦æä»¶</h3>
-<p>å°ä½ ååå¯¹åºçè¯ä¹¦ï¼<code>.crt</code> / <code>.pem</code>ï¼åç§é¥ï¼<code>.key</code>ï¼ä¸ä¼ è³æå¡å¨ãå»ºè®®è·¯å¾ï¼<code>/opt/cloudreve/certs/</code>ã</p>
-<h3 id="2-ä¿®æ¹-confini-éç½®æä»¶">2. ä¿®æ¹ <code>conf.ini</code> éç½®æä»¶</h3>
-<p>Bash</p>
-<pre><code class="language-plain">sudo nano /opt/cloudreve/data/conf.ini
-</code></pre>
-<p>å¨éç½®ä¸­å å¥ä»¥ä¸å­æ®µï¼å¦å·²å­å¨åä¿®æ¹ï¼ï¼</p>
-<p>Ini, TOML</p>
-<pre><code class="language-plain">[System]
-; ä¿®æ¹çå¬ç«¯å£ä¸º HTTPS æ åç«¯å£ 443
-Listen = :443
-
-[SSL]
-; å¼å¯ SSL
-SSL = true
-; è¯ä¹¦ç»å¯¹è·¯å¾
-CertPath = /opt/cloudreve/certs/fullchain.pem
-; ç§é¥ç»å¯¹è·¯å¾
-KeyPath = /opt/cloudreve/certs/privkey.key
-</code></pre>
-<h3 id="3-ç¹å«è¯´æ">3. ç¹å«è¯´æ</h3>
-<ul>
-<li><strong>é«æéç«¯å£</strong>ï¼ç±äº 443 å±äºç¹æç«¯å£ï¼è¯·ç¡®ä¿è¿è¡ Cloudreve çç¨æ·æ¥æç¸åºæéï¼æä½¿ç¨ <code>sudo</code> è¿è¡æå¡ã</li>
-<li><strong>æ¾è¡é²ç«å¢</strong>ï¼</li>
-<li>Bash</li>
-</ul>
-<pre><code class="language-plain">sudo ufw allow 443/tcp
-</code></pre>
-<hr>
-<h2 id="å-è®¿é®æ¹å¼">åã è®¿é®æ¹å¼</h2>
-<h3 id="1-æµè§å¨ç´æ¥è®¿é®">1. æµè§å¨ç´æ¥è®¿é®</h3>
-<p>ç´æ¥éè¿IPæèååè®¿é®ï¼ç¶åæ³¨åè´¦å·å³å¯ã</p>
-<p><img alt="261e80b2-3a54-4fb3-8206-eb4d380ac28b" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3412427/202604/3412427-20260407213537185-436888398.png" class="lazyload"></p>
-<p><img alt="ä¸è½½ (1)" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3412427/202604/3412427-20260407213544046-1790031160.png" class="lazyload"></p>
-<p><img alt="ä¸è½½ (2)" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3412427/202604/3412427-20260407213550644-218719255.png" class="lazyload"></p>
-<h3 id="2-éè¿webdavæè½½å°æ¬å°">2. éè¿WebDAVæè½½å°æ¬å°</h3>
-<p><img alt="ä¸è½½ (3)" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3412427/202604/3412427-20260407213527272-1498127439.png" class="lazyload"></p>
-<h3 id="3-ç¨ææºappè®¿é®">3. ç¨ææºappè®¿é®</h3>
-<p>æ³¨æéè¦å°è®¿é®å°ååå¸å°å¬ç½ï¼åæ¶å¼å¯SSLãææºä¸è½½appï¼æ«æç»å®è®¾å¤å³å¯ã</p>
-<p><img alt="ScreenShot_2026-04-07_211553_239" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3412427/202604/3412427-20260407213514083-1745283171.png" class="lazyload"></p>
-<p>å¶ä»äº®ç¹åè½</p>
-<h3 id="-æè´çå­å¨çµæ´»æ§">ð¾ æè´çå­å¨çµæ´»æ§</h3>
-<p>å¨âç®¡çé¢æ¿ - å­å¨ç­ç¥âä¸­ï¼ä½ å¯ä»¥è½»æ¾æè½½ï¼</p>
-<ul>
-<li><strong>æ¬å°å­å¨</strong>ï¼éåå°å®¶éç NAS ç¡¬çææå¡å¨å¤§å®¹éååºä½ä¸ºä¸»å­å¨ã</li>
-<li><strong>å¯¹è±¡å­å¨</strong>ï¼åçæ¯æé¿éäº OSSãè¾è®¯äº COSãä¸çãS3 ç­ã</li>
-<li><strong>ç¬¬ä¸æ¹ç½ç</strong>ï¼éè¿ WebDAV åè®®ï¼ä½ å¯ä»¥å° <strong>Alist</strong> ä¸­æè½½çåç§ç½çèµæºæ ç¼å¼å¥å° Cloudreve ä¸­ã</li>
-</ul>
-<h3 id="-ç¦»çº¿ä¸è½½ç¥å¨">ð¥ ç¦»çº¿ä¸è½½ç¥å¨</h3>
-<p>å¨æå¡å¨ç«¯å®è£ <strong>Aria2</strong> åï¼ä½ å¯ä»¥å¨ Cloudreve ä¸­ç´æ¥æäº¤ç£åé¾æ¥æç§å­ãæå¡å¨ä¼éé»ä¸è½½å¹¶èªå¨ä¸ä¼ å°ä½ æå®çå­å¨ç­ç¥ä¸­ï¼å®ç°âäººå¨å¤é¢ï¼çå¨äºç«¯âã</p>
-<h3 id="ï¸-å¼ºå¤§çå¤åªä½ç®¡ç">ð¼ï¸ å¼ºå¤§çå¤åªä½ç®¡ç</h3>
-<p>v4.15.0 å¨åªä½å¤çä¸æ´å ç¨³å¥ãå®æ¯ææµ·éç§ççç¼©ç¥å¾çæãè§é¢æµåªä½å¨çº¿ç¹æ­ï¼çè³æ¯æå¤ç§åå¬ææ¡£çå¨çº¿é¢è§ï¼éå¸¸éåä½ä¸ºå®¶åº­å½±é³ä¸­å¿æåä½ç½çã</p>
-<hr>
-<h2 id="ç»è¯­">ç»è¯­</h2>
-<p>Cloudreve ä¸ä»æ¯ä¸ä¸ªå­å¨å·¥å·ï¼æ´æ¯ä¸ä¸ªé«æçæ°æ®è°åº¦ä¸­å¿ãéè¿ç®åçé¨ç½²ï¼ä½ å°±è½å¨ Ubuntu 24.04 ä¸äº«åå°ä¸æ»çç§æäºä½éªã</p>
-<p><strong>å¿«å»å¨ææ­å»ºå±äºä½ çâæ°å­å ¡åâå§ï¼</strong></p>
-<hr>
-<p><em>ð¡ ææ¯å°è´´å£«ï¼å¦æéå°æ°æ®åºæ§è½ç¶é¢ï¼å»ºè®®å¨éç½®æä»¶ä¸­å°é»è®¤ç SQLite è¿ç§»è³ MySQLï¼ä¼ææ´ä½³çååºéåº¦ã</em></p>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-04-07 21:37">2026-04-07 21:36</span>&nbsp;
-<a href="https://www.cnblogs.com/ywzk">è¿ç»´æºåº</a>&nbsp;
-éè¯»(<span id="post_view_count">21</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19832040);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fywzk%2Fp%2F19832040&amp;targetId=19832040&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
