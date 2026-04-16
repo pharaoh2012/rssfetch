@@ -3,20 +3,400 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-04-16T09:13:50.720Z</lastBuildDate>
+        <lastBuildDate>2026-04-16T13:20:23.953Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
-    <title><![CDATA[ PortSwigger SQLæ³¨å¥LAB 2 ]]></title>
-    <link>https://www.cnblogs.com/CH3CH2OH-Blog/p/19878296</link>
-    <guid>92c44fa8ea96c6d2feaea9fc8891521d</guid>
+    <title><![CDATA[ å¦ä½ä¸ºGITè®¾ç½®å¨å±å¾å­ï¼ä¸ºæ¯æ¬¡æäº¤è¿½å ä¿¡æ¯ ]]></title>
+    <link>https://www.cnblogs.com/Man-Dream-Necessary/p/19879569</link>
+    <guid>1c9ebf388735b986c8fb0049cb0c157d</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/CH3CH2OH-Blog/p/19878296" title="åå¸äº 2026-04-16 17:12">
-    <span role="heading" aria-level="2">PortSwigger SQLæ³¨å¥LAB 2</span>
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/Man-Dream-Necessary/p/19879569" title="åå¸äº 2026-04-16 19:23">
+    <span role="heading" aria-level="2">å¦ä½ä¸ºGITè®¾ç½®å¨å±å¾å­ï¼ä¸ºæ¯æ¬¡æäº¤è¿½å ä¿¡æ¯</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h1 id="å¨å±-git-é©å­æ´ä½è®¾ç½®æµç¨">å¨å± Git é©å­æ´ä½è®¾ç½®æµç¨</h1>
+<hr>
+<h2 id="ä¸ç®æ ä¸è¡ä¸ºæè¦">ä¸ãç®æ ä¸è¡ä¸ºæè¦</h2>
+<ul>
+<li>å¨ <strong><code>/Your/work/dir</code></strong> åå¶å­ç®å½ä¸ç Git ä»åºä¸­ï¼æ§è¡ <code>git commit</code> æ¶ï¼è¥æªè®¾ç½® <strong><code>NO_XXX</code></strong>ï¼åå¨<strong>æäº¤è¯´æç¬¬ä¸è¡</strong>æ«å°¾èªå¨è¿½å  <strong><code> [xxx]</code></strong>ã</li>
+<li>ä¸å¨ä¸è¿°è·¯å¾ä¸çä»åºï¼<strong>ä¸</strong>è¿½å ï¼ä»ä¼å°è¯æ§è¡è¯¥ä»åº <strong><code>.git/hooks/prepare-commit-msg</code></strong>ï¼è¥å­å¨ï¼ã</li>
+<li>ä½¿ç¨ç¯å¢åé <strong><code>NO_XXX</code></strong>ï¼æ éèµå¼ï¼å¯è·³è¿æ¬æ¬¡è¿½å ã</li>
+<li>å¨å±éè¿ <strong><code>core.hooksPath</code></strong> æååºå®ç®å½ï¼<strong>Husky ä»åº</strong>éå¨é¡¹ç®åå¢å è½¬åèæ¬ï¼è§ç¬¬äºèï¼ã</li>
+</ul>
+<hr>
+<h2 id="äºç®å½ä¸-git-éç½®">äºãç®å½ä¸ Git éç½®</h2>
+<h3 id="1-åå»ºé©å­ç®å½">1. åå»ºé©å­ç®å½</h3>
+<pre><code class="language-bash">mkdir -p "$HOME/.config/git/hooks"
+</code></pre>
+<h3 id="2-æåè¯¥ç®å½å¨å±">2. æåè¯¥ç®å½ï¼å¨å±ï¼</h3>
+<pre><code class="language-bash">git config --global core.hooksPath "$HOME/.config/git/hooks"
+</code></pre>
+<p>æ¥çï¼</p>
+<pre><code class="language-bash">git config --global --get core.hooksPath
+</code></pre>
+<p>åºè¾åºï¼<code>/Users/macadmin/.config/git/hooks</code>ï¼æ <code>$HOME</code> å±å¼åçç­ä»·è·¯å¾ï¼ã</p>
+<h3 id="3-ä¸ºä½éè¦åç¬ç®å½">3. ä¸ºä½éè¦åç¬ç®å½</h3>
+<p>è®¾ç½® <code>core.hooksPath</code> åï¼Git <strong>åª</strong>ä½¿ç¨è¯¥ç®å½ä¸çé©å­æä»¶ï¼<strong>ä¸å</strong>èªå¨è¯»ååä»åº <code>.git/hooks</code> ä¸çååæä»¶ãå æ­¤éè¦ï¼</p>
+<ul>
+<li>å¨ <strong><code>prepare-commit-msg</code></strong> ä¸­å®ç°è¿½å é»è¾ï¼å¹¶å¨éå½æ¶åè°ç¨ <code>.git/hooks/prepare-commit-msg</code>ï¼</li>
+<li>ä¸º <strong><code>pre-commit</code>ã<code>commit-msg</code>ã<code>pre-push</code></strong> ç­å¸¸ç¨é©å­æä¾<strong>è½¬åèæ¬</strong>ï¼åé¨æ§è¡ <code>.git/hooks/&lt;åå&gt;</code>ï¼è¥å­å¨ï¼ï¼ä»¥å°½éä¿æä¸æªéç½®å¨å± <code>hooksPath</code> æ¶ä¸è´çè¡ä¸ºã</li>
+</ul>
+<hr>
+<h2 id="ä¸prepare-commit-msg-é»è¾è¦ç¹">ä¸ã<code>prepare-commit-msg</code> é»è¾è¦ç¹</h2>
+<p>èæ¬å»ºè®®åå«ï¼</p>
+<ol>
+<li><strong>è§£æä»åºæ ¹ç®å½</strong>ï¼<code>git rev-parse --show-toplevel</code>ï¼å¹¶ç¨ <code>cd "$ROOT" &amp;&amp; pwd -P</code> è§èåè·¯å¾ã</li>
+<li><strong>åç¼å¤æ­</strong>ï¼ä»å½æ ¹ç®å½ä¸º <code>/Your/work/dir</code> æä»¥å¶ä¸ºåç¼çå­è·¯å¾æ¶ï¼ææ§è¡è¿½å ã</li>
+<li><strong><code>NO_XXX</code> å¤æ­</strong>ï¼è¥ <code>[ "${NO_XXX+x}" = "x" ]</code>ï¼åä¸åè¿½å ï¼åéå·²è®¾ç½®å³å¯ï¼ä¸è¦æ±æå¼ï¼ã</li>
+<li><strong>é¾å¼æ§é©å­</strong>ï¼è¥ <code>$GIT_DIR/hooks/prepare-commit-msg</code> å­å¨ä¸å¯æ§è¡ï¼åæ§è¡ï¼é¿åä¸åå²å®è£æ¹å¼å²çªï¼ã</li>
+<li><strong>è¿½å åæ£æ¥</strong>ï¼é¦è¡éç©ºãä¸ä¸ä»¥ <code> [xxx]</code> ç»å°¾ï¼ä½¿ç¨ <code>sed</code> ä¿®æ¹é¦è¡ï¼æ³¨æ macOS ä¸ GNU <code>sed</code> å¯¹ <code>-i</code> çå·®å¼ï¼å¯ç¨ <code>sed -i.bak ... &amp;&amp; rm -f *.bak</code>ï¼ã</li>
+</ol>
+<p>å·ä½å®ç°ä»¥å½åç®å½ä¸ <strong><code>prepare-commit-msg</code></strong> æä»¶ä¸ºåã</p>
+<hr>
+<h2 id="åè½¬åç±»é©å­pre-commitcommit-msg-ç­">åãè½¬åç±»é©å­ï¼pre-commitãcommit-msg ç­ï¼</h2>
+<p>å¨å¨å± <code>hooksPath</code> ç®å½ä¸­ä¸ºæ¯ä¸ªéè¦çé©å­åå»ºç«å¯æ§è¡èæ¬ï¼åå®¹æ¨¡å¼ä¸ºï¼</p>
+<pre><code class="language-sh">#!/usr/bin/env sh
+GIT_DIR=$(git rev-parse --git-dir 2&gt;/dev/null) || exit 0
+LEGACY="$GIT_DIR/hooks/&lt;é©å­å&gt;"
+[ -x "$LEGACY" ] &amp;&amp; exec sh "$LEGACY" "$@"
+exit 0
+</code></pre>
+<p>å° <code>&lt;é©å­å&gt;</code> æ¿æ¢ä¸º <code>pre-commit</code>ã<code>commit-msg</code> ç­ãè¿æ ·æªä½¿ç¨ Huskyãä»ä¾èµ <code>.git/hooks</code> çä»åºä»è½è·åææ£æ¥ã</p>
+<hr>
+<h2 id="äºhusky-ä»åºé¢å¤æ­¥éª¤">äºãHusky ä»åºé¢å¤æ­¥éª¤</h2>
+<p>è¥ä»åºæ§è¡ï¼</p>
+<pre><code class="language-bash">git config core.hooksPath
+</code></pre>
+<p>å¾å° <strong><code>.husky/_</code></strong>ï¼æä»»æéå¨å±è·¯å¾ï¼ï¼å Git <strong>ä¸ä¼</strong>è°ç¨ <code>$HOME/.config/git/hooks/prepare-commit-msg</code>ã</p>
+<p>å¨è¯¥ä»åº <strong><code>/.husky/prepare-commit-msg</code></strong> ä¸­åå¥è½¬åï¼éå¯æ§è¡ï¼ï¼</p>
+<pre><code class="language-sh">#!/usr/bin/env sh
+[ -x "${HOME}/.config/git/hooks/prepare-commit-msg" ] || exit 0
+exec sh "${HOME}/.config/git/hooks/prepare-commit-msg" "$@"
+</code></pre>
+<p>ä¿å­åï¼</p>
+<pre><code class="language-bash">chmod +x .husky/prepare-commit-msg
+</code></pre>
+<p>ä¹åå¨è¯¥ä»åºæäº¤æ¶ï¼ä¼ç± Husky è°ç¨ä¸è¿°æä»¶ï¼åè¿å¥å¨å± <code>prepare-commit-msg</code> é»è¾ã</p>
+<hr>
+<h2 id="å­éªè¯æ­¥éª¤">å­ãéªè¯æ­¥éª¤</h2>
+<ol>
+<li>
+<p><strong>æ  Huskyãå¨ Work/code ä¸</strong>çæµè¯ä»åºï¼</p>
+<pre><code class="language-bash">cd /Your/work/dir/ææµè¯ä»åº
+git commit --allow-empty -m "chore: é©å­æµè¯"
+git log -1 --pretty=%B
+</code></pre>
+<p>é¦è¡åºç±»ä¼¼ï¼<code>chore: é©å­æµè¯ [xxx]</code>ã</p>
+</li>
+<li>
+<p><strong>è·³è¿è¿½å </strong>ï¼</p>
+<pre><code class="language-bash">NO_XXX git commit --allow-empty -m "chore: æ  AI æ "
+</code></pre>
+<p>é¦è¡åº<strong>æ </strong> <code> [xxx]</code>ã</p>
+</li>
+<li>
+<p><strong>Husky ä»åº</strong>ï¼ç¡®è®¤å·²å­å¨ <code>.husky/prepare-commit-msg</code> è½¬åä¸å¯æ§è¡åï¼éå¤æ­¥éª¤ 1ã</p>
+</li>
+</ol>
+<hr>
+<h2 id="ä¸æ¤éä¸æé">ä¸ãæ¤éä¸æé</h2>
+<h3 id="æ¤éå¨å±-hookspath">æ¤éå¨å± hooksPath</h3>
+<pre><code class="language-bash">git config --global --unset core.hooksPath
+</code></pre>
+<p>æ¤éåï¼åä»åºæ¢å¤é»è®¤ä½¿ç¨ <strong><code>.git/hooks</code></strong>ï¼ä»¥ä»åºåæ¯å¦å¦æ <code>core.hooksPath</code> ä¸ºåï¼ã</p>
+<h3 id="æªè¿½å æ¶çæ£æ¥æ¸å">æªè¿½å æ¶çæ£æ¥æ¸å</h3>
+<table>
+<thead>
+<tr>
+<th>æ£æ¥é¡¹</th>
+<th>è¯´æ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>æ¯å¦å¨ <code>Work/code</code> ä¸</td>
+<td>æ ¹ç®å½é¡»å¹é <code>/Your/work/dir</code> åç¼</td>
+</tr>
+<tr>
+<td>æ¯å¦è®¾ç½®äº <code>NO_XXX</code></td>
+<td><code>env | grep NO_XXX</code></td>
+</tr>
+<tr>
+<td>é¦è¡æ¯å¦å·²æ <code> [xxx]</code></td>
+<td>å·²æåä¸åè¿½å </td>
+</tr>
+<tr>
+<td>ä»åºæ¯å¦ä½¿ç¨ Husky</td>
+<td>æ¯åé <code>.husky/prepare-commit-msg</code> è½¬å</td>
+</tr>
+<tr>
+<td>å¨å± <code>core.hooksPath</code></td>
+<td><code>git config --global --get core.hooksPath</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h1 id="å¨å±-git-é©å­ä½¿ç¨è¯´æ">å¨å± Git é©å­ä½¿ç¨è¯´æ</h1>
+<p><code>git config --global core.hooksPath</code> æåçé©å­ç®å½ï¼ç¨äºå¨æäº¤è¯´æé¦è¡æ«å°¾è¿½å  <code> [xxx]</code>ï¼è§ <code>prepare-commit-msg</code>ï¼ï¼å¹¶è½¬åå¶å®é©å­å°åä»åºç <code>.git/hooks</code>ã</p>
+<h2 id="è¿½å -xxx-ä½æ¶çæ">è¿½å  <code>[xxx]</code> ä½æ¶çæ</h2>
+<p>åæ¶æ»¡è¶³ä»¥ä¸æ¡ä»¶æ¶ï¼ä¼å¨<strong>æäº¤è¯´æç¬¬ä¸è¡ï¼æ é¢ï¼</strong>æ«å°¾è¿½å ç©ºæ ¼ + <code>[xxx]</code>ï¼</p>
+<ol>
+<li>ä»åºæ ¹ç®å½ï¼<code>git rev-parse --show-toplevel</code> è§èååï¼ä½äº <strong><code>/Your/work/dir</code></strong> æå¶å­ç®å½ä¸ã</li>
+<li>ç¯å¢åé <strong><code>NO_XXX</code> æªè®¾ç½®</strong>ï¼è§ä¸æãå¦ä½è·³è¿ãï¼ã</li>
+<li>é¦è¡éç©ºï¼ä¸<strong>å°æª</strong>ä»¥ <code> [xxx]</code> ç»å°¾ï¼é¿å <code>git commit --amend</code> éå¤è¿½å ï¼ã</li>
+</ol>
+<p>ä¸æ»¡è¶³ç¬¬ 1 æ¡æ¶ï¼ä»ä¼æ§è¡ <code>.git/hooks/prepare-commit-msg</code>ï¼è¥å­å¨ï¼ï¼ä½<strong>ä¸ä¼</strong>æ¹è¯´æãä¸è¿½å ã</p>
+<h2 id="å¦ä½è·³è¿è¿½å ">å¦ä½è·³è¿è¿½å </h2>
+<p>åªè¦ <strong><code>NO_XXX</code> å·²è¢«è®¾ç½®</strong>ï¼æ éèµå¼ï¼ï¼æ¬æ¬¡æäº¤ä¸ä¼è¿½å  <code>[xxx]</code>ï¼</p>
+<pre><code class="language-bash">NO_XXX git commit -m "feat: æåè½"
+</code></pre>
+<pre><code class="language-bash">export NO_XXX
+git commit -m "feat: å¦ä¸åè½"
+</code></pre>
+<pre><code class="language-bash">NO_XXX= git commit -m "feat: ç©ºå¼ä¹ç®å·²è®¾ç½®"
+</code></pre>
+<p>åæ¶è·³è¿ï¼<code>unset NO_XXX</code>ã</p>
+<h2 id="husky-ä»åºä¸ºä½è¿è¦å¨é¡¹ç®éå é©å­">Husky ä»åºä¸ºä½è¿è¦å¨é¡¹ç®éå é©å­</h2>
+<p>è¥æä»åºå¨<strong>æ¬å°</strong>éç½®äº <code>core.hooksPath</code>ï¼ä¾å¦ Husky ç <code>.husky/_</code>ï¼ï¼Git <strong>åªä¼</strong>æ§è¡è¯¥è·¯å¾ä¸çé©å­ï¼<strong>ä¸ä¼</strong>èªå¨æ§è¡ <code>prepare-commit-msg</code>ã</p>
+<p>æ­¤ç±»ä»åºéå¨ <strong><code>.husky/prepare-commit-msg</code></strong> ä¸­è½¬åå°æ¬æºèæ¬ï¼ä¾å¦ï¼</p>
+<pre><code class="language-sh">#!/usr/bin/env sh
+[ -x "${HOME}/.config/git/hooks/prepare-commit-msg" ] || exit 0
+exec sh "${HOME}/.config/git/hooks/prepare-commit-msg" "$@"
+</code></pre>
+<p>å¹¶èµäºå¯æ§è¡æéï¼<code>chmod +x .husky/prepare-commit-msg</code>ã</p>
+<h2 id="å¶å®é©å­pre-commitcommit-msg-ç­">å¶å®é©å­ï¼pre-commitãcommit-msg ç­ï¼</h2>
+<p><code>pre-commit</code>ã<code>commit-msg</code>ã<code>pre-push</code> ç­ä¸º<strong>èè½¬å</strong>ï¼è¥å­å¨ <code>.git/hooks/&lt;åå&gt;</code> ä¸å¯æ§è¡ï¼åæ§è¡ä¹ï¼å¦åç´æ¥éåºãç¨äºå¨è®¾ç½®äºå¨å± <code>core.hooksPath</code> åï¼ä»è½ä½¿ç¨åä»åºååæ¾å¨ <code>.git/hooks</code> éçé»è¾ã</p>
+<h2 id="ä¸-commitlint-ç­">ä¸ commitlint ç­</h2>
+<p><code>prepare-commit-msg</code> å¨æå¼ç¼è¾å¨æåå¥ <code>-m</code> è¯´æä¹åã<code>commit-msg</code> æ ¡éªä¹åæ§è¡ãè¿½å åé¦è¡å½¢å¦ï¼<code>feat: æè¿° [xxx]</code>ãè¥ä¸ commitlint è§åå²çªï¼éå¨ <code>commitlint.config.js</code> ä¸­æ¾å®½å¯¹ <code>subject</code> çè§åã</p>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0.030555555555555555" data-date-updated="2026-04-16 20:07">2026-04-16 19:23</span>&nbsp;
+<a href="https://www.cnblogs.com/Man-Dream-Necessary">SKILLÂ·NULL</a>&nbsp;
+éè¯»(<span id="post_view_count">26</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19879569);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FMan-Dream-Necessary%2Fp%2F19879569&amp;targetId=19879569&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ Number.isFiniteåisFiniteä¸isNaN()åisNaNçåºå« ]]></title>
+    <link>https://www.cnblogs.com/IwishIcould/p/19879555</link>
+    <guid>dae78f8faab692edf9363d873f26d466</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/IwishIcould/p/19879555" title="åå¸äº 2026-04-16 19:15">
+    <span role="heading" aria-level="2">Number.isFiniteåisFiniteä¸isNaN()åisNaNçåºå«</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h4 id="å¤æ­æ¯å¦ä¸ºæ°å­ä¸å¤å®ç¾">å¤æ­æ¯å¦ä¸ºæ°å­(ä¸å¤å®ç¾)</h4>
+<pre><code>function isNumber(value) {
+    return typeof value === 'number' &amp;&amp; !isNaN(value);
+}
+// æµè¯
+isNumber(123);       // true
+isNumber(0);         // true
+isNumber(NaN);       // false ï¼NaN è¢«æé¤ï¼
+isNumber(Infinity);  // true  ï¼æ ç©·å¤§ç®æ°å­ï¼è¿éå¤æ­åºéäº
+isNumber("123");     // false
+</code></pre>
+<h4 id="å¤æ­æ¯å¦ä¸ºæ°å­">å¤æ­æ¯å¦ä¸ºæ°å­</h4>
+<pre><code>function isNumber(value) {
+  return typeof value === 'number' &amp;&amp; Number.isFinite(value);
+}
+</code></pre>
+<p>è¿ä¸ªåæ³è½ç¶å¥½ï¼ä½æç¹ç´¯èµäºã<br>
+å ä¸ºä½ ä¸æ¸æ¥Number.isFiniteçå«ä¹ã</p>
+<h4 id="numberisfinite">Number.isFinite</h4>
+<p>Number.isFinite(value) æ¯ ES6 å¼å¥çéææ¹æ³ï¼<br>
+åªæå½ value çç±»åä¸º "number"ï¼ä¸è¯¥æ°å­ä¸æ¯ NaNï¼ä¹ä¸æ¯ Infinity æ -Infinity æ¶ï¼æè¿å trueã<br>
+Number.isFinite(): ä¸ä¼ç±»åå¼ºå¶è½¬æ¢<br>
+isFinite()ä¼ç±»åå¼ºå¶è½¬æ¢ã</p>
+<h4 id="isfinite">isFinite</h4>
+<p>åå°valueå¼ºå¶è½¬æ¢ä¸ºæ°å­"number"ï¼ä¸è¯¥æ°å­ä¸æ¯ NaNï¼ä¹ä¸æ¯ Infinity æ -Infinity æ¶ï¼æè¿å trueã</p>
+<h4 id="isfiniteånumberisfiniteçåºå«">isFinite()åNumber.isFinite()çåºå«</h4>
+<p>isFinite()ä¼è¿è¡å¼ºå¶ç±»åè½¬æ¢ï¼èNumber.isFinite()ä¸ä¼è¿è¡ç±»åè½¬æ¢ã</p>
+<h4 id="numberisfiniteåisfiniteçè¯¦ç»ç¤ºä¾å¯¹æ¯">Number.isFinite()åisFinite()çè¯¦ç»ç¤ºä¾å¯¹æ¯</h4>
+<pre><code>// â å¯¹äºçæ­£çæéæ°å­ï¼ä¸¤èè¿åä¸è´
+Number.isFinite(123);        // true
+isFinite(123);               // true
+
+// å¯¹äºéæéæ°å­ï¼NaN / Infinityï¼
+Number.isFinite(NaN);        // false
+isFinite(NaN);               // false
+
+Number.isFinite(Infinity);   // false
+isFinite(Infinity);          // false
+
+Number.isFinite(undefined);  // false
+isFinite(undefined);         // false ï¼å¼ºå¶è½¬åä¸ºæ°å­,undefined -&gt; NaNï¼
+
+Number.isFinite("abc");      // false
+isFinite("abc");             // false ï¼å¼ºå¶è½¬åä¸ºæ°å­,"abc" -&gt; NaNï¼
+
+// â ï¸ å¯¹äºéæ°å­ç±»å,å¼å§åºç°å·¨å¤§åæ­§
+Number.isFinite("123");      // false ï¼å ä¸ºç±»åæ¯ stringï¼
+isFinite("123");             // true  ï¼ä¼è¿è¡å¼ºå¶è½¬æ¢,"123" --&gt; 123ï¼
+
+// â ï¸ å¯¹äº"",å¼å§åºç°å·¨å¤§åæ­§
+Number.isFinite("");         // false
+isFinite("");                // true  ï¼ä¼è¿è¡å¼ºå¶è½¬æ¢ï¼"" --&gt; 0ï¼
+
+// â ï¸ å¯¹äºtrue,å¼å§åºç°å·¨å¤§åæ­§
+Number.isFinite(true);       // false
+isFinite(true);              // true  ï¼ä¼è¿è¡å¼ºå¶è½¬æ¢,true -&gt; 1ï¼
+
+// â ï¸ å¯¹äºnull,å¼å§åºç°å·¨å¤§åæ­§
+Number.isFinite(null);       // false
+isFinite(null);              // true  ï¼ä¼è¿è¡å¼ºå¶è½¬æ¢,null -&gt; 0ï¼
+
+// â ï¸ å¯¹äº[],å¼å§åºç°å·¨å¤§åæ­§
+Number.isFinite([]);         // false
+isFinite([]);                // true  ï¼å¼ºå¶è½¬åä¸ºæ°å­,[] -&gt; "" -&gt; 0ï¼
+
+// â ï¸ å¯¹äºæ°å­ç±»åçæ°ç»,å¼å§åºç°å·¨å¤§åæ­§
+Number.isFinite([5]);        // false
+isFinite([5]);               // true  ï¼[5] -&gt; "5" -&gt; 5ï¼æéï¼
+</code></pre>
+<h4 id="ä»ä¹æ¨èä½¿ç¨-numberisfinite">ä»ä¹æ¨èä½¿ç¨ Number.isFiniteï¼</h4>
+<p>æ´å®å¨ï¼é¿åå éå¼è½¬æ¢å¯¼è´çé»è¾æ¼æ´ã<br>
+å¼å®¹æ§ï¼ES6åºæ¥çï¼ä¸»æµæµè§å¨æ¯æï¼ä½æ¯IEä¸æ¯æ</p>
+<h4 id="æ´å ç®æ´å¤æ­æ¯å¦æ¯æ°å­çåæ³ä¸æ¯æie">æ´å ç®æ´å¤æ­æ¯å¦æ¯æ°å­çåæ³(ä¸æ¯æIE)</h4>
+<p>çäºä¸é¢çè®²è§£ï¼å¤æ­æ°å­çæä½³åæ³æ¯è¿ä¸ªï¼</p>
+<pre><code>const isNumber = Number.isFinite(value)
+</code></pre>
+<h4 id="å¼å®¹ieå¤æ­æ°å­çæ¹æ³">å¼å®¹IEå¤æ­æ°å­çæ¹æ³</h4>
+<pre><code>function isNumber(value) {
+  return typeof value === 'number' &amp;&amp; isFinite(value);
+}
+console.log(isNumber(Infinity)); // false
+console.log(isNumber(NaN)); // false
+console.log(isNumber('1234')); // false
+</code></pre>
+<p>isFinite() IE å¼å®¹æ§</p>
+<h4 id="isnanvalue">isNaN(value)</h4>
+<p>åå°åæ° value å¼ºå¶è½¬æ¢ä¸ºæ°å­(è°ç¨çæ¯ToNumber),åå¤æ­è½¬æ¢åçç»ææ¯å¦ä¸º NaNã</p>
+<pre><code>isNaN("hello")    â true   ï¼helloå¼ºå¶è½¬åä¸ºæ°å­NaN,è¿åtrueï¼ã
+isNaN("123abc");  â true  ï¼Number("123abc") =&gt; NaNï¼
+isNaN(undefined)  â trueââ   (å¼ºå¶è½¬åä¸ºæ°å­NaNï¼å ä¸ºNumber(undefined)æ¯NaNãæä»¥è¿åtrue)
+isNaN({});        â true  ï¼Number({}) =&gt; NaNï¼
+
+isNaN(123)        â false  ï¼123 ä¸æ¯NaNï¼è¿åfalseï¼
+isNaN("123")      â false ï¼å¼ºå¶è½¬åä¸ºæ°å­123ï¼123ä¸æ¯NaNï¼è¿åfalseï¼ã
+isNaN(null)       â false ï¼å¼ºå¶è½¬åä¸ºæ°å­0,å ä¸ºNumber(null)æ¯0ãè¿åfalseï¼ãââ
+isNaN("");        â false ï¼å¼ºå¶è½¬åä¸ºæ°å­0,å ä¸ºNumber("")æ¯0ï¼è¿åfalseï¼
+isNaN("   ");     â false ï¼å¼ºå¶è½¬åä¸ºæ°å­0,å ä¸ºNumber("   ")æ¯0,è¿åfalseï¼
+isNaN(false);     â false ï¼Number(false),å¼ºå¶è½¬åä¸ºæ°å­0ï¼
+isNaN([]);        â false ï¼Number([]),å¼ºå¶è½¬åä¸ºæ°å­0ï¼
+</code></pre>
+<h4 id="numberisnanvalue">Number.isNaN(value)</h4>
+<p>ä¸ä¼å¯¹ä¼ å¥çåæ°valueåç±»åè½¬æ¢ãå®åªå¨ value ä¸¥æ ¼ç­äº NaN æ¶è¿å trueï¼å¶ä»æææåµé½è¿å falseã</p>
+<h4 id="numberisnan-å-isnançåºå«">Number.isNaN() å isNaN()çåºå«</h4>
+<p>Number.isNaN()ä¸ä¼å¯¹ä¼ å¥çåæ°åç±»åè½¬æ¢ã<br>
+isNaN()ä¼å¯¹ä¼ å¥çåæ°åç±»åè½¬æ¢(å¼ºå¶è½¬æ¢ä¸ºæ°å­)ã</p>
+<pre><code>// å¸åçé·é±å¯¹æ¯
+Number.isNaN("abc");   // false ï¼ä¸ä¼è½¬æ¢ï¼ç´æ¥å¤å®ä¸æ¯ NaNï¼è¿åfalseï¼
+isNaN("abc");          // true  ï¼å¼ºå¶è½¬åä¸ºæ°å­ç±»åNaNï¼Number("abc") =&gt; NaNï¼ è¿åtrueï¼
+
+Number.isNaN(undefined); // false ï¼ä¸ä¼è½¬æ¢ï¼ç´æ¥å¤å®ä¸æ¯ NaNï¼è¿åfalseï¼
+isNaN(undefined);        // trueï¼å¼ºå¶è½¬åä¸ºæ°å­ç±»åNaNï¼Number(undefined) =&gt; NaNï¼ è¿åtrueï¼
+</code></pre>
+<h4 id="numberå ä¸ªå¸¸è§çå¼è½¬å">number()å ä¸ªå¸¸è§çå¼è½¬å</h4>
+<pre><code>Number("hello")    â NaN  
+Number("123abc")   â NaN  
+Number(undefined)  â NaN
+Number({})         â NaNï¼
+Number(null);      â 0
+Number("");        â 0
+Number("   ")      â 0
+Number(false);     â 0
+Number(true);      â 1
+Number([]);        â 0
+Number([5]);        â 5
+Number([5, 6]);     â NaN
+</code></pre>
+
+
+</div>
+<div id="MySignature" role="contentinfo">
+    <div style="width:818px;background:#f5f5f5; padding: 10px 10px 10px 10px; border: 1px dashed rgb(224, 224, 224); font-family: å¾®è½¯éé»; font-size: 13px;">
+            <h1 style="font-size: 24px;"> éè§é®é¢ï¼è¿æ¯ä½ æé¿çæºä¼ï¼å¦æä½ è½å¤è§£å³ï¼è¿å°±æ¯æ¶è·ã </h1>
+		    <div style="padding:10px">
+		        ä½èï¼<a href="https://www.cnblogs.com/IwishIcould/" target="_blank">ææ¥åé£æç¸è¯</a> <br>
+		        åºå¤ï¼<a href="https://www.cnblogs.com/IwishIcould/">https://www.cnblogs.com/IwishIcould/</a> <br>
+                        <p> æ³é®é®é¢ï¼æèµäºåå¾®çåä¸»ï¼æ±æ±ä½ å¤æ³¨ä¸ä¸çæ£æ£æèå¾®ä¿¡ï¼è¿æ ·æå¥½èç³»ä½ ï¼(ã£â¢ÌÏâ¢Ì)ã£ââ¾â¾ï¼</p>
+		        <p>å¦æè§å¾è¿ç¯æç« å¯¹ä½ æå°å°çå¸®å©çè¯ï¼è®°å¾å¨å³ä¸è§ç¹ä¸ªâæ¨èâå¦ï¼æèå³æ³¨åä¸»ï¼å¨æ­¤æè°¢ï¼</p>
+		        <p> ä¸æ°´åå±±æ»æ¯æï¼æèµ5æ¯ä¹°è¾£æ¡è¡ä¸è¡ï¼æä»¥å¦æä½ å¿æè¿æ¯è¾é«å´ï¼ä¹æ¯å¯ä»¥æ«ç æèµåä¸»(ã£â¢ÌÏâ¢Ì)ã£ââ¾â¾ï¼</p>
+                        <p> æ³é®é®é¢ï¼æèµäºåå¾®çåä¸»ï¼æ±æ±ä½ å¤æ³¨ä¸ä¸çæ£æ£æèå¾®ä¿¡ï¼è¿æ ·æå¥½èç³»ä½ ï¼(ã£â¢ÌÏâ¢Ì)ã£ââ¾â¾ï¼</p>
+				<div style="display: flex;">
+					<div style="margin-right: 100px;text-align: center;">
+						<img src="//images.cnblogs.com/cnblogs_com/IwishIcould/1900124/t_201214043958æ¯ä»å®æ¶æ¬¾ç .jpg?a=1607924145179">
+						<div>
+							æ¯ä»å®
+						</div>
+					</div>
+					<div style="text-align: center;">
+						<img src="//images.cnblogs.com/cnblogs_com/IwishIcould/1900124/t_20121604194271E6E296CCB71A007F4E22073D5EB64A.jpg">
+						<div>å¾®ä¿¡</div>
+					</div>
+				</div>
+		        æ¬æçæå½ä½èææï¼æ¬¢è¿è½¬è½½ï¼æªç»ä½èåæé¡»ä¿çæ­¤æ®µå£°æï¼å¨æç« é¡µé¢ææ¾ä½ç½®ç»åºåæè¿æ¥ <br>
+		        å¦ææä¸­æä»ä¹éè¯¯ï¼æ¬¢è¿æåºãä»¥åæ´å¤çäººè¢«è¯¯å¯¼ã <br>
+               
+		    </div>
+           
+            
+		</div>
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-04-16 19:16">2026-04-16 19:15</span>&nbsp;
+<a href="https://www.cnblogs.com/IwishIcould">åé£ææ¥æç¸è¯</a>&nbsp;
+éè¯»(<span id="post_view_count">11</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19879555);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FIwishIcould%2Fp%2F19879555&amp;targetId=19879555&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ PortSwigger SQLæ³¨å¥LAB2 ]]></title>
+    <link>https://www.cnblogs.com/CH3CH2OH-Blog/p/19879175</link>
+    <guid>0cf14b074b6f1813120c6d1c4e3e0534</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/CH3CH2OH-Blog/p/19879175" title="åå¸äº 2026-04-16 18:51">
+    <span role="heading" aria-level="2">PortSwigger SQLæ³¨å¥LAB2</span>
     
 
 </a>
@@ -25,47 +405,93 @@
             <div class="clear"></div>
             <div class="postBody">
                 <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
-<h1>PortSwigger SQLæ³¨å¥å®éªå®¤ï¼äºï¼<br>éè¿SQLæ³¨å¥ç»è¿ç»å½éªè¯</h1>
-<p>æ¬å®éªæ¥èª PortSwigger Web Security Academyãæ¯ SQL æ³¨å¥ç³»åçç¬¬äºä¸ªåºç¡å®éª,ç®æ æ¯ä½¿ç¨Burpsuiteå¯¹ç½é¡µè¿è¡æ¦æªåæï¼å¹¶ä¿®æ¹ç»å½è¯·æ±ï¼æç»ç»è¿ç»å½ã</p>
-<p>éè¿è¯¥å®éªå¯ä»¥çè§£ï¼<strong>å½åºç¨ç¨åºç´æ¥å°ç¨æ·è¾å¥æ¼æ¥å°SQLè¯­å¥ä¸­èæªåè¿æ»¤æåæ°åå¤çæ¶ï¼æ»å»èå¯ä»¥éè¿ç²¾å¿è®¾è®¡çè¾å¥æ¹ååæSQLè¯­å¥çè¯­ä¹ï¼ä»èç»è¿å¯ç æ ¡éªã</strong></p>
+<h1>PortSwigger SQLæ³¨å¥å®éªï¼äºï¼<br>éè¿SQLæ³¨å¥ç»è¿ç»å½éªè¯</h1>
+<p>æ¬å®éªæ¥èª PortSwigger Web Security Academyï¼æ¯ SQL æ³¨å¥ç³»åçç¬¬äºä¸ªåºç¡å®éªãç®æ ä¸ºï¼ä½¿ç¨ Burp Suite å¯¹ç»å½è¯·æ±è¿è¡æ¦æªä¸åæï¼å¹¶éè¿ä¿®æ¹è¯·æ±åæ°å®ç°ç»è¿ç»å½éªè¯ã</p>
+<p>éè¿è¯¥å®éªå¯ä»¥çè§£ï¼<strong>å½åºç¨ç¨åºå°ç¨æ·è¾å¥ç´æ¥æ¼æ¥è³ SQL è¯­å¥èæªåä»»ä½è¿æ»¤æåæ°åå¤çæ¶ï¼æ»å»èå¯éè¿ç²¾å¿æé çè¾å¥æ¹ååå§ SQL è¯­å¥çè¯­ä¹ï¼ä»èç»è¿å¯ç æ ¡éªæºå¶ã</strong></p>
 <p><img alt="å®éªæè¿°æªå¾" class="post-image lazyload" data-src="https://img2024.cnblogs.com/blog/3695872/202604/3695872-20260416153845684-2094488623.png"></p>
 <div class="note">
   <strong>ãå®éªç®æ ã</strong><br>
-  è¯¥LABçç»å½åè½ä¸­å­å¨ SQL æ³¨å¥æ¼æ´ã<br>
-  å©ç¨æ³¨å¥æ¼æ´<strong>ä»¥ç®¡çåç¨æ·èº«ä»½ç»å½å°åºç¨</strong>ï¼å³ <code>administrator</code>ç¨æ·ï¼ã
+  è¯¥å®éªçç»å½åè½ä¸­å­å¨ SQL æ³¨å¥æ¼æ´ã<br>
+  å©ç¨è¯¥æ¼æ´<strong>ä»¥ç®¡çåèº«ä»½ï¼administratorï¼ç»å½åºç¨</strong>ã
 </div>
-<h2>1. å¯å¨LABåBurpsuite</h2>
-<p>å¯å¨å®éªå®¤ï¼å¯ä»¥çå°è¿æ¯è·æä»¬LAB1ç¸ä¼¼çè´­ç©é¡µé¢ï¼æ°´å¹³çº¿çå³ä¸æ¹æä¾äºä¸ä¸ªâHomeâåâMy accountâåè½ã</p>
+<h2>1. å¯å¨å®éªç¯å¢ä¸ Burp Suite</h2>
+<p>å¯å¨å®éªç¯å¢åï¼å¯ä»¥çå°ä¸ LAB1 ç¸ä¼¼çè´­ç©é¡µé¢ï¼é¡µé¢å³ä¸æ¹æä¾äºâHomeâä¸âMy accountâåè½å¥å£ã</p>
 <p><img alt="å®éªä¸»é¡µ" class="post-image lazyload" data-src="https://img2024.cnblogs.com/blog/3695872/202604/3695872-20260416155558475-1502341274.png"></p>
-<p>æ¥ä¸æ¥æä»¬å¯å¨Burpsuite,è¿å¥<code>Proxy</code>é¡µé¢ä¸ç<code>HTTP history</code>å­é¡µ</p>
-<p>å½æä»¬å¯å¨æµè§å¨ä¸­çBurpsuitä»£çä¹åè¿éå°±ä¼å¼å§è®°å½ã</p>
-<p><img alt="Burpsuité¡µé¢" class="post-image lazyload" data-src="https://img2024.cnblogs.com/blog/3695872/202604/3695872-20260416160600361-214104566.png"></p>
-<p>æ¥ä¸æ¥æä»¬ä¸å¦¨ç¹å»<code>My account</code>æ¥çä¸ä¸ç»å½çé¢é¿ä»ä¹æ ·:</p>
-<p><img alt="LABç»éé¡µé¢" class="post-image lazyload" data-src="https://img2024.cnblogs.com/blog/3695872/202604/3695872-20260416165146117-18146630.png"></p>
-<p>è¿ä¸ªçé¢ä¹æ¯ååçç®æ´æäºåï¼ç¬ï¼ï¼é£ä¹æ¥ä¸æ¥å°±å¯ä»¥è¿è¡æä»¬ä¸ä¸æ­¥çæä½äºã</p>
-<h2>2. å¯å¨ä»£çå¼å§æå</h2>
-<p>æ¥ä¸æ¥æä»¬å¯å¨æµè§å¨ä¸­å·²ç»éç½®å¥½çBurpsuiteä»£çåå¤è¿è¡æåã</p>
-<p>æ¢ç¶æä»¬çç®æ æ¯ä½¿ç¨ç®¡çåè´¦æ·è¿è¡ç»éï¼é£ä¹æä»¬è¿è¾¹ç´æ¥å¨usernameä¸­å¡«å¥<code>administrator</code>ï¼å¯ç ä¸ºäºæ¹ä¾¿å¯»æ¾ï¼æå¡«å¥äº<code>testcode</code></p>
-<p>ç¹å»ç»éæ¥çä¸ä¸æä»¬çBurpsuiteä¼æåå°ä»ä¹æ°æ®å¢</p>
-<p><img alt="Burpsuitæåç»æ1" class="post-image lazyload" data-src="https://img2024.cnblogs.com/blog/3695872/202604/3695872-20260416165921322-174228018.png"></p>
-<p>è¿ä¹å¤æ°æ®æä»¬è¯¥æä¹æ¾å°æä»¬æ³è¦çæ°æ®å¢ï¼å¶å®å¾ç®åï¼æä»¬ç¥éLABçååä¸º:<code>https://0a62009904db1a7e815c7af3006400a2.web-security-academy.net/login</code>ï¼æä»¥æä»¬è¦æ¾çå°±æ¯<code>Host</code>ä¸º<code>https://0a62009904db1a7e815c7af3006400a2.web-security-academy.net/login</code>ä¸<code>url</code>ä¸º<code>login</code>çæ¡ç®ã</p>
-<p>æ¢ç¶æä»¬å·²ç»è¾å¥äºç¨æ·åå¯ç ï¼ä¸åæå¡å¨åéäºè¿æ®µè¯·æ±ï¼æä»¥å¨æ­¤åºç¡ä¸æä»¬åéè¦å¨<code>Request</code>ä¸­æ¾æä»¬æååºçè¿æ®µè¯·æ±ã</p>
-<p>éè¿è¿æ ·çæ¹æ³ï¼æä»¬å¾å¿«éå®äºæä»¬åååéè¯·æ±çæ¡ç®:</p>
-<p><img alt="Burpsuitæåç»æ2" class="post-image lazyload" data-src="https://img2024.cnblogs.com/blog/3695872/202604/3695872-20260416170855130-924786243.png"></p>
-<p>æ¥ä¸æ¥æä»¬å°ä»åéå°<code>Repeater</code>è¿è¡ä¸ä¸æ­¥çå¤ç</p>
+<p>æ¥ä¸æ¥å¯å¨ Burp Suiteï¼è¿å¥ <code>Proxy</code> æ¨¡åä¸ç <code>HTTP history</code> å­é¡µé¢ãå½æµè§å¨ä¸­çä»£çéç½®çæåï¼æ­¤å¤å°å¼å§è®°å½ææ HTTP æµéã</p>
+<p><img alt="Burp Suite é¡µé¢" class="post-image lazyload" data-src="https://img2024.cnblogs.com/blog/3695872/202604/3695872-20260416160600361-214104566.png"></p>
+<p>æä»¬é¦åç¹å» <code>My account</code> æ¥çç»å½é¡µé¢çç»æï¼</p>
+<p><img alt="LAB ç»å½é¡µé¢" class="post-image lazyload" data-src="https://img2024.cnblogs.com/blog/3695872/202604/3695872-20260416165146117-18146630.png"></p>
+<p>çé¢éå¸¸ç®æ´ï¼ç¬ï¼ï¼æ¥ä¸æ¥ä¾¿å¯ä»¥çæè¿è¡æååæã</p>
+<h2>2. å¼å¯ä»£çå¹¶æåç»å½è¯·æ±</h2>
+<p>å¯ç¨æµè§å¨ä¸­å·²éç½®å¥½ç Burp Suite ä»£çï¼åå¤æè·ç»å½è¯·æ±ã</p>
+<p>ç±äºç®æ æ¯ä½¿ç¨ç®¡çåè´¦æ·ç»å½ï¼æä»¬å¨ç¨æ·åæ è¾å¥ <code>administrator</code>ï¼å¯ç æ ä¸ºäºæ¹ä¾¿è¿½è¸ªå¡«å¥ <code>testcode</code>ã</p>
+<p>ç¹å»ç»å½åï¼è§å¯ Burp Suite ä¸­æè·å°çæ°æ®ï¼</p>
+<p><img alt="Burp Suite æåç»æ1" class="post-image lazyload" data-src="https://img2024.cnblogs.com/blog/3695872/202604/3695872-20260416165921322-174228018.png"></p>
+<p>é¢å¯¹å¤§éè®°å½ï¼å¦ä½å¿«éå®ä½ç®æ è¯·æ±ï¼å·²ç¥å®éªç«ç¹ä¸º <code>https://0a62009904db1a7e815c7af3006400a2.web-security-academy.net</code>ï¼å æ­¤å¯ç­é <code>Host</code> ä¸ºè¯¥ååä¸è¯·æ±è·¯å¾ä¸º <code>/login</code> çæ¡ç®ã</p>
+<p>ç±äºæä»¬ååæäº¤äºç¨æ·åä¸å¯ç ï¼è¯¥è¯·æ±å¿ç¶å­å¨äºè®°å½ä¸­ï¼å¯ç´æ¥å¨è¯·æ±åè¡¨ä¸­æ ¹æ®ä¸è¿°æ¡ä»¶éå®ï¼</p>
+<p><img alt="Burp Suite æåç»æ2" class="post-image lazyload" data-src="https://img2024.cnblogs.com/blog/3695872/202604/3695872-20260416170855130-924786243.png"></p>
+<p>å³é®å°è¯¥è¯·æ±åéè³ <code>Repeater</code> æ¨¡åï¼ä»¥ä¾¿åç»­è¿è¡éæ¾ä¸ä¿®æ¹æµè¯ã</p>
+<h2>3. åæè¯·æ±æ°æ®å¹¶æ¨æµåç«¯ SQL é»è¾</h2>
+<p>è§å¯ <code>Request</code> ç Body é¨åï¼å¯ä»¥åç°æä»¬åæå¡å¨æäº¤çæ ¸å¿åæ°ä¸ºï¼<code>username=administrator&amp;password=testcode</code>ãæ®æ­¤æ¨æµï¼åç«¯å¯è½å­å¨å¦ä¸ SQL æ¥è¯¢é»è¾ï¼</p>
+<pre><code><span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> users <span class="sql-keyword">WHERE</span> username = <span class="sql-string">'$username'</span> <span class="sql-keyword">AND</span> password = <span class="sql-string">'$password'</span></code></pre>
+<h2>4. æé æ³¨å¥æ»å»</h2>
+<h3>4.1 å®ä½æ³¨å¥ç¹</h3>
+<p>è¦ç ´åä¸è¿°æ¥è¯¢è¯­å¥çåæé»è¾ï¼æä»¬éè¦å LAB1 ä¸­ä¸æ ·ï¼å©ç¨åå¼å· <code>'</code> è·³åºå­ç¬¦ä¸²è¾¹çãå°è¯å¨ç¨æ·ååè¿½å ä¸ä¸ªåå¼å·ï¼åæ¥è¯¢è¯­å¥å°åä¸ºï¼</p>
+<pre><code><span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> users <span class="sql-keyword">WHERE</span> username = <span class="sql-string">'administrator''</span> <span class="sql-keyword">AND</span> password = <span class="sql-string">'testcode'</span></code></pre>
+<p>è¿å°å¯¼è´ SQL è¯­æ³éè¯¯ãæä»¬å¨ Repeater ä¸­å° <code>username</code> çå¼æ¹ä¸º <code>administrator'</code> å¹¶åéè¯·æ±ï¼</p>
+<p><img alt="Burp Suite æåç»æ3" class="post-image lazyload" data-src="https://img2024.cnblogs.com/blog/3695872/202604/3695872-20260416175553256-166856875.png"></p>
+<p>æå¡å¨è¿å <code>500 Internal Server Error</code>ï¼è¯å®åå¼å·è¢«æåå¸¦å¥ SQL è¯­å¥å¹¶ç ´åäºå¶è¯­æ³ç»æï¼ä»èç¡®è®¤æ­¤å¤å­å¨ SQL æ³¨å¥æ¼æ´ã</p>
+<h3>4.2 æ³¨éæå¯ç éªè¯é¨å</h3>
+<p>æ¢ç¶ <code>username</code> å­æ®µå­å¨æ³¨å¥ç¹ï¼ä¸ä¸æ­¥å³å¯éè¿æ³¨éç¬¦å±è½å¯ç æ ¡éªæ¡ä»¶ï¼å®ç°ç»è¿ç»å½ã</p>
+<p>æä»¬ææåç«¯æ§è¡ç SQL è¯­å¥åä¸ºå¦ä¸å½¢å¼ï¼</p>
+<pre><code><span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> users <span class="sql-keyword">WHERE</span> username = <span class="sql-string">'administrator'-- '</span> <span class="sql-keyword">AND</span> password = <span class="sql-string">'testcode'</span></code></pre>
+<p>å¶ä¸­ <code>--</code> ä¸º SQL åè¡æ³¨éç¬¦ï¼å¶åçåå®¹ï¼å³å¯ç æ ¡éªé¨åï¼å°è¢«æ°æ®åºå¿½ç¥ã</p>
+<h3>4.3 æé æç» Payload</h3>
+<p>Payload åç»æé¨åçä½ç¨å¦ä¸ï¼</p>
+<ul>
+<li><code>administrator</code>ï¼ç®æ ç¨æ·åã</li>
+<li><code>'</code>ï¼é­å SQL è¯­å¥ä¸­ç¨æ·åå­æ®µçå·¦å¼å·ã</li>
+<li><code>-- </code>ï¼æ³¨éæåç»­ç <code>AND password = 'testcode'</code> æ¡ä»¶ï¼æ³¨ææ«å°¾ç©ºæ ¼ï¼ã</li>
+</ul>
+<p>æç»æé çå®æ´è¯·æ±ä½ä¸ºï¼</p>
+<pre><code>csrf=fAUUPbRa2TaV8nWFNSxRGI12atFIWyW3&amp;username=administrator' -- &amp;password=testcode</code></pre>
+<h3>4.4 æ§è¡æ»å»è¯·æ±</h3>
+<p>å¨ Repeater ä¸­å° <code>username</code> åæ°çå¼ä¿®æ¹ä¸º <code>administrator' -- </code>ï¼ç¹å» <code>Send</code> åéï¼</p>
+<p><img alt="æ»å»æå" class="post-image lazyload" data-src="https://img2024.cnblogs.com/blog/3695872/202604/3695872-20260416182008723-998004860.png"></p>
+<p>è§å¯ååºå¤´ä¸­ç <code>Location</code> å­æ®µï¼å¶å¼ä¸º <code>/my-account?id=administrator</code>ï¼è¡¨æå·²æåä»¥ç®¡çåèº«ä»½ç»å½ï¼å®éªç®æ è¾¾æã</p>
+<div class="answer-box">
+<h3>ãæ¬é¢æç» Payloadã</h3>
+<div class="answer-code">administrator' --</div>
+</div>
+<h2>5. æ»ç»ä¸é²å¾¡å»ºè®®</h2>
+<p>æ¬å®éªæ¯ä¸æ¬¡å¸åç <strong>ç»å½ç»è¿å SQL æ³¨å¥</strong>ï¼å©ç¨æ³¨éç¬¦æªæ­æ¥è¯¢é»è¾ï¼ãå¶æ ¹æ¬æå åæ¬ï¼</p>
+<ul>
+<li>ç»å½è¡¨åä¸­çç¨æ·åä¸å¯ç åæ°ç´æ¥æ¼æ¥å° SQL è¯­å¥ä¸­ï¼</li>
+<li>æªå¯¹åå¼å·ãæ³¨éç¬¦ç­ç¹æ®å­ç¬¦è¿è¡è½¬ä¹æè¿æ»¤ï¼</li>
+<li>æªéç¨åæ°åæ¥è¯¢ï¼Prepared Statementï¼æ ORM æ¡æ¶çå®å¨æ¹æ³ã</li>
+</ul>
+<p>é²å¾¡æªæ½ï¼</p>
+<ul>
+<li><strong>åæ°åæ¥è¯¢</strong> ââ å° SQL ä»£ç ä¸ç¨æ·æ°æ®å½»åºåç¦»ï¼ä»æ ¹æ¬ä¸æç»æ³¨å¥å¯è½ï¼</li>
+<li><strong>è¾å¥æ ¡éªä¸è¿æ»¤</strong> ââ å¯¹ç¨æ·åãå¯ç ç­å­æ®µè¿è¡ä¸¥æ ¼æ ¼å¼æ ¡éªï¼å¹¶è½¬ä¹å±é©å­ç¬¦ï¼</li>
+<li><strong>æå°æéåå</strong> ââ åºç¨ç¨åºè¿æ¥æ°æ®åºçè´¦æ·ä»æäºå¿è¦æ¥è¯¢æéï¼éä½æ³¨å¥æååçå±å®³ã</li>
+</ul>
+<p>æ¬å®éªè½ç¶åºç¡ï¼å´æ¸æ°å°æ­ç¤ºäºæ³¨éç¬¦å¨ SQL æ³¨å¥æ»å»ä¸­çå³é®ä½ç¨ãåç»­å®éªä¸­ï¼æå°ç»§ç»­æ·±å¥å­¦ä¹ èåæ¥è¯¢ï¼UNIONï¼æ»å»ãç²æ³¨ç­è¿é¶æå·§ã</p>
+<hr>
+<p>åå®¢å­ææ¯åäº« Â· è¯·å¿ç¨äºéæ³æµè¯</p>
 
 </div>
 <div class="clear"></div>
 
             </div>
             <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.0006944444444444445" data-date-updated="2026-04-16 17:13">2026-04-16 17:12</span>&nbsp;
+<span id="post-date" data-last-update-days="0.003472222222222222" data-date-updated="2026-04-16 18:56">2026-04-16 18:51</span>&nbsp;
 <a href="https://www.cnblogs.com/CH3CH2OH-Blog">C2H5OH</a>&nbsp;
 éè¯»(<span id="post_view_count">0</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19878296);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FCH3CH2OH-Blog%2Fp%2F19878296&amp;targetId=19878296&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+<a href="javascript:void(0)" onclick="AddToWz(19879175);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FCH3CH2OH-Blog%2Fp%2F19879175&amp;targetId=19879175&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -901,8 +1327,8 @@ fetch("/api/data", { signal: combinedSignal }).catch((err) =&gt; {
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-04-16 16:52">2026-04-16 16:52</span>&nbsp;
 <a href="https://www.cnblogs.com/wjszxli">é©æ°</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">38</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19878933);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fwjszxli%2Fp%2F19878933&amp;targetId=19878933&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
@@ -1137,131 +1563,11 @@ k\le dep[lst]+3-dep[np]
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-04-16 16:49">2026-04-16 16:48</span>&nbsp;
 <a href="https://www.cnblogs.com/TakanashiRikka">liduoduo2021</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">46</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19873798);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FTakanashiRikka%2Fp%2F19873798&amp;targetId=19873798&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ Linuxå®æ--rpmä¸yum ]]></title>
-    <link>https://www.cnblogs.com/alineverstop/p/19878707</link>
-    <guid>adfd92720745b37038267e6995e3716a</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/alineverstop/p/19878707" title="åå¸äº 2026-04-16 16:27">
-    <span role="heading" aria-level="2">Linuxå®æ--rpmä¸yum</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h1 id="rpmä¸yum">RPMä¸YUM</h1>
-<h2 id="rpmåç®¡ç">RPMåç®¡ç</h2>
-<p>rpmç¨äºäºèç½ä¸è½½åçæååå®è£å·¥å·ï¼å®åå«å¨æäºLinuxååçï¼suseãredhatãcentosï¼ä¸­ï¼å®çæå·æ.rpmæ©å±åçæä»¶ãRPMæ¯RedHat Package Manager çç¼©åï¼ç±»ä¼¼Windowsçsetup.exe ã</p>
-<ul>
-<li>RPMåçç®åæ¥è¯¢æä»¤</li>
-</ul>
-<pre><code class="language-sh">// æ¥è¯¢å·²å®è£çrpmåè¡¨
-rpm -qa | grep xx
-rpm -qa | grep firefox   //  æ¥çç³»ç»æ¯å¦å®è£äºç«ç
-</code></pre>
-<ul>
-<li>rpmååçåºæ¬æ ¼å¼</li>
-</ul>
-<p>firefox-60.2.2-1.el7.centos.x86_64</p>
-<p>åç§°ï¼firefox</p>
-<p>çæ¬å·ï¼60.2.2-1</p>
-<p>éç¨æä½ç³»ç»ï¼.el7.centos.x86_64  è¡¨ç¤ºcentos7.x ç64ä½ç³»ç»</p>
-<p>å¦ææ¯i686ãi386è¡¨ç¤º32ä½ç³»ç»ï¼noarchè¡¨ç¤ºéç¨ã</p>
-<ul>
-<li>rpmåçå¶ä»æ¥è¯¢æä»¤</li>
-</ul>
-<pre><code class="language-sh">rpm -qa  // æ¥è¯¢å®è£çæærpmè½¯ä»¶å
-rpm -qa | more
-rpm -qa | grep [è½¯ä»¶åå]
-rpm -q [è½¯ä»¶åå]  // æ¥è¯¢è½¯ä»¶åæ¯å¦å®è£
-rpm -q firefox
-rpm -qi [è½¯ä»¶åå]  // æ¥è¯¢è½¯ä»¶åä¿¡æ¯
-rpm -qi firefox
-rpm -ql [è½¯ä»¶åå]  // æ¥è¯¢è½¯ä»¶åä¸­çæä»¶,æ¥è¯¢è½¯ä»¶å®è£å°äºåªé
-rpm -qf [æä»¶å¨è·¯å¾]  // æ¥è¯¢æä»¶æå±çè½¯ä»¶å
-rpm -qf /etc/passwd
-rpm -qf /root/install.log
-
-</code></pre>
-<ul>
-<li>å¸è½½rpmå</li>
-</ul>
-<pre><code class="language-sh">rpm -e ãrpmååã
-</code></pre>
-<p>å¦æå¶ä»è½¯ä»¶åä¾èµäºè¦å¸è½½çè¿ä¸ªè½¯ä»¶åï¼é£ä¹å¸è½½æ¶ä¼åºéã</p>
-<p>æ¯å¦ rpm -e foo</p>
-<p>å¦æå°±æ¯è¦å¼ºè¡å é¤ï¼å¯ä»¥å¢å åæ° --nodeps ï¼ä½æ¯ä¸æ¨èè¿æ ·åï¼è¿æ ·ä¼å¯¼è´ä¾èµè¯¥è½¯ä»¶åçç¨åºæ æ³è¿è¡ã</p>
-<p>æ¯å¦ rpm -e --nodeps foo</p>
-<ul>
-<li>å®è£rpmå</li>
-</ul>
-<pre><code>rpm -ivh [rpmåå¨è·¯å¾åç§°]
-åæ°è¯´ï¼i=install å®è£
-	   v=verbose æç¤º
-	   h=hash  è¿åº¦æ¡
-</code></pre>
-<h2 id="yum">YUM</h2>
-<p>yumæ¯ä¸ä¸ªShellåç«¯è½¯ä»¶åç®¡çå¨ï¼åºäºRPMåç®¡çï¼è½å¤ä»æå®çæå¡å¨èªå¨ä¸è½½RPMåå¹¶ä¸å®è£ï¼å¯ä»¥èªå¨å¤çä¾èµå³ç³»ï¼å¹¶ä¸ä¸æ¬¡å®è£ææä¾èµçè½¯ä»¶åã</p>
-<ul>
-<li>yumçåºæ¬æä»¤</li>
-</ul>
-<pre><code class="language-sh">// æ¥è¯¢yumæå¡å¨æ¯å¦æéè¦å®è£çè½¯ä»¶
-yum list | grep [è½¯ä»¶å]
-// å®è£æå®çyumå
-yum install [è½¯ä»¶å]
-</code></pre>
-<h1 id="æ­å»ºjavaee-ç¯å¢">æ­å»ºjavaEE ç¯å¢</h1>
-<h2 id="å®è£jdk">å®è£jdk</h2>
-<ol>
-<li>mkdir /opt/jdk</li>
-<li>éè¿xftp ä¸ä¼ å° /opt/jdkä¸</li>
-<li>cd /opt/jdk</li>
-<li>è§£åtar -zxvf jdk-8u202-linux-x64.tar.gz</li>
-<li>mkdir /usr/local/java</li>
-<li>mv /opt/jdk/jdk1.8.0_202 /usr/local/java</li>
-<li>éç½®ç¯å¢åéçéç½®æä»¶vim /etc/profile</li>
-<li>export JAVA_HOME=/usr/local/java/jdk1.8.0_202  // åå¨ææ¬æåé¢</li>
-<li>export PATH=$JAVA_HOME/bin:$PATH  // åå¨ææ¬æåé¢</li>
-<li>source /etc/profile  // è®©æä»¶çæ</li>
-<li>æµè¯æä»¶æ¯å¦å®è£æå</li>
-</ol>
-<h2 id="å®è£tomcat">å®è£tomcat</h2>
-<ol>
-<li>ä¸ä¼ å®è£æä»¶ï¼å¹¶è§£åå°/opt/tomcat</li>
-<li>è¿å¥è§£åç®å½/binï¼å¯å¨tomcatï¼ ./startup.sh</li>
-<li>å¼æ¾ç«¯å£ 8080</li>
-</ol>
-
-
-</div>
-<div id="MySignature" role="contentinfo">
-    <p>æ¬ææ¥èªåå®¢å­ï¼ä½èï¼<a href="https://www.cnblogs.com/alineverstop/" target="_blank">NE_STOP</a>ï¼è½¬è½½è¯·æ³¨æåæé¾æ¥ï¼<a href="https://www.cnblogs.com/alineverstop/p/19878707" target="_blank">https://www.cnblogs.com/alineverstop/p/19878707</a></p>
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-04-16 16:27">2026-04-16 16:27</span>&nbsp;
-<a href="https://www.cnblogs.com/alineverstop">NE_STOP</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19878707);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Falineverstop%2Fp%2F19878707&amp;targetId=19878707&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -1330,7 +1636,7 @@ yum install [è½¯ä»¶å]
             posted on 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-04-16 16:14">2026-04-16 16:13</span>&nbsp;
 <a href="https://www.cnblogs.com/wuhuacong">ä¼åèª</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">157</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19878301);return false;">æ¶è</a>&nbsp;
@@ -1743,7 +2049,7 @@ sink {
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-04-16 16:02">2026-04-16 16:01</span>&nbsp;
 <a href="https://www.cnblogs.com/seatunnel">ApacheSeaTunnel</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">37</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19878467);return false;">æ¶è</a>&nbsp;
@@ -1833,11 +2139,120 @@ print(runnable1.get_graph().draw_ascii())
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0.0006944444444444445" data-date-updated="2026-04-16 16:01">2026-04-16 16:00</span>&nbsp;
 <a href="https://www.cnblogs.com/yclh">ä¸ç¬ä½</a>&nbsp;
-éè¯»(<span id="post_view_count">12</span>)&nbsp;
+éè¯»(<span id="post_view_count">30</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19878436);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fyclh%2Fp%2F19878436&amp;targetId=19878436&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ Vue 3 ç»ä»¶éä¿¡ï¼å«åªä¼ç¨ Props å Emits äºï¼è¿å ä¸ªç æ´»å¿ä½ å¾çç ]]></title>
+    <link>https://www.cnblogs.com/ymtianyu/p/19878093</link>
+    <guid>e1011f7ee8a7d5e3ce073fb411180722</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/ymtianyu/p/19878093" title="åå¸äº 2026-04-16 15:22">
+    <span role="heading" aria-level="2">Vue 3 ç»ä»¶éä¿¡ï¼å«åªä¼ç¨ Props å Emits äºï¼è¿å ä¸ªç æ´»å¿ä½ å¾çç</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                    <div id="cnblogs_post_description" style="display: none">
+        
+        Vue 3çç»ä»¶éä¿¡æ¹å¼ä¸æ­¢PropsåEmitsï¼æ¬æç¨âæ°´ç®¡å·¥âçæ¯å»ï¼å¸¦ä½ çæ¸PropsãEmitsãprovide/injectãv-modelä¸mittè¿äºç§å¸¸ç¨æ¹æ¡ãä¸è®²å¹²å·´å·´ççè®ºï¼å¨æ¯å®æä¸­è¸©åºæ¥çç»éªååï¼å¸®ä½ æ¾å°æéåä¸å¡åºæ¯çé£ä¸æèºä¸åã
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin-bottom: 20px">æ¯ä¸æ¯æ¯æ¬¡éå°è·¨å±çº§ç»ä»¶ä¼ å¼ï¼å°±æè§ä»£ç åä¸å¢ä¹±éº»ï¼ææç¨çæ¯Vue 3ï¼å´è¿å¨ç¨Vue 2çæç»´åä¸å å±å±è½¬åç <span style="background-color: rgba(240, 240, 240, 1); padding: 2px 4px; border-radius: 4px; font-family: monospace; color: rgba(186, 55, 42, 1)">props</span> å <span style="background-color: rgba(240, 240, 240, 1); padding: 2px 4px; border-radius: 4px; font-family: monospace; color: rgba(186, 55, 42, 1)">emits</span> ï¼</p>
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin-bottom: 20px">ä¹åéæä¸ä¸ªåå°ç®¡çé¡¹ç®ï¼ä¸ä¸ªè¡¨åæ·±åå¨ä¸çº§è·¯ç±ä¸ï¼è¦ææ°æ®ä¼ ç»é¡¶æ çç¨æ·å¤´åæ´æ°ç¶æãççé£ä¸ª <span style="background-color: rgba(240, 240, 240, 1); padding: 2px 4px; border-radius: 4px; font-family: monospace; color: rgba(186, 55, 42, 1)">defineEmits</span> é¾æ¡åå»é¼ä¼ è±ä¸æ ·ä¼ äºä¸åå±ï¼æç´æ¥ç»èªå·±æ´ç¬äºãð¯ è¿ç©æå¿ç»´æ¤èµ·æ¥ï¼ç®ç´æ¯å©æ¢¦ã</p>
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin-bottom: 30px">ä»å¤©å±ä¸èé£äºèæ ç¼¥ç¼çæºç è§£æï¼å°±è¸è¸å®å®å°ãåå åä¸æ ·ï¼æè¿äºç§ Vue 3 ç»ä»¶éä¿¡æ¹å¼æä¸éã</p>
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin-bottom: 30px"><strong style="color: rgba(186, 55, 42, 1)">æçç®æ åªæä¸ä¸ªï¼è®©ä½ çå®ä¹åï¼è½æ ¹æ®ä¸åçåºæ¯ï¼åæå·¥å·åä¸æ ·ï¼âå°âå°æ¿åºæè¶æçé£æèºä¸åã</strong></p>
+<hr style="border: none; height: 1px; background: linear-gradient(90deg, rgba(0, 0, 0, 0), rgba(52, 152, 219, 1), rgba(0, 0, 0, 0)); margin: 40px 0">
+<h2 style="font-size: 22px; border-left: 5px solid rgba(52, 152, 219, 1); padding-left: 15px; margin: 30px 0 15px">ð¯ æ ¸å¿æè¦ï¼è¿ç¯æç« è½å¸®ä½ çä¸å¤å°å¤´åï¼</h2>
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin-bottom: 20px">è¿ä¸ä»ä»æ¯ä¸ä»½APIæ¸åãæä¼æè¿äºç§éä¿¡æ¹å¼æ¯ä½<strong>å®¶éçæ°´ç®¡ç³»ç»</strong>ï¼ä½ é©¬ä¸å°±è½æç½ä»ä¹æ¶åè¯¥ç¨ç´éç®¡ï¼ä»ä¹æ¶åè¯¥æä¸ªâç¼å¿âç´è¿æ¥¼ä¸ã</p>
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin-bottom: 20px">æ´éè¦çæ¯ï¼æä¼ææè¸©è¿çåââæ¯å¦ç¨ <span style="background-color: rgba(240, 240, 240, 1); padding: 2px 4px; border-radius: 4px; font-family: monospace; color: rgba(186, 55, 42, 1)">mitt</span> å¿äºè§£ç»å¯¼è´é¡µé¢å´©äºçè¡æ³ªå²ââé½ç»ä½ æ åºæ¥ã</p>
+<h2 style="font-size: 22px; border-left: 5px solid rgba(52, 152, 219, 1); padding-left: 15px; margin: 30px 0 15px">ð ä¸»è¦åå®¹èç»ï¼çä¸ç¼å°±ç¥éè¯¥å¾åªçï¼</h2>
+<div style="margin-bottom: 30px">
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin: 5px 0">ð <strong>ç¶å­ç´è¿ï¼</strong> <span style="color: rgba(186, 55, 42, 1)"><strong>Props</strong></span> ä¸ <span style="color: rgba(186, 55, 42, 1)"><strong>Emits</strong></span> ï¼æåºç¡ï¼å«å«ç¦ï¼</p>
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin: 5px 0">ð <strong>éä»£ä¼ åï¼</strong> <span style="color: rgba(186, 55, 42, 1)"><strong>provide/inject</strong></span> ï¼è·¨çº§ç¥å¨ï¼ä½æåï¼</p>
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin: 5px 0">ð <strong>ååå¥èµ´ï¼</strong> <span style="color: rgba(186, 55, 42, 1)"><strong>v-model</strong></span> ï¼Vue 3 çè¯­æ³ç³çé¦è­¦åï¼</p>
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin: 5px 0">ð <strong>æ±æ¹ææ¥ï¼</strong> <span style="color: rgba(186, 55, 42, 1)"><strong>mitt</strong></span> ï¼æ¯«æ å³ç³»çç»ä»¶æä¹å¾æ­ï¼ç¨å®ï¼ï¼</p>
+</div>
+<h2 style="font-size: 22px; border-left: 5px solid rgba(52, 152, 219, 1); padding-left: 15px; margin: 30px 0 15px">ç¬¬ä¸é¨åï¼å±ä»¬åææï¼ä¸ºä»ä¹éä¿¡è¿ä¹è®©äººå¤´ç¼ï¼</h2>
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin-bottom: 20px">Vue çè®¾è®¡å²å­¦æ¯âååæ°æ®æµâï¼è¿å°±åçå¸ï¼æ°´åªè½ä»ä¸å¾ä¸æµãä½åä¸å¡ä¸æ¯æèºæ¯ï¼ä½ æ»ä¼éå°éè¦æä¸æ¸¸çåå¾ï¼æ°æ®ï¼æå°ä¸æ¸¸å»ï¼æèä¸¤ä¸ªå®å¨ä¸æ¨ççç»ä»¶è¦å±äº«ç¶æã</p>
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin-bottom: 20px">å¾å¤æ°æï¼åæ¬å½å¹´çæï¼çåæ³æ¯ï¼ç¯çæåç¶æå°ç¶ç»ä»¶ï¼ç¶åéè¿ <span style="background-color: rgba(240, 240, 240, 1); padding: 2px 4px; border-radius: 4px; font-family: monospace; color: rgba(186, 55, 42, 1)">props</span> ä¸å±å±å¾ä¸çãè¿å¨å°åé¡¹ç®éæ²¡æ¯çï¼ä½å¨å¤§ååºç¨éï¼<strong style="color: rgba(186, 55, 42, 1)">è¿ç§âProps é»äºâä¼è®©ä½ å´©æºã</strong></p>
+<h2 style="font-size: 22px; border-left: 5px solid rgba(52, 152, 219, 1); padding-left: 15px; margin: 30px 0 15px">ç¬¬äºé¨åï¼æ ¸å¿åçï¼å½ææ°´ç®¡å·¥æ¥çè§£</h2>
+<h3 style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin-bottom: 10px"><strong>1. Props ä¸ Emits ââ ä½ å®¶å«çé´çè¿æ°´ç®¡åä¸æ°´é</strong></h3>
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin-bottom: 20px">è¿æ¯ç¶å­ç»ä»¶çæ åå¯¹è¯æ¹å¼ã<span style="background-color: rgba(240, 240, 240, 1); padding: 2px 4px; border-radius: 4px; font-family: monospace; color: rgba(186, 55, 42, 1)">Props</span> æ¯ç¹ç»å¿å­çé±ï¼åªè¯»ï¼å«æ³ç¯¡æ¹ï¼ï¼<span style="background-color: rgba(240, 240, 240, 1); padding: 2px 4px; border-radius: 4px; font-family: monospace; color: rgba(186, 55, 42, 1)">Emits</span> æ¯å¿å­åç¹å¸®å¿åäºï¼è§¦åäºä»¶ï¼ã</p>
+<pre class="language-java highlighter-hljs"><code>// ç¶ç»ä»¶
+&lt;ChildComponent :name="userName" @update="handleUpdate" /&gt;
+
+// å­ç»ä»¶
+const props = defineProps(['name'])
+const emit = defineEmits(['update'])
+emit('update', newValue)</code></pre>
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin-bottom: 20px"><strong style="color: rgba(186, 55, 42, 1)">â ï¸ æè¸©è¿çåï¼</strong>åä¸å«å¨å­ç»ä»¶éç´æ¥ä¿®æ¹å¼ç¨ç±»åç <span style="background-color: rgba(240, 240, 240, 1); padding: 2px 4px; border-radius: 4px; font-family: monospace; color: rgba(186, 55, 42, 1)">props</span> ï¼æ¯å¦ <span style="background-color: rgba(240, 240, 240, 1); padding: 2px 4px; border-radius: 4px; font-family: monospace; color: rgba(186, 55, 42, 1)">props.obj.name = 'new'</span> ï¼ãè½ç¶å¯¹è±¡å¼ç¨ä¸ä¼æ¥éï¼ä½è¿ä¼è®©æ°æ®æµä¹±æä¸éç²¥ï¼è°è¯çæ¶åå­é½æ¾ä¸å°è°ã</p>
+<h3 style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin-bottom: 10px"><strong>2. provide/inject ââ æ¥¼æ¿æäºä¸ªæ´ï¼ç´éæ¥¼ä¸</strong></h3>
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin-bottom: 20px">ä½ å¯è½ä¼é®ï¼âé£æäºå±æ¥¼çç»ä»¶æä¹ç»ä¸å±ä¼ æ°æ®ï¼â å¥½ï¼å±ä»¬åæ¥èèè¿ä¸ªã</p>
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin-bottom: 20px"><span style="background-color: rgba(240, 240, 240, 1); padding: 2px 4px; border-radius: 4px; font-family: monospace; color: rgba(186, 55, 42, 1)">provide</span> å°±æ¯é¡¶å±ç»ä»¶æä¸ªæ´ï¼æ è®ºä¸é¢å¤å°å±å­å­ï¼åªè¦éè¿ <span style="background-color: rgba(240, 240, 240, 1); padding: 2px 4px; border-radius: 4px; font-family: monospace; color: rgba(186, 55, 42, 1)">inject</span> ä¼¸ä¸ªç®¡å­å°±è½æ¥å°æ°´ã</p>
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin-bottom: 20px"><span style="color: rgba(186, 55, 42, 1)"><strong>åè¯´ä¸ªå®¹æç¿»è½¦çç¹ï¼</strong></span>é»è®¤æåµä¸ï¼<span style="background-color: rgba(240, 240, 240, 1); padding: 2px 4px; border-radius: 4px; font-family: monospace; color: rgba(186, 55, 42, 1)">provide</span> çæ°æ®<strong>ä¸æ¯ååºå¼ç</strong>ï¼<br>å¦æä½ ä¼ äºä¸ªæ®éæ°å­ï¼åé¢åäºï¼æ¥¼ä¸æ¥å°çè¿æ¯æ§çãè¦ä¼  <span style="background-color: rgba(240, 240, 240, 1); padding: 2px 4px; border-radius: 4px; font-family: monospace; color: rgba(186, 55, 42, 1)">ref</span> æè <span style="background-color: rgba(240, 240, 240, 1); padding: 2px 4px; border-radius: 4px; font-family: monospace; color: rgba(186, 55, 42, 1)">reactive</span> æè¡ï¼æèç¨ Vue 3 æä¾ç <span style="background-color: rgba(240, 240, 240, 1); padding: 2px 4px; border-radius: 4px; font-family: monospace; color: rgba(186, 55, 42, 1)">computed</span> åä¸å±ã</p>
+<h3 style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin-bottom: 10px"><strong>3. v-model ââ ååå¯¹è®²æºï¼ä¸æ¯ååå¹¿æ­äº</strong></h3>
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin-bottom: 20px">Vue 3 ç <span style="background-color: rgba(240, 240, 240, 1); padding: 2px 4px; border-radius: 4px; font-family: monospace; color: rgba(186, 55, 42, 1)">v-model</span> å¤ªå¥½ç¨äºï¼å®å°±æ¯ <span style="background-color: rgba(240, 240, 240, 1); padding: 2px 4px; border-radius: 4px; font-family: monospace; color: rgba(186, 55, 42, 1)">:modelValue</span> å <span style="background-color: rgba(240, 240, 240, 1); padding: 2px 4px; border-radius: 4px; font-family: monospace; color: rgba(186, 55, 42, 1)">@update:modelValue</span> çè¯­æ³ç³ãéç¹æ¯ç°å¨å¯ä»¥ç»å®å¤ä¸ª <span style="background-color: rgba(240, 240, 240, 1); padding: 2px 4px; border-radius: 4px; font-family: monospace; color: rgba(186, 55, 42, 1)">v-model:title</span> ï¼å°è£å¼¹çªç»ä»¶çæ¶åé¦ç¯äºã</p>
+<h3 style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin-bottom: 10px"><strong>4. mitt ââ é£ä¸ªæ»¡å¤§è¡åè¯çå¤§åå­</strong></h3>
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin-bottom: 20px">å¯¹äºå®å¨æ²¡æå³ç³»çç»ä»¶ï¼æ¯å¦ä¸¤ä¸ªå¹³çº§çèåç»ä»¶è¦èå¨ï¼ï¼Vue 3 ç§»é¤äºå¨å±äºä»¶æ»çº¿ï¼å®æ¹æ¨èç¨ <span style="background-color: rgba(240, 240, 240, 1); padding: 2px 4px; border-radius: 4px; font-family: monospace; color: rgba(186, 55, 42, 1)">mitt</span> è¿ç§ç¬¬ä¸æ¹å¾®ååºãå®å°±åä¸ªä¼ å¼å°ï¼Aç»ä»¶å¹¿æ­âåååææ¯XXXâï¼Bç»ä»¶éæ¶å¾å½æ¶å°ã</p>
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin-bottom: 20px"><strong style="color: rgba(186, 55, 42, 1)">âï¸è¿éåä¸å«å­¦æå½åå·æï¼å¦åâ¦â¦</strong>å¦åé¡¹ç®ä¸çº¿åä¼åç°åå­æ³æ¼ï¼é¡µé¢è¶ç¨è¶å¡ã<br>ç¨ <span style="background-color: rgba(240, 240, 240, 1); padding: 2px 4px; border-radius: 4px; font-family: monospace; color: rgba(186, 55, 42, 1)">mitt</span> æææéè¦çä¸æ­¥ï¼<strong>å¨ç»ä»¶éæ¯æ¶ï¼onBeforeUnmountï¼ä¸å®è¦<span style="color: rgba(186, 55, 42, 1)"> off </span>æä½ çå¬çé¢éï¼</strong></p>
+<h2 style="font-size: 22px; border-left: 5px solid rgba(52, 152, 219, 1); padding-left: 15px; margin: 30px 0 15px">ç¬¬ä¸é¨åï¼å®æï¼æ¥æ®µè½è·çä»£ç ååæ</h2>
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin-bottom: 20px">æ¥ä¸æ¥éç¹æ¥äºï¼çç mitt æä¹ç¨ï¼å«åéäºï¼</p>
+<pre class="language-javascript highlighter-hljs"><code>// utils/eventBus.js
+import mitt from 'mitt'
+export const emitter = mitt()
+
+// ç»ä»¶A (åé)
+import { emitter } from '@/utils/eventBus'
+emitter.emit('send-message', { msg: 'Hello World' })
+
+// ç»ä»¶B (æ¥æ¶)
+import { emitter } from '@/utils/eventBus'
+import { onBeforeUnmount } from 'vue'
+
+const handler = (data) =&gt; { console.log(data) }
+emitter.on('send-message', handler)
+
+// å¿åï¼å¿åï¼å¿åï¼
+onBeforeUnmount(() =&gt; {
+  emitter.off('send-message', handler)
+})</code></pre>
+<h2 style="font-size: 22px; border-left: 5px solid rgba(52, 152, 219, 1); padding-left: 15px; margin: 30px 0 15px">ç¬¬åé¨åï¼æåå°å¦ä¸å¥ï¼æä¹éï¼</h2>
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin-bottom: 20px">æ¯ä¸æ¯ä»¥ä¸ºè¿æ ·å°±å®äºï¼è¿æ²¡å¢ï¼åç¥éåçä¸å¤ï¼å¾ç¥éä»ä¹æ¶åæåªæåã</p>
+<div style="margin-bottom: 30px">
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin: 5px 0">- <strong>ç¶å­ç»ä»¶ãç®åæ°æ®æµï¼</strong> èèå®å® <span style="background-color: rgba(240, 240, 240, 1); padding: 2px 4px; border-radius: 4px; font-family: monospace; color: rgba(186, 55, 42, 1)">Props</span> / <span style="background-color: rgba(240, 240, 240, 1); padding: 2px 4px; border-radius: 4px; font-family: monospace; color: rgba(186, 55, 42, 1)">Emits</span> ãä»£ç å¯è¯»æ§ç¬¬ä¸ã</p>
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin: 5px 0">- <strong>æ·±å±åµå¥ï¼è¡¨åä¸ä¸æãä¸»é¢è²ï¼ï¼</strong> é¦é <span style="background-color: rgba(240, 240, 240, 1); padding: 2px 4px; border-radius: 4px; font-family: monospace; color: rgba(186, 55, 42, 1)">provide</span> / <span style="background-color: rgba(240, 240, 240, 1); padding: 2px 4px; border-radius: 4px; font-family: monospace; color: rgba(186, 55, 42, 1)">inject</span> ãå«åç¨ props ç©¿éå¼çº¿äºã</p>
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin: 5px 0">- <strong>ç»ä»¶å°è£ï¼InputãDialogï¼ï¼</strong> æ è <span style="background-color: rgba(240, 240, 240, 1); padding: 2px 4px; border-radius: 4px; font-family: monospace; color: rgba(186, 55, 42, 1)">v-model</span> ãVue 3 çè¯­æ³ç³çççã</p>
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin: 5px 0">- <strong>è·¨è§å¾ãè·¨è·¯ç±ãæ å³ç»ä»¶ï¼</strong> å¦æé¡¹ç®å°ï¼ç¨ <span style="background-color: rgba(240, 240, 240, 1); padding: 2px 4px; border-radius: 4px; font-family: monospace; color: rgba(186, 55, 42, 1)">mitt</span> è¶³å¤äºï¼å¦æé¡¹ç®å¤§ï¼ç´æ¥ä¸ <span style="color: rgba(186, 55, 42, 1)">Pinia</span>ï¼å«æ¿ mitt å½å¨å±ç¶æä»åºä½¿ï¼é£æ¯æ¿æé¢æå½éç®æ£ï¼ä¸è¶æã</p>
+</div>
+<hr style="border: none; height: 1px; background: linear-gradient(90deg, rgba(0, 0, 0, 0), rgba(52, 152, 219, 1), rgba(0, 0, 0, 0)); margin: 40px 0">
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin-bottom: 20px; text-align: center">å¥½å¦ï¼ä»å¤©çç»ä»¶éä¿¡âé¿åæåâå°±èå°è¿ãææ¯è¿ç©æå¿å°±æ¯è¿æ ·ï¼åçè¯´ç ´äºä¸å¼é±ï¼ä½é£ä¸ªèªå·±äº²ææé¡µé¢æå´©æçåï¼ææ¯æå®è´µçç»éªã</p>
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin-bottom: 20px; text-align: center">è¿ç¯ä¸è¥¿è±äºå¥½å¤å¿è¡æ´ççï¼<strong style="color: rgba(186, 55, 42, 1)">å¦æä½ è§å¾æç¨ï¼æèè§å¾ä»¥åå¤§æ¦çä¼ç¨å°ï¼åä¸å«è®©å®å°±è¿ä¹å¨æ¶èå¤¹éåç°ã</strong>ç¹èµ+å³æ³¨ï¼è½¬ç»é£ä¸ªè¿å¨ç¨ Props ä¸å±å±åµå¥çå¤ç§åäºï¼è¯´ä¸å®ä»æä»è½è¯·ä½ åæ¯å¥¶è¶å¢ï¼âºï¸</p>
+<p style="color: rgba(85, 85, 85, 1); font-size: 16px; line-height: 1.8; margin-bottom: 20px; text-align: center">èæ ·å­ï¼æä»ä¹é®é¢åæ³æ³ï¼çè¨åºéï¼å±ä»¬ä¸è§ä¸æ£ï½ ð</p>
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-04-16 15:22">2026-04-16 15:22</span>&nbsp;
+<a href="https://www.cnblogs.com/ymtianyu">ä¸åç¨åºåªå</a>&nbsp;
+éè¯»(<span id="post_view_count">97</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">2</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19878093);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fymtianyu%2Fp%2F19878093&amp;targetId=19878093&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -2433,480 +2848,12 @@ public class AIServiceWithMCP {
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-04-16 11:46">2026-04-16 11:46</span>&nbsp;
 <a href="https://www.cnblogs.com/12lisu">èä¸è¯´ææ¯</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">236</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19876301);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2F12lisu%2Fp%2F19876301&amp;targetId=19876301&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ function call å®æï¼è®© LLM èªå¨å¤æ­ pod å¼å¸¸ãè°ç¨æ¥å¿å·¥å·å¹¶å®ææéåæ ]]></title>
-    <link>https://www.cnblogs.com/MrVolleyball/p/19876155</link>
-    <guid>683e3fe98b6cc134f02675e747a0c967</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/MrVolleyball/p/19876155" title="åå¸äº 2026-04-16 11:37">
-    <span role="heading" aria-level="2">function call å®æï¼è®© LLM èªå¨å¤æ­ pod å¼å¸¸ãè°ç¨æ¥å¿å·¥å·å¹¶å®ææéåæ</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                    <div id="cnblogs_post_description" style="display: none">
-        
-        ä»å¤©æ¯ä¸æfunction callçå®æ
-    </div>
-<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h2 id="åè¨">åè¨</h2>
-<p>ä»å¤©æ¯ä¸æfunction callçå®æ</p>
-<h2 id="åä¸ä»£ç ">åä¸ä»£ç </h2>
-<p><a href="https://github.com/wilsonchai8/myblog/blob/main/aiops/function.py" target="_blank" rel="noopener nofollow">function_call</a></p>
-<p><img alt="illustration-01" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1416773/202604/1416773-20260416112520542-1952465206.png" class="lazyload"></p>
-<ul>
-<li>åè·å Pod å½åç¶æ</li>
-<li>è®© LLM å¤æ­è¿ä¸ªç¶ææ¯å¦éè¦è¿ä¸æ­¥ææ¥</li>
-<li>å¦æéè¦ææ¥ï¼å°±è¦æ± LLM è°ç¨ <code>get_pod_logs</code> å·¥å·æ¿æ¥å¿</li>
-<li>åè®© LLM åºäºæ¥å¿è¾åºé®é¢åå ãæ ¹å åæåä¿®å¤å»ºè®®</li>
-</ul>
-<h4 id="openai-å®¢æ·ç«¯åå§å">OpenAI å®¢æ·ç«¯åå§å</h4>
-<p>è¿é¨åä»£ç çä½ç¨ï¼æ¯åå§åæ¨¡åå®¢æ·ç«¯ï¼å¹¶ä»ç¯å¢åééè¯»åæ¨¡åååæ¥å£å°å</p>
-<pre><code class="language-python">from openai import OpenAI
-import json
-import os
-
-
-client = OpenAI(
-    api_key=os.getenv("OPENAI_API_KEY"),
-    base_url=os.getenv("API_BASE_URL")
-)
-
-model = os.getenv("DEFAULT_MODEL")
-</code></pre>
-<h4 id="å·¥å·å®ä¹">å·¥å·å®ä¹</h4>
-<p>å£°æå¯ä¾æ¨¡åè°ç¨çå½æ°å·¥å·</p>
-<pre><code class="language-python">tools = [
-    {
-        "type": "function",
-        "function": {
-            "name": "get_pod_logs",
-            "description": "è·åPodæ¥å¿ç¨äºææ¥é®é¢",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "pod_name": {"type": "string"},
-                    "namespace": {"type": "string"}
-                },
-                "required": ["pod_name"]
-            }
-        }
-    }
-]
-</code></pre>
-<ul>
-<li>æä¸ä¸ªå« <code>get_pod_logs</code> çå·¥å·</li>
-<li>è¿ä¸ªå·¥å·æ¯ç¨æ¥è·å Pod æ¥å¿ç</li>
-<li>å®éè¦ä»ä¹åæ°</li>
-<li>åªä¸ªåæ°æ¯å¿å¡«ç</li>
-</ul>
-<p>function call çæ¬è´¨ä¸æ¯è®©æ¨¡åç´æ¥è· pythonï¼èæ¯è®©æ¨¡åç¥éï¼æä»ä¹å·¥å·å¯ä»¥è°ç¨å¤é¨ä¸ççæ¥å£</p>
-<h4 id="è·å-pod-ç¶æåæ¥å¿">è·å Pod ç¶æåæ¥å¿</h4>
-<p>æ¥ä¸æ¥è¿ä¸¤ä¸ªå½æ°ï¼æ¯æ¬å°å®ç°çæ¨¡æé»è¾ï¼åæå¯ä»¥æ¥å¥æ­£å¼ç¯å¢çæ°æ®ï¼è¿éåç¨æ¨¡ææ°æ®</p>
-<pre><code class="language-python">def get_pod_state(pod_name, namespace):
-    # å¯ä»¥ç¨ kubectl æ k8s API, è¿åï¼Running / CrashLoopBackOff / OOMKilled ç­
-    return "CrashLoopBackOff"
-
-def get_pod_logs(pod_name, namespace="default"):
-    # å»æ¥å¿å¹³å°ä¸è·åå¯¹åºçæ¥å¿å³å¯
-    return "ERROR: database connection failed\nException: timeout"
-</code></pre>
-<h4 id="è®©-llm-åå¤æ­æ¯å¦æå¼å¸¸">è®© LLM åå¤æ­æ¯å¦æå¼å¸¸</h4>
-<p>ä¸é¢è¿æ®µä»£ç ï¼æ¯ç¬¬ä¸æ¬¡è°ç¨æ¨¡åã</p>
-<pre><code class="language-python">messages = [
-    {
-        "role": "system",
-        "content": """ä½ æ¯Kubernetesè¿ç»´ä¸å®¶ã
-
-å¤æ­ Pod ç¶æï¼
-- å¦ææ¯ Running / æ­£å¸¸ â è¿å OK
-- å¦ææ¯ CrashLoopBackOff / OOMKilled / Error â è¿å NEED_DEBUG
-
-åªè¿å OK æ NEED_DEBUG"""
-    },
-    {
-        "role": "user",
-        "content": f"Podç¶ææ¯: {pod_state}"
-    }
-]
-
-resp = client.chat.completions.create(
-    model=model,
-    messages=messages
-)
-
-decision = resp.choices[0].message.content.strip()
-</code></pre>
-<h4 id="llm-è°å·¥å·æ¿æ¥å¿">LLM è°å·¥å·æ¿æ¥å¿</h4>
-<p>å¦æççæé®é¢ï¼è°ç¨é¢å®ä¹çå½æ°è·åç¸å³ä¿¡æ¯</p>
-<pre><code class="language-python">messages = [
-    {
-        "role": "system",
-        "content": """ä½ æ¯ä¸ä¸ªKubernetesæéè¯æ­ä¸å®¶ã
-
-å½Podå¼å¸¸æ¶ï¼
-1. å¿é¡»è°ç¨ get_pod_logs è·åæ¥å¿
-2. æ ¹æ®æ¥å¿åæé®é¢
-3. è¾åºï¼
-   - é®é¢åå 
-   - æ ¹å åæ
-   - ä¿®å¤å»ºè®®
-"""
-    },
-    {
-        "role": "user",
-        "content": f"Pod {pod_name} ç¶ææ¯ {pod_state}ï¼è¯·ææ¥é®é¢"
-    }
-]
-
-response = client.chat.completions.create(
-    model=model,
-    messages=messages,
-    tools=tools
-)
-</code></pre>
-<p>è¿éåç¬¬ä¸è½®æå¤§çåºå«ï¼å°±æ¯å¤ä¼ äºä¸ä¸ª <code>tools=tools</code>ï¼è¿æå³çæ¨¡åæ­¤æ¶ç¥éèªå·±å¯ä»¥åèµ·å½æ°è°ç¨ï¼éåä»£ç ä¼æ£æ¥æ¨¡åæ¯å¦ççè§¦åäºå·¥å·è°ç¨ï¼</p>
-<pre><code class="language-python">msg = response.choices[0].message
-
-if msg.tool_calls:
-    tool_call = msg.tool_calls[0]
-    args = json.loads(tool_call.function.arguments)
-</code></pre>
-<p>æ¿å°å·¥å·è°ç¨åï¼åç±æ¬å° Python å»çæ­£æ§è¡ï¼</p>
-<pre><code class="language-python">logs = get_pod_logs(**args)
-</code></pre>
-<p>ç¶åæå·¥å·æ§è¡ç»æï¼åååæ¨¡åï¼è®©å®åºäºæ¥å¿ç»§ç»­å®ææç»åæï¼</p>
-<pre><code class="language-python">final_resp = client.chat.completions.create(
-    model=model,
-    messages=[
-        *messages,
-        msg,
-        {
-            "role": "tool",
-            "tool_call_id": tool_call.id,
-            "content": logs[:3000]
-        }
-    ]
-)
-</code></pre>
-<h4 id="æ§è¡é¾è·¯">æ§è¡é¾è·¯</h4>
-<p><img alt="illustration-02" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1416773/202604/1416773-20260416112558477-405667869.png" class="lazyload"></p>
-<pre><code class="language-text">è·å Pod ç¶æ
-   â
-LLM å¤æ­ï¼OK / NEED_DEBUG
-   â
-å¦æ NEED_DEBUG
-   â
-LLM åèµ· tool callï¼get_pod_logs(pod_name, namespace)
-   â
-æ¬å°å½æ°æ§è¡ï¼æ¿å°æ¥å¿
-   â
-æ¥å¿ä½ä¸º tool message åå¡«ç» LLM
-   â
-LLM è¾åºï¼é®é¢åå  + æ ¹å åæ + ä¿®å¤å»ºè®®
-</code></pre>
-<h2 id="è¿éä¸ºä»ä¹ä¸ç¨-if-else">è¿éä¸ºä»ä¹ä¸ç¨ if-else</h2>
-<p>å¾å¤èå¥çå°è¿éï¼è¯å®ä¼é®ï¼</p>
-<p>æ¢ç¶ <code>Running</code> å°±æ¯æ­£å¸¸ï¼<code>CrashLoopBackOff</code> å°±æ¯å¼å¸¸ï¼é£ç´æ¥ if-else ä¸é¦åï¼</p>
-<p>å¦æåºæ¯è¶³å¤ç®åï¼å½ç¶å¯ä»¥ç´æ¥å if-elseãçè³å¨è¿ä¸ªåºæ¯ä¸­ï¼ç¬¬ä¸æ®µå¤æ­é»è¾ä¸¥æ ¼æ¥è¯´ä¹ç¡®å®å¯ä»¥ç¨è§åæ¿ä»£ï¼åä¸é¢è¿æ ·ï¼</p>
-<pre><code class="language-python">if pod_state in ["Running", "Succeeded"]:
-    decision = "OK"
-else:
-    decision = "NEED_DEBUG"
-</code></pre>
-<p>è¿ä¹åæ²¡æ¯çï¼èä¸æ´ä¾¿å®ãæ´ç¨³å®ãæ´å¯æ§ï¼é£ä¸ºä»ä¹è¿è¦å¼å¥ LLMï¼å ä¸ºçå®çº¿ä¸ç¯å¢ï¼å¾å¾æ²¡è¿ä¹ç®å</p>
-<p>çº¿ä¸å¤æ­ä¸ä¸ª Pod æ¯å¦å¼å¸¸ï¼å¾å¤æ¶åä¸æ¯çä¸ä¸ªå­æ®µå°±è½ææ¿ï¼èæ¯è¦ç»¼åå¾å¤ä¿¡æ¯ä¸èµ·ç</p>
-<p>1ï¼ç¶æçèµ·æ¥æ­£å¸¸ï¼ä½å¶å®å·²ç»ä¸æ­£å¸¸äºï¼ Pod ç¶æè¿æ¯ <code>Running</code>ï¼ä½å®éä¸ä¸å¡å·²ç»æäºï¼æ¯å¦ï¼</p>
-<ul>
-<li>readiness probe ä¸ç´å¤±è´¥</li>
-<li>æ¥å£ RT é£å</li>
-<li>éè¯¯çåé«</li>
-<li>æ¥å¿æç»­æ¥é</li>
-<li>ä¸æ¸¸æ°æ®åºè¿æ¥é¢ç¹è¶æ¶</li>
-<li>CPU ä¸é«ï¼ä½çº¿ç¨æ± å·²ç»å¡æ­»</li>
-</ul>
-<p>è¿æ¶åå¦æä½ åªåï¼</p>
-<pre><code class="language-python">if pod_state == "Running":
-    return "OK"
-</code></pre>
-<p>2ï¼ç¶æå¼å¸¸ï¼ä½æªå¿éè¦ç«å»ææ¥</p>
-<ul>
-<li>pod ç¶æ <code>Completed</code></li>
-<li>ç°åº¦åå¸æé´æç­æéå»º</li>
-<li>HPA æ©ç¼©å®¹å¸¦æ¥çç­æ¶æ³¢å¨</li>
-<li>èç¹ç»´æ¤å¯¼è´çç¬æ¶æ¼ç§»</li>
-</ul>
-<p>è¿æ¶åä½ å¦æåªæ ¹æ®ç¶æå¼æºæ¢°å¤æ­ï¼å°±å¾å®¹æè¯¯æ¥</p>
-<p>3ï¼çæ­£æä»·å¼çå¤æ­ï¼å¾å¾ä¾èµå¤ç»´ä¿¡å·</p>
-<ul>
-<li>Pod å½å ç¶æ</li>
-<li>restart æ¬¡æ°</li>
-<li>æè¿ 5 åéæ¥å¿</li>
-<li>CPU / Memory ä½¿ç¨ç</li>
-<li>OOM äºä»¶</li>
-<li>èç¹ç¶æ</li>
-<li>åå¸è®°å½</li>
-<li>åæå¡å¶ä»å¯æ¬æ¯å¦ä¹å¼å¸¸</li>
-<li>Prometheus ææ æ³¢å¨</li>
-</ul>
-<p>è¿ä¸ªæ¶åç¨ if-else çº¯æµç¨åçå¤æ­æ¨¡å¼ï¼å¯¹äºäºä»¶çå¤æ­å°±ä¸å¤ªåéäºãif-else æé¿å¤çè¾¹çæ¸æ°ãæ¨¡å¼ç¨³å®çåºæ¯</p>
-<p>èLLM æ´éåå¤çéè¦ç»¼åä¸ä¸æãæ¨¡ç³å¤æ­ä»¥åä¸åºå®æ¡ä»¶çç»¼åå¤æ­ï¼æä»¥è¿ééç¨LLM çè¡¨è¾¾è½ååå½çº³è½åä¼æ´æ¹ä¾¿</p>
-<p><img alt="illustration-03" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1416773/202604/1416773-20260416112627637-1477895473.png" class="lazyload"></p>
-<h2 id="æ»ç»">æ»ç»</h2>
-<p>éè¿ Function Call è·åå¤é¨æ°æ®ï¼æåè®© LLM è¾åºæ»ç»æ§çå»ºè®®ä»¥åå¤çæ¹æ¡</p>
-<p>è³äºä¸ºä»ä¹ä¸ç¨ if-elseï¼ç®ååºæ¯å½ç¶å¯ä»¥ç¨åºå®æµç¨ï¼ä½å½å¤æ­å¼å§ä¾èµå¤ç»´æ°æ®ãæ¥å¿è¯­ä¹åä¸ä¸æç»¼ååææ¶ï¼LLM ä¼æ´çµæ´»ãå¨æ´å å¤æçåºæ¯ä¸ï¼åæ¯åºå®æµç¨å LLM ç»åä½¿ç¨</p>
-<h2 id="åè®°">åè®°</h2>
-<p>å¨æ¬æä¸­ï¼æç¡®åè¯äºllmï¼éè¿<code>get_pod_logs</code>å»æ¿podæ¥å¿å»æ¿å¯¹åºçæ°æ®ï¼é£å¦æéå°æ´å å¤æçäºæï¼æä»¬éè¦</p>
-<ul>
-<li>1ï¼æ¿podæ¥å¿ï¼éè¿kubectl logs</li>
-<li>2ï¼æ¿ä¸å¡æ¥å¿ï¼éè¿æ¥å¿å¹³å°æ¥å£</li>
-<li>3ï¼è·åè´è½½æ°æ®ï¼éè¿çæ§æ¥å£</li>
-<li>4ï¼è·ååå¸æ°æ®ï¼éè¿åå¸å¹³å°æ¥å£</li>
-<li>5ï¼è·åä¸ä¸æ¸¸çtopç»æï¼éè¿cmdbæ¥å£</li>
-<li>6ï¼å¤ªå¤äºï¼åä¸¾ä¸å®...</li>
-</ul>
-<p>å¦ä½è®©llméè¿å½åäºææåµï¼èªå¨éåå¯¹åºçæ¥å£å½æ°è·åæ°æ®å¢ï¼è¿æ¯ä¸ªéå¸¸ç°å®ãæ£æçé®é¢äºï¼ä½è¿ä¸æ¯æ¬æåå®¹äºï¼æä»¬ä¸ä¸æåè§</p>
-<h2 id="èç³»æ">èç³»æ</h2>
-<ul>
-<li>èç³»æï¼åæ·±å¥çäº¤æµ</li>
-</ul>
-<p><img alt="" width="500" height="200" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1416773/202411/1416773-20241121135740959-1907948957.png#" class="lazyload"></p>
-<p>è³æ­¤ï¼æ¬æç»æ</p>
-<p>å¨ä¸æçå­¦æµï¼æææ±¤æ¼æ°´çï¼è¯·åä½ä¸åèµæ...</p>
-
-
-</div>
-<div id="MySignature" role="contentinfo">
-    <p>æ¬ææ¥èªåå®¢å­ï¼ä½èï¼<a href="https://www.cnblogs.com/MrVolleyball/" target="_blank">itæçå</a>ï¼è½¬è½½è¯·æ³¨æåæé¾æ¥ï¼<a href="https://www.cnblogs.com/MrVolleyball/p/19876155" target="_blank">https://www.cnblogs.com/MrVolleyball/p/19876155</a></p>
-<div>æ¬æçæå½ä½èååå®¢å­å±æï¼æ¬¢è¿è½¬è½½ï¼ä½æªç»ä½èåæå¿é¡»å¨æç« é¡µé¢ç»åºåæè¿æ¥ï¼å¦åä¿çè¿½ç©¶æ³å¾è´£ä»»çæå©ã </div>
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-04-16 11:38">2026-04-16 11:37</span>&nbsp;
-<a href="https://www.cnblogs.com/MrVolleyball">itæçå</a>&nbsp;
-éè¯»(<span id="post_view_count">8</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19876155);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FMrVolleyball%2Fp%2F19876155&amp;targetId=19876155&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ éè¿ C# è¯»åå¹¶å¯¼åº PDF ä¹¦ç­¾ ]]></title>
-    <link>https://www.cnblogs.com/jazz-z/p/19875607</link>
-    <guid>67a3483347fa5b1e0075a79768736578</guid>
-    <description>
-    <![CDATA[ 
-            <div class="postcontent">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>PDF ä¹¦ç­¾ï¼å¤§çº²ï¼æ¯ææ¡£å¯¼èªçæ ¸å¿è¦ç´ ï¼å°¤å¶å¯¹äºé¿ææ¡£æææ¯æåï¼æåä¹¦ç­¾ä¿¡æ¯å¯ç¨äºçæç®å½ãç´¢å¼æè¿è¡ææ¡£ç»æåæãæ¬æå°ä»ç»å¦ä½ä½¿ç¨ Free Spire.PDF for .NET åºï¼éè¿ C# ä»£ç å®æ´è¯»å PDF æä»¶ä¸­çææä¹¦ç­¾ï¼åæ¬å¤çº§åµå¥ä¹¦ç­¾ï¼ï¼å¹¶å°æ é¢ãæ¾ç¤ºæ ·å¼ç­ä¿¡æ¯å¯¼åºå°ææ¬æä»¶ã</p>
-<h2 id="1-ç¯å¢åå¤">1. ç¯å¢åå¤</h2>
-<h3 id="11-å®è£åè´¹åº">1.1 å®è£åè´¹åº</h3>
-<p>å¨ Visual Studio ä¸­éè¿ NuGet åç®¡çå¨å®è£ <code>Free Spire.PDF</code>ï¼</p>
-<pre><code class="language-bash">Install-Package FreeSpire.PDF
-</code></pre>
-<p>è¯¥åè´¹çæ¬æ¯æè¯»å PDF ä¹¦ç­¾ç­åºç¡æä½ï¼æ éé¢å¤æææä»¶ï¼ä½æåæä»¶10é¡µçé¡µæ°éå¶ã</p>
-<h3 id="12-å¼ç¨å½åç©ºé´">1.2 å¼ç¨å½åç©ºé´</h3>
-<p>ä»£ç ä¸­éè¦å¼å¥ä»¥ä¸å½åç©ºé´ï¼</p>
-<pre><code class="language-csharp">using System;
-using System.IO;
-using System.Text;
-using Spire.Pdf;
-using Spire.Pdf.Bookmarks;
-</code></pre>
-<h2 id="2-æ ¸å¿å®ç°é»è¾">2. æ ¸å¿å®ç°é»è¾</h2>
-<p>æ´ä½æµç¨åä¸ºåæ­¥ï¼</p>
-<ol>
-<li>å è½½ç®æ  PDF ææ¡£ã</li>
-<li>è·åææ¡£ç <code>PdfBookmarkCollection</code> ä¹¦ç­¾éåã</li>
-<li>éå½éåæ¯ä¸ªä¹¦ç­¾åå¶å­ä¹¦ç­¾ï¼æåæ é¢åæ¾ç¤ºæ ·å¼ã</li>
-<li>å°æåçåå®¹åå¥ææ¬æä»¶ã</li>
-</ol>
-<h3 id="21-å è½½ææ¡£å¹¶è·åä¹¦ç­¾éå">2.1 å è½½ææ¡£å¹¶è·åä¹¦ç­¾éå</h3>
-<pre><code class="language-csharp">PdfDocument pdf = new PdfDocument();
-pdf.LoadFromFile(@"D:\test.pdf");
-PdfBookmarkCollection bookmarks = pdf.Bookmarks;
-</code></pre>
-<p><code>Bookmarks</code> å±æ§è¿åä¸ä¸ªéåï¼åå«é¡¶å±ä¹¦ç­¾ãå¦æææ¡£æ²¡æä¹¦ç­¾ï¼<code>Count</code> ä¸º 0ã</p>
-<h3 id="22-éå½éåä¹¦ç­¾æ ">2.2 éå½éåä¹¦ç­¾æ </h3>
-<p>ä¹¦ç­¾ç»ææ¯å¸åçæ å½¢ç»æï¼æ¯ä¸ªä¹¦ç­¾èç¹å¯è½æ¥æå­ä¹¦ç­¾éåï¼éè¿ <code>Count</code> å±æ§åç´¢å¼å¨è®¿é®ï¼ãæä»¬è®¾è®¡ä¸¤ä¸ªæ¹æ³ï¼</p>
-<ul>
-<li><code>GetBookmarks</code>ï¼å¤çé¡¶å±ä¹¦ç­¾ï¼åå»º <code>StringBuilder</code> å¹¶å¯å¨éå½ã</li>
-<li><code>GetChildBookmark</code>ï¼éå½å¤çå­ä¹¦ç­¾ã</li>
-</ul>
-<pre><code class="language-csharp">public static void GetBookmarks(PdfBookmarkCollection bookmarks, string result)
-{
-    StringBuilder content = new StringBuilder();
-    if (bookmarks.Count &gt; 0)
-    {
-        content.AppendLine("Pdf bookmarks:");
-        foreach (PdfBookmark parentBookmark in bookmarks)
-        {
-            // è·åæ é¢
-            content.AppendLine(parentBookmark.Title);
-            // è·åæ¾ç¤ºæ ·å¼ï¼å¦æ®éãç²ä½ãæä½ç­ï¼
-            content.AppendLine(parentBookmark.DisplayStyle.ToString());
-            // éå½å¤çå­ä¹¦ç­¾
-            GetChildBookmark(parentBookmark, content);
-        }
-    }
-    File.WriteAllText(result, content.ToString());
-}
-</code></pre>
-<p>éå½æ¹æ³ï¼</p>
-<pre><code class="language-csharp">public static void GetChildBookmark(PdfBookmark parentBookmark, StringBuilder content)
-{
-    if (parentBookmark.Count &gt; 0)
-    {
-        foreach (PdfBookmark childBookmark in parentBookmark)
-        {
-            content.AppendLine(childBookmark.Title);
-            content.AppendLine(childBookmark.DisplayStyle.ToString());
-            GetChildBookmark(childBookmark, content);
-        }
-    }
-}
-</code></pre>
-<h3 id="23-å®æ´ä»£ç ç¤ºä¾">2.3 å®æ´ä»£ç ç¤ºä¾</h3>
-<p>ä»¥ä¸æ¯ä¸ä¸ªæ§å¶å°åºç¨ç¨åºçå®æ´å®ç°ï¼å°ä¹¦ç­¾ä¿¡æ¯è¾åºå° <code>GetPdfBookmarks.txt</code> æä»¶ã</p>
-<pre><code class="language-csharp">using System;
-using System.IO;
-using System.Text;
-using Spire.Pdf;
-using Spire.Pdf.Bookmarks;
-
-namespace GetBookmark
-{
-    internal class Program
-    {
-        static void Main(string[] args)
-        {
-            PdfDocument pdf = new PdfDocument();
-            pdf.LoadFromFile(@"D:\testp\test.pdf");
-
-            PdfBookmarkCollection bookmarks = pdf.Bookmarks;
-            string result = "GetPdfBookmarks.txt";
-            GetBookmarks(bookmarks, result);
-
-            Console.WriteLine("ä¹¦ç­¾æåå®æï¼ç»æå·²ä¿å­è³ï¼" + result);
-        }
-
-        public static void GetBookmarks(PdfBookmarkCollection bookmarks, string result)
-        {
-            StringBuilder content = new StringBuilder();
-            if (bookmarks.Count &gt; 0)
-            {
-                content.AppendLine("Pdf bookmarks:");
-                foreach (PdfBookmark parentBookmark in bookmarks)
-                {
-                    content.AppendLine(parentBookmark.Title);
-                    content.AppendLine(parentBookmark.DisplayStyle.ToString());
-                    GetChildBookmark(parentBookmark, content);
-                }
-            }
-            else
-            {
-                content.AppendLine("è¯¥ PDF ææ¡£ä¸åå«ä»»ä½ä¹¦ç­¾ã");
-            }
-            File.WriteAllText(result, content.ToString());
-        }
-
-        public static void GetChildBookmark(PdfBookmark parentBookmark, StringBuilder content)
-        {
-            if (parentBookmark.Count &gt; 0)
-            {
-                foreach (PdfBookmark childBookmark in parentBookmark)
-                {
-                    content.AppendLine(childBookmark.Title);
-                    content.AppendLine(childBookmark.DisplayStyle.ToString());
-                    GetChildBookmark(childBookmark, content);
-                }
-            }
-        }
-    }
-}
-</code></pre>
-<h2 id="3-è¾åºæ ¼å¼è¯´æ">3. è¾åºæ ¼å¼è¯´æ</h2>
-<p>çæçææ¬æä»¶æ¯ä¸¤è¡ä»£è¡¨ä¸ä¸ªä¹¦ç­¾ï¼ç¬¬ä¸è¡æ¯æ é¢ï¼ç¬¬äºè¡æ¯æ¾ç¤ºæ ·å¼ãä¾å¦ï¼</p>
-<pre><code>Pdf bookmarks:
-ç¬¬1ç«  ç®ä»
-Regular
-1.1 èæ¯
-Bold
-1.2 ç®æ 
-Italic
-ç¬¬2ç«  å®ç°
-Regular
-2.1 ç¯å¢æ­å»º
-Regular
-</code></pre>
-<p><code>DisplayStyle</code> æ¯ä¸ä¸ªæä¸¾ï¼å¯è½çå¼åæ¬ï¼</p>
-<ul>
-<li><code>Regular</code>ï¼æ®éææ¬</li>
-<li><code>Bold</code>ï¼ç²ä½</li>
-<li><code>Italic</code>ï¼æä½</li>
-</ul>
-<p>æ ¹æ® PDF æä»¶çå®éä¹¦ç­¾æ ·å¼ï¼è¾åºç»æä¼ç¸åºååã</p>
-<h2 id="4-æ³¨æäºé¡¹ä¸æ©å±">4. æ³¨æäºé¡¹ä¸æ©å±</h2>
-<h3 id="41-ä¹¦ç­¾å¯è½ä¸ºç©º">4.1 ä¹¦ç­¾å¯è½ä¸ºç©º</h3>
-<p>è¥ PDF æ²¡æä¹¦ç­¾ï¼<code>bookmarks.Count</code> ä¸º 0ï¼ä»£ç ä¼åå¥æç¤ºä¿¡æ¯ï¼é¿åç©ºæä»¶ã</p>
-<h3 id="42-ç®æ é¡µç ä¸å¨ä½çè·å">4.2 ç®æ é¡µç ä¸å¨ä½çè·å</h3>
-<p>ä¸è¿°ç¤ºä¾ä»è·åäºæ é¢åæ ·å¼ãå¦æéè¦è·åä¹¦ç­¾è·³è½¬çç®æ é¡µç ï¼å¯ä»¥ä½¿ç¨ <code>PdfBookmark.Action</code> å±æ§ï¼éå¤æ­å¨ä½ç±»åï¼ãä¾å¦ï¼</p>
-<pre><code class="language-csharp">if (parentBookmark.Action is PdfGoToAction goToAction)
-{
-    int pageIndex = pdf.Pages.IndexOf(goToAction.Destination.Page);
-    content.AppendLine($"è·³è½¬è³ç¬¬ {pageIndex + 1} é¡µ");
-}
-</code></pre>
-<p>ç±äº Free Spire.PDF å¯¹ <code>Action</code> çæ¯æè¾ä¸ºå®æ´ï¼å¯æ ¹æ®å®ééæ±æ©å±ã</p>
-<h3 id="43-æ§è½èè">4.3 æ§è½èè</h3>
-<p>å¯¹äºåå«æ°åä¸ªä¹¦ç­¾ç PDFï¼éå½éåä¸ä¼æææ¾æ§è½é®é¢ãä½è¥éé¢ç¹æåï¼å¯èèå° <code>StringBuilder</code> æ¿æ¢ä¸º <code>StreamWriter</code> æµå¼åå¥ï¼éä½åå­å ç¨ã</p>
-<h3 id="44-ç¼ç å¤ç">4.4 ç¼ç å¤ç</h3>
-<p><code>File.WriteAllText</code> é»è®¤ä½¿ç¨ UTF-8 ç¼ç ï¼å¦éæå®ç¼ç ï¼å¦ GB2312ï¼ï¼å¯æ¹ç¨ <code>StreamWriter</code>ã</p>
-<h2 id="5-æ»ç»">5. æ»ç»</h2>
-<p>æ¬ææ¼ç¤ºäºå¦ä½å©ç¨åè´¹ .NET åºå®æ´æå PDF ææ¡£çå¤çº§ä¹¦ç­¾ä¿¡æ¯ãå³é®ææ¯ç¹åæ¬ï¼</p>
-<ul>
-<li>éè¿ <code>PdfDocument.Bookmarks</code> è·åæ ¹ä¹¦ç­¾éåã</li>
-<li>éå½éå <code>PdfBookmark</code> èç¹ç <code>Count</code> åç´¢å¼å¨ã</li>
-<li>è¯»å <code>Title</code> å <code>DisplayStyle</code> å±æ§ã</li>
-<li>å°ç»æåæ°æ®åå¥ææ¬æä»¶ã</li>
-</ul>
-<p>è¿ç§æ¹æ³ä¸ä¾èµ Adobe Acrobat æå¶ä» GUI å·¥å·ï¼éå¸¸éåéæå°åå°æå¡æææ¡£å¤çç®¡éä¸­ãå¼åèå¯ä»¥æ ¹æ®ä¸è¿°æ¨¡å¼è¿ä¸æ­¥æ©å±ï¼è·åä¹¦ç­¾çé¡µç ãç¼©æ¾æ¹å¼çè³ä¿®æ¹ä¹¦ç­¾ç»æã</p>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="itemdesc">
-                åè¡¨äº 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-04-16 10:19">2026-04-16 10:18</span>&nbsp;
-<a href="https://www.cnblogs.com/jazz-z">LAYONTHEGROUND</a>&nbsp;
-éè¯»(<span id="post_view_count">19</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19875607);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fjazz-z%2Fp%2F19875607&amp;targetId=19875607&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-
-            </div>
          ]]>
     </description>
     </item>
