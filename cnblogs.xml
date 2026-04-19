@@ -3,12 +3,656 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-04-18T20:31:46.804Z</lastBuildDate>
+        <lastBuildDate>2026-04-19T02:07:07.353Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
+    <title><![CDATA[ ãä»0å°1æå»ºä¸ä¸ªClaudeAgentãåä½-èªä¸»Agent ]]></title>
+    <link>https://www.cnblogs.com/sevencoding/p/19821594</link>
+    <guid>6012e9ebcf10ffed8e405dc74402074b</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/sevencoding/p/19821594" title="åå¸äº 2026-04-19 09:00">
+    <span role="heading" aria-level="2">ãä»0å°1æå»ºä¸ä¸ªClaudeAgentãåä½-èªä¸»Agent</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>æ¯æ¬¡é½è¦ä¸» Agent åéä»»å¡å¤ªç´¯ã</p>
+<p>æä»¥å¼å¥äº<strong>èªä¸»æºè½ä½</strong>çæ¦å¿µï¼ä½¿æºè½ä½è½å¤ï¼</p>
+<ol>
+<li><strong>å·¥ä½-ç©ºé²å¾ªç¯</strong>ï¼æºè½ä½å¨å·¥ä½å®ææ¶èªå¨è¿å¥ç©ºé²ç¶æ</li>
+<li><strong>ä»»å¡èªå¨è®¤é¢</strong>ï¼ç©ºé²æ¶æ«æä»»å¡æ¿ï¼èªå¨è®¤é¢æ äººè®¤é¢çä»»å¡</li>
+<li><strong>èº«ä»½éæ°æ³¨å¥</strong>ï¼å¨ä¸ä¸æåç¼©åéæ°æ³¨å¥æºè½ä½èº«ä»½ä¿¡æ¯</li>
+<li><strong>èªå¨èµæºç®¡ç</strong>ï¼ç©ºé²è¶æ¶èªå¨å³æºï¼éæ¾èµæº</li>
+</ol>
+<p><strong>å³é®æ´å¯</strong>ï¼æ«æçæ¿ï¼è®¤é¢ä»»å¡ãéåèªå·±æ«æä»»å¡æ¿å¹¶è®¤é¢ä»»å¡ï¼æ éä¸» Agent éä¸ªåéã</p>
+<h2 id="javaå®ç°ä»£ç ">Javaå®ç°ä»£ç </h2>
+<pre><code class="language-java">public class AutonomousAgentsSystem {
+    
+    // --- æ°å¢éç½® ---
+    private static final Path TASKS_DIR = WORKDIR.resolve(".tasks");  // ä»»å¡å­å¨ç®å½
+    private static final int POLL_INTERVAL = 5;      // ç©ºé²è½®è¯¢é´éï¼ç§ï¼
+    private static final int IDLE_TIMEOUT = 60;      // ç©ºé²è¶æ¶ï¼ç§ï¼
+    private static final Object claimLock = new Object();  // ä»»å¡è®¤é¢é
+    
+    // --- æ°å¢ï¼ä»»å¡æ¿æ«æ ---
+    
+    /**
+     * æ«ææ äººè®¤é¢çä»»å¡
+     */
+    private static List&lt;Map&lt;String, Object&gt;&gt; scanUnclaimedTasks() {
+        try {
+            Files.createDirectories(TASKS_DIR);
+            
+            List&lt;Map&lt;String, Object&gt;&gt; unclaimed = new ArrayList&lt;&gt;();
+            Files.list(TASKS_DIR)
+                .filter(p -&gt; p.getFileName().toString().startsWith("task_"))
+                .filter(p -&gt; p.getFileName().toString().endsWith(".json"))
+                .sorted()
+                .forEach(p -&gt; {
+                    try {
+                        String content = Files.readString(p);
+                        Type type = new TypeToken&lt;Map&lt;String, Object&gt;&gt;(){}.getType();
+                        Map&lt;String, Object&gt; task = gson.fromJson(content, type);
+                        
+                        // æ£æ¥æ¯å¦å¯è®¤é¢
+                        String status = (String) task.get("status");
+                        String owner = (String) task.get("owner");
+                        @SuppressWarnings("unchecked")
+                        List&lt;Integer&gt; blockedBy = (List&lt;Integer&gt;) task.get("blockedBy");
+                        
+                        if ("pending".equals(status) &amp;&amp; 
+                            (owner == null || owner.isEmpty()) &amp;&amp;
+                            (blockedBy == null || blockedBy.isEmpty())) {
+                            unclaimed.add(task);
+                        }
+                        // å¯è®¤é¢æ¡ä»¶ï¼ç¶æä¸ºpendingãæ ææèãæ é»å¡ä¾èµ
+                        // æåºæ«æï¼ææä»¶åæåºï¼ç¡®ä¿å¬å¹³æ§
+                    } catch (IOException e) {
+                        // å¿½ç¥è¯»åéè¯¯
+                    }
+                });
+            
+            return unclaimed;
+        } catch (IOException e) {
+            return new ArrayList&lt;&gt;();
+        }
+    }
+    
+    /**
+     * è®¤é¢ä»»å¡
+     */
+    private static String claimTask(int taskId, String owner) {
+        synchronized (claimLock) {  // åæ­¥éé²æ­¢å¹¶åè®¤é¢
+            Path taskPath = TASKS_DIR.resolve("task_" + taskId + ".json");
+            if (!Files.exists(taskPath)) {
+                return "Error: Task " + taskId + " not found";
+            }
+            
+            try {
+                String content = Files.readString(taskPath);
+                Type type = new TypeToken&lt;Map&lt;String, Object&gt;&gt;(){}.getType();
+                Map&lt;String, Object&gt; task = gson.fromJson(content, type);
+                
+                // æ´æ°ä»»å¡ä¿¡æ¯
+                task.put("owner", owner);
+                task.put("status", "in_progress");
+                // åå­æ§æ´æ°ï¼ç¡®ä¿ä»»å¡ä¸ä¼è¢«å¤ä¸ªæºè½ä½åæ¶è®¤é¢
+                // ç¶æè½¬æ¢ï¼pending â in_progress
+                
+                Files.writeString(taskPath, gson.toJson(task));
+                return String.format("Claimed task #%d for %s", taskId, owner);
+            } catch (IOException e) {
+                return "Error: " + e.getMessage();
+            }
+        }
+    }
+    
+    // --- æ°å¢ï¼èº«ä»½éæ°æ³¨å¥ ---
+    
+    /**
+     * åå»ºèº«ä»½åï¼ç¨äºä¸ä¸æåç¼©åéæ°æ³¨å¥èº«ä»½ï¼
+     */
+    private static Map&lt;String, Object&gt; makeIdentityBlock(String name, String role, String teamName) {
+        return Map.of(
+            "role", "user",
+            "content", String.format(
+                "&lt;identity&gt;You are '%s', role: %s, team: %s. Continue your work.&lt;/identity&gt;",
+                name, role, teamName
+            )
+        );
+        // èº«ä»½æä¹åï¼å³ä½¿ä¸ä¸æè¢«åç¼©ï¼ä¹è½éæ°æ³¨å¥èº«ä»½
+        // ç»æåæ è®°ï¼&lt;identity&gt;æ ç­¾æç¡®æ è¯èº«ä»½ä¿¡æ¯
+    }
+    
+    // --- æ°å¢ï¼å¢éæåå·¥å· ---
+    private String executeTeammateTool(String sender, String toolName, Map&lt;String, Object&gt; args) {
+        try {
+            switch (toolName) {
+                // ... åæçå·¥å·å¤ç ...
+                
+                case "idle":
+                    // idle å·¥å·å¨å·¥ä½å¾ªç¯ä¸­ç¹æ®å¤ç
+                    return "Entering idle phase. Will poll for new tasks.";
+                    // ä¸»å¨ç©ºé²ï¼æºè½ä½ä¸»å¨è¡¨ç¤ºå®æå½åå·¥ä½
+                    
+                case "claim_task":
+                    int taskId = ((Number) args.get("task_id")).intValue();
+                    return claimTask(taskId, sender);
+                    // ä¸»å¨è®¤é¢ï¼æºè½ä½ä¸»å¨è®¤é¢æå®ä»»å¡
+            }
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
+    }
+    
+    // --- æ°å¢ï¼å¢éæåå·¥å·å®ä¹ ---
+    private List&lt;Map&lt;String, Object&gt;&gt; getTeammateTools() {
+        List&lt;Map&lt;String, Object&gt;&gt; tools = new ArrayList&lt;&gt;();
+        
+        // æ°å¢ idle å·¥å·
+        tools.add(createToolSpec("idle", 
+            "Signal that you have no more work. Enters idle polling phase.",
+            Map.of(),
+            List.of()));
+        // æ åæ°å·¥å·ï¼ç®åçç¶æè½¬æ¢å·¥å·
+        
+        // æ°å¢ claim_task å·¥å·
+        tools.add(createToolSpec("claim_task",
+            "Claim a task from the task board by ID.",
+            Map.of("task_id", Map.of("type", "integer")),
+            List.of("task_id")));
+        // ä¸»å¨å·¥ä½ï¼æºè½ä½å¯ä»¥ä¸»å¨éæ©ä»»å¡
+        
+        return tools;
+    }
+    
+    // --- æ°å¢ï¼å¢éæåä¸»å¾ªç¯ï¼å·¥ä½-ç©ºé²å¾ªç¯ï¼---
+    private void teammateLoop(String name, String role, String prompt, AtomicBoolean stopFlag) {
+        @SuppressWarnings("unchecked")
+        String teamName = (String) TEAM_MANAGER.config.get("team_name");
+        
+        String systemPrompt = String.format(
+            "You are '%s', role: %s, team: %s, at %s. " +
+            "Use idle tool when you have no more work. You will auto-claim new tasks.",
+            name, role, teamName, WORKDIR
+        );
+        // å¢å¼ºç³»ç»æç¤ºï¼åå«ç©ºé²è¡ä¸ºåèªå¨è®¤é¢æºå¶
+        
+        List&lt;Map&lt;String, Object&gt;&gt; messages = new ArrayList&lt;&gt;();
+        messages.add(Map.of("role", "user", "content", prompt));
+        
+        while (!stopFlag.get()) {  // å¤å±å¾ªç¯æ¯æå·¥ä½-ç©ºé²å¾ªç¯
+            // --- å·¥ä½é¶æ®µ ---
+            TEAM_MANAGER.setStatus(name, "working");
+            
+            boolean completedWorkPhase = false;
+            for (int i = 0; i &lt; 50 &amp;&amp; !stopFlag.get(); i++) {
+                try {
+                    // ... æ£æ¥é®ç®±ãè°ç¨LLMãæ§è¡å·¥å·ç­é»è¾ ...
+                    
+                    boolean idleRequested = false;
+                    for (Map&lt;String, Object&gt; block : content) {
+                        if ("tool_use".equals(block.get("type"))) {
+                            String toolName = (String) block.get("name");
+                            
+                            if ("idle".equals(toolName)) {
+                                idleRequested = true;  // æ è®°ç©ºé²è¯·æ±
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (idleRequested) {
+                        completedWorkPhase = true;
+                        break;  // éåºå·¥ä½é¶æ®µï¼è¿å¥ç©ºé²é¶æ®µ
+                    }
+                    
+                } catch (Exception e) {
+                    System.err.printf("[%s] Error: %s%n", name, e.getMessage());
+                    break;
+                }
+            }
+            
+            if (!completedWorkPhase) {
+                // æ²¡ææç¡®è¿å¥ç©ºé²ï¼å¯è½æ¯å ä¸ºéè¯¯
+                TEAM_MANAGER.setStatus(name, "idle");
+                return;
+            }
+            
+            // --- ç©ºé²é¶æ®µ ---
+            TEAM_MANAGER.setStatus(name, "idle");
+            
+            boolean resume = false;
+            int maxPolls = IDLE_TIMEOUT / Math.max(POLL_INTERVAL, 1);
+            
+            for (int pollCount = 0; pollCount &lt; maxPolls &amp;&amp; !stopFlag.get(); pollCount++) {
+                try {
+                    Thread.sleep(POLL_INTERVAL * 1000L);  // å¨ææ§è½®è¯¢
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+                
+                // æ£æ¥é®ç®±
+                List&lt;Map&lt;String, Object&gt;&gt; inbox = BUS.readInbox(name);
+                if (!inbox.isEmpty()) {
+                    for (Map&lt;String, Object&gt; msg : inbox) {
+                        if ("shutdown_request".equals(msg.get("type"))) {
+                            TEAM_MANAGER.setStatus(name, "shutdown");
+                            return;
+                        }
+                        messages.add(Map.of("role", "user", "content", gson.toJson(msg)));
+                    }
+                    resume = true;  // ææ¶æ¯ï¼æ¢å¤å·¥ä½
+                    break;
+                }
+                
+                // æ«ææ äººè®¤é¢çä»»å¡
+                List&lt;Map&lt;String, Object&gt;&gt; unclaimed = scanUnclaimedTasks();
+                if (!unclaimed.isEmpty()) {
+                    Map&lt;String, Object&gt; task = unclaimed.get(0);
+                    int taskId = ((Number) task.get("id")).intValue();
+                    
+                    // èªå¨è®¤é¢ä»»å¡
+                    claimTask(taskId, name);
+                    
+                    // åå»ºä»»å¡æç¤º
+                    String taskSubject = (String) task.get("subject");
+                    String taskDesc = (String) task.get("description");
+                    if (taskDesc == null) taskDesc = "";
+                    
+                    String taskPrompt = String.format(
+                        "&lt;auto-claimed&gt;Task #%d: %s%n%s&lt;/auto-claimed&gt;",
+                        taskId, taskSubject, taskDesc
+                    );
+                    
+                    // å¦ææ¶æ¯åå²å¤ªç­ï¼éæ°æ³¨å¥èº«ä»½
+                    if (messages.size() &lt;= 3) {
+                        messages.add(0, makeIdentityBlock(name, role, teamName));
+                        messages.add(1, Map.of("role", "assistant", 
+                            "content", "I am " + name + ". Continuing."));
+                        // èº«ä»½æ¢å¤ï¼ç¡®ä¿æºè½ä½ç¥éèªå·±çèº«ä»½
+                    }
+                    
+                    messages.add(Map.of("role", "user", "content", taskPrompt));
+                    messages.add(Map.of("role", "assistant", 
+                        "content", "Claimed task #" + taskId + ". Working on it."));
+                    // èªå¨å¯¹è¯ï¼æ¨¡ææºè½ä½è®¤é¢ä»»å¡å¹¶å¼å§å·¥ä½
+                    
+                    resume = true;  // æä»»å¡ï¼æ¢å¤å·¥ä½
+                    break;
+                }
+            }
+            
+            if (!resume) {
+                // ç©ºé²è¶æ¶ï¼èªå¨å³æº
+                TEAM_MANAGER.setStatus(name, "shutdown");
+                return;
+            }
+            
+            // éæ°è¿å¥å·¥ä½é¶æ®µ
+        }
+    }
+    
+    // --- æ°å¢ï¼ä¸»ç¨åºçç¹æ®å½ä»¤ ---
+    public static void main(String[] args) {
+        // ... åå§åä»£ç  ...
+        
+        while (true) {
+            System.out.print("\n\033[36ms11 &gt;&gt; \033[0m");
+            String userInput = scanner.nextLine().trim();
+            
+            if (userInput.isEmpty() || "exit".equalsIgnoreCase(userInput) || 
+                "q".equalsIgnoreCase(userInput)) {
+                break;
+            }
+            
+            // ç¹æ®å½ä»¤
+            if ("/team".equals(userInput)) {
+                System.out.println("\n" + TEAM_MANAGER.listAll());
+                continue;
+            }
+            
+            if ("/inbox".equals(userInput)) {
+                List&lt;Map&lt;String, Object&gt;&gt; inbox = BUS.readInbox("lead");
+                if (inbox.isEmpty()) {
+                    System.out.println("\nLeader's inbox is empty.");
+                } else {
+                    System.out.println("\nLeader's inbox:");
+                    System.out.println(gson.toJson(inbox));
+                }
+                continue;
+            }
+            
+            if ("/tasks".equals(userInput)) {
+                try {
+                    Files.createDirectories(TASKS_DIR);
+                    
+                    Files.list(TASKS_DIR)
+                        .filter(p -&gt; p.getFileName().toString().startsWith("task_"))
+                        .filter(p -&gt; p.getFileName().toString().endsWith(".json"))
+                        .sorted()
+                        .forEach(p -&gt; {
+                            try {
+                                String content = Files.readString(p);
+                                Type type = new TypeToken&lt;Map&lt;String, Object&gt;&gt;(){}.getType();
+                                Map&lt;String, Object&gt; task = gson.fromJson(content, type);
+                                
+                                String status = (String) task.get("status");
+                                String marker = switch(status) {
+                                    case "pending" -&gt; "[ ]";
+                                    case "in_progress" -&gt; "[&gt;]";
+                                    case "completed" -&gt; "[x]";
+                                    default -&gt; "[?]";
+                                };
+                                
+                                int id = ((Number) task.get("id")).intValue();
+                                String subject = (String) task.get("subject");
+                                String owner = (String) task.get("owner");
+                                String ownerStr = (owner != null &amp;&amp; !owner.isEmpty()) ? 
+                                    " @" + owner : "";
+                                
+                                System.out.printf("  %s #%d: %s%s%n", marker, id, subject, ownerStr);
+                                // å¯è§åä»»å¡æ¿ï¼æ¸æ°æ¾ç¤ºä»»å¡ç¶æåææè
+                            } catch (IOException e) {
+                                // å¿½ç¥éè¯¯
+                            }
+                        });
+                } catch (IOException e) {
+                    System.out.println("Error reading tasks: " + e.getMessage());
+                }
+                continue;
+            }
+            
+            // ... æ­£å¸¸å¤çç¨æ·è¾å¥ ...
+        }
+    }
+}
+</code></pre>
+<h2 id="èªä¸»æ§æ¶æå·¥ä½-ç©ºé²å¾ªç¯">èªä¸»æ§æ¶æï¼å·¥ä½-ç©ºé²å¾ªç¯</h2>
+<p><strong>æ ¸å¿ææ³</strong>ï¼ä»è¢«å¨ååºå¼æºè½ä½åçº§ä¸º<strong>ä¸»å¨ãèªé©±å¨ãå¯æç»­è¿è¡çèªä¸»æºè½ä½</strong>ï¼å¼å¥<strong>å·¥ä½-ç©ºé²å¾ªç¯æºå¶</strong>ï¼è®©æºè½ä½è½å¤<strong>èªä¸»ç®¡çèªå·±çå·¥ä½çå½å¨æ</strong>ï¼å®ç°"æ äººå¼å®"çæç»­è¿è¡ã</p>
+<pre><code class="language-java">// èªä¸»è¿è¡åæ°éç½®
+private static final int POLL_INTERVAL = 5;      // ç©ºé²è½®è¯¢é´éï¼ç§ï¼
+private static final int IDLE_TIMEOUT = 60;      // ç©ºé²è¶æ¶ï¼ç§ï¼
+// æºè½è°åº¦ï¼5ç§è½®è¯¢å¹³è¡¡ååºæ§åèµæºæ¶è
+// èªå¨æ¸çï¼60ç§æ å·¥ä½èªå¨å³æºï¼éæ¾èµæº
+// å¯æç»­è¿è¡ï¼æ¯æé¿æ¶é´æ äººå¼å®è¿è¡
+</code></pre>
+<ul>
+<li><strong>ç¶ææºæ¼è¿</strong>ï¼ä»ç®åçworking/idleç¶æåçº§ä¸ºå®æ´çå·¥ä½-ç©ºé²å¾ªç¯</li>
+<li><strong>èªä¸»è°åº¦</strong>ï¼æºè½ä½èªå·±å³å®ä½æ¶å·¥ä½ãä½æ¶ç©ºé²</li>
+<li><strong>èµæºä¼å</strong>ï¼ç©ºé²æ¶éä½èµæºæ¶èï¼æå·¥ä½æ¶å¿«éååº</li>
+<li><strong>å¯æç»­æ§</strong>ï¼æ¯æ7x24å°æ¶æç»­è¿è¡</li>
+</ul>
+<h2 id="ä»»å¡æ¿ç³»ç»ä¸èªå¨è®¤é¢">ä»»å¡æ¿ç³»ç»ä¸èªå¨è®¤é¢</h2>
+<pre><code class="language-java">/**
+ * æ«ææ äººè®¤é¢çä»»å¡
+ */
+private static List&lt;Map&lt;String, Object&gt;&gt; scanUnclaimedTasks() {
+    List&lt;Map&lt;String, Object&gt;&gt; unclaimed = new ArrayList&lt;&gt;();
+    Files.list(TASKS_DIR)
+        .filter(p -&gt; p.getFileName().toString().startsWith("task_"))
+        .filter(p -&gt; p.getFileName().toString().endsWith(".json"))
+        .sorted()  // å¬å¹³æ§ï¼æIDé¡ºåºæ«æ
+        .forEach(p -&gt; {
+            Map&lt;String, Object&gt; task = gson.fromJson(content, type);
+            
+            String status = (String) task.get("status");
+            String owner = (String) task.get("owner");
+            @SuppressWarnings("unchecked")
+            List&lt;Integer&gt; blockedBy = (List&lt;Integer&gt;) task.get("blockedBy");
+            
+            if ("pending".equals(status) &amp;&amp; 
+                (owner == null || owner.isEmpty()) &amp;&amp;
+                (blockedBy == null || blockedBy.isEmpty())) {
+                unclaimed.add(task);
+            }
+            // æºè½ç­éï¼åªæ«æå¯æ§è¡çä»»å¡
+            // æ é»å¡ï¼ä¸è®¤é¢æä¾èµé»å¡çä»»å¡
+            // æ ææèï¼ä¸è®¤é¢å·²æææèçä»»å¡
+        });
+}
+</code></pre>
+<ul>
+<li><strong>ä»»å¡å¸åº</strong>ï¼ä»»å¡æ¿ä½ä¸ºæºè½ä½é´çä»»å¡åè°æºå¶</li>
+<li><strong>å¬å¹³ç«äº</strong>ï¼æææºè½ä½å¹³ç­æ«æåè®¤é¢ä»»å¡</li>
+<li><strong>ä¾èµæç¥</strong>ï¼èªå¨è¯å«æä¾èµé»å¡çä»»å¡</li>
+<li><strong>è´è½½åè¡¡</strong>ï¼ç©ºé²æºè½ä½èªå¨è®¤é¢ä»»å¡ï¼å®ç°èªå¨è´è½½åè¡¡</li>
+</ul>
+<h2 id="åå­æ§ä»»å¡è®¤é¢æºå¶">åå­æ§ä»»å¡è®¤é¢æºå¶</h2>
+<pre><code class="language-java">/**
+ * è®¤é¢ä»»å¡
+ */
+private static String claimTask(int taskId, String owner) {
+    synchronized (claimLock) {  // å³é®ï¼åæ­¥éé²æ­¢å¹¶åè®¤é¢
+        Path taskPath = TASKS_DIR.resolve("task_" + taskId + ".json");
+        
+        String content = Files.readString(taskPath);
+        Map&lt;String, Object&gt; task = gson.fromJson(content, type);
+        
+        // æ´æ°ä»»å¡ä¿¡æ¯
+        task.put("owner", owner);
+        task.put("status", "in_progress");
+        // åå­æ§æä½ï¼é²æ­¢å¤ä¸ªæºè½ä½åæ¶è®¤é¢åä¸ä¸ªä»»å¡
+        // ç¶æè½¬æ¢ï¼ç¡®ä¿pending â in_progressçåå­æ§
+        
+        Files.writeString(taskPath, gson.toJson(task));
+        return String.format("Claimed task #%d for %s", taskId, owner);
+    }
+}
+</code></pre>
+<ul>
+<li><strong>å¹¶åå®å¨</strong>ï¼åæ­¥éç¡®ä¿å¤æºè½ä½ç¯å¢ä¸çæ°æ®ä¸è´æ§</li>
+<li><strong>åå­æä½</strong>ï¼è¯»å-ä¿®æ¹-åå¥çåå­æ§ï¼é²æ­¢ç«ææ¡ä»¶</li>
+<li><strong>ç¶æç®¡ç</strong>ï¼æç¡®çä»»å¡ç¶æçå½å¨æç®¡ç</li>
+<li><strong>ææèæ è®°</strong>ï¼æç¡®ä»»å¡å½å±ï¼é¿åéå¤å·¥ä½</li>
+</ul>
+<h2 id="ä¸»å¨ç©ºé²å·¥å·ä¸ç¶æè½¬æ¢">ä¸»å¨ç©ºé²å·¥å·ä¸ç¶æè½¬æ¢</h2>
+<pre><code class="language-java">// idle å·¥å·å®ä¹
+tools.add(createToolSpec("idle", 
+    "Signal that you have no more work. Enters idle polling phase.",
+    Map.of(),
+    List.of()));
+// ä¸»å¨å³ç­ï¼æºè½ä½ä¸»å¨å³å®è¿å¥ç©ºé²ç¶æ
+// è¯­ä¹æ¸æ°ï¼å·¥å·åæç¡®è¡¨ç¤ºè¡ä¸º
+// æ åæ°ï¼ç®åçç¶æè½¬æ¢å·¥å·
+
+// å¨teammateLoopä¸­å¤çidle
+boolean idleRequested = false;
+for (Map&lt;String, Object&gt; block : content) {
+    if ("tool_use".equals(block.get("type"))) {
+        String toolName = (String) block.get("name");
+        
+        if ("idle".equals(toolName)) {
+            idleRequested = true;  // æ è®°ç©ºé²è¯·æ±
+            break;
+        }
+    }
+}
+
+if (idleRequested) {
+    completedWorkPhase = true;
+    break;  // éåºå·¥ä½é¶æ®µï¼è¿å¥ç©ºé²é¶æ®µ
+}
+// å·¥ä½å®ææ£æµï¼æºè½ä½ä¸»å¨è¡¨ç¤ºå·¥ä½å®æ
+// ç¶æè½¬æ¢ï¼ä»workingç¶æè½¬æ¢å°idleç¶æ
+// æ§å¶æè½¬ç§»ï¼æºè½ä½èªä¸»æ§å¶å·¥ä½èå¥
+</code></pre>
+<ul>
+<li><strong>ä¸»å¨å³ç­</strong>ï¼æºè½ä½å¯ä»¥ä¸»å¨å³å®ä½æ¶å®æå·¥ä½</li>
+<li><strong>ç¶æç®¡ç</strong>ï¼æç¡®çå·¥ä½-ç©ºé²ç¶æè½¬æ¢</li>
+<li><strong>èµæºä¼å</strong>ï¼å®æå·¥ä½åä¸»å¨éæ¾è®¡ç®èµæº</li>
+<li><strong>å¯é¢æµæ§</strong>ï¼æç¡®çå·¥ä½å®æä¿¡å·</li>
+</ul>
+<h2 id="å¨ææ§è½®è¯¢ä¸èªå¨åç°">å¨ææ§è½®è¯¢ä¸èªå¨åç°</h2>
+<pre><code class="language-java">// --- ç©ºé²é¶æ®µ ---
+TEAM_MANAGER.setStatus(name, "idle");
+
+boolean resume = false;
+int maxPolls = IDLE_TIMEOUT / Math.max(POLL_INTERVAL, 1);
+
+for (int pollCount = 0; pollCount &lt; maxPolls &amp;&amp; !stopFlag.get(); pollCount++) {
+    try {
+        Thread.sleep(POLL_INTERVAL * 1000L);  // å¨ææ§è½®è¯¢
+    } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        break;
+    }
+    
+    // æ£æ¥é®ç®±
+    List&lt;Map&lt;String, Object&gt;&gt; inbox = BUS.readInbox(name);
+    if (!inbox.isEmpty()) {
+        // ææ¶æ¯ï¼æ¢å¤å·¥ä½
+        resume = true;
+        break;
+    }
+    
+    // æ«ææ äººè®¤é¢çä»»å¡
+    List&lt;Map&lt;String, Object&gt;&gt; unclaimed = scanUnclaimedTasks();
+    if (!unclaimed.isEmpty()) {
+        // èªå¨è®¤é¢å¹¶æ¢å¤å·¥ä½
+        resume = true;
+        break;
+    }
+}
+// å¨ææ§æ£æ¥ï¼å®ææ£æ¥æ°å·¥ä½
+// å¤æºè§¦åï¼é®ç®±æ¶æ¯æä»»å¡æ¿é½å¯ä»¥è§¦åæ¢å¤å·¥ä½
+// è¶æ¶æºå¶ï¼é¿æ¶é´æ å·¥ä½èªå¨å³æº
+</code></pre>
+<ul>
+<li><strong>äºä»¶é©±å¨</strong>ï¼é®ç®±æ¶æ¯åä»»å¡æ¿ä»»å¡é½æ¯è§¦åäºä»¶</li>
+<li><strong>èµæºèçº¦</strong>ï¼è½®è¯¢é´éé¿åCPUè¿åº¦æ¶è</li>
+<li><strong>å¤æºååº</strong>ï¼ååºå¤ç§ç±»åçå·¥ä½è§¦å</li>
+<li><strong>èªå¨æ¢å¤</strong>ï¼åç°å·¥ä½åèªå¨æ¢å¤å·¥ä½ç¶æ</li>
+</ul>
+<h2 id="èªå¨ä»»å¡è®¤é¢ä¸ä¸ä¸æéå»º">èªå¨ä»»å¡è®¤é¢ä¸ä¸ä¸æéå»º</h2>
+<pre><code class="language-java">// èªå¨è®¤é¢ä»»å¡
+claimTask(taskId, name);
+
+// åå»ºä»»å¡æç¤º
+String taskPrompt = String.format(
+    "&lt;auto-claimed&gt;Task #%d: %s%n%s&lt;/auto-claimed&gt;",
+    taskId, taskSubject, taskDesc
+);
+
+// å¦ææ¶æ¯åå²å¤ªç­ï¼éæ°æ³¨å¥èº«ä»½
+if (messages.size() &lt;= 3) {
+    messages.add(0, makeIdentityBlock(name, role, teamName));
+    messages.add(1, Map.of("role", "assistant", 
+        "content", "I am " + name + ". Continuing."));
+    // èº«ä»½æ¢å¤ï¼ç¡®ä¿æºè½ä½å¨é¿æ¶é´ç©ºé²åä»ç¶ç¥éèªå·±çèº«ä»½
+    // ä¸ä¸æéå»ºï¼éå»ºè¢«åç¼©çä¸ä¸æ
+}
+
+messages.add(Map.of("role", "user", "content", taskPrompt));
+messages.add(Map.of("role", "assistant", 
+    "content", "Claimed task #" + taskId + ". Working on it."));
+// èªå¨å¯¹è¯ï¼æ¨¡ææºè½ä½è®¤é¢ä»»å¡å¹¶å¼å§å·¥ä½
+// å·¥ä½æµä¿æï¼ä¿æå¯¹è¯çèªç¶æµç
+</code></pre>
+<ul>
+<li><strong>èªå¨æ¥å</strong>ï¼æºè½ä½èªå¨è®¤é¢å¹¶å¼å§å¤çä»»å¡</li>
+<li><strong>èº«ä»½æä¹</strong>ï¼å³ä½¿ä¸ä¸æè¢«åç¼©ï¼ä¹è½éå»ºèº«ä»½</li>
+<li><strong>å·¥ä½æµè¿ç»­</strong>ï¼ä¿æå·¥ä½å¯¹è¯çèªç¶è¿ç»­æ§</li>
+<li><strong>èªå¨åå§å</strong>ï¼ä¸ºæ°ä»»å¡èªå¨åå§åå·¥ä½ä¸ä¸æ</li>
+</ul>
+<h2 id="å½ä»¤è¡ç®¡çä¸å¯è§åçæ§">å½ä»¤è¡ç®¡çä¸å¯è§åçæ§</h2>
+<pre><code class="language-java">// ç¹æ®å½ä»¤
+if ("/team".equals(userInput)) {
+    System.out.println("\n" + TEAM_MANAGER.listAll());
+    continue;
+}
+
+if ("/inbox".equals(userInput)) {
+    // æ¥çé®ç®±
+    continue;
+}
+
+if ("/tasks".equals(userInput)) {
+    // å¯è§åä»»å¡æ¿
+    System.out.printf("  %s #%d: %s%s%n", marker, id, subject, ownerStr);
+    continue;
+}
+// è¿ç»´åå¥½ï¼æä¾æ¹ä¾¿çç®¡çå½ä»¤
+// å®æ¶çæ§ï¼éæ¶æ¥çå¢éç¶æåä»»å¡è¿åº¦
+// å¯è§åï¼æ¸æ°çå¾è¡¨åå±ç¤º
+// è°è¯æ¯æï¼ä¾¿äºé®é¢è¯æ­åç³»ç»çæ§
+</code></pre>
+<ul>
+<li><strong>è¿ç»´çé¢</strong>ï¼ä¸ºäººç±»ç®¡çåæä¾æ¹ä¾¿çç®¡çæ¥å£</li>
+<li><strong>å®æ¶çæ§</strong>ï¼éæ¶ææ¡ç³»ç»è¿è¡ç¶æ</li>
+<li><strong>å¯è§å</strong>ï¼ç´è§çä»»å¡ç¶æå±ç¤º</li>
+<li><strong>è°è¯æ¯æ</strong>ï¼ä¾¿äºé®é¢å®ä½åç³»ç»ä¼å</li>
+</ul>
+<h2 id="æ¶ææ¼è¿ä¸ä»·å¼">æ¶ææ¼è¿ä¸ä»·å¼</h2>
+<p><strong>ä» TeamProtocolsSystem å° AutonomousAgentsSystem çåçº§</strong>ï¼</p>
+<table>
+<thead>
+<tr>
+<th>ç»´åº¦</th>
+<th>TeamProtocolsSystem</th>
+<th>AutonomousAgentsSystem</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>è¿è¡æ¨¡å¼</td>
+<td>è¢«å¨ååº</td>
+<td>ä¸»å¨èªä¸»</td>
+</tr>
+<tr>
+<td>å·¥ä½è°åº¦</td>
+<td>äººå·¥åé</td>
+<td>èªå¨è®¤é¢</td>
+</tr>
+<tr>
+<td>çå½å¨æ</td>
+<td>åæ¬¡è¿è¡</td>
+<td>æç»­å¾ªç¯</td>
+</tr>
+<tr>
+<td>èµæºç®¡ç</td>
+<td>éæåé</td>
+<td>å¨æä¼å</td>
+</tr>
+<tr>
+<td>äººæºäº¤äº</td>
+<td>é¢ç¹äº¤äº</td>
+<td>æ äººå¼å®</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+<div id="MySignature" role="contentinfo">
+    <p>æ¬ææ¥èªå¨çº¿ç½ç«ï¼sevençèé¸æé¿ä¹è·¯ï¼ä½èï¼sevenï¼è½¬è½½è¯·æ³¨æåæé¾æ¥ï¼www.seven97.top</p>
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-04-19 09:00">2026-04-19 09:00</span>&nbsp;
+<a href="https://www.cnblogs.com/sevencoding">ç¨åºåSeven</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19821594);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fsevencoding%2Fp%2F19821594&amp;targetId=19821594&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
     <title><![CDATA[ .NETçæä¸Native AOTå¼å®¹çCronä»»å¡è°åº¦æ¡æ¶ ]]></title>
     <link>https://www.cnblogs.com/shanyou/p/19888982</link>
     <guid>454024960c8c963092df6348795201c7</guid>
@@ -248,8 +892,8 @@
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-04-18 20:32">2026-04-18 20:32</span>&nbsp;
 <a href="https://www.cnblogs.com/shanyou">å¼ åå</a>&nbsp;
-éè¯»(<span id="post_view_count">75</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
+éè¯»(<span id="post_view_count">130</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">3</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19888982);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fshanyou%2Fp%2F19888982&amp;targetId=19888982&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
@@ -695,11 +1339,279 @@ int main()
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0.006944444444444444" data-date-updated="2026-04-18 20:09">2026-04-18 19:59</span>&nbsp;
 <a href="https://www.cnblogs.com/medal-dreams">medal_dreams</a>&nbsp;
-éè¯»(<span id="post_view_count">14</span>)&nbsp;
+éè¯»(<span id="post_view_count">31</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19888864);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fmedal-dreams%2Fp%2F19888864&amp;targetId=19888864&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ å¦ä½å®ç° Claude Code å Codex ç­ Agent CLI çèªå¨éè¯ ]]></title>
+    <link>https://www.cnblogs.com/newbe36524/p/19888549</link>
+    <guid>cd6f15616def6dc8cc833e12ef43df79</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/newbe36524/p/19888549" title="åå¸äº 2026-04-18 17:09">
+    <span role="heading" aria-level="2">å¦ä½å®ç° Claude Code å Codex ç­ Agent CLI çèªå¨éè¯</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h1 id="å¦ä½å®ç°-claude-code-å-codex-ç­-agent-cli-çèªå¨éè¯">å¦ä½å®ç° Claude Code å Codex ç­ Agent CLI çèªå¨éè¯</h1>
+<blockquote>
+<p>èªå¨éè¯è¿ä¸ªè¯ï¼ççåæ¯ä¸ªå°å¼å³ï¼çè½å°å·¥ç¨ç°åºéï¼å®å¨ä¸æ¯é£ä¹åäºãå¨æ°å¶ä½äººä»¬å¤§å®¶å¥½ï¼ææ¯ HagiCode å¶ä½äººä¿å¤ãä»å¤©è¿ç¯æä»¬ä¸èç©ºè¯ï¼å°±è Claude CodeãCodex è¿ç±» Agent CLI çèªå¨éè¯å°åºè¯¥æä¹åï¼æè½æ¢æ¥å¾ä½å¼å¸¸ï¼åä¸æç³»ç»å¸¦è¿æ ä¼æ­¢çéå¤æ§è¡éã</p>
+</blockquote>
+<h2 id="èæ¯">èæ¯</h2>
+<p>å¦æä½ æè¿ä¹å¨æè¾ AI ç¼ç¨ï¼é£è¿ç±»é®é¢ä½ å¤§æ¦çå·²ç»ç¢°å°è¿äºï¼ä»»å¡ä¸æ¯ä¸ä¸æ¥å°±æï¼èæ¯è·å°ä¸åæ­æã</p>
+<p>è¿äºå¿æ¾å°æ®é HTTP è¯·æ±éï¼å¾å¤æ¶åå°±æ¯éåä¸ä¸ï¼é¡¶å¤è¡¥ä¸ªææ°éé¿ãå¯æ¯ Agent CLI ä¸ä¸æ ·ãClaude CodeãCodex è¿ç±»å·¥å·éå¸¸æ¯æµå¼æ§è¡çï¼è¾åºæ¯ä¸æ®µä¸æ®µå¾å¤æ¨ï¼è¿ç¨ä¸­è¿ä¼ç»å® threadãsession æ resume tokenãæ¢å¥è¯è¯´ï¼å®ä¸æ¯âè¿ä¸è¯·æ±å¤±è´¥äºæ²¡æâï¼èæ¯ï¼</p>
+<ul>
+<li>åé¢å·²ç»ååºæ¥çåå®¹è¿ç®ä¸ç®æ°</li>
+<li>å½åä¸ä¸æè¿è½ä¸è½æ¥çè·</li>
+<li>è¿æ¬¡å¤±è´¥è¯¥ä¸è¯¥èªå¨æ¢å¤</li>
+<li>å¦æè¦æ¢å¤ï¼å¤ä¹åè¯ï¼è¯çæ¶ååä»ä¹ï¼åä¸ä¸æè¿è¦ä¸è¦å¤ç¨</li>
+</ul>
+<p>å¾å¤å¢éç¬¬ä¸æ¬¡åè¿éï¼é½ä¼ä¸æè¯åä¸ä¸ªææ´ç´ ççæ¬ï¼æ¥éäºå°±åè¯ä¸æ¬¡ãä½ è¯´å¾éå¸¸æ­£ç¡®ï¼è¿ä¸ªæ³æ³å¾èªç¶ï¼å¯æ¯çè¿é¡¹ç®éï¼é®é¢å°±ä¸ä¸ªæ¥ä¸ä¸ªååºæ¥äºã</p>
+<ul>
+<li>æäºéè¯¯æææ¯ææ¶æéï¼å´è¢«å½ææç»å¤±è´¥</li>
+<li>æäºéè¯¯æ ¹æ¬ä¸å¼å¾éè¯ï¼å´è¢«ç³»ç»åå¤éæ¾</li>
+<li>æ thread çè¯·æ±åæ²¡æ thread çè¯·æ±ï¼è¢«ä¸ææ¢­å°ä¸è§åä»</li>
+<li>éé¿ç­ç¥æ²¡è¾¹çï¼åå°è¯·æ±èªå·±æèªå·±æç</li>
+</ul>
+<p>HagiCode å¨æ¥å¤ç§ Agent CLI çè¿ç¨ä¸­ï¼ä¹è¸©è¿è¿äºåãå°¤å¶æ¯ Codex è¿ä¸ä¾§ï¼æåæ´é²åºæ¥çé®é¢å°±æ¯æç±» reconnect æ¥ææ²¡æè¢«è¯å«æå¯éè¯ç»æï¼ç»æåæ¬å·²æçæ¢å¤æºå¶æ ¹æ¬æ²¡æºä¼çæãè¯´ç½äºï¼ä¸æ¯ç³»ç»æ²¡æèªå¨éè¯ï¼èæ¯ç³»ç»æ²¡æâè¿æ¬¡å¼å¾éè¯âè®¤åºæ¥ã</p>
+<p>æä»¥è¿ç¯æç« æ³è®²çæ ¸å¿ç¹å¾æç¡®ï¼<strong>èªå¨éè¯ä¸æ¯ä¸ä¸ªæé®ï¼èæ¯ä¸å¥åå±è®¾è®¡ã</strong></p>
+<h2 id="å³äº-hagicode">å³äº HagiCode</h2>
+<p>æ¬æåäº«çæ¹æ¡ï¼æ¥èªæä»¬å¨ <a href="https://hagicode.com" target="_blank" rel="noopener nofollow">HagiCode</a> é¡¹ç®éççå®å®è·µãHagiCode è¦åçäºæï¼ä¸æ¯ææä¸ä¸ªæ¨¡åæ¥ä¸å°±å®äºï¼èæ¯æå¤ç§ Agent CLI çæµå¼æ¶æ¯ãå·¥å·è°ç¨ãå¤±è´¥æ¢å¤ãä¼è¯ä¸ä¸æï¼ç»ä¸æä¸å¥è½é¿æç»´æ¤çæ§è¡æ¨¡åã</p>
+<p>æå¹³æ¶æå³å¿çäºæä¹ä¸ï¼å°±æ¯æä¹è®© AI ç¼ç¨è¿ä»¶äºçæ­£è½å°å·¥ç¨ç°åºãå Demo ä¸é¾ï¼é¾çæ¯æ Demo åæå¢éççæ¿æé¿æä½¿ç¨çä¸è¥¿ãHagiCode ä¹æä»¥è®¤çåèªå¨éè¯ï¼ä¸æ¯å ä¸ºè¿ä¸ªåè½çèµ·æ¥é«çº§ï¼èæ¯å ä¸ºé¿é¾è·¯ãæµå¼ãå¯ç»­è·ç CLI æ§è¡å¦ææ¥ä¸ç¨³ï¼ç¨æ·çå°çå°±ä¸æ¯æºè½å©æï¼èæ¯ä¸ä¸ªå¨ä¸å¨åè·¯æçº¿çå½ä»¤åè£å¨ã</p>
+<p>å¦æä½ æ³åççé¡¹ç®å¥å£ï¼è¿éåæ¾ä¸¤ä¸ªï¼</p>
+<ul>
+<li>GitHub: <a href="https://github.com/HagiCode-org/site" target="_blank" rel="noopener nofollow">github.com/HagiCode-org/site</a></li>
+<li>å®ç½: <a href="https://hagicode.com" target="_blank" rel="noopener nofollow">hagicode.com</a></li>
+</ul>
+<p>åå¾åèµ°ä¸æ­¥è®²ï¼HagiCode ç°å¨ä¹å·²ç»ä¸æ¶ Steam äºï¼æ Steam çæåå¯ä»¥åå ä¸ªæ¿æåï¼</p>
+<ul>
+<li><a href="https://store.steampowered.com/app/4625540/Hagicode/" target="_blank" rel="noopener nofollow">Steam ååºé¡µï¼å å¥æ¿æå / æ¥çè¯¦æï¼</a></li>
+</ul>
+<h2 id="ä¸ºä»ä¹-agent-cli-çèªå¨éè¯æ¯æ®ééè¯æ´é¾">ä¸ºä»ä¹ Agent CLI çèªå¨éè¯æ¯æ®ééè¯æ´é¾</h2>
+<p>è¿ä¸ªé®é¢æå¾å¾å®å¨ï¼æä»¬ç´æ¥ä¸ç»è®ºï¼Agent CLI çèªå¨éè¯ï¼é¾ç¹ä¸å¨âéå ç§åè¯ä¸æ¬¡âï¼èå¨âè¿è½ä¸è½å¨åä¸ä¸æéç»§ç»­âã</p>
+<p>ä½ å¯ä»¥æå®çè§£æä¸æ¬¡é¿å¯¹è¯ãæ®é API éè¯ï¼æ´åçµè¯å çº¿åæ¨ä¸éï¼è Agent CLI éè¯ï¼æ´åå¯¹æ¹åè®²å°ä¸åä¿¡å·æ­äºï¼ä½ å¾åå¤æ­è¦ä¸è¦åæ¨ï¼åæ¨ä»¥åè¦ä¸è¦ä»å¤´è¯´ï¼å¯¹æ¹è¿è®°ä¸è®°å¾ååèå°åªãè°è¯´è¿ä¸¤èæ¯ä¸åäºå¢ï¼å®ä»¬åæ ¹ä¸æ¯ä¸ä¸ªå·¥ç¨é®é¢ã</p>
+<p>å·ä½çï¼æåä¸ªé¾ç¹æå¸åã</p>
+<h3 id="1-å®æ¯æµå¼ç">1. å®æ¯æµå¼ç</h3>
+<p>ä¸æ¦è¾åºå·²ç»åç»ç¨æ·ï¼ä½ å°±ä¸è½åå¤çæ®éè¯·æ±é£æ ·ï¼æå¤±è´¥å·å·åæç¶åææéæ¥ãå ä¸ºåé¢é£é¨ååå®¹å·²ç»è¢«çå°äºï¼åæ¬¡éæ¾æ¶å¦æç­ç¥ä¸å¯¹ï¼åç«¯å¾å®¹æçå°éå¤ææ¬ãéä¹±ç¶æï¼å·¥å·è°ç¨çå½å¨æä¹ä¼ä¸èµ·ä¹±å¥ãè¿æ³¢ä¸æ¯çå­¦ï¼æ¯å·¥ç¨ã</p>
+<h3 id="2-å®éå¸¸ç»å®ä¼è¯ä¸ä¸æ">2. å®éå¸¸ç»å®ä¼è¯ä¸ä¸æ</h3>
+<p>Codex è¿ç±» provider ä¼ç»å® threadï¼Claude Code ä¸ç±»å®ç°ä¹ä¼æ continuation target æç­ä»·çç»­è·ä¸ä¸æãçæ­£è½èªå¨éè¯çåæï¼ä¸åªæ¯âè¿ä¸ªéè¯¯é¿å¾åææ¶æéâï¼è¿åæ¬âè¿æ¬¡æ§è¡è¿ææ²¡æç»§ç»­ä¸å»çè½½ä½âã</p>
+<h3 id="3-å®ä¸æ¯ææéè¯¯é½å¼å¾éè¯">3. å®ä¸æ¯ææéè¯¯é½å¼å¾éè¯</h3>
+<p>ç½ç»æå¨ãSSE idle timeoutãä¸æ¸¸ä¸´æ¶æéï¼è¿äºéå¸¸å¯ä»¥è¯ä¸è¯ãå¯å¦æä½ éå°çæ¯è®¤è¯å¤±è´¥ãä¸ä¸æå·²ç»ä¸¢äºï¼æè provider æ ¹æ¬æ²¡æ resume è½åï¼é£ç»§ç»­éè¯å¤æ°ä¸æ¯æ¢å¤ï¼èæ¯å¨å¶é åªé³ã</p>
+<h3 id="4-å®éè¦è¾¹ç">4. å®éè¦è¾¹ç</h3>
+<p>æ éèªå¨éè¯å ä¹æ»æ¯éçãææ¯è¶å¿å¯ä»¥ç­é¹ä¸éµå­ï¼å·¥ç¨è§å¾å¾å¾ä¼ç¨³å®å¾å¤å¹´ï¼å¶ä¸­ä¸æ¡å°±æ¯ï¼å¤±è´¥æ¢å¤ä¸å®è¦æè¾¹çãç³»ç»å¿é¡»ç¥éèªå·±æå¤è¯å æ¬¡ãæ¯æ¬¡éå¤ä¹ãä»ä¹æ¶åè¯¥åææ¿è®¤è¿åçä¸è¡äºã</p>
+<p>ä¹æ­£å ä¸ºè¿å ä¸ªç¹ç¹ï¼HagiCode æåæ²¡ææèªå¨éè¯åææä¸ª provider éçå è¡ <code>try/catch</code>ï¼èæ¯æå®æç¼æä¸å±å±äº«è½åãè¯´å°åºï¼å·¥ç¨é®é¢è¿æ¯è¦åå°å·¥ç¨æ¹æ³éè§£å³ã</p>
+<h2 id="hagicode-çåæ³æéè¯ä»-provider-éæ¿åºæ¥">HagiCode çåæ³ï¼æéè¯ä» Provider éæ¿åºæ¥</h2>
+<p>HagiCode å½åè¿å¥çå®å®ç°ï¼å¯ä»¥åç¼©æä¸å¥è¯ï¼</p>
+<p><strong>å±äº«å±ç»ä¸ç®¡çéè¯æµç¨ï¼å·ä½ Provider åªè´è´£åç­ä¸¤ä¸ªé®é¢ï¼è¿ä¸ªç»æå¼ä¸å¼å¾éè¯ï¼å½åä¸ä¸æè¿è½ä¸è½ç»§ç»­ï¼</strong></p>
+<p>è¿ä»¶äºä¸å¤æï¼å¯æ¯å¾å³é®ãå ä¸ºä¸æ¦æèè´£åå¼ï¼Claude CodeãCodexï¼çè³å¶ä» Agent CLI é½è½å¤ç¨åä¸ä¸ªéª¨æ¶ãæ¨¡åä¼è¯´ï¼å·¥å·ä¼åï¼å·¥ä½æµä¼åçº§ï¼ä½å·¥ç¨ä¸çåºæ¬çä¸ç´é½å¨é£éã</p>
+<h3 id="ç¬¬ä¸å±ç¨ç»ä¸åè°å¨ç®¡çéè¯å¾ªç¯">ç¬¬ä¸å±ï¼ç¨ç»ä¸åè°å¨ç®¡çéè¯å¾ªç¯</h3>
+<p>é¡¹ç®ä¸­çæ ¸å¿å®ç°çæ®µå¤§æ¦æ¯ä¸é¢è¿æ ·ï¼</p>
+<pre><code class="language-csharp">internal static class ProviderErrorAutoRetryCoordinator
+{
+    public static async IAsyncEnumerable&lt;CliMessage&gt; ExecuteAsync(
+        string prompt,
+        ProviderErrorAutoRetrySettings? settings,
+        Func&lt;string, IAsyncEnumerable&lt;CliMessage&gt;&gt; executeAttemptAsync,
+        Func&lt;bool&gt; canRetryInSameContext,
+        Func&lt;TimeSpan, CancellationToken, Task&gt; delayAsync,
+        Func&lt;CliMessage, bool&gt; isRetryableTerminalMessage,
+        [EnumeratorCancellation] CancellationToken cancellationToken)
+    {
+        var normalizedSettings = ProviderErrorAutoRetrySettings.Normalize(settings);
+        var retrySchedule = normalizedSettings.Enabled
+            ? normalizedSettings.GetRetrySchedule()
+            : [];
+
+        for (var attempt = 0; ; attempt++)
+        {
+            var attemptPrompt = attempt == 0
+                ? prompt
+                : ProviderErrorAutoRetrySettings.ContinuationPrompt;
+
+            CliMessage? terminalFailure = null;
+
+            await foreach (var message in executeAttemptAsync(attemptPrompt)
+                               .WithCancellation(cancellationToken))
+            {
+                if (isRetryableTerminalMessage(message))
+                {
+                    terminalFailure = message;
+                    break;
+                }
+
+                yield return message;
+            }
+
+            if (terminalFailure is null)
+            {
+                yield break;
+            }
+
+            if (attempt &gt;= retrySchedule.Count || !canRetryInSameContext())
+            {
+                yield return terminalFailure;
+                yield break;
+            }
+
+            await delayAsync(retrySchedule[attempt], cancellationToken);
+        }
+    }
+}
+</code></pre>
+<p>è¿æ®µä»£ç å¹²çäºæï¼å¶å®éå¸¸æ´ç´ ï¼ä½å¾æåã</p>
+<ul>
+<li>ä¸­é´å¤±è´¥åä¸ç´æ¥éä¼ ï¼åè°å¨åå¤æ­è½ä¸è½æ¢å¤</li>
+<li>åªæéè¯é¢ç®èå°½ï¼æç»å¤±è´¥æçæ­£åå°ä¸å±</li>
+<li>ç¬¬äºè½®å¼å§ä¸ååéåå§ promptï¼èæ¯ç»ä¸åé continuation prompt</li>
+</ul>
+<p>è¿ä¹å°±æ¯ä¸ºä»ä¹æåé¢ä¸ç´å¼ºè°ï¼èªå¨éè¯ä¸æ¯ç®åçâåè¯·æ±ä¸æ¬¡âãå®ä¸æ¯å¨è¡¥ä¸ä¸ªå¼å¸¸åæ¯ï¼èæ¯å¨ç®¡çä¸æ¡æ§è¡çå½å¨å¶ãå¬èµ·æ¥æç¹åäº§åç»çï¼ä½å·¥ç¨ä¸ç¡®å®å¦æ­¤ã</p>
+<h3 id="ç¬¬äºå±æéè¯ç­ç¥å¿«ç§å">ç¬¬äºå±ï¼æéè¯ç­ç¥å¿«ç§å</h3>
+<p>å¦ä¸ä¸ªå¾å®¹æè¢«å¿½ç¥çé®é¢æ¯ï¼è°æ¥å³å®è¿æ¬¡è¯·æ±æ¯å¦å¼å¯èªå¨éè¯ï¼</p>
+<p>HagiCode çç­æ¡æ¯ï¼ä¸è¦ä¾èµæä¸ªâæ­¤å»çå¨å±éç½®âï¼èæ¯æç­ç¥åæ snapshotï¼è·çè¿æ¬¡è¯·æ±ä¸èµ·èµ°ãè¿æ ·ä¸æ¥ï¼ä¼è¯æéãæ¶æ¯æä¹åãæ§è¡è½¬åãprovider ééï¼é½ä¸ä¼æç­ç¥å¼ä¸¢ãä¸æ¬¡æåä¸å«ä½ç³»ï¼æç»­æåæå«ä½ç³»ã</p>
+<p>æ ¸å¿ç»æå¯ä»¥ç®åæè¿æ ·ï¼</p>
+<pre><code class="language-csharp">public sealed record ProviderErrorAutoRetrySnapshot
+{
+    public const string DefaultStrategy = "default";
+
+    public bool Enabled { get; init; }
+
+    public string Strategy { get; init; } = DefaultStrategy;
+
+    public static ProviderErrorAutoRetrySnapshot Normalize(bool? enabled, string? strategy)
+    {
+        return new ProviderErrorAutoRetrySnapshot
+        {
+            Enabled = enabled ?? true,
+            Strategy = string.IsNullOrWhiteSpace(strategy)
+                ? DefaultStrategy
+                : strategy.Trim()
+        };
+    }
+}
+</code></pre>
+<p>ç¶åå¨æ§è¡ä¾§åæ å°æ provider çæ­£æ¶è´¹çè®¾ç½®å¯¹è±¡ãè¿ä¸ªåæ³çä»·å¼å¾ç´æ¥ï¼</p>
+<ul>
+<li>ä¸å¡å±å³å®âè¯¥ä¸è¯¥éè¯â</li>
+<li>è¿è¡æ¶å³å®âæä¹éè¯â</li>
+</ul>
+<p>ä¸¤è¾¹åç®¡ä¸æï¼äºç¸ä¸ææ¶ãå¾å¤é®é¢ä¸æ¯ä¸è½åï¼åªæ¯æ²¡æä»£ä»·ç®æç½ãæç­ç¥å¿«ç§åï¼æ¬è´¨ä¸å°±æ¯å¨æåæä»£ä»·ç®æ¸æ¥ã</p>
+<h3 id="ç¬¬ä¸å±provider-åªåç»æå¤å®åä¸ä¸æå¤å®">ç¬¬ä¸å±ï¼Provider åªåç»æå¤å®åä¸ä¸æå¤å®</h3>
+<p>å°äºå·ä½ç Claude Code æ Codex providerï¼è¿éçèè´£åèå¾èãä½ å¯ä»¥æå®çè§£æå¢å¼ºï¼ä¸è¦æå®è¯¯ä¼æä»£æ¿ã</p>
+<p>ä»¥ Codex ä¸ºä¾ï¼å®æç»æ¥å¥å±äº«åè°å¨æ¶ï¼æ¬è´¨ä¸åªéè¦æä¾ä¸æ ·ä¸è¥¿ï¼</p>
+<pre><code class="language-csharp">await foreach (var message in ProviderErrorAutoRetryCoordinator.ExecuteAsync(
+                   prompt,
+                   options.ProviderErrorAutoRetry,
+                   retryPrompt =&gt; ExecuteCodexAttemptAsync(...),
+                   () =&gt; !string.IsNullOrWhiteSpace(resolvedThreadId),
+                   DelayAsync,
+                   IsRetryableTerminalFailure,
+                   cancellationToken))
+{
+    yield return message;
+}
+</code></pre>
+<p>ä½ ä¼åç°ï¼çæ­£å±äº Provider èªå·±çå¤æ­åªæä¸¤ä¸ªï¼</p>
+<ul>
+<li><code>IsRetryableTerminalFailure</code></li>
+<li><code>canRetryInSameContext</code></li>
+</ul>
+<p>Codex ççæ¯ thread è¿è½ä¸è½ç»­ä¸ï¼Claude Code ççæ¯ continuation target è¿å¨ä¸å¨ãéé¿ç­ç¥ãéè¯æ¬¡æ°ãåç»­ promptï¼è¿äºééä¸è¯¥è®© Provider èªå·±éæ°åæä¸éã</p>
+<p>è¿ä¸å±æåºæ¥ä»¥åï¼HagiCode æ¥æ´å¤ CLI çææ¬å°±ä½å¾å¤äºãä½ ä¸ç¨å¤å¶ä¸æ´å¥éè¯ç¶ææºï¼åªè¦æâè¿ä¸ª provider çè¾¹çæ¡ä»¶âæ¥è¿æ¥å°±è¡ãåå¾å¿«ï¼ä¸ç­äºåå¾ç¨³ï¼æ¥å¾ä½ï¼ä¸ç­äºæ¥å¾å¥½ï¼è½è·èµ·æ¥ï¼ä¹ä¸ç­äºè½é¿æç»´æ¤ã</p>
+<h2 id="ä¸ä¸ªå¾å®¹æåéçç¹å«ææææ¥éé½å½å¯éè¯">ä¸ä¸ªå¾å®¹æåéçç¹ï¼å«ææææ¥éé½å½å¯éè¯</h2>
+<p>è¿æ¬¡åæéï¼æè§å¾æå¼å¾åæåºæ¥è®²çï¼ä¸æ¯âæä¹å®ç°éè¯âï¼èæ¯âæä¹é¿åéè¯¯éè¯âã</p>
+<p>æå¼å§çé®é¢åå¥å£ï¼æ¯ Codex å°è¯å«äºä¸æ¡ reconnect æ¥æãæç´è§ï¼å¾å¤äººä¼éä¸ä¸ªæå°ä¿®æ³ï¼å¾ç½ååéåå ä¸æ¡å­ç¬¦ä¸²åç¼ãè¿ä¸ªæè·¯ä¸è½è¯´éï¼åªæ¯å®æ´å Demo æ¶æçè§£æ³ï¼ä¸å¤ªåé¿æç»´æ¤çè§£æ³ã</p>
+<p>ä»å½å HagiCode çè½å°æ¥çï¼ç³»ç»å·²ç»å¾æ´ç¨³çæ¹åèµ°äºä¸æ­¥ãå®ä¸ååªç¯çæä¸ªå­é¢å­ç¬¦ä¸²ï¼èæ¯æå¯æ¢å¤çç»æç»ä¸äº¤ç»å±äº«åè°å¨å¤çãè¿æ ·åçå¥½å¤å¾ææ¾ï¼</p>
+<ul>
+<li>ä¸å®¹æå ä¸ºææ¡ææ¡çå°æ¹å¨å°±å½»åºå¤±æ</li>
+<li>æµè¯è¦çå¯ä»¥å´ç»âç»æ envelopeâå±å¼ï¼èä¸æ¯åæ¡ç¡¬ç¼ç ææ¬</li>
+<li>åä¸ä¸ª provider çéè¯é»è¾ä¼æ´ä¸è´</li>
+</ul>
+<p>å½ç¶ï¼è¿éè¦ç«ä¸ä¸ªè¾¹çï¼æ´éç¨ï¼ä¸ç­äºæ´å®½æ¾ã<strong>åªè¦å½åä¸ä¸æä¸è½ç»§ç»­ï¼åªææ¥éçèµ·æ¥å¾åææ¶æéï¼ä¹ä¸åºè¯¥ç²ç® replayã</strong></p>
+<p>è¿ç¹å¾å³é®ãçæ­£è®©äººå®å¿çï¼ä¸æ¯å®å¶å°çµä¸æ¬¡ï¼èæ¯å®å¤§å¤æ°æ¶åé½é è°±ãå¦æä¸ä¸ªæµç¨åªè½é é«æç»´æï¼é£å®ç¦»æ®åè¿å·®å¾è¿ã</p>
+<h2 id="å®è·µéæå¼å¾ä¿ççä¸æ¡ç»éª">å®è·µéæå¼å¾ä¿ççä¸æ¡ç»éª</h2>
+<p>æç« åå°è¿éï¼å·®ä¸å¤å¯ä»¥å¾å®è·µå±æ¶ä¸æ¶äºãå¦æä½ åå¤å¨èªå·±çé¡¹ç®éå®ç°ç±»ä¼¼è½åï¼ææå»ºè®®åå®ä½ä¸é¢ä¸æ¡ã</p>
+<h3 id="1-éè¯é¢ç®å¿é¡»æè¾¹ç">1. éè¯é¢ç®å¿é¡»æè¾¹ç</h3>
+<p>HagiCode å½åé»è®¤çéé¿èå¥æ¯ï¼</p>
+<ul>
+<li>10 ç§</li>
+<li>20 ç§</li>
+<li>60 ç§</li>
+</ul>
+<p>è¿ä¸ªèå¥ä¸ä¸å®éåææç³»ç»ï¼ä½âæè¾¹çâè¿ä»¶äºå¿é¡»ä¿çãè¦ä¸ç¶ï¼èªå¨éè¯å¾å¿«å°±ä¼ä»æ¢å¤æºå¶åæäºææ¾å¤§å¨ãå«æ¥çæåå­èµ·å¾å¤ªå¤§ï¼åççè¿ä¸è¥¿è½ä¸è½å¨å¢ééæ´»è¿ä¸¤ä¸ªè¿­ä»£ã</p>
+<h3 id="2-continuation-prompt-è¦ç»ä¸">2. continuation prompt è¦ç»ä¸</h3>
+<p>é¡¹ç®éä½¿ç¨çæ¯åºå® continuation promptï¼è®©åç»­ attempt æç¡®èµ°âç»§ç»­å½åä¸ä¸æâçè·¯å¾ï¼èä¸æ¯éæ°åèµ·ä¸è½®å®æ´è¯·æ±ãè¿ä¸ªè½åä¸è±å¨ï¼å¯æ¯ä½ çåé¡¹ç®æ¶ç¦»ä¸å¼ãå¾å¤è½åçèµ·æ¥åé­æ³ï¼æå¼ä»¥åä¸è¿æ¯ä¸å¥è¢«æç£¨è¿çå·¥ç¨æµç¨ã</p>
+<h3 id="3-å±äº«åºåééå±é½è¦æéåæµè¯">3. å±äº«åºåééå±é½è¦æéåæµè¯</h3>
+<p>è¿ç¹æå¾æ³å¤è¯´ä¸å¥ãå¾å¤å¢éä¼å¨å±äº«è¿è¡æ¶éåä¸å±æµè¯ï¼ç¶åè§å¾å·®ä¸å¤äºãå¶å®ä¸å¤ã</p>
+<p>HagiCode è¿è¾¹ä¹æä»¥è®©ææ¯è¾æ¾å¿ï¼æ¯å ä¸ºä¸¤å±é½è¡¥äºæµè¯ï¼</p>
+<ul>
+<li>å±äº« Provider æµâæ¯å¦ççåçäºèªå¨ç»­è·â</li>
+<li>ééå±æµâæç»éè¯¯åæµå¼æ¶æ¯ææ²¡æè¢«æ´çåâ</li>
+</ul>
+<p>æè¿æ¬¡ä¹é¢å¤è¡¥è·äºä¸¤ç»ç¸å³æµè¯ï¼ç»æé½æ¯ 31 ä¸ªç¨ä¾å¨é¨éè¿ãè¿ä¸ªç»ææ¬èº«è¯´æä¸äºè®¾è®¡ä¸å®å®ç¾ï¼å¯å®è³å°è½è¯´æä¸ä»¶äºï¼å½åè¿å¥èªå¨éè¯ä¸æ¯çº¸é¢æ¹æ¡ï¼èæ¯å·²ç»è¢«ä»£ç åæµè¯å±åçº¦æä½çè½åãTalk is cheap. Show me the code. æ¾å°è¿éï¼æ°å¥½åéã</p>
+<h2 id="æ»ç»">æ»ç»</h2>
+<p>å¦æææ´ç¯æç« åç¼©æä¸å¥è¯ï¼é£å°±æ¯ï¼</p>
+<p><strong>Claude CodeãCodex ç­ Agent CLI çèªå¨éè¯ï¼æå¥½ä¸è¦åææä¸ª Provider åé¨çå±é¨æå·§ï¼èåºè¯¥åæå±äº«åè°å¨ + ç­ç¥å¿«ç§ + ä¸ä¸æå¤å® + éåæµè¯çç»åã</strong></p>
+<p>è¿æ ·åå¸¦æ¥çæ¶çï¼å¶å®éå¸¸å®å¨ï¼</p>
+<ul>
+<li>é»è¾åªåä¸éï¼å¤ä¸ª Provider é½è½å¤ç¨</li>
+<li>è¯·æ±æ¯å¦åè®¸éè¯ï¼å¯ä»¥ç¨³å®å°è·çæ§è¡é¾è·¯èµ°</li>
+<li>æä¸ä¸ææ¶ç»§ç»­è·ï¼æ²¡ä¸ä¸ææ¶åæ¶åæ</li>
+<li>åç«¯æç»çå°çæ¯ç¨³å®çå®æææå¤±è´¥æï¼èä¸æ¯ä¸å åéèåºçä¸­é´åªé³</li>
+</ul>
+<p>è¿å¥æ¹æ¡ï¼æ¯ HagiCode å¨çå®æ¥å¥å¤ç§ Agent CLI çè¿ç¨ä¸­ä¸ç¹ç¹æç£¨åºæ¥çãè°è¯´ AI è¾å©ç¼ç¨å°±ä¸æ¯æ°æ¶ä»£çç»å¯¹ç¼ç¨å¢ï¼æ¨¡åå¸®ä½ èµ·æ­¥ãè¡¥å¨ãåæ£ï¼å¯çæ­£å³å®ä½éªä¸éçï¼å¾å¾è¿æ¯ä¸ä¸æãæµç¨åçº¦æã</p>
+<p>å¦ææ¬æå¯¹ä½ æå¸®å©ï¼ä¹æ¬¢è¿é¡ºæçç HagiCode çå¬å¼å¥å£ï¼</p>
+<ul>
+<li>GitHub: <a href="https://github.com/HagiCode-org/site" target="_blank" rel="noopener nofollow">github.com/HagiCode-org/site</a></li>
+<li>å®ç½: <a href="https://hagicode.com" target="_blank" rel="noopener nofollow">hagicode.com</a></li>
+<li>30 åéå®ææ¼ç¤º: <a href="https://www.bilibili.com/video/BV1pirZBuEzq/" target="_blank" rel="noopener nofollow">www.bilibili.com/video/BV1pirZBuEzq/</a></li>
+<li>Desktop å®è£å¥å£: <a href="https://hagicode.com/desktop/" target="_blank" rel="noopener nofollow">hagicode.com/desktop/</a></li>
+<li>Steam: <a href="https://store.steampowered.com/app/4625540/Hagicode/" target="_blank" rel="noopener nofollow">Steam ååºé¡µï¼å å¥æ¿æå / æ¥çè¯¦æï¼</a></li>
+</ul>
+<p>HagiCode ç°å¨å·²ç»ä¸æ¶ Steam äºï¼è¿ä¸æ¯ç»é¥¼ï¼é¾æ¥ä¹ç»ä½ æ¾è¿å¿äºãæ Steam çæåå¯ä»¥åå ä¸ªæ¿æåï¼èªå·±ç¹è¿å»çä¸ç¼ï¼æ¯æå¨è¿å¿å¤è¯´åå¥é½æ¥å¾ç´æ¥ã</p>
+<p>åæè¿ä»¶äºè®²å°è¿éï¼å©ä¸çæä»¬ç»§ç»­å¨çå®é¡¹ç®éè§ã</p>
+<h2 id="åèèµæ">åèèµæ</h2>
+<ul>
+<li>HagiCode é¡¹ç®ä¸»é¡µ: <a href="https://hagicode.com" target="_blank" rel="noopener nofollow">https://hagicode.com</a></li>
+<li>HagiCode GitHub ä»åº: <a href="https://github.com/HagiCode-org/site" target="_blank" rel="noopener nofollow">https://github.com/HagiCode-org/site</a></li>
+<li>å®æ¹æ¼ç¤ºè§é¢: <a href="https://www.bilibili.com/video/BV1pirZBuEzq/" target="_blank" rel="noopener nofollow">https://www.bilibili.com/video/BV1pirZBuEzq/</a></li>
+<li>Desktop å®è£è¯´æ: <a href="https://hagicode.com/desktop/" target="_blank" rel="noopener nofollow">https://hagicode.com/desktop/</a></li>
+</ul>
+
+<h2 id="åæä¸çæè¯´æ">åæä¸çæè¯´æ</h2>
+<p>æè°¢æ¨çéè¯»,å¦ææ¨è§å¾æ¬ææç¨,æ¬¢è¿ç¹èµãæ¶èååäº«æ¯æã<br>
+æ¬åå®¹éç¨äººå·¥æºè½è¾å©åä½,æç»åå®¹ç±ä½èå®¡æ ¸å¹¶ç¡®è®¤ã</p>
+<ul>
+<li>æ¬æä½è: <a href="https://www.newbe.pro" target="_blank" rel="noopener nofollow">newbe36524</a></li>
+<li>åæé¾æ¥: <a href="https://docs.hagicode.com/go?platform=cnblogs&amp;target=%2Fblog%2F2026-02-11-agent-cli-automatic-retry%2F" target="_blank" rel="noopener nofollow">https://docs.hagicode.com/go?platform=cnblogs&amp;target=%2Fblog%2F2026-02-11-agent-cli-automatic-retry%2F</a></li>
+<li>çæå£°æ: æ¬åå®¢æææç« é¤ç¹å«å£°æå¤,åéç¨ BY-NC-SA è®¸å¯åè®®ãè½¬è½½è¯·æ³¨æåºå¤!</li>
+</ul>
+
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-04-18 17:09">2026-04-18 17:09</span>&nbsp;
+<a href="https://www.cnblogs.com/newbe36524">Newbe36524</a>&nbsp;
+éè¯»(<span id="post_view_count">79</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19888549);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fnewbe36524%2Fp%2F19888549&amp;targetId=19888549&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -1516,7 +2428,7 @@ role: assistant
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-04-18 14:53">2026-04-18 14:53</span>&nbsp;
 <a href="https://www.cnblogs.com/FreakEmbedded">FreakStudio</a>&nbsp;
-éè¯»(<span id="post_view_count">26</span>)&nbsp;
+éè¯»(<span id="post_view_count">39</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19887935);return false;">æ¶è</a>&nbsp;
@@ -1741,7 +2653,7 @@ role: assistant
 	<div class="postDesc">posted on 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-04-18 12:57">2026-04-18 12:56</span>&nbsp;
 <a href="https://www.cnblogs.com/cswuyg">-é¶å-</a>&nbsp;
-éè¯»(<span id="post_view_count">63</span>)&nbsp;
+éè¯»(<span id="post_view_count">77</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19861218);return false;">æ¶è</a>&nbsp;
@@ -1854,7 +2766,7 @@ while True:
 			posted on 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-04-18 11:15">2026-04-18 11:14</span>&nbsp;
 <a href="https://www.cnblogs.com/aspnetx">å¥æ¬åå£«å¥(aspnetx)</a>&nbsp;
-éè¯»(<span id="post_view_count">58</span>)&nbsp;
+éè¯»(<span id="post_view_count">72</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19887217);return false;">æ¶è</a>&nbsp;
@@ -2079,7 +2991,7 @@ CM33 ç«¯ï¼
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0.9263888888888889" data-date-updated="2026-04-18 20:35">2026-04-17 22:21</span>&nbsp;
 <a href="https://www.cnblogs.com/henjay724">çå­è¡¡</a>&nbsp;
-éè¯»(<span id="post_view_count">45</span>)&nbsp;
+éè¯»(<span id="post_view_count">47</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19885724);return false;">æ¶è</a>&nbsp;
@@ -3042,7 +3954,7 @@ function handleStreamingResponse(data: StreamingResponse) {
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-04-17 21:41">2026-04-17 21:40</span>&nbsp;
 <a href="https://www.cnblogs.com/wangzhenyao1994">çæ¯è</a>&nbsp;
-éè¯»(<span id="post_view_count">92</span>)&nbsp;
+éè¯»(<span id="post_view_count">98</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19885603);return false;">æ¶è</a>&nbsp;
@@ -3441,175 +4353,11 @@ Examples:
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-04-17 21:35">2026-04-17 21:34</span>&nbsp;
 <a href="https://www.cnblogs.com/54145a">145a</a>&nbsp;
-éè¯»(<span id="post_view_count">67</span>)&nbsp;
+éè¯»(<span id="post_view_count">68</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19885597);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2F54145a%2Fp%2F19885597&amp;targetId=19885597&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ # linuxçº¢å¸½æç¨-ææææå­¦ ]]></title>
-    <link>https://www.cnblogs.com/create1997/p/19889153</link>
-    <guid>6e2208b1b0e5a62efca0c21123151533</guid>
-    <description>
-    <![CDATA[ 
-		<h1 class="postTitle">
-			<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/create1997/p/19889153" title="åå¸äº 2026-04-18 22:28">
-    <span role="heading" aria-level="2"># linuxçº¢å¸½æç¨-ææææå­¦</span>
-    
-
-</a>
-
-		</h1>
-		<div class="clear"></div>
-		<div class="postBody">
-			<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>ä¸ä¸ªè½åºäºvmwareèªå¨åå»ºå®éªç¯å¢ï¼æ£æµä»£ç æ§è¡ç»æçLinuxæå­¦å¹³å°ã</p>
-<p>æ£è¾äºä¸ä¸ªlinuxå­¦ä¹ å¹³å°ï¼</p>
-<p>åºäºçº¢å¸½çlinuxæç¨ï¼åäºéç½®çæååå®éªç¯å¢ã</p>
-<p>éè¦æ­évmwareä½¿ç¨ï¼éå¯¹å®éªæ­¥éª¤åäºä¸äºéªè¯ï¼å¸®å©åå­¦èæ£éªç»æã</p>
-<p>ç¯å¢æ¯æéç½®ï¼å¼éäºå°±éå¤´æ¥ã</p>
-<h2 id="è½¯ä»¶ä»ç»">è½¯ä»¶ä»ç»</h2>
-<h3 id="è¯¾ç¨å¯¼å¥">è¯¾ç¨å¯¼å¥</h3>
-<p>è½¯ä»¶ä¾èµäºå®éªæåï¼å¯¼å¥å®éªæååå°±è½çå¾å°è¯¾ç¨ï¼å·ä½æä½å¨è¯´æä¸­æåã</p>
-<p><img alt="image-20260417204112892" loading="lazy" data-src="https://create1997linxudo.oss-cn-guangzhou.aliyuncs.com/file/image-20260417204112892.png" class="lazyload"></p>
-<h3 id="å®éªåºå">å®éªåºå</h3>
-<p>å·¦ä¾§åè½èåï¼ä¸­é´å®éªæåï¼å³ä¾§sshèµæºï¼sshèµæºåºäºvmareèªè¡åå»ºï¼èªå¨è¿æ¥å®éªæåå¯¹åºçèææºèµæºã</p>
-<p><img alt="image-20260417204214868" loading="lazy" data-src="https://create1997linxudo.oss-cn-guangzhou.aliyuncs.com/file/image-20260417204214868.png" class="lazyload"></p>
-<h3 id="ç¯å¢éç½®">ç¯å¢éç½®</h3>
-<p>ç¯å¢å¼åäºï¼ç¹å»å·¦ä¾§âç¯å¢éç½®å³å¯âï¼åºäºå¿«ç§æºå¶ï¼10ç§å´­æ°å¦åãä¸­é´å®éªæåï¼ç®åå±ç¤ºçåå®¹åºäºçº¢å¸½ç¼åï¼ï¼ç´¯åï¼çº¯æå·¥å¶ä½ï¼å³ä¾§æ¯å®éªæåå¯¹åºçsshèµæºã</p>
-<h3 id="å®éªæ­¥éª¤æ£æµ">å®éªæ­¥éª¤æ£æµ</h3>
-<p>å®éªæåéå¯¹å½åå¿è¦çæ­¥éª¤è¿è¡æ£æµï¼è¾å©ç¡®è®¤å½ä»¤æææ§è¡ã</p>
-<p>æªéè¿ï¼</p>
-<p><img alt="image-20260417215111050" loading="lazy" data-src="https://create1997linxudo.oss-cn-guangzhou.aliyuncs.com/file/image-20260417215111050.png" class="lazyload"></p>
-<p>éè¿ï¼</p>
-<p><img alt="image-20260417215123315" loading="lazy" data-src="https://create1997linxudo.oss-cn-guangzhou.aliyuncs.com/file/image-20260417215123315.png" class="lazyload"></p>
-<h3 id="å®éªæä»¶ä¸é®å¯¼å¥">å®éªæä»¶ä¸é®å¯¼å¥</h3>
-<p>å¦æå®éªæåç»å®æä»¶ï¼ä»»æç±»åï¼ï¼æ¯æä¸é®å¯¼å¥ï¼é¿åå®éªä¸­ç¼ºå¤±ç´ æã</p>
-<p><img alt="image-20260417220514931" loading="lazy" data-src="https://create1997linxudo.oss-cn-guangzhou.aliyuncs.com/file/image-20260417220514931.png" class="lazyload"></p>
-<h3 id="èµæºèªå®ä¹">èµæºèªå®ä¹</h3>
-<p>é¤äºå®éªæåå®ä¹çèµæºï¼å¯èªè¡å®ä¹èææºã</p>
-<p>å¨é¦é¡µä¸­æ°å»ºè¯¾ç¨ï¼è¯¾ç¨ä¸­æ°å»ºç®å½ï¼ç¶åå³å¯åå»ºå®éªï¼å¨å®éªä¸­ï¼å¯èªè¡æ·»å å®éªèµæºã</p>
-<p><img alt="image-20260417212953393" loading="lazy" data-src="https://create1997linxudo.oss-cn-guangzhou.aliyuncs.com/file/image-20260417212953393.png" class="lazyload"></p>
-<p>åè®¾è¯´ä½ éè¦å¼ä¸ªéç¾¤ï¼å¯æ ¹æ®ä¸ªäººéè¦åå»ºèææºï¼åªè¦ä½ æ¬å°èµæºå°±è¡ã</p>
-<p><img alt="image-20260417215307223" loading="lazy" data-src="https://create1997linxudo.oss-cn-guangzhou.aliyuncs.com/file/image-20260417215307223.png" class="lazyload"></p>
-<p>æ­¤å¤æ¼ç¤ºåå»ºä¸å°èææºã</p>
-<p><img alt="image-20260417213048149" loading="lazy" data-src="https://create1997linxudo.oss-cn-guangzhou.aliyuncs.com/file/image-20260417213048149.png" class="lazyload"></p>
-<h3 id="èææºç®¡ç">èææºç®¡ç</h3>
-<p>å¯èªè¡ç®¡çè¯¾ç¨æåå»ºçèææºã</p>
-<p><img alt="image-20260417213217709" loading="lazy" data-src="https://create1997linxudo.oss-cn-guangzhou.aliyuncs.com/file/image-20260417213217709.png" class="lazyload"></p>
-<p>å¶ä»ä»ç»å¨è¯´ææ°ä¸­ï¼å¯åå¾æ¥çã</p>
-<h2 id="è½¯ä»¶ä¸è½½å®è£">è½¯ä»¶ä¸è½½å®è£</h2>
-<p>githubéå¶100Mçè½¯ä»¶ï¼ç®åææ¶æ¾å°ç¾åº¦ç½çï¼æå¶ä»æ´å¥½çä½¬å¯ä»¥åç¥ä¸ã<br>
-é¾æ¥: <a href="https://pan.baidu.com/s/1l5PtiP-e9LmixzB0NBYvkA" target="_blank" rel="noopener nofollow">https://pan.baidu.com/s/1l5PtiP-e9LmixzB0NBYvkA</a> æåç : p8mh</p>
-<p>è¯¾ç¨èµæä¹å¨ç½çä¸­ï¼ä¸èµ·ä¸è½½å³å¯ã</p>
-<p>åå»âLabBox-1.0.0-Portable.exeâç´æ¥è¿è¡ï¼åå®è£ã</p>
-
-
-</div>
-<div class="clear"></div>
-
-		</div>
-		<div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.034722222222222224" data-date-updated="2026-04-18 23:18">2026-04-18 22:28</span>&nbsp;
-<a href="https://www.cnblogs.com/create1997">Create1997</a>&nbsp;
-éè¯»(<span id="post_view_count">15</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19889153);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fcreate1997%2Fp%2F19889153&amp;targetId=19889153&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-	 ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ UIImageView è®¾ç½®å¾çä¸çæçåå ææ¥ ]]></title>
-    <link>https://www.cnblogs.com/chaoguo1234/p/19888978</link>
-    <guid>bf4d845cc7f3ea8a9def409a197d5d66</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/chaoguo1234/p/19888978" title="åå¸äº 2026-04-18 20:31">
-    <span role="heading" aria-level="2">UIImageView è®¾ç½®å¾çä¸çæçåå ææ¥</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                    <div id="cnblogs_post_description" style="display: none">
-        
-        UIImageView è®¾ç½®å¾çä¸çæçåå ææ¥
-    </div>
-<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>æè¿å¨é¡¹ç®ä¸­ç¢°å°äºä¸ä¸ª<code>UIImageView</code>çé®é¢ã</p>
-<p>éæ±åå®¹æ¯æ è®ºæ¯å¨æµè²è¿æ¯æ·±è²æ¨¡å¼ï¼<code>UIImageView</code>é½ä½¿ç¨æ·±è²æ¨¡å¼ä¸çå¾çã</p>
-<p>æåæ³å°çæ¹æ³å°±æ¯ä»<code>Image Assets</code>ä¸­æç§ä¸é¢æ¹æ³ååºå¯¹åºçæ·±è²æ¨¡å¼å¾çï¼ç¶åèµå¼ç»<code>UIImageView</code>ç<code>image</code>å±æ§:</p>
-<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/489427/202604/489427-20260418203026708-1284822259.png" class="lazyload"></p>
-<pre><code class="language-swift">var darkTrait = UITraitCollection(userInterfaceStyle: .dark)
-// ååºæé»æ¨¡å¼ä¸å¾ç
-let image = UIImage(named: name, in: nil, compatibleWith: darkTrait)
-imageView.image = image
-</code></pre>
-<p>ä½æ¯å¨æµè²æ¨¡å¼ä¸ï¼<code>UIImageView</code>è¿æ¯æ¾ç¤ºæµè²æ¨¡å¼ä¸çå¾çã</p>
-<pre><code class="language-bash">// æå° image
-(lldb) po imageView.image
-â¿ Optional&lt;UIImage&gt;
-  - some : &lt;UIImage:0x30ac59cc0 named(main: BDPPersonalPage_video_collection) {16, 16} renderingMode=automatic(original)&gt;
-  
-// æå° image ç configuration
-(lldb) expression -l objc -O -- [0x30ac59cc0 configuration]
-0x0000000301439a00
-
-// æå° configuration çåå®¹
-(lldb) expression -l objc -O -- 0x0000000301439a00
-&lt;UIImageConfiguration:0x301439a00 traits=(UserInterfaceIdiom = Pad, DisplayScale = 2, DisplayGamut = P3, HorizontalSizeClass = Regular, VerticalSizeClass = Regular, UserInterfaceStyle = Light, UserInterfaceLayoutDirection = LTR, PreferredContentSizeCategory = L, AccessibilityContrast = Normal)&gt;
-</code></pre>
-<p>ä»ä¸é¢<code>imageView.image</code>ç<code>configuration</code>å±æ§è¾åºå¯ä»¥çå°ï¼å¾çç<code>UserInterfaceStyle</code>è¿æ¯<code>Light</code>ã</p>
-<p>éè¿è°è¯<code>UIImageView</code>ç<code>setImage:</code>æ¹æ³ï¼åç°åé¨ä¼è°ç¨ä¸é¢çæ¹æ³:</p>
-<pre><code class="language-objectivec">-[UIImageView _resolveImagesWithPreviouslyDisplayedImage:]:
-</code></pre>
-<p><code>_resolveImagesWithPreviouslyDisplayedImage:</code>æ¹æ³ä¼è·å<code>UIImageView</code>å½åç<code>traitCollection</code>:</p>
-<pre><code class="language-c">0x19b688834 &lt;+108&gt;: bl     0x199d49170 ; -[UIImageView _effectiveImageViewTraitCollectionForResolvingImages]
-</code></pre>
-<p>å¨<code>lldb</code>è¾åºå¯ä»¥çå°ï¼<code>UIImageView</code>ç<code>UserInterfaceStyle</code>æ¯<code>Light</code>:</p>
-<pre><code class="language-bash">(lldb) po $x0
-&lt;UITraitCollection: 0x17c7fa1c0; UserInterfaceIdiom = Pad, DisplayScale = 2, DisplayGamut = P3, HorizontalSizeClass = Regular, VerticalSizeClass = Regular, UserInterfaceStyle = Light, UserInterfaceLayoutDirection = LTR, ForceTouchCapability = Unavailable, PreferredContentSizeCategory = L, AccessibilityContrast = Normal, UserInterfaceLevel = Base, HDRHeadroomUsageLimit = 1, SceneCaptureState = 0, ImageDynamicRange = 1&gt;
-</code></pre>
-<p>æ¥çä¼æ¯è¾<code>UIImageView</code>ç<code>traitCollection</code>åè¦è®¾ç½®çå¾çç<code>traitCollection</code>æ¯å¦ç¸ç­:</p>
-<pre><code class="language-c">0x19b68884c &lt;+132&gt;: bl     0x19ad03818  ; -[UITraitCollection _isEqualToTraitCollectionForResolvingImage:]
-</code></pre>
-<p>åªæä¸¤èç¸ç­ï¼è®¾ç½®çå¾çæçæã</p>
-<p>è¿éç±äº<code>UIImageView</code>ç<code>UserInterfaceStyle</code>ä¸º<code>Light</code>ï¼èè¦è®¾ç½®çå¾çç<code>UserInterfaceStyle</code>ä¸º<code>Dark</code>ï¼å æ­¤äºèä¸ç¸ç­ã</p>
-<p>å¨äºèä¸ç¸ç­çæåµä¸ï¼<code>UIImageView</code>ä¼ä½¿ç¨èªå·±ç<code>traitCollection</code>ä»<code>Image Assets</code>ä¸­æ¾å¯¹åºçå¾ç:</p>
-<pre><code class="language-c"> 0x19b68898c &lt;+452&gt;: bl     0x19b68858c  ; -[UIImageView _resolvedImageFromImage:withImageViewTrait:]
-</code></pre>
-<p>ç±äº<code>UIImageView</code>ç<code>UserInterfaceStyle</code>æ¯<code>Light</code>ï¼å æ­¤æ¾å°çä¹æ¯<code>Light</code>å¾çã</p>
-<p>æå<code>UIImageView</code>ä¼å°æ¾å°çå¾çè®¾ç½®ä¸ºçæ­£è¦æ¾ç¤ºçå¾çã</p>
-<p>è¿å°±æ¯ä¸ºä»ä¹ä½¿ç¨æé»æ¨¡å¼çå¾çè®¾ç½®<code>UIImageView</code>ç<code>image</code>å±æ§ä¸æåçåå ã</p>
-<p>ç¥éäºåå ï¼æ³è¦è§£å³ï¼å°±åªéè¦å°ä¿è¯<code>UIImageView</code>ç<code>UserInterfaceStyle</code>åè¦è®¾ç½®çå¾çä¸æ ·å³å¯ã</p>
-<pre><code class="language-swift">imageView.overrideUserInterfaceStyle = .dark
-</code></pre>
-<p>å ä¸ä¸é¢ä»£ç ï¼<code>UIImageView</code>å°±å¯ä»¥æ­£å¸¸æ¾ç¤ºæé»æ¨¡å¼çå¾çäºã</p>
-<p>å®éä¸ï¼è®¾ç½®äº<code>UIImageView</code>ç<code>overrideUserInterfaceStyle</code>å±æ§ä¸º<code>dark</code>ï¼å³ä½¿ä¸è®¾ç½®<code>UIImageView</code>ç<code>image</code>å±æ§ä¸ºæé»æ¨¡å¼å¾çï¼ç³»ç»ä¹ä¼èªå¨åæ¢å°æé»æ¨¡å¼å¾çã</p>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-04-18 20:32">2026-04-18 20:31</span>&nbsp;
-<a href="https://www.cnblogs.com/chaoguo1234">chaoguo1234</a>&nbsp;
-éè¯»(<span id="post_view_count">27</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19888978);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fchaoguo1234%2Fp%2F19888978&amp;targetId=19888978&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
