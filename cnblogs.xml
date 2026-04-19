@@ -3,7 +3,7 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-04-19T16:35:15.098Z</lastBuildDate>
+        <lastBuildDate>2026-04-19T20:31:25.352Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
@@ -1682,6 +1682,11 @@ alias kpc='kubectl get pod -o jsonpath="{range .spec.containers[*]}{.name}{\"\n\
 <ul>
 <li><strong>ctr</strong> æ¯ containerd å®æ¹æä¾ç<strong>åºå±å½ä»¤è¡å·¥å·</strong>ï¼ç´æ¥ä¸ <strong>containerd å®æ¤è¿ç¨éä¿¡</strong>ï¼ç¨äº<strong>ç®¡çå®¹å¨çå½å¨æ</strong>çåä¸ªåºå±ç»ä»¶ã</li>
 </ul>
+<blockquote>
+<blockquote>
+<p>ç®è¨ä¹ï¼*K8sçå®¹å¨è¿è¡æ¶(CRI)ç»ä»¶ := ctr **</p>
+</blockquote>
+</blockquote>
 <h3 id="æ ¸å¿ç¹ç¹">æ ¸å¿ç¹ç¹</h3>
 <table>
 <thead>
@@ -1775,19 +1780,73 @@ ctr tasks delete &lt;task-id&gt;
 ctr tasks exec --exec-id shell1 -t &lt;task-id&gt; /bin/sh
 </code></pre>
 <h4 id="4-éåimages">4. éåï¼Imagesï¼</h4>
-<pre><code class="language-bash"># ååºéå
-ctr images ls
-ctr -n k8s.io i ls
+<ul>
+<li>ååºéå / æ¥çå·²ä¸è½½çéå</li>
+</ul>
+<pre><code class="language-bash">ctr images ls æ: ctr images list æ: ctr i ls
 
-# æåéå
-ctr images pull docker.io/library/nginx:latest
+//æ¥ç k8s containerd æå®å½åç©ºé´çéå
+ctr -n k8s.io images list   æ ctr -n k8s.io i ls
+</code></pre>
+<ul>
+<li>æåéå</li>
+</ul>
+<pre><code class="language-shell">ctr images pull docker.io/library/nginx:latest
 
-# å¯¼å¥/å¯¼åºéå
+//ä¸è½½éåä½¿ç¨ctrå½ä»¤æåéåæ¶ï¼éè¦æå®éç½®å ééåå°å
+ctr images pull docker.io/library/nginx:latest --hosts-dir=/etc/containerd/certs.d
+</code></pre>
+<blockquote>
+<p><code>ctr images pull</code> æåçéåé»è®¤æ¾å¨<code>default</code>å½åç©ºé´ï¼è <code>crictl pull</code> å <code>kubelet</code> é»è®¤æåçéåé½å¨ <code>k8s.io</code> å½åç©ºé´ä¸ã</p>
+</blockquote>
+<ul>
+<li>ä¿®æ¹éåæ ç­¾</li>
+</ul>
+<pre><code class="language-shell">ctr images tag  nginx  docker.io/library/nginx:latest  nginx:v1.20.1
+</code></pre>
+<ul>
+<li>å¯¼å¥/å¯¼åºéå</li>
+</ul>
+<pre><code class="language-shell"># å¯¼å¥éå
 ctr images import /path/to/image.tar
-ctr images export nginx.tar docker.io/library/nginx:latest
 
-# æ¥çéååå®¹ï¼ä¸æåï¼
-ctr images mount docker.io/library/nginx:latest /mnt/nginx-fs
+# å¯¼åºéåï¼åå­ä¸º nginx-latest.img
+ctr images export  nginx-lates.img  docker.io/library/nginx:latest
+</code></pre>
+<blockquote>
+<blockquote>
+<ul>
+<li>å¯¼å¥éå: å°dockerä¸­çéåå¯¼å¥å°k8sçcontainerd</li>
+</ul>
+</blockquote>
+</blockquote>
+<pre><code class="language-shell">//step1 æåéå
+docker pull calico/cni:v3.26.1
+docker pull calico/node:v3.26.1
+docker pull calico/kube-controllers:v3.26.1
+
+//step2 å¯¼å¥ docker éå å° containerd
+ctr -n k8s.io images import &lt;(docker save calico/cni:v3.26.1)
+ctr -n k8s.io images import &lt;(docker save calico/node:v3.26.1)
+ctr -n k8s.io images import &lt;(docker save calico/kube-controllers:v3.26.1)
+
+//æ: ctr images import  --platform linux/amd64 nginx-latest.img #  å¯¼å¥éåï¼éè¦æå®å¹³å°åå­ï¼å¦åä¼æ¥é
+</code></pre>
+<ul>
+<li>æè½½éå</li>
+</ul>
+<pre><code class="language-shell"># æè½½éåï¼æ¹ä¾¿æ¥çéåä¸­åå«çåå®¹ï¼å°éåæè½½å°æ¬å°     å¸è½½å½ä»¤ï¼ umount  /mnt
+ctr images mount  docker.io/library/nginx:latest  /mnt/
+</code></pre>
+<ul>
+<li>å é¤éå</li>
+</ul>
+<pre><code class="language-shell">ctr images rm   docker.io/library/nginx:latest
+</code></pre>
+<ul>
+<li>æ¥çéååå®¹ï¼ä¸æåï¼</li>
+</ul>
+<pre><code class="language-shell">ctr images mount docker.io/library/nginx:latest /mnt/nginx-fs
 </code></pre>
 <h4 id="5-å¿«ç§snapshots-æä»¶ç³»ç»å±">5. å¿«ç§ï¼Snapshotsï¼ââ æä»¶ç³»ç»å±</h4>
 <pre><code class="language-bash"># æ¥çå¿«ç§
@@ -1922,6 +1981,21 @@ ctr snapshots info &lt;snapshot-key&gt;
 </ul>
 </li>
 </ul>
+<h3 id="ç®¡çéåçæ¹å¼å¯¹æ¯-docker-vs-k8såæº-containerd-vs-k8séç¾¤-crictl">ç®¡çéåçæ¹å¼å¯¹æ¯: docker vs. k8såæº containerd vs. k8séç¾¤ crictl</h3>
+<ul>
+<li>
+<p>dockerç®¡çéåï¼ dockerä½¿ç¨ <code>docker images</code> ç®¡çéå</p>
+</li>
+<li>
+<p>åæºcontainerdç®¡çéåï¼ä½¿ç¨ <code>ctr images</code> å½ä»¤ç®¡çéåï¼containerdæ¬èº«çCLI</p>
+</li>
+<li>
+<p>k8séç¾¤ä¸­containerdç®¡çéåï¼ä½¿ç¨ <code>crictl images</code> å½ä»¤ç®¡çéåï¼k8sç¤¾åºä¸ç¨çCLIå·¥å·</p>
+</li>
+</ul>
+<blockquote>
+<p><code>containerd</code>æ¯æ<strong>ociæ å</strong>çéåï¼æä»¥å¯ä»¥ä½¿ç¨dockerå®æ¹æèdockerfileæå»ºçéå</p>
+</blockquote>
 <h3 id="ä¸-crictl-æ ¸å¿å¯¹æ¯">ä¸ crictl æ ¸å¿å¯¹æ¯</h3>
 <table>
 <thead>
@@ -2872,6 +2946,9 @@ Warning: Stopping docker.service, but it can still be activated by:
 </li>
 </ul>
 <h1 id="x-åèæç®">X åèæç®</h1>
+<ul>
+<li><a href="https://www.cnblogs.com/lifuqiang/articles/18844284" target="_blank">containerdéåç®¡ç - åå®¢å­</a></li>
+</ul>
 
 
 </div>
@@ -2903,9 +2980,9 @@ Warning: Stopping docker.service, but it can still be activated by:
 
             </div>
             <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.006944444444444444" data-date-updated="2026-04-19 19:18">2026-04-19 19:08</span>&nbsp;
+<span id="post-date" data-last-update-days="0.25763888888888886" data-date-updated="2026-04-20 01:19">2026-04-19 19:08</span>&nbsp;
 <a href="https://www.cnblogs.com/johnnyzen">ååå¯°å®</a>&nbsp;
-éè¯»(<span id="post_view_count">16</span>)&nbsp;
+éè¯»(<span id="post_view_count">39</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19891502);return false;">æ¶è</a>&nbsp;
@@ -3351,7 +3428,7 @@ $$<br>
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-04-19 16:14">2026-04-19 16:13</span>&nbsp;
 <a href="https://www.cnblogs.com/topai">ç©éµå æç§æ</a>&nbsp;
-éè¯»(<span id="post_view_count">30</span>)&nbsp;
+éè¯»(<span id="post_view_count">79</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19891103);return false;">æ¶è</a>&nbsp;
@@ -3586,7 +3663,7 @@ typedef struct {
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-04-19 15:52">2026-04-19 15:51</span>&nbsp;
 <a href="https://www.cnblogs.com/chaoguo1234">chaoguo1234</a>&nbsp;
-éè¯»(<span id="post_view_count">11</span>)&nbsp;
+éè¯»(<span id="post_view_count">23</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19891077);return false;">æ¶è</a>&nbsp;
@@ -3980,7 +4057,7 @@ public class DocumentService {
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-04-19 15:40">2026-04-19 15:40</span>&nbsp;
 <a href="https://www.cnblogs.com/12lisu">èä¸è¯´ææ¯</a>&nbsp;
-éè¯»(<span id="post_view_count">14</span>)&nbsp;
+éè¯»(<span id="post_view_count">63</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19891059);return false;">æ¶è</a>&nbsp;
@@ -4048,11 +4125,354 @@ public class DocumentService {
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-04-19 15:22">2026-04-19 15:21</span>&nbsp;
 <a href="https://www.cnblogs.com/formulahendry">formulahendry</a>&nbsp;
-éè¯»(<span id="post_view_count">53</span>)&nbsp;
+éè¯»(<span id="post_view_count">122</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19891032);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fformulahendry%2Fp%2F19891032&amp;targetId=19891032&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ åäº«ä¸ä¸ç¬èç Mac è£æºå¿å¤è½¯ä»¶ ]]></title>
+    <link>https://www.cnblogs.com/roseAT/p/19890975</link>
+    <guid>e739237acbadb34d8a75fe6718f6b71c</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/roseAT/p/19890975" title="åå¸äº 2026-04-19 15:05">
+    <span role="heading" aria-level="2">åäº«ä¸ä¸ç¬èç Mac è£æºå¿å¤è½¯ä»¶</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                    <div id="cnblogs_post_description" style="display: none">
+        
+        åäº«ä¸ä¸ç¬èç Mac è£æºå¿å¤è½¯ä»¶
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p><em>ç¢ç¢å¿µ...</em></p>
+<p>æ¬å¨ä¸ç­å¹²æ´»çæ¶åï¼ç¬è®°æ¬å±å¹ç´æ¥é»äº GGãæå¼å§æè¿ä»¥ä¸ºæ¯æ²¡çµäºï¼ç»ææä¸çµï¼éå¯å¤§æ³è¯äºä¸ä¸ï¼å±å¹ä¹å°±åªä¼äº®1sã</p>
+<p>ä¸è¿å¤æ¥æ¾ç¤ºå¨è½æ­£å¸¸ç¨ï¼åºå¹¸æ ¸å¿æ²¡æåï¼é£ 8 ææ¯å±å¹ç¸å³çé®é¢äºï¼å°±æ¿å»ç»´ä¿®ï¼2å¨å·¦å³è¦ï¼ï¼æ¢äºä¸å°æ§çµèä¸´æ¶ç¨ä¸ä¸ãï¼å¬å¸çµè ð» (#<sup>.</sup>#)ï¼</p>
+<p>åå¾ä»å¤´æ¥ä¸é"è£æº"ï¼è¶æ­¤æºä¼æä¸ªæ¸åï¼ä¸æ¬¡å°±ä¸ç¨å¯¹çæ§çµèæäºã</p>
+<p><em>çåéç´æ¥åå°æåð</em></p>
+<h2 id="è£æºå¿å¤">è£æºå¿å¤</h2>
+<h3 id="1-itsycal"><a href="https://github.com/sfsam/Itsycal/tree/master" target="_blank" rel="noopener nofollow">1. Itsycal</a></h3>
+<p>ç¶ææ  æ¥å/æ¶é´ å°ç»ä»¶ãå¹³æ¶ææå°±æ¿è¿ä¸ªçæ¶é´ã</p>
+<p>è¿æå¤å¤çæ´ç¹æ¥æ¶ã</p>
+<p><img alt="" loading="lazy" data-src="https://cdn.upyun.sugarat.top/mdImg/sugar/8a5d8fd5d406a55c653e6eb4f829a769" class="lazyload"></p>
+<h3 id="2-bartender"><a href="https://www.macbartender.com/" target="_blank" rel="noopener nofollow">2. Bartender</a></h3>
+<p>ç¶ææ å¾æ ç®¡çå·¥å·ã</p>
+<p>Mac è½¯ä»¶è£å¤äºï¼é¡¶é¨ç¶ææ é åç§æä¸æå«çè½¯ä»¶å¾æ ï¼æäºä¸ä¼ç¨å°ï¼ä½å ç¨çå¾ç¦ã</p>
+<p>ç¨è¿ä¸ªè½æ¹ä¾¿çç®¡çåªäºå±ç¤ºåªäºä¸å±ç¤ºã</p>
+<p><img alt="" loading="lazy" data-src="https://cdn.upyun.sugarat.top/mdImg/sugar/70e47c81c180e6f15c99b175fc26af15" class="lazyload"></p>
+<p><em>é½ç»æå»è£ä¸ (</em><sup>â½</sup><em>)ï¼</em></p>
+<h3 id="3-snipaste"><a href="https://www.snipaste.com/" target="_blank" rel="noopener nofollow">3. Snipaste</a></h3>
+<p>ç®åä½å¼ºå¤§çæªå¾å·¥å·ï¼ç¨äºé½è¯´å¥½!</p>
+<p>æ¯æåªè´´æ¿åå®¹è½¬å¾ï¼æªå¾éå¨å±å¹ä¸ï¼æªå¾åå²åæº¯ï¼è¿å ä¸ªææå¸¸ç¨çåè½ï¼ã</p>
+<h3 id="4-alfred"><a href="https://www.alfredapp.com/" target="_blank" rel="noopener nofollow">4. Alfred</a></h3>
+<p>æ¯è¾èççä¸ä¸ªèåå·¥å·å¹³å°ã</p>
+<p>ç¬èä¸»è¦å°±ç¨å®åç½®ç åªè´´æ¿ åè½ï¼è¶³å¤ç®æ´ï¼åæ§è½æ¯è¯ç¨è¿çå¶å®çä¸é¨çåªè´´æ¿è½¯ä»¶è¦å¥½ã</p>
+<p><img alt="" loading="lazy" data-src="https://cdn.upyun.sugarat.top/mdImg/sugar/172879668059f94b771658afbb35280b" class="lazyload"></p>
+<h3 id="5-arc"><a href="https://arc.net/" target="_blank" rel="noopener nofollow">5. Arc</a></h3>
+<p>Arc æµè§å¨ï¼ç¨ä¹ æ¯äºéå¸¸æ¹ä¾¿ï¼æ¯æå¤ç«¯æ°æ®åæ­¥ï¼ä¸æ¯ææä»¶ï¼ï¼æ¯æå¤èº«ä»½çè®¾è®¡ãç«åçæ ç­¾æåã</p>
+<p><em>åªå¯æä¸»åå¢éï¼ç°å¨ä¸æ´æ°åè½äºï¼åªæ´æ° Chrome åæ ¸çæ¬ï¼è½¬å</em> <em><a href="https://www.diabrowser.com/" target="_blank" rel="noopener nofollow">Dia</a></em> <em>ç AI æµè§å¨äº</em></p>
+<p><img alt="" loading="lazy" data-src="https://cdn.upyun.sugarat.top/mdImg/sugar/dcea899d656fc5ce89fc5b465011548b" class="lazyload"></p>
+<p><em>ä¸è¿åäºæ¨èè¯´å¬å¸åºçè¿ä¸ª AIæµè§å¨ä¹æºå¥½ç¨</em> <em><a href="https://www.tabbitbrowser.com/" target="_blank" rel="noopener nofollow">Tabbit æµè§å¨</a>ï¼æå´è¶£çå¯ä»¥è¯è¯</em></p>
+<h3 id="6-betterdisplay"><a href="https://github.com/waydabber/BetterDisplay" target="_blank" rel="noopener nofollow">6. BetterDisplay</a></h3>
+<p>è°èæ¾ç¤ºå¨äº®åº¦ï¼åè¾¨çç­éå¸¸æ¹ä¾¿ã</p>
+<p><img alt="" loading="lazy" data-src="https://cdn.upyun.sugarat.top/mdImg/sugar/bcd85ffb9ecf40f2b22774dd26e5a700" class="lazyload"></p>
+<h3 id="7-tencent-lemon"><a href="https://lemon.qq.com/" target="_blank" rel="noopener nofollow">7. Tencent Lemon</a></h3>
+<p>æ¥å¸¸æ¿æ¥æ¸çä¸ä¸åå¾ãä¸ç¶è¿å å¤© 500G ççåæ»¡äºã</p>
+<p><img alt="" loading="lazy" data-src="https://cdn.upyun.sugarat.top/mdImg/sugar/b9de37ea679aa0091cc2f613cdc755a3" class="lazyload"></p>
+<h2 id="åå¬æ­å­">åå¬æ­å­</h2>
+<h3 id="1-bongocat"><a href="https://github.com/ayangweb/BongoCat" target="_blank" rel="noopener nofollow">1. BongoCat</a></h3>
+<p>âå¯ç±äºå¨çæ¡é¢å® ç©åºç¨âï¼åºäº Tauri å¶ä½ï¼æ¯æä¸ç«¯ï¼</p>
+<p><img alt="" loading="lazy" data-src="https://cdn.upyun.sugarat.top/mdImg/sugar/a33bd0ca6f9096d2ff6236ec75ce1c56" class="lazyload"></p>
+<p>é¼ æ åé®ççå¨ä½ï¼ç«ç«é½ä¼åæ­¥ã</p>
+<p><em>èµ¶ç´§è£ä¸ï¼æ²é®çåå¤äºä¸ç¹ä¹è¶£</em></p>
+<h3 id="2-healthtick"><a href="https://github.com/lifedever/health-tick-release?tab=readme-ov-file" target="_blank" rel="noopener nofollow">2. HealthTick</a></h3>
+<p>ä¹åæéå·¥å·ã</p>
+<p><img alt="" loading="lazy" data-src="https://cdn.upyun.sugarat.top/mdImg/sugar/8d189e3251c219b54c3a78869b688bd3" class="lazyload"></p>
+<h3 id="3-shui"><a href="https://github.com/rock-zhang/Shui" target="_blank" rel="noopener nofollow">3. Shui</a></h3>
+<p>å¨å±å±ç¤ºçæéåæ°´çè½¯ä»¶ï¼ã</p>
+<p><img alt="" loading="lazy" data-src="https://cdn.upyun.sugarat.top/mdImg/sugar/8347fa9399d80a2a9fc0224473c840fa" class="lazyload"></p>
+<p><em>ä¸ç­å®æèµ·æ¥ï¼ç»å°¿åæ¸äº®ï¼</em></p>
+<h3 id="4-drawio"><a href="https://www.drawio.com/" target="_blank" rel="noopener nofollow">4. drawio</a></h3>
+<p>ç»å¾ç¥å¨ï¼å·¥ä½ä¸­æ¿æ¥ç»æµç¨å¾æ¶æå¾å¿å¤ã</p>
+<p><img alt="" loading="lazy" data-src="https://cdn.upyun.sugarat.top/mdImg/sugar/a61c93b8ffe494fdc764a3845269d903" class="lazyload"></p>
+<h3 id="5-kap"><a href="https://getkap.co/" target="_blank" rel="noopener nofollow">5. Kap</a></h3>
+<p>å½å±è½¯ä»¶ï¼æ¯æå¯¼åºå¤ç§å¸¸ç¨æ ¼å¼ï¼æ¯æåºç¡çç¼è¾ã</p>
+<p>ä½¿ç¨èµ·æ¥éå¸¸æ¹ä¾¿ï¼è½¯ä»¶ä¹æ¯å¼æº<a href="https://github.com/wulkano/kap" target="_blank" rel="noopener nofollow">github:kap</a>çã</p>
+<p><img alt="" loading="lazy" data-src="https://cdn.upyun.sugarat.top/mdImg/sugar/d603d42200fc0873041c06e85adfc471" class="lazyload"></p>
+<h3 id="6-easydict"><a href="https://github.com/tisfeng/Easydict" target="_blank" rel="noopener nofollow">6. Easydict</a></h3>
+<p>èåç¿»è¯è½¯ä»¶ï¼éåº¦ä¹å¿«ï¼æ¯æå¿«æ·å¤èµ·ã</p>
+<p><img alt="" loading="lazy" data-src="https://cdn.upyun.sugarat.top/mdImg/sugar/e9cfbbad79f088fc88343b597291130f" class="lazyload"></p>
+<h2 id="å¼åç¸å³">å¼åç¸å³</h2>
+<h3 id="1-warp"><a href="https://www.warp.dev/" target="_blank" rel="noopener nofollow">1. Warp</a></h3>
+<p>å¼ºå¤§åç¾è§çç»ç«¯å·¥å·ï¼åç½® AI è½åéæï¼</p>
+<p>ç¸è¾äºä¼ ç»çç»ç«¯å·¥å·ï¼å¶æ´å æºè½ï¼ç¼è¾æä»¤ä¹éå¸¸æ¹ä¾¿ã</p>
+<p><img alt="" loading="lazy" data-src="https://cdn.upyun.sugarat.top/mdImg/sugar/7949dc0d26c1e130e3227389bb889f72" class="lazyload"></p>
+<h3 id="2-kiro-cli"><a href="https://kiro.dev/downloads/" target="_blank" rel="noopener nofollow">2. Kiro CLI</a></h3>
+<p>ç¬èä¸»è¦ç¨è¿ä¸ªç»ç«¯è¾å¥æç¤ºçåè½ã</p>
+<p><em>è¿ä¸ªåè½ææ©æ¯å¨ Fig éï¼åæ¥è¢«äºé©¬éæ¶è´­äºã</em></p>
+<p><img alt="" loading="lazy" data-src="https://cdn.upyun.sugarat.top/mdImg/sugar/abdec3aac898108e570e6ee0234c83a8" class="lazyload"></p>
+<h3 id="3-easydevo"><a href="https://easydevo.boringboring.design/" target="_blank" rel="noopener nofollow">3. EasyDevo</a></h3>
+<p>Macåå¾æ¸ç &amp; ç³»ç»çæ§è½¯ä»¶ï¼å¼åèåå¥½ã</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center">ç³»ç»çæ§</th>
+<th style="text-align: center">node_modules æ¸ç</th>
+<th style="text-align: center">é¡¹ç®ç»è®¡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center"><img alt="" loading="lazy" data-src="https://img.cdn.sugarat.top/mdImg/sugar/383755a2089ec6aca9b7b469b8e02de9" class="lazyload"></td>
+<td style="text-align: center"><img alt="" loading="lazy" data-src="https://img.cdn.sugarat.top/mdImg/sugar/a05902a5431608eae5bb27b1747e929b" class="lazyload"></td>
+<td style="text-align: center"><img alt="" loading="lazy" data-src="https://img.cdn.sugarat.top/mdImg/sugar/fb69bbdfc27ead1f58f34dd530faea71" class="lazyload"></td>
+</tr>
+<tr>
+<td style="text-align: center"><br></td>
+<td style="text-align: center"><br></td>
+<td style="text-align: center"><br></td>
+</tr>
+</tbody>
+</table>
+<h3 id="4-utools"><a href="https://www.u-tools.cn/" target="_blank" rel="noopener nofollow">4. uTools</a></h3>
+<p>èåå·¥å·å¹³å°ï¼ç¬èä¸»è¦è£äºä¸äºå¼åç¸å³çæä»¶ã</p>
+<p><img alt="" loading="lazy" data-src="https://cdn.upyun.sugarat.top/mdImg/sugar/8a8ee6c74057295376920b45b5177e31" class="lazyload"></p>
+<h3 id="5-whistle-client"><a href="https://github.com/avwo/whistle-client" target="_blank" rel="noopener nofollow">5. Whistle Client</a></h3>
+<p>ä»£çè°è¯æåå·¥å·ï¼</p>
+<p><img alt="" loading="lazy" data-src="https://cdn.upyun.sugarat.top/mdImg/sugar/4d0d12a35e6f98ef7df328fdc2cae1c9" class="lazyload"></p>
+<h3 id="6-ide">6. IDE</h3>
+<p>ç¬èå°±å¸¸ç¨ <a href="https://www.trae.ai/" target="_blank" rel="noopener nofollow">TRAE</a> å <a href="https://cursor.com/" target="_blank" rel="noopener nofollow">Cursor</a>ï¼èªæAIå¤§çåä»¥æ¥ï¼VS Code ç´æ¥ä¸è£äºã</p>
+<h2 id="ç»ç«¯æä»¤">ç»ç«¯æä»¤</h2>
+<h3 id="1-fnm"><a href="https://github.com/Schniz/fnm" target="_blank" rel="noopener nofollow">1. fnm</a></h3>
+<p>Node çæ¬ç®¡çå·¥å·ï¼</p>
+<p><img alt="" loading="lazy" data-src="https://cdn.upyun.sugarat.top/mdImg/sugar/fdb3b5c16b765a6ef94390d5fc0cd0fc" class="lazyload"></p>
+<h3 id="2-zoxide"><a href="https://github.com/ajeetdsouza/zoxide" target="_blank" rel="noopener nofollow">2. zoxide</a></h3>
+<p>å¿«éåæ¢ç®å½çå·¥å·ï¼</p>
+<p><img alt="" loading="lazy" data-src="https://cdn.upyun.sugarat.top/mdImg/sugar/8e29d18b64989826972950c7cb6eb534" class="lazyload"></p>
+<h3 id="3-yrm"><a href="https://github.com/i5ting/yrm" target="_blank" rel="noopener nofollow">3. yrm</a></h3>
+<p>npm éåæºç®¡çã</p>
+<pre><code class="language-sh">yrm ls
+
+* npm ---- https://registry.npmjs.org/
+  cnpm --- http://r.cnpmjs.org/
+  taobao - https://registry.npmmirror.com/
+  nj ----- https://registry.nodejitsu.com/
+  rednpm - http://registry.mirror.cqupt.edu.cn/
+  npmMirror  https://skimdb.npmjs.com/registry/
+  edunpm - http://registry.enpmjs.org/
+  yarn --- https://registry.yarnpkg.com
+</code></pre>
+<h3 id="4-ni"><a href="https://github.com/antfu-collective/ni" target="_blank" rel="noopener nofollow">4. ni</a></h3>
+<pre><code class="language-sh">npm i -g @antfu/ni
+</code></pre>
+<p>å¸¸ç¨ç <code>ni</code> è£ä¾èµï¼<code>nr</code> è¿è¡ npm æä»¤ã</p>
+<h3 id="5-killport"><a href="https://github.com/jkfran/killport" target="_blank" rel="noopener nofollow">5. killport</a></h3>
+<p>ä½¿ç¨ killport å¯ä»¥ä¸æ­¥å°ä½ï¼ç´æ¥ææ­»å ç¨ç«¯å£çè¿ç¨</p>
+<p><img alt="" loading="lazy" data-src="https://img.cdn.sugarat.top/mdImg/MTY5MDAzNTgwNzI0NQ==690035807245" class="lazyload"></p>
+<h2 id="å¶å®æ¨è">å¶å®æ¨è</h2>
+<h3 id="1-marta"><a href="https://marta.sh/" target="_blank" rel="noopener nofollow">1. Marta</a></h3>
+<p>æä»¶ç®¡çè½¯ä»¶ï¼å¯ä»¥æ¿æ¥æ¿ä»£ç³»ç»é»è®¤ç Finderãæ¯æåæ å±ç¤ºï¼ç§»å¨åæ´çæä»¶çæ¶åä¹æ¯è¾æ¹ä¾¿ã</p>
+<p><img alt="" loading="lazy" data-src="https://cdn.upyun.sugarat.top/mdImg/sugar/f445eb3f7eb8e2382dfbb8e9fb7665e5" class="lazyload"></p>
+<h3 id="2-localsend"><a href="https://localsend.org/#/download" target="_blank" rel="noopener nofollow">2. LocalSend</a></h3>
+<p>å¤è®¾å¤ä¹é´ç¸äºä¼ è¾æä»¶ãè¶³å¤ç®åä¸å¥½ç¨ã</p>
+<p><img alt="" loading="lazy" data-src="https://cdn.upyun.sugarat.top/mdImg/sugar/37e1d5f3dff31821435a54160d4e51da" class="lazyload"></p>
+<h2 id="æ±æ»">æ±æ»</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: right">åºå·</th>
+<th>åç§°</th>
+<th>ä»ç»</th>
+<th>é¾æ¥</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right">1</td>
+<td>Itsycal</td>
+<td>ç¶ææ  æ¥å/æ¶é´ å°ç»ä»¶ãå¹³æ¶ææå°±æ¿è¿ä¸ªçæ¶é´ã</td>
+<td><a href="https://github.com/sfsam/Itsycal/tree/master" target="_blank" rel="noopener nofollow">https://github.com/sfsam/Itsycal/tree/master</a></td>
+</tr>
+<tr>
+<td style="text-align: right">2</td>
+<td>Bartender</td>
+<td>ç¶ææ å¾æ ç®¡çå·¥å·ã</td>
+<td><a href="https://www.macbartender.com/" target="_blank" rel="noopener nofollow">https://www.macbartender.com/</a></td>
+</tr>
+<tr>
+<td style="text-align: right">3</td>
+<td>Snipaste</td>
+<td>ç®åä½å¼ºå¤§çæªå¾å·¥å·ï¼ç¨äºé½è¯´å¥½!</td>
+<td><a href="https://www.snipaste.com/" target="_blank" rel="noopener nofollow">https://www.snipaste.com/</a></td>
+</tr>
+<tr>
+<td style="text-align: right">4</td>
+<td>Alfred</td>
+<td>æ¯è¾èççä¸ä¸ªèåå·¥å·å¹³å°ã</td>
+<td><a href="https://www.alfredapp.com/" target="_blank" rel="noopener nofollow">https://www.alfredapp.com/</a></td>
+</tr>
+<tr>
+<td style="text-align: right">5</td>
+<td>Arc</td>
+<td>Arc æµè§å¨ï¼ç¨ä¹ æ¯äºéå¸¸æ¹ä¾¿ï¼æ¯æå¤ç«¯æ°æ®åæ­¥ï¼ä¸æ¯ææä»¶ï¼ï¼æ¯æå¤èº«ä»½çè®¾è®¡ãç«åçæ ç­¾æåã</td>
+<td><a href="https://arc.net/" target="_blank" rel="noopener nofollow">https://arc.net/</a></td>
+</tr>
+<tr>
+<td style="text-align: right">6</td>
+<td>BetterDisplay</td>
+<td>è°èæ¾ç¤ºå¨äº®åº¦ï¼åè¾¨çç­éå¸¸æ¹ä¾¿ã</td>
+<td><a href="https://github.com/waydabber/BetterDisplay" target="_blank" rel="noopener nofollow">https://github.com/waydabber/BetterDisplay</a></td>
+</tr>
+<tr>
+<td style="text-align: right">7</td>
+<td>Tencent Lemon</td>
+<td>æ¥å¸¸æ¿æ¥æ¸çä¸ä¸åå¾ãä¸ç¶è¿å å¤© 500G ççåæ»¡äºã</td>
+<td><a href="https://lemon.qq.com/" target="_blank" rel="noopener nofollow">https://lemon.qq.com/</a></td>
+</tr>
+<tr>
+<td style="text-align: right">8</td>
+<td>BongoCat</td>
+<td>âå¯ç±äºå¨çæ¡é¢å® ç©åºç¨âï¼åºäº Tauri å¶ä½ï¼æ¯æä¸ç«¯ï¼</td>
+<td><a href="https://github.com/ayangweb/BongoCat" target="_blank" rel="noopener nofollow">https://github.com/ayangweb/BongoCat</a></td>
+</tr>
+<tr>
+<td style="text-align: right">9</td>
+<td>HealthTick</td>
+<td>ä¹åæéå·¥å·ã</td>
+<td><a href="https://github.com/lifedever/health-tick-release?tab=readme-ov-file" target="_blank" rel="noopener nofollow">https://github.com/lifedever/health-tick-release?tab=readme-ov-file</a></td>
+</tr>
+<tr>
+<td style="text-align: right">10</td>
+<td>Shui</td>
+<td>å¨å±å±ç¤ºçæéåæ°´çè½¯ä»¶ï¼ã</td>
+<td><a href="https://github.com/rock-zhang/Shui" target="_blank" rel="noopener nofollow">https://github.com/rock-zhang/Shui</a></td>
+</tr>
+<tr>
+<td style="text-align: right">11</td>
+<td>drawio</td>
+<td>ç»å¾ç¥å¨ï¼å·¥ä½ä¸­æ¿æ¥ç»æµç¨å¾æ¶æå¾å¿å¤ã</td>
+<td><a href="https://www.drawio.com/" target="_blank" rel="noopener nofollow">https://www.drawio.com/</a></td>
+</tr>
+<tr>
+<td style="text-align: right">12</td>
+<td>Kap</td>
+<td>å½å±è½¯ä»¶ï¼æ¯æå¯¼åºå¤ç§å¸¸ç¨æ ¼å¼ï¼æ¯æåºç¡çç¼è¾ã</td>
+<td><a href="https://getkap.co/" target="_blank" rel="noopener nofollow">https://getkap.co/</a></td>
+</tr>
+<tr>
+<td style="text-align: right">13</td>
+<td>Easydict</td>
+<td>èåç¿»è¯è½¯ä»¶ï¼éåº¦ä¹å¿«ï¼æ¯æå¿«æ·å¤èµ·ã</td>
+<td><a href="https://github.com/tisfeng/Easydict" target="_blank" rel="noopener nofollow">https://github.com/tisfeng/Easydict</a></td>
+</tr>
+<tr>
+<td style="text-align: right">14</td>
+<td>Warp</td>
+<td>å¼ºå¤§åç¾è§çç»ç«¯å·¥å·ï¼åç½® AI è½åéæï¼</td>
+<td><a href="https://www.warp.dev/" target="_blank" rel="noopener nofollow">https://www.warp.dev/</a></td>
+</tr>
+<tr>
+<td style="text-align: right">15</td>
+<td>Kiro CLI</td>
+<td>ç¬èä¸»è¦ç¨è¿ä¸ªç»ç«¯è¾å¥æç¤ºçåè½ã</td>
+<td><a href="https://kiro.dev/downloads/" target="_blank" rel="noopener nofollow">https://kiro.dev/downloads/</a></td>
+</tr>
+<tr>
+<td style="text-align: right">16</td>
+<td>EasyDevo</td>
+<td>Macåå¾æ¸ç &amp; ç³»ç»çæ§è½¯ä»¶ï¼å¼åèåå¥½ã</td>
+<td><a href="https://easydevo.boringboring.design/" target="_blank" rel="noopener nofollow">https://easydevo.boringboring.design/</a></td>
+</tr>
+<tr>
+<td style="text-align: right">17</td>
+<td>uTools</td>
+<td>èåå·¥å·å¹³å°ï¼ç¬èä¸»è¦è£äºä¸äºå¼åç¸å³çæä»¶ã</td>
+<td><a href="https://www.u-tools.cn/" target="_blank" rel="noopener nofollow">https://www.u-tools.cn/</a></td>
+</tr>
+<tr>
+<td style="text-align: right">18</td>
+<td>Whistle Client</td>
+<td>ä»£çè°è¯æåå·¥å·ï¼</td>
+<td><a href="https://github.com/avwo/whistle-client" target="_blank" rel="noopener nofollow">https://github.com/avwo/whistle-client</a></td>
+</tr>
+<tr>
+<td style="text-align: right">19</td>
+<td>IDE</td>
+<td>ç¬èå°±å¸¸ç¨ <a href="https://www.trae.ai/" target="_blank" rel="noopener nofollow">TRAE</a> å <a href="https://cursor.com/" target="_blank" rel="noopener nofollow">Cursor</a>ï¼èªæAIå¤§çåä»¥æ¥ï¼VS Code ç´æ¥ä¸è£äºã</td>
+<td><a href="https://www.trae.ai/" target="_blank" rel="noopener nofollow">https://www.trae.ai/</a><a href="https://cursor.com/" target="_blank" rel="noopener nofollow">https://cursor.com/</a></td>
+</tr>
+<tr>
+<td style="text-align: right">20</td>
+<td>fnm</td>
+<td>Node çæ¬ç®¡çå·¥å·ï¼</td>
+<td><a href="https://github.com/Schniz/fnm" target="_blank" rel="noopener nofollow">https://github.com/Schniz/fnm</a></td>
+</tr>
+<tr>
+<td style="text-align: right">21</td>
+<td>zoxide</td>
+<td>å¿«éåæ¢ç®å½çå·¥å·ï¼</td>
+<td><a href="https://github.com/ajeetdsouza/zoxide" target="_blank" rel="noopener nofollow">https://github.com/ajeetdsouza/zoxide</a></td>
+</tr>
+<tr>
+<td style="text-align: right">22</td>
+<td>yrm</td>
+<td>npm éåæºç®¡çã</td>
+<td><a href="https://github.com/i5ting/yrm" target="_blank" rel="noopener nofollow">https://github.com/i5ting/yrm</a></td>
+</tr>
+<tr>
+<td style="text-align: right">23</td>
+<td>ni</td>
+<td>å¸¸ç¨ç <code>ni</code> è£ä¾èµï¼<code>nr</code> è¿è¡ npm æä»¤ã</td>
+<td><a href="https://github.com/antfu-collective/ni" target="_blank" rel="noopener nofollow">https://github.com/antfu-collective/ni</a></td>
+</tr>
+<tr>
+<td style="text-align: right">24</td>
+<td>killport</td>
+<td>ä½¿ç¨ killport å¯ä»¥ä¸æ­¥å°ä½ï¼ç´æ¥ææ­»å ç¨ç«¯å£çè¿ç¨</td>
+<td><a href="https://github.com/jkfran/killport" target="_blank" rel="noopener nofollow">https://github.com/jkfran/killport</a></td>
+</tr>
+<tr>
+<td style="text-align: right">25</td>
+<td>Marta</td>
+<td>æä»¶ç®¡çè½¯ä»¶ï¼å¯ä»¥æ¿æ¥æ¿ä»£ç³»ç»é»è®¤ç Finderãæ¯æåæ å±ç¤ºï¼ç§»å¨åæ´çæä»¶çæ¶åä¹æ¯è¾æ¹ä¾¿ã</td>
+<td><a href="https://marta.sh/" target="_blank" rel="noopener nofollow">https://marta.sh/</a></td>
+</tr>
+<tr>
+<td style="text-align: right">26</td>
+<td>LocalSend</td>
+<td>å¤è®¾å¤ä¹é´ç¸äºä¼ è¾æä»¶ãè¶³å¤ç®åä¸å¥½ç¨ã</td>
+<td><a href="https://localsend.org/#/download" target="_blank" rel="noopener nofollow">https://localsend.org/#/download</a></td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+<div id="MySignature" role="contentinfo">
+    "ä½ çæå°,æ¥ææ¹åä¸ççåé! "
+æ¬¢è¿å³æ³¨æçä¸ªäººåå®¢:https://sugarat.top
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-04-19 15:05">2026-04-19 15:05</span>&nbsp;
+<a href="https://www.cnblogs.com/roseAT">ç²¥éæåºç³</a>&nbsp;
+éè¯»(<span id="post_view_count">81</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19890975);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FroseAT%2Fp%2F19890975&amp;targetId=19890975&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -4139,255 +4559,6 @@ public class DocumentService {
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19890819);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fxrlong%2Fp%2F19890819&amp;targetId=19890819&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ æ·±åº¦å­¦ä¹ è¿é¶ï¼ä¹ï¼æ± åææ¯çåæ­¥æ¹è¿ï¼RoI Pooling ]]></title>
-    <link>https://www.cnblogs.com/Goblinscholar/p/19890795</link>
-    <guid>1ef6b8c5b009f43e18ecf324bea1a371</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/Goblinscholar/p/19890795" title="åå¸äº 2026-04-19 13:47">
-    <span role="heading" aria-level="2">æ·±åº¦å­¦ä¹ è¿é¶ï¼ä¹ï¼æ± åææ¯çåæ­¥æ¹è¿ï¼RoI Pooling</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>å¨<a href="https://www.cnblogs.com/Goblinscholar/p/19873948" target="_blank">ä¸ä¸ç¯</a>éï¼æä»¬å·²ç»å®æ´ä»ç»äº Swin Transformer çæ¨¡åé»è¾ï¼ç¥éäºï¼<strong>Swin Transformer çæ ¸å¿ï¼å¹¶ä¸æ¯ç®åå°âæ¨¡ä»¿ CNNâï¼èæ¯å¨ä¿çå½çº³åç½®çåæ¶ï¼è®©å»ºæ¨¡æ¹å¼æ´å çµæ´»ã</strong></p>
-<p>æ¢å¥è¯è¯´ï¼å®åçäºææ¯ï¼</p>
-<blockquote>
-<p><strong>å¨âçº¦æâä¸âèªç±âä¹é´æ¾å°ä¸ä¸ªå¹³è¡¡ç¹ã</strong></p>
-</blockquote>
-<p>èå¨ä¸ä¸ç¯çæ«å°¾ï¼æä»¬ä¹æå°ï¼å½ Swin å¨å­¦ä¹ âçº¦æâçåæ¶ï¼CNN ä¹å¨å­¦ä¹ âèªç±âã</p>
-<p>å®éä¸ï¼CNN ä½ç³»åé¨æ©å°±å·²ç»åºç°äºè¿ç§â<strong>è®©ç»æåå¾æ´çµæ´»</strong>âçè¶å¿å¹¶åå±åºäºç¹å¤çè½å°ææ¯ã<br>
-å æ­¤ï¼å¨æ­£å¼å±å¼â CNN ç Transformer å â åï¼ä¸ºäºä¸è®©åå®¹è¿äºå²è£ï¼è¿éè¦å±å¼ä¸äºåç½®åå®¹ï¼å¼å¥ä¸äº CNN åçä¸äºç¸å³æ¹è¿æ¥ç®å<strong>è¿æ¸¡</strong>ã<br>
-æ¬ç¯çåå®¹å³äº<strong>æ± åææ¯çåæ­¥æ¹è¿:RoI Pooling</strong>ã</p>
-<h1 id="1-åºæ¬æ± å-pooling">1. åºæ¬æ± å Pooling</h1>
-<p>ååé¡¾ä¸ä¸æåºæ¬çæ± åæä½ï¼ä»¥æå¸¸è§çæå¤§æ± åï¼Max Poolingï¼ä¸ºä¾ï¼</p>
-<p></p><div class="math display">\[y(i,j) = \max_{(m,n)\in \mathcal{R}} x(i+m, j+n)  
-\]</div><p></p><p>è¿éç <span class="math inline">\(\mathcal{R}\)</span> è¡¨ç¤ºæ± åçªå£ï¼æä»¬ç¨æå¤§æ± åæ¥ç­éâæå¼ºååºâã</p>
-<p>æ­¤å¤ï¼è¿å¯ä»¥ä½¿ç¨å¹³åæ± åæ¥ä¿çâæ´ä½ä¿¡æ¯âï¼</p>
-<p></p><div class="math display">\[y(i,j) = \frac{1}{|\mathcal{R}|} \sum_{(m,n)\in \mathcal{R}} x(i+m, j+n)  
-\]</div><p></p><p>ä¸åå±å¼è¿å¤ç»èï¼è¿ééä¸æä»¬ä¹åä»ç»æ± åçåå®¹ï¼<a href="https://www.cnblogs.com/Goblinscholar/p/19336216" target="_blank">æ± åæä½ä¸å·ç§¯ä¸­çååä¼ æ­</a>ã</p>
-<p><strong>æ»çæ¥è¯´ï¼Pooling çæ¬è´¨æ¯éè¿ä¸éæ ·æ¥åç¼©ä¿¡æ¯ï¼ä»èåå°è®¡ç®éã</strong><br>
-åæ¶ï¼ç±äºå¶å¨å±é¨çªå£åè¿è¡èåï¼å®å®éä¸å¼å¥äºä¸ç§éè¦çå½çº³åç½®ï¼</p>
-<blockquote>
-<p><strong>å±é¨ä¸åæ§åéªï¼å¨å°èå´åçååä¸ä¼æ¾èå½±åè¾åºã</strong></p>
-</blockquote>
-<p>ä¹æ­£å ä¸ºè¿ä¸ç¹ï¼å¨ä¸æ¾èæ¹åè¯­ä¹çåæä¸ï¼Pooling è¿å¯ä»¥é´æ¥æ©å¤§åç»­ç½ç»çæåéã</p>
-<p>å½ç¶ï¼æåºç¡ç Pooling ä¹å­å¨ææ¾çå±éï¼</p>
-<blockquote>
-<p><strong>éæ ·ä½ç½®æ¯å®å¨åºå®çã</strong></p>
-</blockquote>
-<p>æ¢å¥è¯è¯´ï¼å®çè¡ä¸ºæ¯âåæ§çâï¼çªå£ä½ç½®åºå®ãéæ ·æ¹å¼åºå®ã<strong>ä¸éè¾å¥åå®¹åçååã</strong><br>
-æ»ç»ä¸ä¸å°±æ¯<strong>ä¸å¤çµæ´»</strong>ï¼è¿å¨åç±»ä»»å¡ä¸­éå¸¸é®é¢ä¸å¤§ï¼ä½å¨<strong>ç®æ æ£æµ</strong>ç­ä»»å¡ä¸­å°±ä¼åå¾éå¸¸ææ¾ã<br>
-æ¯å¦ç®æ åå¥½è½å¨æ± åçªå£è¾¹çæåçè½»å¾®å½¢åæåç§»ï¼æ­¤æ¶ç Pooling å¯è½ä¼ä¸¢å¤±é¨åå³é®ä¿¡æ¯çè³ç´æ¥åå¼±ç®æ ååºã</p>
-<p>é®é¢çå³é®å¨äºï¼</p>
-<blockquote>
-<p><strong>Pooling ä»ç¶æ¯å¨âæ´å¼ ç¹å¾å¾ä¸ä½¿ç¨ç»ä¸è§åâï¼ä½ææ¶æä»¬çæ­£å³å¿çæ¯âæä¸ä¸ªå±é¨ç®æ âã</strong></p>
-</blockquote>
-<p>å æ­¤ï¼Pooling çç¬¬ä¸æ­¥æ¹è¿å°±åºç°å¨æ£æµä»»å¡ä¸­ï¼æä»¬ç»§ç»­ã</p>
-<h1 id="2-region-of-interest-pooling">2. Region of Interest Pooling</h1>
-<p><strong>Region of Interest Pooling ç®ç§° RoI Pooling</strong>ï¼å®èµ·æºäº 15 å¹´çè®ºæï¼<a href="https://openaccess.thecvf.com/content_iccv_2015/papers/Girshick_Fast_R-CNN_ICCV_2015_paper.pdf" target="_blank" rel="noopener nofollow"><strong><em>Fast R-CNN</em></strong></a>ã<br>
-Fast R-CNN æ¯ä¸ä¸ªç®æ æ£æµæ¨¡åï¼å®é¦æ¬¡ç³»ç»æ§æåºäº RoI Poolingï¼<strong>ç¨äºå°ä»»æå¤§å°çåéæ¡æ å°ä¸ºåºå®å°ºå¯¸ç¹å¾ã</strong></p>
-<p>åæ ·ï¼å¦æä½ å¯¹æ£æµä»»å¡æ¬èº«çç¸å³æ¦å¿µæäºéå¿äºï¼å¯ä»¥å¨è¿éåé¡¾ï¼<a href="https://www.cnblogs.com/Goblinscholar/p/19384242" target="_blank">ç®æ å®ä½ä¸ç¹å¾ç¹æ£æµ</a>ã<br>
-é¦åè¦è¯´æçæ¯ï¼Fast R-CNN å¹¶ä¸åç°å¨ä¸»æµç YOLO ä¸æ ·æ¯ç«¯å°ç«¯æ¨¡åï¼å®çç®æ æ£æµé»è¾æ¯<strong>åä½¿ç¨ç©çæ¹æ³å¾å°åéæ¡ï¼åæåéæ¡æ å°è¾å¥ç½ç»è¿è¡åç±»</strong>ï¼æ¯ä¸ä¸ªä¸¤é¶æ®µæ¨¡åã<br>
-æä»¬å·ä½å±å¼å¶é»è¾å¦ä¸ï¼</p>
-<h2 id="21-åéæ¡æ å°">2.1 åéæ¡æ å°</h2>
-<p><img src="https://img2024.cnblogs.com/blog/3708248/202604/3708248-20260419134603862-640873830.png" alt="image.png" loading="lazy"><br>
-å¦å¾æç¤ºï¼<strong>ç¬¬ä¸æ­¥å°±æ¯æç©çæ¹æ³çæçåéæ¡å¨åå¾ä¸­çç¸å¯¹ä½ç½®æ å°å°åå¾å·ç§¯åå¾å°çç¹å¾å¾ä¸ã</strong></p>
-<p>è¿ä¸ªæ å°æ¬è´¨ä¸ä¾èµäºä¸ä¸ªéå¸¸å³é®çåæ°ï¼ <strong>ç©ºé´ç¼©æ¾æ¯ä¾ï¼spatial scaleï¼</strong>ã<br>
-å¦æåå¾å°ºå¯¸ä¸º <span class="math inline">\(H \times W\)</span>ï¼ç¹å¾å¾å°ºå¯¸ä¸º <span class="math inline">\(H' \times W'\)</span>ï¼é£ä¹ï¼</p>
-<p></p><div class="math display">\[\text{scale}_x = \frac{W'}{W}, \quad  
-\text{scale}_y = \frac{H'}{H}  
-\]</div><p></p><p>åè®¾åå¾ä¸ç RoI ä¸ºï¼</p>
-<p></p><div class="math display">\[(x_1, y_1, x_2, y_2)  
-\]</div><p></p><p><span class="math inline">\((x_1, y_1)\)</span>æ¯<strong>å·¦ä¸è§åæ </strong>ï¼<span class="math inline">\((x_2, y_2)\)</span>æ¯<strong>å³ä¸è§åæ </strong>ã<br>
-é£ä¹æ å°åå°±æ¯ï¼</p>
-<p></p><div class="math display">\[x_1' = x_1 \cdot \text{scale}_x,\quad  
-y_1' = y_1 \cdot \text{scale}_y  
-\]</div><p></p><p></p><div class="math display">\[x_2' = x_2 \cdot \text{scale}_x,\quad  
-y_2' = y_2 \cdot \text{scale}_y  
-\]</div><p></p><p>æä»¬åççå¾éçå®ä¾ï¼</p>
-<ul>
-<li>åå¾ï¼<span class="math inline">\(128 \times 128\)</span></li>
-<li>feature mapï¼<span class="math inline">\(6 \times 6\)</span><br>
-åï¼</li>
-</ul>
-<p></p><div class="math display">\[\text{scale} = \frac{6}{128} \approx 0.046875  
-\]</div><p></p><p>åè®¾åå¾ä¸­æä¸ä¸ªåéæ¡ï¼</p>
-<p></p><div class="math display">\[(32,\ 32,\ 96,\ 96)  
-\]</div><p></p><p>æ å°å° feature mapï¼</p>
-<table>
-<thead>
-<tr>
-<th>åæ </th>
-<th>åå¾å¼</th>
-<th>è®¡ç®å¬å¼</th>
-<th>feature map å¼</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><span class="math inline">\(x_1\)</span></td>
-<td>32</td>
-<td><span class="math inline">\(32 \times \frac{6}{128}\)</span></td>
-<td><span class="math inline">\(1.5\)</span></td>
-</tr>
-<tr>
-<td><span class="math inline">\(y_1\)</span></td>
-<td>32</td>
-<td><span class="math inline">\(32 \times \frac{6}{128}\)</span></td>
-<td><span class="math inline">\(1.5\)</span></td>
-</tr>
-<tr>
-<td><span class="math inline">\(x_2\)</span></td>
-<td>96</td>
-<td><span class="math inline">\(96 \times \frac{6}{128}\)</span></td>
-<td><span class="math inline">\(4.5\)</span></td>
-</tr>
-<tr>
-<td><span class="math inline">\(y_2\)</span></td>
-<td>96</td>
-<td><span class="math inline">\(96 \times \frac{6}{128}\)</span></td>
-<td><span class="math inline">\(4.5\)</span></td>
-</tr>
-</tbody>
-</table>
-<p>æä»¥å¾å°ï¼</p>
-<p></p><div class="math display">\[(1.5,\ 1.5,\ 4.5,\ 4.5)  
-\]</div><p></p><p><strong>è¿éå°±æä¸ä¸ªé®é¢ï¼è¦ä¸è¦åæ´ï¼</strong><br>
-å¨ <strong>RoI Poolingï¼Fast R-CNN åå§åæ³ï¼</strong> ä¸­ï¼ä¼è¿è¡ç´æ¥åæ´ï¼å·ä½å¦ä¸ï¼</p>
-<ul>
-<li>å·¦ä¸è§ï¼åä¸åæ´ <span class="math inline">\(\lfloor x_1' \rfloor\)</span>ã</li>
-<li>å³ä¸è§ï¼åä¸åæ´ <span class="math inline">\(\lceil x_2' \rceil\)</span>ã</li>
-</ul>
-<p>é»è¾è¿æ¯æ¯è¾æ¸æ°çï¼<strong>æ©å¤§ä¸ç¹èå´ï¼ä¿è¯ä¸æ¼ã</strong> ä½åæ ·ï¼è¿ä¹å¸¦æ¥äºè¯¯å·®ã<br>
-ç±æ­¤å¾å°æç»ç»æï¼</p>
-<p></p><div class="math display">\[(1.5,1.5,4.5,4.5) \rightarrow (1,1,5,5)  
-\]</div><p></p><p>è¿å°±æ¯ RoI Pooling çç¬¬ä¸æ­¥ã</p>
-<h2 id="22-ååå­åºå">2.2 ååå­åºå</h2>
-<p>ç°å¨ï¼æä»¬å¾å°äºå°åéæ¡æ å°å°ç¹å¾å¾ä¸­çåºåï¼ä¸ä¸æ­¥æ¯<strong>æè¯¥åºåååä¸º <span class="math inline">\(k \times k\)</span> ä¸ªå­åºåã</strong><br>
-<img src="https://img2024.cnblogs.com/blog/3708248/202604/3708248-20260419134605492-769978170.png" alt="image.png" loading="lazy"></p>
-<p>è¦è¯´æçæ¯ï¼è¿éå¹¶ä¸æ¯æåºååæ <span class="math inline">\(k \times k\)</span> ä¸ªæ­£æ¹å½¢ï¼èæ¯<strong>æå®½åé«åå«ç­åï¼å½¢æç½æ ¼</strong>ã<br>
-å¯¹æç»ååå¥½çæ¯ä¸ªå­ç½æ ¼ï¼æä»¬å°±å«å®ä¸ä¸ª <strong>bin</strong> ã</p>
-<p>å±å¼æ¥è¯´ï¼è®¾å½å RoI ä¸ºï¼</p>
-<p></p><div class="math display">\[(x_1', y_1', x_2', y_2')  
-\]</div><p></p><p>åï¼</p>
-<p></p><div class="math display">\[w = x_2' - x_1', \quad h = y_2' - y_1'  
-\]</div><p></p><p>ååä¸º <span class="math inline">\(k \times k\)</span> åï¼<strong>ä¸ä¸ª bin çå°ºå¯¸</strong>å°±æ¯ï¼</p>
-<p></p><div class="math display">\[bin_{width} = \frac{w}{k},\quad bin_{height} = \frac{h}{k}  
-\]</div><p></p><p>ç»§ç»­ä¸ä¸èçä¾å­ï¼</p>
-<p></p><div class="math display">\[(1,\ 1,\ 5,\ 5)  
-\]</div><p></p><p>æä»¥ï¼</p>
-<p></p><div class="math display">\[w = 4,\quad h = 4  
-\]</div><p></p><p>è®¾ <span class="math inline">\(k = 2\)</span> åï¼</p>
-<p></p><div class="math display">\[bin_{width} = 2,\quad bin_{height} = 2  
-\]</div><p></p><p>ä½å®éä¸ï¼è¿åªæ¯ä¸ç§æçæ³çè¯·åµï¼æ°çé®é¢æ¯ï¼</p>
-<blockquote>
-<p><strong>åéæ¡ä¸æ¯æ­£æ¹å½¢æä¹åï¼æç» bin çå°ºå¯¸ä¸æ¯æ´æ°æä¹åï¼</strong></p>
-</blockquote>
-<p>ç¬¬ä¸ä¸ªé®é¢åªè¦è·³åºæç»´å®è§å°±å¥½ï¼ç­æ¡æ¯ï¼<strong>ä¸æ ·å</strong>ã<br>
-å³é®å¨äºç¬¬äºä¸ªé®é¢ï¼<br>
-<img src="https://img2024.cnblogs.com/blog/3708248/202604/3708248-20260419134603422-1892048372.png" alt="image.png" loading="lazy"><br>
-å¦å¾æç¤ºï¼å¨çå®æåµä¸ï¼</p>
-<p></p><div class="math display">\[\frac{w}{k},\ \frac{h}{k}  
-\]</div><p></p><p><strong>å¾å¯è½ä¸æ¯æ´æ°ã</strong><br>
-ä¾å¦å¾ä¸­çï¼</p>
-<p></p><div class="math display">\[h = 5,\ k = 2 \Rightarrow bin_{height} = 2.5  
-\]</div><p></p><p>èåå§ RoI Pooling ç»åºçç­æ¡æ¯åä¸é¨åæ¯ä¸æ ·çï¼</p>
-<blockquote>
-<p><strong>æ¯ä¸ª bin çè¾¹çé½ä¼åæ¬¡åæ´ã</strong></p>
-</blockquote>
-<p>å¶å®ç°æ¹å¼æ¯ï¼<strong>å¯¹äºæ¯ä¸ä¸ªæ¹å</strong>ï¼</p>
-<ul>
-<li>èµ·ç¹ï¼åä¸åæ´ <span class="math inline">\(\lfloor \cdot \rfloor\)</span> ã</li>
-<li>ç»ç¹ï¼åä¸åæ´ <span class="math inline">\(\lceil \cdot \rceil\)</span> ã</li>
-</ul>
-<p>ä¾å¦ä¸¤ bin ç<strong>é«åº¦æ¹å</strong>ï¼</p>
-<ul>
-<li>bin1ï¼</li>
-</ul>
-<p></p><div class="math display">\[[0,\ 2.5] \rightarrow [0,\ 3]  
-\]</div><p></p><ul>
-<li>bin2ï¼</li>
-</ul>
-<p></p><div class="math display">\[[2.5,\ 5.0] \rightarrow [2,\ 5]  
-\]</div><p></p><p>è¿éçå³é®ç¹æ¯ï¼<strong>RoI Pooling ç bin ååæ¯å¨è¿ç»­ç©ºé´å®æçï¼èåæ´æ¯å¨æ¯ä¸ª bin åç¬ç«è¿è¡çã</strong></p>
-<p>ä½è¿ç§åæ´ç­ç¥ä¹ä¼å¸¦æ¥ç¸åºçé®é¢ï¼<br>
-<img src="https://img2024.cnblogs.com/blog/3708248/202604/3708248-20260419134607707-1506554308.png" alt="image.png" loading="lazy"><br>
-å æ­¤ï¼è¿ç§åæ´ç­ç¥ä¾¿è®© RoI Pooling çé»è¾ä¸­åºç°äºå±éã<br>
-æä»¬åç»§ç»­æ´ä½é»è¾ï¼åä¸é¨æ¥éè¿°è¿ä¸ªé®é¢ã</p>
-<h2 id="23-åºåæ± å">2.3 åºåæ± å</h2>
-<p>æåä¸æ­¥å°±è¾ä¸ºç®åäºï¼<strong>å¨æ¯ä¸ªååå¥½ç bin åè¿è¡æå¤§æå¹³åæ± åå¾å°æç»ç»æ</strong>ã<br>
-<img src="https://img2024.cnblogs.com/blog/3708248/202604/3708248-20260419134604006-1354847953.png" alt="image.png" loading="lazy"></p>
-<p>è¿ä¾¿æ¯ RoI Pooling çå®æ´é»è¾åå¶å¨æ£æµä»»å¡ä¸­åæ¥çä½ç¨ï¼</p>
-<blockquote>
-<p><strong>ä»»æå¤§å°çåéæ¡é½å¯ä»¥éè¿ bin çååæ å°ä¸ºåºå®å°ºå¯¸ç¹å¾ï¼ä»èç»ä¸ç»´åº¦ç¨äºå¤å®ã</strong></p>
-</blockquote>
-<p>å°è¿éï¼ä½ å¯è½ä¼æè¿æ ·ä¸ä¸ªé®é¢ï¼</p>
-<blockquote>
-<p><strong>è¿ä¸å°±æ¯å¨å¾åéæäºä¸åè¿è¡æ®éæ± ååï¼å¹¶æ²¡ææ¹åæ± åçé»è¾å§ï¼å½æ ¹ç»åºåªæ¯æ± åå¨æ£æµä»»å¡ä¸­çç¹åï¼å¨åªéä½ç°åºâæ´çµæ´»âäºï¼</strong></p>
-</blockquote>
-<p>æä»¬å°±è¿ä¸ªé®é¢æ¥æ»è¿°ä¸ä¸è¿æ®µé»è¾ï¼</p>
-<h1 id="3-roi-pooling-çæä¹åå±é">3. RoI Pooling çæä¹åå±é</h1>
-<h2 id="31-ä»ä¹æ¯æ´çµæ´»çæ± å">3.1 ä»ä¹æ¯âæ´çµæ´»âçæ± åï¼</h2>
-<p>å¦æä»è®¡ç®æµç¨ä¸çï¼RoI Pooling ä¼¼ä¹åªæ¯åäºä¸ä»¶å¾ç®åçäºæï¼</p>
-<blockquote>
-<p><strong>ä» feature map ä¸­æªåä¸ä¸ªåºåï¼ç¶ååä¸æ¬¡åºå®å°ºå¯¸çæ± åã</strong></p>
-</blockquote>
-<p>ä½å®çæ­£çæä¹å¹¶ä¸å¨âæä½å¤æåº¦âï¼èå¨äºï¼</p>
-<blockquote>
-<p><strong>å®ç¬¬ä¸æ¬¡å¨ CNN ä¸­å¼å¥äºâåºäºç®æ çç¹å¾å¯¹é½æºå¶âã</strong></p>
-</blockquote>
-<p>å±å¼æ¥è¯´ï¼å¨ä¼ ç» Pooling ä¸­ï¼æä»¬é»è®¤ï¼<strong>æ± åçªå£æ¯é¢ååºå®çï¼ä¸è¾å¥åå®¹æ å³ã</strong><br>
-è¿æ¶çæ± åæ¬è´¨å°±æ¯ä¸ä¸ªâ<strong>ç©ºé´æ å³çåç¼©æä½</strong>âã</p>
-<p>è RoI Pooling åäºä¸ä»¶å³é®ååï¼</p>
-<blockquote>
-<p><strong>æ± åçªå£ä¸ååºå®ï¼èæ¯ç±âåéç®æ ï¼RoIï¼âå³å®ã</strong></p>
-</blockquote>
-<p>ä»è¿ä¸ªè§åº¦çï¼âæ´çµæ´»âä½ç°å¨ï¼Pooling çä½ç½®ç±è¾å¥å³å®ã Pooling çèå´éç®æ åå ã</p>
-<p>å æ­¤ï¼å®çâçµæ´»æ§âæ¬è´¨æ¯ï¼<strong>ä»âåºå®æä½âåæäºâéå¯¹ç®æ çæä½âã</strong></p>
-<p><strong>å½ç¶ï¼è¿åªæ¯éå¯¹æ± åçåæ­¥æ¹è¿ï¼å°±ç°å¨çç¼åæ¥çï¼å®çé»è¾å¹¶ä¸å¤æï¼å¨ææ CV ä»»å¡ä¸­çæ³ç¨æ§ä¹å¹¶ä¸å¼ºã</strong><br>
-ä½è¿æ¯ä¸ä¸ªâ<strong>èµ·ç¹</strong>âï¼æä»¬å¨å¶åç»­çæ¹è¿ä¸­å°±è½è¶åä½ä¼å°âçµæ´»âäºå­ã<br>
-ä»¥æ­¤ï¼æä»¬æ¥å±å¼ RoI Pooling çå±éé®é¢ã</p>
-<h2 id="32-roi-pooling-çå¯¹é½é®é¢">3.2 RoI Pooling çå¯¹é½é®é¢</h2>
-<p>RoI Pooling çé»è¾ä¸­å­å¨ä¸ä¸ªéå¸¸æ ¹æ¬çé®é¢ï¼<strong>å®å¹¶æ²¡æåå°å®åçå ä½å¯¹é½ã</strong></p>
-<p>é¦åï¼RoI Pooling è³å°ç»åäºä¸¤æ¬¡å¯¹é½é®é¢ï¼RoI æ å°æ¶çåæ´å bin ååæ¶çåæ´ã<br>
-<img src="https://img2024.cnblogs.com/blog/3708248/202604/3708248-20260419134606953-1696088766.png" alt="image.png" loading="lazy"></p>
-<p>å¦å¾æç¤ºï¼åæ¬è¿ç»­çç®æ åºåï¼å¨è¿å¥ç¹å¾å¾åè¢«âææ­âäºä¸¤æ¬¡ãæç»éæ ·çä½ç½®å¹¶ä¸ä¸å®ä¸çå® RoI å¯¹é½ã<br>
-èè¿ç§åå·®ä¼è®©æç»æ± åå¾å°çæ¯ï¼<strong>ä¸ä¸ªâè¿ä¼¼åºåçç»è®¡å¼âï¼èä¸æ¯âç²¾ç¡®åºåçååºâ</strong>ã<br>
-ç¨ä¸ä¸åè¯æ¥è¯´ï¼è¿å«ï¼</p>
-<blockquote>
-<p><strong>éåè¯¯å·®ï¼å³è¿ç»­å¼è¢«æ å°å°ç¦»æ£å¼æ¶äº§ççè¯¯å·®ã</strong></p>
-</blockquote>
-<p>è¿ç§è¯¯å·®å¨æ£æµä»»å¡ä¸­ä¼è¢«æ¾å¤§ï¼æç»çææå°±æ¯ï¼</p>
-<blockquote>
-<p><strong>æ¨¡åç¥éâè¿éæä¸è¥¿âï¼ä½ä¸ç¥éâè¾¹çå°åºå¨åªéâãå ä¸ºæä»¬æ²¡ææåå°ç²¾åçè¾¹çã</strong></p>
-</blockquote>
-<p>æ­¤å¤ï¼pooling æ¹å¹³ç©ºé´ç»èï¼å¯¹<strong>å°ç®æ /è¾¹ççæ£æµ</strong>ä¹å¹¶ä¸åå¥½ã</p>
-<p>éå¯¹è¿äºé®é¢ï¼èªç¶å°±ä¼æç¸åºçæ¹è¿ï¼æä»¬ä¸ä¸ç¯åè¯¦ç»å±å¼ã</p>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.00625" data-date-updated="2026-04-19 13:56">2026-04-19 13:47</span>&nbsp;
-<a href="https://www.cnblogs.com/Goblinscholar">å¥å¸æå­¦è</a>&nbsp;
-éè¯»(<span id="post_view_count">18</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19890795);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FGoblinscholar%2Fp%2F19890795&amp;targetId=19890795&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
