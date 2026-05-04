@@ -3,12 +3,1036 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-05-03T20:37:56.937Z</lastBuildDate>
+        <lastBuildDate>2026-05-04T02:16:56.163Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
+    <title><![CDATA[ äº¬ä¸äºé¢ï¼åå¦SQLä¸­joinäº10å¼ è¡¨ï¼å¦ä½ä¼åæ§è½ï¼ ]]></title>
+    <link>https://www.cnblogs.com/12lisu/p/19970851</link>
+    <guid>5ce9b66baad4a19e95799ee9ff28a45f</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/12lisu/p/19970851" title="åå¸äº 2026-05-04 09:50">
+    <span role="heading" aria-level="2">äº¬ä¸äºé¢ï¼åå¦SQLä¸­joinäº10å¼ è¡¨ï¼å¦ä½ä¼åæ§è½ï¼</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h2 id="åè¨">åè¨</h2>
+<p>æè¿æä½å°ä¼ä¼´å»å¤§åé¢è¯ï¼è¢«é®å°ä¸ä¸ªå¾åé»çé®é¢ï¼âåå¦çäº§ç¯å¢æä¸æ¡SQLï¼joinäº10å¼ è¡¨ï¼æ¥è¯¢èæ¶è¶è¿30ç§ï¼ä½ å¦ä½ä¸æ­¥æ­¥ææ¥å¹¶ä¼åæ§è½ï¼â</p>
+<p>è¿ä¸ªé®é¢çé¾ç¹ä¸å¨äºâå¦ä½åSQLâï¼èå¨äº<strong>ææ¥æè·¯çç³»ç»æ§</strong>å<strong>å¤å±æ¬¡ä¼åææ®µçç»å</strong>ã</p>
+<p>ä»å¤©è¿ç¯æç« ä¸é¨è·å¤§å®¶ä¸èµ·èèè¿ä¸ªè¯é¢ï¼å¸æå¯¹ä½ ä¼ææå¸®å©ã</p>
+<p>æ´å¤é¡¹ç®å®æå¨Javaçªå»éç½ï¼susan.net.cn</p>
+<h2 id="ä¸ç¨è¿3æ­¥éå®ç¶é¢">ä¸ãç¨è¿3æ­¥éå®ç¶é¢</h2>
+<p>å½åç°ä¸æ¡10è¡¨JOINçSQLå¾æ¢æ¶ï¼åä¸å«ç´æ¥æ¹SQLï¼èæ¯æä¸é¢æµç¨éæ­¥å®ä½ï¼</p>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2238006/202605/2238006-20260504094925862-455719916.png" class="lazyload"></p>
+<h3 id="11-ä½¿ç¨explainåææ§è¡è®¡å">1.1 ä½¿ç¨EXPLAINåææ§è¡è®¡å</h3>
+<p>æ§è¡<code>EXPLAIN</code>æ¥çæ¯æ¡å³èçè®¿é®ç±»åãéç¹å³æ³¨ï¼</p>
+<ul>
+<li><code>type</code>åï¼åºç°<code>ALL</code>ï¼å¨è¡¨æ«æï¼ã<code>index</code>ï¼å¨ç´¢å¼æ«æï¼éè¦ä¼åï¼çæ³æ¯<code>ref</code>ã<code>eq_ref</code>æ<code>const</code>ã</li>
+<li><code>rows</code>åï¼ä¼°ç®æ«æè¡æ°ï¼ææ¾åå¤§çè¡¨èèå ç´¢å¼ã</li>
+<li><code>Extra</code>åï¼åºç°<code>Using temporary</code>ï¼ä½¿ç¨ä¸´æ¶è¡¨ï¼ã<code>Using filesort</code>ï¼æä»¶æåºï¼æ¯æ§è½å¤§æã</li>
+</ul>
+<p><strong>ç¤ºä¾</strong>ï¼ä¸æ¡<code>orders</code> join <code>users</code> join <code>products</code>çSQL</p>
+<pre><code class="language-sql">EXPLAIN SELECT o.id, o.amount, u.name, p.title
+FROM orders o
+JOIN users u ON o.user_id = u.id
+JOIN products p ON o.product_id = p.id
+WHERE o.status = 'PAID';
+</code></pre>
+<p>å¦æ<code>EXPLAIN</code>æ¾ç¤º<code>users</code>è¡¨ç<code>type=ALL</code>ï¼è¯´æ<code>user_id</code>æ²¡æç´¢å¼ââè¿æ¯æç´æ¥çä¼åç¹ã</p>
+<h3 id="12-æ¥ççå®sqlæ§è¡æ¶é´åå¸">1.2 æ¥ççå®SQLæ§è¡æ¶é´åå¸</h3>
+<pre><code class="language-sql">SET profiling = 1;
+-- æ§è¡ä½ çæ¢SQL
+SELECT ...;
+SHOW PROFILES;
+SHOW PROFILE FOR QUERY 1;
+</code></pre>
+<p>ç»æä¼æ¾ç¤ºæ¯ä¸ªé¶æ®µï¼sending dataãcreating sort indexç­ï¼çèæ¶ï¼å¸®ä½ å¤æ­æ¯IOç¶é¢è¿æ¯CPU/æåºç¶é¢ã</p>
+<h3 id="13-æ£æ¥æ°æ®åºåæ°éç½®">1.3 æ£æ¥æ°æ®åºåæ°éç½®</h3>
+<ul>
+<li><code>join_buffer_size</code>ï¼å¤ªå°ä¼å¯¼è´å¤æ¬¡æ«æã</li>
+<li><code>tmp_table_size</code>/<code>max_heap_table_size</code>ï¼å¤ªå¤§ä¼å¯¼è´ç£çä¸´æ¶è¡¨ã</li>
+<li><code>innodb_buffer_pool_size</code>ï¼æ¯å¦è¶³å¤å®¹çº³ç­æ°æ®ã</li>
+</ul>
+<h2 id="äºä¸ºä»ä¹join-10å¼ è¡¨ä¼æ¢">äºãä¸ºä»ä¹join 10å¼ è¡¨ä¼æ¢ï¼</h2>
+<p>MySQLï¼InnoDBï¼ä¸­ï¼å¤è¡¨JOINé»è®¤éç¨<strong>Nested Loop Join</strong>ï¼ä»ç¬¬ä¸å¼ è¡¨ï¼é©±å¨è¡¨ï¼ååºä¸è¡ï¼ç¶åå¾ªç¯å»ä¸ä¸å¼ è¡¨å¹éï¼éå¤è¿ä¸ªè¿ç¨ç´å°ææè¡¨å³èå®ã</p>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2238006/202605/2238006-20260504094942049-438725928.png" class="lazyload"></p>
+<p>æ¶é´å¤æåº¦ â <code>æ«æé©±å¨è¡¨è¡æ° Ã æ¯å¼ å³èè¡¨ç´¢å¼æ«æææ¬</code>ã</p>
+<p>è¥é©±å¨è¡¨æ10ä¸è¡ï¼æ¯å¼ å³èè¡¨ç´¢å¼æ«æææ¬ä¸º1msï¼10å¼ è¡¨æ»ææ¬ = 10ä¸ Ã (10 Ã 1ms) = 1000ç§ã</p>
+<p>å¦æMySQLéæ©<strong>Hash Join</strong>ï¼MySQL 8.0.18å¼å¥ï¼ä¸ææå³èæ¡ä»¶é½è½ç¨ä¸ç´¢å¼ï¼æ§è½ä¼å¤§å¹æåï¼ä½ä»åéäºåå­åæå»ºåå¸è¡¨çå¼éã</p>
+<h2 id="ä¸ä»sqlå°æ¶æç7ç§æ­¦å¨">ä¸ãä»SQLå°æ¶æç7ç§æ­¦å¨</h2>
+<p>ä¸é¢ä»<strong>ä½ææ¬ãææ¹å¨çSQLå±</strong>å°<strong>é«ææ¬ãé¿æçæ¶æå±</strong>ï¼éçº§ç»åºå·ä½è§£å³æ¹æ¡ï¼æ¯ä¸ç§é½éå®æ´çç¤ºä¾ä»£ç ã</p>
+<h3 id="æ­¦å¨ä¸ç´¢å¼ä¼åæç«ç«¿è§å½±">æ­¦å¨ä¸ï¼ç´¢å¼ä¼åï¼æç«ç«¿è§å½±ï¼</h3>
+<p>ç¡®ä¿æ¯ä¸ª<code>ON</code>å<code>WHERE</code>æ¡ä»¶ä¸­çåé½æç´¢å¼ã</p>
+<p>å¯¹äº<code>LEFT JOIN</code>ï¼å³è¡¨å³èåå¿é¡»ç´¢å¼ãèåç´¢å¼è¦éµå¾ª<strong>æå·¦åç¼</strong>ååã</p>
+<p><strong>ç¤ºä¾ï¼</strong> åSQL</p>
+<pre><code class="language-sql">SELECT o.order_no, u.name, p.product_name, c.category_name
+FROM orders o
+JOIN users u ON o.user_id = u.id
+JOIN products p ON o.product_id = p.id
+JOIN categories c ON p.category_id = c.id
+WHERE o.create_time &gt; '2026-01-01'
+  AND u.vip_level &gt; 2
+  AND c.status = 'ACTIVE';
+</code></pre>
+<p><strong>ææ¥æ¹æ³</strong>ï¼<code>EXPLAIN</code>åç°<code>orders</code>è¡¨æ²¡æç¨å°<code>create_time</code>ç´¢å¼ï¼<code>users</code>è¡¨ä½¿ç¨å¨è¡¨æ«æã</p>
+<p><strong>ä¼åæ¹æ¡</strong>ï¼</p>
+<pre><code class="language-sql">-- ç»ordersè¡¨å å¤åç´¢å¼
+ALTER TABLE orders ADD INDEX idx_create_user (create_time, user_id);
+-- ç»usersè¡¨å ç´¢å¼
+ALTER TABLE users ADD INDEX idx_vip (vip_level);
+-- ç»categoriesè¡¨å ç´¢å¼
+ALTER TABLE categories ADD INDEX idx_status (status);
+</code></pre>
+<p>è¿æ ·æ¯ä¸ªå³èé½è½ä½¿ç¨ç´¢å¼ï¼ä»å¨è¡¨æ«æåä¸º<code>ref</code>æ<code>range</code>è®¿é®ã</p>
+<p><strong>ä¼ç¹</strong>ï¼ç®åç´æ¥ï¼å¯¹ä¸å¡ä»£ç é¶ä¾µå¥ã<br>
+<strong>ç¼ºç¹</strong>ï¼ç´¢å¼è¿å¤ä¼å½±ååå¥æ§è½ï¼éæè¡¡ã<br>
+<strong>éç¨åºæ¯</strong>ï¼å³èåéæ©æ§å¥½ï¼å³éå¤å¼å°ã</p>
+<h3 id="æ­¦å¨äºè°æ´joiné¡ºåº">æ­¦å¨äºï¼è°æ´JOINé¡ºåº</h3>
+<p>è®©å°è¡¨é©±å¨å¤§è¡¨ã</p>
+<p>Nested Loop Joinä¸­ï¼é©±å¨è¡¨çè¡æ°å³å®äºå¾ªç¯æ¬¡æ°ã</p>
+<p>è®©ç»æéæå°çè¡¨åé©±å¨è¡¨ã</p>
+<p><strong>ç¤ºä¾</strong>ï¼è®¢åè¡¨1000ä¸è¡ï¼ç¨æ·é»ååè¡¨åªæ100è¡ãæ¥è¯¢âé»ååç¨æ·çè®¢åâï¼</p>
+<pre><code class="language-sql">-- åSQLï¼å¯è½ä»¥å¤§è¡¨ordersé©±å¨
+SELECT o.* FROM orders o JOIN blacklist b ON o.user_id = b.user_id;
+</code></pre>
+<p><strong>ä¼åæ¹æ¡</strong>ï¼éè¿<code>STRAIGHT_JOIN</code>å¼ºå¶å°è¡¨é©±å¨</p>
+<pre><code class="language-sql">SELECT STRAIGHT_JOIN o.* FROM blacklist b JOIN orders o ON b.user_id = o.user_id;
+</code></pre>
+<p><strong>éªè¯</strong>ï¼ä½¿ç¨<code>EXPLAIN</code>æ¥çç¬¬ä¸è¡æ¯å¦ä¸º<code>blacklist</code>ï¼rowsâ100ï¼ã</p>
+<p><strong>ä¼ç¹</strong>ï¼ä¸æ¹åä¸å¡é»è¾ï¼ä»è°æ´é¡ºåºã<br>
+<strong>ç¼ºç¹</strong>ï¼éè¦äºè§£æ°æ®åå¸ï¼ä¸æ°å½ä½¿ç¨å¯è½åèåæ¢ã<br>
+<strong>éç¨åºæ¯</strong>ï¼é©±å¨è¡¨ä¸å³èè¡¨æ°æ®éæ¬æ®ææ¾ã</p>
+<h3 id="æ­¦å¨ä¸æåjoin--åºç¨å±ç»è£">æ­¦å¨ä¸ï¼æåJOIN + åºç¨å±ç»è£</h3>
+<p>å½10å¼ è¡¨å³èåªæ¯ä¸ºäºå±ç¤ºä¸ä¸ªåè¡¨ï¼ä¸æ°æ®éä¸æ¯å¤©ææ°å­æ¶ï¼å¯ä»¥å¨Javaä»£ç ä¸­åæ¹æ¥è¯¢ï¼åç¨Streamåå¹¶ã</p>
+<p><strong>ç¤ºä¾ï¼æ¥è¯¢è®¢ååè¡¨ï¼éè¦å³èç¨æ·ãååãå°åãæ¯ä»æµæ°´ç­6å¼ è¡¨ã</strong></p>
+<p><strong>ä¼ååï¼æ°æ®åºå¤§JOINï¼ï¼</strong></p>
+<pre><code class="language-sql">SELECT o.id, o.amount, u.name, p.title, a.city, pay.status
+FROM orders o
+LEFT JOIN users u ON o.user_id = u.id
+LEFT JOIN products p ON o.product_id = p.id
+LEFT JOIN address a ON o.address_id = a.id
+LEFT JOIN payment pay ON o.pay_id = pay.id
+WHERE o.create_time &gt; '2026-01-01'
+LIMIT 20;
+</code></pre>
+<p><strong>ä¼ååï¼åºç¨å±ç»è£ï¼ï¼</strong></p>
+<pre><code class="language-java">// 1. åæ¥ä¸»è®¢åï¼ä¸JOINä»»ä½è¡¨
+List&lt;Order&gt; orders = orderMapper.selectList(
+    new LambdaQueryWrapper&lt;Order&gt;()
+        .gt(Order::getCreateTime, startTime)
+        .last("limit 20")
+);
+
+if (orders.isEmpty()) return Collections.emptyList();
+
+// 2. æåå³èIDéå
+Set&lt;Long&gt; userIds = orders.stream().map(Order::getUserId).collect(Collectors.toSet());
+Set&lt;Long&gt; productIds = orders.stream().map(Order::getProductId).collect(Collectors.toSet());
+Set&lt;Long&gt; addressIds = orders.stream().map(Order::getAddressId).collect(Collectors.toSet());
+Set&lt;Long&gt; payIds = orders.stream().map(Order::getPayId).collect(Collectors.toSet());
+
+// 3. æ¹éæ¥è¯¢å³èè¡¨ï¼æ³¨æåæ¹ï¼é²æ­¢INè¶è¿1000ï¼
+Map&lt;Long, User&gt; userMap = batchQuery(userIds, userMapper::selectBatchIds);
+Map&lt;Long, Product&gt; productMap = batchQuery(productIds, productMapper::selectBatchIds);
+Map&lt;Long, Address&gt; addressMap = batchQuery(addressIds, addressMapper::selectBatchIds);
+Map&lt;Long, Payment&gt; payMap = batchQuery(payIds, payMapper::selectBatchIds);
+
+// 4. åå­ç»è£ (ä½¿ç¨Stream)
+orders.forEach(order -&gt; {
+    order.setUser(userMap.get(order.getUserId()));
+    order.setProduct(productMap.get(order.getProductId()));
+    order.setAddress(addressMap.get(order.getAddressId()));
+    order.setPayment(payMap.get(order.getPayId()));
+});
+return orders;
+
+// è¾å©æ¹æ³ï¼INåæ¹ï¼é²æ­¢è¶è¿1000
+private &lt;T, ID&gt; Map&lt;ID, T&gt; batchQuery(Set&lt;ID&gt; ids, Function&lt;List&lt;ID&gt;, List&lt;T&gt;&gt; mapper) {
+    if (ids == null || ids.isEmpty()) return Collections.emptyMap();
+    List&lt;ID&gt; idList = new ArrayList&lt;&gt;(ids);
+    List&lt;T&gt; result = new ArrayList&lt;&gt;();
+    for (int i = 0; i &lt; idList.size(); i += 500) {
+        List&lt;ID&gt; batch = idList.subList(i, Math.min(i + 500, idList.size()));
+        result.addAll(mapper.apply(batch));
+    }
+    return result.stream().collect(Collectors.toMap(this::extractId, Function.identity()));
+}
+</code></pre>
+<p><strong>ä¼ç¹</strong>ï¼æ°æ®åºååå°ï¼é¿åç¬å¡å°ç§¯ï¼å¯åå«ä¼åæ¯æ¡æ¥è¯¢ã<br>
+<strong>ç¼ºç¹</strong>ï¼ä»£ç éå¢å¤ï¼éè¦å¤çæ¹éæ¥è¯¢çå°ºå¯¸ã<br>
+<strong>éç¨åºæ¯</strong>ï¼ä¸»è¡¨æ°æ®ééä¸­ï¼&lt;10ä¸ï¼ï¼å³èè¡¨æ°æ®éä¸å¤§ä¸å¯ç¬ç«æ¥è¯¢ã</p>
+<h3 id="æ­¦å¨åæ´»ç¨ä¸´æ¶è¡¨æè¡çè¡¨">æ­¦å¨åï¼æ´»ç¨ä¸´æ¶è¡¨æè¡çè¡¨</h3>
+<p>å°å¤æ¬¡ä½¿ç¨çJOINä¸­é´ç»æç©åï¼åå°éå¤è®¡ç®ã</p>
+<p><strong>ç¤ºä¾</strong>ï¼ä¸ä¸ªæ¥è¡¨éè¦åç»è®¡æ¯ä¸ªç¨æ·çè®¢åæ»é¢ï¼åå³èç¨æ·ä¿¡æ¯åç­çº§è¡¨ã</p>
+<p><strong>ä¼åå</strong>ï¼</p>
+<pre><code class="language-sql">SELECT u.name, u.level, stat.total
+FROM users u
+JOIN (
+    SELECT user_id, SUM(amount) as total
+    FROM orders
+    GROUP BY user_id
+) stat ON u.id = stat.user_id
+WHERE u.status = 'ACTIVE';
+</code></pre>
+<p><strong>ä¼ååï¼ä½¿ç¨ä¸´æ¶è¡¨ï¼</strong>ï¼</p>
+<pre><code class="language-sql">-- åå»ºä¸´æ¶è¡¨å­æ¾ç¨æ·è®¢åæ»é¢
+CREATE TEMPORARY TABLE tmp_user_stat (
+    user_id BIGINT PRIMARY KEY,
+    total DECIMAL(10,2),
+    INDEX(user_id)
+) ENGINE=InnoDB;
+
+INSERT INTO tmp_user_stat (user_id, total)
+SELECT user_id, SUM(amount) FROM orders GROUP BY user_id;
+
+-- ç¶åJOIN
+SELECT u.name, u.level, t.total
+FROM users u
+JOIN tmp_user_stat t ON u.id = t.user_id
+WHERE u.status = 'ACTIVE';
+
+-- ç¨å®å¯ä»¥å é¤ï¼ä¼è¯ç»æèªå¨æ¸çï¼
+DROP TEMPORARY TABLE IF EXISTS tmp_user_stat;
+</code></pre>
+<p><strong>ä¼ç¹</strong>ï¼é¿åéå¤è®¡ç®GROUP BYï¼ç´¢å¼åå¥½ã<br>
+<strong>ç¼ºç¹</strong>ï¼éè¦é¢å¤å­å¨ç©ºé´åä¸´æ¶è¡¨ç®¡çã<br>
+<strong>éç¨åºæ¯</strong>ï¼éè¦å¤æ¬¡å¼ç¨ç¸åä¸­é´ç»æï¼æèä¸­é´ç»æéè¾å¤§ã</p>
+<h3 id="æ­¦å¨äºä½¿ç¨ç©åè§å¾ææ±æ»è¡¨">æ­¦å¨äºï¼ä½¿ç¨ç©åè§å¾ææ±æ»è¡¨</h3>
+<p>å¦æ10è¡¨JOINçæ¥è¯¢ç¸å¯¹åºå®ï¼æ¯å¦BIæ¥è¡¨ï¼ï¼å¯ä»¥å®æéè¿ETLå°ç»æå­å¨å°ä¸å¼ æ±æ»è¡¨ã</p>
+<p><strong>ç¤ºä¾</strong>ï¼æ¯æ¥éå®æ¥è¡¨ï¼éè¦JOINè®¢åãç¨æ·ãäº§åãå°åºãéå®åç­8å¼ è¡¨ã</p>
+<p><strong>ä¼åæ¹æ¡</strong>ï¼åå»ºæ±æ»è¡¨ï¼æ¯å¤©åæ¨è·ä¸æ¬¡ã</p>
+<pre><code class="language-sql">-- åå»ºç»æè¡¨
+CREATE TABLE daily_sales_report (
+    report_date DATE,
+    product_id BIGINT,
+    region VARCHAR(50),
+    total_amount DECIMAL(12,2),
+    order_count INT,
+    PRIMARY KEY (report_date, product_id, region)
+);
+
+-- å­å¨è¿ç¨æå®æ¶ä»»å¡
+INSERT INTO daily_sales_report
+SELECT DATE(o.create_time), p.id, a.region, SUM(o.amount), COUNT(*)
+FROM orders o
+JOIN products p ON o.product_id = p.id
+JOIN users u ON o.user_id = u.id
+JOIN address a ON u.address_id = a.id
+-- è¿æ4å¼ è¡¨....
+WHERE o.create_time &gt;= CURDATE() - INTERVAL 1 DAY
+  AND o.create_time &lt; CURDATE()
+GROUP BY DATE(o.create_time), p.id, a.region;
+</code></pre>
+<p>æ¥è¯¢æ¶ç´æ¥æ¥æ±æ»è¡¨ï¼æ¯«ç§çº§ååºã</p>
+<p><strong>ä¼ç¹</strong>ï¼æ¥è¯¢æ¥è¿ç¬æ¶ï¼å¯¹OLAPåå¥½ã<br>
+<strong>ç¼ºç¹</strong>ï¼æ°æ®æå»¶è¿ï¼T+1ï¼ï¼éè¦é¢å¤çç»´æ¤ä»»å¡ã<br>
+<strong>éç¨åºæ¯</strong>ï¼BIæ¥è¡¨ãè¿è¥çæ¿ç­å®æ¶æ§è¦æ±ä¸é«çåºæ¯ã</p>
+<h3 id="æ­¦å¨å­æ¢ç¨olapå¼æ">æ­¦å¨å­ï¼æ¢ç¨OLAPå¼æ</h3>
+<p>å¯ä»¥æ¢æClickHouseæDorisã</p>
+<p>å¯¹äºå®æ¶æ§è¦æ±ä¸é«çå¤æåææ¥è¯¢ï¼ç´æ¥å°æ°æ®åæ­¥å°ClickHouseç­åå¼æ°æ®åºã</p>
+<p>å®ä»¬å¤©çæ¯æå¤§å®½è¡¨åå¤è¡¨æåæ¨¡åå³èï¼æ¥è¯¢æ§è½è¿è¶MySQLã</p>
+<p><strong>ç¤ºä¾</strong>ï¼ä½¿ç¨ClickHouseç<code>JOIN</code>ï¼éæ³¨æå®çåå¸å¼ç¹æ§ï¼</p>
+<pre><code class="language-sql">-- ClickHouseä¸­ï¼å°å¤§è¡¨ä½ä¸ºå³è¡¨æ¶å»ºè®®ä½¿ç¨GLOBAL JOIN
+SELECT o.order_no, u.name, p.product_name
+FROM orders_local o
+GLOBAL JOIN users_local u ON o.user_id = u.id
+GLOBAL JOIN products_local p ON o.product_id = p.id
+SETTINGS join_algorithm = 'partial_merge';
+</code></pre>
+<p><strong>ä¼ç¹</strong>ï¼æ§è½æè´ï¼æ¯æPBçº§æ°æ®ï¼åç¼©æ¯é«ã<br>
+<strong>ç¼ºç¹</strong>ï¼å¼å¥æ°ç»ä»¶ï¼è¿ç»´å¤æï¼ä¸æ¯æäºå¡åé¢ç¹æ´æ°ã<br>
+<strong>éç¨åºæ¯</strong>ï¼æ¥å¿åæãç¨æ·è¡ä¸ºåæãå®æ¶æ¥è¡¨ã</p>
+<h3 id="æ­¦å¨ä¸åç´æå--è¯»ååç¦»">æ­¦å¨ä¸ï¼åç´æå + è¯»ååç¦»</h3>
+<ul>
+<li><strong>åç´åè¡¨</strong>ï¼æè®¢åä¸­çææ¬åå¤§å­æ®µãä½é¢å­æ®µæå°æ©å±è¡¨ï¼åå°åè¡å®½åº¦ã</li>
+<li><strong>è¯»ååç¦»</strong>ï¼æå¤æJOINæ¥è¯¢è·¯ç±å°ä»åºï¼é¿åå½±åä¸»åºåå¥æ§è½ã</li>
+</ul>
+<p><strong>ç¤ºä¾</strong>ï¼å°è®¢åè¡¨æä¸ºåºç¡è¡¨ï¼é«é¢å­æ®µï¼åæ©å±è¡¨ï¼å¤§å­æ®µï¼ã</p>
+<pre><code class="language-sql">-- åºç¡è¡¨
+CREATE TABLE orders_basic (
+    id BIGINT PRIMARY KEY,
+    user_id BIGINT,
+    amount DECIMAL(10,2),
+    status VARCHAR(20),
+    create_time DATETIME
+);
+-- æ©å±è¡¨
+CREATE TABLE orders_ext (
+    order_id BIGINT PRIMARY KEY,
+    remark TEXT,
+    delivery_address TEXT,
+    FOREIGN KEY (order_id) REFERENCES orders_basic(id)
+);
+</code></pre>
+<p>æ¥è¯¢å¸¸ç¨å­æ®µæ¶åªæ¥åºç¡è¡¨ï¼éè¦å¤æ³¨ä¿¡æ¯æ¶åLEFT JOINæ©å±è¡¨ã</p>
+<p><strong>ä¼ç¹</strong>ï¼åå°åè¡IOï¼æåç¼å­å½ä¸­çã<br>
+<strong>ç¼ºç¹</strong>ï¼ä»£ç éè¦åºååºæ¯ï¼å¢å å¤æåº¦ã<br>
+<strong>éç¨åºæ¯</strong>ï¼è¡¨ä¸­å¤§å­æ®µè®¿é®é¢çä½ï¼ä½åºç¡å­æ®µé¢ç¹æ¥è¯¢ã</p>
+<p>æ´å¤é¡¹ç®å®æå¨Javaçªå»éç½ï¼susan.net.cn/project</p>
+<h2 id="åä¼åææ®µä¼ç¼ºç¹åéç¨åºæ¯">åãä¼åææ®µä¼ç¼ºç¹åéç¨åºæ¯</h2>
+<table>
+<thead>
+<tr>
+<th>ä¼åææ®µ</th>
+<th>ä¼ç¹</th>
+<th>ç¼ºç¹</th>
+<th>éç¨åºæ¯</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>å ç´¢å¼</td>
+<td>ç®åç´æ¥ï¼å¿«éè§æ</td>
+<td>è¿å¤ç´¢å¼å½±ååå¥</td>
+<td>å³èåéæ©æ§å¥½</td>
+</tr>
+<tr>
+<td>è°æ´JOINé¡ºåº</td>
+<td>ä¸æ¹SQLé»è¾ï¼ææ¬ä½</td>
+<td>éè¦äºè§£æ°æ®åå¸</td>
+<td>é©±å¨è¡¨æ¯ä»è¡¨å°å¾å¤</td>
+</tr>
+<tr>
+<td>æå+åºç¨å±ç»è£</td>
+<td>å½»åºè§£è¦ï¼æ°æ®åºååå°</td>
+<td>ä»£ç å¤æåº¦å¢å </td>
+<td>ä¸»è¡¨æ°æ®éä¸­ç­ï¼å³èè¡¨å¤</td>
+</tr>
+<tr>
+<td>ä¸´æ¶è¡¨/è¡çè¡¨</td>
+<td>åå°éå¤è®¡ç®</td>
+<td>é¢å¤å­å¨ï¼éç®¡çæ¸ç</td>
+<td>å¤æ¬¡å¼ç¨ç¸åä¸­é´ç»æ</td>
+</tr>
+<tr>
+<td>ç©åè§å¾/æ±æ»è¡¨</td>
+<td>æ¥è¯¢æå¿«</td>
+<td>æ°æ®æå»¶è¿ï¼å­å¨ææ¬é«</td>
+<td>BIæ¥è¡¨ï¼å®æ¶æ§è¦æ±ä¸é«</td>
+</tr>
+<tr>
+<td>æ¢ç¨OLAPå¼æ</td>
+<td>æ§è½æè´ï¼æ¯æå¤§æ°æ®é</td>
+<td>å¼å¥æ°ç»ä»¶ï¼è¿ç»´å¤æ</td>
+<td>åæåæ¥è¯¢</td>
+</tr>
+<tr>
+<td>åç´æå/è¯»ååç¦»</td>
+<td>åå°éç«äºï¼æåå¹¶å</td>
+<td>æ¶ææ¹é å¤§</td>
+<td>åå¥é¢ç¹ï¼æ¥è¯¢å¤æ</td>
+</tr>
+</tbody>
+</table>
+<h2 id="äºæ»ç»">äºãæ»ç»</h2>
+<p><strong>é¢è¯æ¶ä½ å¯ä»¥è¿æ ·åç­ï¼</strong></p>
+<p>é¦åï¼æä¼ç¨<code>EXPLAIN</code>åææ§è¡è®¡åï¼æ¾åºåªå¼ è¡¨åºç°å¨è¡¨æ«ææäº§çäºä¸´æ¶è¡¨/æä»¶æåºã</p>
+<p>ç¶åéå¯¹æ§å ç´¢å¼æè°æ´JOINé¡ºåºã</p>
+<p>å¦æSQLå±é¢ä¼ååä»æ¢ï¼æä¼èèä¸å¡æåï¼æ¯å¦åºç¨å±åå¤æ¬¡æ¥è¯¢+åå­ç»è£ï¼æèå°é¨åç»ææåç©åå°ä¸´æ¶è¡¨ã</p>
+<p>å¯¹äºçäº§çº§å«çBIæ¥è¡¨ï¼ææ´å¾åå°æ°æ®åæ­¥å°ClickHouseè¿ç±»ä¸ç¨æ°æ®åºã</p>
+<p>æåï¼å¦æä¸å¡åè®¸ï¼æä¼ä»æºå¤´åå°JOINè¡¨æ°éââæ¯å¦å¨è®¢åè¡¨éåä½å¿è¦çåååç§°ãç¨æ·æµç§°ç­ï¼é¿åæ¯æ¬¡é½è¦å³èã</p>
+<p>æ»ä¹ï¼ä¼åæ²¡æé¶å¼¹ï¼è¦ç»åå·ä½æ°æ®éåä¸å¡å®¹å¿åº¦ï¼ç»åä½¿ç¨ç´¢å¼ãSQLæ¹åãæ¶ææåç­å¤ç§ææ®µã</p>
+<p>æä¹ä¼ç¨profileæperformance_schemaè¿ä¸æ­¥å®ä½æ¯IOè¿æ¯CPUç¶é¢ã</p>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-05-04 09:51">2026-05-04 09:50</span>&nbsp;
+<a href="https://www.cnblogs.com/12lisu">èä¸è¯´ææ¯</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19970851);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2F12lisu%2Fp%2F19970851&amp;targetId=19970851&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ 9. LangChain 6å¤§æ ¸å¿åæ°è¯¦è§£ + ä»£ç å®æï¼çå®å°±è½ç´æ¥ç¨ ]]></title>
+    <link>https://www.cnblogs.com/halfcode/p/19970479</link>
+    <guid>e3b4edefeb50e44f12efbdc392ba17a0</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/halfcode/p/19970479" title="åå¸äº 2026-05-04 08:08">
+    <span role="heading" aria-level="2">9. LangChain 6å¤§æ ¸å¿åæ°è¯¦è§£ + ä»£ç å®æï¼çå®å°±è½ç´æ¥ç¨</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
+<p>å¨ä½¿ç¨ init_chat_model æå»ºå¤§æ¨¡ååºç¨æ¶ï¼ä¸ºäºééä¸åçä¸å¡åºæ¯ï¼å¦æ¬å°æ¨¡åè°è¯ãç¬¬ä¸æ¹ä»£çæ¥å¥ãåæåå®¹çæãé«å¹¶åæ¥å£è°ç¨ç­ï¼ï¼æä»¬éå¸¸ä¼å°ææ ¸å¿ç 6 ä¸ªåæ°æ¾å¨ **kwargs ééä¼ ï¼ç²¾åæ§å¶æ¥å£è¯·æ±ãé´æåæ¨¡åçæææã</p>
+<p>åæ¬¢çæç« çæ¥çå¾ä¸çï¼ä¹ æ¯çè§é¢ççè¿é<a href="https://www.bilibili.com/video/BV1CS9kBtEzW/" rel="noopener nofollow">ã9. LangChain 6å¤§æ ¸å¿åæ°è¯¦è§£ + ä»£ç å®æï¼çå®å°±è½ç´æ¥ç¨ã</a>ã</p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 0, 1)">init_chat_model(
+  model: str </span>| None =<span style="color: rgba(0, 0, 0, 1)"> None,
+  </span>*<span style="color: rgba(0, 0, 0, 1)">,
+  model_provider: str </span>| None =<span style="color: rgba(0, 0, 0, 1)"> None,
+  configurable_fields: Literal[</span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">any</span><span style="color: rgba(128, 0, 0, 1)">'</span>] | list[str] | tuple[str, ...] | None =<span style="color: rgba(0, 0, 0, 1)"> None,
+  config_prefix: str </span>| None =<span style="color: rgba(0, 0, 0, 1)"> None,
+  </span>**kwargs: Any =<span style="color: rgba(0, 0, 0, 1)"> {}
+) </span>-&gt; BaseChatModel | _ConfigurableModel</pre>
+</div>
+<p>base_urlï¼èªå®ä¹è¯·æ±å¤§æ¨¡åååç API å°åãä¹æä»¥éè¦æå®è¯¥åæ°ï¼æ¯å ä¸ºå¤§æ¨¡åæå¡ç±ä¸åååæä¾ï¼åååç API ç«¯ç¹å°ååå¼ï¼æ­¤å¤ï¼å½ä½¿ç¨æ¬å°é¨ç½²çæ¨¡åãç¬¬ä¸æ¹ä»£çæå¡æç¹å®äºæå¡çä¸å±å¥å£æ¶ï¼ä¹ééè¿ base_url æç¡®è¯·æ±å°åï¼ç¡®ä¿è¯·æ±è½æ­£ç¡®è·¯ç±å°ç®æ æå¡ã</p>
+<p>api_keyï¼è·åæ¥å£è°ç¨æéçå¯é¥ãå®æ¯ååéªè¯è°ç¨èèº«ä»½ä¸æéçæ ¸å¿å­è¯ï¼åªææä¾ææç api_keyï¼æè½è·å¾æ¥å£è°ç¨æé ââ è¿æ¢ä¿éäºååæå¡çå®å¨å¯æ§ï¼ä¹è½ç²¾åç»è®¡è°ç¨éãè¿è¡è´¹ç¨ç»ç®ï¼é²æ­¢æªææè®¿é®ä¸æ»¥ç¨ã</p>
+<p>timeoutï¼åä½ä¸ºç§ï¼è®¾ç½® API è¯·æ±çæå¤§ç­å¾æ¶é¿ï¼è¶æ¶èªå¨ç»æ­¢è¯·æ±ï¼å¯é¿åç¨åºå ç½ç»æ³¢å¨ææå¡ååºæ¢èé¿æ¶é´é»å¡ã</p>
+<p>max_retriesï¼è¯·æ±å¤±è´¥æ¶çæå¤§éè¯æ¬¡æ°ï¼é»è®¤å¼ä¸º 6 æ¬¡ï¼ç¨äºåºå¯¹å¶åçç½ç»å¼å¸¸ææå¡éæµï¼æåè¯·æ±æåçã</p>
+<p>temperatureï¼æ¸©åº¦å¼ï¼æ¨¡åè¾åºçåé åå¼å³ï¼èå´ä¸º 0-2ãå¼è¶ä½ï¼è¾åºè¶ç¡®å®ä¸¥è°¨ï¼éåä»£ç çæãäºå®é®ç­ç­åºæ¯ï¼å¼è¶é«ï¼è¾åºè¶éæºæåæï¼éåææ¡åä½ãæäºçæç­åºæ¯ã</p>
+<table style="height: 129px; width: 826px" border="0">
+<tbody>
+<tr>
+<td style="text-align: left">temperature</td>
+<td style="text-align: left">&nbsp;éååºæ¯</td>
+</tr>
+<tr>
+<td>0.0~0.3</td>
+<td>&nbsp;ä»£ç çæãäºå®é®ç­ï¼é«åç¡®éæ±ï¼</td>
+</tr>
+<tr>
+<td>0.4~0.7</td>
+<td>&nbsp;éç¨å¯¹è¯ãåå®¹æ¶¦è²ï¼åè¡¡åºæ¯ï¼</td>
+</tr>
+<tr>
+<td>0.8~2.0</td>
+<td>&nbsp;åæåä½ãå¤´èé£æ´ï¼é«åé åéæ±ï¼</td>
+</tr>
+</tbody>
+</table>
+<p>max_tokensï¼éå¶æ¨¡ååæ¬¡è¾åºçæå¤§ token æ°éï¼é¿åè¶é¿åå¤ï¼é»è®¤ä¸éå¶ï¼å¯æ ¹æ®ä¸å¡éæ±æ§å¶åå¤é¿åº¦ä¸ææ¬ã</p>
+<table style="height: 137px; width: 826px" border="0">
+<tbody>
+<tr>
+<td>tokens</td>
+<td>éååºæ¯</td>
+</tr>
+<tr>
+<td>50~200</td>
+<td>ç­ææ¬ï¼é¿ååä½ï¼</td>
+</tr>
+<tr>
+<td>1024~2048</td>
+<td>éç¨å¯¹è¯(å¹³è¡¡å®æ´åº¦ï¼</td>
+</tr>
+<tr>
+<td>4096 ä»¥å</td>
+<td>é¿ææ¬çæï¼ç®¡æ§ææ¬ï¼</td>
+</tr>
+</tbody>
+</table>
+<p>ä»¥ä¸ä¸º.env ç¯å¢éç½®æä»¶çåå®¹ï¼è®°å¾å¿å°å¶ä¸­ç API_KEY å ä½å¼ï¼æ¿æ¢ä¸ºæ¨èªè¡å¨å¯¹åºå¹³å°ç³è¯·çææAPIå¯é¥ã</p>
+<div class="cnblogs_code">
+<pre>QWEN_API_KEY=<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">ä½ ç³è¯·çAPI KEY</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+QWEN_BASE_URL</span>=<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">https://dashscope.aliyuncs.com/compatible-mode/v1</span><span style="color: rgba(128, 0, 0, 1)">"</span></pre>
+</div>
+<p>å¨å®ç°åè½æ¶ï¼åéè¿load_dotenv()å è½½åç®å½ä¸ç.envæä»¶ï¼åç¨os.getenv()ä».env æä»¶éå®å¨è·å QWEN_BASE_URL å QWEN_API_KEYï¼é¿åå° API å°ååå¯é¥ç´æ¥ç¡¬ç¼ç å¨ä»£ç ä¸­ï¼è¿æ¯å¼åäº§åæ¶å¸¸ç¨çæ¹å¼ã</p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> os
+</span><span style="color: rgba(0, 0, 255, 1)">from</span> dotenv <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> load_dotenv
+</span><span style="color: rgba(0, 0, 255, 1)">from</span> langchain.chat_models <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> init_chat_model
+</span><span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> @èéè¯´ç¼ç¨ åå©åå© ä»æ¥å¤´æ¡</span>
+<span style="color: rgba(0, 0, 0, 1)">load_dotenv()
+llm </span>= init_chat_model(model=<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">openai:qwen3.6-plus</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">,
+                      base_url</span>=os.getenv(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">QWEN_BASE_URL</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">),
+                      api_key</span>=os.getenv(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">QWEN_API_KEY</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">),
+                      temperature</span>=0.5<span style="color: rgba(0, 0, 0, 1)">,
+                      max_tokens</span>=1024<span style="color: rgba(0, 0, 0, 1)">)
+</span><span style="color: rgba(0, 0, 255, 1)">for</span> chunk <span style="color: rgba(0, 0, 255, 1)">in</span> llm.stream(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">è¯¦ç»ä»ç»AIå¤§æ¨¡åçåºç¨</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">):
+    </span><span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)"> chunk.content:
+        </span><span style="color: rgba(0, 0, 255, 1)">print</span>(chunk.content, end=<span style="color: rgba(128, 0, 0, 1)">""</span>, flush=True)</pre>
+</div>
+<p>&nbsp;</p>
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-05-04 08:08">2026-05-04 08:08</span>&nbsp;
+<a href="https://www.cnblogs.com/halfcode">èéè¯´ç¼ç¨</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19970479);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fhalfcode%2Fp%2F19970479&amp;targetId=19970479&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ å¤§æ¨¡ååºç¡ï¼åï¼ï¼å¼ºåå­¦ä¹ å¥é¨-ä»æ¯éçº³ç®±å°å¤§æ¨¡åæ¨ç ]]></title>
+    <link>https://www.cnblogs.com/wenha/p/19969057</link>
+    <guid>79783ff6d65564c502fd569a81aa4d03</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/wenha/p/19969057" title="åå¸äº 2026-05-04 07:30">
+    <span role="heading" aria-level="2">å¤§æ¨¡ååºç¡ï¼åï¼ï¼å¼ºåå­¦ä¹ å¥é¨-ä»æ¯éçº³ç®±å°å¤§æ¨¡åæ¨ç</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<blockquote>
+<p>2025å¹´å¾çµå¥é¢ç»äºå¼ºåå­¦ä¹ çå¥ åºäººRichard SuttonåAndrew Bartoãä¸ºä»ä¹å¼ºåå­¦ä¹ å¦æ­¤éè¦ï¼å®å¦ä½ä»è®­ç»èé¼ åæè®­ç»å¤§æ¨¡åï¼è¿ç¯æç« å¸¦ä½ ä¸æ¢ç©¶ç«ã</p>
+</blockquote>
+<hr>
+<h2 id="ä¸ä¸ä¸ªèé¼ å®éªå¼åçé©å½">ä¸ãä¸ä¸ªèé¼ å®éªå¼åçé©å½</h2>
+<h3 id="11-æ¯éçº³ç®±å¼ºåå­¦ä¹ çæºå¤´">1.1 æ¯éçº³ç®±ï¼å¼ºåå­¦ä¹ çæºå¤´</h3>
+<p>1930å¹´ä»£ï¼å¿çå­¦å®¶æ¯éçº³åäºä¸ä¸ªèåå®éªï¼</p>
+<p><strong>å®éªè¿ç¨</strong>ï¼</p>
+<ol>
+<li>æä¸åªèé¼ æ¾è¿ç®±å­</li>
+<li>ç®±å­éæä¸ä¸ªæ æ</li>
+<li>èé¼ å¶ç¶æåæ æ â é£ç©æåºæ¥ï¼å¥å±ï¼</li>
+<li>å¤æ¬¡ä¹å â èé¼ ä¸»å¨é¢ç¹æåæ æ<br>
+<img src="https://img2024.cnblogs.com/blog/822189/202605/822189-20260503160905195-61744607.png" alt="image" loading="lazy"></li>
+</ol>
+<p><strong>èé¼ å­¦ä¼äºä»ä¹ï¼</strong></p>
+<blockquote>
+<p>"ææ æ = æåçï¼"</p>
+</blockquote>
+<p>è¿å°±æ¯<strong>å¼ºåå­¦ä¹ çæ ¸å¿ææ³</strong>ï¼<strong>éè¿å°è¯å¨ä½ï¼æ ¹æ®è·å¾çå¥å±è°æ´è¡ä¸º</strong>ã</p>
+<h3 id="12-ä»èé¼ å°ai">1.2 ä»èé¼ å°AI</h3>
+<p>åä¸ªä¸çºªåï¼è¿ä¸ªææ³å¯åäºAIç ç©¶èï¼</p>
+<blockquote>
+<p>å¦æèé¼ è½éè¿"å¥å±"å­¦ä¼è¡ä¸ºï¼æºå¨è½ä¸è½ä¹è¿æ ·å­¦ä¹ ï¼</p>
+</blockquote>
+<p>1950å¹´ï¼å¾çµæåº"éè¿å¥æ©æºå¶è®­ç»æºå¨"çè®¾æ³ã</p>
+<p>1957å¹´ï¼Minskyæ­£å¼æåº"å¼ºåå­¦ä¹ "æ¦å¿µã</p>
+<hr>
+<h2 id="äºä»ä¹æ¯å¼ºåå­¦ä¹ ">äºãä»ä¹æ¯å¼ºåå­¦ä¹ ï¼</h2>
+<h3 id="21-å®ä¹">2.1 å®ä¹</h3>
+<p><strong>å¼ºåå­¦ä¹ ï¼Reinforcement Learning, RLï¼</strong>ï¼è®©æºè½ä½éè¿ä¸ç¯å¢äº¤äºå"è¯é"ï¼å­¦ä¹ æä¼å³ç­ç­ç¥ä»¥æå¤§åé¿æç´¯ç§¯å¥å±ã</p>
+<p><strong>ç±»æ¯</strong>ï¼</p>
+<blockquote>
+<p>å¼ºåå­¦ä¹ å°±åè®­ç»å® ç©ï¼å®åå¯¹äºç»å¥å±ï¼é¶é£ï¼ï¼åéäºä¸ç»å¥å±ãæ¢æ¢å°ï¼å®å°±å­¦ä¼åæ­£ç¡®çäºæã</p>
+</blockquote>
+<h3 id="22-åå¶ä»æºå¨å­¦ä¹ æ¹æ³æä»ä¹ä¸å">2.2 åå¶ä»æºå¨å­¦ä¹ æ¹æ³æä»ä¹ä¸åï¼</h3>
+<p>æºå¨å­¦ä¹ æä¸å¤§èå¼ï¼</p>
+<table>
+<thead>
+<tr>
+<th>ç±»å</th>
+<th>å­¦ä¹ æ¹å¼</th>
+<th>æ°æ®ç¹ç¹</th>
+<th>ä¾å­</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>æçç£å­¦ä¹ </td>
+<td>ä»æ æ³¨æ°æ®å­¦ä¹ æ å°</td>
+<td>æ"æ åç­æ¡"</td>
+<td>å¾ååç±»</td>
+</tr>
+<tr>
+<td>æ çç£å­¦ä¹ </td>
+<td>ä»æ°æ®ä¸­åç°æ¨¡å¼</td>
+<td>æ æ ç­¾</td>
+<td>èç±»åæ</td>
+</tr>
+<tr>
+<td><strong>å¼ºåå­¦ä¹ </strong></td>
+<td>éè¿äº¤äºåå¥å±å­¦ä¹ </td>
+<td>æ°æ®æ¥èªäº¤äºè¿ç¨</td>
+<td>æ¸¸æAI</td>
+</tr>
+</tbody>
+</table>
+<p><strong>å³é®åºå«</strong>ï¼</p>
+<ul>
+<li>æçç£å­¦ä¹ ï¼èå¸åè¯ä½ ç­æ¡ï¼"è¿æ¯ç«"ï¼</li>
+<li>æ çç£å­¦ä¹ ï¼èªå·±æ¾è§å¾ï¼"è¿äºå¾çå¾å"ï¼</li>
+<li>å¼ºåå­¦ä¹ ï¼ç¯å¢åè¯ä½ å¥½ä¸å¥½ï¼"å¾å+10"ï¼</li>
+</ul>
+<h3 id="23-å¼ºåå­¦ä¹ å¨å­¦ä»ä¹">2.3 å¼ºåå­¦ä¹ å¨å­¦ä»ä¹ï¼</h3>
+<p>å¼ºåå­¦ä¹ çç®æ ï¼<strong>å­¦ä¸å¥"çæåµåå³å®"çç­ç¥</strong></p>
+<p>æä»»ä½ç¶ææ å°ææä¼å¨ä½ï¼ä½¿å¾é¿æç´¯è®¡å¥å±æå¤§ã</p>
+<hr>
+<h2 id="ä¸å¼ºåå­¦ä¹ çæ ¸å¿æ¦å¿µ">ä¸ãå¼ºåå­¦ä¹ çæ ¸å¿æ¦å¿µ</h2>
+<h3 id="31-äºå¤§è¦ç´ ">3.1 äºå¤§è¦ç´ </h3>
+<p>ç¨ä¸ä¸ªä¾å­æ¥çè§£ï¼<strong>è®­ç»ä¸ä¸ªæ¸¸æAI</strong></p>
+<table>
+<thead>
+<tr>
+<th>æ¦å¿µ</th>
+<th>æ¸¸æä¸­çä¾å­</th>
+<th>è¯´æ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>æºè½ä½ï¼Agentï¼</strong></td>
+<td>æ¸¸æAI</td>
+<td>å³ç­åè¡å¨çä¸»ä½</td>
+</tr>
+<tr>
+<td><strong>ç¯å¢ï¼Environmentï¼</strong></td>
+<td>æ¸¸æä¸ç</td>
+<td>æºè½ä½æå¤çå¤é¨ç³»ç»</td>
+</tr>
+<tr>
+<td><strong>ç¶æï¼Stateï¼</strong></td>
+<td>å½åæ¸¸æç»é¢</td>
+<td>ç¯å¢å¨æä¸æ¶å»çæè¿°</td>
+</tr>
+<tr>
+<td><strong>å¨ä½ï¼Actionï¼</strong></td>
+<td>ç§»å¨ãæ»å»ãè·³è·</td>
+<td>æºè½ä½å¯æ§è¡çè¡ä¸º</td>
+</tr>
+<tr>
+<td><strong>å¥å±ï¼Rewardï¼</strong></td>
+<td>å¾å+10ãè¢«å»ä¸­-5</td>
+<td>ç¯å¢å¯¹å¨ä½çåé¦</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-ç­ç¥åä»·å¼å½æ°">3.2 ç­ç¥åä»·å¼å½æ°</h3>
+<p><strong>ç­ç¥ï¼Policyï¼</strong>ï¼æºè½ä½éæ©å¨ä½çè§å</p>
+<ul>
+<li>"çå°æäººå°±æ»å»"</li>
+<li>"è¡éä½å°±éè·"</li>
+</ul>
+<p><strong>ä»·å¼å½æ°ï¼Value Functionï¼</strong>ï¼è¯ä¼°æä¸ªç¶æé¿æè½è·å¾å¤å°å¥å±</p>
+<ul>
+<li>"å½åç¶æå¾å¥½ï¼è¡éé«ãè£å¤å¥½ï¼"</li>
+<li>"å½åç¶æå¾å·®ï¼è¡éä½ãè¢«åå´ï¼"</li>
+</ul>
+<h3 id="33-äº¤äºå¾ªç¯">3.3 äº¤äºå¾ªç¯</h3>
+<p><img src="https://img2024.cnblogs.com/blog/822189/202605/822189-20260503161005896-677273202.png" alt="image" loading="lazy"></p>
+<p><strong>å¾ªç¯è¿ç¨</strong>ï¼</p>
+<ol>
+<li>æºè½ä½è§å¯å½åç¶æ</li>
+<li>æ ¹æ®ç­ç¥éæ©å¨ä½</li>
+<li>ç¯å¢æ§è¡å¨ä½ï¼è¿åæ°ç¶æåå¥å±</li>
+<li>æºè½ä½æ ¹æ®å¥å±è°æ´ç­ç¥</li>
+<li>éå¤...</li>
+</ol>
+<hr>
+<h2 id="åå¼ºåå­¦ä¹ çé«åæ¶å»">åãå¼ºåå­¦ä¹ çé«åæ¶å»</h2>
+<h3 id="41-alphagoéæä¸ç">4.1 AlphaGoï¼éæä¸ç</h3>
+<table>
+<thead>
+<tr>
+<th>æ¶é´</th>
+<th>äºä»¶</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2015å¹´10æ</td>
+<td>AlphaGoå»è´¥äººç±»èä¸éææ¨éº¾</td>
+</tr>
+<tr>
+<td>2016å¹´3æ</td>
+<td>AlphaGo 4:1å»è´¥æä¸ç³</td>
+</tr>
+<tr>
+<td>2017å¹´5æ</td>
+<td>AlphaGo Master 3:0å»è´¥æ¯æ´</td>
+</tr>
+</tbody>
+</table>
+<p><strong>AlphaGoçç§å¯</strong>ï¼</p>
+<ul>
+<li>ä½¿ç¨å¼ºåå­¦ä¹ èªæå¯¹å¼</li>
+<li>éè¿ä¸æ­è¯éå­¦ä¹ æä¼ç­ç¥</li>
+<li>æç»è¶è¶äººç±»é¡¶å°æ£æ</li>
+</ul>
+<h3 id="42-deepseek-r1å¤§æ¨¡åççªç ´">4.2 DeepSeek-R1ï¼å¤§æ¨¡åççªç ´</h3>
+<p><strong>2025å¹´1æï¼DeepSeekåå¸DeepSeek-R1</strong>ï¼</p>
+<p>è¿æ¯ä¸ä¸ªéç¨ç¢ï¼<strong>ç¨å¼ºåå­¦ä¹ è®­ç»å¤§æ¨¡åçæ¨çè½å</strong>ã</p>
+<p><strong>å³é®åæ°</strong>ï¼</p>
+<ul>
+<li>èªæåå»ºåè°æ´çå¥å±ç³»ç»</li>
+<li>å¨Math-500ç­åºåæµè¯ä¸­åª²ç¾OpenAI o1</li>
+<li>ä»¥æä½ç®åææ¬å®ç°é¡¶å°æ§è½</li>
+</ul>
+<p><strong>ä¸ºä»ä¹éè¦ï¼</strong></p>
+<blockquote>
+<p>è¯æäºå¼ºåå­¦ä¹ å¯ä»¥è®©å¤§æ¨¡åå­¦ä¼"æ¨ç"ï¼èä¸åªæ¯"é¢æµä¸ä¸ä¸ªå­"ã</p>
+</blockquote>
+<h3 id="43-2025å¹´å¾çµå¥">4.3 2025å¹´å¾çµå¥</h3>
+<p><strong>è·å¥è</strong>ï¼Richard SuttonåAndrew Barto</p>
+<p>Richard Suttonçè·å¥æè¨ï¼</p>
+<blockquote>
+<p>"å¼ºåå­¦ä¹ çæ¬è´¨æ¯ä»ç»éªä¸­å­¦ä¹ ï¼è¿æ¯æèªç¶çå­¦ä¹ æ¹å¼ã"</p>
+</blockquote>
+<hr>
+<h2 id="äºç»å¸ç®æ³q-learning">äºãç»å¸ç®æ³ï¼Q-Learning</h2>
+<h3 id="51-ä»ä¹æ¯q-learning">5.1 ä»ä¹æ¯Q-Learningï¼</h3>
+<p>Q-Learningæ¯å¼ºåå­¦ä¹ æç»å¸çå¥é¨ç®æ³ï¼1989å¹´ç±Watkinsæåºã</p>
+<p><strong>æ ¸å¿ææ³</strong>ï¼å»ºç«ä¸ä¸ª"Qè¡¨"ï¼è®°å½æ¯ä¸ªç¶æ-å¨ä½ç»åçä»·å¼ã</p>
+<h3 id="52-qè¡¨æ¯ä»ä¹">5.2 Qè¡¨æ¯ä»ä¹ï¼</h3>
+<p>æ³è±¡ä¸ä¸ªè¿·å®«æ¸¸æï¼</p>
+<table>
+<thead>
+<tr>
+<th>ç¶æ</th>
+<th>å¨ä½</th>
+<th>Q å¼ (ä»·å¼)</th>
+<th>å¤æ³¨</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ä½ç½® A</td>
+<td>åå·¦</td>
+<td>0.1</td>
+<td></td>
+</tr>
+<tr>
+<td>ä½ç½® A</td>
+<td>åå³</td>
+<td>0.8</td>
+<td>ä»·å¼æé«</td>
+</tr>
+<tr>
+<td>ä½ç½® A</td>
+<td>åä¸</td>
+<td>0.2</td>
+<td></td>
+</tr>
+<tr>
+<td>ä½ç½® B</td>
+<td>åå·¦</td>
+<td>0.9</td>
+<td>è¿éåå·¦å¥½</td>
+</tr>
+<tr>
+<td>ä½ç½® B</td>
+<td>åå³</td>
+<td>-0.1</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>æºè½ä½å³ç­</strong>ï¼</p>
+<ul>
+<li>å¨ä½ç½®A â Qè¡¨æ¾ç¤ºåå³ä»·å¼æé« â éæ©åå³</li>
+<li>å¨ä½ç½®B â Qè¡¨æ¾ç¤ºåå·¦ä»·å¼æé« â éæ©åå·¦</li>
+</ul>
+<h3 id="53-qå¼æä¹æ´æ°">5.3 Qå¼æä¹æ´æ°ï¼</h3>
+<p>Qå¼æ´æ°å¬å¼ï¼è´å°æ¼æ¹ç¨ï¼ï¼</p>
+<pre><code>æ°Qå¼ = å½åQå¼ + å­¦ä¹ ç Ã (å¥å± + Î³Ãæå¤§æªæ¥Qå¼ - å½åQå¼)
+</code></pre>
+<p><strong>éä¿è§£é</strong>ï¼</p>
+<pre><code>ä½ ä»¥ä¸ºè¿ä¸ªå¨ä½å¼10å
+å®éåäºï¼ç«å»å¾å°5åï¼å ä¸é¢è®¡æªæ¥æå¤è½å¾8å
+æä»¥å®éåºè¯¥å¼5+8=13å
+éè¦æ´æ°ä½ çè®¤è¯ï¼ä»10åè°å°æ¥è¿13å
+</code></pre>
+<h3 id="54-q-learningçå±é">5.4 Q-Learningçå±é</h3>
+<p>Qè¡¨æ¹æ³æä¸ä¸ªè´å½é®é¢ï¼<strong>ç¶æå¤ªå¤æ¶ï¼Qè¡¨å­ä¸ä¸</strong>ï¼</p>
+<p>æ¯å¦ï¼</p>
+<ul>
+<li>å´æ£ç¶æï¼çº¦10^170ç§ï¼å¤©ææ°å­ï¼</li>
+<li>æ¸¸æç»é¢ï¼åç´ çº§å«çç¶æ</li>
+</ul>
+<p>è§£å³æ¹æ³ï¼ç¨ç¥ç»ç½ç»ä»£æ¿Qè¡¨ â <strong>DQNï¼æ·±åº¦Qç½ç»ï¼</strong></p>
+<hr>
+<h2 id="å­è¿é¶ç®æ³ppoä¸dpo">å­ãè¿é¶ç®æ³ï¼PPOä¸DPO</h2>
+<h3 id="61-ppoç¨³å®é«æçå¼ºåå­¦ä¹ ">6.1 PPOï¼ç¨³å®é«æçå¼ºåå­¦ä¹ </h3>
+<p>PPOï¼Proximal Policy Optimizationï¼æ¯OpenAIå¼åçç®æ³ï¼å¹¿æ³åºç¨äºå¤§æ¨¡åè®­ç»ã</p>
+<p><strong>æ ¸å¿ææ³</strong>ï¼æ¯æ¬¡æ´æ°ç­ç¥æ¶ï¼ä¸è¦æ¹åå¤ªå¤§ï¼ä¿æç¨³å®ã</p>
+<p><strong>ç±»æ¯</strong>ï¼</p>
+<blockquote>
+<p>å­¦ä¹ æ°æè½æ¶ï¼ä¸è¦ä¸æ¬¡å­¦å¤ªå¤ï¼æ¢æ¢è¿æ­¥ï¼é¿å"èµ°ç«å¥é­"ã</p>
+</blockquote>
+<p><strong>PPOçä¼ç¹</strong>ï¼</p>
+<ul>
+<li>è®­ç»ç¨³å®</li>
+<li>æ ·æ¬æçé«</li>
+<li>æäºå®ç°</li>
+</ul>
+<h3 id="62-dpoæ´ç®åçæ¿ä»£æ¹æ¡">6.2 DPOï¼æ´ç®åçæ¿ä»£æ¹æ¡</h3>
+<p>DPOï¼Direct Preference Optimizationï¼æ¯ä¸ç§æ°æ¹æ³ï¼<strong>ä¸éè¦è®­ç»å¥å±æ¨¡å</strong>ï¼</p>
+<p><strong>ä¼ ç»RLHFæµç¨</strong>ï¼</p>
+<pre><code>1. è®­ç»å¥å±æ¨¡åï¼RMï¼
+2. ç¨å¥å±æ¨¡åè®­ç»ç­ç¥
+</code></pre>
+<p><strong>DPOæµç¨</strong>ï¼</p>
+<pre><code>ç´æ¥ç¨åå¥½æ°æ®ä¼åç­ç¥ï¼ä¸æ­¥å°ä½ï¼
+</code></pre>
+<p><strong>ä¸ºä»ä¹DPOå¥½ï¼</strong></p>
+<ul>
+<li>æ´ç®åï¼çå»RMè®­ç»ï¼</li>
+<li>æ´ç¨³å®ï¼åå°è®­ç»æ­¥éª¤ï¼</li>
+<li>æææ¥è¿ä¼ ç»æ¹æ³</li>
+</ul>
+<hr>
+<h2 id="ä¸å¼ºåå­¦ä¹ å¨å¤§æ¨¡åä¸­çåºç¨">ä¸ãå¼ºåå­¦ä¹ å¨å¤§æ¨¡åä¸­çåºç¨</h2>
+<h3 id="71-rlhfè®©æ¨¡åæ´å¬è¯">7.1 RLHFï¼è®©æ¨¡åæ´"å¬è¯"</h3>
+<p>RLHFï¼Reinforcement Learning from Human Feedbackï¼æ¯å¤§æ¨¡åè®­ç»çå³é®ç¯èã</p>
+<p><strong>æµç¨</strong>ï¼</p>
+<ol>
+<li>æ¨¡åçæå¤ä¸ªåç­</li>
+<li>äººç±»æåºè¿äºåç­</li>
+<li>è®­ç»å¥å±æ¨¡åå­¦ä¹ äººç±»åå¥½</li>
+<li>ç¨RLä¼åæ¨¡åï¼ä½¿å¶çæäººç±»åæ¬¢çåç­</li>
+</ol>
+<p><strong>ææ</strong>ï¼</p>
+<ul>
+<li>åå°æå®³åå®¹</li>
+<li>æé«åç­è´¨é</li>
+<li>ä½¿æ¨¡åæ´ç¬¦åäººç±»ä»·å¼è§</li>
+</ul>
+<h3 id="72-è®­ç»æ¨çè½ådeepseek-r1çåæ°">7.2 è®­ç»æ¨çè½åï¼DeepSeek-R1çåæ°</h3>
+<p>DeepSeek-R1å±ç¤ºäºRLçæ°ç¨æ³ï¼<strong>è®­ç»æ¨çè½å</strong></p>
+<p><strong>ä¼ ç»å¤§æ¨¡åé®é¢</strong>ï¼</p>
+<ul>
+<li>åªä¼"é¢æµä¸ä¸ä¸ªå­"</li>
+<li>ç¼ºä¹é»è¾æ¨çè½å</li>
+</ul>
+<p><strong>DeepSeek-R1çè§£å³æ¹æ¡</strong>ï¼</p>
+<ul>
+<li>è®¾è®¡æ¨çå¥å±ï¼å¦"æèæ­¥éª¤æ¯å¦æ­£ç¡®"ï¼</li>
+<li>ç¨RLè®­ç»æ¨¡åå­¦ä¼æ¨ç</li>
+<li>èªæåå»ºå¥å±ç³»ç»</li>
+</ul>
+<p><strong>ç»æ</strong>ï¼</p>
+<ul>
+<li>æ°å­¦æ¨çè½åå¤§å¹æå</li>
+<li>ä»£ç çæè´¨éæé«</li>
+<li>æ¥è¿o1æ¨¡åçæ¨çæ°´å¹³</li>
+</ul>
+<h3 id="73-alphagoå°å¤§æ¨¡ååæ ·çææ³">7.3 AlphaGoå°å¤§æ¨¡åï¼åæ ·çææ³</h3>
+<p>AlphaGoåDeepSeek-R1æä»ä¹å±åç¹ï¼</p>
+<table>
+<thead>
+<tr>
+<th>å¯¹æ¯</th>
+<th>AlphaGo</th>
+<th>DeepSeek-R1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ä»»å¡</td>
+<td>å´æ£</td>
+<td>ææ¬æ¨ç</td>
+</tr>
+<tr>
+<td>ç¯å¢</td>
+<td>æ£ç</td>
+<td>è¯­è¨ä»»å¡</td>
+</tr>
+<tr>
+<td>å¥å±</td>
+<td>èµ¢æ£å¾å</td>
+<td>æ¨çæ­£ç¡®æ§</td>
+</tr>
+<tr>
+<td>å­¦ä¹ æ¹å¼</td>
+<td>èªæå¯¹å¼</td>
+<td>èªææ¨ç</td>
+</tr>
+</tbody>
+</table>
+<p><strong>å±åæ ¸å¿</strong>ï¼éè¿èªæè¯éï¼å­¦ä¹ æä¼ç­ç¥ï¼</p>
+<hr>
+<h2 id="å«å¼ºåå­¦ä¹ çææä¸å±é">å«ãå¼ºåå­¦ä¹ çææä¸å±é</h2>
+<h3 id="81-è®­ç»ä¸ç¨³å®">8.1 è®­ç»ä¸ç¨³å®</h3>
+<p>RLè®­ç»å®¹æåºç°ï¼</p>
+<ul>
+<li>å´©æºï¼å¥å±çªç¶ä¸éï¼</li>
+<li>éè¡ï¼å¿½å¥½å¿½åï¼</li>
+<li>æ¶æå°é¾</li>
+</ul>
+<p><strong>åå </strong>ï¼å¥å±ä¿¡å·ç¨çï¼ç­ç¥æ´æ°å¤æ</p>
+<h3 id="82-æ ·æ¬æçä½">8.2 æ ·æ¬æçä½</h3>
+<p>RLéè¦å¤§éè¯éæè½å­¦ä¹ ã</p>
+<p>AlphaGoèªæå¯¹å¼äºæ°ç¾ä¸çæ£ï¼</p>
+<h3 id="83-å¤æ ·æ§éä½">8.3 å¤æ ·æ§éä½</h3>
+<p>Andrej Karpathyæåºï¼RLä¼ä½¿æ¨¡åç"çµéä½"ã</p>
+<p><strong>è§£é</strong>ï¼æ¨¡ååå¾æ´ä¿å®ãæ´ç¡®å®ï¼å¯è½åå°åé æ§ã</p>
+<h3 id="84-rmåç¡®æ§é®é¢">8.4 RMåç¡®æ§é®é¢</h3>
+<p>å¦æå¥å±æ¨¡åï¼RMï¼å¤æ­éè¯¯ï¼æ¨¡åå°±ä¼å­¦éã</p>
+<p><strong>ç±»æ¯</strong>ï¼å¦æèå¸è¯åæ åæé®é¢ï¼å­¦çå°±ä¼å­¦æ­ªã</p>
+<hr>
+<h2 id="ä¹ç»ææ¯äººåçå¯ç¤º">ä¹ãç»ææ¯äººåçå¯ç¤º</h2>
+<h3 id="91-ä»ä¹æ¶åç¨rl">9.1 ä»ä¹æ¶åç¨RLï¼</h3>
+<table>
+<thead>
+<tr>
+<th>åºæ¯</th>
+<th>éåRLï¼</th>
+<th>åå </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>æ¸¸æAI</td>
+<td>â éå</td>
+<td>ææç¡®å¥å±ï¼å¾åï¼</td>
+</tr>
+<tr>
+<td>å¤§æ¨¡ååè®­ç»</td>
+<td>â éå</td>
+<td>äººç±»åå¥½ä½ä¸ºå¥å±</td>
+</tr>
+<tr>
+<td>ç®ååç±»ä»»å¡</td>
+<td>â ä¸éå</td>
+<td>æçç£å­¦ä¹ æ´é«æ</td>
+</tr>
+<tr>
+<td>éè¦åé æ§çä»»å¡</td>
+<td>â ï¸ éè°¨æ</td>
+<td>RLå¯è½éä½å¤æ ·æ§</td>
+</tr>
+</tbody>
+</table>
+<h3 id="92-rlhf-vs-dpoéåªä¸ª">9.2 RLHF vs DPOï¼éåªä¸ªï¼</h3>
+<table>
+<thead>
+<tr>
+<th>æ¹æ¡</th>
+<th>ä¼ç¹</th>
+<th>ç¼ºç¹</th>
+<th>éç¨åºæ¯</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RLHF</td>
+<td>ææå¯è½æ´å¥½</td>
+<td>æµç¨å¤æ</td>
+<td>å¤§è§æ¨¡è®­ç»</td>
+</tr>
+<tr>
+<td>DPO</td>
+<td>ç®åé«æ</td>
+<td>ææå¯è½ç¥å·®</td>
+<td>å¿«éè¿­ä»£</td>
+</tr>
+</tbody>
+</table>
+<h3 id="93-èªå·±è½å®è·µrlå">9.3 èªå·±è½å®è·µRLåï¼</h3>
+<p><strong>å¯ä»¥ï¼</strong> å¼æºå·¥å·ï¼</p>
+<ul>
+<li>Stable Baselines3ï¼ç»å¸RLç®æ³åº</li>
+<li>DeepSpeed-Chatï¼å¤§æ¨¡åRLHFæ¡æ¶</li>
+<li>TRLï¼HuggingFaceçRLè®­ç»åº</li>
+</ul>
+<p><strong>å®è·µå»ºè®®</strong>ï¼</p>
+<ol>
+<li>ä»ç®åç¯å¢å¼å§ï¼å¦CartPoleæ¸¸æï¼</li>
+<li>çè§£Q-Learningåç</li>
+<li>å°è¯PPOç®æ³</li>
+<li>åè¿å¥å¤§æ¨¡åé¢å</li>
+</ol>
+<hr>
+<h2 id="åæ»ç»å¼ºåå­¦ä¹ çæ¬è´¨">åãæ»ç»ï¼å¼ºåå­¦ä¹ çæ¬è´¨</h2>
+<p>Richard Suttonè¯´ï¼</p>
+<blockquote>
+<p>"å¼ºåå­¦ä¹ çæ¬è´¨æ¯ä»ç»éªä¸­å­¦ä¹ ï¼è¿æ¯æèªç¶çå­¦ä¹ æ¹å¼ã"</p>
+</blockquote>
+<p>ä»æ¯éçº³ç®±éçèé¼ ï¼å°æè´¥å´æ£ä¸çå åçAlphaGoï¼åå°æ¨çè½åå¼ºå¤§çDeepSeek-R1ââå¼ºåå­¦ä¹ å±ç¤ºäºAIçä¸ç§æ ¸å¿å­¦ä¹ èå¼ï¼</p>
+<p><strong>ä¸æ¯è¢«åç¥ç­æ¡ï¼èæ¯éè¿å°è¯ååé¦ï¼èªå·±å­¦ä¼æä¹åã</strong></p>
+<p>è¿æ­£æ¯éåæ´æºè½AIçå³é®è·¯å¾ï¼</p>
+<hr>
+<h2 id="å³é®æ¶é´çº¿">å³é®æ¶é´çº¿</h2>
+<table>
+<thead>
+<tr>
+<th>å¹´ä»½</th>
+<th>äºä»¶</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1930s</td>
+<td>æ¯éçº³ç®±å®éª</td>
+</tr>
+<tr>
+<td>1950</td>
+<td>å¾çµæåºå¥æ©æºå¶è®¾æ³</td>
+</tr>
+<tr>
+<td>1957</td>
+<td>Minskyæåºå¼ºåå­¦ä¹ æ¦å¿µ</td>
+</tr>
+<tr>
+<td>1985</td>
+<td>Sutton&amp;Bartoåå±TD-Learning</td>
+</tr>
+<tr>
+<td>1989</td>
+<td>WatkinsæåºQ-Learning</td>
+</tr>
+<tr>
+<td>2013</td>
+<td>DeepMindæåºDQN</td>
+</tr>
+<tr>
+<td>2016</td>
+<td>AlphaGoå»è´¥æä¸ç³</td>
+</tr>
+<tr>
+<td>2022</td>
+<td>ChatGPTä½¿ç¨RLHF</td>
+</tr>
+<tr>
+<td>2025</td>
+<td>DeepSeek-R1ç¨RLè®­ç»æ¨ç</td>
+</tr>
+<tr>
+<td>2025</td>
+<td>Sutton&amp;Bartoè·å¾çµå¥</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="åèèµæ">åèèµæ</h2>
+<ul>
+<li>ãReinforcement Learning: An Introductionã- Sutton &amp; Bartoï¼ç»å¸ææï¼</li>
+<li>AlphaGoè®ºæï¼Silver et al., 2016</li>
+<li>DeepSeek-R1ææ¯æ¥åï¼DeepSeek, 2025</li>
+<li>InstructGPTè®ºæï¼OpenAI, 2022</li>
+<li>DPOè®ºæï¼Rafailov et al., 2023</li>
+</ul>
+<hr>
+<p><em>ä¸ä¸ç¯é¢åï¼RAGå¥é¨ââè®©å¤§æ¨¡åå­¦ä¼å¼å·èè¯</em></p>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-05-04 07:31">2026-05-04 07:30</span>&nbsp;
+<a href="https://www.cnblogs.com/wenha">wenha</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19969057);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fwenha%2Fp%2F19969057&amp;targetId=19969057&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
     <title><![CDATA[ ç®æè´ªåè ]]></title>
     <link>https://www.cnblogs.com/myInception/p/19969715</link>
     <guid>a6116126b5536fe0b6fa7841ed09267c</guid>
@@ -239,8 +1263,8 @@ int main()
 	<div class="postDesc">posted on 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-05-03 23:47">2026-05-03 23:46</span>&nbsp;
 <a href="https://www.cnblogs.com/myInception">myLv</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">39</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19969715);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FmyInception%2Fp%2F19969715&amp;targetId=19969715&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
@@ -318,7 +1342,7 @@ static int irq_thread(void *data)
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-05-03 23:34">2026-05-03 23:33</span>&nbsp;
 <a href="https://www.cnblogs.com/gecpyy">ç¥ç»è(æ¾å·¥ä½ä¸­)</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">26</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19968620);return false;">æ¶è</a>&nbsp;
@@ -883,7 +1907,7 @@ ABAC è§£å³çæ¯âæéå¦ä½è®¡ç®âã�
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-05-03 16:55">2026-05-03 16:55</span>&nbsp;
 <a href="https://www.cnblogs.com/formulahendry">formulahendry</a>&nbsp;
-éè¯»(<span id="post_view_count">59</span>)&nbsp;
+éè¯»(<span id="post_view_count">87</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19969134);return false;">æ¶è</a>&nbsp;
@@ -939,7 +1963,7 @@ ABAC è§£å³çæ¯âæéå¦ä½è®¡ç®âã�
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-05-03 16:20">2026-05-03 16:19</span>&nbsp;
 <a href="https://www.cnblogs.com/HelloQLQ">HelloLLLLL</a>&nbsp;
-éè¯»(<span id="post_view_count">42</span>)&nbsp;
+éè¯»(<span id="post_view_count">67</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19969067);return false;">æ¶è</a>&nbsp;
@@ -1354,7 +2378,7 @@ Tokenæ°éï¼çº¦4ä¸ª
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-05-03 16:17">2026-05-03 16:16</span>&nbsp;
 <a href="https://www.cnblogs.com/wenha">wenha</a>&nbsp;
-éè¯»(<span id="post_view_count">54</span>)&nbsp;
+éè¯»(<span id="post_view_count">82</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19969044);return false;">æ¶è</a>&nbsp;
@@ -1508,1756 +2532,11 @@ void InitB(int _N,int B,vector&lt;int&gt; U,vector&lt;int&gt; V,vector&lt;int&gt
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-05-03 15:41">2026-05-03 15:41</span>&nbsp;
 <a href="https://www.cnblogs.com/xiaoniu142857">xiaoniu142857</a>&nbsp;
-éè¯»(<span id="post_view_count">24</span>)&nbsp;
+éè¯»(<span id="post_view_count">37</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19968990);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fxiaoniu142857%2Fp%2F19968990&amp;targetId=19968990&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ 8.ãä¿å§çº§ãä»é¶å­¦ä¼LangChainè°ç¨å¤§æ¨¡åï¼ç»ä¸æ¥å£+ä»£ç å®æ ]]></title>
-    <link>https://www.cnblogs.com/halfcode/p/19968140</link>
-    <guid>8d297aaa82cbbe6d6a2e35165bd2ae8d</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/halfcode/p/19968140" title="åå¸äº 2026-05-03 09:41">
-    <span role="heading" aria-level="2">8.ãä¿å§çº§ãä»é¶å­¦ä¼LangChainè°ç¨å¤§æ¨¡åï¼ç»ä¸æ¥å£+ä»£ç å®æ</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
-<p>æ¨¡åè°ç¨åºæ¯ä¸­ï¼ç¨æ·å¸¸ä¼æ ¹æ®ä¸ªäººä½¿ç¨ä¹ æ¯æå®åå¥½çAIå¤§æ¨¡åååååç§°ãæ¯å¦é¿éå·´å·´ç qwen3.6-plusãqwen3.5-maxï¼å­èè·³å¨ç doubao-proç­å½äº§ä¸»æµæè°åå·ï¼ä»¥åOpenAIçgpt-4oãAnthropic çclaude-3.5-sonnetç­æµ·å¤åå·ï¼é½æ¯ç¨æ·ä¼ç»åä»»å¡å¤æåº¦ãææ¬é¢ç®ãåè§è¦æ±ç­å ç´ ï¼å¨ä¸åä½¿ç¨åºæ¯ä¸­é«é¢æå®çè°ç¨å¯¹è±¡ã</p>
-<p>å¦æåæ¬¢çè§é¢å­¦ä¹ çï¼å¯ä»¥çè¿ä¸ª<a href="https://www.bilibili.com/video/BV1FJokBfEXw/" rel="noopener nofollow">ã8.ãä¿å§çº§ãä»é¶å­¦ä¼LangChainè°ç¨å¤§æ¨¡åï¼ç»ä¸æ¥å£+ä»£ç å®æã</a>ï¼åæ¬¢çæç« çæ¥çå¾ä¸çã</p>
-<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1919157/202605/1919157-20260503093730011-497157501.png" class="lazyload"></p>
-<p>&nbsp;</p>
-<p>ä¸ºæåå¼åæçï¼æ°ç LangChain1.2.x+å°ä¸ååå AI å¤§æ¨¡åçè°ç¨é»è¾åäºç»ä¸å°è£ï¼æ´åå°init_chat_modelä¸­å®æç»ä¸è°ç¨ï¼å¤§å¹ç®åå¤æ¨¡åééå¼åãæ ¸å¿åæ°ä»éå³æ³¨ä¸¤ä¸ªï¼</p>
-<p>modelï¼æå®å·ä½çæ¨¡ååç§°ï¼å¦ gpt-5.5ãdeepseek-v3ï¼</p>
-<p>model_providerï¼æå®æ¨¡åæä¾åæ è¯ï¼å¦ openaiãdeepseekãè¥æªæå®ï¼ç³»ç»å°æ ¹æ® model åæ°çåç¼æ¨æ­æ¨¡åæä¾åï¼å¦model=âopenai:gpt-5.5âï¼ä¼æ¨æ­ä¸ºopenaiã</p>
-<div class="cnblogs_code">
-<pre><span style="color: rgba(0, 0, 0, 1)">init_chat_model(
-  model: str </span>| None =<span style="color: rgba(0, 0, 0, 1)"> None,
-  </span>*<span style="color: rgba(0, 0, 0, 1)">,
-  model_provider: str </span>| None =<span style="color: rgba(0, 0, 0, 1)"> None,
-  configurable_fields: Literal[</span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">any</span><span style="color: rgba(128, 0, 0, 1)">'</span>] | list[str] | tuple[str, ...] | None =<span style="color: rgba(0, 0, 0, 1)"> None,
-  config_prefix: str </span>| None =<span style="color: rgba(0, 0, 0, 1)"> None,
-  </span>**kwargs: Any =<span style="color: rgba(0, 0, 0, 1)"> {}
-) </span>-&gt; BaseChatModel | _ConfigurableModel</pre>
-</div>
-<p>ç»ç¡®å®å¤§æ¨¡åæä¾ååï¼ä¾¿ä¼èªå¨å®ä¾åå¯¹åºååçåçå®ç°ç±» ââ æ¯å¦ OpenAI å¯¹åº ChatOpenAIãAnthropic å¯¹åº ChatAnthropicãDeepSeek å¯¹åº ChatDeepSeek ç­ï¼å¼åèæ éæå¨å¼å¥ï¼åªééè¿init_chat_modelç»ä¸å¥å£å³å¯å®æåºå±ééã</p>
-<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1919157/202605/1919157-20260503093831361-1972730197.png" class="lazyload"></p>
-<p>&nbsp;å¨å®ç°ç±»å¯¹è±¡ä¸ï¼å¸¸ç¨invokeåstreamä¸¤ç§è°ç¨æ¹æ³ãinvoke ä¼è®©å¤§æ¨¡åä¸æ¬¡æ§è¿åå®æ´ååºå¯¹è±¡ï¼<span class="words-blog hl-git-1" data-tit="stream" data-pretit="stream">streamåéTokenè¾åºåå®¹çæ®µã</span></p>
-<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1919157/202605/1919157-20260503093847034-1269364019.png" class="lazyload"></p>
-<p>&nbsp;ä¸é¢éè¿ä»£ç å®æï¼å¸¦ä½ å½»åºææãé¦åæå¼å½ä»¤è¡çªå£ï¼ä½¿ç¨ pip å½ä»¤å®è£&nbsp;<span class="words-blog hl-git-1" data-tit="LangChain" data-pretit="langchain">LangChainålangchain-openaiå¼ååºã</span></p>
-<div class="cnblogs_code">
-<pre>pip install langchain langchain-openai</pre>
-</div>
-<p>éè¿dotenvåºçload_dotenv()æ¹æ³ï¼èªå¨è¯»åé¡¹ç®éç.envéç½®æä»¶ï¼ææä»¶ä¸­ææé®å¼å¯¹èªå¨è½½å¥ç³»ç»ç¯å¢åéos.environï¼åç»­å¯ç´æ¥è¯»åæ¨¡åå°åãå¯é¥ç­éç½®ï¼é¿åç¡¬ç¼ç ã</p>
-<div class="cnblogs_code">
-<pre><span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> os
-</span><span style="color: rgba(0, 0, 255, 1)">from</span> dotenv <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> load_dotenv
- 
-load_dotenv()</span></pre>
-</div>
-<p>ä½¿ç¨ LangChain åç½®çinit_chat_modelåå§åå¤§æ¨¡åï¼éè¿ä¸¤ä¸ªæ ¸å¿åæ°éç½®ï¼modelæå®æ¨¡ååç§°ï¼model_provideræå®æ¨¡åå¯¹æ¥ååã</p>
-<div class="cnblogs_code">
-<pre><span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> os
-</span><span style="color: rgba(0, 0, 255, 1)">from</span> dotenv <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> load_dotenv
- 
-load_dotenv()
-llm </span>= init_chat_model(model=<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">qwen3.6-plus</span><span style="color: rgba(128, 0, 0, 1)">"</span>, model_provider=<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">openai</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">)
-</span><span style="color: rgba(0, 0, 255, 1)">print</span>(type(llm))</pre>
-</div>
-<p>å½åååæ°è®¾ä¸ºopenaiæ¶ï¼åºå±ä¼èªå¨è°ç¨ChatOpenAIå®ç°ç±»ï¼å¹¶ä»ç¯å¢åéèªå¨è¯»åAPIå¯é¥åæ¥å£å°åãè¿éæå°æ¨¡åå®ä¾ç±»ååè¯·æ±åºåå°åï¼æ¹ä¾¿æ¥çåºå±éç½®ã</p>
-<div class="cnblogs_code">
-<pre><span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> os
-</span><span style="color: rgba(0, 0, 255, 1)">from</span> dotenv <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> load_dotenv
-</span><span style="color: rgba(0, 0, 255, 1)">from</span> langchain.chat_models <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> init_chat_model
- 
-load_dotenv()
-llm </span>= init_chat_model(model=<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">qwen3.6-plus</span><span style="color: rgba(128, 0, 0, 1)">"</span>, model_provider=<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">openai</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">)
-</span><span style="color: rgba(0, 0, 255, 1)">print</span><span style="color: rgba(0, 0, 0, 1)">(type(llm))
-</span><span style="color: rgba(0, 0, 255, 1)">print</span>(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">base_url:</span><span style="color: rgba(128, 0, 0, 1)">"</span>, llm.root_client.base_url)</pre>
-</div>
-<p>å¯ä»¥çç¥model_provideråæ°ï¼ç´æ¥å¨æ¨¡ååç§°åå ä¸åååç¼ï¼æ ¼å¼ä¸ºåå:æ¨¡ååï¼ä¸è¡ä»£ç å³å¯å®æå¤§æ¨¡ååå§åï¼åæ³æ´ç®æ´ã</p>
-<div class="cnblogs_code">
-<pre><span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> os
-</span><span style="color: rgba(0, 0, 255, 1)">from</span> dotenv <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> load_dotenv
-</span><span style="color: rgba(0, 0, 255, 1)">from</span> langchain.chat_models <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> init_chat_model
- 
-load_dotenv()
-llm </span>= init_chat_model(model=<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">openai:qwen3.6-plus</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">)
-</span><span style="color: rgba(0, 0, 255, 1)">print</span><span style="color: rgba(0, 0, 0, 1)">(type(llm))
-</span><span style="color: rgba(0, 0, 255, 1)">print</span>(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">base_url:</span><span style="color: rgba(128, 0, 0, 1)">"</span>, llm.root_client.base_url)</pre>
-</div>
-<p>å¤§æ¨¡ååå§åå®æåï¼ä½¿ç¨invoke()æ¹æ³åèµ·å¯¹è¯è¯·æ±ãè¯¥æ¹å¼ä¼ç­å¾æ¨¡åçæå®æ´åå®¹åï¼ä¸æ¬¡æ§è¿åå¨é¨ç»æã</p>
-<div class="cnblogs_code">
-<pre><span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> os
-</span><span style="color: rgba(0, 0, 255, 1)">from</span> dotenv <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> load_dotenv
-</span><span style="color: rgba(0, 0, 255, 1)">from</span> langchain.chat_models <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> init_chat_model
- 
-load_dotenv()
-llm </span>= init_chat_model(model=os.getenv(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">MODEL</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">))
-result </span>= llm.invoke(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">ä½ æ¯è°åï¼</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">)
-</span><span style="color: rgba(0, 0, 255, 1)">print</span>(result)</pre>
-</div>
-<p>æ³è¦å®ç°æå­æºå®æ¶è¾åºææï¼æ¹ç¨stream()æ¹æ³å¾ªç¯éåæ¨¡åè¿ååå®¹ãend=""ä¿è¯æå­è¿ç»­ä¸æ¢è¡ï¼flush=Trueå¼ºå¶å³æ¶æå°ï¼å®ç°æµççæµå¼å¯¹è¯ææã</p>
-<div class="cnblogs_code">
-<pre><span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> os
-</span><span style="color: rgba(0, 0, 255, 1)">from</span> dotenv <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> load_dotenv
-</span><span style="color: rgba(0, 0, 255, 1)">from</span> langchain.chat_models <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> init_chat_model
- 
-load_dotenv()
-llm </span>= init_chat_model(model=os.getenv(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">MODEL</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">))
-</span><span style="color: rgba(0, 0, 255, 1)">for</span> chunk <span style="color: rgba(0, 0, 255, 1)">in</span> llm.stream(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">è¯¦ç»ä»ç»AIå¤§æ¨¡åçåºç¨</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">):
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)"> chunk.content:       
-</span><span style="color: rgba(0, 0, 255, 1)">print</span>(chunk.content, end=<span style="color: rgba(128, 0, 0, 1)">""</span>, flush=True)</pre>
-</div>
-<p>&nbsp;</p>
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-05-03 09:41">2026-05-03 09:41</span>&nbsp;
-<a href="https://www.cnblogs.com/halfcode">èéè¯´ç¼ç¨</a>&nbsp;
-éè¯»(<span id="post_view_count">57</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19968140);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fhalfcode%2Fp%2F19968140&amp;targetId=19968140&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ SkillNexusï¼å¼æº Skills å¨çå½å¨æåé å¹³å° ]]></title>
-    <link>https://www.cnblogs.com/skyseraph/p/19966076</link>
-    <guid>8846c0c77383257979f16c723c870be1</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/skyseraph/p/19966076" title="åå¸äº 2026-05-03 09:33">
-    <span role="heading" aria-level="2">SkillNexusï¼å¼æº Skills å¨çå½å¨æåé å¹³å°</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<blockquote>
-<p>ä½èï¼skyseraph<br>
-æ¥æï¼2026-05-02<br>
-åæï¼<a href="https://skyseraph.github.io/posts/2026/skillnexus_intro/" target="_blank" rel="noopener nofollow">SkillNexus Intro</a><br>
-å¼æºï¼<a href="https://github.com/skyseraph/SkillNexus" target="_blank" rel="noopener nofollow">SkillNexus</a></p>
-</blockquote>
-<blockquote>
-<p>Skills å¨çå½å¨æåé å¹³å°ï¼è®©ä½ ç Skill å¯çæãå¯éåãå¯ç®¡çãå¯æé¿ã</p>
-</blockquote>
-<hr>
-<h2 id="ä½ åç-skillå°åºæå¤å¥½ç¨">ä½ åç Skillï¼å°åºæå¤å¥½ç¨ï¼</h2>
-<p>æå¼ <code>~/.claude/skills/</code>ï¼æ°ä¸æ°éé¢æå¤å°ä¸ªæä»¶ã</p>
-<p>10 ä¸ªï¼20 ä¸ªï¼è¿æ¯ä¸å å«ä¸åºåå­ç <code>my-prompt-v3-final</code>ï¼</p>
-<p>æ´é¾åç­çé®é¢æ¯ï¼<strong>ä½ ç¥éåªä¸ª Skill ççå¥½ç¨åï¼</strong></p>
-<p>å¤§å¤æ°äººçç­æ¡æ¯ï¼å­æè§ã</p>
-<hr>
-<h2 id="skill-æ¯ä»ä¹">Skill æ¯ä»ä¹</h2>
-<p>å¦æä½ ç¨è¿ Claude CodeãCursor æ Windsurfï¼ä½ ä¸å®æ¥è§¦è¿ Skillââä¸æ®µ Markdown æä»¶ï¼åå« YAML frontmatter åèªç¶è¯­è¨æä»¤ï¼ä½ä¸º system prompt å½±å AI çè¡ä¸ºã</p>
-<pre><code class="language-markdown">---
-name: code-review
-description: æ§è¡ä»£ç å®¡æ¥ï¼å³æ³¨å®å¨ãæ§è½åå¯è¯»æ§
-tags: [review, security]
----
-
-ä½ æ¯ä¸ä½èµæ·±å·¥ç¨å¸ï¼è´è´£å®¡æ¥ä»£ç ã
-è¯·æå®å¨æ§ãæ§è½ãå¯è¯»æ§ä¸ä¸ªç»´åº¦åæï¼
-è¾åºé®é¢åè¡¨åå¯ç´æ¥æ¿æ¢çä»£ç çæ®µã
-</code></pre>
-<p>è¿ç±»æä»¶å¯ä»¥å®è£å° Claude Code ç <code>.claude/commands/</code>ãæ Cursor ç <code>.cursorrules</code>ï¼è®© AI å¨ç¹å®åºæ¯ä¸æä½ çæå¾å·¥ä½ã</p>
-<p>Skill è§£å³äº"è½åçè½½ä½"é®é¢ââæ¨¡ååãå¯ååãè·¨å·¥å·ã</p>
-<p>ä½å®æ²¡æè§£å³ï¼<strong>è¿ä¸ª Skill å¥½ä¸å¥½ï¼æä¹è®©å®æç»­åå¥½ï¼</strong></p>
-<hr>
-<h2 id="ä»åæç¤ºè¯å°å¹è²è½åçè®¤ç¥è·è¿">ä»"åæç¤ºè¯"å°"å¹è²è½å"çè®¤ç¥è·è¿</h2>
-<p>ä¼ ç» Skill åå»ºçé®é¢ä¸å¨äºåæ³ï¼èå¨äº<strong>ç¼ºä¹é­ç¯</strong>ï¼</p>
-<ul>
-<li>åå®å³ä¸¢ï¼æ²¡æçæ¬ç®¡ç</li>
-<li>ææå¥½åé ä¸»è§æåï¼æ²¡æéåæ°æ®</li>
-<li>æ¨¡åæ¢ä»£ååªè½ä»é¶è°è¯</li>
-<li>å¤äººåä½æ¶åä¸è½åè¢«åå¤éé </li>
-</ul>
-<p>Skill æ ååªå®ä¹äº"è½åçè½½ä½"ââ<strong>å¦ä½çæãå¦ä½éåãå¦ä½æç»­æ¹è¿</strong>ï¼ä¾ç¶æ¯ç©ºç½ã</p>
-<p><strong>SkillNexus å¡«è¡¥äºè¿ä¸ªç©ºç½ã</strong></p>
-<hr>
-<h2 id="çæ­£çé®é¢">çæ­£çé®é¢</h2>
-<p>éç AI å·¥å·æ®åï¼å¼åèç§¯ç´¯ç Skill è¶æ¥è¶å¤ï¼ä½é¢ä¸´å ä¸ªå±åå°å¢ï¼</p>
-<p><strong>åå®ä¸ç¥éå¥½ä¸å¥½</strong>ââé ä¸»è§æåï¼æ²¡æéåæ°æ®ãä¸ä¸ª Skill å¨å¸¸è§ä»»å¡ä¸è¡¨ç°ä¸éï¼å¨è¾¹çæåµä¸å¯è½å®å¨å¤±æï¼ä½ä½ ä¸ç¥éã</p>
-<p><strong>è¿åé ç</strong>ââæ¹äºä¸çï¼æè§"å·®ä¸å¤"ï¼ä½ä¸ç¥éåªä¸ªç»´åº¦åå¥½äºãåªä¸ªéæ­¥äºãæ²¡æå¯¹æ¯æ°æ®ï¼ä¼åé ç´è§ã</p>
-<p><strong>æ¨¡åæ¢ä»£åææå¤±æ</strong>ââClaude åçº§ï¼åæ¥è°å¥½ç Skill å¯è½ææåå·®ï¼ä½ çè³å¯è§ä¸å°ã</p>
-<p><strong>éå¤é è½®å­</strong>ââå¢ééä¸ä¸ªäººåèªç»´æ¤åè½å ä¹ç¸åç code-review Skillï¼è°ä¹ä¸ç¥éåªä¸ªæå¥½ã</p>
-<p>è¿ä¸æ¯ä¸ªäººç®¡çè½åçé®é¢ãæ¯ <strong>Skill å¼åæ¬èº«ç¼ºå°åºç¡è®¾æ½</strong>ã</p>
-<hr>
-<h2 id="skillnexusskill-çå¨çå½å¨æå¹³å°">SkillNexusï¼Skill çå¨çå½å¨æå¹³å°</h2>
-<p>SkillNexus æ¯ä¸æ¬¾æ¡é¢åºç¨ï¼Mac / Windowsï¼ï¼æ Skill ä»çæå°è¿åçå®æ´é¾è·¯æ¶è¿ä¸ä¸ªå·¥å·ï¼</p>
-<pre><code>Homeï¼ç®¡çï¼â Studioï¼çæï¼â TestCaseï¼ç¨ä¾ï¼â Evalï¼è¯æµï¼â Evoï¼è¿åï¼â Trendingï¼æ¦åï¼
-</code></pre>
-<p>æ¯ä¸æ­¥é½ä¸æ¯å­¤ç«åè½ï¼èæ¯æ°æ®æµè½¬çèç¹ï¼Studio çæç Skill è¿å¥ Home ç®¡çï¼TestCase ä¸º Skill å»ºç«æ°æ®éï¼Eval äº§åºè¯åï¼Evo æ¶è´¹è¯åäº§åºè¿åçæ¬ï¼Trending ä»åå²è¯åä¸­èåæè¡ââ<strong>å½¢æå®æ´çè½åå¹è²é­ç¯</strong>ã</p>
-<p><img src="https://img2024.cnblogs.com/blog/137896/202605/137896-20260503094819196-666528321.png" alt="image" loading="lazy"></p>
-<hr>
-<h3 id="studio6-ç§æ¹å¼çæ-skill">Studioï¼6 ç§æ¹å¼çæ Skill</h3>
-<p>ä¸ç¥éæä¹å Skillï¼Studio ç»äºä½  6 æ¡è·¯ï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">æ¨¡å¼</th>
-<th style="text-align: left">è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><strong>æè¿°çæ</strong></td>
-<td style="text-align: left">ç¨èªç¶è¯­è¨è¯´æ¸æ¥éæ±ï¼AI çæå®æ´ Skill</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>ç¤ºä¾å½çº³</strong></td>
-<td style="text-align: left">æä¾å ç» Input/Output æ ·æ¬ï¼AI ä»ä¸­å½çº³è¡ä¸ºè§å</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>å¯¹è¯æç¼</strong></td>
-<td style="text-align: left">æåå²å¯¹è¯ç²è´´è¿æ¥ï¼æ"è°æ³"åºåæ Skill</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>ææ¡£æç¼</strong></td>
-<td style="text-align: left">ä¸ä¼  PDFãMarkdown æ TXTï¼ä»ææ¯è§èãSOP ä¸­æç¼</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>æå¨ç¼è¾</strong></td>
-<td style="text-align: left">ç´æ¥åæç²è´´å·²æåå®¹</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Agent è®¾è®¡</strong></td>
-<td style="text-align: left">æå»ºå·¥å·è°ç¨å Agent Skill</td>
-</tr>
-</tbody>
-</table>
-<p>æ¯ç§æ¨¡å¼çæåé½æ<strong>å®æ¶ 5D è´¨éé¢è¯å</strong>ï¼å®è£åå°±ç¥éè¿ä¸ª Skill å¤§æ¦å¨ä»ä¹æ°´å¹³ã</p>
-<p><img src="https://img2024.cnblogs.com/blog/137896/202605/137896-20260503094837864-201396197.png" alt="image" loading="lazy"></p>
-<hr>
-<h3 id="eval8-ä¸ªç»´åº¦éåå¥½ä¸å¥½">Evalï¼8 ä¸ªç»´åº¦ï¼éå"å¥½ä¸å¥½"</h3>
-<p>æè§å¥½ç¨åççå¥½ç¨ï¼å·®çæ¯æ°æ®ã</p>
-<blockquote>
-<p><strong>è¿æ¯ SkillNexus ææ ¸å¿çææ¯åæ°</strong>ï¼ä¹æ¯è®©"æè§è¿è¡"åæ"æ°æ®è¯´è¯"çå³é®ã</p>
-</blockquote>
-<p>è¯æµç»´åº¦åä¸ºä¸¤ç»ï¼</p>
-<p><strong>G ç³»åï¼ä»»å¡è´¨éï¼</strong>ï¼è¡¡é Skill äº§åºçç»æå¥½ä¸å¥½</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">ç»´åº¦</th>
-<th style="text-align: left">å«ä¹</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left">G1 Â· Correctness</td>
-<td style="text-align: left">è¾åºæ¯å¦æ­£ç¡®å®æä»»å¡ç®æ </td>
-</tr>
-<tr>
-<td style="text-align: left">G2 Â· Instruction Following</td>
-<td style="text-align: left">æ¯å¦ä¸¥æ ¼éµå¾ªæ ¼å¼åçº¦æ</td>
-</tr>
-<tr>
-<td style="text-align: left">G3 Â· Safety</td>
-<td style="text-align: left">è¾åºæ¯å¦å®å¨ãä¸­ç«ãæ å®³</td>
-</tr>
-<tr>
-<td style="text-align: left">G4 Â· Completeness</td>
-<td style="text-align: left">æ¯å¦æ¶µçææå¿è¦åå®¹</td>
-</tr>
-<tr>
-<td style="text-align: left">G5 Â· Robustness</td>
-<td style="text-align: left">å¯¹è¾¹ç/æ¨¡ç³è¾å¥çé²æ£æ§</td>
-</tr>
-</tbody>
-</table>
-<p><strong>S ç³»åï¼Skill è´¨éï¼</strong>ï¼è¡¡é Skill æ¬èº«åå¾å¥½ä¸å¥½</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">ç»´åº¦</th>
-<th style="text-align: left">å«ä¹</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left">S1 Â· Executability</td>
-<td style="text-align: left">æä»¤æ¯å¦æ¸æ°å¯æä½</td>
-</tr>
-<tr>
-<td style="text-align: left">S2 Â· Cost Awareness</td>
-<td style="text-align: left">è¾åºæ¯å¦ç®æ´ï¼é¿å token æµªè´¹</td>
-</tr>
-<tr>
-<td style="text-align: left">S3 Â· Maintainability</td>
-<td style="text-align: left">ç»ææ¯å¦æ¸æ°æç»´æ¤</td>
-</tr>
-</tbody>
-</table>
-<p>8 ä¸ªç»´åº¦éï¼</p>
-<ul>
-<li>G ç³»åè½åè¯ä½ "Skill ææ²¡æåå¯¹äº"</li>
-<li>S ç³»åè½åè¯ä½ "Skill ææ²¡ææäºåå¥½"</li>
-<li><strong>ä¸¤èçåç¦»è®¾è®¡æ¯æ ¸å¿æ´å¯</strong>ï¼ä¸ä¸ª Skill å¯è½ä»»å¡æåçé«ä½ token èè´¹æäººï¼ä¹å¯è½æä»¤æ¨¡ç³ä½ç¢°å·§è·å¯¹äº</li>
-</ul>
-<p>è¯æµæ¯æä¸ç§æ¨¡å¼ï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">æ¨¡å¼</th>
-<th style="text-align: left">è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><strong>åæ¬¡è¯æµ</strong></td>
-<td style="text-align: left">å¯¹å½åçæ¬åºå</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>å¯¹æ¯æ¨¡å¼</strong></td>
-<td style="text-align: left">A vs B çæ¬å¹¶æå¯è§åå·®å¼ï¼ç¡®è®¤è¿åæ¯å¦ææ</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>ä¸æ¡ä»¶åºçº¿</strong></td>
-<td style="text-align: left">æ  Skill ç» vs å½åçæ¬ vs AI çæçï¼éå"è£ä¸è¿ä¸ª Skill å°åºå¢çäºå¤å°"</td>
-</tr>
-</tbody>
-</table>
-<p>æ¯æ¬¡è¯æµé½çä¸åå²è®°å½ï¼é·è¾¾å¾ãè¶å¿æçº¿ãç­åå¾å¨é¨å¯è§åã</p>
-<p><img src="https://img2024.cnblogs.com/blog/137896/202605/137896-20260503094901664-1046408222.png" alt="image" loading="lazy"><br>
-<img src="https://img2024.cnblogs.com/blog/137896/202605/137896-20260503094912023-362395227.png" alt="image" loading="lazy"><br>
-<img src="https://img2024.cnblogs.com/blog/137896/202605/137896-20260503094922483-203194254.png" alt="image" loading="lazy"></p>
-<hr>
-<h3 id="evoè®©-skill-èªå¨åå¥½">Evoï¼è®© Skill èªå¨åå¥½</h3>
-<p>è¯æµåºäºåï¼åç° Skill æé®é¢ä¹åå¢ï¼</p>
-<p>SkillNexus åç½® 8 ç§è¿åç­ç¥ï¼è¦çä»äº¤äºå¼å¾®è°å°å¨èªå¨è¿­ä»£çå¨åºæ¯ã</p>
-<p><strong>Studio æµå¼è¿åï¼å®æ¶å¯è§ï¼</strong></p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">ç­ç¥</th>
-<th style="text-align: left">æ ¸å¿æè·¯</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><code>evidence</code></td>
-<td style="text-align: left">å¤ç§ææ¯å¼ä¿®å¤ââæè¯æµä½åæ¡ç®ä½ä¸ºè¯æ®ï¼ç²¾åå®ä½é®é¢å¹¶ä¿®å¤</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>strategy</code></td>
-<td style="text-align: left">ç­ç¥ç©éµââç¨æ·æå®ä¼åç®æ ï¼å¦"æå G1+S2"ï¼ï¼AI ç»åºéå¯¹æ§æ¹è¿æ¹æ¡</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>capability</code></td>
-<td style="text-align: left">è½åæç¥ç¼è¯ââåæ Skill å¯¹ AI æ§è¡è½åçè¦æ±ï¼éä½é¨æ§</td>
-</tr>
-</tbody>
-</table>
-<p><strong>èªå¨å SDK å¼æï¼åå°æ¹éï¼</strong></p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">å¼æ</th>
-<th style="text-align: left">æ ¸å¿æè·¯</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><strong>EvoSkill</strong></td>
-<td style="text-align: left">æå·®æ ·æ¬é©±å¨ï¼æ¾åºä½åç¨ä¾éå¯¹æ§æ¹è¿ï¼å¤è½®è¿­ä»£æ¶æ</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>CoEvoSkill</strong></td>
-<td style="text-align: left">çæå¨-éªè¯å¨å¾ªç¯ï¼çææ¹è¿æ¹æ¡ + å¯¹ææ§æµè¯éªè¯ï¼ç¸äºåå¼</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>SkillX</strong></td>
-<td style="text-align: left">æåæ¨¡å¼æåï¼ä»é«ååå²ä¸­å½çº³è§å¾ï¼ç¼ç è¿ Skill æ­£æ</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>SkillClaw</strong></td>
-<td style="text-align: left">éä½å¤±è´¥åæï¼è·¨ä¼è¯èç±»å¤±è´¥æ¨¡å¼ï¼æ¾ç»ææ§ç¼ºé·</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>SkillMOO</strong></td>
-<td style="text-align: left">å¤ç®æ  Pareto ä¼åï¼å¨è´¨éä¸ token æçä¹é´æ¾æä¼è§£é</td>
-</tr>
-</tbody>
-</table>
-<p><img src="https://img2024.cnblogs.com/blog/137896/202605/137896-20260503094942962-893104815.png" alt="image" loading="lazy"><br>
-<img src="https://img2024.cnblogs.com/blog/137896/202605/137896-20260503094952993-778663389.png" alt="image" loading="lazy"></p>
-<hr>
-<h3 id="trendingä½ ç-skill-èµäº§å°å¾">Trendingï¼ä½ ç Skill èµäº§å°å¾</h3>
-<p>åºäºææåå²è¯æµæ°æ®ï¼Trending æ 8 ä¸ªç»´åº¦å®æ¶æåââåªä¸ª Skill çæ­£å¨ç¨ãçæ­£å¥½ç¨ï¼æ°æ®è¯´è¯ã</p>
-<p><img src="https://img2024.cnblogs.com/blog/137896/202605/137896-20260503095011572-1277751554.png" alt="image" loading="lazy"><br>
-<img src="https://img2024.cnblogs.com/blog/137896/202605/137896-20260503095102953-818008735.png" alt="image" loading="lazy"></p>
-<hr>
-<h2 id="ä¸ºä»ä¹æ¯æ¡é¢åºç¨">ä¸ºä»ä¹æ¯æ¡é¢åºç¨</h2>
-<p><strong>ä½ ç Skill æä»¶å API Key é½æ¯æ¬å°èµäº§ï¼ä¸åºè¯¥ç»è¿ä»»ä½ç¬¬ä¸æ¹æå¡å¨ã</strong></p>
-<ul>
-<li>Skill æä»¶å­å¨ <code>~/.claude/skills/</code>ï¼ä¸ Claude Code ç´æ¥å±äº«ï¼é¶è¿ç§»ææ¬</li>
-<li>API Key åªå¨ä¸»è¿ç¨åå­ä¸­å­å¨ï¼æ¸²æè¿ç¨æ¿ä¸å°</li>
-<li>æ¯ææ¬å° Ollamaï¼å®å¨ç¦»çº¿å¯ç¨</li>
-<li>è¯æµä»»å¡ï¼Shell å½ä»¤æ§è¡ï¼éè¦è®¿é®æ¬å°ç¯å¢</li>
-</ul>
-<h3 id="ææ¯æ ">ææ¯æ </h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">å±</th>
-<th style="text-align: left">éæ©</th>
-<th style="text-align: left">çç±</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left">æ¡é¢æ¡æ¶</td>
-<td style="text-align: left">Electron 31 + electron-vite 2.3</td>
-<td style="text-align: left">è·¨å¹³å°ãåçæä»¶è®¿é®ãIPC å®å¨éç¦»</td>
-</tr>
-<tr>
-<td style="text-align: left">åç«¯</td>
-<td style="text-align: left">React 18 + TypeScript 5.5</td>
-<td style="text-align: left">æµå¼æ¸²æï¼Streaming UIï¼ãç±»åå®å¨</td>
-</tr>
-<tr>
-<td style="text-align: left">ä¸å¡å­å¨</td>
-<td style="text-align: left">better-sqlite3 11</td>
-<td style="text-align: left">é¶ç½ç»å»¶è¿ãäºå¡å®æ´æ§ãè¿ååå²æä¹å</td>
-</tr>
-<tr>
-<td style="text-align: left">éç½®å­å¨</td>
-<td style="text-align: left">electron-store 8ï¼å å¯ï¼</td>
-<td style="text-align: left">API Key å®å¨ãè·¨éå¯æä¹</td>
-</tr>
-<tr>
-<td style="text-align: left">AI SDK</td>
-<td style="text-align: left">@anthropic-ai/sdk 0.39</td>
-<td style="text-align: left">æ¯ææµå¼è¾åºï¼via baseURL å¼å®¹ 13+ Provider</td>
-</tr>
-<tr>
-<td style="text-align: left">æµè¯</td>
-<td style="text-align: left">Vitest 2ï¼693 testsï¼38 suitesï¼</td>
-<td style="text-align: left">çº¯é»è¾å±å¿«éæµè¯ï¼æ  Electron ä¾èµ</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="å¼æºç°å¨å¯ç¨">å¼æºï¼ç°å¨å¯ç¨</h2>
-<p>SkillNexus ä»¥ <strong>Apache 2.0</strong> åè®®å¼æºï¼æ¯æ macOS å Windowsã</p>
-<pre><code class="language-bash">git clone https://github.com/skyseraph/SkillNexus.git
-cd SkillNexus
-npm install &amp;&amp; npm run rebuild
-npm run dev
-</code></pre>
-<p>å¦æä½ å¨ç¨ Claude CodeãCursor æä»»ä½æ¯æ Skill æ åç AI å·¥å·ï¼SkillNexus å¯ä»¥ç´æ¥æ«æå¯¼å¥ä½ ç°æç Skill ç®å½ï¼5 åéåå®æç¬¬ä¸æ¬¡è¯æµã</p>
-<p>æå´è¶£åä¸åæµï¼æèææ³æ³æ³äº¤æµï¼æ¬¢è¿çè¨æç§ä¿¡ã</p>
-<hr>
-<h2 id="ç³»åæç« ">ç³»åæç« </h2>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">#</th>
-<th style="text-align: left">æç« </th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left">01</td>
-<td style="text-align: left"><a href="https://skyseraph.github.io/series/skill-nexus/2026/01-why-skill-nexus" target="_blank" rel="noopener nofollow">ä½ ç Skill ç®å½ï¼æ­£å¨åæå±å±±</a></td>
-</tr>
-<tr>
-<td style="text-align: left">02</td>
-<td style="text-align: left"><a href="https://skyseraph.github.io/series/skill-nexus/2026/02-quickstart" target="_blank" rel="noopener nofollow">5 åéå®æç¬¬ä¸æ¬¡ Skill è¯æµ</a></td>
-</tr>
-<tr>
-<td style="text-align: left">03</td>
-<td style="text-align: left"><a href="https://skyseraph.github.io/series/skill-nexus/2026/03-studio" target="_blank" rel="noopener nofollow">ä»ä¸è¡æè¿°å°å¯ç¨ SkillââStudio ç 5 ç§åä½æ¨¡å¼</a></td>
-</tr>
-<tr>
-<td style="text-align: left">04</td>
-<td style="text-align: left"><a href="https://skyseraph.github.io/series/skill-nexus/2026/04-eval" target="_blank" rel="noopener nofollow">8 ç»´åº¦è¯æµæ¡æ¶ï¼è®©"æè§è¿è¡"åææ°æ®</a></td>
-</tr>
-<tr>
-<td style="text-align: left">05</td>
-<td style="text-align: left"><a href="https://skyseraph.github.io/series/skill-nexus/2026/05-evo" target="_blank" rel="noopener nofollow">è¿åå¼æï¼è®© Skill èªå¨åå¥½</a></td>
-</tr>
-<tr>
-<td style="text-align: left">06</td>
-<td style="text-align: left"><a href="https://skyseraph.github.io/series/skill-nexus/2026/06-trending" target="_blank" rel="noopener nofollow">Trending æ¦åï¼ä½ ç Skill èµäº§å°å¾</a></td>
-</tr>
-<tr>
-<td style="text-align: left">07</td>
-<td style="text-align: left"><a href="https://skyseraph.github.io/series/skill-nexus/2026/07-architecture" target="_blank" rel="noopener nofollow">ææ¯æ¶æï¼Electron åè¿ç¨ + é¶ä¾èµè¿å SDK</a></td>
-</tr>
-<tr>
-<td style="text-align: left">08</td>
-<td style="text-align: left"><a href="https://skyseraph.github.io/series/skill-nexus/2026/08-roadmap" target="_blank" rel="noopener nofollow">ç°ç¶ä¸è·¯çº¿å¾ï¼SkillNexus çä¸ä¸æ­¥</a></td>
-</tr>
-<tr>
-<td style="text-align: left">09</td>
-<td style="text-align: left"><a href="https://skyseraph.github.io/series/skill-nexus/2026/09-offline-report" target="_blank" rel="noopener nofollow">è¯æµæ¥åä¸åªæ¯çå®å°±ç®ââç¦»çº¿æ¥åç³»ç»</a></td>
-</tr>
-<tr>
-<td style="text-align: left">10</td>
-<td style="text-align: left"><a href="https://skyseraph.github.io/series/skill-nexus/2026/10-visualization" target="_blank" rel="noopener nofollow">å¯è§åè®¾è®¡ï¼ä¸ºä»ä¹ Skill è¯æµéè¦ 6 ç§å¾è¡¨</a></td>
-</tr>
-</tbody>
-</table>
-<hr>
-<p><strong>è®© Skill ä»ãå­æè§ãåæãææ°æ®ãï¼ä»ãå æä»¶ãåæãæçå½ãã</strong></p>
-<p><em>SkillNexus â è®©è½åå¯çæãå¯éåãå¯ç®¡çãå¯æé¿</em></p>
-<p><img src="https://img2024.cnblogs.com/blog/137896/202605/137896-20260502131529523-237688711.png" alt="image" loading="lazy"></p>
-
-
-</div>
-<div id="MySignature" role="contentinfo">
-    <p>æ¬ææ¥èªåå®¢å­ï¼ä½èï¼<a href="https://www.cnblogs.com/skyseraph/" target="_blank">SkySeraph</a>ï¼è½¬è½½è¯·æ³¨æåæé¾æ¥ï¼<a href="https://www.cnblogs.com/skyseraph/p/19966076" target="_blank">https://www.cnblogs.com/skyseraph/p/19966076</a></p>
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.0125" data-date-updated="2026-05-03 09:51">2026-05-03 09:33</span>&nbsp;
-<a href="https://www.cnblogs.com/skyseraph">SkySeraph</a>&nbsp;
-éè¯»(<span id="post_view_count">79</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19966076);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fskyseraph%2Fp%2F19966076&amp;targetId=19966076&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ Graphify-DotNetï¼AI é©±å¨ç .NET ä»£ç ç¥è¯å¾è°±æå»ºå·¥å· ]]></title>
-    <link>https://www.cnblogs.com/shanyou/p/19966996/graphify-dotnet</link>
-    <guid>7151f76655bf52905e46d00590a6fe72</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/shanyou/p/19966996/graphify-dotnet" title="åå¸äº 2026-05-02 22:58">
-    <span role="heading" aria-level="2">Graphify-DotNetï¼AI é©±å¨ç .NET ä»£ç ç¥è¯å¾è°±æå»ºå·¥å·</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                    <div id="cnblogs_post_description" style="display: none">
-        
-        ä»ä»»æä»£ç åºæå»º AI é©±å¨çç¥è¯å¾è°±ï¼åç°ä½ æªæ¾ç¥æçç»æï¼ãè¿ä¸æè¿°ä¸­å®å¨æ²¡ææåä»£ç çæåè½ï¼èæ¯èç¦äºç»æçè§£ä¸ç¥è¯åç°ã
-    </div>
-<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h2 id="1-é¡¹ç®å®ä½ä¸æ ¸å¿è½åè¾¨æ">1. é¡¹ç®å®ä½ä¸æ ¸å¿è½åè¾¨æ</h2>
-<h3 id="11-é¡¹ç®æ¬è´¨æ¾æ¸">1.1 é¡¹ç®æ¬è´¨æ¾æ¸</h3>
-<h4 id="111-ä»£ç åæå·¥å·èéä»£ç çæå¨">1.1.1 ä»£ç åæå·¥å·èéä»£ç çæå¨</h4>
-<p><strong><code>graphify-dotnet</code> æ¬è´¨ä¸æ¯ä¸æ¬¾ä»£ç åæä¸ç¥è¯å¾è°±æå»ºå·¥å·ï¼èéç´æ¥éè¿èªç¶è¯­è¨çæ .NET ä»£ç çä»£ç çæå¨</strong>ãä»é¡¹ç®æè¿°æ¥çï¼å¶æ ¸å¿å®ä½è¢«æ¸æ°å°è¡¨è¿°ä¸ºï¼"Build AI-powered knowledge graphs from any codebase. Understand structure you didn't know was there."ï¼ä»ä»»æä»£ç åºæå»º AI é©±å¨çç¥è¯å¾è°±ï¼åç°ä½ æªæ¾ç¥æçç»æï¼ãè¿ä¸æè¿°ä¸­å®å¨æ²¡ææåä»£ç çæåè½ï¼èæ¯èç¦äº<strong>ç»æçè§£</strong>ä¸<strong>ç¥è¯åç°</strong>ãé¡¹ç®çå¤é¶æ®µæµæ°´çº¿è®¾è®¡ââDetectï¼æä»¶æ£æµï¼â Extractï¼ç¹å¾æåï¼â Buildï¼å¾è°±æå»ºï¼â Clusterï¼èç±»åæï¼â Analyzeï¼ç»æåæï¼â Reportï¼æ¥åçæï¼â Exportï¼ç»æå¯¼åºï¼ââè¿ä¸æ­¥å°è¯äºå¶åæå·¥å·çå±æ§ ã</p>
-<p>å·ä½èè¨ï¼<a href="https://github.com/elbruno/graphify-dotnet" target="_blank" rel="noopener nofollow"><code>graphify-dotnet</code></a> çæ ¸å¿å·¥ä½æµç¨æ¯ï¼è¯»åç¨æ·æå®çæä»¶å¤¹åå®¹ï¼åæ¬ä»£ç æä»¶ãææ¡£ãå¾çç­å¤ç§æ ¼å¼ï¼ï¼éè¿ ASTï¼æ½è±¡è¯­æ³æ ï¼è§£æå AI è¯­ä¹åææåæ¦å¿µä¸å³ç³»ï¼æå»ºå¸¦æç¤¾åºæ£æµåè½çç¥è¯å¾è°±ï¼æç»å¯¼åºä¸ºäº¤äºå¼å¯è§åçé¢æå¤ç§ç»æåæ°æ®æ ¼å¼ ãæ´ä¸ªæµç¨çäº§åºç©æ¯<strong>å¯¹ç°æä»£ç ç»æçè®¤ç¥å¢å¼º</strong>ï¼èé<strong>æ°çä»£ç å®ä½</strong>ãè¿ä¸ GitHub CopilotãCursor ç­ç´æ¥æä¾ä»£ç è¡¥å¨æçæåè½ç AI ç¼ç¨å©æå­å¨æ¬è´¨åºå«ã</p>
-<p>ç¶èï¼è¿ç§"éçæå¨"çå®ä½å¹¶ä¸æå³çé¡¹ç®ä¸"èªç¶è¯­è¨çæä»£ç "å®å¨æ å³ãæ°æ°ç¸åï¼<code>graphify-dotnet</code> éè¿ä¸º AI ç¼ç¨å©ææä¾<strong>æ·±åº¦ç»æåçé¡¹ç®ä¸ä¸æ</strong>ï¼é´æ¥å°æåäºèªç¶è¯­è¨é©±å¨ä»£ç çæçè´¨éä¸å¯é æ§ãè¿ç§é´æ¥æ¯ææºå¶å°å¨åç»­ç« èè¯¦ç»å±å¼ã</p>
-<h4 id="112-ç¥è¯å¾è°±æå»ºå¨çæ ¸å¿å®ä½">1.1.2 ç¥è¯å¾è°±æå»ºå¨çæ ¸å¿å®ä½</h4>
-<p><code>graphify-dotnet</code> çæ ¸å¿å®ä½å¯ä»¥ç²¾ç¡®æ¦æ¬ä¸º<strong>"é¢åä»£ç åºçå¤æ¨¡æç¥è¯å¾è°±æå»ºå¨"</strong>ãè¿ä¸å®ä½åå«ä¸ä¸ªå³é®ç»´åº¦ï¼å¤æ¨¡æè¾å¥å¤çè½åãç¥è¯å¾è°±çå¾ç»æè¡¨å¾ãä»¥åé¢å AI å©æçå¯æ¥è¯¢æ§è®¾è®¡ã</p>
-<p><strong>å¤æ¨¡æè¾å¥å¤ç</strong>æ¯é¡¹ç®åºå«äºä¼ ç»éæåæå·¥å·çé¦è¦ç¹å¾ãæ ¹æ®å®æ¹ææ¡£ï¼<code>graphify-dotnet</code> æ¯æåç±»æä»¶ç±»åçè§£æï¼ä»£ç æä»¶ï¼C#ãPythonãTypeScriptãJavaScriptãGoãRustãJavaãCãC++ãRubyãKotlinãScalaãPHPãSwiftãRãLuaãShellãPowerShell ç­ 18 ç§ä»¥ä¸è¯­è¨ï¼ãéç½®æä»¶ï¼YAMLãJSONãTOMLãXMLï¼ãææ¡£æä»¶ï¼MarkdownãPlain TextãreStructuredTextãAsciiDocï¼ä»¥ååªä½æä»¶ï¼PDFãPNGãJPEGãWebPãGIFãSVGï¼ãè¿ç§å¹¿æ³çå¤æ¨¡ææ¯ææå³çé¡¹ç®ä¸ä»è½çè§£ä»£ç çè¯­æ³ç»æï¼è¿è½æ´åè®¾è®¡ææ¡£ãæ¶æå¾ãä¼è®®è®°å½ç­éç»æåä¿¡æ¯ï¼æå»ºçæ­£å¨é¢çé¡¹ç®ç¥è¯è¡¨ç¤ºã</p>
-<p><strong>ç¥è¯å¾è°±çå¾ç»æè¡¨å¾</strong>æ¯é¡¹ç®çææ¯æ ¸å¿ãä¸ç®åçæä»¶æ æç¬¦å·ç´¢å¼ä¸åï¼<code>graphify-dotnet</code> æå»ºçæ¯åå«<strong>èç¹</strong>ï¼æ¦å¿µå®ä½ï¼å¦ç±»ãå½æ°ãæ¨¡åãææ¡£ä¸»é¢ï¼å<strong>è¾¹</strong>ï¼å³ç³»è¿æ¥ï¼å¦è°ç¨å³ç³»ãç»§æ¿å³ç³»ãä¾èµå³ç³»ãè¯­ä¹å³èï¼çå¾ç»æãè¿ç§å¾ç»æå¤©ç¶éåè¡¨è¾¾ä»£ç åºä¸­å¤æçç½ç¶å³ç³»ï¼èéå±çº§åçæ å½¢å³ç³»ãé¡¹ç®éç¨ NetworkX ä½ä¸ºå¾è®¡ç®åºï¼æ¯æ Louvain ç¤¾åºåç°ç®æ³è¿è¡èç±»åæï¼è½å¤è¯å«åºä»£ç åºä¸­èªç¶å½¢æçæ¨¡åè¾¹çå"ä¸å¸èç¹"ï¼god nodesï¼å³è¢«å¤§éå¶ä»ç»ä»¶ä¾èµçæ ¸å¿èç¹ï¼ã</p>
-<p><strong>é¢å AI å©æçå¯æ¥è¯¢æ§è®¾è®¡</strong>ä½ç°äºé¡¹ç®çç°ä»£ AI åçæç»´ã<code>graphify-dotnet</code> æç¡®å°èªå·±å®ä½ä¸º"AI ç¼ç å©æçæè½æä»¶"ï¼AI coding assistant skillï¼ï¼æ¯æéè¿ MCPï¼Model Context Protocolï¼åè®®ä¸ Claude CodeãGitHub Copilot CLIãVS Code Copilot Chat ç­å¤ç§ AI å©æéæ ãå¶è®¾è®¡ç®æ ä¸æ¯æ¿ä»£ AI å©æï¼èæ¯ä¸º AI å©ææä¾<strong>ç»è¿é¢è®¡ç®çç»æåé¡¹ç®ä¸ä¸æ</strong>ï¼ä½¿ AI å©æè½å¤å¨çè§£é¡¹ç®å¨å±ç»æçåºç¡ä¸ååºç¨æ·çèªç¶è¯­è¨æ¥è¯¢ã</p>
-<h4 id="113-ä¸èªç¶è¯­è¨çæä»£ç æ¦å¿µçå³èä¸åºå">1.1.3 ä¸"èªç¶è¯­è¨çæä»£ç "æ¦å¿µçå³èä¸åºå</h4>
-<p>ç¨æ·åå§é®é¢ä¸­"å¸®å©å¼åèéè¿èªç¶è¯­è¨çæ .NET ä»£ç "çè¡¨è¿°ï¼éè¦æ¾å¨å½å AI ç¼ç¨å·¥å·çæçå®æ´å¾æ¯ä¸­å ä»¥è¾¨æãä¸¥æ ¼æ¥è¯´ï¼<code>graphify-dotnet</code> æ¬èº«<strong>ä¸å·å¤</strong>èªç¶è¯­è¨å°ä»£ç çç´æ¥è½¬æ¢è½åââç¨æ·ä¸è½å <code>graphify-dotnet</code> è¾å¥"åå»ºä¸ä¸ªå¤çç¨æ·æ³¨åç Web API æ§å¶å¨"è¿æ ·çèªç¶è¯­è¨æä»¤å¹¶ææè·å¾å¯ç´æ¥ç¼è¯ç C# ä»£ç ã</p>
-<p>ç¶èï¼<code>graphify-dotnet</code> ä¸"èªç¶è¯­è¨çæä»£ç "å­å¨<strong>é´æ¥ä½éè¦çå³è</strong>ï¼è¿ç§å³èä½ç°å¨ä¸ä¸ªå±é¢ï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">å³èå±é¢</th>
-<th style="text-align: left">ä½ç¨æºå¶</th>
-<th style="text-align: left">å®éææ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><strong>ä¸ä¸æå¢å¼ºå±</strong></td>
-<td style="text-align: left">ç¥è¯å¾è°±ä½ä¸º AI å©æç"é¡¹ç®åé¨ç»´åº"ï¼æä¾å¨å±ç»æè§å¾</td>
-<td style="text-align: left">Copilot çæä»£ç æ¶çè§£æ¨¡åè¾¹çãæ ¸å¿ä¾èµãæ¢ææ¨¡å¼</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>ç»æçº¦æå±</strong></td>
-<td style="text-align: left">èç±»åæå"ä¸å¸èç¹"æ£æµè¯å«å³é®æ¶æçº¦æ</td>
-<td style="text-align: left">AI çæå¨éµå¾ªæ¢ææ¶æé£æ ¼ï¼é¿åçæå²çªä»£ç </td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>éæ±æ¾æ¸å±</strong></td>
-<td style="text-align: left">äº¤äºå¼æ¥è¯¢å¸®å©å¼åèé¢åå»ºç«ç»æè®¤ç¥</td>
-<td style="text-align: left">å¼åèç¨æ´ç²¾ç¡®çèªç¶è¯­è¨æè¿°å¼å¯¼ä»£ç çæ</td>
-</tr>
-</tbody>
-</table>
-<p><strong>ç¬¬ä¸ï¼ä¸ä¸æå¢å¼ºå±</strong>ã<code>graphify-dotnet</code> æå»ºçç¥è¯å¾è°±å¯ä»¥ä½ä¸º AI ä»£ç çæå·¥å·ï¼å¦ GitHub Copilotï¼ç"é¡¹ç®åé¨ç»´åº"ï¼ä¸ºä»£ç çææä¾æ´ä¸°å¯çé¡¹ç®ä¸ä¸æãå½å¼åèå¨ IDE ä¸­ä½¿ç¨èªç¶è¯­è¨æè¿°éæ±æ¶ï¼Copilot ç­å·¥å·å¯ä»¥éè¿ <code>graphify-dotnet</code> æä¾çç¥è¯å¾è°±çè§£é¡¹ç®çæ´ä½æ¶æãæ¨¡åè¾¹çãæ ¸å¿ä¾èµå³ç³»ï¼ä»èçææ´ç¬¦åé¡¹ç®æ¢æè®¾è®¡æ¨¡å¼åç¼ç è§èçä»£ç  ãè¿ç§"å¾è°±å¢å¼ºçä»£ç çæ"ï¼Graph-Enhanced Code Generationï¼æ¯å½å AI ç¼ç¨ç ç©¶çåæ²¿æ¹åã</p>
-<p><strong>ç¬¬äºï¼ç»æçº¦æå±</strong>ã<code>graphify-dotnet</code> çèç±»åæå"ä¸å¸èç¹"æ£æµåè½ï¼è½å¤è¯å«é¡¹ç®ä¸­çå³é®æ¶æçº¦æåæ¨¡å¼ãè¿äºç»æä¿¡æ¯å¯ä»¥ä½ä¸º<strong>é«å±è®¾è®¡æå¾</strong>çæ¾å¼è¡¨ç¤ºï¼æå¯¼ AI ä»£ç çæå¨å¨çææ°ä»£ç æ¶éµå¾ªæ¢ææ¶æé£æ ¼ï¼é¿åçæä¸ç°æè®¾è®¡ç¸å²çªçä»£ç ãä¾å¦ï¼è¥å¾è°±æ¾ç¤ºé¡¹ç®éç¨ä¸¥æ ¼ç Repository æ¨¡å¼è¿è¡æ°æ®è®¿é®ï¼AI çæå¨å¨ååº"æ·»å ç¨æ·æ°æ®è®¿é®åè½"çè¯·æ±æ¶ï¼ä¾¿æ´å¯è½çæç¬¦åè¯¥æ¨¡å¼çä»£ç ç»æã</p>
-<p><strong>ç¬¬ä¸ï¼éæ±æ¾æ¸å±</strong>ã<code>graphify-dotnet</code> çäº¤äºå¼å¯è§åçé¢åæ¥è¯¢åè½ï¼å¦ <code>query "what connects AuthService to Database?"</code>ã<code>explain "UserController"</code>ï¼ï¼è½å¤å¸®å©å¼åèå¨è¯·æ± AI çæä»£ç ä¹åï¼åæ¾æ¸èªå·±å¯¹é¡¹ç®ç»æççè§£ãè¿ç§<strong>ç»æè®¤ç¥çé¢åå»ºç«</strong>ï¼ä½¿å¾å¼åèè½å¤ç¨æ´ç²¾ç¡®çèªç¶è¯­è¨æè¿°æ¥å¼å¯¼ä»£ç çæï¼åå°å ä¸ä¸æè¯¯è§£å¯¼è´ççæéè¯¯ã</p>
-<p>ç»¼ä¸æè¿°ï¼<code>graphify-dotnet</code> ä¸"èªç¶è¯­è¨çæä»£ç "çå³ç³»æ¯<strong>èµè½èèéæ§è¡è</strong>ââå®ä¸ç´æ¥çæä»£ç ï¼ä½éè¿æä¾æ·±åº¦ç»æåçé¡¹ç®çè§£ï¼æ¾èæåäºèªç¶è¯­è¨ä»£ç çæå·¥å·çææåå¯é æ§ã</p>
-<h3 id="12-ä¸-graphifypython-ççå¯¹åºå³ç³»">1.2 ä¸ Graphifyï¼Python çï¼çå¯¹åºå³ç³»</h3>
-<h4 id="121-åæå¯¹-graphifypython-ççåè½æè¿°">1.2.1 åæå¯¹ Graphifyï¼Python çï¼çåè½æè¿°</h4>
-<p>åºäºå¯¹ Python åç Graphify å®æ¹ææ¡£  åç¸å³ææ¯æç«   çç»¼ååæï¼ Graphify ä½ä¸º AI ç¼ç å©ææè½ï¼Skillï¼çå®ä½ãåºäº Tree-sitter å LLM çåè½¨æåæ¶æãç¥è¯å¾è°±çæå»ºä¸å¯è§åæµç¨ãä»¥åå¶å¨ä»£ç çè§£åºæ¯ä¸­çåºç¨ä»·å¼ã</p>
-<p>Python ç Graphify ç± Safi Shamsi ç»´æ¤ï¼éç¨ MIT è®¸å¯è¯ï¼åºäº NetworkX + Leidenï¼graspologicï¼+ tree-sitter + vis.js ææ¯æ ï¼è¯­ä¹æ½åéè¿ ClaudeãGPT-4 ç­æ¨¡åå®æï¼è§é¢è½¬å½éè¿ faster-whisper + yt-dlp å®ç° ãå¶æ ¸å¿åè½æ¶æåæ¬ï¼å¤æ¨¡ææä»¶æ¯æï¼ä»£ç ãPDFãMarkdownãæªå¾ãå¾è¡¨ãç½æ¿ç§çï¼ãTree-sitter AST éæè§£æï¼æ¯æ 16-25 ç§ç¼ç¨è¯­è¨ï¼ãLLM è¯­ä¹æ½åï¼éè¿ Claude ç­æ¨¡åå¹¶è¡å¤çææ¡£ï¼ãLeiden/Louvain ç¤¾åºæ£æµç®æ³ãä»¥åå¤ç§å¯¼åºæ ¼å¼ï¼HTML äº¤äºå¾è°±ãObsidian ç¥è¯åºãNeo4j å¾æ°æ®åºãJSON ç­ï¼ã</p>
-<p>Python ççä¸ä¸ªå³é®ç¹æ§æ¯ <strong>71.5 åç Token åç¼©æ¯</strong>ââè¿æ¯æå¨å¤æ¬¡æ¥è¯¢åºæ¯ä¸ï¼ä½¿ç¨é¢æå»ºçç¥è¯å¾è°±æ¿ä»£éå¤æ«æåå§æä»¶æç´¯ç§¯èçç Token æ¶è ãè¿ä¸ææ å¨å¤§è§æ¨¡æ··åä»åºï¼å¦ Karpathy ä»åº + 5 ç¯è®ºæ + 4 å¼ å¾ï¼å± 52 ä¸ªæä»¶ï¼ä¸­å°¤ä¸ºæ¾è ãPython çè¿æ¯æ"Always-On"éææºå¶ï¼éè¿å AI å©æå¹³å°ç hook ç³»ç»ï¼å¦ Claude Code ç PreToolUse hookãCursor ç .cursor/rules æä»¶ï¼å¼ºå¶å¨ AI æ§è¡ Glob/Grep æä½åä¼åæ¥è¯¢å¾è°± ã</p>
-<h4 id="122-graphify-dotnet-ä½ä¸º-net-ç§»æ¤çæ¬çç»§æ¿ä¸æ¼å">1.2.2 graphify-dotnet ä½ä¸º .NET ç§»æ¤çæ¬çç»§æ¿ä¸æ¼å</h4>
-<p><code>graphify-dotnet</code> ä½ä¸º Python ç Graphify ç .NET ç§»æ¤çæ¬ï¼å¨ç»§æ¿æ ¸å¿è®¾è®¡çå¿µçåæ¶ï¼è¿è¡äºéå¯¹ .NET çæçéåºæ§æ¼åãä½è Bruno Capuano å¨åå®¢ä¸­æç¡®è¡¨è¿°äºç§»æ¤å¨æºï¼"Then I saw @socialwithaayan showcase graphify â a Python tool that does exactly this for codebases... I thought: 'This needs to exist in .NET.' So I built graphify-dotnet."</p>
-<p><strong>ç»§æ¿æ¹é¢</strong>ï¼<code>graphify-dotnet</code> ä¿çäº Python ççæ ¸å¿æµæ°´çº¿æ¶æï¼æä»¶æ£æµ â ç¹å¾æåï¼AST + AI è¯­ä¹ï¼â å¾è°±æå»º â ç¤¾åºåç°èç±» â ç»æåæ â å¤æ ¼å¼å¯¼åº ãåæ ·æ¯æå¤æ¨¡æè¾å¥ï¼ä»£ç ãææ¡£ãå¾çï¼åå¤ç§ AI æä¾åï¼Azure OpenAIãOllamaãCopilot SDKï¼ãç¥è¯å¾è°±çå¯æ¥è¯¢æ§åä¸º AI å©ææä¾ä¸ä¸æçå®ä½ä¹å¾å°å»¶ç»­ã</p>
-<p><strong>æ¼åæ¹é¢</strong>ï¼<code>graphify-dotnet</code> ä½ç°äºæ¾èç .NET çæç¹æ§ï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">ç»´åº¦</th>
-<th style="text-align: left">Python ç Graphify</th>
-<th style="text-align: left">graphify-dotnet</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><strong>è¿è¡æ¶å¹³å°</strong></td>
-<td style="text-align: left">Python 3.10+</td>
-<td style="text-align: left">.NET 10</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>ååæ¹å¼</strong></td>
-<td style="text-align: left"><code>pip install graphifyy</code></td>
-<td style="text-align: left"><code>dotnet tool install -g graphify-dotnet</code></td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>AI æ½è±¡å±</strong></td>
-<td style="text-align: left">ç´æ¥è°ç¨åæ¨¡å API</td>
-<td style="text-align: left">Microsoft.Extensions.AI ç»ä¸æ½è±¡</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>IDE éæ</strong></td>
-<td style="text-align: left">éè¿å AI å©æå¹³å°ç skill æºå¶</td>
-<td style="text-align: left">åçæ¯æ GitHub Copilot SDK</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>AST è§£æ</strong></td>
-<td style="text-align: left">tree-sitter Python ç»å®</td>
-<td style="text-align: left">tree-sitter + .NET ç¹å®è§£æ</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>éç½®ç³»ç»</strong></td>
-<td style="text-align: left">å½ä»¤è¡åæ° + ç¯å¢åé</td>
-<td style="text-align: left">äº¤äºå¼éç½®åå¯¼ï¼interactive wizardï¼</td>
-</tr>
-</tbody>
-</table>
-<p>ç¹å«å¼å¾æ³¨æçæ¯ <code>graphify-dotnet</code> å¯¹ <strong>Microsoft.Extensions.AI</strong> çéç¨ãè¿æ¯ .NET çæä¸­æ°å´ç AI æå¡æ½è±¡å±ï¼æ¨å¨ä¸º .NET åºç¨æä¾ç»ä¸ç AI æå¡æ¥å¥æ¥å£ï¼ç±»ä¼¼äºæ¥å¿è®°å½ä¸­ç <code>Microsoft.Extensions.Logging</code> æä¾èµæ³¨å¥ä¸­ç <code>Microsoft.Extensions.DependencyInjection</code>ãéè¿è¿ä¸æ½è±¡å±ï¼<code>graphify-dotnet</code> è½å¤ä»¥ä¸è´çæ¹å¼åæ¢ä¸åç AI æä¾åï¼Azure OpenAIãOllamaãCopilot SDKï¼ï¼èæ éä¿®æ¹æ ¸å¿ä»£ç  ãè¿ç§è®¾è®¡ä½ç°äº .NET çæä¸­å¸¸è§ç"æä¾èæ¨¡å¼"ï¼Provider Patternï¼å®è·µï¼æ¯ç§»æ¤çæ¬å¯¹ .NET ææ¯æåçä¸»å¨éåºã</p>
-<h4 id="123-ç¥è¯å¾è°±å¯¹ä»£ç çæçè¾å©ä½ç¨">1.2.3 ç¥è¯å¾è°±å¯¹ä»£ç çæçè¾å©ä½ç¨</h4>
-<p><strong><code>graphify-dotnet</code> çæçç¥è¯å¾è°±æ¬èº«ä¸è½ç´æ¥è½¬æ¢ä¸ºå¯æ§è¡ç .NET ä»£ç </strong>ï¼ä½å¾è°±ææ¿è½½çç»æåä»£ç è®¤ç¥ä¿¡æ¯å¯ä»¥æ¾èå¢å¼º AI ä»£ç çæå·¥å·çæ§è½ååç¡®æ§ã</p>
-<p>å·ä½èè¨ï¼ç¥è¯å¾è°±å¯¹ä»£ç çæçè¾å©ä½ç¨ä½ç°å¨ä»¥ä¸æºå¶ï¼</p>
-<p><strong>æ¶æçº¦æä¼ é</strong>ï¼å¾è°±ä¸­çç¤¾åºç»æï¼æ¨¡åè¾¹çï¼å"ä¸å¸èç¹"ï¼æ ¸å¿ä¾èµï¼ä¿¡æ¯å¯ä»¥çº¦æ AI ä»£ç çæå·¥å·çè¾åºï¼ç¡®ä¿çæçä»£ç ç¬¦åé¡¹ç®çæ¢ææ¶ææ¨¡å¼ãä¾å¦ï¼å½å¾è°±æ¾ç¤ºæé¡¹ç®éç¨ Repository æ¨¡å¼è¿è¡æ°æ®è®¿é®æ¶ï¼Copilot å¨çææ°æ®æä½ä»£ç æ¶ä¼ä¼åéµå¾ªè¿ä¸æ¨¡å¼ ã</p>
-<p><strong>ä¸ä¸æçªå£ä¼å</strong>ï¼ä¼ ç» AI å©æå¤çå¤§åä»£ç åºæ¶é¢ä¸´ä¸ä¸æçªå£æº¢åºé®é¢ï¼çº¦ 50 ä¸è¯è¯­æçä¼ ç»å¤çæ¹å¼éè¦çº¦ 67 ä¸ tokenï¼ï¼èåºäºç¥è¯å¾è°±ç BFS å­å¾æ¥è¯¢ä»éçº¦ 2,000 tokenï¼å®ç°äº <strong>71.5 ååç¼©æ¯</strong> ãè¿ç§åç¼©ä½¿ AI ä»£ç çæå·¥å·è½å¤å¨æéçä¸ä¸æçªå£åè·åæ´ä¸°å¯çé¡¹ç®ç»æä¿¡æ¯ã</p>
-<p><strong>å³ç³»æ¨çå¢å¼º</strong>ï¼å¾è°±ä¸­çæ¾å¼å³ç³»ï¼foundï¼ãæ¨æ­å³ç³»ï¼inferredï¼åä¸ç¡®å®å³ç³»ï¼uncertainï¼ä¸çº§ç½®ä¿¡åº¦æ æ³¨ ï¼å¸®å© AI å·¥å·çè§£ä»£ç åç´ é´çä¾èµå¼ºåº¦ï¼é¿åå¨ä»£ç çæä¸­å¼å¥ä¸åççè¦åã</p>
-<p>å æ­¤ï¼"ç»åºå¾æ¥å°±è½çæä»£ç "çåç¡®ææ¯è§£è¯»åºä¸ºï¼<strong>ç»åºå¾æ¥ï¼æå»ºç¥è¯å¾è°±ï¼â çè§£ç»æï¼AI å©ææ¶è´¹å¾è°±ï¼â è¾å©çæï¼å¨æ¶æçº¦æä¸çææ´ä¼ä»£ç ï¼</strong>ãè¿æ¯ä¸ä¸ªé´æ¥çãå¢å¼ºæ§çä»£ç çææ¯ææµç¨ï¼èéç´æ¥çå¾è°±å°ä»£ç çèªå¨è½¬æ¢ã</p>
-<h3 id="13-é¡¹ç®èµ·æºä¸çµææ¥æº">1.3 é¡¹ç®èµ·æºä¸çµææ¥æº</h3>
-<h4 id="131-andrej-karpathy-ç-llm-ç¥è¯åºçå¿µ">1.3.1 Andrej Karpathy ç LLM ç¥è¯åºçå¿µ</h4>
-<p><code>graphify-dotnet</code> ççè®ºæºå¤´å¯è¿½æº¯è³ Andrej Karpathyï¼å Tesla AI æ»çãOpenAI åå§æåï¼å¨ 2024 å¹´ååå¸çä¸æ¡å·ææ·±è¿å½±åçæ¨æãKarpathy æåºäºå° LLMï¼å¤§è¯­è¨æ¨¡åï¼ç¨ä½"ç¥è¯ç¼è¯å¨"ï¼knowledge compilersï¼ççå¿µï¼ä¸åäºä¼ ç»ç RAGï¼æ£ç´¢å¢å¼ºçæï¼æåéæ°æ®åºæ¹æ³ï¼ä»ä¸»å¼ å°åå§æ°æ®æºï¼è®ºæãä»£ç ãå¾åï¼ç´æ¥"ç¼è¯"ä¸ºç»æåçãå¯å¯¼èªçç¥è¯è¡¨ç¤ºââå·ä½èè¨æ¯ Markdown ç»´åºä¸å¾è§å¾çç»å ã</p>
-<p>è¿ä¸çå¿µçæ ¸å¿åæ°å¨äº<strong>èå¼è½¬æ¢</strong>ï¼ä»"æ¯æ¬¡æ¥è¯¢æ¶å¨ææ£ç´¢ç¸å³çæ®µ"è½¬å"ä¸æ¬¡æ§é¢è®¡ç®å¨å±ç¥è¯ç»æ"ãä¼ ç» RAG æ¹æ³å¨é¢å¯¹å¤§åä»£ç åºæ¶ï¼æ¯æ¬¡æ¥è¯¢é½éè¦éæ°è¿è¡ç¸ä¼¼åº¦æç´¢ãä¸ä¸ææ¼æ¥ï¼å­å¨éå¤è®¡ç®åä¸ä¸æç¢çåçé®é¢ãKarpathy æåºçç¥è¯ç¼è¯æ¹æ³åå¼ºè°<strong>åææå¥è®¡ç®èµæºæå»ºå®æ´ç¥è¯å¾è°±</strong>ï¼åç»­æ¥è¯¢ç´æ¥åºäºé¢è®¡ç®çç»æè¿è¡å¯¼èªï¼ä»èå®ç°æ´é«æãæ´è¿è´¯çç¥è¯è®¿é®ã</p>
-<p><code>graphify-dotnet</code> åå¶ä¸æ¸¸ Python ç Graphify å° Karpathy çè¿ä¸çå¿µä»ä¸ªäººç¥è¯ç®¡çé¢åè¿ç§»å°è½¯ä»¶å·¥ç¨é¢åï¼å®ç°äºå³é®çèå¼æåï¼ä»"LLM ç»´æ¤ Flat File Wiki"åçº§ä¸º"LLM + AST å±åæå»º Knowledge Graph" ãè¿ç§åçº§ä¸æ¯ç®åçå·¥ç¨å®ç°ï¼èæ¯ç¥è¯è¡¨ç¤ºå½¢å¼çæ ¹æ¬åé©ââä»çº¿æ§ææ¡£ç»æå°å¾è®¡ç®ç»æï¼ä»å³é®è¯æ£ç´¢å°å³ç³»éåï¼ä»äººå·¥ç»´æ¤é¾æ¥å°ç®æ³èªå¨åç°ç¤¾åºãGraphify éè¿ç¤¾åºæ£æµç®æ³ï¼Leiden/Louvainï¼èªå¨åç°æ¦å¿µéç¾¤ãè¯å«"å³é®èç¹"ï¼god nodesï¼åè·¨éç¾¤çæå¤è¿æ¥ï¼è¿äºæ¯çº¿æ§ç»´åºç»æé¾ä»¥åç°ç ã</p>
-<h4 id="132-ä»-python-ç-graphify-å°-net-çæçè¿ç§»å¨æº">1.3.2 ä» Python ç graphify å° .NET çæçè¿ç§»å¨æº</h4>
-<p>ä» Python ç graphify å° <code>graphify-dotnet</code> çè¿ç§»ï¼å¹¶éç®åçè¯­è¨ç§»æ¤ï¼èæ¯è´å«çå¯¹ .NET çæç¹å®éæ±çæ·±å»æ´å¯ãä½è Bruno Capuano ä½ä¸ºé¿æå¨ .NET ç¤¾åºæ´»è·çææ¯ä¸å®¶ï¼å¶åå®¢ elbruno.com æ¶µç AIã.NETãAzure ç­å¹¿æ³ä¸»é¢ï¼ï¼è¯å«åºäº Python çå¨ .NET åºæ¯ä¸çè¥å¹²ééç¼ºå£ï¼</p>
-<p><strong>ä¼ä¸éæéæ±</strong>ï¼.NET çæå¨ä¼ä¸çº§åºç¨ä¸­å æ®éè¦å°ä½ï¼è¿äºä¼ä¸ç¯å¢éå¸¸å¯¹ææ¯æ æä¸¥æ ¼çç»ä¸æ§è¦æ±ãå¼å¥ Python ä¾èµé¾ï¼Python è¿è¡æ¶ãpip åç®¡çãç¹å®çæ¬ç C åºç¼è¯ï¼å¨ Windows æå¡å¨æ Azure äºç¯å¢ä¸­å¯è½å¸¦æ¥é¢å¤çè¿ç»´å¤æåº¦ã<code>graphify-dotnet</code> ä½ä¸ºçº¯ .NET å·¥å·ï¼è½å¤ä»¥ <code>dotnet tool</code> çå¨å±å·¥å·å½¢å¼å®è£ï¼ä¸ç°æç .NET CI/CD æµæ°´çº¿ãå®¹å¨åé¨ç½²ï¼.NET è¿è¡æ¶å®¹å¨éåï¼æ ç¼éæ ã</p>
-<p><strong>IDE çæåå</strong>ï¼Visual Studio å VS Code ç C# æ©å±çææ¯ .NET å¼åçæ ¸å¿å·¥ä½æµã<code>graphify-dotnet</code> éè¿ GitHub Copilot SDK å Microsoft.Extensions.AI çéæï¼è½å¤æ´æ·±åº¦å°åµå¥å° .NET å¼åèçæçå·¥å·ç¯å¢ä¸­ ãç¸æ¯ä¹ä¸ï¼Python ç Graphify éè¦éè¿å AI å©æå¹³å°çéç¨ skill æºå¶æ¥å¥ï¼å¨ .NET ç¹å®ç IDE ä½éªä¸å­å¨é´æ¥æ§ã</p>
-<p><strong>æ§è½ä¸ç±»åå®å¨</strong>ï¼.NET 10 ä½ä¸ºææ° LTS çæ¬ï¼å¨æ§è½ï¼ç¹å«æ¯ Span<t>ãMemory<t> ç­ç°ä»£åå­ç®¡çç¹æ§ï¼å AOTï¼Ahead-of-Timeï¼ç¼è¯æ¯ææ¹é¢å·æä¼å¿ãå¯¹äºéè¦å¤çå¤§åä»£ç åºï¼æ°åä¸æä»¶è§æ¨¡ï¼çç¥è¯å¾è°±æå»ºä»»å¡ï¼.NET çè¿è¡æ¶æ§è½ç¹å¾å¯è½ä¼äº Python çè§£éæ§è¡æ¨¡åãæ­¤å¤ï¼C# çéæç±»åç³»ç»æå©äºå¨ç¼è¯ææè·å¾è°±æå»ºæµæ°´çº¿ä¸­çç±»åéè¯¯ï¼æåå·¥å·æ¬èº«çå¯é æ§ã</t></t></p>
-<h4 id="133-ä½è-el-brunobruno-capuanoçææ¯æ¿æ¯">1.3.3 ä½è El Brunoï¼Bruno Capuanoï¼çææ¯æ¿æ¯</h4>
-<p>Bruno Capuanoï¼ç½å El Brunoï¼çææ¯æ¿æ¯å¯éè¿å¶åå®¢åå®¹åé¡¹ç®éæ©è¿è¡æ¨æ­ãä½ä¸ºå¾®è½¯ MVPï¼Most Valuable Professionalï¼åæ´»è·çç¤¾åºè´¡ç®èï¼Capuano é¿æå³æ³¨ AI ææ¯ä¸ .NET çæçèåç¹ãå¶åå®¢æ ç­¾äºæ¾ç¤ºï¼AI æ¯æ ¸å¿ä¸»é¢ä¹ä¸ï¼åæ¶æ¶µç EventãNo Tiene Nombreï¼è¥¿ç­çè¯­æ­å®¢ï¼ç­å¤ååå®¹ ã</p>
-<p><code>graphify-dotnet</code> é¡¹ç®ä½ç°äº Capuano çå ä¸ªææ¯åå¥½ï¼<strong>å¾®è½¯ææ¯æ ä¼å</strong>ï¼éæ© .NET 10ãMicrosoft.Extensions.AIãAzure OpenAI ä½ä¸ºé¦ééæç®æ ï¼ã<strong>å®ç¨ä¸»ä¹ AI</strong>ï¼å³æ³¨ AI å¨å¼åèæ¥å¸¸å·¥ä½æçæåä¸­çå·ä½åºç¨ï¼èééç¨äººå·¥æºè½çå®å¤§åäºï¼ã<strong>ç¤¾åºé©±å¨åæ°</strong>ï¼å°ä¸ªäººé¡¹ç®å¼æºï¼æ¥åç¤¾åºè´¡ç®ï¼ä¸ä¸æ¸¸ Python çä¿æè¯æ§äºå¨ï¼ã</p>
-<p>å¼å¾æ³¨æçæ¯ï¼Capuano å¨åå®¢ä¸­å¦è¯ä½¿ç¨äº AI å·¥å·è¾å©æç« æ°åï¼"This blog post was created with the help of AI tools... but the geeky fun and the [coding] in C# are 100% mine"ï¼ï¼è¿ç§å¯¹ AI è¾å©çå¼æ¾æåº¦ä¸å¶å·¥å·æå»ºæ¹åå½¢æå¼åºââ<code>graphify-dotnet</code> æ¬èº«å°±æ¯ä¸º AI è¾å©å¼åæä¾åºç¡è®¾æ½çå·¥å·ã</p>
-<h2 id="2-æ¶æè®¾è®¡ä¸ææ¯å®ç°">2. æ¶æè®¾è®¡ä¸ææ¯å®ç°</h2>
-<h3 id="21-æ´ä½æ¶ææ¦è§">2.1 æ´ä½æ¶ææ¦è§</h3>
-<h4 id="211-å¤é¶æ®µæµæ°´çº¿è®¾è®¡æ¨¡å¼">2.1.1 å¤é¶æ®µæµæ°´çº¿è®¾è®¡æ¨¡å¼</h4>
-<p><code>graphify-dotnet</code> éç¨ç»å¸ç<strong>å¤é¶æ®µæµæ°´çº¿ï¼Multi-Stage Pipelineï¼</strong>æ¶ææ¨¡å¼ï¼å°ç¥è¯å¾è°±æå»ºè¿ç¨åè§£ä¸ºä¸ä¸ªé¡ºåºæ§è¡ä¸å¯ç¬ç«æ©å±çé¶æ®µãè¿ä¸è®¾è®¡æ¨¡å¼å¨æ°æ®å¤çãç¼è¯å¨æå»ºå ETLï¼æ½å-è½¬æ¢-å è½½ï¼ç³»ç»ä¸­å¹¿æ³åºç¨ï¼å¶æ ¸å¿ä¼å¿å¨äº<strong>é¶æ®µè§£è¦</strong>ã<strong>å¢éå¤ç</strong>å<strong>å¹¶è¡ä¼åæ½å</strong>ã</p>
-<p>æ ¹æ®ä½èåå®¢ä¸­åå¸çæ¶æå¾ï¼å®æ´æµæ°´çº¿å¦ä¸ ï¼</p>
-<pre><code>ââââââââââââ    ââââââââââââ    ââââââââââââ    ââââââââââââ
-â  Detect  â -&gt; â Extract  â -&gt; â  Build   â -&gt; â Cluster  â
-â  Files   â    â Features â    â  Graph   â    â (Louvain)â
-ââââââââââââ    ââââââââââââ    ââââââââââââ    ââââââââââââ
-                                                     â
-                                                     v
-ââââââââââââ    ââââââââââââ    ââââââââââââ    ââââââââââââ
-â  Export  â &lt;- â  Report  â &lt;- â Analyze  â &lt;- â Clusteredâ
-â Formats  â    âGenerator â    â  Graph   â    â  Graph   â
-ââââââââââââ    ââââââââââââ    ââââââââââââ    ââââââââââââ
-</code></pre>
-<p><strong>Scan â Extract relationships â Build the graph â Find communities â Analyze structure â Export to multiple formats.</strong></p>
-<p>è¿ä¸æµæ°´çº¿çæ¯ä¸ªé¶æ®µå·ææç¡®çè¾å¥è¾åºå¥çº¦ï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">é¶æ®µ</th>
-<th style="text-align: left">è¾å¥</th>
-<th style="text-align: left">è¾åº</th>
-<th style="text-align: left">æ ¸å¿èè´£</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><strong>Detect</strong></td>
-<td style="text-align: left">æä»¶ç³»ç»è·¯å¾</td>
-<td style="text-align: left">åç±»æä»¶æ¸åï¼ä»£ç /ææ¡£/å¾å/è§é¢ï¼</td>
-<td style="text-align: left">éå½æ«æç®å½ï¼è¯å«æä»¶ç±»åï¼è¿æ»¤å¿½ç¥æ¨¡å¼</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Extract</strong></td>
-<td style="text-align: left">åç±»æä»¶æ¸å</td>
-<td style="text-align: left">èç¹/è¾¹æåå­å¸åè¡¨</td>
-<td style="text-align: left">AST è§£æãAI è¯­ä¹åæãç¹å¾åéå</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Build</strong></td>
-<td style="text-align: left">æåå­å¸åè¡¨</td>
-<td style="text-align: left">NetworkX Graph æ DiGraph</td>
-<td style="text-align: left">å¾ç»æç»è£ãèç¹å±æ§èµå¼ãå³ç³»è¾¹å»ºç«</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Cluster</strong></td>
-<td style="text-align: left">åå§å¾</td>
-<td style="text-align: left">å¸¦ç¤¾åºæ ç­¾çèç±»å¾</td>
-<td style="text-align: left">Louvain ç¤¾åºåç°ãæ¨¡ååº¦ä¼åãèç±»è´¨éè¯ä¼°</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Analyze</strong></td>
-<td style="text-align: left">èç±»å¾</td>
-<td style="text-align: left">ç»æåææ¥å</td>
-<td style="text-align: left">ä¸å¸èç¹è¯å«ãå¼å¸¸è¿æ¥æ£æµãæ¶ææ¨¡å¼æå</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>Report/Export</strong></td>
-<td style="text-align: left">åæç»æ + å¾æ°æ®</td>
-<td style="text-align: left">å¤æ ¼å¼è¾åºæä»¶</td>
-<td style="text-align: left">HTML å¯è§åãMarkdown æ¥åãJSON/Neo4j åºåå</td>
-</tr>
-</tbody>
-</table>
-<p>æµæ°´çº¿è®¾è®¡çä¸ä¸ªå³é®ç¹æ§æ¯<strong>å¢éæ´æ°æ¯æ</strong>ã<code>graphify-dotnet</code> å®ç°äºåºäº SHA256 åå¸çç¼å­æºå¶ï¼è½å¤è·³è¿æªåæ´æä»¶çéæ°å¤çï¼ä»å¯¹æ°å¢æä¿®æ¹çæä»¶æ§è¡å¢éæååå¾è°±æ´æ° ãè¿ä¸æºå¶å¯¹äºå¤§åä»£ç åºçæç»­çæ§åºæ¯è³å³éè¦ââå¨ Watch Mode ä¸ï¼å·¥å·å¯ä»¥çè§æä»¶ç³»ç»ååï¼èªå¨è§¦åå¢éå¾è°±éå»ºï¼ä¿æç¥è¯è¡¨ç¤ºä¸ä»£ç å®éç¶æçåæ­¥ã</p>
-<h4 id="212-æ¨¡ååç»ä»¶ä¸æ©å±æ¥å£">2.1.2 æ¨¡ååç»ä»¶ä¸æ©å±æ¥å£</h4>
-<p><code>graphify-dotnet</code> çæ¨¡ååè®¾è®¡ä½ç°å¨ä¸¤ä¸ªå±é¢ï¼<strong>åé¨ç»ä»¶çèè´£åç¦»</strong>å<strong>å¤é¨æ©å±çæä»¶åæºå¶</strong>ã</p>
-<p>åé¨ç»ä»¶å±é¢ï¼é¡¹ç®éç¨ .NET ä¸­å¸¸è§ç<strong>ç±»åºï¼Class Libraryï¼+ æ§å¶å°åºç¨ï¼Console Appï¼</strong>çåå±ç»æãæ ¹æ®ä»åºç»ææ¨æ­ï¼æ ¸å¿åè½å°è£å¨å¯éç¨çç±»åºä¸­ï¼CLI å¥å£ï¼<code>Graphify.Cli</code> é¡¹ç®ï¼ä½ä¸ºè½»éçº§ééå±ãè¿ç§åå±ä½¿å¾ <code>graphify-dotnet</code> çæ ¸å¿å¼æå¯ä»¥è¢«å¶ä» .NET åºç¨ï¼å¦ ASP.NET Core Web æå¡ãWPF æ¡é¢åºç¨ãAzure Functions æ æå¡å¨å½æ°ï¼å¼ç¨ï¼å®ç°ç¥è¯å¾è°±æå»ºè½åçåµå¥å¼éæã</p>
-<p>å¤é¨æ©å±å±é¢ï¼é¡¹ç®éè¿ä»¥ä¸æºå¶å®ç°å¼æ¾æ§ï¼</p>
-<p><strong>AI æä¾åæ½è±¡</strong>ï¼<code>Microsoft.Extensions.AI</code> ä½ä¸ºç»ä¸ç AI æå¡æ¥å£ï¼åè®¸å¨ä¸ä¿®æ¹æ ¸å¿ä»£ç çæåµä¸æ¥å¥æ°ç LLM æä¾åãå½åæ¯æçæä¾ååæ¬ Azure OpenAIï¼äºæç®¡ãä¼ä¸çº§ SLAï¼ãOllamaï¼æ¬å°é¨ç½²ãéç§ä¼åï¼ãGitHub Copilot SDKï¼IDE éæãå¼åèå·¥ä½æµåçï¼ä»¥å"None"éé¡¹ï¼çº¯ AST åæï¼é¶å¤é¨ä¾èµï¼ãè¿ç§è®¾è®¡éµå¾ªäº .NET çæä¸­æçç<strong>éé¡¹æ¨¡å¼ï¼Options Patternï¼</strong>å<strong>ä¾èµæ³¨å¥ï¼Dependency Injectionï¼</strong>å®è·µã</p>
-<p><strong>å¯¼åºæ ¼å¼æä»¶</strong>ï¼é¡¹ç®æ¯æä¸ç§è¾åºæ ¼å¼ï¼æ¯ç§æ ¼å¼å¯¹åºç¬ç«çåºååæ¨¡åï¼HTML Interactiveï¼åºäº vis.js çäº¤äºå¼å¯è§åï¼ãJSONï¼NetworkX node_link_data å¼å®¹æ ¼å¼ï¼ãSVGï¼éæç¢éå¾å½¢ï¼ãNeo4j Cypherï¼å¾æ°æ®åºå¯¼å¥èæ¬ï¼ãObsidian Vaultï¼ä¸ªäººç¥è¯ç®¡çå·¥å·æ ¼å¼ï¼ãWikiï¼ç»æå Markdown ç»´åºï¼ãReportï¼çº¯ææ¬å®¡è®¡æ¥åï¼ãæ°å¢å¯¼åºæ ¼å¼åªéå®ç°ç¹å®çå¾åºååæ¥å£ï¼æ éæ¹å¨æµæ°´çº¿æ ¸å¿ã</p>
-<p><strong>è¯­è¨è§£ææ©å±</strong>ï¼AST æåå±åºäº tree-sitter è§£æå¨çæï¼æ°è¯­è¨çæ·»å éµå¾ª tree-sitter çè¯­æ³å®ä¹è§èãé¡¹ç®ææ¡£ä¸­ç <code>ARCHITECTURE.md</code> æç¡®è¯´æäºæ·»å æ°è¯­è¨çæ¨¡åèè´£åå ã</p>
-<h4 id="213-net-10-ææ¯æ éåä¾æ®">2.1.3 .NET 10 ææ¯æ éåä¾æ®</h4>
-<p><code>graphify-dotnet</code> éæ© .NET 10 ä½ä¸ºç®æ æ¡æ¶ï¼è¿ä¸å³ç­å·æå¤ç»´åº¦çææ¯èéï¼</p>
-<p><strong>é¿ææ¯æï¼LTSï¼ç­ç¥</strong>ï¼.NET 10 æ¯ç»§ .NET 8 ä¹åçä¸ä¸ä¸ª LTS çæ¬ï¼æä¾ä¸å¹´çå®æ¹æ¯æå¨æãå¯¹äºä¼ä¸çº§ä»£ç åæå·¥å·èè¨ï¼ä¾èµ LTS çæ¬è½å¤éä½çäº§ç¯å¢çåçº§é£é©ï¼ç¡®ä¿å®å¨è¡¥ä¸åå³é®ä¿®å¤çæç»­å¯ç¨æ§ã</p>
-<p><strong>æ§è½ä¼åç¹æ§</strong>ï¼.NET 10 å¼å¥äºå¤é¡¹æ§è½æ¹è¿ï¼åæ¬æ´é«æç JIT ç¼è¯å¨ãæ¹è¿ç GCï¼åå¾åæ¶å¨ï¼è¡ä¸ºãä»¥å Span<t> å Memory<t> ç­ç°ä»£åå­æ½è±¡çå¨é¢ä¼åãè¿äºç¹æ§å¯¹äºå¤çå¤§åä»£ç åºï¼å¯è½åå«æ°ç¾ä¸ä¸ª AST èç¹ï¼çç¥è¯å¾è°±æå»ºä»»å¡å·æç´æ¥ä»·å¼ã</t></t></p>
-<p><strong>AI å·¥ä½è´è½½åçæ¯æ</strong>ï¼.NET 10 å å¼ºäºå¯¹ AI/ML å·¥ä½è´è½½çæ¯æï¼åæ¬ä¸ ONNX Runtime çæ·±åº¦éæãTensor<t> åºåç±»åçå¼å¥ãä»¥å System.Numerics.Tensors å½åç©ºé´çæ©å±ãè½ç¶ <code>graphify-dotnet</code> å½åä¸»è¦ä½¿ç¨å¤é¨ LLM API è¿è¡è¯­ä¹åæï¼ä½æªæ¥è¥å¼å¥æ¬å°æ¨¡åæ¨çï¼å¦éè¿ ONNX è¿è¡è½»éçº§ä»£ç çè§£æ¨¡åï¼ï¼.NET 10 ç AI åºç¡è®¾æ½å°æä¾æåæ¯æã</t></p>
-<p><strong>C# è¯­è¨æ¼è¿</strong>ï¼C# 13ï¼é .NET 10 åå¸ï¼å¼å¥äºæ©å±ç±»åï¼extension typesï¼ãæ¹è¿çéåè¡¨è¾¾å¼ãæ´çµæ´»ç async/await æ¨¡å¼ç­ç¹æ§ï¼è½å¤ç®åå¾è°±æå»ºæµæ°´çº¿çä»£ç è¡¨è¾¾ãä¾å¦ï¼éåè¡¨è¾¾å¼ <code>[..nodes, ..edges]</code> çè¯­æ³ç³å¯ä»¥æåå¾æ°æ®æé çå¯è¯»æ§ã</p>
-<p><strong>è·¨å¹³å°ä¸è´æ§</strong>ï¼.NET 10 å¨ WindowsãmacOS å Linux ä¸æä¾ä¸è´çè¡ä¸ºä¿è¯ï¼<code>graphify-dotnet</code> ä½ä¸º CLI å·¥å·è½å¤å¨å¼åèçä¸»æµæä½ç³»ç»ä¸æ ç¼è¿è¡ï¼è¿å¯¹äºéè¦åæé¨ç½²å¨ä¸åå¹³å°ä¸ç .NET é¡¹ç®ï¼å¦éè¿ Docker å®¹å¨åç ASP.NET Core åºç¨ï¼å°¤ä¸ºéè¦ã</p>
-<h3 id="22-æ ¸å¿å¤çæµæ°´çº¿è¯¦è§£">2.2 æ ¸å¿å¤çæµæ°´çº¿è¯¦è§£</h3>
-<h4 id="221-æä»¶æ£æµä¸ç±»åè¯å«å±">2.2.1 æä»¶æ£æµä¸ç±»åè¯å«å±</h4>
-<h5 id="2211-å¤æ ¼å¼æä»¶æ¯æä»£ç ææ¡£å¾ç">2.2.1.1 å¤æ ¼å¼æä»¶æ¯æï¼ä»£ç ãææ¡£ãå¾çï¼</h5>
-<p>æä»¶æ£æµå±æ¯ <code>graphify-dotnet</code> å¤æ¨¡æè½åçå¥å£ãè¯¥å±éè¦è§£å³çæ ¸å¿é®é¢æ¯ï¼<strong>å¨ä»»æå¤æçç®å½ç»æä¸­ï¼åç¡®è¯å«æä»¶çåå®¹ç±»åï¼å¹¶å°å¶è·¯ç±å°ç¸åºçå¤çç®¡é</strong>ã</p>
-<p>é¡¹ç®éç¨<strong>æ©å±åæ å° + åå®¹åæ¢</strong>çæ··åç­ç¥ãæ©å±åæ å°æä¾ O(1) çå¿«éåç±»ï¼è¦çç»å¤§å¤æ°å¸¸è§æ ¼å¼ï¼åå®¹åæ¢ä½ä¸ºåå¤æºå¶ï¼å¤çæ æ©å±åææ©å±åè¯¯å¯¼çæåµï¼å¦æäºæå»ºäº§ç©å¯è½ä½¿ç¨éæ åæ©å±åï¼ã</p>
-<p>æ¯æçæä»¶ç±»åæåå®¹åç»ç»å¦ä¸ ï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">åå®¹å</th>
-<th style="text-align: left">å·ä½æ ¼å¼</th>
-<th style="text-align: left">å¤çç­ç¥</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><strong>ä»£ç </strong></td>
-<td style="text-align: left">C# (.cs), Python (.py), TypeScript (.ts), JavaScript (.js), Go (.go), Rust (.rs), Java (.java), C (.c), C++ (.cpp), Ruby (.rb), Kotlin (.kt), Scala (.scala), PHP (.php), Swift (.swift), R (.r), Lua (.lua), Shell (.sh), PowerShell (.ps1)</td>
-<td style="text-align: left">tree-sitter AST è§£æ + è¯­è¨ç¹å®ç¬¦å·æå</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>éç½®</strong></td>
-<td style="text-align: left">YAML (.yml/.yaml), JSON (.json), TOML (.toml), XML (.xml)</td>
-<td style="text-align: left">ç»æè§£æ + é®å¼å³ç³»æå</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>ææ¡£</strong></td>
-<td style="text-align: left">Markdown (.md), Plain Text (.txt), reStructuredText (.rst), AsciiDoc (.adoc)</td>
-<td style="text-align: left">æ é¢ç»ææå + AI è¯­ä¹æè¦</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>åªä½</strong></td>
-<td style="text-align: left">PDF (.pdf), PNG (.png), JPEG (.jpg/.jpeg), WebP (.webp), GIF (.gif), SVG (.svg)</td>
-<td style="text-align: left">OCR/å¾åçè§£ï¼AI æä¾åï¼+ åæ°æ®æå</td>
-</tr>
-</tbody>
-</table>
-<p>è¿ç§å¤æ¨¡ææ¯æè½åä½¿ <code>graphify-dotnet</code> è½å¤æå»º<strong>çæ­£ç»ä¸çé¡¹ç®ç¥è¯å¾è°±</strong>ï¼å°ä»£ç å®ç°ãéç½®å®ä¹ãè®¾è®¡ææ¡£ãæ¶æå¾ç¤ºç­å¤ç§ä¿¡æ¯æºæ´åä¸ºåä¸çç¥è¯ç»æãä¾å¦ï¼ä¸ä¸ªå¸åç .NET é¡¹ç®å¯è½åå« C# æºä»£ç ï¼ä¸å¡é»è¾ï¼ã<code>appsettings.json</code>ï¼éç½®ï¼ã<code>README.md</code>ï¼ææ¡£ï¼ãä»¥å <code>.drawio.svg</code> æ <code>.png</code> æ¶æå¾ã<code>graphify-dotnet</code> å¯ä»¥è§£æææè¿äºæä»¶ï¼æåå¶ä¸­çæ¦å¿µåå³ç³»ï¼å¹¶å¨å¾è°±ä¸­å»ºç«è·¨æä»¶ç±»åçå³èââå¦å°æ¶æå¾ä¸­ç"è®¢åæå¡"æ¨¡åä¸ C# ä»£ç ä¸­ç <code>OrderService</code> ç±»ãä»¥åææ¡£ä¸­çç¸å³è®¾è®¡è¯´æå³èèµ·æ¥ã</p>
-<p>ç¹å«å¼å¾æ³¨æçæ¯<strong>åªä½æä»¶çå¤çç­ç¥</strong>ã<code>graphify-dotnet</code> è½å¤å°æ¶æå¾ãç½æ¿ç§çãUI è®¾è®¡ç¨¿ç­è§è§åå®¹çº³å¥ç¥è¯å¾è°±ï¼è¿æ¯ä¼ ç»ä»£ç åæå·¥å·æå°å·å¤çè½åãå¤çæµç¨éå¸¸æ¶åï¼å¾åè§£ç  â è§è§ç¹å¾æåï¼éè¿ AI æä¾åçå¤æ¨¡ææ¨¡åï¼å¦ GPT-4Vï¼â ææ¬æè¿°çæ â æè¿°ææ¬ä½ä¸ºèç¹çº³å¥å¾è°±ãè¿ä½¿å¾"ç½æ¿ä¸çæ¶æèå¾"ä¸"å®éä»£ç å®ç°"è½å¤å¨åä¸ç¥è¯ç©ºé´ä¸­å»ºç«å³èï¼å¼¥åè®¾è®¡æå¾ä¸å®ç°ä¹é´çé¸¿æ²ã</p>
-<h5 id="2212-ç¼ç ä¸æ ¼å¼é¢å¤ç">2.2.1.2 ç¼ç ä¸æ ¼å¼é¢å¤ç</h5>
-<p>å¨ç±»åè¯å«ä¹åï¼æä»¶æ£æµå±è¿éå¤ç<strong>ç¼ç è§èå</strong>é®é¢ãç°ä»£ä»£ç åºä¸­æä»¶ç¼ç çå¤æ ·æ§ï¼UTF-8ãUTF-8-BOMãUTF-16ãGBKãLatin-1 ç­ï¼ä»¥åè¡å°¾ç¬¦å·®å¼ï¼LFãCRLFï¼å¯è½å¯¼è´è§£æå¤±è´¥æç¹å¾æåéè¯¯ã</p>
-<p><code>graphify-dotnet</code> çé¢å¤çç­ç¥æ¨æ­åæ¬ï¼ç¼ç èªå¨æ£æµï¼éè¿å­èåºæ è®° BOM åææç»è®¡å¯åå¼æ¹æ³ï¼ãç»ä¸è½¬æ¢ä¸º UTF-8 åé¨è¡¨ç¤ºãè¡å°¾ç¬¦è§èåï¼ç»ä¸ä¸º LF ä»¥åå°è·¨å¹³å°å·®å¼ï¼ãä»¥åæ æå­ç¬¦æ¿æ¢æå é¤ãå¯¹äºäºè¿å¶æä»¶ï¼å¦ç¼è¯åç DLLãEXEï¼ï¼æ£æµå±éè¦è¯å«å¹¶è·³è¿ï¼é¿åå°å¶è¯¯ä½ä¸ºææ¬è§£æå¯¼è´æµæ°´çº¿å´©æºã</p>
-<p>é¢å¤çå±è¿è´è´£<strong>å¿½ç¥æ¨¡å¼å¤ç</strong>ï¼æ¯æ <code>.gitignore</code> è¯­æ³çæ©å±ï¼èªå¨æé¤ <code>node_modules</code>ã<code>bin</code>ã<code>obj</code>ã<code>.git</code> ç­æå»ºäº§ç©åçæ¬æ§å¶ç®å½ãç¨æ·å¯éè¿éç½®èªå®ä¹å¿½ç¥è§åï¼ç¡®ä¿åæèç¦äºæºä»£ç èéçææä»¶ã</p>
-<h4 id="222-ç¹å¾æåå±">2.2.2 ç¹å¾æåå±</h4>
-<h5 id="2221-astæ½è±¡è¯­æ³æ è§£ææºå¶">2.2.2.1 ASTï¼æ½è±¡è¯­æ³æ ï¼è§£ææºå¶</h5>
-<p>AST è§£ææ¯ <code>graphify-dotnet</code> ç¹å¾æåç<strong>ç¡®å®æ§åºç¡</strong>ãä¸åºäºæ­£åè¡¨è¾¾å¼æææ¬æ¨¡å¼çæµå±è§£æä¸åï¼AST è§£æè½å¤åç¡®çè§£ä»£ç çè¯­æ³ç»æï¼æåå·æè¯­ä¹æä¹çå®ä½ï¼ç±»å®ä¹ãæ¹æ³ç­¾åãå±æ§å£°æãå¯¼å¥è¯­å¥ç­ï¼èéä»ä»æ¯ææ¬å¹éç»æã</p>
-<p>ä»¥ C# è¯­è¨ä¸ºä¾ï¼AST è§£æè½å¤è¯å«ï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">AST èç¹ç±»å</th>
-<th style="text-align: left">æåä¸ºå¾è°±èç¹</th>
-<th style="text-align: left">å³ç³»ç±»å</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><code>NamespaceDeclaration</code></td>
-<td style="text-align: left">å½åç©ºé´èç¹</td>
-<td style="text-align: left"><code>contains</code> â ç±»åèç¹</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>ClassDeclaration</code> / <code>RecordDeclaration</code> / <code>StructDeclaration</code></td>
-<td style="text-align: left">ç±»åèç¹</td>
-<td style="text-align: left"><code>inherits</code> â åºç±»åèç¹ï¼<code>implements</code> â æ¥å£èç¹</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>MethodDeclaration</code> / <code>ConstructorDeclaration</code></td>
-<td style="text-align: left">æ¹æ³èç¹</td>
-<td style="text-align: left"><code>belongs_to</code> â æå±ç±»åï¼<code>calls</code> â è¢«è°ç¨æ¹æ³</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>PropertyDeclaration</code> / <code>FieldDeclaration</code></td>
-<td style="text-align: left">æåèç¹</td>
-<td style="text-align: left"><code>belongs_to</code> â æå±ç±»åï¼<code>type_of</code> â ç±»åå¼ç¨</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>UsingDirective</code> / <code>ExternAliasDirective</code></td>
-<td style="text-align: left">å¯¼å¥å³ç³»è¾¹</td>
-<td style="text-align: left"><code>imports</code> â å½åç©ºé´/ç±»åèç¹</td>
-</tr>
-<tr>
-<td style="text-align: left"><code>AttributeList</code></td>
-<td style="text-align: left">ç¹æ§èç¹</td>
-<td style="text-align: left"><code>decorates</code> â ç®æ èç¹</td>
-</tr>
-</tbody>
-</table>
-<p>AST è§£æç<strong>ç¡®å®æ§</strong>æå³çï¼å¯¹äºç¸åçæºä»£ç ï¼æ è®ºè¿è¡å¤å°æ¬¡ï¼æåçç»æå³ç³»å®å¨ä¸è´ãè¿ä¸ºç¥è¯å¾è°±æä¾äºå¯é çäºå®åºç¡ï¼ä¸åç»­ AI è¯­ä¹åæç<strong>æ¦çæ§</strong>æ¨æ­å½¢æäºè¡¥ã</p>
-<h5 id="2222-tree-sitter-è§£æå¨éæ">2.2.2.2 Tree-sitter è§£æå¨éæ</h5>
-<p><code>graphify-dotnet</code> éæ© <strong>tree-sitter</strong> ä½ä¸º AST è§£æçåºç¡è®¾æ½ï¼è¿æ¯ä¸é¡¹ç»è¿æ·±æçèçææ¯å³ç­ãTree-sitter æ¯ç± GitHub å¼åçå¼æºè§£æå¨çæå·¥å·ï¼å·æä»¥ä¸æ ¸å¿ä¼å¿ï¼</p>
-<p><strong>å¢éè§£æè½å</strong>ï¼Tree-sitter è½å¤å¨æä»¶å±é¨ä¿®æ¹æ¶ï¼ä»éæ°è§£æåæ´åºåèéæ´ä¸ªæä»¶ï¼è§£ææ¶é´ä¸åæ´å¤§å°ææ¯ä¾èéæä»¶å¤§å°ãè¿å¯¹äº Watch Mode ä¸çå®æ¶å¾è°±æ´æ°è³å³éè¦ââå¼åèå¨ IDE ä¸­ä¿®æ¹ä»£ç ä¿å­åï¼<code>graphify-dotnet</code> è½å¤ä»¥æ¯«ç§çº§å»¶è¿å®æå¾è°±å¢ééå»ºã</p>
-<p><strong>éè¯¯æ¢å¤é²æ£æ§</strong>ï¼çå®ä»£ç åºä¸­ç»å¸¸å­å¨è¯­æ³ä¸å®æ´çæä»¶ï¼å¦æ­£å¨ç¼è¾ä¸­çä»£ç ãåå«é¢å¤çå¨æ¡ä»¶ç¼è¯çä»£ç ï¼ãTree-sitter çéè¯¯æ¢å¤æºå¶è½å¤åºäºé¨åè¯­æ³ä¿¡æ¯æå»ºæä½³-effort ç ASTï¼èéå¨éå°ç¬¬ä¸ä¸ªè¯­æ³éè¯¯æ¶å®å¨å¤±è´¥ãè¿ç¡®ä¿äº <code>graphify-dotnet</code> è½å¤å¤ç"æ­£å¨å¼åä¸­"ççå®é¡¹ç®ç¶æã</p>
-<p><strong>å¤è¯­è¨ç»ä¸æ¥å£</strong>ï¼Tree-sitter ä¸ºæ¯ç§è¯­è¨æä¾ä¸è´ç C APIï¼èç¹ç±»åãå­èç¹éåãæºç ä½ç½®æ å°ï¼ï¼<code>graphify-dotnet</code> å¯ä»¥éè¿ç»ä¸ç .NET P/Invoke æ C++/CLI å°è£å±æ¥å¥æææ¯æçè¯­è¨ï¼æ éä¸ºæ¯ç§è¯­è¨ç»´æ¤ç¬ç«çè§£æå¨éæä»£ç ã</p>
-<p><strong>æ´»è·çè¯­è¨çæ</strong>ï¼æªè³ 2026 å¹´ï¼tree-sitter æ¯æè¶è¿ 100 ç§ç¼ç¨è¯­è¨ï¼ä¸æ°è¯­è¨çè¯­æ³å®ä¹æç»­å¢å ã<code>graphify-dotnet</code> å½åæ¯æ 18+ ç§ä»£ç è¯­è¨ ï¼æªæ¥æ©å±ä¸»è¦ä¾èµ tree-sitter çæçå¢é¿èéèªèº«å¼åæå¥ã</p>
-<h5 id="2223-ai-è¯­ä¹åæå¢å¼º">2.2.2.3 AI è¯­ä¹åæå¢å¼º</h5>
-<p>AI è¯­ä¹åææ¯ <code>graphify-dotnet</code> ç¹å¾æåç<strong>æ¦çæ§å¢å¼ºå±</strong>ï¼ç¨äºè¡¥å AST è§£ææ æ³æè·ç<strong>è®¾è®¡æå¾</strong>å<strong>æ¦å¿µå³è</strong>ãAST è§£ææé¿åç­"ä»£ç æ¯ä»ä¹ç»æ"ï¼What is the structure?ï¼ï¼AI è¯­ä¹åæåå°è¯åç­"ä»£ç ä¸ºä»ä¹è¿æ ·è®¾è®¡"ï¼Why is it designed this way?ï¼ä»¥å"è¿æ®µä»£ç ä¸é£æ®µææ¡£æè¿°çæ¦å¿µæä½å³è"ï¼How do concepts relate across modalities?ï¼ã</p>
-<p>AI è¯­ä¹åæçå¸ååºç¨åºæ¯åæ¬ï¼</p>
-<p><strong>ææ¡£-ä»£ç å³è</strong>ï¼é¡¹ç®ä¸­ç Markdown ææ¡£å¯è½æè¿°"ç¨æ·è®¤è¯æµç¨æ¶åä»¤ççæãéªè¯åå·æ°ä¸ä¸ªæ­¥éª¤"ï¼èä»£ç ä¸­å¯¹åº <code>TokenService.Generate()</code>ã<code>AuthMiddleware.Validate()</code>ã<code>TokenService.Refresh()</code> ä¸ä¸ªæ¹æ³ãAST è§£ææ æ³å»ºç«ææ¡£æ®µè½ä¸æ¹æ³ä¹é´çå³èï¼å®ä»¬ä½äºä¸åæä»¶ï¼æ è¯­æ³å¼ç¨å³ç³»ï¼ï¼ä½ AI è¯­ä¹åæå¯ä»¥éè¿çè§£ææ¡£ææ¬åä»£ç æ³¨éçè¯­ä¹ï¼æ¨æ­åºè¿ç§è·¨æ¨¡æçæ¦å¿µæ å°ã</p>
-<p><strong>å¾åçè§£</strong>ï¼æ¶æå¾ãER å¾ãæµç¨å¾ç­è§è§ææåå«ä¸°å¯çç»æåä¿¡æ¯ãéè¿å¤æ¨¡æ AI æ¨¡åï¼å¦ GPT-4VãClaude 3 Opus çè§è§è½åï¼ï¼<code>graphify-dotnet</code> å¯ä»¥æåå¾åä¸­çå®ä½æ¡ãå³ç³»ç®­å¤´ãææ¬æ ç­¾ï¼å°å¶è½¬æ¢ä¸ºå¾è°±ä¸­çèç¹åè¾¹ï¼ä¸ä»£ç å®ç°è¿è¡äº¤åéªè¯ã</p>
-<p><strong>éå¼ä¾èµæ£æµ</strong>ï¼æäºæ¶ææ¨¡å¼ï¼å¦äºä»¶é©±å¨æ¶æä¸­çåå¸-è®¢éå³ç³»ï¼å¨ä»£ç ä¸­ä¸è¡¨ç°ä¸ºç´æ¥çç±»åå¼ç¨ï¼èæ¯éè¿å­ç¬¦ä¸²äºä»¶åãåå°è°ç¨æéç½®çº¦å®å®ç°ãAI è¯­ä¹åæå¯ä»¥éè¿çè§£äºä»¶å¤çå½æ°çå½åæ¨¡å¼ãææ¡£ä¸­çæ¶ææè¿°ï¼æ¨æ­åºè¿äºéå¼çæ¶æè¿æ¥ã</p>
-<p>AI è¯­ä¹åæç<strong>å¯éæ§</strong>æ¯ <code>graphify-dotnet</code> çéè¦è®¾è®¡ç¹å¾ãç¨æ·å¯ä»¥éæ©"None"ä½ä¸º AI æä¾åï¼æ­¤æ¶å·¥å·ä»ä¾èµ AST è§£æè¿è¡ï¼é¶å¤é¨ä¾èµãé¶ API è´¹ç¨ãé¶éç§é£é© ãè¿ç§éçº§è½åç¡®ä¿äºå·¥å·å¨åéç¯å¢ï¼å¦æ°éç½ç»ãé«ä¿å¯é¡¹ç®ï¼ä¸­çå¯ç¨æ§ã</p>
-<h4 id="223-ç¥è¯å¾è°±æå»ºå±">2.2.3 ç¥è¯å¾è°±æå»ºå±</h4>
-<h5 id="2231-æ¦å¿µèç¹æåä¸å³ç³»æ å°">2.2.3.1 æ¦å¿µèç¹æåä¸å³ç³»æ å°</h5>
-<p>ç¥è¯å¾è°±æå»ºå±å°ç¹å¾æåå±çè¾åºââç»æèç¹ãè¯­ä¹èç¹åå¶å³ç³»ââæ´åä¸º<strong>ç»ä¸çå¾æ°æ®ç»æ</strong>ãè¿ä¸å±çæ ¸å¿ä»»å¡æ¯<strong>èç¹å»é</strong>ã<strong>å³ç³»åå¹¶</strong>ãä»¥å<strong>å¾ç»æä¼å</strong>ã</p>
-<p>èç¹å»éæ¯å¾è°±è´¨éçå³é®ãåä¸æ¦å¿µå¯è½å¨å¤ä¸ªæä»¶ä¸­ä»¥ä¸åå½¢å¼åºç°ï¼å¦ <code>IUserService</code> æ¥å£ã<code>UserService</code> å®ç°ç±»ã<code>userService</code> åéå®ä¾ï¼ï¼éè¦éè¿æ ç­¾å¹éãç±»åæ¨æ­ãæ AI è¾å©çå®ä½é¾æ¥ï¼Entity Linkingï¼å°å¶å½çº¦ä¸ºåä¸èç¹ãPython ç Graphify ç <code>build.py</code> æ¨¡ååå« <code>deduplicate_by_label()</code> å½æ°ï¼ä¸é¨å¤çè¿ä¸ä»»å¡ ã<code>graphify-dotnet</code> likely å®ç°äºç±»ä¼¼çé»è¾ï¼å¹¶å¯è½å©ç¨ .NET ç LINQ åéåæä½ä¼åå»éæ§è½ã</p>
-<p>å³ç³»æ å°æ¶åå°æåçå¤ç§å³ç³»ç±»åç»ä¸ä¸ºå¾è°±è¾¹ãå³ç³»ç±»ååæ¬ä½ä¸éäºï¼è¯­æ³å³ç³»ï¼<code>imports</code>ã<code>inherits</code>ã<code>implements</code>ã<code>calls</code>ï¼ãè¯­ä¹å³ç³»ï¼<code>uses</code>ã<code>depends_on</code>ã<code>related_to</code>ï¼ãä»¥å AI æ¨æ­çå³ç³»ï¼<code>semantically_similar_to</code>ã<code>conceptually_equivalent_to</code>ï¼ãè¿äºå³ç³»è¾¹ææå¾è°±çææç»æï¼æ¯åç»­ç¤¾åºæ£æµåè·¯å¾åæçåºç¡ã</p>
-<p>ç¹å«éè¦çæ¯ï¼æ¯æ¡å³ç³»è¾¹é½è¢«æç¡®æ æ³¨ä¸ºä¸ç§ç½®ä¿¡åº¦ç¶æä¹ä¸ ï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">ç½®ä¿¡åº¦çº§å«</th>
-<th style="text-align: left">å«ä¹</th>
-<th style="text-align: left">æ¥æº</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><strong>foundï¼å·²åç°ï¼</strong></td>
-<td style="text-align: left">ç±ä»£ç è§£æç´æ¥ç¡®è®¤çå³ç³»</td>
-<td style="text-align: left">AST æåï¼ç¡®å®æ§</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>inferredï¼æ¨æ­ï¼</strong></td>
-<td style="text-align: left">ç±è¯­è¨æ¨¡åæ ¹æ®ä¸ä¸ææ¨æ­çå³ç³»</td>
-<td style="text-align: left">AI è¯­ä¹åæï¼é«ç½®ä¿¡åº¦</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>uncertainï¼ä¸ç¡®å®ï¼</strong></td>
-<td style="text-align: left">ç½®ä¿¡åº¦è¾ä½ãå­ççå³ç³»</td>
-<td style="text-align: left">AI è¯­ä¹åæï¼éäººå·¥éªè¯</td>
-</tr>
-</tbody>
-</table>
-<p>è¿ç§<strong>éæçæ æ³¨æºå¶</strong>æ¯ <code>graphify-dotnet</code> è®¾è®¡å²å­¦çéè¦ä½ç°ââ"ä¸æ¯ç»ä½ ä¸ä¸ªé»çç­æ¡ï¼èæ¯éè¿ä¸çº§ç½®ä¿¡åº¦æ ç­¾è®©ä½ çå°ç¥è¯çå¯è¿½æº¯æ§" ãå¨ AI å¹»è§ä»æ¯ä¸»è¦ææçä»å¤©ï¼è¿ç§éæåº¦å¯è½æ¯åè½æ¬èº«æ´æä»·å¼ï¼å®ä½¿å¼åèè½å¤åºåä»£ç ä¸­ç"äºå®"ä¸ AI ç"æ¨æµ"ï¼ååºæ´ææºçæ¶æå³ç­ã</p>
-<h5 id="2232-å¾æ°æ®åºç»æè®¾è®¡ä¸å­å¨">2.2.3.2 å¾æ°æ®åºç»æè®¾è®¡ä¸å­å¨</h5>
-<p><code>graphify-dotnet</code> çå¾æ°æ®ç»æè®¾è®¡å¼é¡¾<strong>åå­è®¡ç®æç</strong>å<strong>æä¹ååºååå¼å®¹æ§</strong>ãåå­ä¸­ä½¿ç¨ NetworkX çå¾å¯¹è±¡æ¨¡åï¼æ¯æ <code>Graph</code> æ åå¾å <code>DiGraph</code> æåå¾ï¼ï¼è¿æ¯ Python å¾è®¡ç®çæçäºå®æ åï¼<code>graphify-dotnet</code> éè¿ç¸åºç .NET å¾åºï¼å¯è½æ¯èªå®ä¹å®ç°æåºäº QuickGraph ç­ .NET å¾åºï¼ä¿ææ¦å¿µå¼å®¹ã</p>
-<p>å¾æ°æ®çæä¹åå­å¨éç¨<strong>å¤æ ¼å¼å¹¶è¡</strong>ç­ç¥ï¼èéä¾èµåä¸å¾æ°æ®åºï¼</p>
-<ul>
-<li>
-<p><strong>JSON æ ¼å¼</strong>ï¼ä½¿ç¨ NetworkX <code>node_link_data</code> æ¨¡å¼ï¼åå« <code>nodes</code> æ°ç»å <code>links</code> æ°ç»ï¼æ¯ä¸ªåç´ æºå¸¦å®æ´çå±æ§å­å¸ãè¿ç§æ ¼å¼å·ææä½³çäºæä½æ§ï¼å¯è¢«ä»»ä½ç¼ç¨è¯­è¨çå¾åºå è½½ï¼ä¹æ¯ä¸ Python ç Graphify äº¤æ¢æ°æ®çæ åæ ¼å¼ ã</p>
-</li>
-<li>
-<p><strong>Neo4j Cypher æ ¼å¼</strong>ï¼çæå¯ç´æ¥å¨ Neo4j å¾æ°æ®åºæ§è¡ç Cypher åå»ºèæ¬ï¼<code>CREATE (n:Label {props})</code> è¯­å¥åºåï¼ãè¿ä½¿å¾ä¼ä¸ç¨æ·è½å¤å° <code>graphify-dotnet</code> çåæç»æå¯¼å¥çäº§çº§å¾æ°æ®åºï¼ä¸ç°æç Neo4j çæï¼å¾ç®æ³åºãå¯è§åå·¥å· Bloomãæ¥è¯¢è¯­è¨ Cypherï¼æ·±åº¦éæ ã</p>
-</li>
-<li>
-<p><strong>Obsidian Vault æ ¼å¼</strong>ï¼çæ Markdown æä»¶éåï¼å©ç¨ Obsidian çååé¾æ¥è¯­æ³ï¼<code>[[WikiLink]]</code>ï¼å¨ç¬è®°è½¯ä»¶ä¸­éå»ºå¾è°±ç»æãè¿é¢åä¸ªäººå¼åèåå°åå¢éçç¥è¯ç®¡çéæ±ï¼å°ä»£ç çè§£èå¥æ¥å¸¸ç¬è®°å·¥ä½æµ ã</p>
-</li>
-</ul>
-<h4 id="224-èç±»åæå±">2.2.4 èç±»åæå±</h4>
-<h5 id="2241-louvain-ç¤¾åºåç°ç®æ³åºç¨">2.2.4.1 Louvain ç¤¾åºåç°ç®æ³åºç¨</h5>
-<p>èç±»åæå±æ¯ <code>graphify-dotnet</code> ä»"åå§å¾"å°"å¯çè§£æ¶æ"çå³é®è½¬æ¢ç¯èãé¡¹ç®éç¨ <strong>Louvain ç®æ³</strong>ï¼ç± Blondel ç­äººäº 2008 å¹´æåºï¼è¿è¡ç¤¾åºåç°ï¼è¿æ¯ä¸ç§åºäºæ¨¡ååº¦ï¼Modularityï¼ä¼åçè´ªå¿ç®æ³ï¼å¨å¤§è§æ¨¡ç½ç»ä¸­è¡¨ç°åºè²ã</p>
-<p>Louvain ç®æ³çå·¥ä½åçå¯æ¦æ¬ä¸ºä¸¤é¶æ®µè¿­ä»£ï¼</p>
-<p><strong>ç¬¬ä¸é¶æ®µï¼å±é¨ä¼åï¼</strong>ï¼æ¯ä¸ªèç¹åå§èªæä¸ä¸ªç¤¾åºãç®æ³éåææèç¹ï¼å°è¯å°æ¯ä¸ªèç¹ç§»å¨å°å¶é»å±æå¨çç¤¾åºï¼éæ©ä½¿æ¨¡ååº¦å¢çæå¤§çç§»å¨ãéå¤æ­¤è¿ç¨ç´è³æ²¡ææ¨¡ååº¦å¢çä¸ºæ­£çç§»å¨ã</p>
-<p><strong>ç¬¬äºé¶æ®µï¼å¾ç²åï¼</strong>ï¼å°ç¬¬ä¸é¶æ®µåç°çæ¯ä¸ªç¤¾åºåç¼©ä¸ºåä¸ª"è¶çº§èç¹"ï¼ç¤¾åºåé¨çè¾¹æéèåä¸ºè¶çº§èç¹çèªç¯è¾¹ï¼ç¤¾åºä¹é´çè¾¹æéèåä¸ºè¶çº§èç¹ä¹é´çè¾¹ãå¨ç²ååçå¾ä¸éæ°æ§è¡ç¬¬ä¸é¶æ®µã</p>
-<p>ä¸¤é¶æ®µè¿­ä»£ç´è³æ¨¡ååº¦ä¸åæåãLouvain ç®æ³çæ¶é´å¤æåº¦è¿ä¼¼çº¿æ§ O(n log n)ï¼è½å¤å¤çç¾ä¸èç¹è§æ¨¡çå¾è°±ï¼è¿å¯¹äºå¤§åä»£ç åºåæè³å³éè¦ã</p>
-<p>å¨ <code>graphify-dotnet</code> çåºç¨åºæ¯ä¸­ï¼Louvain ç®æ³è¯å«ç"ç¤¾åº"å¯¹åºä»£ç åºä¸­<strong>èªç¶å½¢æçæ¨¡åæå±æ¬¡</strong>ãä¾å¦ï¼ä¸ä¸ªå¸åç ASP.NET Core é¡¹ç®å¯è½è¢«èç±»ä¸ºï¼Controllers ç¤¾åºãServices ç¤¾åºãRepositories ç¤¾åºãModels/DTOs ç¤¾åºãConfiguration ç¤¾åºç­ãè¿ç§èç±»ç»æä¸å¼åèçå¿çæ¨¡åé«åº¦å»åï¼éªè¯äºç®æ³çæææ§ã</p>
-<p>Python ç Graphify çææ¯æ è¯´æä¸­æå°ä½¿ç¨ <code>graspologic</code> åºç Leiden ç®æ³å®ç° ï¼è¿æ¯ Louvain ç®æ³çæ¹è¿çæ¬ï¼å¨ç¤¾åºå¤§å°åå¸ååè¾¨çåæ°æ§å¶æ¹é¢æ´ä¼ã<code>graphify-dotnet</code> ä½ä¸ºç§»æ¤çæ¬ï¼å¯è½éç¨ç±»ä¼¼ç .NET å¾ç®æ³åºå®ç°ï¼æç´æ¥ä½¿ç¨ NetworkX çç¤¾åºåç°æ¨¡åã</p>
-<h5 id="2242-æ¨¡åè¾¹çè¯å«ä¸ä¸å¸èç¹æ£æµ">2.2.4.2 æ¨¡åè¾¹çè¯å«ä¸"ä¸å¸èç¹"æ£æµ</h5>
-<p>èç±»åæçå¦ä¸éè¦è¾åºæ¯<strong>ç»æå¼å¸¸æ£æµ</strong>ï¼ç¹å«æ¯"ä¸å¸èç¹"ï¼God Nodesï¼çè¯å«ãä¸å¸èç¹æ¯æå¨å¾ä¸­å·æå¼å¸¸é«åº¦ä¸­å¿æ§çèç¹ââå®ä»¬è¢«å¤§éå¶ä»èç¹ä¾èµæå¼ç¨ï¼æ¯ç³»ç»çå³é®æ¢çº½ã</p>
-<p><code>graphify-dotnet</code> éè¿å¤ç§ä¸­å¿æ§ææ ç»¼åè¯å«ä¸å¸èç¹ï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">ä¸­å¿æ§ææ </th>
-<th style="text-align: left">è®¡ç®æ¹å¼</th>
-<th style="text-align: left">æ¶æå«ä¹</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><strong>åº¦ä¸­å¿æ§ï¼Degree Centralityï¼</strong></td>
-<td style="text-align: left">ç´æ¥è¿æ¥æ° / æå¤§å¯è½è¿æ¥æ°</td>
-<td style="text-align: left">è¯¥èç¹ä¸å¶ä»å¤å°ç»ä»¶æç´æ¥äº¤äº</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>ä»æ°ä¸­å¿æ§ï¼Betweenness Centralityï¼</strong></td>
-<td style="text-align: left">ç»è¿è¯¥èç¹çæç­è·¯å¾æ° / æ»æç­è·¯å¾æ°</td>
-<td style="text-align: left">è¯¥èç¹å¨ä¿¡æ¯æµå¨ä¸­çæ¡¥æ¢ä½ç¨</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>ç¹å¾åéä¸­å¿æ§ï¼Eigenvector Centralityï¼</strong></td>
-<td style="text-align: left">éå½èèé»å±éè¦æ§çå æè¿æ¥æ°</td>
-<td style="text-align: left">è¯¥èç¹è¿æ¥ç"éè¦é»å±"æ°é</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>PageRank</strong></td>
-<td style="text-align: left">éæºæ¸¸èµ°ç¨³ææ¦ç</td>
-<td style="text-align: left">è¯¥èç¹å¨éæºå¯¼èªä¸­çè¢«è®¿é®æ¦ç</td>
-</tr>
-</tbody>
-</table>
-<p>ä¸å¸èç¹çè¯å«å·æéè¦çæ¶ææ²»çä»·å¼ãé«ä¸­å¿æ§èç¹éå¸¸æ¯ç³»ç»ç<strong>æ ¸å¿æ½è±¡</strong>ï¼å¦å·¥å·ç±»ãåºç¡æå¡ãéç½®ä¸­å¿ï¼ï¼ä½ä¹å¯è½æ¯<strong>æ¶æåºå¡</strong>çä¿¡å·ââ"ä¸å¸ç±»"ï¼God Classï¼è¿åäºåä¸èè´£ååï¼"ä¸å¸æ¨¡å"ï¼God Moduleï¼å¯è½å¯¼è´åæ´å½±åèå´é¾ä»¥æ§å¶ã<code>graphify-dotnet</code> å¨ <code>GRAPH_REPORT.md</code> å®¡è®¡æ¥åä¸­æ¾å¼ååºè¯å«çä¸å¸èç¹ï¼å¹¶çææ¢ç´¢æ§é®é¢å¼å¯¼ç¨æ·æ·±å¥åæï¼å¦ "<code>Client</code> ç±»å¦ä½å¨å®ç 15 ä¸ªè¿æ¥å®ä½ä¹é´è¿è¡åè°ï¼"ï¼ã</p>
-<h4 id="225-ç»æå¯¼åºå±">2.2.5 ç»æå¯¼åºå±</h4>
-<h5 id="2251-äº¤äºå¼-html-å¯è§åå¯¼åº">2.2.5.1 äº¤äºå¼ HTML å¯è§åå¯¼åº</h5>
-<p>HTML äº¤äºå¼å¯¼åºæ¯ <code>graphify-dotnet</code> æç´è§çè¾åºå½¢å¼ï¼çæ <code>graphify-out/graph.html</code> æä»¶ï¼å¯å¨ä»»ä½ç°ä»£æµè§å¨ä¸­æå¼ ãè¯¥å¯¼åºåºäº <strong>vis.js</strong> ç½ç»å¯è§ååºï¼æä¾ä»¥ä¸äº¤äºè½åï¼</p>
-<ul>
-<li><strong>èç¹ç¹å»</strong>ï¼éä¸­èç¹é«äº®ï¼æ¾ç¤ºå±æ§é¢æ¿ï¼åç§°ãç±»åãæºç ä½ç½®ãç¤¾åºå½å±ï¼</li>
-<li><strong>å³ç³»æ¢ç´¢</strong>ï¼ç¹å»èç¹åé«äº®å¶ç´æ¥é»å±ï¼æ¯æå¤çº§å±å¼</li>
-<li><strong>ç¤¾åºç­é</strong>ï¼æ Louvain èç±»ç»æè¿æ»¤æ¾ç¤ºç¹å®ç¤¾åºçå­å¾</li>
-<li><strong>æç´¢å®ä½</strong>ï¼ææ¬æç´¢å¿«éå®ä½å°ç¹å®èç¹ï¼èªå¨è°æ´è§å£</li>
-<li><strong>ç©çæ¨¡æ</strong>ï¼åå¯¼åå¸å±çå¨æè°æ´ï¼æ¯æææ½èç¹éæ°æå</li>
-<li><strong>ç¼©æ¾ä¸å¹³ç§»</strong>ï¼å¤§è§æ¨¡å¾è°±çå¹³æ»å¯¼èª</li>
-</ul>
-<p>vis.js çéæ©åºäºå¶<strong>æ§è½ä¸åè½å¹³è¡¡</strong>ââè½å¤æµçæ¸²ææ°åèç¹çå¾è°±ï¼åæ¶æä¾ä¸°å¯çäº¤äº APIãå¯¹äºæ´å¤§è§æ¨¡çå¾è°±ï¼æ°ä¸èç¹ï¼ï¼<code>graphify-dotnet</code> å¯è½éç¨åå±æ¸²æç­ç¥ï¼åå§æ¾ç¤ºç¤¾åºçº§å«çèåè§å¾ï¼ç¨æ·å±å¼ç¹å®ç¤¾åºåæå è½½è¯¦ç»èç¹ã</p>
-<h5 id="2252-neo4j-å¾æ°æ®åºæ ¼å¼æ¯æ">2.2.5.2 Neo4j å¾æ°æ®åºæ ¼å¼æ¯æ</h5>
-<p>Neo4j å¯¼åºé¢å<strong>ä¼ä¸çº§å¾æ°æ®ç®¡ç</strong>éæ±ãçæç Cypher èæ¬åå«å®æ´çèç¹åå»ºåå³ç³»åå»ºè¯­å¥ï¼å¯ç´æ¥éè¿ Neo4j Browser æ <code>cypher-shell</code> å·¥å·å¯¼å¥ ã</p>
-<p>Neo4j éæçä»·å¼å¨äºï¼</p>
-<ul>
-<li>
-<p><strong>å¤ææ¥è¯¢è½å</strong>ï¼Cypher æ¥è¯¢è¯­è¨æ¯ææ¨¡å¼å¹éãå¯åé¿åº¦è·¯å¾ãèåè®¡ç®ï¼è½å¤è¡¨è¾¾"æ¥æ¾ææé´æ¥ä¾èµ UserService ç Controller"ç­å¤æå¯¼èªéæ±ï¼è¿è¶ <code>graphify-dotnet</code> åç½®æ¥è¯¢çè¡¨è¾¾è½åã</p>
-</li>
-<li>
-<p><strong>å¾ç®æ³çæ</strong>ï¼Neo4j Graph Data Science (GDS) åºæä¾ä¸­å¿æ§ç®æ³ãç¤¾åºæ£æµãè·¯å¾åæãç¸ä¼¼åº¦è®¡ç®ç­é«çº§å¾ç®æ³ï¼å¯ä¸ <code>graphify-dotnet</code> çåºç¡åæå½¢æäºè¡¥ã</p>
-</li>
-<li>
-<p><strong>æä¹åä¸å±äº«</strong>ï¼Neo4j æ°æ®åºå¯ä½ä¸ºå¢éå±äº«çä»£ç ç¥è¯åºç¡è®¾æ½ï¼æ¯æå¤ç¨æ·å¹¶åæ¥è¯¢ãæéæ§å¶ãå¤ä»½æ¢å¤ç­ä¼ä¸çº§ç¹æ§ã</p>
-</li>
-<li>
-<p><strong>å¯è§åå·¥å·</strong>ï¼Neo4j Bloom æä¾é¢åä¸å¡ç¨æ·çæ ä»£ç å¾æ¢ç´¢çé¢ï¼éææ¯å¢éæåï¼å¦äº§åç»çãé¡¹ç®ç»çï¼ä¹è½ç´è§çè§£ä»£ç æ¶æã</p>
-</li>
-</ul>
-<h5 id="2253-json-ç»æåæ°æ®è¾åº">2.2.5.3 JSON ç»æåæ°æ®è¾åº</h5>
-<p>JSON å¯¼åºæ¯ <code>graphify-dotnet</code> ç<strong>æºå¨æ¶è´¹æ¥å£</strong>ï¼éç¨ NetworkX <code>node_link_data</code> æ åæ ¼å¼ ãå¸åç»æå¦ä¸ï¼</p>
-<pre><code class="language-json">{
-  "directed": true,
-  "multigraph": false,
-  "graph": {
-    "name": "Project Knowledge Graph",
-    "generated_by": "graphify-dotnet 1.0.0",
-    "timestamp": "2026-04-06T12:34:56Z"
-  },
-  "nodes": [
-    {
-      "id": "src/Services/AuthService.cs:15:1",
-      "label": "AuthService",
-      "type": "Class",
-      "language": "csharp",
-      "file": "src/Services/AuthService.cs",
-      "line": 15,
-      "column": 1,
-      "community": 3,
-      "centrality": 0.85
-    }
-  ],
-  "links": [
-    {
-      "source": "src/Controllers/UserController.cs:22:5",
-      "target": "src/Services/AuthService.cs:15:1",
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "line": 45
-    }
-  ]
-}
-</code></pre>
-<p>è¿ç§æ ååæ ¼å¼ä½¿å¾ <code>graphify-dotnet</code> çè¾åºè½å¤è¢«ä»»æä¸æ¸¸å·¥å·æ¶è´¹ï¼èªå®ä¹å¯è§åèæ¬ãCI/CD è´¨éé¨ç¦ãæ¶æåè§æ£æ¥å·¥å·ãä»¥åå¶ä» AI å©æçä¸ä¸æå è½½ã</p>
-<h3 id="23-ai-æä¾åéææ¶æ">2.3 AI æä¾åéææ¶æ</h3>
-<h4 id="231-microsoftextensionsai-æ½è±¡å±">2.3.1 Microsoft.Extensions.AI æ½è±¡å±</h4>
-<p><code>graphify-dotnet</code> å¯¹ <strong>Microsoft.Extensions.AI</strong> çéç¨æ¯å¶ .NET çæåçè®¾è®¡çå³é®æ å¿ãè¿æ¯å¾®è½¯å¨ .NET 9/10 æ¶ææ¨åºç AI æå¡æ½è±¡åºï¼ç®æ æ¯ä¸º .NET åºç¨æä¾ä¸ <code>Microsoft.Extensions.Logging</code>ã<code>Microsoft.Extensions.Caching.Memory</code> ç­æçæ©å±åºç±»ä¼¼ç<strong>ç»ä¸æå¡æ¥å¥æ¨¡å¼</strong>ã</p>
-<p><code>Microsoft.Extensions.AI</code> çæ ¸å¿æ½è±¡åæ¬ï¼</p>
-<ul>
-<li><code>IChatClient</code>ï¼ç»ä¸çèå¤©è¡¥å¨æ¥å£ï¼å°è£ä¸å LLM æä¾åçèå¤© API å·®å¼</li>
-<li><code>IEmbeddingGenerator</code>ï¼ææ¬åµå¥çææ¥å£ï¼ç¨äºè¯­ä¹ç¸ä¼¼åº¦è®¡ç®</li>
-<li><code>AITool</code> / <code>AIFunction</code>ï¼AI å¯è°ç¨çå·¥å·/å½æ°æ½è±¡ï¼æ¯æå½æ°è°ç¨æ¨¡å¼</li>
-</ul>
-<p><code>graphify-dotnet</code> éè¿ <code>IChatClient</code> æ¥å£æ¥å¥ LLM è¿è¡è¯­ä¹åæï¼å·ä½å®ç°ç±éç½®æ¶éæ©çæä¾åå³å®ãè¿ç§æ½è±¡çä»·å¼å¨äºï¼</p>
-<p><strong>æä¾ååæ¢é¶ä»£ç åæ´</strong>ï¼ä» Azure OpenAI åæ¢å° Ollama æ¬å°æ¨¡åï¼åªéä¿®æ¹éç½®æä»¶ï¼<code>appsettings.json</code> æç¯å¢åéï¼ï¼æ éä¿®æ¹ä»»ä½ C# ä»£ç ã</p>
-<p><strong>æµè¯ä¸æ¨¡æåå¥½</strong>ï¼ååæµè¯ä¸­å¯ä»¥æ³¨å¥ <code>IChatClient</code> ç mock å®ç°ï¼è¿åé¢è®¾çè¯­ä¹åæç»æï¼å®ç°æµæ°´çº¿æ ¸å¿é»è¾çå®å¨éç¦»æµè¯ã</p>
-<p><strong>æªæ¥å¼å®¹æ§</strong>ï¼å½æ°ç LLM æä¾ååºç°æ¶ï¼åªéå®ç° <code>IChatClient</code> æ¥å£çééå¨ï¼å³å¯è¢« <code>graphify-dotnet</code> ä½¿ç¨ï¼æ éç­å¾å®æ¹æ´æ°ã</p>
-<h4 id="232-github-copilot-sdk-éææ¨¡å¼">2.3.2 GitHub Copilot SDK éææ¨¡å¼</h4>
-<p>GitHub Copilot SDK éææ¯ <code>graphify-dotnet</code> æå· .NET çæç¹è²ç AI éæéé¡¹ ãä¸éç¨ç Azure OpenAI éæä¸åï¼Copilot SDK ä½¿ <code>graphify-dotnet</code> è½å¤ï¼</p>
-<p><strong>å©ç¨ç°æè®¢é</strong>ï¼ä¼ä¸å¼åèéå¸¸å·²æ¥æ Copilot Business æ Copilot Enterprise è®¸å¯è¯ï¼æ éé¢å¤ç³è¯· Azure OpenAI æå¡ã</p>
-<p><strong>æ·±åº¦ IDE éæ</strong>ï¼éè¿ VS Code ç Copilot Chat é¢æ¿æ Visual Studio ç Copilot åè½ï¼å®ç°å¾è°±æ¥è¯¢ä¸ç¼ç ç¯å¢çæ ç¼èåã<code>graphify-dotnet</code> æ¯æéè¿ <code>@graphify</code> æåï¼mentionï¼å¨èå¤©é¢æ¿ä¸­è°ç¨ï¼Copilot èªå¨æ§è¡å¾è°±æå»ºå¹¶å¼ç¨ç»æåç­é¡¹ç®ç»æé®é¢ã</p>
-<p><strong>MCP åè®®æ¯æ</strong>ï¼ä½ä¸º MCP æå¡å¨æ³¨åå° Copilotï¼ä½¿ Copilot Agent æ¨¡å¼è½å¤è°ç¨å¾è°±æ¥è¯¢å·¥å· ãè¿ç§åè®®åéææ¯ä¼ ç»ç API è°ç¨ææä»¶è¯»åæ´å·çµæ´»æ§åå®å¨æ§ï¼AI å©æéè¿ç»æåè¯·æ±ï¼å¦ <code>graphify/query</code>ã<code>graphify/explain</code>ã<code>graphify/path</code>ï¼è·åå¾è°±ä¿¡æ¯ï¼èéç´æ¥è®¿é®åå§æºä»£ç  ã</p>
-<h4 id="233-azure-openai-æå¡éé">2.3.3 Azure OpenAI æå¡éé</h4>
-<p>Azure OpenAI éæé¢å<strong>ä¼ä¸åè§åºæ¯</strong> ãä¸ç´æ¥è°ç¨ OpenAI API ç¸æ¯ï¼Azure OpenAI æä¾ï¼</p>
-<ul>
-<li><strong>æ°æ®é©»çä¿é</strong>ï¼ç¡®ä¿ææ¡£è¯­ä¹æè¿°çå¤çå¨æå®å°çåºåè¿è¡ï¼æ»¡è¶³ GDPRãä¸­å½ç½ç»å®å¨æ³ç­åè§è¦æ±</li>
-<li><strong>ç§æç½ç»éç¦»</strong>ï¼æ¯æèæç½ç»ï¼VNetï¼åç§æç«¯ç¹ï¼Private Endpointï¼ï¼é¿åæ°æ®ç»è¿å¬å±äºèç½</li>
-<li><strong>Azure AD è®¤è¯</strong>ï¼å©ç¨ç°æä¼ä¸èº«ä»½ä½ç³»ï¼æ éç®¡çé¢å¤ç API å¯é¥</li>
-<li><strong>æå¡çº§å«åè®®</strong>ï¼æä¾ 99.9% çæå¡çº§å«åè®®ï¼éåçäº§ç¯å¢ä¾èµ</li>
-</ul>
-<p><code>graphify-dotnet</code> éè¿ Microsoft.Extensions.AI ç Azure OpenAI ééå¨æ¥å¥è¿ä¸æå¡ï¼éç½®åæ°åæ¬ç«¯ç¹ URLãé¨ç½²åç§°ãAPI çæ¬ç­ã</p>
-<h4 id="234-ollama-æ¬å°æ¨¡åæ¯æ">2.3.4 Ollama æ¬å°æ¨¡åæ¯æ</h4>
-<p>Ollama éæä½ç°äº <code>graphify-dotnet</code> å¯¹<strong>éç§ä¼ååºæ¯</strong>å<strong>ç¦»çº¿ç¯å¢</strong>çè¦ç ãOllama æ¯ä¸ä¸ªç®åæ¬å° LLM è¿è¡ç®¡ççå·¥å·ï¼æ¯æ LlamaãMistralãCodeLlama ç­å¼æºæ¨¡åã</p>
-<p>æ¬å°æ¨¡åæ¯æçå³é®åºæ¯ï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">åºæ¯</th>
-<th style="text-align: left">çç¹</th>
-<th style="text-align: left">Ollama è§£å³æ¹æ¡</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left">éè/å»çä»£ç åæ</td>
-<td style="text-align: left">çç®¡ç¦æ­¢æºä»£ç åºå¢</td>
-<td style="text-align: left">å®å¨æ¬å°å¤çï¼é¶å¤é¨ä¼ è¾</td>
-</tr>
-<tr>
-<td style="text-align: left">ç¦»çº¿å¼åç¯å¢</td>
-<td style="text-align: left">èªç©ºãåäºãä¼ä¸åç½æ äºèç½</td>
-<td style="text-align: left">æ¬å°æ¨¡åæä¾å®æ´ AI å¢å¼º</td>
-</tr>
-<tr>
-<td style="text-align: left">ææ¬ä¼å</td>
-<td style="text-align: left">é«é¢åæäº§çå¤§é API è´¹ç¨</td>
-<td style="text-align: left">åºå®ç¡¬ä»¶ææ¬ï¼è¾¹éåæææ¬è¶è¿äºé¶</td>
-</tr>
-<tr>
-<td style="text-align: left">æ¨¡åå®å¶å</td>
-<td style="text-align: left">éè¦é¢åä¸ç¨æ¨¡å</td>
-<td style="text-align: left">æ¯æå¾®è°æ¬å°æ¨¡åééç¹å®ææ¯æ </td>
-</tr>
-</tbody>
-</table>
-<h4 id="235-å¤æä¾ååæ¢ä¸éç½®æºå¶">2.3.5 å¤æä¾ååæ¢ä¸éç½®æºå¶</h4>
-<p><code>graphify-dotnet</code> éè¿<strong>äº¤äºå¼éç½®åå¯¼</strong>ç®åå¤æä¾åç®¡ç ï¼</p>
-<pre><code>$ graphify-dotnet configure
-
-ð View current configuration
-ð§ Set up AI provider
-   ââ Azure OpenAI
-   ââ Ollama
-   ââ Copilot SDK
-   ââ None (AST-only)
-ð Set folder to analyze
-</code></pre>
-<p>éç½®æä¹åä¸º JSON æä»¶ï¼æ¯ææé¡¹ç®ãæç¯å¢çå·®å¼åéç½®ãè¿ç§è®¾è®¡æ¯æ<strong>åºæ¯ååæ¢</strong>ï¼æ¥å¸¸å¼åä½¿ç¨ Copilot SDKï¼å©ç¨ç°æè®¢éï¼ï¼ææé¡¹ç®åæ¢ Ollamaï¼å®å¨æ¬å°ï¼ï¼å¢éåä½é¡¹ç®ä½¿ç¨ Azure OpenAIï¼ä¼ä¸ç»ä¸ç®¡çï¼ã</p>
-<h2 id="3-æ ¸å¿åè½ä¸-net-çæç¹æ§">3. æ ¸å¿åè½ä¸ .NET çæç¹æ§</h2>
-<h3 id="31-å¤è¯­è¨ä»£ç è§£æè½å">3.1 å¤è¯­è¨ä»£ç è§£æè½å</h3>
-<h4 id="311-c-è¯­è¨æ·±åº¦æ¯æ">3.1.1 C# è¯­è¨æ·±åº¦æ¯æ</h4>
-<p>ä½ä¸º .NET ç§»æ¤çæ¬ï¼<code>graphify-dotnet</code> å¯¹ <strong>C# è¯­è¨æä¾æ·±åº¦è§£ææ¯æ</strong>ï¼è¶è¶éç¨ Tree-sitter è¯­æ³è¦çï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">C# ç¹æ§</th>
-<th style="text-align: left">AST æåè½å</th>
-<th style="text-align: left">å¾è°±å³ç³»</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><strong>é¡¶çº§è¯­å¥ï¼Top-Level Statementsï¼</strong></td>
-<td style="text-align: left">éå¼ Program ç±»è¯å«</td>
-<td style="text-align: left">å¥å£ç¹æ è®°</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>è®°å½ç±»åï¼Recordsï¼</strong></td>
-<td style="text-align: left">å¼è¯­ä¹/å¼ç¨è¯­ä¹åºå</td>
-<td style="text-align: left">ç»§æ¿ãwith è¡¨è¾¾å¼</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>æ¨¡å¼å¹éï¼Pattern Matchingï¼</strong></td>
-<td style="text-align: left">ç±»åæ¨¡å¼ãå±æ§æ¨¡å¼æå</td>
-<td style="text-align: left">æ§å¶æµä¾èµ</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>æºçæå¨ï¼Source Generatorsï¼</strong></td>
-<td style="text-align: left">çæä»£ç ä¸åå§ä»£ç å³è</td>
-<td style="text-align: left">æ´¾çå³ç³»</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>å¯ç©ºå¼ç¨ç±»åï¼Nullableï¼</strong></td>
-<td style="text-align: left">å¯ç©ºæ§æ³¨è§£æå</td>
-<td style="text-align: left">å¥çº¦å³ç³»</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>å¼æ­¥æµï¼IAsyncEnumerableï¼</strong></td>
-<td style="text-align: left">å¼æ­¥æ¹æ³é¾è¯å«</td>
-<td style="text-align: left">å¼æ­¥è°ç¨å¾</td>
-</tr>
-</tbody>
-</table>
-<p>è¿äºæ·±åº¦ç¹æ§ä½¿ <code>graphify-dotnet</code> è½å¤æå»º<strong>è¯­ä¹ä¸°å¯ç .NET ä¸ç¨å¾è°±</strong>ï¼èééç¨çæ½è±¡è¯­æ³æ æ å°ãä¾å¦ï¼è¯å« <code>IEnumerable&lt;T&gt;</code> ç LINQ é¾å¼è°ç¨è½å¤æ­ç¤ºæ°æ®è½¬æ¢é»è¾ï¼èåçº¯ç AST è§£æåªè½çå°æ¹æ³è°ç¨åºåã</p>
-<h4 id="312-è·¨è¯­è¨é¡¹ç®åæpythontypescript-ç­">3.1.2 è·¨è¯­è¨é¡¹ç®åæï¼PythonãTypeScript ç­ï¼</h4>
-<p>å¨ .NET çæç<strong>ç°ä»£æ··åæ¶æ</strong>ä¸­ï¼é¡¹ç®å¸¸åå«å¤ç§è¯­è¨å®ç°ï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">åºæ¯</th>
-<th style="text-align: left">å¸åææ¯æ </th>
-<th style="text-align: left"><code>graphify-dotnet</code> æ¯æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left">å¾®æå¡æ¶æ</td>
-<td style="text-align: left">C# åç«¯ + Python ML æå¡ + TypeScript åç«¯</td>
-<td style="text-align: left">å¨æ ç»ä¸å¾è°±</td>
-</tr>
-<tr>
-<td style="text-align: left">æ°æ®ç®¡é</td>
-<td style="text-align: left">.NET ETL + Python æ°æ®åæ + R ç»è®¡</td>
-<td style="text-align: left">æ°æ®æµè¿½è¸ª</td>
-</tr>
-<tr>
-<td style="text-align: left">ç§»å¨åºç¨</td>
-<td style="text-align: left">C# MAUI + Kotlin Swift åçæ¨¡å</td>
-<td style="text-align: left">è·¨å¹³å°ä¾èµæ å°</td>
-</tr>
-</tbody>
-</table>
-<p>è·¨è¯­è¨åæçå³é®æææ¯<strong>ç±»åç³»ç»æ å°</strong>ââä¸åè¯­è¨çç±»åæ¦å¿µï¼å¦ Python çå¨æç±»å vs C# çéææ³åï¼éè¦ç»ä¸ä¸ºå¾è°±ä¸­çéç¨è¡¨ç¤ºã<code>graphify-dotnet</code> éè¿æå"æå°å¬åæ¯"ä¿¡æ¯ï¼åç§°ãè°ç¨ç­¾åãææ¡£æ³¨éï¼å¹¶æ æ³¨è¯­è¨ç¹å®è¯­ä¹æ¥è§£å³è¿ä¸é®é¢ã</p>
-<h4 id="313-net-ç¹å®ç»æè¯å«å½åç©ºé´ç¨åºéä¾èµå³ç³»">3.1.3 .NET ç¹å®ç»æè¯å«ï¼å½åç©ºé´ãç¨åºéãä¾èµå³ç³»ï¼</h4>
-<p><code>graphify-dotnet</code> å¯¹ .NET é¡¹ç®ç»æçè¯å«è¶è¶äºåä¸ªæä»¶å±é¢ï¼æ·±å¥å°<strong>é¡¹ç®ç³»ç»ï¼Project Systemï¼</strong>å<strong>è§£å³æ¹æ¡ç»ç»</strong>ï¼</p>
-<ul>
-<li><strong>å½åç©ºé´å±çº§</strong>ï¼å®æ´è§£æåµå¥å½åç©ºé´ï¼<code>namespace A.B.C</code>ï¼ï¼æå»ºé»è¾ç»ç»æ </li>
-<li><strong>ç¨åºéä¸å¼ç¨</strong>ï¼è¯å«é¡¹ç®å¼ç¨ãNuGet åä¾èµãæ¡æ¶å¼ç¨ï¼æå»ºä¾èµå³ç³»å¾</li>
-<li><strong>å¨å± using åæ</strong>ï¼C# 10+ çéå¼ using ä¸å¨å± using æä»¤çæ¾å¼å</li>
-<li><strong>ä¾èµæ³¨å¥å®¹å¨</strong>ï¼è¯å«å¸¸è§ DI å®¹å¨ï¼å¦ Microsoft.Extensions.DependencyInjectionãAutofacï¼çæ³¨åæ¨¡å¼ï¼æå»ºæå¡ç±»åå°å®ç°ç±»åçè§£æå¾ï¼æ­ç¤ºè¿è¡æ¶ä¾èµå³ç³»</li>
-</ul>
-<h3 id="32-ç¥è¯å¾è°±å¯è§åä¸å¯¼èª">3.2 ç¥è¯å¾è°±å¯è§åä¸å¯¼èª</h3>
-<h4 id="321-ç»æä¼åçä»£ç æµè§èå¼">3.2.1 ç»æä¼åçä»£ç æµè§èå¼</h4>
-<p><code>graphify-dotnet</code> å¡å¯¼ç<strong>ç»æä¼åèå¼</strong>æ¯å¯¹ä¼ ç» IDE å¯¼èªçé©å½æ§è¡¥åï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">å¯¼èªéæ±</th>
-<th style="text-align: left">ä¼ ç»æ¹å¼ï¼ææ¬æç´¢ï¼</th>
-<th style="text-align: left">ç»æä¼åæ¹å¼ï¼å¾è°±ï¼</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left">"æ¾å°ææä½¿ç¨ Redis çå°æ¹"</td>
-<td style="text-align: left">å¨å±æç´¢ "Redis"ï¼è¿åå¤§éè¯¯å¹é</td>
-<td style="text-align: left">å®ä½ Redis éç½®èç¹ï¼æ²¿ä¾èµè¾¹éå</td>
-</tr>
-<tr>
-<td style="text-align: left">"çè§£è®¢åæ¨¡åçè¾¹ç"</td>
-<td style="text-align: left">éè¯»ææ Order* æä»¶ï¼æå¨å½çº³</td>
-<td style="text-align: left">æ¥ç Order ç¤¾åºï¼ç´æ¥è·åæ¨¡åæå</td>
-</tr>
-<tr>
-<td style="text-align: left">"è¯ä¼°éæå½±åèå´"</td>
-<td style="text-align: left">éå±æ¥æ¾å¼ç¨ï¼æéæ¼é´æ¥ä¾èµ</td>
-<td style="text-align: left">ä»ç®æ èç¹æ§è¡ BFSï¼å®æ´å½±ååå¯è§å</td>
-</tr>
-<tr>
-<td style="text-align: left">"åç°å¾ªç¯ä¾èµ"</td>
-<td style="text-align: left">ä¾èµéæåæå·¥å·çè­¦ååè¡¨</td>
-<td style="text-align: left">å¾è°±ä¸­ç´æ¥è§å¯ç¯ç¶ç»æ</td>
-</tr>
-</tbody>
-</table>
-<p>è¿ç§èå¼ç¹å«éå<strong>å¤§è§æ¨¡ä»£ç åº onboarding</strong>ââæ°å¢éæåæ ééè¯»æ°åæä»¶ï¼éè¿æ¢ç´¢å¾è°±å³å¯å¿«éå»ºç«å¯¹ç³»ç»æ¶æçè®¤ç¥å°å¾ã</p>
-<h4 id="322-äº¤äºå¼å¾è°±æ¢ç´¢çé¢">3.2.2 äº¤äºå¼å¾è°±æ¢ç´¢çé¢</h4>
-<p>HTML å¯è§åçé¢æä¾<strong>å¤ç»´åº¦äº¤äºè½å</strong> ï¼</p>
-<ul>
-<li><strong>åå¯¼åå¸å±</strong>ï¼åºäºç©çæ¨¡æçèç¹æå¸ï¼ç¸å³èç¹èªç¶èéï¼ç¤¾åºç»æç´è§å¯è§</li>
-<li><strong>ç¼©æ¾ä¸å¹³ç§»</strong>ï¼æ¯æä»å¨å±æ¦è§å°å±é¨ç»èçå¹³æ»å¯¼èª</li>
-<li><strong>èç¹ç­é</strong>ï¼æç±»åï¼ç±»ãæ¹æ³ãææ¡£æ¦å¿µï¼ãç¤¾åºå½å±ãåº¦æ°èå´ç­æ¡ä»¶è¿æ»¤æ¾ç¤º</li>
-<li><strong>æç´¢å®ä½</strong>ï¼å¿«éå®ä½ç¹å®èç¹ï¼é«äº®æ¾ç¤ºå¶é»å±åå³èè¾¹</li>
-<li><strong>ç¤¾åºçè²</strong>ï¼ä¸åç¤¾åºä½¿ç¨ä¸åé¢è²æ è¯ï¼è¾¹çä¸ç®äºç¶</li>
-<li><strong>è¯¦ç»ä¿¡æ¯é¢æ¿</strong>ï¼ç¹å»èç¹æ¾ç¤ºå¶å±æ§ãå³ç³»åè¡¨åç¤¾åºä¸ä¸æ</li>
-</ul>
-<h4 id="323-ä»å®è§æ¶æå°å¾®è§å®ç°çå±çº§é»å">3.2.3 ä»å®è§æ¶æå°å¾®è§å®ç°çå±çº§é»å</h4>
-<p>å¾è°±ç<strong>å±çº§æ½è±¡è½å</strong>æ¯æä¸åç²åº¦çè®¤ç¥éæ±ï¼</p>
-<pre><code>è§£å³æ¹æ¡çº§ï¼Solutionï¼â é¡¹ç®çº§ï¼Projectï¼â å½åç©ºé´çº§ï¼Namespaceï¼
-    â ç±»åçº§ï¼Typeï¼â æåçº§ï¼Memberï¼â è¯­å¥çº§ï¼Statementï¼æªæ¥æ©å±ï¼
-</code></pre>
-<p>æ¯å±ç¹å»å¯ä¸é»ï¼å³é®å¯è¿åï¼å½¢æ<strong>æ ç¼çè®¤ç¥å¯¼èªä½éª</strong>ãè¿ç§å±çº§ç»æä¸ C4 æ¨¡åï¼ContextãContainerãComponentãCodeï¼å¯¹åºï¼ä½¿ä¸åè§è²ï¼æ¶æå¸ãææ¯è´è´£äººãå¼åèï¼è½å¤æ¾å°éåçæ½è±¡å±çº§ã</p>
-<h3 id="33-ä¸-ai-å©æçååå·¥ä½æ¨¡å¼">3.3 ä¸ AI å©æçååå·¥ä½æ¨¡å¼</h3>
-<h4 id="331-ä¸º-github-copilot-æä¾ä¸ä¸æå¢å¼º">3.3.1 ä¸º GitHub Copilot æä¾ä¸ä¸æå¢å¼º</h4>
-<p><code>graphify-dotnet</code> ä¸ GitHub Copilot çååæ¯å¶<strong>æ ¸å¿ä»·å¼å®ç°è·¯å¾</strong>ãä¼ ç» Copilot åºäºå½åæä»¶ä¸ä¸æåç¸ä¼¼ä»£ç çæ®µè¿è¡çæï¼ç¼ºä¹å¯¹é¡¹ç®å¨å±ç»æçè®¤ç¥ã<code>graphify-dotnet</code> éè¿ä»¥ä¸æºå¶å¢å¼ºï¼</p>
-<p><strong>ä¸ä¸æåç¼©æºå¶</strong>ï¼ä¼ ç»æ¹å¼ä¸ï¼Copilot å¤çå¤§åé¡¹ç®æ¶éè¦å¤æ¬¡æä»¶è¯»åå»ºç«ä¸ä¸æï¼åæ¬¡è¯·æ±å¯è½æ¶è 1 ä¸ä»¥ä¸ Token ã<code>graphify-dotnet</code> é¢æå»ºçç¥è¯å¾è°±å°ç¸å³ä¸ä¸æåç¼©ä¸ºçº¦ <strong>2k Token ç BFS å­å¾æ¥è¯¢</strong>ï¼å®ç° <strong>71.5 ååç¼©æ¯</strong> ã</p>
-<p><strong>æ¥è¯¢ç¤ºä¾</strong>ï¼</p>
-<pre><code>ç¨æ·æé®ï¼"ä¸º UserService æ·»å ç¼å­"
-
-ä¼ ç» Copilot è¡ä¸ºï¼
-1. æç´¢ UserService å®ä¹ â è¯»åæä»¶
-2. æ¥æ¾ ICacheService æ¥å£ â è¯»åæä»¶  
-3. æ£æ¥ç°æç¼å­ä½¿ç¨æ¨¡å¼ â è¯»åå¤ä¸ªæä»¶
-4. çæä»£ç ï¼åºäºæéä¸ä¸æï¼
-
-graphify-dotnet å¢å¼ºåï¼
-1. æ¥è¯¢å¾è°±ï¼UserService èç¹ â è·åå®æ´å³èå­å¾
-   ï¼ç±»å®ä¹ãä¾èµæ¥å£ãç°ææ¹æ³ãæµè¯æä»¶ãéç½®ï¼
-2. å­å¾ä½ä¸ºä¸ä¸ææ³¨å¥ Copilot
-3. çæä¸é¡¹ç®æ¨¡å¼ä¸è´çç²¾åä»£ç 
-</code></pre>
-<h4 id="332-ç¥è¯å¾è°±ä½ä¸º-ai-å©æçé¡¹ç®åé¨ç»´åº">3.3.2 ç¥è¯å¾è°±ä½ä¸º AI å©æç"é¡¹ç®åé¨ç»´åº"</h4>
-<p><code>graphify-dotnet</code> æå»ºçç¥è¯å¾è°±æ¬è´¨ä¸æ¯ä¸º AI å©æåå»ºç<strong>ç»æåé¡¹ç®è®°å¿</strong> ï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">è®°å¿ç±»å</th>
-<th style="text-align: left">ä¼ ç» RAG æ¹å¼</th>
-<th style="text-align: left"><code>graphify-dotnet</code> æ¹å¼</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><strong>äºå®è®°å¿</strong></td>
-<td style="text-align: left">ææ¬çæ®µæ£ç´¢</td>
-<td style="text-align: left">å¾è°±èç¹å±æ§æ¥è¯¢</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>å³ç³»è®°å¿</strong></td>
-<td style="text-align: left">è¯­ä¹ç¸ä¼¼åº¦å¹é</td>
-<td style="text-align: left">å¾éåï¼å¤è·³æ¨çï¼</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>è¿ç¨è®°å¿</strong></td>
-<td style="text-align: left">åå²å¯¹è¯è®°å½</td>
-<td style="text-align: left">ä»£ç åæ´è·¯å¾è¿½è¸ª</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>è®¾è®¡è®°å¿</strong></td>
-<td style="text-align: left">ææ¡£å¨æç´¢å¼</td>
-<td style="text-align: left">æ¶æå³ç­èç¹å³è</td>
-</tr>
-</tbody>
-</table>
-<p>è¿ç§ç»æåè®°å¿ä½¿ AI å©æè½å¤åç­<strong>å³ç³»åé®é¢</strong>ï¼èéä»<strong>äºå®åé®é¢</strong>ï¼</p>
-<ul>
-<li>"ä¸ºä»ä¹ OrderService ç´æ¥ä¾èµ PaymentGateway èä¸æ¯éè¿äºä»¶æ»çº¿ï¼" â æ¥è¯¢è®¾è®¡å³ç­èç¹</li>
-<li>"å¦æä¿®æ¹ User å®ä½çä¸»é®ç±»åï¼ä¼å½±ååªäºæ¨¡åï¼" â æ§è¡å½±ååæè·¯å¾æ¥è¯¢</li>
-</ul>
-<h4 id="333-é´æ¥æ¯æèªç¶è¯­è¨äº¤äºçä»£ç çè§£åºç¡">3.3.3 é´æ¥æ¯æèªç¶è¯­è¨äº¤äºçä»£ç çè§£åºç¡</h4>
-<p><code>graphify-dotnet</code> å¯¹"èªç¶è¯­è¨çæä»£ç "ç<strong>é´æ¥æ¯ææºå¶</strong>å¯æ»ç»ä¸ºï¼</p>
-<pre><code>èªç¶è¯­è¨éæ±
-    â
-[AI å©æ] è§£ææå¾
-    â
-[graphify-dotnet å¾è°±] æä¾é¡¹ç®ä¸ä¸æ
-    â
-[AI å©æ] çæç¬¦åé¡¹ç®ç»æçä»£ç 
-    â
-å¼åèå®¡æ¥ä¸è°æ´
-</code></pre>
-<p>è¿ä¸æºå¶çå³é®ä»·å¼å¨äº<strong>æ¶é¤"ä¸ä¸æé¸¿æ²"</strong>ââAI å©æçæçä»£ç ä¸åæ¯å­¤ç«çãéç¨ççæ®µï¼èæ¯ä¸ç°æå½åè§èãæ¶ææ¨¡å¼ãä¾èµå³ç³»æ·±åº¦æ´åç<strong>é¡¹ç®åçä»£ç </strong>ã</p>
-<h3 id="34-ä¸èªç¶è¯­è¨çæ-net-ä»£ç çå®éå³è">3.4 ä¸"èªç¶è¯­è¨çæ .NET ä»£ç "çå®éå³è</h3>
-<h4 id="341-ç¥è¯å¾è°±å¯¹-ai-ä»£ç çæçè¾å©ä½ç¨æºå¶">3.4.1 ç¥è¯å¾è°±å¯¹ AI ä»£ç çæçè¾å©ä½ç¨æºå¶</h4>
-<p>åºäºåè¿°åæï¼<code>graphify-dotnet</code> å¯¹èªç¶è¯­è¨ä»£ç çæçè¾å©ä½ç¨ä½ç°å¨ä¸ä¸ªå±é¢ï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">å±é¢</th>
-<th style="text-align: left">ä½ç¨æºå¶</th>
-<th style="text-align: left">ææåº¦é</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><strong>ä¸ä¸æç²¾åº¦</strong></td>
-<td style="text-align: left">æä¾ç¸å³ä»£ç çå³èå­å¾ï¼èéå¨æ</td>
-<td style="text-align: left">Token æçæå 71.5 å</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>ç»æä¸è´æ§</strong></td>
-<td style="text-align: left">ç¡®ä¿çæä»£ç éµå¾ªç°ææ¶ææ¨¡å¼</td>
-<td style="text-align: left">åå°éæå·¥ä½é 40-60%ï¼ä¼°ç®ï¼</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>ä¾èµå®æ´æ§</strong></td>
-<td style="text-align: left">èªå¨è¯å«éå¼ç¨çå½åç©ºé´ãå</td>
-<td style="text-align: left">éä½ç¼è¯éè¯¯ç</td>
-</tr>
-</tbody>
-</table>
-<h4 id="342-éè¿-copilot-sdk-å®ç°çé´æ¥ä»£ç çææ¯æ">3.4.2 éè¿ Copilot SDK å®ç°çé´æ¥ä»£ç çææ¯æ</h4>
-<p><code>graphify-dotnet</code> ä¸ GitHub Copilot SDK çéæï¼å®ç°äº<strong>ä»ä»£ç çè§£å°ä»£ç çæçé­ç¯</strong>ï¼</p>
-<p><strong>åºæ¯ç¤ºä¾</strong>ï¼å¼åèéè¦"ä¸ºçµåç³»ç»æ·»å è®¢åç¶ææº"</p>
-<ol>
-<li>
-<p><strong><code>graphify-dotnet</code> é¢å¤ç</strong>ï¼</p>
-<ul>
-<li>è¯å«ç°æ Order ç±»ãOrderStatus æä¸¾</li>
-<li>åç°å·²ä½¿ç¨ç State æ¨¡å¼å®ç°ï¼å¦æï¼</li>
-<li>å®ä½ç¸å³çä»å¨æ¥å£åæ°æ®åºè¿ç§»æä»¶</li>
-</ul>
-</li>
-<li>
-<p><strong>Copilot SDK ä»£ç çæ</strong>ï¼</p>
-<ul>
-<li>æ¥æ¶å¾è°±æä¾çä¸ä¸æå­å¾</li>
-<li>çæä¸ç°æ Order ç±»å±æ§å¼å®¹çç¶ææºå®ç°</li>
-<li>èªå¨æ·»å å¿è¦ç using è¯­å¥åæ¥å£å®ç°</li>
-<li>çæå¯¹åºçååæµè¯æ¡æ¶</li>
-</ul>
-</li>
-<li>
-<p><strong>å¼åèç¡®è®¤</strong>ï¼</p>
-<ul>
-<li>å®¡æ¥çæçä»£ç ä¸é¡¹ç®æ¨¡å¼çä¸è´æ§</li>
-<li>å¨å¾è°±ä¸­éªè¯æ°æ·»å çèç¹ä¸ç°æç»æçæ´å</li>
-</ul>
-</li>
-</ol>
-<h4 id="343-å½åçæ¬åè½è¾¹çä¸æªæ¥æ©å±å¯è½æ§">3.4.3 å½åçæ¬åè½è¾¹çä¸æªæ¥æ©å±å¯è½æ§</h4>
-<p><strong>æç¡®çåè½è¾¹ç</strong>ï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">åè½</th>
-<th style="text-align: left">å½åæ¯æ</th>
-<th style="text-align: left">æªæ¥å¯è½</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left">ç´æ¥èªç¶è¯­è¨ â ä»£ç çæ</td>
-<td style="text-align: left">â ä¸æ¯æ</td>
-<td style="text-align: left">å¯éè¿æ´æ·± Copilot éæé´æ¥å®ç°</td>
-</tr>
-<tr>
-<td style="text-align: left">ä»£ç ç»æ â èªç¶è¯­è¨æè¿°</td>
-<td style="text-align: left">â æ¯æï¼ææ¡£çæï¼</td>
-<td style="text-align: left">å¢å¼ºçèªå¨ææ¡£å</td>
-</tr>
-<tr>
-<td style="text-align: left">èªç¶è¯­è¨æ¥è¯¢ â ä»£ç å®ä½</td>
-<td style="text-align: left">â æ¯æï¼å¾è°±æ¥è¯¢ï¼</td>
-<td style="text-align: left">è¯­ä¹æç´¢å¢å¼º</td>
-</tr>
-<tr>
-<td style="text-align: left">ä»£ç åæ´ â å½±åé¢æµ</td>
-<td style="text-align: left">â æ¯æï¼å­å¾åæï¼</td>
-<td style="text-align: left">å®æ¶å¢éæ´æ°</td>
-</tr>
-<tr>
-<td style="text-align: left">æ¶æå»ºè®® â ä»£ç æ¨¡æ¿</td>
-<td style="text-align: left">â ä¸æ¯æ</td>
-<td style="text-align: left">æ¨¡å¼åºéæ</td>
-</tr>
-</tbody>
-</table>
-<h2 id="4-ç¹å®åºæ¯åºç¨æ½ååæ">4. ç¹å®åºæ¯åºç¨æ½ååæ</h2>
-<h3 id="41-æå­¦åºæ¯åºç¨">4.1 æå­¦åºæ¯åºç¨</h3>
-<h4 id="411-ä»£ç ç»æå¯è§åè¾å©æå­¦">4.1.1 ä»£ç ç»æå¯è§åè¾å©æå­¦</h4>
-<h5 id="4111-é¢åå¯¹è±¡è®¾è®¡æ¦å¿µçå¾è°±ååç°">4.1.1.1 é¢åå¯¹è±¡è®¾è®¡æ¦å¿µçå¾è°±ååç°</h5>
-<p><code>graphify-dotnet</code> ç<strong>å¯è§åè½å</strong>ä¸ºé¢åå¯¹è±¡è®¾è®¡ï¼OODï¼æå­¦æä¾äº<strong>å·è±¡åå·¥å·</strong>ï¼</p>
-<p><strong>ç»§æ¿å±æ¬¡æå­¦</strong>ï¼ä¼ ç»ç UML ç±»å¾éè¦æå¨ç»å¶ï¼ä¸æä¸ä»£ç å®ç°è±èã<code>graphify-dotnet</code> èªå¨ä»ä»£ç æåç»§æ¿å³ç³»ï¼çæ<strong>å¨æå¯äº¤äºçç»§æ¿å¾è°±</strong>ãå­¦çå¯ä»¥ï¼</p>
-<ul>
-<li>ç¹å»åºç±»ï¼æ¥çæææ´¾çç±»çåå¸</li>
-<li>è§å¯æ¥å£å®ç°çå¤æç»æ</li>
-<li>è¯å«"è±å½¢ç»§æ¿"ç­å¤ææ¨¡å¼</li>
-</ul>
-<p><strong>è®¾è®¡æ¨¡å¼è¯å«</strong>ï¼éè¿ç¤¾åºæ£æµç®æ³ï¼å¾è°±èªå¨è¯å«æ½å¨çè®¾è®¡æ¨¡å¼å®ç°ãä¾å¦ï¼Singleton æ¨¡å¼è¡¨ç°ä¸ºé«åº¦ä¸­å¿åç"ä¸å¸èç¹"ï¼Factory æ¨¡å¼è¡¨ç°ä¸ºåå»ºåæ¹æ³çèç±»ç¤¾åºã</p>
-<h5 id="4112-å¤æç»§æ¿å³ç³»ä¸ä¾èµæ³¨å¥çç´è§å±ç¤º">4.1.1.2 å¤æç»§æ¿å³ç³»ä¸ä¾èµæ³¨å¥çç´è§å±ç¤º</h5>
-<p>å¨ .NET çæä¸­ï¼<strong>ä¾èµæ³¨å¥ï¼DIï¼</strong>æ¯ç°ä»£æ¶æçæ ¸å¿ï¼ä½å¶å¨æè§£æç¹æ§ä½¿çè§£å°é¾ã<code>graphify-dotnet</code> éè¿<strong>éæåæ + éç½®è§£æ</strong>ï¼æå»º DI å®¹å¨ç<strong>æ³¨å-è§£æå¾è°±</strong>ï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">DI æ¦å¿µ</th>
-<th style="text-align: left">å¾è°±è¡¨ç¤º</th>
-<th style="text-align: left">æå­¦ä»·å¼</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left">æå¡æ³¨åï¼Service Registrationï¼</td>
-<td style="text-align: left">æ³¨åèç¹ â å®ç°ç±»åè¾¹</td>
-<td style="text-align: left">å±ç¤ºçå½å¨æéç½®ï¼Singleton/Scoped/Transientï¼</td>
-</tr>
-<tr>
-<td style="text-align: left">æé å½æ°æ³¨å¥</td>
-<td style="text-align: left">ç±»åèç¹ â ä¾èµåæ°è¾¹</td>
-<td style="text-align: left">å¯è§åä¾èµé¾æ·±åº¦ï¼è¯å«è¿åº¦æ³¨å¥</td>
-</tr>
-<tr>
-<td style="text-align: left">æå¡å®ä½å¨åæ¨¡å¼</td>
-<td style="text-align: left">å¼å¸¸ä¸­å¿èç¹</td>
-<td style="text-align: left">æ è®°æ¶æå¼å³ï¼å¼å¯¼éæè®¨è®º</td>
-</tr>
-</tbody>
-</table>
-<h4 id="412-å­¦çèªä¸»å­¦ä¹ è½åå¹å»">4.1.2 å­¦çèªä¸»å­¦ä¹ è½åå¹å»</h4>
-<h5 id="4121-å¤§åå¼æºé¡¹ç®å¿«éçè§£">4.1.2.1 å¤§åå¼æºé¡¹ç®å¿«éçè§£</h5>
-<p>å¯¹äºå­¦ä¹  .NET çå­¦çï¼éè¯» <strong>ASP.NET CoreãEntity Framework Core</strong> ç­å¤§åå¼æºé¡¹ç®æ¯æåæè½çå³é®è·¯å¾ï¼ä½ä»£ç è§æ¨¡ï¼æ°åä¸è¡ï¼ææå·¨å¤§è®¤ç¥éç¢ã<code>graphify-dotnet</code> ç<strong>ç¤¾åºæ£æµåè½</strong>å°ä»£ç èªå¨ç»ç»ä¸º<strong>ä¸»é¢æ¨¡å</strong>ï¼å­¦çå¯ä»¥ï¼</p>
-<ol>
-<li><strong>ä»å´è¶£æ¨¡åå¥æ</strong>ï¼éæ©ä¸èªå·±å­¦ä¹ ç®æ ç¸å³çç¤¾åºï¼å¦"è®¤è¯ææ"ã"ä¸­é´ä»¶ç®¡é"ï¼</li>
-<li><strong>éæ­¥æ©å±è®¤ç¥è¾¹ç</strong>ï¼æ²¿ä¾èµè¾¹æ¢ç´¢ç¸é»æ¨¡åï¼å½¢æç³»ç»æ§çè§£</li>
-<li><strong>å¯¹æ¯è®¾è®¡æ¼è¿</strong>ï¼ç»å Git åå²ï¼è§å¯æ¨¡åçæå/åå¹¶è¿ç¨</li>
-</ol>
-<h5 id="4122-ä»£ç éè¯»ä¸å¯¼èªæè½è®­ç»">4.1.2.2 ä»£ç éè¯»ä¸å¯¼èªæè½è®­ç»</h5>
-<p><code>graphify-dotnet</code> å¹å»ç<strong>ç»æå¯¼èªè½å</strong>æ¯ä¸ä¸å¼åèçæ ¸å¿æè½ï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">æè½å±çº§</th>
-<th style="text-align: left">ä¼ ç»å¹å»æ¹å¼</th>
-<th style="text-align: left"><code>graphify-dotnet</code> è¾å©æ¹å¼</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><strong>æä»¶çº§å¯¼èª</strong></td>
-<td style="text-align: left">IDE ç Go to Definition</td>
-<td style="text-align: left">å¾è°±ä¸­çèç¹è·³è½¬ï¼çè§£"ä¸ºä½å¨æ­¤"</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>æ¨¡åçº§å¯¼èª</strong></td>
-<td style="text-align: left">éè¯»é¡¹ç®ææ¡£ãæ¶æå¾</td>
-<td style="text-align: left">ç¤¾åºç»æèªå¨æ­ç¤ºæ¨¡åè¾¹ç</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>æ¶æçº§å¯¼èª</strong></td>
-<td style="text-align: left">èµæ·±å¼åèå£å¤´ä¼ æ</td>
-<td style="text-align: left">å¨å±ä¾èµææå¯è§å</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>æ¼åçº§å¯¼èª</strong></td>
-<td style="text-align: left">éè¯» Git åå²ãCHANGELOG</td>
-<td style="text-align: left">æ¶é´ç»´åº¦å¾è°±å¨ç»ï¼æªæ¥æ©å±ï¼</td>
-</tr>
-</tbody>
-</table>
-<h4 id="413-ç¼ç¨æç»´ä¸æ¶æè®¾è®¡æè²">4.1.3 ç¼ç¨æç»´ä¸æ¶æè®¾è®¡æè²</h4>
-<h5 id="4131-æ¨¡ååè®¾è®¡ååçå®è·µéªè¯">4.1.3.1 æ¨¡ååè®¾è®¡ååçå®è·µéªè¯</h5>
-<p><strong>åä¸èè´£ååï¼SRPï¼</strong>çæå­¦å¯éè¿å¾è°±<strong>ç¤¾åºåèåº¦</strong>éåéªè¯ï¼</p>
-<ul>
-<li>é«åèç¤¾åºï¼èç¹é´è¿æ¥ç´§å¯ï¼åè½èç¦ â SRP éµå¾ªè¯å¥½</li>
-<li>ä½åèç¤¾åºï¼èç¹é´è¿æ¥ç¨çï¼åè½åæ£ â æç¤ºæåéæ±</li>
-</ul>
-<p><strong>å¼é­ååï¼OCPï¼</strong>å¯éè¿<strong>æ©å±ç¹è¯å«</strong>æå­¦ï¼</p>
-<ul>
-<li>å¾è°±æ è®°æ½è±¡ç±»ãæ¥å£ä½ä¸ºæ©å±ç¹</li>
-<li>è§å¯å·ä½å®ç°èç¹çåå¸ï¼è¯ä¼°æ©å±ä¾¿å©æ§</li>
-</ul>
-<h5 id="4132-åæ¨¡å¼è¯å«å¦ä¸å¸ç±»å¾ªç¯ä¾èµ">4.1.3.2 åæ¨¡å¼è¯å«ï¼å¦ä¸å¸ç±»ãå¾ªç¯ä¾èµï¼</h5>
-<p><code>graphify-dotnet</code> ç<strong>æ¶æåæå±</strong>èªå¨è¯å«å¸¸è§åæ¨¡å¼ï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">åæ¨¡å¼</th>
-<th style="text-align: left">å¾è°±ç¹å¾</th>
-<th style="text-align: left">æå­¦å¹²é¢</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><strong>ä¸å¸ç±»ï¼God Classï¼</strong></td>
-<td style="text-align: left">å¼å¸¸é«åº¦ä¸­å¿æ§èç¹</td>
-<td style="text-align: left">è®¨è®ºèè´£æåç­ç¥</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>å¾ªç¯ä¾èµï¼Circular Dependencyï¼</strong></td>
-<td style="text-align: left">ç¯ç¶å­å¾ç»æ</td>
-<td style="text-align: left">å¼å¥ä¾èµåç½®åå</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>æ£å¼¹å¼ä¿®æ¹ï¼Shotgun Surgeryï¼</strong></td>
-<td style="text-align: left">é«åº¦è·¨ç¤¾åºè¿æ¥èç¹</td>
-<td style="text-align: left">è®¨è®ºåèæ§æå</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>è´«è¡é¢åæ¨¡å</strong></td>
-<td style="text-align: left">å®ä½èç¹ç¼ºä¹è¡ä¸ºè¾¹</td>
-<td style="text-align: left">å¼å¥é¢åé©±å¨è®¾è®¡</td>
-</tr>
-</tbody>
-</table>
-<h3 id="42-ååè®¾è®¡ä¸å¿«éå¼å">4.2 ååè®¾è®¡ä¸å¿«éå¼å</h3>
-<h4 id="421-éçç³»ç»å¿«éåæ">4.2.1 éçç³»ç»å¿«éåæ</h4>
-<h5 id="4211-æ ææ¡£é¡¹ç®çç»æè¿å">4.2.1.1 æ ææ¡£é¡¹ç®çç»æè¿å</h5>
-<p>å¨ä¼ä¸ç¯å¢ä¸­ï¼<strong>éç .NET ç³»ç»</strong>å¸¸é¢ä¸´ææ¡£ç¼ºå¤±ãåå§å¼åèç¦»èçå°å¢ã<code>graphify-dotnet</code> ç <strong>AST-only é¶éç½®æ¨¡å¼</strong>  å¯å¨æ°åéåçæç³»ç»çå®æ´ç»æå¾è°±ï¼</p>
-<p><strong>å®ææµç¨</strong>ï¼</p>
-<ol>
-<li>è·åä»£ç åºè®¿é®æéï¼æ éæå»ºè¿è¡ï¼</li>
-<li>æ§è¡ <code>graphify-dotnet run . --ai-provider none</code></li>
-<li>å¨æµè§å¨ä¸­æ¢ç´¢çæç <code>graph.html</code></li>
-<li>è¯å«æ ¸å¿æ¨¡åãæ°æ®æµè·¯å¾ãå¤é¨ä¾èµ</li>
-</ol>
-<p><strong>ä»·å¼éå</strong>ï¼å¯¹äº 10 ä¸è¡çº§å«ç .NET é¡¹ç®ï¼ä¼ ç»äººå·¥ä»£ç éè¯»éè¦ <strong>2-4 å¨</strong>å»ºç«åæ­¥è®¤ç¥ï¼<code>graphify-dotnet</code> å°è¿ä¸è¿ç¨åç¼©è³ <strong>æ°å°æ¶</strong>ï¼ä¸å¾è°±å¯ä½ä¸ºå¢éå±äº«çè®¤ç¥åºç¡ã</p>
-<h5 id="4212-ææ¯åºå¡å¯è§åè¯ä¼°">4.2.1.2 ææ¯åºå¡å¯è§åè¯ä¼°</h5>
-<p><code>graphify-dotnet</code> ç<strong>ç»æåæææ </strong>ä¸ºææ¯åºå¡éåæä¾ä¾æ®ï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">ææ </th>
-<th style="text-align: left">è®¡ç®æ¹å¼</th>
-<th style="text-align: left">åºå¡å«ä¹</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><strong>å¹³åç¤¾åºå¤§å°</strong></td>
-<td style="text-align: left">èç¹æ° / ç¤¾åºæ°</td>
-<td style="text-align: left">è¿å¤§æç¤ºæ¨¡åèè¿</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>ç¤¾åºé´è¿æ¥å¯åº¦</strong></td>
-<td style="text-align: left">è·¨ç¤¾åºè¾¹ / æ»è¾¹æ°</td>
-<td style="text-align: left">è¿é«æç¤ºè¦åè¿åº¦</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>ä¸å¸èç¹å æ¯</strong></td>
-<td style="text-align: left">ä¸­å¿æ§ &gt; éå¼èç¹ / æ»èç¹</td>
-<td style="text-align: left">è¿é«æç¤ºæ¶æå¤±è¡¡</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>å¾ªç¯ä¾èµæ¯ä¾</strong></td>
-<td style="text-align: left">ç¯ç¶å­å¾æ° / è¿éåéæ°</td>
-<td style="text-align: left">è¿é«æç¤ºè®¾è®¡èå</td>
-</tr>
-</tbody>
-</table>
-<h4 id="422-æ°é¡¹ç®æ¶æéªè¯">4.2.2 æ°é¡¹ç®æ¶æéªè¯</h4>
-<h5 id="4221-è®¾è®¡æå¾ä¸å®éå®ç°çåå·®æ£æµ">4.2.2.1 è®¾è®¡æå¾ä¸å®éå®ç°çåå·®æ£æµ</h5>
-<p>å¨ææ·å¼åä¸­ï¼æ¶æè®¾è®¡å¾å¾éç¨"æ¼è¿å¼"æ¹æ³ï¼è®¾è®¡æå¾ä¸å®éå®ç°å®¹æåç¦»ã<code>graphify-dotnet</code> å¯ä»¥å®æåæé¡¹ç®ä»£ç ï¼å°æ£æµåºçç¤¾åºç»æä¸é¢ææ¶æï¼å¦ C4 æ¨¡åãæ¶æå³ç­è®°å½ä¸­çè®¾è®¡è¯´æï¼è¿è¡å¯¹æ¯ãåå·®æ£æµåæ¬ï¼é¢æç¬ç«çæ¨¡ååºç°æå¤è¦åãé¢æçæ ¸å¿æ½è±¡æªè¢«å¹¿æ³ä½¿ç¨ãé¢æçåå±ç»æåºç°è·¨å±ä¾èµç­ãè¿ç§<strong>æç»­æ¶æéªè¯</strong>è½åï¼ä½¿æ¶ææ²»çä»ææ¡£è¯å®¡å»¶ä¼¸å°ä»£ç å®éã</p>
-<h5 id="4222-å¾®æå¡è¾¹çååè¾å©å³ç­">4.2.2.2 å¾®æå¡è¾¹çååè¾å©å³ç­</h5>
-<p>å¾®æå¡æ¶æçè¾¹çååæ¯æå·ææçè®¾è®¡å³ç­ã<code>graphify-dotnet</code> å¯ä»¥éè¿åæåä½åºç¨çä»£ç å¾è°±ï¼ä¸ºæå¡æåæä¾<strong>æ°æ®é©±å¨çå»ºè®®</strong>ï¼ç¤¾åºæ£æµç»ææç¤ºèªç¶çè¾¹çåéï¼é«åèãä½è¦åçç¤¾åºï¼ï¼ç¤¾åºä¹é´çè¿æ¥å¼ºåº¦åç±»åæç¤ºæååçéä¿¡æ¨¡å¼ï¼åæ­¥è°ç¨ãå¼æ­¥æ¶æ¯ãå±äº«æ°æ®ï¼ï¼å³é®èç¹çåå¸æç¤ºæå¡æææçååãè½ç¶æç»å³ç­ä»éèèä¸å¡é¢åãå¢éç»æãè¿ç»´è½åç­å ç´ ï¼ä½å¾è°±æ°æ®ä¸º"ä»ä½å¤åå"æä¾äºå®¢è§ä¾æ®ã</p>
-<h4 id="423-è·¨å¢éåä½å¢å¼º">4.2.3 è·¨å¢éåä½å¢å¼º</h4>
-<h5 id="4231-ç»ä¸ä»£ç è®¤ç¥åºç¡æå»º">4.2.3.1 ç»ä¸ä»£ç è®¤ç¥åºç¡æå»º</h5>
-<p>å¤§åé¡¹ç®ä¸­ï¼ä¸åå¢éï¼åç«¯/åç«¯ãå¹³å°/ä¸å¡ãå¼å/æµè¯ï¼å¯¹ä»£ç åºçè®¤ç¥å¾å¾å­å¨å·®å¼ï¼å¯¼è´æ²éæ©æ¦åéæé®é¢ã<code>graphify-dotnet</code> çæçç¥è¯å¾è°±å¯ä»¥ä½ä¸º<strong>è·¨å¢éçç»ä¸è®¤ç¥åºç¡</strong>ï¼ææè§è²åºäºåä¸å¥å¯è§åç»æè¿è¡è®¨è®ºï¼åå°"ä½ è¯´çæ¨¡å X åæçè§£çæ¨¡å X ä¸æ¯åä¸ä¸ªä¸è¥¿"çè¯¯è§£ãå¨æ¶æè¯å®¡ãAPI è®¾è®¡è®¨è®ºãæéææ¥ç­åä½åºæ¯ä¸­ï¼å±äº«çå¾è°±è§å¾æ¾èæåäºæ²éæçã</p>
-<h5 id="4232-æ°äºº-onboarding-å é">4.2.3.2 æ°äºº onboarding å é</h5>
-<p>æ°åå·¥èå¥å¢éçæ¶é´ææ¬æ¯ä¼ä¸å³æ³¨çéç¹ã<code>graphify-dotnet</code> è½å¤å°ä¼ ç»ç"éè¯»ææ¡£+è·éå¯¼å¸+èªè¡æ¸ç´¢"ç onboarding æ¨¡å¼ï¼å¢å¼ºä¸º<strong>"å¾è°±å¼å¯¼çç»æåæ¢ç´¢"</strong>ï¼æ°äººé¦åæµè§é¡¹ç®æ´ä½å¾è°±ï¼äºè§£æ¨¡ååååæ ¸å¿æ½è±¡ï¼ç¶åéå¯¹å¶è´è´£çå·ä½åè½ï¼è¿½è¸ªç¸å³èç¹åä¾èµè·¯å¾ï¼å¨éå°é®é¢æ¶æéå¯¹æ§å°æ¥éç¸å³ä»£ç ï¼èéç²ç®æç´¢ãè¿ç§ç»æåè·¯å¾å¯å° onboarding æ¶é´ç¼©ç­ 30-50%ï¼ç¹å«æ¯å¨å¤§åãå¤æé¡¹ç®ä¸­æææ¾èã</p>
-<h3 id="43-ä¼ä¸çº§ä»£ç æ²»ç">4.3 ä¼ä¸çº§ä»£ç æ²»ç</h3>
-<h4 id="431-ä»£ç åºå¥åº·åº¦çæ§">4.3.1 ä»£ç åºå¥åº·åº¦çæ§</h4>
-<p><code>graphify-dotnet</code> çåæç»æå¯ä»¥çº³å¥<strong>æç»­éææµæ°´çº¿</strong>ï¼å®ç°ä»£ç åºå¥åº·åº¦çèªå¨åçæ§ãæ¯æ¬¡ä»£ç æäº¤è§¦åå¢éåæï¼æ£æµï¼æ°å¼å¥çè·¨æ¨¡åä¾èµãç¤¾åºç»æçæ¼åè¶å¿ãä¸å¸èç¹çå¢é¿æåµãå¾ªç¯ä¾èµçæ°å¢å®ä¾ç­ãè¿äºææ çè¶å¿å¯è§åï¼å¦éæ¶é´ååçæ¨¡ååº¦åæ°ãå¹³åè¦ååº¦ï¼ä¸ºææ¯è´è´£äººæä¾äº<strong>æ¶ææ¼è¿çéåè§å¾</strong>ï¼æ¯ææ°æ®é©±å¨çææ¯å³ç­ã</p>
-<h4 id="432-éæå½±åèå´è¯ä¼°">4.3.2 éæå½±åèå´è¯ä¼°</h4>
-<p>éææ¯ä»£ç æ¼è¿çæ ¸å¿æ´»å¨ï¼ä½"éæå¼å¥åå½ç¼ºé·"çé£é©ä½¿å¼åèç¹è±«ã<code>graphify-dotnet</code> çå¾è°±åææ¯æ<strong>å½±åèå´é¢è¯ä¼°</strong>ï¼å¨è®¡åéææä¸ªç±»ææ¥å£æ¶ï¼éè¿å¾è°±å¿«éè¯å«ææç´æ¥åé´æ¥ä¾èµæ¹ï¼è¯ä¼°åæ´çæ³¢åèå´ãè¿ç§è¯ä¼°æ¯ IDE ç"Find All References"æ´æ·±å¥ï¼å ä¸ºå®åå«é´æ¥ä¾èµï¼A ä¾èµ Bï¼B ä¾èµ Cï¼åä¿®æ¹ C å¯è½å½±å Aï¼åè¯­ä¹ä¾èµï¼éè¿äºä»¶ãéç½®ãåå°ç­éå¼æºå¶ï¼ã</p>
-<h4 id="433-ç¥è¯æ²æ·ä¸å¢éè®°å¿ä¿æ">4.3.3 ç¥è¯æ²æ·ä¸å¢éè®°å¿ä¿æ</h4>
-<p>è½¯ä»¶å¼åæ¯ç¥è¯å¯éåæ´»å¨ï¼ä½å¢éç¥è¯å¾å¾éäººåæµå¨èæµå¤±ã<code>graphify-dotnet</code> çæçç¥è¯å¾è°±åå¶å¯¼åºæ ¼å¼ï¼ç¹å«æ¯ Neo4j å Obsidian Vaultï¼æ¯æ<strong>æ¶æç¥è¯çæä¹åæ²æ·</strong> ãå³ä½¿åå§å¼åèç¦»å¼ï¼å¶è®¾è®¡æå¾ï¼éè¿ AI è¯­ä¹æåæè·ç"ä¸ºä»ä¹"ï¼åç»æå³ç­ï¼éè¿ç¤¾åºæ£æµæ­ç¤ºçæ¨¡åè¾¹çï¼ä»ä»¥å¾è°±å½¢å¼ä¿çï¼æä¸ºæ°å¢éæåçå­¦ä¹ èµæºåå³ç­åèã</p>
-<h2 id="5-å¼æºçæä¸æ©å±åæ¯">5. å¼æºçæä¸æ©å±åæ¯</h2>
-<h3 id="51-å¼æºé¡¹ç®æ²»çæ¨¡å¼">5.1 å¼æºé¡¹ç®æ²»çæ¨¡å¼</h3>
-<h4 id="511-ä»£ç è´¡ç®ä¸ç¤¾åºåä½æºå¶">5.1.1 ä»£ç è´¡ç®ä¸ç¤¾åºåä½æºå¶</h4>
-<p><code>graphify-dotnet</code> éç¨æ åç GitHub å¼æºåä½æ¨¡å¼ï¼MIT è®¸å¯è¯ä¿éå¹¿æ³çä½¿ç¨åä¿®æ¹èªç±ï¼Issues å Pull Requests æ¯æç¤¾åºåé¦åè´¡ç®ï¼GitHub Actions å®ç°æç»­éæ ãé¡¹ç®ç¹å«é¼å± <strong>Worked Examplesï¼å®éæ¡ä¾åæï¼</strong> ä½ä¸ºè´¡ç®å½¢å¼ï¼ç¤¾åºæåè¿è¡å·¥å·åæçå®ä»£ç åºï¼æäº¤å®¢è§çææè¯ä¼°ï¼æ­£ç¡®ä¸éè¯¯ä¹å¤ï¼ï¼è¿ç§å®è·µå¯¼åçè´¡ç®æ¯çº¯ä»£ç æäº¤æ´è½å»ºç«é¡¹ç®ä¿¡ä»»ã</p>
-<h4 id="512-ä¸ä¸æ¸¸-python-ç-graphify-çåæ­¥ç­ç¥">5.1.2 ä¸ä¸æ¸¸ Python ç Graphify çåæ­¥ç­ç¥</h4>
-<p>ä½ä¸ºç§»æ¤é¡¹ç®ï¼<code>graphify-dotnet</code> é¢ä¸´ä¸ä¸æ¸¸ Python ççåè½åæ­¥ææãPython ç Graphify å¨åå¸åè¿éè·å¾è¶è¿ 30,000 GitHub Starsï¼ç¤¾åºè¿­ä»£éåº¦æå¿« ã.NET çæ¬çåæ­¥ç­ç¥éè¦æè¡¡ï¼ç´§å¯è·éä¸æ¸¸å¯è·å¾ææ°åè½ï¼ä½ .NET çæçç¹å®ä¼åï¼å¦ Roslyn éæãVS æ©å±å¼åï¼å¯è½è¢«å»¶è¯¯ï¼ç¬ç«æ¼è¿å¯æ·±åº¦éé .NETï¼ä½å¯è½åç¦»ç¤¾åºå±è¯åè½éãå½åçæ¬éå<strong>åè½å¯¹ç­ä¼å</strong>ç­ç¥ï¼åå®ç°æ ¸å¿æµæ°´çº¿ï¼åéæ­¥æ·»å  .NET ç¹æå¢å¼º ã</p>
-<h4 id="513-net-ç¤¾åºç¹æççææ´å">5.1.3 .NET ç¤¾åºç¹æççææ´å</h4>
-<p>.NET å¼æºçæå·æé²æçå¾®è½¯ææ¯æ ç¹å¾ï¼NuGet åç®¡çãMSBuild æå»ºç³»ç»ãVisual Studio/VS Code å·¥å·é¾ãAzure äºæå¡éæç­ã<code>graphify-dotnet</code> ç .NET çææ´åä½ç°å¨ï¼ä½ä¸º <code>dotnet global tool</code> çåå¸å½¢å¼ã<code>.slnx</code> è§£å³æ¹æ¡æä»¶çä½¿ç¨ãä¸ <code>Microsoft.Extensions.AI</code> çéæãä»¥å Azure DevOps/GitHub Actions ç CI/CD éç½® ãè¿äºæ´åä½¿å¾ .NET å¼åèè½å¤ä»¥æä½çå­¦ä¹ ææ¬éç¨å·¥å·ï¼ä¹ä¾¿äºåç»­çä¼ä¸çº§é¨ç½²åè¿ç»´ã</p>
-<h3 id="52-å·²ç¥å±éä¸æ¹è¿æ¹å">5.2 å·²ç¥å±éä¸æ¹è¿æ¹å</h3>
-<h4 id="521-å½åçæ¬åè½è¾¹ç">5.2.1 å½åçæ¬åè½è¾¹ç</h4>
-<p>æç¡®å½åçæ¬çåè½è¾¹çå¯¹äºç¨æ·ææç®¡çè³å³éè¦ã<code>graphify-dotnet</code> <strong>ä¸ç´æ¥æä¾</strong>ï¼èªç¶è¯­è¨ä»£ç çææ¥å£ãä»£ç è¡¥å¨ IDE æ©å±ãå®æ¶å¢éåæãèªå¨éææ§è¡ç­åè½ãè¿äºåè½å±äºæç¡®ç<strong>æªæ¥æ©å±æ¹å</strong>ï¼å¶å®ç°ä¾èµäºï¼ä¸ Roslyn ç¼è¯å¨å¹³å°çæ´æ·±éæãVS Code/Visual Studio æ©å±çå¼åãå®æ¶æä»¶ç³»ç»çæ§çå¼å¥ãä»¥åæ´æçç AI Agent æ¶æçåºç¨ã</p>
-<h4 id="522-æ§è½ä¼åç©ºé´å¤§åä»£ç åºå¤ç">5.2.2 æ§è½ä¼åç©ºé´ï¼å¤§åä»£ç åºå¤çï¼</h4>
-<p>å¯¹äºè¶å¤§è§æ¨¡ä»£ç åºï¼ç¾ä¸è¡ä»¥ä¸ï¼ï¼<code>graphify-dotnet</code> é¢ä¸´åå­å ç¨åæå»ºæ¶é´çææãå½åçæ¬éç¨åå­ä¼åçå¾å­å¨ç­ç¥ï¼å°æªå®ç°ç£çåé¡µæåå¸å¼å¾è®¡ç®ãæªæ¥ä¼åæ¹ååæ¬ï¼å¼å¥å¢éå¾æ´æ°ç®æ³ï¼ä»å¤çåæ´å­å¾ï¼ãéç¨æ´ç´§åçå¾åºååæ ¼å¼ï¼å¦ GraphBinaryï¼ãä»¥åæ¢ç´¢ .NET ç Native AOT ç¼è¯ä»¥æåå¯å¨éåº¦åè¿è¡æ¶æçã</p>
-<h4 id="523-æ´æ·±åº¦-ide-éæéæ±vs-code-æ©å±ç­">5.2.3 æ´æ·±åº¦ IDE éæéæ±ï¼VS Code æ©å±ç­ï¼</h4>
-<p>å½å <code>graphify-dotnet</code> ä¸»è¦ä»¥ CLI å·¥å·åç¬ç«å¯è§åçé¢å½¢å¼å­å¨ï¼ä¸ IDE çéæåçå¨ Copilot SDK çé´æ¥å±é¢ãå¼åèææçæ´æ·±åº¦éæåæ¬ï¼VS Code ä¾§è¾¹æ çå®æ¶å¾è°±é¢æ¿ãVisual Studio çæ¶ææµè§å¨æ©å±ãä»¥å IDE åç´æ¥ç¹å»å¾è°±èç¹è·³è½¬æºä»£ç çè½åãè¿äºéæéè¦å¼åä¸é¨ç IDE æ©å±ï¼æ¯é¡¹ç®è·¯çº¿å¾ä¸­çéè¦è§åé¡¹ ã</p>
-<h3 id="53-æªæ¥æ¼è¿è·¯å¾">5.3 æªæ¥æ¼è¿è·¯å¾</h3>
-<h4 id="531-ä»ä»£ç çè§£å°ä»£ç çæçå¯è½æ§æ¢ç´¢">5.3.1 ä»ä»£ç çè§£å°ä»£ç çæçå¯è½æ§æ¢ç´¢</h4>
-<p>è½ç¶å½åçæ¬æç¡®ä¸ç´æ¥çæä»£ç ï¼ä½ææ¯æ¶æä¸å­å¨å<strong>"å¾è°±é©±å¨ä»£ç çæ"</strong>æ¼è¿çå¯è½æ§ãå·ä½è·¯å¾åæ¬ï¼åºäºç¤¾åºç»æè¯å«æ¨¡å¼ç¼ºå£ï¼èªå¨çæç¬¦åæ¶æçä»£ç æ¨¡æ¿ï¼å©ç¨"ä¸å¸èç¹"åæï¼ä¸ºå³é®æ½è±¡çæéå¥å®ç°ï¼ä»¥åç»å AI å©æçå½æ°è°ç¨è½åï¼å®ç°ä»èªç¶è¯­è¨éæ±å°å¾è°±æ¥è¯¢åå°ä»£ç æ¨¡æ¿å¡«åçèªå¨åé¾è·¯ãè¿ç§æ¼è¿å°æ¨¡ç³"åæå·¥å·"ä¸"çæå·¥å·"çè¾¹çï¼å½¢ææ´å®æ´ç AI è¾å©å¼åé­ç¯ã</p>
-<h4 id="532-ä¸-net-ç¼è¯å¨å¹³å°roslynæ´æ·±éæ">5.3.2 ä¸ .NET ç¼è¯å¨å¹³å°ï¼Roslynï¼æ´æ·±éæ</h4>
-<p>Roslyn éææ¯ <code>graphify-dotnet</code> æå· .NET ç¹è²çææ¯æ¼è¿æ¹åãå½åçæ¬ä½¿ç¨ Tree-sitter è¿è¡éç¨ AST è§£æï¼è½ç¶è·¨è¯­è¨ä¸è´æ§å¥½ï¼ä½å¯¹ C# çè¯­ä¹çè§£æ·±åº¦æéãRoslyn ä½ä¸º .NET çå®æ¹ç¼è¯å¨å¹³å°ï¼æä¾å®æ´çè¯­ä¹åæ APIï¼ç¬¦å·è§£æãç±»åæ¨æ­ãæ§å¶æµåæãæ°æ®æµåæï¼ï¼è½å¤å®ç°æ¯ Tree-sitter æ´ç²¾ç¡®çä¾èµå³ç³»æååæ¶ææ¨¡å¼è¯å«ãä½èå·²æç¡®å° "Roslyn-powered C# extraction" åå¥è·¯çº¿å¾ ï¼è¿å°æ¯ .NET çæ¬è¶è¶åå§ Python çæ¬çå³é®å·®å¼åè½åã</p>
-<h4 id="533-å®æ¶å¢éæ´æ°ä¸æç»­åæè½å">5.3.3 å®æ¶å¢éæ´æ°ä¸æç»­åæè½å</h4>
-<p>Watch Mode çå¢å¼ºæ¯æåå¼åèä½éªçéè¦æ¹åãå½åçæ¬æ¯æåºäºæä»¶ç³»ç»çè§çå¢éå¾è°±éå»ºï¼ä½æ´æ°ç²åº¦è¾ç²ï¼æä»¶çº§ï¼ãæªæ¥æ¼è¿åæ¬ï¼ç»ç²åº¦å¢éæ´æ°ï¼å½æ°çº§åæ´ä»å½±åå±é¨å­å¾ï¼ãå®æ¶åä½åæï¼å¤äººåæ¶ä¿®æ¹æ¶çå¾è°±ä¸è´æ§ç»´æ¤ï¼ãä»¥åä¸ CI/CD ç³»ç»çæ·±åº¦éæï¼æ¯æ¬¡æå»ºèªå¨çææ¶æå¥åº·åº¦æ¥åï¼ãè¿äºè½åå°ä½¿ <code>graphify-dotnet</code> ä»"ç¦»çº¿åæå·¥å·"è¿åä¸º"æç»­æ¶æçæ§å¹³å°"ã</p>
-<h2 id="6-ç»è®ºä¸å»ºè®®">6. ç»è®ºä¸å»ºè®®</h2>
-<h3 id="61-é¡¹ç®ä»·å¼æ»ç»">6.1 é¡¹ç®ä»·å¼æ»ç»</h3>
-<h4 id="611-å¨-net-çæä¸­çç¬ç¹å®ä½">6.1.1 å¨ .NET çæä¸­çç¬ç¹å®ä½</h4>
-<p><code>graphify-dotnet</code> å¨ .NET çæä¸­å æ®äº<strong>ç¬ç¹ççæä½</strong>ââä»äºä¼ ç»éæåæå·¥å·ï¼å¦ NDependãSonarQubeï¼åéç¨ AI ç¼ç¨å©æï¼å¦ GitHub Copilotï¼ä¹é´ãä¸åèç¸æ¯ï¼å®å¼å¥äº AI è¯­ä¹çè§£åç¥è¯å¾è°±çç°ä»£èå¼ï¼ä¸åèç¸æ¯ï¼å®æä¾äºç¡®å®æ§çç»æåæåå¯è§£éçé¡¹ç®ä¸ä¸æãè¿ç§"ç»æåç¡®å®æ§ + è¯­ä¹æºè½æ§"çæ··åæ¶æï¼ä½¿å¶æä¸º .NET å¼åèå·¥å·é¾ä¸­ä¸å¯æç¼ºç<strong>è®¤ç¥åºç¡è®¾æ½</strong>ã</p>
-<h4 id="612-ä¸çº¯ä»£ç çæå·¥å·çå·®å¼åä»·å¼">6.1.2 ä¸çº¯ä»£ç çæå·¥å·çå·®å¼åä»·å¼</h4>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">ç»´åº¦</th>
-<th style="text-align: left">çº¯ä»£ç çæå·¥å·ï¼å¦ Copilotï¼</th>
-<th style="text-align: left"><code>graphify-dotnet</code></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><strong>æ ¸å¿è½å</strong></td>
-<td style="text-align: left">èªç¶è¯­è¨ â ä»£ç çæ®µ</td>
-<td style="text-align: left">ä»£ç åº â ç»æåç¥è¯å¾è°±</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>ä¸ä¸ææ·±åº¦</strong></td>
-<td style="text-align: left">å½åæä»¶ + ç¸ä¼¼ä»£ç </td>
-<td style="text-align: left">é¡¹ç®å¨å±æ¶æ + è·¨æ¨¡æå³è</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>ç¡®å®æ§ä¿è¯</strong></td>
-<td style="text-align: left">æ¦ççæï¼å­å¨å¹»è§é£é©</td>
-<td style="text-align: left">AST è§£æï¼100% ç»æåç¡®</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>å¯è§£éæ§</strong></td>
-<td style="text-align: left">é»ççæè¿ç¨</td>
-<td style="text-align: left">æ¾å¼å³ç³»æ æ³¨ï¼found/inferred/uncertainï¼</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>éç¨åºæ¯</strong></td>
-<td style="text-align: left">å¿«éç¼ç ãæ ·æ¿ä»£ç çæ</td>
-<td style="text-align: left">æ¶æçè§£ãææ¯å³ç­ãç¥è¯æ²æ·</td>
-</tr>
-</tbody>
-</table>
-<p><code>graphify-dotnet</code> çå·®å¼åä»·å¼å¨äºï¼<strong>å®ä¸è¯å¾æ¿ä»£å¼åèçåé æ§ç¼ç ï¼èæ¯å¢å¼ºå¼åèå¯¹å¤æç³»ç»çè®¤ç¥è½å</strong>ãå¨å¤§åãéçãæç¼ºä¹ææ¡£ç .NET é¡¹ç®ä¸­ï¼è¿ç§è®¤ç¥å¢å¼ºçä»·å¼è¿è¶ä»£ç çæ®µçèªå¨çæã</p>
-<h3 id="62-ç®æ ç¨æ·ç¾¤ä½å»ºè®®">6.2 ç®æ ç¨æ·ç¾¤ä½å»ºè®®</h3>
-<h4 id="621-éç¨åºæ¯ä¸æä½³å®è·µ">6.2.1 éç¨åºæ¯ä¸æä½³å®è·µ</h4>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">ç¨æ·ç¾¤ä½</th>
-<th style="text-align: left">æ ¸å¿çç¹</th>
-<th style="text-align: left"><code>graphify-dotnet</code> è§£å³æ¹æ¡</th>
-<th style="text-align: left">æ¨èéç½®</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><strong>ä¼ä¸æ¶æå¸</strong></td>
-<td style="text-align: left">ææ¯åºå¡è¯ä¼°ãæ¶ææ¼è¿è§å</td>
-<td style="text-align: left">ç¤¾åºæ£æµ + ä¸å¸èç¹åæ + åå²è¶å¿å¯¹æ¯</td>
-<td style="text-align: left">Azure OpenAI + Neo4j å¯¼åº</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>ææ¯è´è´£äºº</strong></td>
-<td style="text-align: left">æ°äºº onboardingãä»£ç å®¡æ¥æç</td>
-<td style="text-align: left">äº¤äºå¼ HTML å¯è§å + ç»ææ¥å</td>
-<td style="text-align: left">Copilot SDK + å¢éå±äº«å¾è°±</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>å¨æ å¼åè</strong></td>
-<td style="text-align: left">è·¨è¯­è¨é¡¹ç®çè§£ãå¾®æå¡è¾¹çåå</td>
-<td style="text-align: left">å¤è¯­è¨è§£æ + ç¤¾åºèç±»</td>
-<td style="text-align: left">Ollama æ¬å°æ¨¡åï¼éç§ä¼åï¼</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>å¼æºè´¡ç®è</strong></td>
-<td style="text-align: left">å¿«éçè§£éçä»£ç åº</td>
-<td style="text-align: left">AST-only æ¨¡å¼ + å¿«éå¾è°±æµè§</td>
-<td style="text-align: left">None æä¾åï¼é¶ææ¬ï¼</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>æè²å·¥ä½è</strong></td>
-<td style="text-align: left">ç¼ç¨æ¦å¿µå¯è§åãå¤§åé¡¹ç®æå­¦</td>
-<td style="text-align: left">HTML å¯¼åº + ç¤¾åºçè² + åæ¨¡å¼è¯å«</td>
-<td style="text-align: left">ä»»æéç½®ï¼æ³¨éå¯è§åææ</td>
-</tr>
-</tbody>
-</table>
-<h4 id="622-ä¸å¶ä»å·¥å·é¾çç»åä½¿ç¨ç­ç¥">6.2.2 ä¸å¶ä»å·¥å·é¾çç»åä½¿ç¨ç­ç¥</h4>
-<p><code>graphify-dotnet</code> çæä½³ä½¿ç¨æ¹å¼æ¯<strong>åµå¥ç°æå·¥å·é¾ï¼å½¢æååæåº</strong>ï¼</p>
-<ul>
-<li><strong>ä¸ GitHub Copilot ç»å</strong>ï¼<code>graphify-dotnet</code> æä¾é¡¹ç®ä¸ä¸æ â Copilot çæç¬¦åæ¶æçä»£ç  â å¼åèå®¡æ¥ç¡®è®¤</li>
-<li><strong>ä¸ Neo4j ç»å</strong>ï¼<code>graphify-dotnet</code> çæ Cypher èæ¬ â Neo4j æä¹åå­å¨ â å¤ææ¥è¯¢åè·¨é¡¹ç®åæ</li>
-<li><strong>ä¸ Obsidian ç»å</strong>ï¼<code>graphify-dotnet</code> çæ Vault â Obsidian ååé¾æ¥ â ä¸ªäºº/å¢éç¥è¯ç®¡ç</li>
-<li><strong>ä¸ CI/CD ç»å</strong>ï¼<code>graphify-dotnet</code> çº³å¥æå»ºæµæ°´çº¿ â èªå¨çææ¶æå¥åº·åº¦æ¥å â ææ¯åºå¡é¨ç¦</li>
-</ul>
-<h3 id="63-å¯¹èªç¶è¯­è¨çæä»£ç éæ±çååº">6.3 å¯¹"èªç¶è¯­è¨çæä»£ç "éæ±çååº</h3>
-<h4 id="631-å½åè½åè¾¹çè¯´æ">6.3.1 å½åè½åè¾¹çè¯´æ</h4>
-<p>å¿é¡»å¦è¯è¯´æï¼<code>graphify-dotnet</code> <strong>å½åçæ¬ä¸ç´æ¥æ¯æèªç¶è¯­è¨çæ .NET ä»£ç </strong>ãç¨æ·æ æ³åè¯¥å·¥å·è¾å¥èªç¶è¯­è¨éæ±å¹¶è·å¾å¯ç¼è¯çä»£ç è¾åºãè¿ä¸è¾¹çæ¯å·¥å·è®¾è®¡çåºæç¹æ§ï¼èéä¸´æ¶éå¶ââé¡¹ç®çæ ¸å¿ä½¿å½æ¯"çè§£ç»æ"èé"åé ä»£ç "ã</p>
-<h4 id="632-é´æ¥å®ç°è·¯å¾ä¸æ¿ä»£æ¹æ¡å»ºè®®">6.3.2 é´æ¥å®ç°è·¯å¾ä¸æ¿ä»£æ¹æ¡å»ºè®®</h4>
-<p>å¯¹äºç¡®æ"èªç¶è¯­è¨çæä»£ç "éæ±çç¨æ·ï¼å»ºè®®éç¨<strong>ç»åå·¥å·ç­ç¥</strong>ï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">éæ±åºæ¯</th>
-<th style="text-align: left">æ¨èå·¥å·ç»å</th>
-<th style="text-align: left">å·¥ä½æµç¨</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><strong>å¿«éååå¼å</strong></td>
-<td style="text-align: left"><code>graphify-dotnet</code> + GitHub Copilot</td>
-<td style="text-align: left">åç¨å¾è°±çè§£ç°æç»æï¼åå¨ Copilot ä¸­åºäºä¸ä¸æçæ</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>æ¶æåè§çæ°åè½</strong></td>
-<td style="text-align: left"><code>graphify-dotnet</code> + Cursor + èªå®ä¹è§å</td>
-<td style="text-align: left">å¾è°±è¯å«æ¶ææ¨¡å¼ â Cursor ç Composer çæç¬¦åæ¨¡å¼çå®ç°</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>éçç³»ç»ç°ä»£å</strong></td>
-<td style="text-align: left"><code>graphify-dotnet</code> + ä¸ç¨éæå·¥å·ï¼å¦ ReSharperï¼</td>
-<td style="text-align: left">å¾è°±è¯å«ææ¯åºå¡ â éæå·¥å·æ§è¡å®å¨åæ¢</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>æå­¦/å­¦ä¹ åºæ¯</strong></td>
-<td style="text-align: left"><code>graphify-dotnet</code> + ä¼ ç» IDE</td>
-<td style="text-align: left">å¾è°±å»ºç«è®¤ç¥å°å¾ â IDE ä¸­éå±æ·±å¥ä»£ç å®ç°</td>
-</tr>
-</tbody>
-</table>
-<h4 id="633-ææ¯åå±è¶å¿å±æ">6.3.3 ææ¯åå±è¶å¿å±æ</h4>
-<p>ä»é¿æææ¯æ¼è¿è§è§ï¼<code>graphify-dotnet</code> æä»£è¡¨çç¥è¯å¾è°±å¢å¼ºèå¼å¯è½æä¸º<strong>ä¸ä¸ä»£ AI ç¼ç¨å·¥å·çåºç¡è®¾æ½</strong>ãå½å LLM ä»£ç çæé¢ä¸´çæ ¸å¿ç¶é¢ââä¸ä¸æçªå£éå¶ãå¹»è§é£é©ãæ¶æä¸è´æ§ç¼ºå¤±ââåå¯éè¿ç»æåç¥è¯å¾è°±å¾å°ç¼è§£ãæªæ¥å¯è½åºç°"å¾è°±åç"ç AI ç¼ç¨å©æï¼å¶åé¨è¡¨ç¤ºä¸åæ¯çº¯ææ¬åºåï¼èæ¯æ¾å¼çå¾ç»æï¼ä»£ç çæä¸åæ¯æ¦çéæ ·ï¼èæ¯å¾çº¦æä¸çç»æåæç´¢ã</p>
-<p><code>graphify-dotnet</code> ä½ä¸ºè¿ä¸è¶å¿çæ©æå®è·µèï¼å¶ä»·å¼ä¸ä»å¨äºå½åçåè½å®ç°ï¼æ´å¨äº<strong>æ¢ç´¢äº"ç»æåè®¤ç¥å¢å¼º"è¿ä¸ææ¯æ¹åçå¯è¡æ§</strong>ãå¯¹äº .NET çæèè¨ï¼æ¥æä¸ä¸ªåççãå¼æºçãç¤¾åºé©±å¨çç¥è¯å¾è°±åºç¡è®¾æ½ï¼æ¯åä¸æªæ¥ AI ç¼ç¨èå¼ç«äºçéè¦æç¥èµäº§ã</p>
-
-
-</div>
-<div id="MySignature" role="contentinfo">
-    <p>æ¬¢è¿å¤§å®¶æ«æä¸é¢äºç»´ç æä¸ºæçå®¢æ·ï¼æ¶ä½ ä¸äº</p>
-<img src="https://images.cnblogs.com/cnblogs_com/shanyou/57459/o_220125090408_%E9%82%80%E8%AF%B7%E4%BA%8C%E7%BB%B4%E7%A0%81-258px.jpeg" width="170">
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.9423611111111111" data-date-updated="2026-05-03 21:35">2026-05-02 22:58</span>&nbsp;
-<a href="https://www.cnblogs.com/shanyou">å¼ åå</a>&nbsp;
-éè¯»(<span id="post_view_count">180</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(19966996);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fshanyou%2Fp%2F19966996%2Fgraphify-dotnet&amp;targetId=19966996&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
