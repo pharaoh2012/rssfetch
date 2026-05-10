@@ -3,12 +3,567 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-05-10T16:47:54.878Z</lastBuildDate>
+        <lastBuildDate>2026-05-10T20:42:51.207Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
+    <title><![CDATA[ ä»æºç å°æ¶æï¼React useActionState æ·±åº¦åæ ]]></title>
+    <link>https://www.cnblogs.com/wjszxli/p/20009307</link>
+    <guid>a8f523afcd33bc7fcc184bbb9370a1c7</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/wjszxli/p/20009307" title="åå¸äº 2026-05-11 00:30">
+    <span role="heading" aria-level="2">ä»æºç å°æ¶æï¼React useActionState æ·±åº¦åæ</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<blockquote>
+<p>React 19 å¼å¥ç <code>useActionState</code> æ¯è¿å¹´æ¥ React Hooks ä½ç³»ä¸­è®¾è®¡æç²¾å·§ç API ä¹ä¸ãå®è¡¨é¢ä¸åªæ¯ä¸ä¸ªç®¡çè¡¨åç¶æç Hookï¼ä½åé¨å´éèç<strong>ä¸ Hook åä½ãå¾ªç¯éåè°åº¦ãTransition ä¸ä¸ææ¢å¤ãThenable ç¶æè¿½è¸ª</strong>ç­ä¸ç³»åç²¾å¦çå·¥ç¨å®ç°ãæä»¬å°ä»æºç åºåï¼éå±å¥å¼å®çæ¶æè®¾è®¡ï¼å¸®å©æä»¬çæ­£çè§£è¿ä¸ª API èåçè®¾è®¡å²å­¦ã</p>
+</blockquote>
+<hr>
+<h2 id="ä¸ä¸ºä»ä¹-useactionstate-å¼å¾æ·±å¥åæ">ä¸ãä¸ºä»ä¹ useActionState å¼å¾æ·±å¥åæï¼</h2>
+<p>å¨ React 19 ä¹åï¼å¤çä¸ä¸ªå¸¦æå¼æ­¥æäº¤ãloading ç¶æãéè¯¯å¤ççè¡¨åï¼æä»¬éè¦è¿æ ·åï¼</p>
+<pre><code class="language-js">function OldForm() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [result, setResult] = useState(null);
+
+  const handleSubmit = async (e) =&gt; {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+    try {
+      const formData = new FormData(e.target);
+      const res = await submitToServer(formData);
+      setResult(res);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    &lt;form onSubmit={handleSubmit}&gt;
+      &lt;input name="email" /&gt;
+      &lt;button disabled={isLoading}&gt;
+        {isLoading ? 'æäº¤ä¸­...' : 'æäº¤'}
+      &lt;/button&gt;
+      {error &amp;&amp; &lt;p className="error"&gt;{error}&lt;/p&gt;}
+      {result &amp;&amp; &lt;p className="success"&gt;{result.message}&lt;/p&gt;}
+    &lt;/form&gt;
+  );
+}
+</code></pre>
+<p>ä¸ä¸ª <code>useState</code>ãä¸ä¸ª <code>try/catch/finally</code>ãä¸ä¸ª <code>e.preventDefault()</code>ââè¿æ¯æ¯ä¸ä¸ª React å¼åèé½åè¿æ æ°éçæ ·æ¿ä»£ç ãè React 19 ç»åºçç­æ¡æ¯ï¼</p>
+<pre><code class="language-js">function NewForm() {
+  const [state, formAction, isPending] = useActionState(
+    async (prevState, formData) =&gt; {
+      const res = await submitToServer(formData);
+      return { success: true, message: res.message };
+    },
+    { success: null, message: '' }
+  );
+
+  return (
+    &lt;form action={formAction}&gt;
+      &lt;input name="email" /&gt;
+      &lt;button disabled={isPending}&gt;
+        {isPending ? 'æäº¤ä¸­...' : 'æäº¤'}
+      &lt;/button&gt;
+      {state.message &amp;&amp; (
+        &lt;p className={state.success ? 'success' : 'error'}&gt;
+          {state.message}
+        &lt;/p&gt;
+      )}
+    &lt;/form&gt;
+  );
+}
+</code></pre>
+<p>ä¸ä¸ª Hookï¼ä¸ä¸ªè¿åå¼ï¼é¶æ ·æ¿ä»£ç ãè¿ä¸æ¯ç®åçè¯­æ³ç³ââ<strong>å®èåæ¯ä¸å¥å®æ´ç Action é©±å¨ç¶æç®¡çæ¶æ</strong>ãçè§£äº <code>useActionState</code>ï¼æä»¬å°±çè§£äº React 19 å¯¹"å¯ä½ç¨å³ç¶æ"è¿ä¸çå¿µçå¨é¨æèã</p>
+<hr>
+<h2 id="äºä»-useformstate-å°-useactionstate">äºãä» useFormState å° useActionState</h2>
+<p><code>useActionState</code> çåèº«æ¯ React Canary çæ¬ä¸­ç <code>useFormState</code>ãReact å¢éå¨æ­£å¼åå¸æ¶å°å¶éå½åï¼è¿ä¸ªå³ç­èåè´å«çæ·±å»çè®¾è®¡æèã</p>
+<p><strong><code>useFormState</code> çé®é¢å¨äºï¼å®æèªå·±æ¡æ­»äºã</strong> "Form" è¿ä¸ªè¯æç¤ºå®åªè½ç¨äºè¡¨ååºæ¯ï¼ä½å®éä¸è¿ä¸ª Hook çè½åè¿ä¸æ­¢äºæ­¤ãä»»ä½éè¦"æ§è¡ä¸ä¸ªå¯ä½ç¨ï¼ç¶ååºäºç»ææ´æ°ç¶æ"çåºæ¯ï¼é½å¯ä»¥ç¨å®æ¥å¤çãReact å¢éæè¯å°äºè¿ä¸ªå½åä¸çå±éï¼ååºäºä¸ä¸ªçä¼¼å¾®å°å®åå³é®çå³å®ââå°å¶æ´åä¸º <code>useActionState</code>ã</p>
+<p>è¿ä¸ªæ¹ååæ äº React 19 çä¸ä¸ªæ ¸å¿è®¾è®¡çå¿µï¼<strong>Action ä¸åªæ¯è¡¨åçä¸å©ï¼å®æ¯ä¸ç§éç¨çå¼æ­¥ç¶æåæ´æ¨¡å¼ã</strong> å¨ React 19 çè¯­ä¹ä½ç³»ä¸­ï¼"Action"æçæ¯ä»»ä½å¯è½äº§çå¯ä½ç¨å¹¶å¯¼è´ç¶æåæ´çå½æ°è°ç¨ãå®å¯ä»¥æ¯è¡¨åæäº¤ãæé®ç¹å»ãæ°æ®åæ­¥ï¼çè³æ¯ä¸ä¸ªå®æ¶å¨è§¦åçæä½ã<code>useActionState</code> æ¯è¿ä¸ª Action ä½ç³»çåºç¡è®¾æ½ä¹ä¸ï¼ä¸ <code>useTransition</code>ã<code>useOptimistic</code>ã<code>useFormStatus</code> å±åææäºå®æ´ç Action å·¥å·é¾ã</p>
+<p>ä» <code>useFormState</code> å° <code>useActionState</code> çæ¼è¿ï¼æ¬è´¨ä¸æ¯ä»"<strong>æ°æ®é©±å¨</strong>"å°"<strong>æå¾é©±å¨</strong>"çèå¼è½¬åãåèå³æ³¨çæ¯"è¡¨åæä»ä¹æ°æ®"ï¼åèå³æ³¨çæ¯"ç¨æ·æ³åä»ä¹"ãè¿ç§è§è§çè½¬æ¢ï¼è®© API çæ½è±¡å±çº§æåäºä¸ä¸ªç»´åº¦ã</p>
+<hr>
+<h2 id="ä¸api-è¡¨é¢ç®æ´ä¹ä¸çè®¾è®¡">ä¸ãAPI è¡¨é¢ï¼ç®æ´ä¹ä¸çè®¾è®¡</h2>
+<h3 id="31-å½æ°ç­¾å">3.1 å½æ°ç­¾å</h3>
+<pre><code class="language-typescript">function useActionState&lt;S, P&gt;(
+  action: (state: Awaited&lt;S&gt;, payload: P) =&gt; Awaited&lt;S&gt; | Promise&lt;Awaited&lt;S&gt;&gt;,
+  initialState: Awaited&lt;S&gt;,
+  permalink?: string
+): [Awaited&lt;S&gt;, (payload: P) =&gt; void, boolean];
+</code></pre>
+<p>è¿ä¸ªç­¾åä¸­æå ä¸ªå¼å¾æ³¨æçè®¾è®¡ç»èï¼</p>
+<p><strong>æ³å <code>&lt;S, P&gt;</code> çååæ°è®¾è®¡</strong>ã<code>S</code> ä»£è¡¨ç¶æç±»åï¼<code>P</code> ä»£è¡¨ payload ç±»åã<code>S</code> è¢« <code>Awaited&lt;&gt;</code> åè£¹ï¼æå³çç¶æå¯ä»¥æ¯ <code>Promise&lt;T&gt;</code> ç±»åââAction è¿åç Promise ä¼è¢«èªå¨è§£åãè¿ä¸ªè®¾è®¡è®©åæ­¥åå¼æ­¥ Action å¨ç±»åå±é¢ä¿æç»ä¸ã</p>
+<p><strong><code>action</code> çç¬¬ä¸ä¸ªåæ°æ¯ <code>prevState</code></strong>ãè¿å <code>useReducer</code> ç reducer å½æ°ç­¾åä¸èç¸æ¿ï¼ä½æä¸ä¸ªå³é®åºå«ï¼<code>useReducer</code> ç reducer æ¯çº¯åæ­¥å½æ°ï¼èè¿éç <code>action</code> å¯ä»¥æ¯å¼æ­¥å½æ°ãReact åé¨ä¼èªå¨å¤ç Promise çè§£æåç¶æçæ´æ°ã</p>
+<p><strong><code>permalink</code> åæ°</strong>ãè¿æ¯ä¸ä¸ªå®¹æè¢«å¿½ç¥ä½è®¾è®¡ç²¾å·§çåæ°ãå®ç¨äº Server Components åºæ¯ï¼åè¯ React è¿ä¸ª Action ä¿®æ¹çæ¯åªä¸ªé¡µé¢çæ°æ®ãå¨æµå¼ SSR ä¸­ï¼React ä¼å©ç¨è¿ä¸ªä¿¡æ¯å¨æå¡ç«¯æ¸²ææ¶å°±å±ç¤º Action çç»æï¼èä¸éè¦ç­å¾å®¢æ·ç«¯ hydration å®æã</p>
+<h3 id="32-ä¸ä¸ªè¿åå¼">3.2 ä¸ä¸ªè¿åå¼</h3>
+<pre><code class="language-typescript">const [state, dispatch, isPending] = useActionState(action, initialState);
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>è¿åå¼</th>
+<th>ç±»å</th>
+<th>è¯´æ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>state</code></td>
+<td><code>Awaited&lt;S&gt;</code></td>
+<td>Action çææ°æ§è¡ç»æï¼åå§ä¸º <code>initialState</code></td>
+</tr>
+<tr>
+<td><code>dispatch</code></td>
+<td><code>(payload: P) =&gt; void</code></td>
+<td>è§¦å Action çå½æ°ï¼payload ä¼ä½ä¸ºç¬¬äºä¸ªåæ°ä¼ ç» action</td>
+</tr>
+<tr>
+<td><code>isPending</code></td>
+<td><code>boolean</code></td>
+<td>æ¯å¦ææ­£å¨æ§è¡ç Action</td>
+</tr>
+</tbody>
+</table>
+<p><code>isPending</code> çå®ç°å°¤ä¸ºå·§å¦ãå®ä¸æ¯ç®åç"Action æ¯å¦æ­£å¨è¿è¡"æ å¿ï¼èæ¯åºäº React ç Transition æºå¶å®ç°çãå½ Action å¨ Transition ä¸­æ§è¡æ¶ï¼<code>isPending</code> ä¼èªå¨åä¸º <code>true</code>ï¼å¨ Transition å®æååä¸º <code>false</code>ãè¿æå³çå®å¤©ç¶ä¸ React çå¹¶åæ¸²æç¹æ§éæï¼è½å¤å¨é¿æ¶é´è¿è¡ç Action æé´ä¿æ UI çååºæ§ã</p>
+<hr>
+<h2 id="åæºç åæhook-åä½çç§å¯">åãæºç åæï¼Hook åä½çç§å¯</h2>
+<p>è¿æ¯æ¬æææ ¸å¿çé¨åãæä»¬å°æ·±å¥ React æºç ï¼<code>packages/react-reconciler/src/ReactFiberHooks.js</code>ï¼ï¼çç <code>useActionState</code> å°åºæ¯å¦ä½å®ç°çã</p>
+<h3 id="41-æ´ä½æ¶æ">4.1 æ´ä½æ¶æ</h3>
+<p><code>useActionState</code> çæ ¸å¿ç§å¯å¨äºï¼<strong>å®ä¸æ¯ä¸ä¸ª Hookï¼èæ¯ä¸ä¸ª Hook çåä½ä½</strong>ã</p>
+<p><img alt="" loading="lazy" data-src="https://show-blog.su.bcebos.com/uPic/mermaid-20260510_225634.png" class="lazyload"></p>
+<p>å½æä»¬å¨ç»ä»¶ä¸­è°ç¨ <code>useActionState</code> æ¶ï¼React åé¨ä¼åå»ºä¸ä¸ªç¬ç«ç Hook å®ä¾ï¼å®ä»¬åèªç®¡çä¸åçèè´£ï¼</p>
+<ul>
+<li><strong>stateHook</strong>ï¼å­å¨ Action çæ§è¡ç»æï¼æ¬è´¨ä¸æ¯ <code>useState</code> çåºå±å®ç°</li>
+<li><strong>pendingStateHook</strong>ï¼è¿½è¸ª pending ç¶æï¼ä½¿ç¨ Thenable æ¨¡å¼å®ç°ç»ç²åº¦çå¼æ­¥è¿½è¸ª</li>
+<li><strong>actionQueueHook</strong>ï¼ç®¡ç Action çæ§è¡éåï¼ä½¿ç¨å¾ªç¯é¾è¡¨å®ç°é«æçå¥éååºé</li>
+</ul>
+<h3 id="42-mountactionstateåå§åçç²¾å¯å·¥ç¨">4.2 mountActionStateï¼åå§åçç²¾å¯å·¥ç¨</h3>
+<p>è®©æä»¬ççé¦æ¬¡æ¸²ææ¶çæºç ï¼</p>
+<pre><code class="language-javascript">// packages/react-reconciler/src/ReactFiberHooks.js
+
+// ä¸ä¸ªæç­ reducerââç´æ¥è¿åæ°ç¶æ
+function actionStateReducer&lt;S&gt;(oldState: S, newState: S): S {
+  return newState;
+}
+
+function mountActionState&lt;S, P&gt;(
+  action: (Awaited&lt;S&gt;, P) =&gt; Awaited&lt;S&gt;,
+  initialStateProp: Awaited&lt;S&gt;,
+  permalink?: string
+): [Awaited&lt;S&gt;, (P) =&gt; void, boolean] {
+  // Hook 1: ç¶æ Hook ââ å­å¨ Action ç»æ
+  const stateHook = mountStateImpl&lt;Awaited&lt;S&gt;&gt;(initialStateProp);
+  const setState = stateHook.queue.dispatch;
+
+  // Hook 2: Pending ç¶æ Hook ââ è¿½è¸ªå¼æ­¥æ§è¡ç¶æ
+  // ä½¿ç¨ Thenable æ¨¡å¼ï¼ç±»ä¼¼ Transition ç pending è¿½è¸ª
+  const pendingStateHook = mountStateImpl&lt;Thenable&lt;boolean&gt; | boolean&gt;(false);
+  const setPendingState: boolean =&gt; void =
+    dispatchOptimisticSetState.bind(null, pendingStateHook.queue, false);
+
+  // Hook 3: Action éå Hook ââ ç®¡çæ§è¡éå
+  const actionQueueHook = mountRefImpl&lt;ActionStateQueue&lt;S, P&gt; | null&gt;(null);
+  const actionQueue = actionQueueHook.mutableRef;
+
+  // åå§åéå
+  if (actionQueue.current === null) {
+    actionQueue.current = {
+      action: action,
+      state: initialStateProp,
+      pending: null,  // å¾ªç¯é¾è¡¨çå¤´æé
+    };
+  }
+
+  // åå»º dispatch å½æ°
+  const dispatch = dispatchActionState.bind(
+    null,
+    actionQueue.current,
+    setState,
+    setPendingState,
+    action,
+    permalink
+  );
+
+  // è®¡ç® isPending
+  const isPending =
+    pendingStateHook.memoizedState !== false &amp;&amp;
+    pendingStateHook.memoizedState !== null;
+
+  return [stateHook.memoizedState, dispatch, isPending];
+}
+</code></pre>
+<p>è¿æ®µä»£ç æå ä¸ªå¼å¾æ·±å¥åæçç»èï¼</p>
+<p><strong><code>actionStateReducer</code> æ¯ä¸ä¸ªæç­å½æ°</strong>ãå®ç´æ¥è¿å <code>newState</code>ï¼ä¸åä»»ä½è®¡ç®ãè¿æå³ç <code>useActionState</code> çç¶ææ´æ°ä¸æ¯éè¿ reducer é»è¾æ¨å¯¼åºæ¥çï¼èæ¯ç± Action å½æ°ç´æ¥å³å®çãè¿ä¸ <code>useReducer</code> å½¢æäºé²æå¯¹æ¯ââ<code>useReducer</code> çç¶ææ¯æ°ç¶æç±æ§ç¶æå action type æ¨å¯¼èæ¥ï¼è <code>useActionState</code> çç¶ææ¯ Action å½æ°çè¿åå¼ãè¿ä¸ªè®¾è®¡éæ©åæ äºä¸¤ç§ä¸åçç¶æç®¡çå²å­¦ã</p>
+<p><strong><code>pendingStateHook</code> ä½¿ç¨ <code>dispatchOptimisticSetState</code></strong>ãè¿ä¸æ¯æ®éç <code>setState</code>ï¼èæ¯ React åé¨çä¹è§æ´æ°æºå¶ãå½ Action å¼å§æ§è¡æ¶ï¼pending ç¶æä¼è¢«è®¾ç½®ä¸ºä¸ä¸ª Thenable å¯¹è±¡ï¼ä¸ä¸ªå·æ <code>then</code> æ¹æ³çå¯¹è±¡ï¼ï¼èä¸æ¯ç®åç <code>true</code>ãReact çå¹¶åæ¸²æå¨è½å¤è¯å« Thenable å¯¹è±¡ï¼å¹¶å¨å¶ resolve æ¶èªå¨è§¦åéæ°æ¸²æãè¿ç§è®¾è®¡è®© <code>isPending</code> çæ´æ°ä¸ React çè°åº¦ç³»ç»æ·±åº¦éæï¼èä¸æ¯ç®åå°è®¾ç½®ä¸ä¸ªå¸å°å¼ã</p>
+<p><strong><code>actionQueue</code> ä½¿ç¨ <code>mountRefImpl</code> èé <code>mountStateImpl</code></strong>ãè¿æ¯ä¸ä¸ªå³é®çè®¾è®¡å³ç­ãéåçåæ´ä¸åºè¯¥è§¦åéæ°æ¸²æââåªæéåä¸­ Action çæ§è¡ç»ææåºè¯¥è§¦åæ¸²æãä½¿ç¨ <code>Ref</code> æ¥å­å¨éåï¼ç¡®ä¿äºéåæä½ï¼å¥éãåºéï¼ä¸ä¼å¯¼è´ä¸å¿è¦çæ¸²æã</p>
+<h3 id="43-å¾ªç¯é¾è¡¨action-éåçæ°æ®ç»æ">4.3 å¾ªç¯é¾è¡¨ï¼Action éåçæ°æ®ç»æ</h3>
+<p><code>useActionState</code> ç Action éåä½¿ç¨äºä¸ä¸ª<strong>å¾ªç¯ååé¾è¡¨</strong>ï¼Circular Singly Linked Listï¼æ¥å®ç°ãè¿æ¯ä¸ä¸ªå¨ç®æ³é¢è¯ä¸­ç»å¸¸åºç°çæ°æ®ç»æï¼React å¢éå°å¶åºç¨å°äºå®éçå·¥ç¨é®é¢ä¸­ã</p>
+<pre><code class="language-javascript">// Action éåèç¹çæ°æ®ç»æ
+interface ActionStateQueueNode&lt;S, P&gt; {
+  action: (state: Awaited&lt;S&gt;, payload: P) =&gt; Awaited&lt;S&gt;;
+  payload: P;
+  nextState: Awaited&lt;S&gt; | null;  // Action æ§è¡åçç»æ
+  status: 'pending' | 'fulfilled' | 'rejected';
+  value: Awaited&lt;S&gt; | null;
+  then: Thenable&lt;Awaited&lt;S&gt;&gt;['then'] | null;
+  next: ActionStateQueueNode&lt;S, P&gt; | null;  // æåä¸ä¸ä¸ªèç¹
+}
+
+// Action éåçæ°æ®ç»æ
+interface ActionStateQueue&lt;S, P&gt; {
+  action: ((state: Awaited&lt;S&gt;, payload: P) =&gt; Awaited&lt;S&gt;) | null;
+  state: Awaited&lt;S&gt;;
+  pending: ActionStateQueueNode&lt;S, P&gt; | null;  // éåå°¾æé
+}
+</code></pre>
+<p>ä¸ºä»ä¹éæ©å¾ªç¯é¾è¡¨èä¸æ¯æ°ç»ææ®ééåï¼æä¸ä¸ªåå ï¼</p>
+<p><strong>O(1) çå¥éååºéæä½</strong>ãå¨å¾ªç¯é¾è¡¨ä¸­ï¼å¥éåªéè¦å°æ°èç¹é¾æ¥å°å°¾èç¹ç nextï¼å¹¶æ´æ°å°¾æéï¼åºéåªéè¦å°å°¾èç¹ç next æåç¬¬äºä¸ªèç¹ãä¸éè¦åæ°ç»é£æ ·è¿è¡åç´ ç§»å¨ææ©å®¹ã</p>
+<p><strong>å¤©ç¶çç©ºéåå¤æ­</strong>ãå½éåä¸­åªæä¸ä¸ªèç¹æ¶ï¼<code>last.next === last</code>ï¼è¿ä¸ªæ¡ä»¶å¯ä»¥ç¨æ¥å¤æ­"è¿æ¯æåä¸ä¸ª Action"ãå½éåä¸ºç©ºæ¶ï¼<code>pending === null</code>ã</p>
+<p><strong>åå­æç</strong>ãä¸éè¦é¢ååéåºå®å¤§å°çæ°ç»ï¼ä¹ä¸éè¦å¨éåå¢é¿æ¶è¿è¡æ©å®¹å¤å¶ãæ¯ä¸ªèç¹åªå¨éè¦æ¶åå»ºï¼Action å®æåå¯ä»¥è¢«åå¾åæ¶ã<br>
+<img alt="" loading="lazy" data-src="https://show-blog.su.bcebos.com/uPic/mermaid-20260510_231005.png" class="lazyload"></p>
+<hr>
+<h2 id="äºdispatchactionstateè§¦å-action-çå®æ´é¾è·¯">äºãdispatchActionStateï¼è§¦å Action çå®æ´é¾è·¯</h2>
+<p>å½ç¨æ·è°ç¨ <code>dispatch(payload)</code> æ¶ï¼å°åºåçäºä»ä¹ï¼è®©æä»¬è¿½è¸ªå®æ´çæ§è¡é¾è·¯ã</p>
+<p><img alt="" loading="lazy" data-src="https://show-blog.su.bcebos.com/uPic/mermaid-20260510_225733.png" class="lazyload"></p>
+<h3 id="51-dispatchactionstate-æºç ">5.1 dispatchActionState æºç </h3>
+<pre><code class="language-javascript">function dispatchActionState&lt;S, P&gt;(
+  actionQueue: ActionStateQueue&lt;S, P&gt;,
+  setState: (newState: Awaited&lt;S&gt;) =&gt; void,
+  setPendingState: (isPending: boolean) =&gt; void,
+  action: (Awaited&lt;S&gt;, P) =&gt; Awaited&lt;S&gt;,
+  permalink: string | undefined,
+  payload: P
+) {
+  // 1. åå»º Action èç¹
+  const node: ActionStateQueueNode&lt;S, P&gt; = {
+    action: action,
+    payload: payload,
+    nextState: null,
+    status: 'pending',
+    value: null,
+    then: null,
+    next: null,
+  };
+
+  // 2. å å¥å¾ªç¯éåï¼O(1) æä½ï¼
+  const last = actionQueue.pending;
+  if (last === null) {
+    // éåä¸ºç©ºï¼èªå¾ªç¯
+    node.next = node;
+  } else {
+    // æå¥å°å°¾é¨
+    node.next = last.next;
+    last.next = node;
+  }
+  actionQueue.pending = node;
+
+  // 3. è®¾ç½® pending ç¶æ
+  setPendingState(true);
+
+  // 4. å¨ Transition ä¸­æ§è¡ Action
+  startTransition(() =&gt; {
+    runActionStateAction(actionQueue, node);
+  });
+}
+</code></pre>
+<p>æ³¨æç¬¬ 4 æ­¥ï¼<strong>Action æ»æ¯å¨ <code>startTransition</code> ä¸­æ§è¡</strong>ãè¿ç¡®ä¿äº Action çç¶ææ´æ°è¢«æ è®°ä¸ºä½ä¼åçº§ç Transition æ´æ°ï¼ä¸ä¼é»å¡ç¨æ·çé«ä¼åçº§äº¤äºï¼å¦è¾å¥ãç¹å»ï¼ãè¿æ¯ React 19 "éé»å¡ UI" çå¿µå¨ <code>useActionState</code> ä¸­çå·ä½ä½ç°ã</p>
+<h3 id="52-runactionstateactionæ§è¡å¼æ">5.2 runActionStateActionï¼æ§è¡å¼æ</h3>
+<pre><code class="language-javascript">function runActionStateAction&lt;S, P&gt;(
+  actionQueue: ActionStateQueue&lt;S, P&gt;,
+  node: ActionStateQueueNode&lt;S, P&gt;
+) {
+  const action = node.action;
+  const payload = node.payload;
+  const prevState = actionQueue.state;
+
+  if (node.isTransition) {
+    // æ¢å¤åå§ç Transition ä¸ä¸æ
+    const prevTransition = ReactSharedInternals.T;
+    const currentTransition = ({}: any);
+    ReactSharedInternals.T = currentTransition;
+
+    try {
+      const returnValue = action(prevState, payload);
+      const onStartTransitionFinish = ReactSharedInternals.S;
+      if (onStartTransitionFinish !== null) {
+        onStartTransitionFinish(currentTransition, returnValue);
+      }
+      handleActionReturnValue(actionQueue, node, returnValue);
+    } catch (error) {
+      onActionError(actionQueue, node, error);
+    } finally {
+      ReactSharedInternals.T = prevTransition;
+    }
+  } else {
+    try {
+      const returnValue = action(prevState, payload);
+      handleActionReturnValue(actionQueue, node, returnValue);
+    } catch (error) {
+      onActionError(actionQueue, node, error);
+    }
+  }
+}
+</code></pre>
+<p>è¿æ®µä»£ç ä¸­æç²¾å¦çé¨åæ¯ <strong>Transition ä¸ä¸æçæ¢å¤</strong>ãå½ <code>dispatch</code> å¨ä¸ä¸ªå·²æç Transition ä¸­è¢«è°ç¨æ¶ï¼ä¾å¦éè¿ <code>&lt;form action&gt;</code> è§¦åï¼ï¼React ä¼ä¿å­å½åç Transition ä¸ä¸æï¼<code>ReactSharedInternals.T</code>ï¼ï¼å¨ Action æ§è¡æ¶æ¢å¤å®ï¼æ§è¡å®æ¯ååè¿åãè¿ç¡®ä¿äºåµå¥ Transition çæ­£ç¡®æ§ââåå± Action è½å¤æç¥å°å¤å± Transition çå­å¨ï¼ä»èæ­£ç¡®å¤ç pending ç¶æåä¼åçº§ã</p>
+<p><code>ReactSharedInternals.T</code> å <code>ReactSharedInternals.S</code> æ¯ React åé¨çå¨å±ç¶ææ§½ä½ï¼åå«å­å¨å½å Transition å®ä¾å Transition å®æåè°ãè¿äºæ¯ React è°åº¦ç³»ç»çæ ¸å¿åé¨ APIï¼æ­£å¸¸æåµä¸å¼åèä¸åºè¯¥ç´æ¥è®¿é®å®ä»¬ãä½å¨ <code>useActionState</code> çå®ç°ä¸­ï¼React å¢ééè¦æä½è¿äºåºå± API æ¥ç¡®ä¿ Action æ§è¡ä¸ Transition ç³»ç»çæ­£ç¡®éæã</p>
+<hr>
+<h2 id="å­å¼æ­¥å¤çthenable-è¿½è¸ª">å­ãå¼æ­¥å¤çï¼Thenable è¿½è¸ª</h2>
+<p><code>handleActionReturnValue</code> æ¯ <code>useActionState</code> å¤çå¼æ­¥ Action çæ ¸å¿å½æ°ãå®éè¦å¤çä¸ç§æåµï¼åæ­¥å¼ãPromiseãThenableã</p>
+<pre><code class="language-javascript">function handleActionReturnValue&lt;S, P&gt;(
+  actionQueue: ActionStateQueue&lt;S, P&gt;,
+  node: ActionStateQueueNode&lt;S, P&gt;,
+  returnValue: Awaited&lt;S&gt; | Promise&lt;Awaited&lt;S&gt;&gt;
+) {
+  if (typeof returnValue === 'object' &amp;&amp; returnValue !== null) {
+    if (typeof returnValue.then === 'function') {
+      // Promise æ Thenable ââ å¼æ­¥å¤ç
+      returnValue.then(
+        (nextState: Awaited&lt;S&gt;) =&gt; onActionSuccess(actionQueue, node, nextState),
+        (error: mixed) =&gt; onActionError(actionQueue, node, error)
+      );
+    } else {
+      // åæ­¥å¯¹è±¡å¼
+      const nextState = (returnValue: any);
+      onActionSuccess(actionQueue, node, nextState);
+    }
+  } else {
+    // åæ­¥åå§å¼
+    const nextState = (returnValue: any);
+    onActionSuccess(actionQueue, node, nextState);
+  }
+}
+</code></pre>
+<p><img alt="" loading="lazy" data-src="https://show-blog.su.bcebos.com/uPic/mermaid-20260510_225850.png" class="lazyload"></p>
+<p>è¿éæä¸ä¸ªå®¹æå¿½ç¥ä½æå¶éè¦çè®¾è®¡ï¼<strong><code>useActionState</code> æ£æ¥çæ¯ <code>then</code> æ¹æ³çå­å¨ï¼èä¸æ¯ <code>instanceof Promise</code></strong>ãè¿æå³çå®è½å¤å¤çä»»ä½ Thenable å¯¹è±¡ï¼ä¸ä»ä»æ¯åç Promiseãè¿ä¸ªè®¾è®¡éæ©ä¸ React 18 å¼å¥ç Thenable æ¦å¿µä¸èç¸æ¿ââReact çå¹¶åç¹æ§ï¼å¦ SuspenseãTransitionï¼é½åºäº Thenable åè®®èé Promise APIï¼å ä¸º Thenable æ¯ä¸ä¸ªæ´éç¨çå¼æ­¥åè®®ã</p>
+<h3 id="61-onactionsuccessæååçè¿éååº">6.1 onActionSuccessï¼æååçè¿éååº</h3>
+<pre><code class="language-javascript">function onActionSuccess&lt;S, P&gt;(
+  actionQueue: ActionStateQueue&lt;S, P&gt;,
+  actionNode: ActionStateQueueNode&lt;S, P&gt;,
+  nextState: Awaited&lt;S&gt;
+) {
+  // 1. æ è®°èç¹ä¸ºå·²å®æ
+  actionNode.status = 'fulfilled';
+  actionNode.value = nextState;
+  notifyActionListeners(actionNode);
+
+  // 2. æ´æ°éåçç¶æå¿«ç§
+  actionQueue.state = nextState;
+
+  // 3. ä»å¾ªç¯éåä¸­åºéï¼å¹¶æ§è¡ä¸ä¸ä¸ª
+  const last = actionQueue.pending;
+  if (last !== null) {
+    const first = last.next;
+    if (first === last) {
+      // è¿æ¯éåä¸­æåä¸ä¸ª Action
+      actionQueue.pending = null;
+    } else {
+      // ç§»é¤å¤´èç¹ï¼æ´æ°å°¾æé
+      const next = first.next;
+      last.next = next;
+      // éå½æ§è¡ä¸ä¸ä¸ª Action
+      runActionStateAction(actionQueue, next);
+    }
+  }
+}
+</code></pre>
+<p>æ³¨æç¬¬ 3 æ­¥çéå½è°ç¨ï¼<strong>å½ä¸ä¸ª Action å®æåï¼å®ä¼èªå¨è§¦åéåä¸­çä¸ä¸ä¸ª Action</strong>ãè¿å°±æ¯ <code>useActionState</code> å®ç°"é¡ºåºæ§è¡"çæºå¶ââå³ä½¿æä»¬å¿«éç¹å»äºæäº¤æé®ä¸æ¬¡ï¼ä¸ä¸ª Action ä¹ä¼æç§é¡ºåºä¾æ¬¡æ§è¡ï¼æ¯ä¸ª Action é½è½æ¿å°åä¸ä¸ª Action çæ§è¡ç»æä½ä¸º <code>prevState</code>ã</p>
+<h3 id="62-onactionerroréè¯¯ççº§èå¤ç">6.2 onActionErrorï¼éè¯¯ççº§èå¤ç</h3>
+<pre><code class="language-javascript">function onActionError&lt;S, P&gt;(
+  actionQueue: ActionStateQueue&lt;S, P&gt;,
+  actionNode: ActionStateQueueNode&lt;S, P&gt;,
+  error: mixed
+) {
+  actionNode.status = 'rejected';
+  actionNode.value = error;
+  notifyActionListeners(actionNode);
+
+  // å³é®ï¼å° action è®¾ä¸º nullï¼é»æ­¢åç»­ Action æ§è¡
+  actionQueue.action = null;
+  actionQueue.pending = null;
+
+  // éè¯¯æ²¿ Fiber æ åä¸ä¼ æ­
+  throw error;
+}
+</code></pre>
+<p>å½ Action æåºå¼å¸¸æ¶ï¼<code>onActionError</code> ä¼å° <code>actionQueue.action</code> è®¾ä¸º <code>null</code>ãè¿ä¸ªæä½çæææ¯<strong>é»æ­¢éåä¸­ææåç»­ Action çæ§è¡</strong>ãè¿æ¯ä¸ç§"å¿«éå¤±è´¥"ï¼fail-fastï¼ç­ç¥ââä¸æ¦æä¸ª Action å¤±è´¥ï¼åç»­ç Action å³ä½¿å·²ç»å¥éä¹ä¸ä¼è¢«æ§è¡ï¼å ä¸ºå®ä»¬å¯è½ä¾èµäºå¤±è´¥ Action çç»æã</p>
+<hr>
+<h2 id="ä¸updateactionstateæ´æ°æ¶ç-hook-ä¸è´æ§">ä¸ãupdateActionStateï¼æ´æ°æ¶ç Hook ä¸è´æ§</h2>
+<p>React ç Hooks ç³»ç»è¦æ± Hook çè°ç¨é¡ºåºå¨æ¯æ¬¡æ¸²ææ¶ä¿æä¸è´ã<code>useActionState</code> å¨æ´æ°æ¶çå®ç°ç¡®ä¿äºè¿ä¸ç¹ï¼</p>
+<pre><code class="language-javascript">function updateActionState&lt;S, P&gt;(
+  action: (Awaited&lt;S&gt;, P) =&gt; Awaited&lt;S&gt;,
+  initialState: Awaited&lt;S&gt;,
+  permalink?: string
+): [Awaited&lt;S&gt;, (P) =&gt; void, boolean] {
+  // æç§æè½½æ¶çé¡ºåºæ¢å¤ä¸ä¸ª Hook
+  const stateHook = updateWorkInProgressHook();
+  const pendingStateHook = updateWorkInProgressHook();
+  const actionQueueHook = updateWorkInProgressHook();
+
+  return updateActionStateImpl(
+    stateHook, currentStateHook,
+    pendingStateHook, currentPendingStateHook,
+    actionQueueHook, currentActionQueueHook,
+    action, initialState, permalink
+  );
+}
+</code></pre>
+<p><code>updateWorkInProgressHook()</code> æ¯ React Hooks ç³»ç»çæ ¸å¿å½æ°ï¼å®æç§ Fiber èç¹ä¸ Hook é¾è¡¨çé¡ºåºä¾æ¬¡æ¢å¤æ¯ä¸ª Hook çç¶æãç±äº <code>mountActionState</code> æç§åºå®é¡ºåºåå»ºäºä¸ä¸ª Hookï¼stateHook â pendingStateHook â actionQueueHookï¼ï¼<code>updateActionState</code> å¿é¡»ä»¥ç¸åçé¡ºåºæ¢å¤å®ä»¬ãå¦æé¡ºåºä¸ä¸è´ï¼React ä¼æåº"Hooks é¡ºåºéè¯¯"çå¼å¸¸ã</p>
+<p><code>updateActionStateImpl</code> è¿ä¼å¤çä¸ä¸ªéè¦çè¾¹çæåµï¼<strong>Action å½æ°çæ´æ°</strong>ãå¦æç»ä»¶éæ°æ¸²ææ¶ä¼ å¥äºä¸åç <code>action</code> å½æ°ï¼<code>updateActionStateImpl</code> ä¼æ´æ° <code>actionQueue.action</code> çå¼ç¨ï¼ç¡®ä¿åç»­ç dispatch ä½¿ç¨ææ°ç action å½æ°ãè¿ç§"å½æ°å¼ç¨æ´æ°"çæ¨¡å¼å¨ React åé¨å¾å¸¸è§ï¼<code>useEffect</code> å <code>useCallback</code> ä¹éç¨äºç±»ä¼¼çç­ç¥ã</p>
+<hr>
+<h2 id="å«æ¶æå¨æ¯useactionstate-å¨-react-19-çæä¸­çä½ç½®">å«ãæ¶æå¨æ¯ï¼useActionState å¨ React 19 çæä¸­çä½ç½®</h2>
+<p>çè§£äº <code>useActionState</code> çåé¨å®ç°åï¼è®©æä»¬æå®æ¾å° React 19 çæ´ä½æ¶æä¸­æ¥çã<br>
+<img alt="" loading="lazy" data-src="https://show-blog.su.bcebos.com/uPic/mermaid-20260510_225945.png" class="lazyload"></p>
+<p>å¨è¿ä¸ªæ¶æå¾ä¸­ï¼æä»¬å¯ä»¥çå° <code>useActionState</code> å¤äºä¸ä¸ªæ¿ä¸å¯ä¸çå³é®ä½ç½®ï¼</p>
+<p><strong>åä¸</strong>ï¼å®ä¸ºå¼åèæä¾äºç®æ´ç APIï¼éèäºå¼æ­¥ç¶æç®¡ççå¤ææ§ãå¼åèåªéè¦å®ä¹ Action å½æ°ååå§ç¶æï¼å©ä¸çäº¤ç»æ¡æ¶ã</p>
+<p><strong>åä¸</strong>ï¼å®ä¾èµ <code>useTransition</code> çè°åº¦è½åæ¥ç®¡çæ´æ°çä¼åçº§ï¼ä¾èµ Reconciler æ¥å¤çæ°æ§ç¶æçå·®å¼ï¼ä¾èµ Committer æ¥å°åæ´åºç¨å° DOMã</p>
+<p><strong>æ¨ªå</strong>ï¼å®ä¸ <code>useOptimistic</code> å <code>useFormStatus</code> å½¢æäºè¡¥ã<code>useOptimistic</code> è´è´£å¨ Action æ§è¡æé´æ¾ç¤ºä¹è§ç UI ç¶æï¼<code>useFormStatus</code> è´è´£å¨è¡¨åå­ç»ä»¶ä¸­è®¿é®ç¶çº§è¡¨åçæäº¤ç¶æãä¸èéåä½¿ç¨ï¼å¯ä»¥æå»ºåºå®æ´çè¡¨åäº¤äºä½éªã</p>
+<p><strong>ä¸ Server Actions çéæ</strong>æ¯ <code>useActionState</code> æéè¦çæ¶æç¹æ§ä¹ä¸ãå½ Action å½æ°æ¯ä¸ä¸ª Server Actionï¼éè¿ <code>"use server"</code> æä»¤æ è®°çå½æ°ï¼æ¶ï¼<code>useActionState</code> è½å¤å¨æå¡ç«¯æ¸²æé¶æ®µå°±æ§è¡ Action å¹¶å°ç»æåå«å¨åå§ HTML ä¸­ãè¿æå³çç¨æ·å¨é¡µé¢å è½½æ¶å°±è½çå° Action çç»æï¼èä¸éè¦ç­å¾å®¢æ·ç«¯ JavaScript å è½½åæ§è¡ãè¿ç§"æå¡ç«¯ä¼å"çç­ç¥æ¯ React 19 å¨æ æ¶æçæ ¸å¿ä¼å¿ã</p>
+<hr>
+<h2 id="ä¹ä¸¾ä¸åä¸ä»æºç æ¨å¯¼è¡ä¸º">ä¹ãä¸¾ä¸åä¸ï¼ä»æºç æ¨å¯¼è¡ä¸º</h2>
+<p>æ·±å¥çè§£æºç çæå¤§ä»·å¼å¨äºï¼<strong>æä»¬å¯ä»¥ä»å®ç°æ¨å¯¼åºè¡ä¸ºï¼èä¸æ¯æ­»è®°ç¡¬è API ææ¡£ã</strong> è®©æä»¬ç¨å ä¸ªå®éåºæ¯æ¥éªè¯è¿ä¸ç¹ã</p>
+<h3 id="91-å¿«éè¿ç»­ç¹å»éåçé¡ºåºä¿è¯">9.1 å¿«éè¿ç»­ç¹å»ï¼éåçé¡ºåºä¿è¯</h3>
+<pre><code class="language-ts">function Counter() {
+  const [count, dispatch, isPending] = useActionState(
+    async (prev, delta) =&gt; {
+      await new Promise(r =&gt; setTimeout(r, 1000));
+      return prev + delta;
+    },
+    0
+  );
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Count: {count}&lt;/p&gt;
+      &lt;p&gt;Pending: {isPending ? 'yes' : 'no'}&lt;/p&gt;
+      &lt;button onClick={() =&gt; startTransition(() =&gt; dispatch(1))}&gt;+1&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+<p>å¿«éç¹å»ä¸¤æ¬¡ "+1"ï¼ä¸¤æ¬¡ dispatch ä¼è¢«ä¾æ¬¡å å¥å¾ªç¯éåãç¬¬ä¸ä¸ª Action å®æåï¼count åä¸º 1ï¼ï¼ç¬¬äºä¸ª Action æå¼å§æ§è¡ï¼åºäº prevState=1ï¼ç»æä¸º 2ï¼ã<code>isPending</code> å¨æ´ä¸ªè¿ç¨ä¸­ä¿æ <code>true</code>ã</p>
+<p>è¿ä¸ªè¡ä¸ºå®å¨å¯ä»¥ä»æºç æ¨å¯¼åºæ¥ï¼<code>dispatchActionState</code> å°æ¯ä¸ª dispatch åè£ä¸ºä¸ä¸ª ActionNode å¹¶å å¥å¾ªç¯éåï¼<code>onActionSuccess</code> å¨å½å Action å®æåéå½è°ç¨ <code>runActionStateAction</code> æ§è¡ä¸ä¸ä¸ªãéåç FIFO é¡ºåºä¿è¯äº Action çæ§è¡é¡ºåºä¸ dispatch çè°ç¨é¡ºåºä¸è´ã</p>
+<h3 id="92-éè¯¯ä¼ æ­å¿«éå¤±è´¥çè¿éæåº">9.2 éè¯¯ä¼ æ­ï¼å¿«éå¤±è´¥çè¿éæåº</h3>
+<pre><code class="language-js">function Form() {
+  const [state, formAction, isPending] = useActionState(
+    async (prev, formData) =&gt; {
+      const name = formData.get('name');
+      if (!name) throw new Error('Name is required');
+      return { submitted: true, name };
+    },
+    { submitted: false, name: '' }
+  );
+
+  return (
+    &lt;ErrorBoundary fallback={&lt;p&gt;Something went wrong&lt;/p&gt;}&gt;
+      &lt;form action={formAction}&gt;
+        &lt;input name="name" /&gt;
+        &lt;button disabled={isPending}&gt;Submit&lt;/button&gt;
+      &lt;/form&gt;
+    &lt;/ErrorBoundary&gt;
+  );
+}
+</code></pre>
+<p>å½ Action æåºå¼å¸¸æ¶ï¼<code>onActionError</code> ä¼å° <code>actionQueue.action</code> è®¾ä¸º <code>null</code>ï¼é»æ­¢åç»­æéç Action æ§è¡ãéè¯¯ä¼æ²¿ Fiber æ åä¸ä¼ æ­ï¼ç´å°è¢«æè¿ç Error Boundary æè·ãåæ¶ï¼<code>isPending</code> ä¼è¢«éç½®ä¸º <code>false</code>ï¼ç¡®ä¿ UI ä¸ä¼æ°¸ä¹å¡å¨ loading ç¶æã</p>
+<h3 id="93-transition-çº¦æä¸ºä»ä¹å¿é¡»å¨-transition-ä¸­è°ç¨">9.3 Transition çº¦æï¼ä¸ºä»ä¹å¿é¡»å¨ Transition ä¸­è°ç¨ï¼</h3>
+<p>å¦æç´æ¥è°ç¨ <code>dispatch</code> èä¸åè£¹å¨ <code>startTransition</code> ä¸­ï¼ä¸ä¸éè¿ <code>&lt;form action&gt;</code> ä¼ éï¼React ä¼æåºéè¯¯ï¼</p>
+<pre><code>An async function with useActionState was called outside of a transition.
+</code></pre>
+<p>ä»æºç å¯ä»¥çè§£è¿ä¸ªçº¦æçåå ï¼<code>isPending</code> çæ­£ç¡®æ§ä¾èµäº <code>dispatchOptimisticSetState</code>ï¼èè¿ä¸ªå½æ°éè¦å¨ Transition ä¸ä¸æä¸­æè½æ­£ç¡®å·¥ä½ãæ²¡æ Transition ä¸ä¸æï¼React æ æ³è¿½è¸ª pending ç¶æçååï¼ä¹æ æ³æ­£ç¡®å°å°ç¶ææ´æ°æ è®°ä¸ºä½ä¼åçº§ãè¿ä¸æ¯ä¸ä¸ªä»»æçéå¶ï¼èæ¯æ¶æä¸çå¿ç¶è¦æ±ã</p>
+<h3 id="94-ä¸-usereducer-çå¯¹æ¯ä½æ¶éæ©åªä¸ª">9.4 ä¸ useReducer çå¯¹æ¯ï¼ä½æ¶éæ©åªä¸ªï¼</h3>
+<table>
+<thead>
+<tr>
+<th>ç»´åº¦</th>
+<th>useReducer</th>
+<th>useActionState</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ç¶æè®¡ç®</td>
+<td>çº¯åæ­¥ reducer</td>
+<td>å¯ä»¥æ¯å¼æ­¥å½æ°</td>
+</tr>
+<tr>
+<td>æ´æ°è§¦å</td>
+<td><code>dispatch({type: 'X'})</code></td>
+<td><code>dispatch(payload)</code></td>
+</tr>
+<tr>
+<td>Pending è¿½è¸ª</td>
+<td>éè¦æå¨å®ç°</td>
+<td>åç½® <code>isPending</code></td>
+</tr>
+<tr>
+<td>éè¯¯å¤ç</td>
+<td>å¨ reducer ä¸­å¤ç</td>
+<td>èªå¨ä¼ æ­å° Error Boundary</td>
+</tr>
+<tr>
+<td>éåç®¡ç</td>
+<td>æ ï¼æ¯æ¬¡ dispatch ç«å³æ§è¡ï¼</td>
+<td>åç½®é¡ºåºéå</td>
+</tr>
+<tr>
+<td>éç¨åºæ¯</td>
+<td>å¤æçåæ­¥ç¶æé»è¾</td>
+<td>å¼æ­¥ Actionãè¡¨åæäº¤ãæ°æ®åæ´</td>
+</tr>
+</tbody>
+</table>
+<p>ä¸ä¸ªå®ç¨çå¤æ­æ åï¼<strong>å¦ææä»¬çç¶ææ´æ°æ¶å I/O æä½ï¼ç½ç»è¯·æ±ãæ°æ®åºåå¥ãæä»¶è¯»åï¼ï¼ä½¿ç¨ <code>useActionState</code>ï¼å¦æåªæ¯çº¯è®¡ç®é»è¾ï¼ä½¿ç¨ <code>useReducer</code>ã</strong></p>
+<hr>
+<h2 id="åè®¾è®¡æ¨¡å¼æç¼ä»-useactionstate-å­¦å°çå·¥ç¨æºæ§">åãè®¾è®¡æ¨¡å¼æç¼ï¼ä» useActionState å­¦å°çå·¥ç¨æºæ§</h2>
+<h3 id="101-ç»åæ¨¡å¼composition-over-inheritance">10.1 ç»åæ¨¡å¼ï¼Composition over Inheritanceï¼</h3>
+<p><code>useActionState</code> æ²¡æå®ç°ä¸å¥å¨æ°çç¶æç®¡çæºå¶ï¼èæ¯<strong>ç»åäºä¸ä¸ªå·²æçåºç¡ Hook</strong>ï¼<code>useState</code>ã<code>useState</code>ã<code>useRef</code>ï¼æ¥æå»ºæ´é«çº§çæ½è±¡ãè¿ç§"ç¨ç®åçç§¯æ¨æ­å»ºå¤æçå»ºç­"çæè·¯ï¼æ¯ React Hooks ä½ç³»çæ ¸å¿è®¾è®¡ååãå®åè¯æä»¬ï¼å¥½ç API è®¾è®¡ä¸æ¯åææ°çåºç¡åè¯­ï¼èæ¯å¨æ­£ç¡®çæ½è±¡å±çº§ä¸ç»åå·²æçåè¯­ã</p>
+<h3 id="102-å³æ³¨ç¹åç¦»separation-of-concerns">10.2 å³æ³¨ç¹åç¦»ï¼Separation of Concernsï¼</h3>
+<p>ä¸ä¸ª Hook åèªç®¡çä¸ä¸ªç¬ç«çå³æ³¨ç¹ï¼ç¶æãpending è¿½è¸ªãéåè°åº¦ãå®ä»¬éè¿é­ååå¼ç¨ç¸äºéä¿¡ï¼ä½åèªççå½å¨ææ¯ç¬ç«çãè¿ç§åç¦»ä½¿å¾æ¯ä¸ªé¨åé½å¯ä»¥ç¬ç«æµè¯åä¼åï¼ä¹ä½¿å¾æ´ä¸ªç³»ç»çå¤æåº¦è¢«æ§å¶å¨å¯ç®¡ççèå´åã</p>
+<h3 id="103-thenable-åè®®ä¼äº-promise-api">10.3 Thenable åè®®ä¼äº Promise API</h3>
+<p><code>useActionState</code> æ£æ¥ <code>then</code> æ¹æ³èé <code>instanceof Promise</code>ï¼è¿ä¸ªè®¾è®¡éæ©ä½ç°äº"åè®®ä¼äºå®ç°"çå·¥ç¨ååãThenable æ¯ä¸ä¸ªæ´è½»éçåè®®ï¼ä»»ä½å®ç°äº <code>then</code> æ¹æ³çå¯¹è±¡é½å¯ä»¥åä¸ React çå¼æ­¥ç³»ç»ï¼ä¸éè¦ä¾èµç¹å®ç Promise å®ç°ãè¿ç§è®¾è®¡å¨ React ç SuspenseãTransition ç­ç¹æ§ä¸­ä¸ä»¥è´¯ä¹ã</p>
+<h3 id="104-å¿«éå¤±è´¥ä¸ä¼ééçº§">10.4 å¿«éå¤±è´¥ä¸ä¼ééçº§</h3>
+<p><code>onActionError</code> ä¸­ç"æ¸ç©ºéå"ç­ç¥æ¯ä¸ç§å¿«éå¤±è´¥æ¨¡å¼ãå¨åå¸å¼ç³»ç»åå¹¶åç¼ç¨ä¸­ï¼å¿«éå¤±è´¥æ¯ä¸ç§éè¦çè®¾è®¡ååââå½æ£æµå°ä¸å¯æ¢å¤çéè¯¯æ¶ï¼ç«å³åæ­¢ææåç»­æä½ï¼èä¸æ¯è®©éè¯¯å¨ç³»ç»ä¸­çº§èä¼ æ­ã<code>useActionState</code> å°è¿ä¸ªåååºç¨å°äºåç«¯ç¶æç®¡çä¸­ã</p>
+<hr>
+<h2 id="åä¸æ»ç»ä»å®ç°ç»èå°è®¾è®¡å²å­¦">åä¸ãæ»ç»ï¼ä»å®ç°ç»èå°è®¾è®¡å²å­¦</h2>
+<p>åé¡¾ <code>useActionState</code> çå®æ´å®ç°ï¼æä»¬å¯ä»¥çå°åä¸ªå±æ¬¡çè®¾è®¡æºæ§ï¼</p>
+<p><strong>ç¬¬ä¸å±ï¼API è®¾è®¡çç®æ´æ§ã</strong> ä¸ä¸ªè¿åå¼ <code>[state, dispatch, isPending]</code> è¦çäº Action é©±å¨ç¶æåæ´çææéæ±ï¼æ²¡æå¤ä½çéç½®é¡¹ï¼æ²¡æå¤æçéé¡¹å¯¹è±¡ãå¥½ç API å°±åå¥½çæ°å­¦å¬å¼ââç®æ´ï¼ä½è´å«ä¸°å¯çä¿¡æ¯ã</p>
+<p><strong>ç¬¬äºå±ï¼æ°æ®ç»æçç²¾å·§æ§ã</strong> å¾ªç¯é¾è¡¨å®ç° O(1) çéåæä½ï¼Thenable æ¨¡å¼å®ç°ç»ç²åº¦çå¼æ­¥è¿½è¸ªï¼ActionNode çç¶ææºè®¾è®¡ç¡®ä¿äºçå½å¨æçæ¸æ°å¯æ§ãè¿äºæ°æ®ç»æçéæ©ä¸æ¯éæçï¼èæ¯éå¯¹å·ä½é®é¢çæä¼è§£ã</p>
+<p><strong>ç¬¬ä¸å±ï¼æ¶æéæçä¸è´æ§ã</strong> <code>useActionState</code> ä¸æ¯å­¤ç«å­å¨çââå®ä¸ <code>useTransition</code> å±äº«åºå±æºå¶ï¼ä¸ Server Components æ ç¼éæï¼ä¸ <code>&lt;form action&gt;</code> å½¢æå®æ´çè¡¨åè§£å³æ¹æ¡ãè¿ç§"å¨æ­£ç¡®çæ½è±¡å±çº§ä¸ä¿æä¸è´æ§"çè®¾è®¡ï¼æ¯æ¡æ¶çº§ API ååºçº§ API çæ¬è´¨åºå«ã</p>
+<p><strong>ç¬¬åå±ï¼è®¾è®¡å²å­¦çåç»æ§ã</strong> ä» <code>useFormState</code> å° <code>useActionState</code> çæ¹åï¼ä»"æ°æ®é©±å¨"å°"æå¾é©±å¨"çèå¼è½¬åï¼React å¢éæ­£å¨æå»ºä¸ä¸ªä»¥ Action ä¸ºæ ¸å¿çå£°æå¼å¯ä½ç¨ä½ç³»ã<code>useActionState</code> æ¯è¿ä¸ªä½ç³»çå³é®æ¼å¾ââå®ä¸ä»ä»æ¯ä¸ä¸ªè¡¨å Hookï¼èæ¯ React å¯¹"å¦ä½å¨ UI æ¡æ¶ä¸­ä¼éå°å¤çå¯ä½ç¨"è¿ä¸ªæ ¹æ¬æ§é®é¢çåç­ã</p>
+<p>ä½ä¸ºå·¥ç¨å¸ï¼ä»ä¼ç§çæ¡æ¶æºç ä¸­å­¦ä¹ çä¸ä»ä»æ¯å®ç°æå·§ï¼æ´æ¯<strong>å¦ä½å¨ç®æ´æ§åè¡¨è¾¾åä¹é´æ¾å°å¹³è¡¡ï¼å¦ä½å¨æ§è½åæ­£ç¡®æ§ä¹é´ååºåèï¼å¦ä½è®¾è®¡åºæ¢è½è§£å³å½ä¸é®é¢åè½éåºæªæ¥æ¼è¿çæ½è±¡</strong>ãè¿äºææ¯çæ­£å¼å¾åå¤åå³çè®¾è®¡æºæ§ã</p>
+<hr>
+<p><em>æ¬æåºäº React 19 æºç ï¼<code>packages/react-reconciler/src/ReactFiberHooks.js</code>ï¼åæï¼æ¶åçåé¨ API å¯è½éçæ¬æ´æ°èååãå»ºè®®ç»å React GitHub ä»åºçææ°ä»£ç å¯¹ç§éè¯»ã</em></p>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-05-11 00:31">2026-05-11 00:30</span>&nbsp;
+<a href="https://www.cnblogs.com/wjszxli">èçä»¥ä¸º</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(20009307);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fwjszxli%2Fp%2F20009307&amp;targetId=20009307&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
     <title><![CDATA[ .NETæ§è½ä¼åï¼æåApache Arrowè¯»åæ§è½ ]]></title>
     <link>https://www.cnblogs.com/InCerry/p/-/dotnet-arrownet-copression</link>
     <guid>4ae3946024a4438bdcf0e676b56c0f39</guid>
@@ -718,672 +1273,6 @@ parent_or_path
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(20008456);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fofnoname%2Fp%2F20008456&amp;targetId=20008456&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ 12ãByteArrayInputStreamåDataInputStreamçæºç åæåä½¿ç¨æ¹æ³è¯¦ç»åæ ]]></title>
-    <link>https://www.cnblogs.com/Carey-ccl/p/20009118</link>
-    <guid>f42601c62cccf195e2f60ff33c0797e2</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/Carey-ccl/p/20009118" title="åå¸äº 2026-05-10 23:01">
-    <span role="heading" aria-level="2">12ãByteArrayInputStreamåDataInputStreamçæºç åæåä½¿ç¨æ¹æ³è¯¦ç»åæ</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h4 id="ä¸bytearrayinputstreamçæºç é¶æ·è´zero-copyçä¸ç§å­èæµ">ä¸ãByteArrayInputStreamçæºç ââé¶æ·è´ï¼Zero-Copyï¼çä¸ç§å­èæµ</h4>
-<p>ââå¨ä¼ ç»çç£ç I/Oï¼æ¯å¦FileInputStream.classãBufferedInputStream.class...ç­ï¼ ä¸­ï¼ä½¿ç¨èé½éè¦å°ç£ççæ°æ®åå¤å¶å°åå­ä¸­æ¥ä½¿ç¨èæ æ³å®ç°é¶æ·è´ï¼Zero-Copyï¼ï¼èByteArrayInputStream&nbsp;.classå¯ä»¥ä»åå­ä¸­ç´æ¥è¯»åæ°æ®ï¼å æ­¤ï¼ByteArrayInputStream&nbsp;.classè¿ä¸ªç±»æ­£æ¯ä¸ºäºè§£å³åå­æ°æ®è¯»åèå­å¨çï¼ByteArrayInputStream&nbsp;çæ ¸å¿ä»·å¼å¨äºé¶æ·è´ï¼Zero-Copyï¼ï¼å®åè®¸å°åå­ä¸­çbyte[]å­èæ°ç»å½ä½è¾å¥æµæ¥è¯»åï¼æ¯å¤çåå­æ°æ®çå¸¸ç¨å·¥å·ï¼å¦ä¸æç¤ºï¼<br>
-<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510224134238-844494612.png" class="lazyload"></p>
-<p>ByteArrayInputStream&nbsp;.classçUMLå³ç³»å¾ï¼å¦ä¸æç¤ºï¼<br>
-<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510224142576-535630162.png" class="lazyload"></p>
-<p>ByteArrayInputStream&nbsp;.classçæºç å¦ä¸ï¼</p>
-<pre><code>package java.io;
-
-public
-class ByteArrayInputStream extends InputStream {
-    //byte[] bufåéç´æ¥æåäºåå­ä¸­çbyte[]å­èæ°ç»ï¼ä¸ä¼åBufferedInputStreamæºç ä¸­çé£æ ·ï¼åå°æ°æ®å¤å¶å°èªå·±åé¨çbyte[]å­èæ°ç»ä¸ï¼åè¿è¡æ°æ®å¤ç
-    protected byte buf[];
-     //åå¤ä»å½ååå­ä¸­çbyte[]æ°ç»ï¼ç´æ¥å¼ç¨ï¼è¯»åå­èçç´¢å¼ä½ç½®ï¼åå¼èå´ä¸º[0,count)
-    protected int pos;
-     //æ è®°æä¸ªç´¢å¼ä½ç½®ï¼0&lt;=mark&lt;=pos
-    //è¯¥åéåªä¼å¨ æé å½æ°åmark()å½æ°ä¸­èµå¼
-    protected int mark = 0;
-    //byte[] bufåéæåçåå­ä¸­çbyte[]å­èæ°ç»çé¿åº¦
-    protected int count;
-    //æé å½æ°
-    public ByteArrayInputStream(byte buf[]) {
-        this.buf = buf;//byte[] bufåéç´æ¥æåäºåå­ä¸­çbyte[]å­èæ°ç»
-        this.pos = 0;
-        this.count = buf.length;
-    }
-    //æé å½æ°ï¼åå¤ä»byte buf[]å­èæ°ç»ä¸­è¯»åå­èçç´¢å¼ä½ç½®ä»int offsetç´¢å¼ä½ç½®å¼å§
-    public ByteArrayInputStream(byte buf[], int offset, int length) {
-        this.buf = buf;//byte[] bufåéç´æ¥æåäºåå­ä¸­çbyte[]å­èæ°ç»
-        this.pos = offset;
-        //è¯»åæ°ç»çå³è¾¹çç´¢å¼ä½ç½® &lt; åå­ä¸­çbyte[]å­èæ°ç»çé¿åº¦
-        this.count = Math.min(offset + length, buf.length);
-        this.mark = offset;//è¯»åæ°ç»æ¶åçå·¦è¾¹çç´¢å¼ä½ç½®&gt;=offset
-    }
-    //çº¿ç¨åæ­¥çå½æ°ï¼ä»åå­ä¸­çbyte[]å­èæ°ç»è¯»å1ä¸ªå­è
-    public synchronized int read() {
-        return (pos &lt; count) ? (buf[pos++] &amp; 0xff) : -1;
-    }
-    //çº¿ç¨åæ­¥çå½æ°ï¼ä»åå­ä¸­çbyte[]å­èæ°ç»è¯»ålenä¸ªå­èå°æå®çbyte[]æ°ç»bä¸­ï¼è¿lenä¸ªå­èè¢«æ¾å°byte[]æ°ç»bç[off,off+len)ç´¢å¼ä½ç½®ã
-    public synchronized int read(byte b[], int off, int len) {
-        if (b == null) {
-            //å¦ææå®çåå­ä¸­çbyte[]æ°ç»bä¸ºnullï¼æåºä¸ä¸ªNullPointerException
-            throw new NullPointerException();
-        //èå´æ£æµï¼offålenå¿é¡»æ¯éè´æ°ï¼b.length - offæ¯åå­ä¸­çbyte[]æ°ç»è¿å¯ä»¥æ¾çå­èï¼ASCIIç å¼ï¼çæ°é
-        } else if (off &lt; 0 || len &lt; 0 || len &gt; b.length - off) {
-            throw new IndexOutOfBoundsException();
-        }
-        //pos&gt;=countæ¶ï¼è¿å-1ï¼è¡¨ç¤ºåå­ä¸­çbyte[]æ°ç»å·²ç»è¯»åå®æ¯
-        if (pos &gt;= count) {
-            return -1;
-        }
-        //int availè¡¨ç¤ºæ¬æ¬¡å¯ä»¥ä»åå­ä¸­çbyte[]æ°ç»ä¸­è¯»åå°çå­èæ°é
-        int avail = count - pos;
-        if (len &gt; avail) {
-            len = avail;
-        }
-        if (len &lt;= 0) {
-            return 0;
-        }
-        //ä»åå­ä¸­çbyte[]å­èæ°ç»è¯»å[pos,pos+len)ç´¢å¼ä½ç½®çå­èå°æå®çbyte[]æ°ç»bä¸­ï¼è¿lenä¸ªå­èè¢«æ¾å°byte[]æ°ç»bç[off,off+len)ç´¢å¼ä½ç½®ã
-        System.arraycopy(buf, pos, b, off, len);
-        pos += len;//è·æ°int posåéçå¼
-        return len;
-    }
-    //çº¿ç¨åæ­¥çå½æ°
-    public synchronized long skip(long n) {
-        //å°è¯æ´æ°å³æéint posçå¼ï¼å¯¹äºä¸åçnå¼ï¼æä»¥ä¸2ç§å¯è½ï¼
-        //aãå¦æn&lt;count - poså¹¶ä¸n&gt;0æ¶ï¼ææ´æ°int pos= pos+n
-        //bãå½n&lt;0ï¼æèn&gt;=count - posæ¶ï¼æ´æ°int pos = count
-        long k = count - pos;
-        if (n &lt; k) {
-            k = n &lt; 0 ? 0 : n;
-        }
-
-        pos += k;
-        return k;
-    }
-    //çº¿ç¨åæ­¥çå½æ°ï¼è¿ååå­ä¸­çbyte[]å­èæ°ç»è¿å¯ä»¥è¯»åçå­èæ°é
-    public synchronized int available() {
-        return count - pos;
-    }
-
-    public boolean markSupported() {
-        return true;
-    }
-    //æ´æ°int markåéä¸ºposçå¼
-    public void mark(int readAheadLimit) {
-        mark = pos;
-    }
-    //çº¿ç¨åæ­¥çå½æ°ï¼éç½®int posåéçå¼ä¸ºmarkçå¼
-    public synchronized void reset() {
-        pos = mark;
-    }
-
-    public void close() throws IOException {
-    }
-}
-</code></pre>
-<h5 id="11bytearrayinputstreamclassä»åå­ä¸­è¯»åæ°æ®çè¿ç¨">1.1ãByteArrayInputStream.classä»åå­ä¸­è¯»åæ°æ®çè¿ç¨</h5>
-<p>ââByteArrayInputStream.classæ¬è´¨å°±æ¯éè¿ç´æ¥å¼ç¨å­èæ°ç»æ¥å®ç°çé¶æ·è´ï¼å¹¶éè¿åæéï¼int markæ¯å·¦æéåint posæ¯å³æéï¼æ¥å®ç°çread()å½æ°ãskip()å½æ°ãreset()å½æ°...ç­ï¼ByteArrayInputStream.classä»åå­ä¸­è¯»åæ°æ®çè¿ç¨å¦ä¸æç¤ºï¼</p>
-<pre><code>import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-public class ByteArrayInputStreamTest {
-
-    private static final int LEN = 5;
-    // å¯¹åºè±æå­æ¯"abcdefghijklmnopqrstuvwxyz"ï¼ASCIIç¼ç ï¼
-    private static final byte[] ArrayLetters = {
-        0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6A, 0x6B, 0x6C, 0x6D, 0x6E, 0x6F,
-        0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A
-    };
-    public static void main(String[] args) {
-        //step1ï¼åå»ºByteArrayInputStreamå­èæµï¼å¼ç¨çæ¯åå­ä¸­çArrayLettersæ°ç»
-        ByteArrayInputStream bais = new ByteArrayInputStream(ArrayLetters);
-
-        //step2ï¼ ä»ByteArrayInputStreamæåçåå­æ°ç»ä¸­è¯»å5ä¸ªå­è
-        for (int i=0; i&lt;LEN; i++) {
-            // è¥è½ç»§ç»­è¯»åä¸ä¸ä¸ªå­èï¼åè¯»åä¸ä¸ä¸ªå­è
-            if (bais.available() &gt; 0) {
-                // è¯»åByteArrayInputStreamæåçåå­æ°ç»ä¸­çä¸ä¸ä¸ªå­è
-                int tmp = bais.read();
-                System.out.printf("%d : 0x%s\n", i, Integer.toHexString(tmp));
-            }
-        }
-        //step3ï¼æ è®°ByteArrayInputStreamä¸­ä¸ä¸ä¸ªè¢«è¯»åçç´¢å¼ä½ç½®ï¼å³--æ è®°"0x66"ï¼ï¼å ä¸ºå ä¸ºåé¢å·²ç»è¯»åäº5ä¸ªå­èï¼æä»¥ä¸ä¸ä¸ªè¢«è¯»åçä½ç½®æ¯ç¬¬6ä¸ªå­è
-        // â ã ByteArrayInputStreamä¸­çmark(0)å½æ°ä¸­çâåæ°0âæ¯æ²¡æå®éæä¹çã
-        // â¡ã mark()ä¸reset()æ¯éå¥çï¼reset()ä¼å°å­èæµä¸­å³æéint posæåçç´¢å¼éç½®ä¸ºmark()å½æ°ä¸­å·¦æéint markæåçç´¢å¼
-        bais.mark(0);
-
-        //step4ï¼ è·³è¿5ä¸ªå­èãè·³è¿5ä¸ªå­èåï¼ä¸ä¸ä¸ªè¢«è¯»åçç´¢å¼ä½ç½®åºè¯¥æ¯ByteArrayInputStreamæåçåå­æ°ç»ä¸­â0x6Bâã
-        bais.skip(5);
-
-        //step5ï¼ä»ByteArrayInputStreamæåçåå­æ°ç»ä¸­è¯»å5ä¸ªå­èå°byte[] bufæ°ç»ç[0,5)ç´¢å¼ä½ç½®ãå³è¯»åâ0x6B, 0x6C, 0x6D, 0x6E, 0x6Fâ
-        byte[] buf = new byte[LEN];
-        bais.read(buf, 0, LEN);
-        String str1 = new String(buf);
-        System.out.printf("str1=%s\n", str1);
-    
-        //step6ãéç½®ByteArrayInputStreamä¸­çå³æéint posä¸ºmark()å½æ°ä¸­å·¦æéint markæåçç´¢å¼ï¼å³0x66ã
-        bais.reset();
-        //step7ãä»âéç½®åçByteArrayInputStreamâä¸­è¯»å5ä¸ªå­èå°bufä¸­ãå³è¯»åâ0x66, 0x67, 0x68, 0x69, 0x6Aâ
-        bais.read(buf, 0, LEN);
-        String str2 = new String(buf);
-        System.out.printf("str2=%s\n", str2);
-    }
-}
-</code></pre>
-<p>ä¸è¿°ä»£ç çæ§è¡è¿ç¨ä¸ºï¼<br>
-â ãstep1ï¼åå»ºByteArrayInputStreamå¯¹è±¡ï¼å¼ç¨çæ¯åå­ä¸­çbyte[] ArrayLettersæ°ç»ï¼å¦ä¸æç¤ºï¼int mark = 0,int pos = 0ï¼ï¼<br>
-<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510224242407-249571668.png" class="lazyload"></p>
-<p>â¡ãstep2ï¼ä»åå­ä¸­çbyte[] ArrayLettersæ°ç»ä¸­ä¾æ¬¡è¯»å5ä¸ªå­èï¼è¯»åå®æåï¼int pos=5ï¼int mark=0ï¼å¦ä¸æç¤ºï¼int mark = 0,int pos = 5ï¼ï¼<br>
-<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510224249100-837067567.png" class="lazyload"></p>
-<p>â¢ãstep3ï¼æ è®°ByteArrayInputStreamä¸­ä¸ä¸ä¸ªè¢«è¯»åçç´¢å¼ä½ç½®ï¼å³--æ è®°"0x66"ï¼ï¼å ä¸ºå ä¸ºåé¢å·²ç»è¯»åäº5ä¸ªå­èï¼æä»¥ä¸ä¸ä¸ªè¢«è¯»åçä½ç½®æ¯ç¬¬6ä¸ªå­èï¼å¦ä¸æç¤ºï¼int mark = 5,int pos = 5ï¼ï¼<br>
-<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510224256846-313611433.png" class="lazyload"></p>
-<p>mark(0)å½æ°éè¦æ³¨æä»¥ä¸2ç¹<br>
-aã ByteArrayInputStreamä¸­çmark(0)å½æ°ä¸­çâå¥å0âæ¯æ²¡æå®éæä¹çï¼<br>
-bã mark()å½æ°ä¸reset()å½æ°æ¯éå¥çï¼reset()å½æ°ä¼å°ByteArrayInputStreamä¸­å³æéint posæåçç´¢å¼éç½®ä¸ºmark()å½æ°ä¸­å·¦æéint markæåçç´¢å¼ã<br>
-â£ãstep4ï¼ è·³è¿5ä¸ªå­èãè·³è¿5ä¸ªå­èåï¼ä¸ä¸ä¸ªè¢«è¯»åçç´¢å¼ä½ç½®åºè¯¥æ¯ByteArrayInputStreamæåçåå­æ°ç»ä¸­"0x6B"ï¼å¦ä¸æç¤ºï¼int mark = 5,int pos = 10ï¼ï¼<br>
-<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510224328112-980172842.png" class="lazyload"></p>
-<p>â¤ãstep5ï¼ ä»ByteArrayInputStreamæåçåå­æ°ç»ä¸­è¯»å5ä¸ªå­èå°byte[] bufæ°ç»ç[0,5)ç´¢å¼ä½ç½®ãå³è¯»åâ0x6B, 0x6C, 0x6D, 0x6E, 0x6Fâï¼å¦ä¸æç¤ºï¼int mark = 5,int pos = 15ï¼ï¼<br>
-<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510224335407-2139459462.png" class="lazyload"></p>
-<p>â¥ãstep6ï¼ éç½®ByteArrayInputStreamä¸­çå³æéint posä¸ºstep3ä¸­è°ç¨mark()å½æ°æ¶å·¦æéint markæåçç´¢å¼ä½ç½®ï¼å³0x66ï¼å¦ä¸æç¤ºï¼int mark = 5,int pos = 5ï¼ï¼<br>
-<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510224342132-1119334842.png" class="lazyload"></p>
-<p>â¦ãstep7ï¼ ä»âéç½®åçByteArrayInputStreamâä¸­è¯»å5ä¸ªå­èå°bufä¸­ãå³è¯»åâ0x66, 0x67, 0x68, 0x69, 0x6Aâï¼å¦ä¸æç¤ºï¼int mark = 5,int pos = 10ï¼ï¼<br>
-<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510224351618-221708823.png" class="lazyload"></p>
-<h4 id="äºdatainputstreamçæºç javaåç8ç§æ°æ®ç±»åè§£æåutf-8-è§£ç ç®æ³å®ç°çä¸ç§è£é¥°å¨æµ">äºãDataInputStreamçæºç ââJavaåç8ç§æ°æ®ç±»åè§£æåUTF-8 è§£ç ç®æ³å®ç°çä¸ç§è£é¥°å¨æµ</h4>
-<p>ââDataInputStream.classæ¯ Java I/O ä½ç³»ä¸­å®ç°äº DataInput.interface æ¥å£çæ ¸å¿ç±»ï¼èª JDK  1.0 èµ·å°±ä¸ºä»æºå¨æ å³çäºè¿å¶æ°æ®ä¸­è¯»ååºæ¬ Java æ°æ®ç±»åæä¾äºæ åå®ç°ï¼åæ¶ä¹ç»§æ¿äºFilterInputStream.classï¼å æ­¤ï¼ä¹å¯ä»¥ç¨æ¥è£é¥°å¶å®è¾å¥æµ ãå¶ä¸­ï¼DataInputStream.class::readUTF()å½æ°æ¯UTF-8 è§£ç ç®æ³çç²¾å¦å®ç°ï¼è¿æ¯ Java åºåååç½ç»åè®®çåºç³ã<br>
-ââDataInputStream.classçUMLå³ç³»å¾ï¼å¦ä¸æç¤ºï¼<br>
-<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510224505888-1934814158.png" class="lazyload"></p>
-<pre><code>public
-class DataInputStream extends FilterInputStream implements DataInput {
-    //æé å½æ°ï¼éè¦ä¼ å¥ä¸ä¸ªè¢«è£é¥°çè¾å¥æµ
-    public DataInputStream(InputStream in) {
-        super(in);
-    }
-    
-    private byte bytearr[] = new byte[80];
-    private char chararr[] = new char[80];
-    //å®éè°ç¨çæ¯InputStream.class::read()å½æ°
-    public final int read(byte b[]) throws IOException {
-        return in.read(b, 0, b.length);
-    }
-    //å®éè°ç¨çæ¯InputStream.class::read()å½æ°
-    public final int read(byte b[], int off, int len) throws IOException {
-        return in.read(b, off, len);
-    }
-    
-    public final void readFully(byte b[]) throws IOException {
-        readFully(b, 0, b.length);
-    }
-
-    public final void readFully(byte b[], int off, int len) throws IOException {
-        if (len &lt; 0)
-            throw new IndexOutOfBoundsException();
-        int n = 0;
-        while (n &lt; len) {
-            int count = in.read(b, off + n, len - n);
-            if (count &lt; 0)
-                throw new EOFException();
-            n += count;
-        }
-    }
-    //å½åè¿ä¸ªDataInputStreamå¯¹è±¡å¯ä»¥ä»å®è£é¥°çè¾å¥æµä¸­ï¼å¯ä»¥çè§£ä¸ºä¸ä¸ªå¤§åçå­èæ°ç»ï¼ä¸­è·³è¿nä¸ªå­èï¼n&lt;è¢«è£é¥°çè¾å¥æµä¸­å¯ç¨çå­èæ°éï¼åè¿è¡åç»­æä½ï¼æ¯å¦éè¿read()å½æ°è¯»åç­ï¼
-    public final int skipBytes(int n) throws IOException {
-        int total = 0;//ç´¯è®¡è·³è¿çå­èæ»æ°é
-        int cur = 0;//æ¬æ¬¡éè¿InputStream.class::skip()å½æ°è·³è¿çå­èæ»æ°é
-        
-        //å½InputStream.class::skip()å½æ°çè¿åå¼&lt;=0æ¶ï¼è¡¨ç¤ºDataInputStreamå¯¹è±¡è£é¥°çè¾å¥æµä¸­å·²ç»æ²¡æå¯è¯»çå­èäº
-        while ((total&lt;n) &amp;&amp; ((cur = (int) in.skip(n-total)) &gt; 0)) {
-            total += cur;//ç´¯å ä»è¢«è£é¥°çè¾å¥æµä¸­è·³è¿çå­èæ»é
-        }
-
-        return total;
-    }
-
-    //è¯»å1ä¸ªbooleanç±»åæ°æ®
-    public final boolean readBoolean() throws IOException {
-        int ch = in.read();//booleanç±»åå ä¸ä¸ªå­è
-        
-        if (ch &lt; 0)
-            throw new EOFException();
-        return (ch != 0);
-    }
-    //è¯»å1ä¸ªbyteç±»åæ°æ®
-    public final byte readByte() throws IOException {
-        int ch = in.read();//byteç±»åå 1ä¸ªå­è
-        if (ch &lt; 0)
-            throw new EOFException();
-        return (byte)(ch);
-    }
-    //è¯»å1ä¸ªæ ç¬¦å·çbyteç±»åæ°æ®
-    public final int readUnsignedByte() throws IOException {
-        int ch = in.read();//byteç±»åå 1ä¸ªå­è
-        if (ch &lt; 0)
-            throw new EOFException();
-        return ch;
-    }
-    //è¯»å1ä¸ªshortç±»åæ°æ®
-    public final short readShort() throws IOException {
-        int ch1 = in.read();//shortç±»åå 2ä¸ªå­è
-        int ch2 = in.read();
-        if ((ch1 | ch2) &lt; 0)
-            throw new EOFException();
-        return (short)((ch1 &lt;&lt; 8) + (ch2 &lt;&lt; 0));
-    }
-    //è¯»å1ä¸ªæ ç¬¦å·çshortç±»åæ°æ®
-    public final int readUnsignedShort() throws IOException {
-        int ch1 = in.read();//æ ç¬¦å·çshortç±»åå 2ä¸ªå­è
-        int ch2 = in.read();
-        if ((ch1 | ch2) &lt; 0)
-            throw new EOFException();
-        return (ch1 &lt;&lt; 8) + (ch2 &lt;&lt; 0);
-    }
-    //è¯»å1ä¸ªcharç±»åæ°æ®
-    public final char readChar() throws IOException {
-        int ch1 = in.read();//charç±»åå 2ä¸ªå­è
-        int ch2 = in.read();
-        if ((ch1 | ch2) &lt; 0)
-            throw new EOFException();
-        return (char)((ch1 &lt;&lt; 8) + (ch2 &lt;&lt; 0));
-    }
-    //è¯»å1ä¸ªintç±»åæ°æ®
-    public final int readInt() throws IOException {
-        int ch1 = in.read();//charç±»åå 4ä¸ªå­è
-        int ch2 = in.read();
-        int ch3 = in.read();
-        int ch4 = in.read();
-        if ((ch1 | ch2 | ch3 | ch4) &lt; 0)
-            throw new EOFException();
-        return ((ch1 &lt;&lt; 24) + (ch2 &lt;&lt; 16) + (ch3 &lt;&lt; 8) + (ch4 &lt;&lt; 0));
-    }
-
-    private byte readBuffer[] = new byte[8];
-    //è¯»å1ä¸ªlongç±»åæ°æ®
-    public final long readLong() throws IOException {
-        readFully(readBuffer, 0, 8);//longç±»åå 8ä¸ªå­è
-        return (((long)readBuffer[0] &lt;&lt; 56) +
-                ((long)(readBuffer[1] &amp; 255) &lt;&lt; 48) +
-                ((long)(readBuffer[2] &amp; 255) &lt;&lt; 40) +
-                ((long)(readBuffer[3] &amp; 255) &lt;&lt; 32) +
-                ((long)(readBuffer[4] &amp; 255) &lt;&lt; 24) +
-                ((readBuffer[5] &amp; 255) &lt;&lt; 16) +
-                ((readBuffer[6] &amp; 255) &lt;&lt;  8) +
-                ((readBuffer[7] &amp; 255) &lt;&lt;  0));
-    }
-    //è¯»å1ä¸ªfloatç±»åæ°æ®
-    public final float readFloat() throws IOException {
-        return Float.intBitsToFloat(readInt());
-    }
-    //è¯»å1ä¸ªdoubleç±»åæ°æ®
-    public final double readDouble() throws IOException {
-        return Double.longBitsToDouble(readLong());
-    }
-
-    public final String readUTF() throws IOException {
-        return readUTF(this);
-    }
-    //ä»å¥åçè¾å¥æµä¸­è¯»åUTF-8ç¼ç æ ¼å¼,ï¼å¹¶ä»¥Stringå­ç¬¦ä¸²çå½¢å¼è¿åã
-    public final static String readUTF(DataInput in) throws IOException {
-        //UTF-8æ°æ®çé¿åº¦åå«å¨å®çåä¸¤ä¸ªå­èå½ä¸­ï¼éè¿readUnsignedShort()è¯»ååºåä¸¤ä¸ªå­èå¯¹åºçæ­£æ´æ°å°±æ¯UTF-8æ°æ®çé¿åº¦ã
-        int utflen = in.readUnsignedShort();
-        byte[] bytearr = null;
-        char[] chararr = null;
-        //å¤æ­å¥åçè¾å¥æµæ¬èº«æ¯ä¸æ¯DataInputStreamç±»å
-        if (in instanceof DataInputStream) {
-            DataInputStream dis = (DataInputStream)in;
-            if (dis.bytearr.length &lt; utflen){
-                //å¦æå¥åçè¾å¥æµæ¯DataInputStreamç±»åå¹¶ä¸è¯»åçUTF-8æ°æ®çé¿åº¦utflen&gt;80ï¼åå°byte[] bytearræ°ç»åchar[] chararræ°ç»çé¿åº¦è®¾ç½®ä¸ºutflenï¼è¯»åçUTF-8æ°æ®çé¿åº¦ï¼*2
-                dis.bytearr = new byte[utflen*2];
-                dis.chararr = new char[utflen*2];
-            }
-            //å¦æå¥åçè¾å¥æµæ¯DataInputStreamç±»åå¹¶ä¸è¯»åçUTF-8æ°æ®çé¿åº¦&lt;=80ï¼byte[] bytearræ°ç»åchar[] chararræ°ç»çé¿åº¦è®¾ç½®ä¸º80
-            chararr = dis.chararr;
-            bytearr = dis.bytearr;
-        } else {
-            //å¦æå¥åçè¾å¥æµä¸æ¯DataInputStreamç±»åï¼åå°byte[] bytearræ°ç»åchar[] chararræ°ç»çé¿åº¦è®¾ç½®ä¸ºutflenï¼è¯»åçUTF-8æ°æ®çé¿åº¦ï¼
-            bytearr = new byte[utflen];
-            chararr = new char[utflen];
-        }
-
-        int c, char2, char3;
-        int count = 0;
-        int chararr_count=0;
-        //å°UTF-8æ°æ®å¨é¨è¯»åå°å­èæ°ç»byte[] bytearrä¸­
-        in.readFully(bytearr, 0, utflen);
-
-        //å¯¹åå­èæ°æ®è¡¨ç¤ºçUTF-8ç¼ç åè¿è¡å¤ç
-        while (count &lt; utflen) {
-            c = (int) bytearr[count] &amp; 0xff;//åå°æ¯ä¸ªåå­èè¡¨ç¤ºçUTF-8ç¼ç è½¬æ¢æintå¼
-            if (c &gt; 127) break;// UTF-8çåå­èæ°æ®çå¼ä¸ä¼è¶è¿127ï¼æä»¥ï¼å½æè¶è¿127çåå­èæ°æ®æ¶ï¼åéåºã
-            count++;
-            chararr[chararr_count++]=(char)c;// åè½¬æ¢ä¸ºchar cï¼å°cä¿å­å°å­ç¬¦æ°ç»char[] chararrä¸­
-        }
-
-        while (count &lt; utflen) {
-            //ç°å°byteç±»åè¡¨ç¤ºçUTF-8æ ¼å¼ç¼ç çæ°æ®è½¬æ¢æintç±»å
-            c = (int) bytearr[count] &amp; 0xff;
-            switch (c &gt;&gt; 4) {//å¤æ­è¯¥UTF-8æ ¼å¼ç¼ç çæ°æ®æ¯å å­èçæ¨¡æ¿ï¼æ»å±æ4ç§ä¸åé¿åº¦å­èç»æçæ¨¡æ¿åå«ä¸ºï¼1å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ã2å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ã3å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ã4å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®
-                case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
-                    //1å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ï¼è¯¥å­èå³ç§»4ä½ä¹ååå¼èå´ä¸º0~7
-                    /* 0xxxxxxx*/
-                    count++;
-                    chararr[chararr_count++]=(char)c;
-                    break;
-                case 12: case 13:
-                    //2å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ï¼ç¬¬1ä¸ªå­èæ¯ç¨æ¥ç¡®å®æ¨¡æ¿ç±»åçï¼ç¬¬1ä¸ªå­èå³ç§»4ä½ä»¥åï¼ç¬¬1ä¸ªå­èçåå¼èå´ä¸º12~13
-                    /* 110x xxxx   10xx xxxx*/
-                    count += 2;
-                    if (count &gt; utflen)
-                        throw new UTFDataFormatException(
-                            "malformed input: partial character at end");
-                    char2 = (int) bytearr[count-1];
-                    if ((char2 &amp; 0xC0) != 0x80)
-                        throw new UTFDataFormatException(
-                            "malformed input around byte " + count);
-                    chararr[chararr_count++]=(char)(((c &amp; 0x1F) &lt;&lt; 6) |
-                                                    (char2 &amp; 0x3F));
-                    break;
-                case 14:
-                    //3å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ï¼ç¬¬1ä¸ªå­èæ¯ç¨æ¥ç¡®å®æ¨¡æ¿ç±»åçï¼ç¬¬1ä¸ªå­èå³ç§»4ä½ä»¥åï¼ç¬¬1ä¸ªå­èä¸å®ä¸º14
-                    /* 1110 xxxx  10xx xxxx  10xx xxxx */
-                    count += 3;
-                    if (count &gt; utflen)
-                        throw new UTFDataFormatException(
-                            "malformed input: partial character at end");
-                    char2 = (int) bytearr[count-2];
-                    char3 = (int) bytearr[count-1];
-                    if (((char2 &amp; 0xC0) != 0x80) || ((char3 &amp; 0xC0) != 0x80))
-                        throw new UTFDataFormatException(
-                            "malformed input around byte " + (count-1));
-                    chararr[chararr_count++]=(char)(((c     &amp; 0x0F) &lt;&lt; 12) |
-                                                    ((char2 &amp; 0x3F) &lt;&lt; 6)  |
-                                                    ((char3 &amp; 0x3F) &lt;&lt; 0));
-                    break;
-                default:
-                    //4å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ï¼ç¬¬1ä¸ªå­èæ¯ç¨æ¥ç¡®å®æ¨¡æ¿ç±»åçï¼ç¬¬1ä¸ªå­èå³ç§»4ä½ä»¥åï¼ç¬¬1ä¸ªå­èä¸å®ä¸º15
-                    //Javaä¸­ä¸æ¯æ4å­èé¿åº¦çUTF-8ç¼ç æ°æ®è§£æï¼åç°4å­èé¿åº¦çUTF-8ç¼ç æ°æ®ï¼åæåºä¸ä¸ªUTFDataFormatException
-                    /* 10xx xxxx,  1111 xxxx */
-                    throw new UTFDataFormatException(
-                        "malformed input around byte " + count);
-            }
-        }
-        // The number of chars produced may be less than utflen
-        return new String(chararr, 0, chararr_count);
-    }
-}
-</code></pre>
-<h5 id="21datainputstreamclassçreadutfå½æ°">2.1ãDataInputStream.classçreadUTF()å½æ°</h5>
-<p>ââreadUTF()å½æ°æ¯ç¨æ¥ä»è¾å¥æµä¸­è¯»åUTF-8ç¼ç çæ°æ®ï¼å¹¶ä»¥Stringå­ç¬¦ä¸²çå½¢å¼è¿åï¼UTF-8çè¯¦ç»ç¼ç è§ååè§£æè§åï¼è¯·æ¥çæçå¦ä¸ç¯åå®¢ï¼<a href="https://www.cnblogs.com/Carey-ccl/p/19981026" title="11ãï¼ByteArrayInputStreamåDataInputStreamçæºç åæåä½¿ç¨æ¹æ³è¯¦ç»åæåè¨ï¼UTF-8 ç¼ç è§å" target="_blank">11ãï¼ByteArrayInputStreamåDataInputStreamçæºç åæåä½¿ç¨æ¹æ³è¯¦ç»åæåè¨ï¼UTF-8 ç¼ç è§å</a><br>
-DataInputStream.class::readUTF()å½æ°çæºç å¦ä¸ï¼</p>
-<pre><code>public
-class DataInputStream extends FilterInputStream implements DataInput {
-    ...çç¥é¨åä»£ç ...
-  
-    //ä»å¥åçè¾å¥æµä¸­è¯»åUTF-8ç¼ç æ ¼å¼,ï¼å¹¶ä»¥Stringå­ç¬¦ä¸²çå½¢å¼è¿åã
-    public final static String readUTF(DataInput in) throws IOException {
-        //UTF-8æ°æ®çé¿åº¦åå«å¨å®çåä¸¤ä¸ªå­èå½ä¸­ï¼éè¿readUnsignedShort()è¯»ååºåä¸¤ä¸ªå­èå¯¹åºçæ­£æ´æ°å°±æ¯UTF-8æ°æ®çé¿åº¦ã
-        int utflen = in.readUnsignedShort();
-        byte[] bytearr = null;
-        char[] chararr = null;
-        //å¤æ­å¥åçè¾å¥æµæ¬èº«æ¯ä¸æ¯DataInputStreamç±»å
-        if (in instanceof DataInputStream) {
-            DataInputStream dis = (DataInputStream)in;
-            if (dis.bytearr.length &lt; utflen){
-                //å¦æå¥åçè¾å¥æµæ¯DataInputStreamç±»åå¹¶ä¸è¯»åçUTF-8æ°æ®çé¿åº¦utflen&gt;80ï¼åå°byte[] bytearræ°ç»åchar[] chararræ°ç»çé¿åº¦è®¾ç½®ä¸ºutflenï¼è¯»åçUTF-8æ°æ®çé¿åº¦ï¼*2
-                dis.bytearr = new byte[utflen*2];
-                dis.chararr = new char[utflen*2];
-            }
-            //å¦æå¥åçè¾å¥æµæ¯DataInputStreamç±»åå¹¶ä¸è¯»åçUTF-8æ°æ®çé¿åº¦&lt;=80ï¼byte[] bytearræ°ç»åchar[] chararræ°ç»çé¿åº¦è®¾ç½®ä¸º80
-            chararr = dis.chararr;
-            bytearr = dis.bytearr;
-        } else {
-            //å¦æå¥åçè¾å¥æµä¸æ¯DataInputStreamç±»åï¼åå°byte[] bytearræ°ç»åchar[] chararræ°ç»çé¿åº¦è®¾ç½®ä¸ºutflenï¼è¯»åçUTF-8æ°æ®çé¿åº¦ï¼
-            bytearr = new byte[utflen];
-            chararr = new char[utflen];
-        }
-
-        int c, char2, char3;
-        int count = 0;
-        int chararr_count=0;
-        //å°UTF-8æ°æ®å¨é¨è¯»åå°å­èæ°ç»byte[] bytearrä¸­
-        in.readFully(bytearr, 0, utflen);
-
-        //å¯¹åå­èæ°æ®è¡¨ç¤ºçUTF-8ç¼ç åè¿è¡é¢å¤çï¼å¦æå¤çè¿ç¨ä¸­ç¢°å°å¤å­èæ°æ®è¡¨ç¤ºçutf-8ç¼ç ï¼å°±åéåºé¢å¤ç
-        while (count &lt; utflen) {
-            c = (int) bytearr[count] &amp; 0xff;//åå°æ¯ä¸ªåå­èè¡¨ç¤ºçUTF-8ç¼ç è½¬æ¢æintå¼
-            if (c &gt; 127) break;// UTF-8çåå­èæ°æ®çå¼ä¸ä¼è¶è¿127ï¼æä»¥ï¼å½æè¶è¿127çåå­èæ°æ®æ¶ï¼åéåºã
-            count++;
-            chararr[chararr_count++]=(char)c;// åè½¬æ¢ä¸ºchar cï¼å°cä¿å­å°å­ç¬¦æ°ç»char[] chararrä¸­
-        }
-        //æ­£å¼è¯»åç¯è
-        while (count &lt; utflen) {
-            //ç°å°byteç±»åè¡¨ç¤ºçUTF-8æ ¼å¼ç¼ç çæ°æ®è½¬æ¢æintç±»å
-            c = (int) bytearr[count] &amp; 0xff;
-            switch (c &gt;&gt; 4) {//å¤æ­è¯¥UTF-8æ ¼å¼ç¼ç çæ°æ®æ¯å å­èçæ¨¡æ¿ï¼æ»å±æ4ç§ä¸åé¿åº¦å­èç»æçæ¨¡æ¿åå«ä¸ºï¼1å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ã2å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ã3å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ã4å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®
-                case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
-                    //1å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ï¼è¯¥å­èå³ç§»4ä½ä¹ååå¼èå´ä¸º0~7
-                    /* 0xxxxxxx*/
-                    count++;
-                    chararr[chararr_count++]=(char)c;
-                    break;
-                case 12: case 13:
-                    //2å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ï¼ç¬¬1ä¸ªå­èæ¯ç¨æ¥ç¡®å®æ¨¡æ¿ç±»åçï¼ç¬¬1ä¸ªå­èå³ç§»4ä½ä»¥åï¼ç¬¬1ä¸ªå­èçåå¼èå´ä¸º12~13
-                    /* 110x xxxx   10xx xxxx*/
-                    count += 2;
-                    if (count &gt; utflen)
-                        throw new UTFDataFormatException(
-                            "malformed input: partial character at end");
-                    char2 = (int) bytearr[count-1];
-                    if ((char2 &amp; 0xC0) != 0x80)
-                        throw new UTFDataFormatException(
-                            "malformed input around byte " + count);
-                    chararr[chararr_count++]=(char)(((c &amp; 0x1F) &lt;&lt; 6) |
-                                                    (char2 &amp; 0x3F));
-                    break;
-                case 14:
-                    //3å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ï¼ç¬¬1ä¸ªå­èæ¯ç¨æ¥ç¡®å®æ¨¡æ¿ç±»åçï¼ç¬¬1ä¸ªå­èå³ç§»4ä½ä»¥åï¼ç¬¬1ä¸ªå­èä¸å®ä¸º14
-                    /* 1110 xxxx  10xx xxxx  10xx xxxx */
-                    count += 3;
-                    if (count &gt; utflen)
-                        throw new UTFDataFormatException(
-                            "malformed input: partial character at end");
-                    char2 = (int) bytearr[count-2];
-                    char3 = (int) bytearr[count-1];
-                    if (((char2 &amp; 0xC0) != 0x80) || ((char3 &amp; 0xC0) != 0x80))
-                        throw new UTFDataFormatException(
-                            "malformed input around byte " + (count-1));
-                    chararr[chararr_count++]=(char)(((c     &amp; 0x0F) &lt;&lt; 12) |
-                                                    ((char2 &amp; 0x3F) &lt;&lt; 6)  |
-                                                    ((char3 &amp; 0x3F) &lt;&lt; 0));
-                    break;
-                default:
-                    //4å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ï¼ç¬¬1ä¸ªå­èæ¯ç¨æ¥ç¡®å®æ¨¡æ¿ç±»åçï¼ç¬¬1ä¸ªå­èå³ç§»4ä½ä»¥åï¼ç¬¬1ä¸ªå­èä¸å®ä¸º15
-                    //Javaä¸­ä¸æ¯æ4å­èé¿åº¦çUTF-8ç¼ç æ°æ®è§£æï¼åç°4å­èé¿åº¦çUTF-8ç¼ç æ°æ®ï¼åæåºä¸ä¸ªUTFDataFormatException
-                    /* 10xx xxxx,  1111 xxxx */
-                    throw new UTFDataFormatException(
-                        "malformed input around byte " + count);
-            }
-        }
-        // The number of chars produced may be less than utflen
-        return new String(chararr, 0, chararr_count);
-    }  
-}
-</code></pre>
-<p>å¯ä»¥ä½¿ç¨ä¸é¢çä»£ç ååæçwindowsç³»ç»ä¸çD:\utf-8_Test.txt æä»¶ä¸­åå¥3ä¸ªUTF-8ç¼ç çå­ç¬¦"ä¸­AÃ©"ï¼å¦ä¸æç¤ºï¼</p>
-<pre><code>package com.chelong.bio;
-import java.io.*;
-
-public class DataInputStreamTest {
-   public static void main(String[] args) throws FileNotFoundException {
-      File file = new File("D:\\utf-8_Test.txt");
-      try {
-         // åå»º FileOutputStream å¯¹è±¡ï¼æå®è¦åå¶ä¸­åå¥æ°æ®çæä»¶
-         FileOutputStream fos = new FileOutputStream(file);
-         // åå»º DataOutputStream å¯¹è±¡ï¼ç¨æ¥åæä»¶ä¸­åå¥æ°æ®
-         DataOutputStream dos = new DataOutputStream(fos);
-         dos.writeUTF("ä¸­AÃ©"); // å°å­ç¬¦ä¸²åå¥æä»¶ä¸­
-         dos.close();
-         fos.close();
-      } catch (IOException e) {
-         e.printStackTrace();
-      }
-   }
-}
-</code></pre>
-<p>éè¿ä¸é¢çä»£ç åæçwindowsç³»ç»ä¸çD:\utf-8_Test.txt æä»¶ä¸­åå¥äº3ä¸ªUTF-8ç¼ç çå­ç¬¦"ä¸­AÃ©"ä¹åï¼è¯¥D:\utf-8_Test.txt æä»¶çåå®¹å¦ä¸ï¼<br>
-<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510224848411-580968948.png" class="lazyload"></p>
-<p>ç¶ååä½¿ç¨ä¸é¢çä»£ç ä»ä¸æä¸­åå¥çD:\utf-8_Test.txtæä»¶ä¸­è¯»åUTF-8ç¼ç ç3ä¸ªå­ç¬¦"ä¸­AÃ©"ï¼å¦ä¸æç¤ºï¼</p>
-<pre><code>package com.chelong.bio;
-import java.io.*;
-
-public class DataInputStreamTest {
-   public static void main(String[] args) throws FileNotFoundException {
-      File file = new File("D:\\utf-8_Test.txt");
-      try {
-         // åå»º FileInputStream å¯¹è±¡ï¼æå®è¦ä»ä¸­è¯»åæ°æ®çæä»¶
-         FileInputStream fis = new FileInputStream(file);
-         // åå»º DataInputStream å¯¹è±¡ï¼ç¨æ¥ä»æä»¶ä¸­è¯»åæ°æ®
-         DataInputStream dis = new DataInputStream(fis);
-         System.out.println("readUTF æ¹æ³è¯»åæ°æ®ï¼" + dis.readUTF()); // è¯»åå­ç¬¦ä¸²
-         dis.close();
-         fis.close();
-      } catch (IOException e) {
-         e.printStackTrace();
-      }
-   }
-}
-</code></pre>
-<p>è¯»åUTF-8ç¼ç çå­ç¬¦çä»£ç çæ§è¡ç»æå¦ä¸ï¼<br>
-<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510224941213-622084597.png" class="lazyload"></p>
-<p>2.1.1ãreadUTF()å½æ°çæ§è¡è¿ç¨è¯¦è§£<br>
-ââå½æ§è¡ä¸æä¸­ç</p>
-<pre><code>dis.readUTF()
-</code></pre>
-<p>å½æ°æ¶ï¼è¯¥å½æ°ä¼ä»åå¥çD:\utf-8_Test.txtæä»¶ä¸­è¯»åUTF-8ç¼ç çå­ç¬¦ä¸²ï¼æ´ä¸ªæ§è¡è¿ç¨åä¸ºä»¥ä¸4æ­¥ï¼<br>
-â ãéè¿readUnsignedShort()å½æ°è¯»ååºåä¸¤ä¸ªå­èå¯¹åºçæ­£æ´æ°utflen=6ï¼ä¹å°±è¯¥æä»¶ä¸­UTF-8æ°æ®çæ»é¿åº¦ï¼ï¼ç¶åå°å­èæ°ç»byte[] bytearråå­ç¬¦æ°ç»char[] chararrçé¿åº¦é½è®¾ç½®ä¸º80ï¼å¦ä¸æç¤ºï¼<br>
-<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510225058643-1286415082.png" class="lazyload"></p>
-<p>â¡ãç¶ååå§åæä½å­èæ°ç»byte[] bytearræ°ç»çæéint count = 0;åæä½char[] chararræ°ç»çæé int chararr_count=0;åéè¿</p>
-<pre><code>in.readFully(bytearr, 0, utflen);
-</code></pre>
-<p>å½æ°ï¼å°UTF-8æ°æ®å¨é¨è¯»åå°å­èæ°ç»byte[] bytearrä¸­ï¼å¦ä¸æç¤ºï¼<br>
-<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510225120789-368682448.png" class="lazyload"></p>
-<p>â¢ãç¶åå¯¹åå­èæ°æ®è¡¨ç¤ºçUTF-8ç¼ç åè¿è¡é¢å¤çï¼å¦æé¢å¤çè¿ç¨ä¸­ç¢°å°å¤å­èæ°æ®è¡¨ç¤ºçutf-8ç¼ç ï¼å°±åéåºé¢å¤çï¼<br>
-â£ãæåè¿å¥æ­£å¼è¯»åUTF-8ç¼ç çç¯èï¼æ­£å¼è¯»åUTF-8ç¼ç çç¯èååä¸ºä»¥ä¸3æ­¥ï¼<br>
-aãåä»å­èæ°ç»byte[] bytearrä¸­è¯»åç¬¬1ä¸ªå­èæ¥å¤æ­å½åè¿ä¸ªUTF-8ç¼ç çæ°æ®æ¯å å­èæ¨¡æ¿ï¼UTF-8ç¼ç çæ°æ®æ4ç§é¿åº¦çå­èæ¨¡æ¿ï¼ä½æ¯å¨Javaä¸­åªä½¿ç¨1~3å­èé¿åº¦çå­èæ¨¡æ¿ï¼</p>
-<pre><code>c = (int) bytearr[count] &amp; 0xff;
-switch (c &gt;&gt; 4) {
-    case 14:
-</code></pre>
-<p>ç¬¬1ä¸ªUTF-8ç¼ç çæ°æ®âä¸­âï¼UTF-8 ç¼ç ä¸º 0xE4 0xB8 0xADï¼ä¼å¹éå°3å­èçæ¨¡æ¿ï¼å¦ä¸æç¤ºï¼<br>
-<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510225210269-410539545.png" class="lazyload"></p>
-<p>ç¶åè¿è¡åé¢2ä¸ªå­èçè¯»åï¼æåååå¹¶ä»è¿3ä¸ªå­èä¸­åå°çææå³äºUTF-8çç¼ç çbitä½ï¼ç»æå®æ´çUTF-8ç¼ç çæ°æ®</p>
-<pre><code>                    //3å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ï¼ç¬¬1ä¸ªå­èæ¯ç¨æ¥ç¡®å®æ¨¡æ¿ç±»åçï¼ç¬¬1ä¸ªå­èå³ç§»4ä½ä»¥åï¼ç¬¬1ä¸ªå­èä¸å®ä¸º14
-                    /* 1110 xxxx  10xx xxxx  10xx xxxx */
-                    count += 3;
-                    if (count &gt; utflen)
-                        throw new UTFDataFormatException(
-                            "malformed input: partial character at end");
-                    char2 = (int) bytearr[count-2];//è¯»å3å­èæ¨¡çç»æçUTF-8ç¼ç æ°æ®ä¸­çç¬¬2ä¸ªå­è
-                    char3 = (int) bytearr[count-1];//è¯»å3å­èæ¨¡çç»æçUTF-8ç¼ç æ°æ®ä¸­çç¬¬3ä¸ªå­è
-                    //æ ¡éª3å­èæ¨¡çç»æçUTF-8ç¼ç æ°æ®ä¸­çç¬¬2ã3ä¸ªå­è
-                    if (((char2 &amp; 0xC0) != 0x80) || ((char3 &amp; 0xC0) != 0x80))
-                        throw new UTFDataFormatException(
-                            "malformed input around byte " + (count-1));
-                    //åå¹¶ç¬¬1ã2ã3ä¸ªå­èç»ææç»ç3å­èæ¨¡çç»æçUTF-8ç¼ç æ°æ®
-                    chararr[chararr_count++]=(char)(((c     &amp; 0x0F) &lt;&lt; 12) |
-                                                    ((char2 &amp; 0x3F) &lt;&lt; 6)  |
-                                                    ((char3 &amp; 0x3F) &lt;&lt; 0));
-                    break;
-</code></pre>
-<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510225301114-805610767.png" class="lazyload"></p>
-<p>bãè¯»åå®å3ä¸ªå­èä¹åä¾¿å®æäºç¬¬1ä¸ªUTF-8ç¼ç çæ°æ®âä¸­âçè§£æï¼ç¶åå¼å§è¯»åå­èæ°ç»byte[] bytearrçç¬¬4ä¸ªå­èï¼è¯¥å­èä¹æ¯ç¨æ¥å¤æ­å½åè¿ä¸ªUTF-8ç¼ç çæ°æ®æ¯å å­èæ¨¡æ¿çï¼UTF-8ç¼ç çæ°æ®æ4ç§é¿åº¦çå­èæ¨¡æ¿ï¼ä½æ¯å¨Javaä¸­åªä½¿ç¨1~3å­èé¿åº¦çå­èæ¨¡æ¿ï¼</p>
-<pre><code>c = (int) bytearr[count] &amp; 0xff;
-switch (c &gt;&gt; 4) {
-    case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
-</code></pre>
-<p>ç¬¬2ä¸ªUTF-8ç¼ç çæ°æ®âAâï¼ UTF-8 ç¼ç ä¸º0x41ï¼ä¼å¹éå°1å­èçæ¨¡æ¿ï¼å¦ä¸æç¤ºï¼<br>
-<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510225330241-1864104262.png" class="lazyload"><br>
-ç¶åå¯¹count++ï¼å°è¿1ä¸ªå­èä¸­è¯»åå°çå³äºUTF-8çç¼ç çbitä½ï¼è½¬æ¢ä¸º2å­èçcharç±»åæ°æ®ï¼æ¾å¥å°å­ç¬¦æ°ç»char[] chararrä¸­</p>
-<pre><code>                    //1å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ï¼è¯¥å­èå³ç§»4ä½ä¹ååå¼èå´ä¸º0~7
-                    /* 0xxxxxxx*/
-                    count++;
-                    chararr[chararr_count++]=(char)c;
-                    break;
-</code></pre>
-<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510225417345-95710388.png" class="lazyload"></p>
-<p>cãè¯»åå®ç¬¬4ä¸ªå­èä¹åä¾¿å®æäºç¬¬2ä¸ªUTF-8ç¼ç çæ°æ®âAâçè§£æï¼ç¶åå¼å§è¯»åå­èæ°ç»byte[] bytearrçç¬¬5ä¸ªå­èï¼è¯¥å­èä¹æ¯ç¨æ¥å¤æ­å½åè¿ä¸ªUTF-8ç¼ç çæ°æ®æ¯å å­èæ¨¡æ¿çï¼UTF-8ç¼ç çæ°æ®æ4ç§é¿åº¦çå­èæ¨¡æ¿ï¼ä½æ¯å¨Javaä¸­åªä½¿ç¨1~3å­èé¿åº¦çå­èæ¨¡æ¿ï¼</p>
-<pre><code>c = (int) bytearr[count] &amp; 0xff;
-switch (c &gt;&gt; 4) {
-    case 12: case 13:
-</code></pre>
-<p>ç¬¬3ä¸ªUTF-8ç¼ç çæ°æ®âÃ©âï¼ UTF-8 ç¼ç ä¸º0xC3 0xA9ï¼ä¼å¹éå°2å­èçæ¨¡æ¿ï¼å¦ä¸æç¤ºï¼<br>
-<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510225455658-12701351.png" class="lazyload"></p>
-<p>ç¶åè¿è¡åé¢1ä¸ªå­èçè¯»åï¼æåååå¹¶ä»è¿2ä¸ªå­èä¸­åå°çææå³äºUTF-8çç¼ç çbitä½ï¼ç»æå®æ´çUTF-8ç¼ç çæ°æ®</p>
-<pre><code>                    //2å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ï¼ç¬¬1ä¸ªå­èæ¯ç¨æ¥ç¡®å®æ¨¡æ¿ç±»åçï¼ç¬¬1ä¸ªå­èå³ç§»4ä½ä»¥åï¼ç¬¬1ä¸ªå­èçåå¼èå´ä¸º12~13
-                    /* 110x xxxx   10xx xxxx*/
-                    count += 2;
-                    if (count &gt; utflen)
-                        throw new UTFDataFormatException(
-                            "malformed input: partial character at end");
-                    char2 = (int) bytearr[count-1];
-                    if ((char2 &amp; 0xC0) != 0x80)
-                        throw new UTFDataFormatException(
-                            "malformed input around byte " + count);
-                    chararr[chararr_count++]=(char)(((c &amp; 0x1F) &lt;&lt; 6) |
-                                                    (char2 &amp; 0x3F));
-                    break;
-</code></pre>
-<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510225520710-1227227180.png" class="lazyload"></p>
-<p>2.1.2ãJavaä¸­byteç±»åçæç¬¦å·æ´æ°çè¡¨ç¤ºæ¹å¼<br>
-ââä¸æä¸­çUTF-8ç¼ç çæ°æ®"ä¸­"å¨byte[] bytearrå­èæ°ç»ä¸­æ¯ç¨è¯¥å­èæ°ç»ç[0,3)ç´¢å¼ä½ç½®ï¼å·¦é­å³å¼ï¼çå­èæ¥è¡¨ç¤ºçï¼è¿3ä¸ªå­èåå«æ¯-28ï¼-72ï¼-23ï¼åå«å¯¹åºç8ä½äºè¿å¶è¡¨ç¤ºä¸ºï¼1110 0100ã1011 1000ã1010 1101ï¼å¦ä¸æç¤ºï¼<br>
-<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510225623770-11678734.png" class="lazyload"></p>
-<p>è¿ç§è¡¨ç¤ºæ¹å¼æ¯å ä¸ºJavaä¸­çæç¬¦å·æ´æ°ï¼æ¯ä½¿ç¨äºè¿å¶è¡¥ç çæ¹å¼æ¥è¡¨ç¤ºçï¼-28çäºè¿å¶è¡¥ç çè®¡ç®æ­¥éª¤åä¸ºä»¥ä¸3æ­¥ï¼<br>
-â ãåæ±&nbsp;+28&nbsp;çäºè¿å¶ï¼ç»æå¦ä¸æç¤ºï¼</p>
-<pre><code>0001 1100
-</code></pre>
-<p>â¡ãåæ±åç ï¼æä½ååï¼ï¼å¦ä¸æç¤ºï¼</p>
-<pre><code>1110 0011
-</code></pre>
-<p>â¢ãå¯¹æ­¥éª¤â¡ä¸­çåç  +1 ï¼å¾å°è¡¥ç ï¼å¦ä¸æç¤ºï¼</p>
-<pre><code>1110 0100ï¼æé«ä½ä¸º&nbsp;1ï¼è¡¨ç¤ºè´æ°ï¼
-</code></pre>
-<p>å¯ä»¥ä½¿ç¨ä»£ç è¿è¡éªè¯ï¼å¦ä¸æç¤ºï¼</p>
-<pre><code>public class Main {
-    public static void main(String[] args) {
-        byte a = -28;
-        System.out.println(Integer.toBinaryString(a &amp; 0xFF));// è¾åºï¼11100100
-    }
-}
-</code></pre>
-<p>ä¸è¿°ä»£ç çè¿è¡ç»æå¦ä¸ï¼<br>
-<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510225844966-1515924660.png" class="lazyload"><br>
-ââ-72ï¼-23åçï¼å¨Javaä¸­ä¹æ¯ä½¿ç¨è¡¥ç è¡¨ç¤ºçï¼æ­¤å¤ä¸åèµè¿°ã</p>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.0006944444444444445" data-date-updated="2026-05-10 23:02">2026-05-10 23:01</span>&nbsp;
-<a href="https://www.cnblogs.com/Carey-ccl">Carey_ccl</a>&nbsp;
-éè¯»(<span id="post_view_count">2</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(20009118);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FCarey-ccl%2Fp%2F20009118&amp;targetId=20009118&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -2968,7 +2857,7 @@ if __name__ == "__main__":
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-05-10 10:25">2026-05-10 10:24</span>&nbsp;
 <a href="https://www.cnblogs.com/dzlishen">é¸ä¹å¤ªå­</a>&nbsp;
-éè¯»(<span id="post_view_count">63</span>)&nbsp;
+éè¯»(<span id="post_view_count">94</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(20007038);return false;">æ¶è</a>&nbsp;
@@ -2978,14 +2867,14 @@ if __name__ == "__main__":
     </description>
     </item>
 <item>
-    <title><![CDATA[ OpenClaw.NET å¤é¨ CLI è¿æ¥å¨ (External CLI Connectors) è¯¦ç»ææ¯æ»ç» ]]></title>
-    <link>https://www.cnblogs.com/shanyou/p/20009085</link>
-    <guid>822e12c8f749197937b9d0430c6e1cb9</guid>
+    <title><![CDATA[ 12ãByteArrayInputStreamåDataInputStreamçæºç åæåä½¿ç¨æ¹æ³è¯¦ç»åæ ]]></title>
+    <link>https://www.cnblogs.com/Carey-ccl/p/20009118</link>
+    <guid>f42601c62cccf195e2f60ff33c0797e2</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/shanyou/p/20009085" title="åå¸äº 2026-05-10 22:44">
-    <span role="heading" aria-level="2">OpenClaw.NET å¤é¨ CLI è¿æ¥å¨ (External CLI Connectors) è¯¦ç»ææ¯æ»ç»</span>
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/Carey-ccl/p/20009118" title="åå¸äº 2026-05-10 23:01">
+    <span role="heading" aria-level="2">12ãByteArrayInputStreamåDataInputStreamçæºç åæåä½¿ç¨æ¹æ³è¯¦ç»åæ</span>
     
 
 </a>
@@ -2994,1094 +2883,651 @@ if __name__ == "__main__":
             <div class="clear"></div>
             <div class="postBody">
                 <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<blockquote>
-<p>åºäºææ¡£: <a href="https://github.com/clawdotnet/openclaw.net/blob/main/docs/EXTERNAL_CLI_CONNECTORS.md" target="_blank" rel="noopener nofollow">https://github.com/clawdotnet/openclaw.net/blob/main/docs/EXTERNAL_CLI_CONNECTORS.md</a><br>
-åºäºä»£ç  Commit: <a href="https://github.com/clawdotnet/openclaw.net/commit/bde72ea12f05457d0d36422d627ffbe383fce1d8" target="_blank" rel="noopener nofollow">https://github.com/clawdotnet/openclaw.net/commit/bde72ea12f05457d0d36422d627ffbe383fce1d8</a><br>
-æ´çæ¥æ: 2026-05-10</p>
-</blockquote>
-<hr>
-<h2 id="ä¸æ¶ææ¦è¿°">ä¸ãæ¶ææ¦è¿°</h2>
-<p><strong>External CLI Connectors</strong> æ¯ OpenClaw.NET çä¸ä¸ªåæ§åçå·¥å· (<code>external_cli</code>)ï¼ç¨äºå°å®æ¹å¹³å° CLIï¼å¦ GitHub CLIãAzure CLIãkubectlãStripe CLIãLark/Feishu CLI ç­ï¼åè£ä¸ºå¯è¢« AI Agent å®å¨è°ç¨çå·¥å·ã</p>
-<p><strong>æ ¸å¿è®¾è®¡å²å­¦ï¼</strong></p>
-<ul>
-<li><strong>é»è®¤ç¦ç¨</strong> â åè½ä¸ä¼èªå¨å¯ç¨ï¼éè¦æ¾å¼éç½®</li>
-<li><strong>ä¸æ¯éç¨ Shell</strong> â ä¸æ¥åä»»æå½ä»¤å­ç¬¦ä¸²ï¼åªåè®¸é¢éç½®çå·åå½ä»¤</li>
-<li><strong>æ·±åº¦é²å¾¡</strong> â éè¿å½åå½ä»¤ç½ååãé£é©è¯åãé¢è§ãå®¡æ¹ãè±æãè¶æ¶ãå®¡è®¡è®°å½åè¿è¡æ¶äºä»¶å®ç°å¤å±å®å¨æ§å¶</li>
-</ul>
-<hr>
-<h2 id="äºå®å¨æ¨¡å-security-model">äºãå®å¨æ¨¡å (Security Model)</h2>
-<h3 id="21-æ ¸å¿å®å¨åå">2.1 æ ¸å¿å®å¨åå</h3>
-<p>å¤é¨ CLI å¯ä»¥å¨å¼ºå¤§çç¨æ·ãæºå¨äººãäºãéç¾¤ææ¯ä»èº«ä»½ä¸è¿è¡ï¼å æ­¤ï¼</p>
-<ul>
-<li>ææ<strong>åæ´æ§å½ä»¤ (mutating commands)</strong> è¢«è§ä¸ºé«é£é©</li>
-<li>ä½¿ç¨<strong>æå°æéåå (least privilege)</strong></li>
-<li>æ¯æ <strong>dry-run é¢è§</strong>ã<strong>å®¡æ¹æµç¨</strong> å <strong>å®¡è®¡æ¥å¿</strong></li>
-</ul>
-<h3 id="22-å½ä»¤è°ç¨æ¹å¼">2.2 å½ä»¤è°ç¨æ¹å¼</h3>
-<p>è¿æ¥å¨<strong>ä¸æ¥ååå§å½ä»¤å­ç¬¦ä¸²</strong>ãAgent éè¿æå®è¿æ¥å¨åãå½ä»¤ååå½ååæ°æ¥è°ç¨ï¼</p>
-<pre><code class="language-json">{
-  "action": "execute",
-  "connector": "gh",
-  "command": "issue_list",
-  "parameters": {
-    "repo": "clawdotnet/openclaw.net"
-  }
-}
-</code></pre>
-<p>è¿è¡æ¶éè¿éç½®åçåæ°æ¨¡æ¿ç´æ¥å±å¼ä¸º <code>ProcessStartInfo.ArgumentList</code>ï¼<strong>ä¸ç»è¿ Shell è§£éå¨</strong>ï¼ä¸æç»ç¼ºå¤±ææªç¥åæ°ï¼é¤éå½ä»¤æ¾å¼åè®¸ï¼ã</p>
-<h3 id="23-å³é®å®å¨é»è®¤å¼">2.3 å³é®å®å¨é»è®¤å¼</h3>
-<table>
-<thead>
-<tr>
-<th>éç½®é¡¹</th>
-<th>é»è®¤å¼</th>
-<th>å«ä¹</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>Enabled</code></td>
-<td><code>false</code></td>
-<td>é»è®¤ä¸æ³¨åå·¥å·</td>
-</tr>
-<tr>
-<td><code>AllowFreeformCommands</code></td>
-<td><code>false</code></td>
-<td>æç»èªç±å½¢å¼å½ä»¤</td>
-</tr>
-<tr>
-<td><code>RequireApprovalForMutatingCommands</code></td>
-<td><code>true</code></td>
-<td>éåªè¯»å½ä»¤éè¦å®¡æ¹</td>
-</tr>
-<tr>
-<td><code>RiskLevel</code></td>
-<td><code>high</code></td>
-<td>é»è®¤é«é£é©ï¼æ»æ¯éè¦å®¡æ¹</td>
-</tr>
-<tr>
-<td><code>ReadOnly</code></td>
-<td><code>false</code></td>
-<td>é»è®¤å¯åæä½</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="ä¸éç½®ç³»ç»è¯¦è§£">ä¸ãéç½®ç³»ç»è¯¦è§£</h2>
-<h3 id="31-é¡¶å±éç½®ç»æ">3.1 é¡¶å±éç½®ç»æ</h3>
-<pre><code class="language-json">{
-  "OpenClaw": {
-    "ExternalCli": {
-      "Enabled": true,                          // æ»å¼å³
-      "DefaultTimeoutSeconds": 60,              // é»è®¤è¶æ¶
-      "MaxStdoutBytes": 262144,                 // stdout æå¤§å­èæ° (256KB)
-      "MaxStderrBytes": 65536,                  // stderr æå¤§å­èæ° (64KB)
-      "RedactSecrets": true,                    // å¯ç¨å¯é¥è±æ
-      "AllowFreeformCommands": false,           // ç¦æ­¢èªç±å½ä»¤
-      "RequireApprovalForMutatingCommands": true, // åæ´å½ä»¤éå®¡æ¹
-      "Connectors": {                           // è¿æ¥å¨éç½®
-        // åå¹³å°CLIè¿æ¥å¨å®ä¹
-      }
+<h4 id="ä¸bytearrayinputstreamçæºç é¶æ·è´zero-copyçä¸ç§å­èæµ">ä¸ãByteArrayInputStreamçæºç ââé¶æ·è´ï¼Zero-Copyï¼çä¸ç§å­èæµ</h4>
+<p>ââå¨ä¼ ç»çç£ç I/Oï¼æ¯å¦FileInputStream.classãBufferedInputStream.class...ç­ï¼ ä¸­ï¼ä½¿ç¨èé½éè¦å°ç£ççæ°æ®åå¤å¶å°åå­ä¸­æ¥ä½¿ç¨èæ æ³å®ç°é¶æ·è´ï¼Zero-Copyï¼ï¼èByteArrayInputStream&nbsp;.classå¯ä»¥ä»åå­ä¸­ç´æ¥è¯»åæ°æ®ï¼å æ­¤ï¼ByteArrayInputStream&nbsp;.classè¿ä¸ªç±»æ­£æ¯ä¸ºäºè§£å³åå­æ°æ®è¯»åèå­å¨çï¼ByteArrayInputStream&nbsp;çæ ¸å¿ä»·å¼å¨äºé¶æ·è´ï¼Zero-Copyï¼ï¼å®åè®¸å°åå­ä¸­çbyte[]å­èæ°ç»å½ä½è¾å¥æµæ¥è¯»åï¼æ¯å¤çåå­æ°æ®çå¸¸ç¨å·¥å·ï¼å¦ä¸æç¤ºï¼<br>
+<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510224134238-844494612.png" class="lazyload"></p>
+<p>ByteArrayInputStream&nbsp;.classçUMLå³ç³»å¾ï¼å¦ä¸æç¤ºï¼<br>
+<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510224142576-535630162.png" class="lazyload"></p>
+<p>ByteArrayInputStream&nbsp;.classçæºç å¦ä¸ï¼</p>
+<pre><code>package java.io;
+
+public
+class ByteArrayInputStream extends InputStream {
+    //byte[] bufåéç´æ¥æåäºåå­ä¸­çbyte[]å­èæ°ç»ï¼ä¸ä¼åBufferedInputStreamæºç ä¸­çé£æ ·ï¼åå°æ°æ®å¤å¶å°èªå·±åé¨çbyte[]å­èæ°ç»ä¸ï¼åè¿è¡æ°æ®å¤ç
+    protected byte buf[];
+     //åå¤ä»å½ååå­ä¸­çbyte[]æ°ç»ï¼ç´æ¥å¼ç¨ï¼è¯»åå­èçç´¢å¼ä½ç½®ï¼åå¼èå´ä¸º[0,count)
+    protected int pos;
+     //æ è®°æä¸ªç´¢å¼ä½ç½®ï¼0&lt;=mark&lt;=pos
+    //è¯¥åéåªä¼å¨ æé å½æ°åmark()å½æ°ä¸­èµå¼
+    protected int mark = 0;
+    //byte[] bufåéæåçåå­ä¸­çbyte[]å­èæ°ç»çé¿åº¦
+    protected int count;
+    //æé å½æ°
+    public ByteArrayInputStream(byte buf[]) {
+        this.buf = buf;//byte[] bufåéç´æ¥æåäºåå­ä¸­çbyte[]å­èæ°ç»
+        this.pos = 0;
+        this.count = buf.length;
     }
-  }
-}
-</code></pre>
-<h3 id="32-è¿æ¥å¨éç½®ç»æ">3.2 è¿æ¥å¨éç½®ç»æ</h3>
-<p>ä»¥ <strong>GitHub CLI (gh)</strong> ä¸ºä¾ï¼</p>
-<pre><code class="language-json">{
-  "gh": {
-    "Enabled": true,
-    "DisplayName": "GitHub CLI",
-    "Executable": "gh",
-    "DefaultOutputFormat": "json",
-    "StatusCommand": {
-      "Args": ["auth", "status"],
-      "TimeoutSeconds": 20
-    },
-    "VersionCommand": {
-      "Args": ["--version"],
-      "TimeoutSeconds": 10
-    },
-    "Commands": {
-      "repo_view": {
-        "Description": "View repository metadata",
-        "ArgsTemplate": [
-          "repo", "view", "{{repo}}",
-          "--json", "name,owner,description,url,isPrivate"
-        ],
-        "RiskLevel": "low",
-        "ReadOnly": true,
-        "StructuredOutput": "json",
-        "Parameters": {
-          "repo": {
-            "Required": true,
-            "Pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
-          }
-        }
-      },
-      "issue_create": {
-        "Description": "Create a GitHub issue",
-        "ArgsTemplate": [
-          "issue", "create", "--repo", "{{repo}}",
-          "--title", "{{title}}", "--body", "{{body}}"
-        ],
-        "RiskLevel": "medium",
-        "ReadOnly": false,
-        "RequiresApproval": true,
-        "StructuredOutput": "text",
-        "Parameters": {
-          "repo": { "Required": true },
-          "title": { "Required": true, "MaxLength": 200 },
-          "body": { "Required": true, "MaxLength": 16000 }
-        }
-      }
+    //æé å½æ°ï¼åå¤ä»byte buf[]å­èæ°ç»ä¸­è¯»åå­èçç´¢å¼ä½ç½®ä»int offsetç´¢å¼ä½ç½®å¼å§
+    public ByteArrayInputStream(byte buf[], int offset, int length) {
+        this.buf = buf;//byte[] bufåéç´æ¥æåäºåå­ä¸­çbyte[]å­èæ°ç»
+        this.pos = offset;
+        //è¯»åæ°ç»çå³è¾¹çç´¢å¼ä½ç½® &lt; åå­ä¸­çbyte[]å­èæ°ç»çé¿åº¦
+        this.count = Math.min(offset + length, buf.length);
+        this.mark = offset;//è¯»åæ°ç»æ¶åçå·¦è¾¹çç´¢å¼ä½ç½®&gt;=offset
     }
-  }
+    //çº¿ç¨åæ­¥çå½æ°ï¼ä»åå­ä¸­çbyte[]å­èæ°ç»è¯»å1ä¸ªå­è
+    public synchronized int read() {
+        return (pos &lt; count) ? (buf[pos++] &amp; 0xff) : -1;
+    }
+    //çº¿ç¨åæ­¥çå½æ°ï¼ä»åå­ä¸­çbyte[]å­èæ°ç»è¯»ålenä¸ªå­èå°æå®çbyte[]æ°ç»bä¸­ï¼è¿lenä¸ªå­èè¢«æ¾å°byte[]æ°ç»bç[off,off+len)ç´¢å¼ä½ç½®ã
+    public synchronized int read(byte b[], int off, int len) {
+        if (b == null) {
+            //å¦ææå®çåå­ä¸­çbyte[]æ°ç»bä¸ºnullï¼æåºä¸ä¸ªNullPointerException
+            throw new NullPointerException();
+        //èå´æ£æµï¼offålenå¿é¡»æ¯éè´æ°ï¼b.length - offæ¯åå­ä¸­çbyte[]æ°ç»è¿å¯ä»¥æ¾çå­èï¼ASCIIç å¼ï¼çæ°é
+        } else if (off &lt; 0 || len &lt; 0 || len &gt; b.length - off) {
+            throw new IndexOutOfBoundsException();
+        }
+        //pos&gt;=countæ¶ï¼è¿å-1ï¼è¡¨ç¤ºåå­ä¸­çbyte[]æ°ç»å·²ç»è¯»åå®æ¯
+        if (pos &gt;= count) {
+            return -1;
+        }
+        //int availè¡¨ç¤ºæ¬æ¬¡å¯ä»¥ä»åå­ä¸­çbyte[]æ°ç»ä¸­è¯»åå°çå­èæ°é
+        int avail = count - pos;
+        if (len &gt; avail) {
+            len = avail;
+        }
+        if (len &lt;= 0) {
+            return 0;
+        }
+        //ä»åå­ä¸­çbyte[]å­èæ°ç»è¯»å[pos,pos+len)ç´¢å¼ä½ç½®çå­èå°æå®çbyte[]æ°ç»bä¸­ï¼è¿lenä¸ªå­èè¢«æ¾å°byte[]æ°ç»bç[off,off+len)ç´¢å¼ä½ç½®ã
+        System.arraycopy(buf, pos, b, off, len);
+        pos += len;//è·æ°int posåéçå¼
+        return len;
+    }
+    //çº¿ç¨åæ­¥çå½æ°
+    public synchronized long skip(long n) {
+        //å°è¯æ´æ°å³æéint posçå¼ï¼å¯¹äºä¸åçnå¼ï¼æä»¥ä¸2ç§å¯è½ï¼
+        //aãå¦æn&lt;count - poså¹¶ä¸n&gt;0æ¶ï¼ææ´æ°int pos= pos+n
+        //bãå½n&lt;0ï¼æèn&gt;=count - posæ¶ï¼æ´æ°int pos = count
+        long k = count - pos;
+        if (n &lt; k) {
+            k = n &lt; 0 ? 0 : n;
+        }
+
+        pos += k;
+        return k;
+    }
+    //çº¿ç¨åæ­¥çå½æ°ï¼è¿ååå­ä¸­çbyte[]å­èæ°ç»è¿å¯ä»¥è¯»åçå­èæ°é
+    public synchronized int available() {
+        return count - pos;
+    }
+
+    public boolean markSupported() {
+        return true;
+    }
+    //æ´æ°int markåéä¸ºposçå¼
+    public void mark(int readAheadLimit) {
+        mark = pos;
+    }
+    //çº¿ç¨åæ­¥çå½æ°ï¼éç½®int posåéçå¼ä¸ºmarkçå¼
+    public synchronized void reset() {
+        pos = mark;
+    }
+
+    public void close() throws IOException {
+    }
 }
 </code></pre>
-<h3 id="33-å½ä»¤éç½®éé¡¹è¯´æ">3.3 å½ä»¤éç½®éé¡¹è¯´æ</h3>
-<table>
-<thead>
-<tr>
-<th>å­æ®µ</th>
-<th>ç±»å</th>
-<th>è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>Description</code></td>
-<td>string</td>
-<td>å½ä»¤æè¿°</td>
-</tr>
-<tr>
-<td><code>ArgsTemplate</code></td>
-<td>string[]</td>
-<td>åæ°æ¨¡æ¿ï¼<code>{{param}}</code> å ä½ç¬¦å°è¢«æ¿æ¢</td>
-</tr>
-<tr>
-<td><code>RiskLevel</code></td>
-<td>string</td>
-<td>é£é©ç­çº§: <code>low</code> / <code>medium</code> / <code>high</code></td>
-</tr>
-<tr>
-<td><code>ReadOnly</code></td>
-<td>bool</td>
-<td>æ¯å¦ä¸ºåªè¯»æä½</td>
-</tr>
-<tr>
-<td><code>RequiresApproval</code></td>
-<td>bool</td>
-<td>æ¯å¦éè¦å®¡æ¹ï¼è¦çé»è®¤ç­ç¥ï¼</td>
-</tr>
-<tr>
-<td><code>StructuredOutput</code></td>
-<td>string</td>
-<td>è¾åºæ ¼å¼: <code>json</code> / <code>ndjson</code> / <code>csv</code> / <code>table</code> / <code>text</code></td>
-</tr>
-<tr>
-<td><code>DryRunArgsTemplate</code></td>
-<td>string[]</td>
-<td>(å¯é) Dry-run æ¨¡å¼çåæ°æ¨¡æ¿</td>
-</tr>
-<tr>
-<td><code>Parameters</code></td>
-<td>dict</td>
-<td>åæ°å®ä¹ï¼å« Required/MaxLength/Pattern/AllowedValues</td>
-</tr>
-<tr>
-<td><code>RedactionRules</code></td>
-<td>string[]</td>
-<td>(å¯é) å¹³å°ç¹å®çå¯é¥è±æè§å</td>
-</tr>
-<tr>
-<td><code>RequiredScopes</code></td>
-<td>string[]</td>
-<td>(å¯é) æéèº«ä»½/æéèå´</td>
-</tr>
-<tr>
-<td><code>RequiredIdentity</code></td>
-<td>string</td>
-<td>(å¯é) æéèº«ä»½æ è¯</td>
-</tr>
-<tr>
-<td><code>TimeoutSeconds</code></td>
-<td>int</td>
-<td>(å¯é) å½ä»¤çº§å«è¶æ¶è¦ç</td>
-</tr>
-<tr>
-<td><code>WorkingDirectory</code></td>
-<td>string</td>
-<td>(å¯é) å·¥ä½ç®å½</td>
-</tr>
-<tr>
-<td><code>Environment</code></td>
-<td>dict</td>
-<td>(å¯é) ç¯å¢åé</td>
-</tr>
-</tbody>
-</table>
-<h3 id="34-åæ°éªè¯éé¡¹">3.4 åæ°éªè¯éé¡¹</h3>
-<p>æ¯ä¸ªåæ°å¯éç½®ï¼</p>
-<ul>
-<li><code>Required</code> â æ¯å¦å¿å¡«</li>
-<li><code>Description</code> â åæ°æè¿°</li>
-<li><code>MaxLength</code> â æå¤§é¿åº¦éå¶</li>
-<li><code>Pattern</code> â æ­£åè¡¨è¾¾å¼éªè¯</li>
-<li><code>AllowedValues</code> â åè®¸å¼åè¡¨</li>
-</ul>
-<hr>
-<h2 id="åé¢è§ä¸å®¡æ¹æµç¨-preview--approval">åãé¢è§ä¸å®¡æ¹æµç¨ (Preview &amp; Approval)</h2>
-<h3 id="41-é¢è§å½ä»¤">4.1 é¢è§å½ä»¤</h3>
-<pre><code class="language-bash">openclaw external preview gh repo_view --param repo=clawdotnet/openclaw.net
-</code></pre>
-<h3 id="42-é¢è§è¿åä¿¡æ¯">4.2 é¢è§è¿åä¿¡æ¯</h3>
-<table>
-<thead>
-<tr>
-<th>å­æ®µ</th>
-<th>è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>å¯æ§è¡æä»¶è·¯å¾</td>
-<td>è§£æåç CLI è·¯å¾</td>
-</tr>
-<tr>
-<td>åæ°åè¡¨</td>
-<td>å±å¼çåæ°ï¼å·²è±æï¼</td>
-</tr>
-<tr>
-<td>é£é©ç­çº§</td>
-<td>low / medium / high</td>
-</tr>
-<tr>
-<td>æä½ç±»å</td>
-<td>åªè¯» (ReadOnly) æåæ´ (Mutating)</td>
-</tr>
-<tr>
-<td>æ¯å¦éè¦å®¡æ¹</td>
-<td>true / false</td>
-</tr>
-<tr>
-<td>è¾åºæ ¼å¼</td>
-<td>json / ndjson / csv / table / text</td>
-</tr>
-<tr>
-<td>æéèº«ä»½/æéèå´</td>
-<td>å¦éç½®äº RequiredScopes</td>
-</tr>
-<tr>
-<td>å®¡æ¹æçº¹ (Approval Fingerprint)</td>
-<td>ç¨³å®çæçº¹å¼ï¼ç¨äºå®¡æ¹å¹é</td>
-</tr>
-</tbody>
-</table>
-<h3 id="43-æ§è¡å®¡æ¹æµç¨">4.3 æ§è¡å®¡æ¹æµç¨</h3>
-<pre><code class="language-bash"># 1. åé¢è§
-openclaw external preview gh issue_create \
-  --param repo=clawdotnet/openclaw.net \
-  --param title="Example" \
-  --param body="Example body"
+<h5 id="11bytearrayinputstreamclassä»åå­ä¸­è¯»åæ°æ®çè¿ç¨">1.1ãByteArrayInputStream.classä»åå­ä¸­è¯»åæ°æ®çè¿ç¨</h5>
+<p>ââByteArrayInputStream.classæ¬è´¨å°±æ¯éè¿ç´æ¥å¼ç¨å­èæ°ç»æ¥å®ç°çé¶æ·è´ï¼å¹¶éè¿åæéï¼int markæ¯å·¦æéåint posæ¯å³æéï¼æ¥å®ç°çread()å½æ°ãskip()å½æ°ãreset()å½æ°...ç­ï¼ByteArrayInputStream.classä»åå­ä¸­è¯»åæ°æ®çè¿ç¨å¦ä¸æç¤ºï¼</p>
+<pre><code>import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+public class ByteArrayInputStreamTest {
 
-# 2. ç¡®è®¤åå  --yes æ§è¡ï¼èªå¨æºå¸¦æçº¹ï¼
-openclaw external execute gh issue_create \
-  --param repo=clawdotnet/openclaw.net \
-  --param title="Example" \
-  --param body="Example body" \
-  --yes
-</code></pre>
-<p><strong>æçº¹å®å¨æºå¶ï¼</strong> å¦æå½ä»¤æ¨¡æ¿ãè§£æåæ°æç­ç¥å¨å®¡æ¹åæ§è¡ä¹é´åçååï¼æçº¹ä¸å¹éå°å¯¼è´æ§è¡è¢«é»æ­¢ã</p>
-<h3 id="44-dry-run-æ¯æ">4.4 Dry-Run æ¯æ</h3>
-<p>é¢è§æ¶å ä¸ <code>--dry-run</code> å¯æ§è¡ dry-run æ¨¡å¼ï¼éå½ä»¤éç½®äº <code>DryRunArgsTemplate</code>ï¼ï¼</p>
-<pre><code class="language-bash">openclaw external preview gh issue_create \
-  --param repo=clawdotnet/openclaw.net \
-  --param title="Test" \
-  --param body="Test body" \
-  --dry-run
-</code></pre>
-<p><strong>æ³¨æï¼</strong> è¿è¡æ¶<strong>ä¸ä¼çæµ</strong> dry-run æ å¿ï¼å¿é¡»å¨æ¨¡æ¿ä¸­æ¾å¼éç½®ã</p>
-<hr>
-<h2 id="äºå®¡è®¡äºä»¶ä¸è±æ-audit-events--redaction">äºãå®¡è®¡ãäºä»¶ä¸è±æ (Audit, Events &amp; Redaction)</h2>
-<h3 id="51-å®¡è®¡è®°å½-append-only-audit">5.1 å®¡è®¡è®°å½ (Append-Only Audit)</h3>
-<p>æ¯æ¬¡æ§è¡åå¥ä¸å¯ç¯¡æ¹çå®¡è®¡è®°å½ï¼åå«ï¼</p>
-<ul>
-<li>è¿æ¥å¨ååå½ä»¤å</li>
-<li>å¯æ§è¡æä»¶è·¯å¾</li>
-<li>å·²è±æçå½ä»¤è¡é¢è§</li>
-<li>åæ°ååæ°åå¸</li>
-<li>æ§è¡èãä¼è¯ãé¢éãåéè</li>
-<li>å®¡æ¹æçº¹ï¼å¦æï¼</li>
-<li>éåºç ãæ§è¡æ¶é¿ãè¶æ¶æ å¿</li>
-<li>stdout/stderr æªæ­æ å¿</li>
-<li>é£é©ç­çº§åå·¥ä½ç®å½</li>
-</ul>
-<h3 id="52-è¿è¡æ¶äºä»¶">5.2 è¿è¡æ¶äºä»¶</h3>
-<p>è§¦åä»¥ä¸äºä»¶ç±»åï¼</p>
-<ul>
-<li><code>status_check</code> â ç¶ææ£æ¥</li>
-<li><code>previewed</code> / <code>dry_run_previewed</code> â é¢è§</li>
-<li><code>dry_run_executed</code> â Dry-run æ§è¡</li>
-<li><code>command_executed</code> â å½ä»¤æ§è¡</li>
-<li><code>command_failed</code> â å½ä»¤å¤±è´¥</li>
-<li><code>command_timed_out</code> â è¶æ¶</li>
-<li><code>truncation</code> â è¾åºæªæ­</li>
-<li><code>redaction</code> â å¯é¥è±æ</li>
-<li><code>command_blocked_by_policy</code> â ç­ç¥é»æ­¢</li>
-</ul>
-<h3 id="53-å¯é¥è±æ-redaction">5.3 å¯é¥è±æ (Redaction)</h3>
-<p>è±æåºç¨äºï¼åæ°é¢è§ãstdoutãstderrãå®¡è®¡è®°å½ãè¿è¡æ¶äºä»¶ãéè¯¯æ¶æ¯ãå¯ä¸ºè¿æ¥å¨æå½ä»¤éç½® <code>RedactionRules</code>ï¼æ¯æå¹³å°ç¹å®çå¯é¥æ ¼å¼ã</p>
-<hr>
-<h2 id="å­è¾åºè§£æ-output-parsing">å­ãè¾åºè§£æ (Output Parsing)</h2>
-<p>æå½ä»¤éç½® <code>StructuredOutput</code>ï¼</p>
-<table>
-<thead>
-<tr>
-<th>æ ¼å¼</th>
-<th>å¤çæ¹å¼</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>json</code></td>
-<td>è§£æ stdout ä¸º JSONï¼è¿åè§£æåç JSON + è±æ stdout</td>
-</tr>
-<tr>
-<td><code>ndjson</code></td>
-<td>è§£ææ¢è¡åé JSON ä¸º JSON æ°ç»</td>
-</tr>
-<tr>
-<td><code>csv</code> / <code>table</code> / <code>text</code></td>
-<td>ä½ä¸ºè±æææ¬è¿å</td>
-</tr>
-</tbody>
-</table>
-<p><strong>æ³¨æï¼</strong> è¿æ¥å¨ä¸ä¼æ³¨å¥å¨å± <code>--json</code> æ å¿ï¼éè¦å¨æ¯ä¸ªå½ä»¤æ¨¡æ¿ä¸­æ¾å¼æ¾ç½®è¾åºæ å¿ã</p>
-<hr>
-<h2 id="ä¸æ¨èéç½®é¢è®¾-conservative-presets">ä¸ãæ¨èéç½®é¢è®¾ (Conservative Presets)</h2>
-<h3 id="71-github-cli-gh">7.1 GitHub CLI (gh)</h3>
-<table>
-<thead>
-<tr>
-<th>ç±»å«</th>
-<th>å½ä»¤ç¤ºä¾</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>åªè¯»</td>
-<td><code>auth status</code>, <code>repo view</code>, <code>issue list</code>, <code>pr list</code>, <code>pr view</code>, <code>release list</code></td>
-</tr>
-<tr>
-<td>éå®¡æ¹</td>
-<td><code>issue create</code>, <code>issue comment</code>, <code>pr review</code>, <code>pr merge</code>, <code>release create</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="72-azure-cli-az">7.2 Azure CLI (az)</h3>
-<table>
-<thead>
-<tr>
-<th>ç±»å«</th>
-<th>å½ä»¤ç¤ºä¾</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>åªè¯»</td>
-<td><code>account show</code>, <code>group list</code>, <code>resource list</code>, <code>webapp list</code></td>
-</tr>
-<tr>
-<td>éå®¡æ¹</td>
-<td><code>resource create/update/delete</code>, <code>deployment create</code>, <code>role assignment changes</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="73-kubectl">7.3 kubectl</h3>
-<table>
-<thead>
-<tr>
-<th>ç±»å«</th>
-<th>å½ä»¤ç¤ºä¾</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>åªè¯»</td>
-<td><code>config current-context</code>, <code>get pods/services/deployments -o json</code>, <code>describe</code></td>
-</tr>
-<tr>
-<td>é«é£é©éå®¡æ¹</td>
-<td><code>apply</code>, <code>delete</code>, <code>scale</code>, <code>rollout restart</code>, <code>exec</code>, <code>port-forward</code></td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p>æ¥å¿å¯è½æ´é²å¯é¥ï¼å»ºè®®è³å° medium é£é©ç­çº§ã</p>
-</blockquote>
-<h3 id="74-stripe-cli">7.4 Stripe CLI</h3>
-<table>
-<thead>
-<tr>
-<th>ç±»å«</th>
-<th>å½ä»¤ç¤ºä¾</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>åªè¯»</td>
-<td><code>listen status</code>, <code>fixtures/list</code>, <code>customers/list</code>ï¼æå°æéå­è¯ï¼</td>
-</tr>
-<tr>
-<td>é«é£é©éå®¡æ¹</td>
-<td><code>payment mutations</code>, <code>refunds</code>, <code>customer/subscription mutations</code>, <code>webhook trigger</code>, <code>event replay</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="75-lark--feishu-cli">7.5 Lark / Feishu CLI</h3>
-<table>
-<thead>
-<tr>
-<th>ç±»å«</th>
-<th>å½ä»¤ç¤ºä¾</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>åªè¯»</td>
-<td><code>auth status</code>, schema inspection, <code>calendar agenda</code>, docs search/read, sheets read, mail search/read, meeting minutes query</td>
-</tr>
-<tr>
-<td>éå®¡æ¹</td>
-<td>send messages, write docs, write sheets, send email, approve/reject workflows, create/update OKRs, raw API calls</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="å«ç®¡ç-api-admin-api">å«ãç®¡ç API (Admin API)</h2>
-<p>ç½å³æ´é²ä»¥ä¸ RESTful ç«¯ç¹ï¼</p>
-<table>
-<thead>
-<tr>
-<th>æ¹æ³</th>
-<th>ç«¯ç¹</th>
-<th>è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>GET</td>
-<td><code>/admin/external-cli/connectors</code></td>
-<td>ååºææè¿æ¥å¨</td>
-</tr>
-<tr>
-<td>GET</td>
-<td><code>/admin/external-cli/connectors/{connector}</code></td>
-<td>è·åè¿æ¥å¨ç¶æ</td>
-</tr>
-<tr>
-<td>GET</td>
-<td><code>/admin/external-cli/connectors/{connector}/commands</code></td>
-<td>ååºè¿æ¥å¨å½ä»¤</td>
-</tr>
-<tr>
-<td>POST</td>
-<td><code>/admin/external-cli/preview</code></td>
-<td>é¢è§å½ä»¤ï¼é CSRFï¼</td>
-</tr>
-<tr>
-<td>POST</td>
-<td><code>/admin/external-cli/execute</code></td>
-<td>æ§è¡å½ä»¤ï¼é operator è§è² + å¹éå®¡æ¹åæ°æ®ï¼</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="ä¹cli-å½ä»¤">ä¹ãCLI å½ä»¤</h2>
-<pre><code class="language-bash"># ååºææè¿æ¥å¨
-openclaw external list
+    private static final int LEN = 5;
+    // å¯¹åºè±æå­æ¯"abcdefghijklmnopqrstuvwxyz"ï¼ASCIIç¼ç ï¼
+    private static final byte[] ArrayLetters = {
+        0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6A, 0x6B, 0x6C, 0x6D, 0x6E, 0x6F,
+        0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A
+    };
+    public static void main(String[] args) {
+        //step1ï¼åå»ºByteArrayInputStreamå­èæµï¼å¼ç¨çæ¯åå­ä¸­çArrayLettersæ°ç»
+        ByteArrayInputStream bais = new ByteArrayInputStream(ArrayLetters);
 
-# æ¥çè¿æ¥å¨ç¶æ
-openclaw external status gh
-
-# ååºè¿æ¥å¨å½ä»¤
-openclaw external commands gh
-
-# é¢è§å½ä»¤
-openclaw external preview gh repo_view --param repo=clawdotnet/openclaw.net
-
-# æ§è¡å½ä»¤
-openclaw external execute gh repo_view --param repo=clawdotnet/openclaw.net
-
-# ä½¿ç¨ --json è·åæºå¨å¯è¯»è¾åº
-openclaw external list --json
-</code></pre>
-<hr>
-<h2 id="åä»£ç å®ç°æ¶æ-commit-bde72ea">åãä»£ç å®ç°æ¶æ (Commit bde72ea)</h2>
-<h3 id="101-é¡¹ç®ç»æ">10.1 é¡¹ç®ç»æ</h3>
-<p>æ¬æ¬¡ Commit å±ä¿®æ¹ <strong>29 ä¸ªæä»¶</strong>ï¼<strong>+2,966 è¡</strong>ä»£ç ï¼æ¶åä»¥ä¸æ¨¡åï¼</p>
-<pre><code>docs/
-  EXTERNAL_CLI_CONNECTORS.md          # æ°å¢å®æ´ææ¡£ (278è¡)
-  README.md                           # æ·»å ææ¡£é¾æ¥
-  SITE_MAP.md                         # æ·»å ç«ç¹å°å¾
-
-src/OpenClaw.Agent/
-  OpenClawToolExecutor.cs             # å·¥å·æ§è¡å¨éæ (+29/-4)
-  Tools/ExternalCliTool.cs            # æ°å¢ External CLI å·¥å·å®ç° (251è¡)
-
-src/OpenClaw.Client/
-  OpenClawHttpClient.cs               # HTTP å®¢æ·ç«¯æ°å¢ Admin API æ¹æ³ (+51è¡)
-
-src/OpenClaw.Cli/
-  CliArgs.cs                          # CLI åæ°è§£ææ©å±
-  ExternalCliCommands.cs              # æ°å¢ CLI å½ä»¤å®ç° (250è¡)
-  OpenClawHttpClient.cs               # CLI HTTP å®¢æ·ç«¯åè£ (+15è¡)
-  Program.cs                          # æ³¨å external å­å½ä»¤ (+3è¡)
-
-src/OpenClaw.Core/
-  Abstractions/IToolActionDescriptorProvider.cs  # æ½è±¡æ¥å£
-  ExternalCli/
-    ExternalCliServices.cs            # DI æå¡æ³¨å
-    ExternalCliConnectorRegistry.cs   # è¿æ¥å¨æ³¨åè¡¨
-    ExternalCliRunner.cs              # å½ä»¤æ§è¡å¨
-  Models/
-    ExternalCliModels.cs              # æ°æ®æ¨¡å (284è¡)
-    GatewayConfig.cs                  # éç½®éæ (+1è¡)
-    Session.cs                        # JSON åºåå (+26è¡)
-    ToolingPolicyModels.cs            # ç­ç¥æ¨¡å (+4è¡)
-  Pipeline/ToolActionPolicyResolver.cs # ç­ç¥è§£æ (+27/-1)
-  Validation/ConfigValidator.cs       # éç½®éªè¯ (+78è¡)
-
-src/OpenClaw.Gateway/
-  Composition/                         # DI ç»åæ³¨å
-  Endpoints/AdminEndpoints.ExternalCli.cs  # Admin API ç«¯ç¹ (264è¡)
-  Endpoints/ExternalCliStores.cs      # å­å¨æ½è±¡
-
-OpenClaw.Tests/
-  ExternalCliTests.cs                 # ååæµè¯
-</code></pre>
-<h3 id="102-æ ¸å¿ç±»åä¸æ¥å£">10.2 æ ¸å¿ç±»åä¸æ¥å£</h3>
-<pre><code class="language-csharp">// è¿æ¥å¨æ³¨åè¡¨
-public interface IExternalCliConnectorRegistry
-{
-    ExternalCliPreparedInvocation BuildPreview(ExternalCliPreviewRequest request, bool dryRun);
-}
-
-// å½ä»¤æ§è¡å¨
-public interface IExternalCliRunner
-{
-    Task&lt;ExternalCliExecutionResult&gt; ExecuteAsync(ExternalCliPreparedInvocation prepared, CancellationToken ct);
-}
-
-// å®¡è®¡ Sink
-public interface IExternalCliAuditSink { void Record(ExternalCliAuditEntry entry); }
-
-// äºä»¶ Sink
-public interface IExternalCliEventSink { void Record(ExternalCliRuntimeEvent evt); }
-</code></pre>
-<h3 id="103-å³é®æ°æ®æ¨¡å">10.3 å³é®æ°æ®æ¨¡å</h3>
-<pre><code class="language-csharp">// è¿æ¥å¨éç½®éé¡¹
-public sealed class ExternalCliConnectorOptions
-{
-    public bool Enabled { get; set; } = false;
-    public string DisplayName { get; set; } = "";
-    public string Executable { get; set; } = "";
-    public string DefaultOutputFormat { get; set; } = "json";
-    public ExternalCliStatusCommandOptions? StatusCommand { get; set; }
-    public ExternalCliStatusCommandOptions? VersionCommand { get; set; }
-    public Dictionary&lt;string, ExternalCliCommandOptions&gt; Commands { get; set; } = new();
-    // ...
-}
-
-// å½ä»¤éç½®éé¡¹
-public sealed class ExternalCliCommandOptions
-{
-    public string Description { get; set; } = "";
-    public string[] ArgsTemplate { get; set; } = [];
-    public string[]? DryRunArgsTemplate { get; set; }
-    public string RiskLevel { get; set; } = ExternalCliRiskLevel.High;
-    public bool ReadOnly { get; set; } = false;
-    public bool RequiresApproval { get; set; } = false;
-    public string StructuredOutput { get; set; } = ExternalCliOutputFormat.Text;
-    public Dictionary&lt;string, ExternalCliParameterOptions&gt; Parameters { get; set; } = new();
-    // ...
-}
-
-// æ§è¡ç»æ
-public sealed class ExternalCliExecutionResult
-{
-    public ExternalCliInvocationPreview Preview { get; init; } = new();
-    public int ExitCode { get; init; }
-    public double DurationMs { get; init; }
-    public bool TimedOut { get; init; }
-    public bool Failed { get; init; }
-    public bool StdoutTruncated { get; init; }
-    public bool StderrTruncated { get; init; }
-    // ...
-}
-
-// å®¡è®¡è®°å½
-public sealed class ExternalCliAuditEntry
-{
-    public string Id { get; init; } = "";
-    public DateTimeOffset TimestampUtc { get; init; }
-    public string SessionId { get; init; } = "";
-    public string Connector { get; init; } = "";
-    public string Command { get; init; } = "";
-    public string RedactedArgsPreview { get; init; } = "";
-    public string? ApprovalFingerprint { get; init; }
-    public int ExitCode { get; init; }
-    // ...
-}
-</code></pre>
-<h3 id="104-æ§è¡æµç¨">10.4 æ§è¡æµç¨</h3>
-<ol>
-<li><strong>Agent è°ç¨</strong> â <code>ExternalCliTool</code> æ¥æ¶å·¥å·è¯·æ±</li>
-<li><strong>ç­ç¥è§£æ</strong> â <code>ToolActionPolicyResolver</code> è§£ææä½æè¿°ç¬¦ï¼å« IsMutationãRequiresApprovalãApprovalFingerprintãRiskLevelãReadOnlyï¼</li>
-<li><strong>é¢è§æå»º</strong> â <code>ExternalCliConnectorRegistry.BuildPreview()</code> è§£ææ¨¡æ¿ãéªè¯åæ°ãè®¡ç®æçº¹</li>
-<li><strong>å®¡æ¹æ£æ¥</strong> â å¦éå®¡æ¹ï¼æ¯è¾æçº¹æ¯å¦å¹é</li>
-<li><strong>æ§è¡å½ä»¤</strong> â <code>ExternalCliRunner.ExecuteAsync()</code> éè¿ <code>ProcessStartInfo.ArgumentList</code> å¯å¨è¿ç¨</li>
-<li><strong>è¾åºè§£æ</strong> â æ <code>StructuredOutput</code> è®¾ç½®è§£æè¾åº</li>
-<li><strong>è®°å½å®¡è®¡</strong> â åå¥ <code>ExternalCliAuditEntry</code>ï¼ä¸å¯ç¯¡æ¹ï¼</li>
-<li><strong>åéäºä»¶</strong> â éè¿ <code>ExternalCliEventSink</code> åéè¿è¡æ¶äºä»¶</li>
-</ol>
-<h3 id="105-ç­ç¥è§£æå¢å¼º">10.5 ç­ç¥è§£æå¢å¼º</h3>
-<p><code>ToolActionDescriptor</code> æ°å¢å­æ®µï¼</p>
-<ul>
-<li><code>RequiresApproval</code> â æ¯å¦éè¦å®¡æ¹</li>
-<li><code>ApprovalFingerprint</code> â å®¡æ¹æçº¹</li>
-<li><code>RiskLevel</code> â é£é©ç­çº§</li>
-<li><code>ReadOnly</code> â æ¯å¦åªè¯»</li>
-</ul>
-<p><code>OpenClawToolExecutor</code> ä¸­çå®¡æ¹é»è¾å¢å¼ºï¼</p>
-<ul>
-<li>æ¯ææçº¹å¹ééªè¯</li>
-<li>å¦æ¨¡æ¿ãåæ°æç­ç¥å¨å®¡æ¹ååæ´ï¼æçº¹ä¸å¹éå°é»æ­¢æ§è¡</li>
-</ul>
-<hr>
-<h2 id="åä¸é£ä¹¦-feishulark-cli-éç½®è¯¦ç»æç¨">åä¸ãé£ä¹¦ (Feishu/Lark) CLI éç½®è¯¦ç»æç¨</h2>
-<h3 id="111-çè§£æ¶æ">11.1 çè§£æ¶æ</h3>
-<p>OpenClaw éè¿å¤é¨ CLI è¿æ¥å¨è°ç¨ <code>lark-cli</code>ï¼å®æ¹ npm å <code>@larksuite/cli</code>ï¼æ¥æä½é£ä¹¦ãè¿éè¦ï¼</p>
-<ol>
-<li>å¨é£ä¹¦å¼æ¾å¹³å°åå»º<strong>èªå»ºåºç¨</strong>å¹¶è·åå­è¯</li>
-<li>å®è£å¹¶éç½® <code>lark-cli</code></li>
-<li>å®æ<strong>ç¨æ·ææ</strong>ï¼OAuth 2.0 è®¾å¤æææµç¨ï¼</li>
-<li>å¨ OpenClaw ä¸­éç½® External CLI è¿æ¥å¨</li>
-</ol>
-<h3 id="112-æ­¥éª¤ä¸åå»ºé£ä¹¦èªå»ºåºç¨">11.2 æ­¥éª¤ä¸ï¼åå»ºé£ä¹¦èªå»ºåºç¨</h3>
-<p><strong>1. è®¿é®é£ä¹¦å¼æ¾å¹³å°</strong></p>
-<ul>
-<li>å½åç: <a href="https://open.feishu.cn" target="_blank" rel="noopener nofollow">https://open.feishu.cn</a></li>
-<li>å½éç (Lark): <a href="https://open.larksuite.com" target="_blank" rel="noopener nofollow">https://open.larksuite.com</a></li>
-</ul>
-<p><strong>2. åå»ºåºç¨</strong></p>
-<ol>
-<li>ç»å½åç¹å»å³ä¸è§ <strong>ãå¼åèåå°ã</strong></li>
-<li>ç¹å» <strong>ãåå»ºåºç¨ã</strong> â éæ© <strong>ãä¼ä¸èªå»ºåºç¨ã</strong></li>
-<li>å¡«ååºç¨åç§°ï¼å¦ãæçAIå©æãï¼åæè¿°</li>
-<li>ç¹å» <strong>ãç¡®è®¤åå»ºã</strong></li>
-</ol>
-<p><strong>3. å¼å¯æºå¨äººè½å</strong></p>
-<ol>
-<li>å·¦ä¾§èå â <strong>ãåºç¨è½åãâãæºå¨äººã</strong></li>
-<li>ç¹å» <strong>ãå¼å¯ã</strong></li>
-</ol>
-<p><strong>4. è·åå­è¯</strong></p>
-<ol>
-<li>å·¦ä¾§èå â <strong>ãå­è¯ä¸åºç¡ä¿¡æ¯ã</strong></li>
-<li>å¤å¶ä»¥ä¸ä¿¡æ¯å¤ç¨ï¼
-<ul>
-<li><strong>App ID</strong>ï¼æ ¼å¼å¦ <code>cli_xxxxxxxxx</code>ï¼</li>
-<li><strong>App Secret</strong>ï¼ç¹å»ãæ¥çãæ¾ç¤ºå®æ´åå®¹ï¼è¯·å¦¥åä¿ç®¡ï¼</li>
-</ul>
-</li>
-</ol>
-<p><strong>5. å¼éæé</strong><br>
-å·¦ä¾§èå â <strong>ãæéç®¡çã</strong>ï¼æç´¢å¹¶å¼éä»¥ä¸æéï¼</p>
-<table>
-<thead>
-<tr>
-<th>æé</th>
-<th>ç¨é</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>docx:document:readonly</code></td>
-<td>æ¥çãè¯è®ºåå¯¼åºäºææ¡£</td>
-</tr>
-<tr>
-<td><code>docx:document:write</code></td>
-<td>åå»ºåç¼è¾äºææ¡£</td>
-</tr>
-<tr>
-<td><code>drive:drive:readonly</code></td>
-<td>è·åæä»¶åä¿¡æ¯</td>
-</tr>
-<tr>
-<td><code>drive:folder:write</code></td>
-<td>ç®¡çäºç©ºé´ä¸­æææä»¶</td>
-</tr>
-<tr>
-<td><code>im:message</code></td>
-<td>åé/æ¥æ¶æ¶æ¯</td>
-</tr>
-<tr>
-<td><code>im:message.group_at_msg</code></td>
-<td>æ¥æ¶ç¾¤è @ æ¶æ¯</td>
-</tr>
-<tr>
-<td><code>im:message:send_as_bot</code></td>
-<td>ä»¥æºå¨äººèº«ä»½åéæ¶æ¯</td>
-</tr>
-<tr>
-<td><code>im:chat</code></td>
-<td>ç¾¤èç®¡ç</td>
-</tr>
-<tr>
-<td><code>im:resource</code></td>
-<td>æ¶æ¯èµæº</td>
-</tr>
-<tr>
-<td><code>search:docs:read</code></td>
-<td>æç´¢ææ¡£</td>
-</tr>
-</tbody>
-</table>
-<p><strong>6. åå¸åºç¨</strong></p>
-<ol>
-<li>å·¦ä¾§èå â <strong>ãçæ¬ç®¡çä¸åå¸ã</strong></li>
-<li><strong>ãåå»ºçæ¬ã</strong> â å¡«åçæ¬è¯´æ â <strong>ãæäº¤ã</strong></li>
-<li>ç­å¾å®¡æ¹ï¼ä¼ä¸åé¨åºç¨éå¸¸èªå¨éè¿ï¼</li>
-</ol>
-<h3 id="113-æ­¥éª¤äºå®è£ä¸éç½®-lark-cli">11.3 æ­¥éª¤äºï¼å®è£ä¸éç½® lark-cli</h3>
-<p><strong>1. å®è£ lark-cli</strong></p>
-<pre><code class="language-bash"># å¨å±å®è£
-npm install -g @larksuite/cli
-
-# éªè¯å®è£
-lark-cli --version
-</code></pre>
-<p><strong>2. éç½®å­è¯ï¼äº¤äºå¼ï¼</strong></p>
-<pre><code class="language-bash">lark-cli config init --new
-</code></pre>
-<p>ææç¤ºè¾å¥ App ID å App Secretã</p>
-<p><strong>3. éç½®å­è¯ï¼éäº¤äºå¼/èªå¨åï¼</strong></p>
-<pre><code class="language-bash">echo "ä½ çApp Secret" | lark-cli config init \
-  --app-id "ä½ çAppID" \
-  --app-secret-stdin \
-  --brand feishu
-</code></pre>
-<blockquote>
-<p><code>--brand feishu</code> ç¨äºå½åçé£ä¹¦ï¼å½éç Lark ä½¿ç¨ <code>--brand lark</code>ã</p>
-</blockquote>
-<p><strong>4. éªè¯éç½®</strong></p>
-<pre><code class="language-bash">lark-cli doctor
-</code></pre>
-<p>åºæ¾ç¤ºéç½®æ­£ç¡®ãå­è¯ææã</p>
-<h3 id="114-æ­¥éª¤ä¸ç¨æ·ææ-oauth-20-è®¾å¤ææ">11.4 æ­¥éª¤ä¸ï¼ç¨æ·ææ (OAuth 2.0 è®¾å¤ææ)</h3>
-<p><strong>1. åèµ·ææè¯·æ±</strong></p>
-<pre><code class="language-bash">lark-cli auth login --no-wait --recommend --json
-</code></pre>
-<p>è¾åºç¤ºä¾ï¼</p>
-<pre><code class="language-json">{
-  "device_code": "ABC123XYZ",
-  "user_code": "ABCD1234",
-  "verification_url": "https://open.feishu.cn/open-apis/authen/v1/scan?qrcode=..."
-}
-</code></pre>
-<p><strong>2. å®æææ</strong><br>
-å¤å¶ <code>verification_url</code> å°æµè§å¨æå¼ï¼ä½¿ç¨é£ä¹¦ App æ«ç ç¡®è®¤ã</p>
-<p><strong>3. å®æç»å½</strong><br>
-æ«ç ç¡®è®¤åæ§è¡ï¼</p>
-<pre><code class="language-bash">lark-cli auth login --device-code "ABC123XYZ"
-</code></pre>
-<p><strong>4. è¡¥åæç´¢æéï¼å¦éææ¡£æç´¢è½åï¼</strong></p>
-<pre><code class="language-bash">lark-cli auth login --no-wait --scope "search:docs:read" --json
-</code></pre>
-<p>éå¤æ«ç æææµç¨ã</p>
-<h3 id="115-æ­¥éª¤åéªè¯-lark-cli-åè½">11.5 æ­¥éª¤åï¼éªè¯ lark-cli åè½</h3>
-<pre><code class="language-bash"># æç´¢ææ¡£
-lark-cli docs +search --query "ææ¡£" --as user
-
-# åå»ºææ¡£
-lark-cli docs +create --title "æµè¯ææ¡£" --markdown "# ä½ å¥½ä¸ç"
-
-# æ¥è¯¢æ¥å
-lark-cli calendar +agenda --as user
-
-# åéæ¶æ¯
-lark-cli message +send --to-user "user_open_id" --text "Hello from CLI"
-</code></pre>
-<h3 id="116-æ­¥éª¤äºå¨-openclaw-ä¸­éç½®-feishu-external-cli-è¿æ¥å¨">11.6 æ­¥éª¤äºï¼å¨ OpenClaw ä¸­éç½® Feishu External CLI è¿æ¥å¨</h3>
-<p>å¨ OpenClaw éç½®æä»¶ä¸­æ·»å ï¼</p>
-<pre><code class="language-json">{
-  "OpenClaw": {
-    "ExternalCli": {
-      "Enabled": true,
-      "DefaultTimeoutSeconds": 60,
-      "MaxStdoutBytes": 262144,
-      "MaxStderrBytes": 65536,
-      "RedactSecrets": true,
-      "AllowFreeformCommands": false,
-      "RequireApprovalForMutatingCommands": true,
-      "Connectors": {
-        "lark": {
-          "Enabled": true,
-          "DisplayName": "Lark/Feishu CLI",
-          "Executable": "lark-cli",
-          "DefaultOutputFormat": "json",
-          "StatusCommand": {
-            "Args": ["auth", "status"],
-            "TimeoutSeconds": 20
-          },
-          "VersionCommand": {
-            "Args": ["--version"],
-            "TimeoutSeconds": 10
-          },
-          "Commands": {
-            "auth_status": {
-              "Description": "Check lark-cli auth status",
-              "ArgsTemplate": ["auth", "status"],
-              "RiskLevel": "low",
-              "ReadOnly": true,
-              "StructuredOutput": "text",
-              "Parameters": {}
-            },
-            "docs_search": {
-              "Description": "Search Feishu documents",
-              "ArgsTemplate": ["docs", "+search", "--query", "{{query}}", "--as", "user", "--json"],
-              "RiskLevel": "low",
-              "ReadOnly": true,
-              "StructuredOutput": "json",
-              "Parameters": {
-                "query": { "Required": true, "MaxLength": 200 }
-              }
-            },
-            "docs_read": {
-              "Description": "Read a Feishu document",
-              "ArgsTemplate": ["docs", "+get", "{{doc_id}}", "--as", "user"],
-              "RiskLevel": "low",
-              "ReadOnly": true,
-              "StructuredOutput": "json",
-              "Parameters": {
-                "doc_id": { "Required": true }
-              }
-            },
-            "docs_create": {
-              "Description": "Create a Feishu document",
-              "ArgsTemplate": ["docs", "+create", "--title", "{{title}}", "--markdown", "{{content}}"],
-              "RiskLevel": "medium",
-              "ReadOnly": false,
-              "RequiresApproval": true,
-              "StructuredOutput": "json",
-              "Parameters": {
-                "title": { "Required": true, "MaxLength": 200 },
-                "content": { "Required": true, "MaxLength": 50000 }
-              }
-            },
-            "calendar_agenda": {
-              "Description": "Query calendar agenda",
-              "ArgsTemplate": ["calendar", "+agenda", "--as", "user"],
-              "RiskLevel": "low",
-              "ReadOnly": true,
-              "StructuredOutput": "json",
-              "Parameters": {}
-            },
-            "message_send": {
-              "Description": "Send a Feishu message",
-              "ArgsTemplate": ["message", "+send", "--to-user", "{{to}}", "--text", "{{text}}"],
-              "RiskLevel": "medium",
-              "ReadOnly": false,
-              "RequiresApproval": true,
-              "StructuredOutput": "text",
-              "Parameters": {
-                "to": { "Required": true },
-                "text": { "Required": true, "MaxLength": 2000 }
-              }
+        //step2ï¼ ä»ByteArrayInputStreamæåçåå­æ°ç»ä¸­è¯»å5ä¸ªå­è
+        for (int i=0; i&lt;LEN; i++) {
+            // è¥è½ç»§ç»­è¯»åä¸ä¸ä¸ªå­èï¼åè¯»åä¸ä¸ä¸ªå­è
+            if (bais.available() &gt; 0) {
+                // è¯»åByteArrayInputStreamæåçåå­æ°ç»ä¸­çä¸ä¸ä¸ªå­è
+                int tmp = bais.read();
+                System.out.printf("%d : 0x%s\n", i, Integer.toHexString(tmp));
             }
-          }
         }
-      }
+        //step3ï¼æ è®°ByteArrayInputStreamä¸­ä¸ä¸ä¸ªè¢«è¯»åçç´¢å¼ä½ç½®ï¼å³--æ è®°"0x66"ï¼ï¼å ä¸ºå ä¸ºåé¢å·²ç»è¯»åäº5ä¸ªå­èï¼æä»¥ä¸ä¸ä¸ªè¢«è¯»åçä½ç½®æ¯ç¬¬6ä¸ªå­è
+        // â ã ByteArrayInputStreamä¸­çmark(0)å½æ°ä¸­çâåæ°0âæ¯æ²¡æå®éæä¹çã
+        // â¡ã mark()ä¸reset()æ¯éå¥çï¼reset()ä¼å°å­èæµä¸­å³æéint posæåçç´¢å¼éç½®ä¸ºmark()å½æ°ä¸­å·¦æéint markæåçç´¢å¼
+        bais.mark(0);
+
+        //step4ï¼ è·³è¿5ä¸ªå­èãè·³è¿5ä¸ªå­èåï¼ä¸ä¸ä¸ªè¢«è¯»åçç´¢å¼ä½ç½®åºè¯¥æ¯ByteArrayInputStreamæåçåå­æ°ç»ä¸­â0x6Bâã
+        bais.skip(5);
+
+        //step5ï¼ä»ByteArrayInputStreamæåçåå­æ°ç»ä¸­è¯»å5ä¸ªå­èå°byte[] bufæ°ç»ç[0,5)ç´¢å¼ä½ç½®ãå³è¯»åâ0x6B, 0x6C, 0x6D, 0x6E, 0x6Fâ
+        byte[] buf = new byte[LEN];
+        bais.read(buf, 0, LEN);
+        String str1 = new String(buf);
+        System.out.printf("str1=%s\n", str1);
+    
+        //step6ãéç½®ByteArrayInputStreamä¸­çå³æéint posä¸ºmark()å½æ°ä¸­å·¦æéint markæåçç´¢å¼ï¼å³0x66ã
+        bais.reset();
+        //step7ãä»âéç½®åçByteArrayInputStreamâä¸­è¯»å5ä¸ªå­èå°bufä¸­ãå³è¯»åâ0x66, 0x67, 0x68, 0x69, 0x6Aâ
+        bais.read(buf, 0, LEN);
+        String str2 = new String(buf);
+        System.out.printf("str2=%s\n", str2);
     }
-  }
 }
 </code></pre>
-<h3 id="117-æ­¥éª¤å­éªè¯-openclaw-éæ">11.7 æ­¥éª¤å­ï¼éªè¯ OpenClaw éæ</h3>
-<pre><code class="language-bash"># æ¥çè¿æ¥å¨ç¶æ
-openclaw external status lark
+<p>ä¸è¿°ä»£ç çæ§è¡è¿ç¨ä¸ºï¼<br>
+â ãstep1ï¼åå»ºByteArrayInputStreamå¯¹è±¡ï¼å¼ç¨çæ¯åå­ä¸­çbyte[] ArrayLettersæ°ç»ï¼å¦ä¸æç¤ºï¼int mark = 0,int pos = 0ï¼ï¼<br>
+<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510224242407-249571668.png" class="lazyload"></p>
+<p>â¡ãstep2ï¼ä»åå­ä¸­çbyte[] ArrayLettersæ°ç»ä¸­ä¾æ¬¡è¯»å5ä¸ªå­èï¼è¯»åå®æåï¼int pos=5ï¼int mark=0ï¼å¦ä¸æç¤ºï¼int mark = 0,int pos = 5ï¼ï¼<br>
+<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510224249100-837067567.png" class="lazyload"></p>
+<p>â¢ãstep3ï¼æ è®°ByteArrayInputStreamä¸­ä¸ä¸ä¸ªè¢«è¯»åçç´¢å¼ä½ç½®ï¼å³--æ è®°"0x66"ï¼ï¼å ä¸ºå ä¸ºåé¢å·²ç»è¯»åäº5ä¸ªå­èï¼æä»¥ä¸ä¸ä¸ªè¢«è¯»åçä½ç½®æ¯ç¬¬6ä¸ªå­èï¼å¦ä¸æç¤ºï¼int mark = 5,int pos = 5ï¼ï¼<br>
+<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510224256846-313611433.png" class="lazyload"></p>
+<p>mark(0)å½æ°éè¦æ³¨æä»¥ä¸2ç¹<br>
+aã ByteArrayInputStreamä¸­çmark(0)å½æ°ä¸­çâå¥å0âæ¯æ²¡æå®éæä¹çï¼<br>
+bã mark()å½æ°ä¸reset()å½æ°æ¯éå¥çï¼reset()å½æ°ä¼å°ByteArrayInputStreamä¸­å³æéint posæåçç´¢å¼éç½®ä¸ºmark()å½æ°ä¸­å·¦æéint markæåçç´¢å¼ã<br>
+â£ãstep4ï¼ è·³è¿5ä¸ªå­èãè·³è¿5ä¸ªå­èåï¼ä¸ä¸ä¸ªè¢«è¯»åçç´¢å¼ä½ç½®åºè¯¥æ¯ByteArrayInputStreamæåçåå­æ°ç»ä¸­"0x6B"ï¼å¦ä¸æç¤ºï¼int mark = 5,int pos = 10ï¼ï¼<br>
+<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510224328112-980172842.png" class="lazyload"></p>
+<p>â¤ãstep5ï¼ ä»ByteArrayInputStreamæåçåå­æ°ç»ä¸­è¯»å5ä¸ªå­èå°byte[] bufæ°ç»ç[0,5)ç´¢å¼ä½ç½®ãå³è¯»åâ0x6B, 0x6C, 0x6D, 0x6E, 0x6Fâï¼å¦ä¸æç¤ºï¼int mark = 5,int pos = 15ï¼ï¼<br>
+<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510224335407-2139459462.png" class="lazyload"></p>
+<p>â¥ãstep6ï¼ éç½®ByteArrayInputStreamä¸­çå³æéint posä¸ºstep3ä¸­è°ç¨mark()å½æ°æ¶å·¦æéint markæåçç´¢å¼ä½ç½®ï¼å³0x66ï¼å¦ä¸æç¤ºï¼int mark = 5,int pos = 5ï¼ï¼<br>
+<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510224342132-1119334842.png" class="lazyload"></p>
+<p>â¦ãstep7ï¼ ä»âéç½®åçByteArrayInputStreamâä¸­è¯»å5ä¸ªå­èå°bufä¸­ãå³è¯»åâ0x66, 0x67, 0x68, 0x69, 0x6Aâï¼å¦ä¸æç¤ºï¼int mark = 5,int pos = 10ï¼ï¼<br>
+<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510224351618-221708823.png" class="lazyload"></p>
+<h4 id="äºdatainputstreamçæºç javaåç8ç§æ°æ®ç±»åè§£æåutf-8-è§£ç ç®æ³å®ç°çä¸ç§è£é¥°å¨æµ">äºãDataInputStreamçæºç ââJavaåç8ç§æ°æ®ç±»åè§£æåUTF-8 è§£ç ç®æ³å®ç°çä¸ç§è£é¥°å¨æµ</h4>
+<p>ââDataInputStream.classæ¯ Java I/O ä½ç³»ä¸­å®ç°äº DataInput.interface æ¥å£çæ ¸å¿ç±»ï¼èª JDK  1.0 èµ·å°±ä¸ºä»æºå¨æ å³çäºè¿å¶æ°æ®ä¸­è¯»ååºæ¬ Java æ°æ®ç±»åæä¾äºæ åå®ç°ï¼åæ¶ä¹ç»§æ¿äºFilterInputStream.classï¼å æ­¤ï¼ä¹å¯ä»¥ç¨æ¥è£é¥°å¶å®è¾å¥æµ ãå¶ä¸­ï¼DataInputStream.class::readUTF()å½æ°æ¯UTF-8 è§£ç ç®æ³çç²¾å¦å®ç°ï¼è¿æ¯ Java åºåååç½ç»åè®®çåºç³ã<br>
+ââDataInputStream.classçUMLå³ç³»å¾ï¼å¦ä¸æç¤ºï¼<br>
+<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510224505888-1934814158.png" class="lazyload"></p>
+<pre><code>public
+class DataInputStream extends FilterInputStream implements DataInput {
+    //æé å½æ°ï¼éè¦ä¼ å¥ä¸ä¸ªè¢«è£é¥°çè¾å¥æµ
+    public DataInputStream(InputStream in) {
+        super(in);
+    }
+    
+    private byte bytearr[] = new byte[80];
+    private char chararr[] = new char[80];
+    //å®éè°ç¨çæ¯InputStream.class::read()å½æ°
+    public final int read(byte b[]) throws IOException {
+        return in.read(b, 0, b.length);
+    }
+    //å®éè°ç¨çæ¯InputStream.class::read()å½æ°
+    public final int read(byte b[], int off, int len) throws IOException {
+        return in.read(b, off, len);
+    }
+    
+    public final void readFully(byte b[]) throws IOException {
+        readFully(b, 0, b.length);
+    }
 
-# ååºå¯ç¨å½ä»¤
-openclaw external commands lark
+    public final void readFully(byte b[], int off, int len) throws IOException {
+        if (len &lt; 0)
+            throw new IndexOutOfBoundsException();
+        int n = 0;
+        while (n &lt; len) {
+            int count = in.read(b, off + n, len - n);
+            if (count &lt; 0)
+                throw new EOFException();
+            n += count;
+        }
+    }
+    //å½åè¿ä¸ªDataInputStreamå¯¹è±¡å¯ä»¥ä»å®è£é¥°çè¾å¥æµä¸­ï¼å¯ä»¥çè§£ä¸ºä¸ä¸ªå¤§åçå­èæ°ç»ï¼ä¸­è·³è¿nä¸ªå­èï¼n&lt;è¢«è£é¥°çè¾å¥æµä¸­å¯ç¨çå­èæ°éï¼åè¿è¡åç»­æä½ï¼æ¯å¦éè¿read()å½æ°è¯»åç­ï¼
+    public final int skipBytes(int n) throws IOException {
+        int total = 0;//ç´¯è®¡è·³è¿çå­èæ»æ°é
+        int cur = 0;//æ¬æ¬¡éè¿InputStream.class::skip()å½æ°è·³è¿çå­èæ»æ°é
+        
+        //å½InputStream.class::skip()å½æ°çè¿åå¼&lt;=0æ¶ï¼è¡¨ç¤ºDataInputStreamå¯¹è±¡è£é¥°çè¾å¥æµä¸­å·²ç»æ²¡æå¯è¯»çå­èäº
+        while ((total&lt;n) &amp;&amp; ((cur = (int) in.skip(n-total)) &gt; 0)) {
+            total += cur;//ç´¯å ä»è¢«è£é¥°çè¾å¥æµä¸­è·³è¿çå­èæ»é
+        }
 
-# é¢è§æç´¢ææ¡£å½ä»¤
-openclaw external preview lark docs_search --param query="é¡¹ç®è®¡å"
+        return total;
+    }
 
-# æ§è¡æç´¢ï¼å¦éè¦å®¡æ¹ï¼åé¢è§åå  --yesï¼
-openclaw external execute lark docs_search --param query="é¡¹ç®è®¡å" --yes
+    //è¯»å1ä¸ªbooleanç±»åæ°æ®
+    public final boolean readBoolean() throws IOException {
+        int ch = in.read();//booleanç±»åå ä¸ä¸ªå­è
+        
+        if (ch &lt; 0)
+            throw new EOFException();
+        return (ch != 0);
+    }
+    //è¯»å1ä¸ªbyteç±»åæ°æ®
+    public final byte readByte() throws IOException {
+        int ch = in.read();//byteç±»åå 1ä¸ªå­è
+        if (ch &lt; 0)
+            throw new EOFException();
+        return (byte)(ch);
+    }
+    //è¯»å1ä¸ªæ ç¬¦å·çbyteç±»åæ°æ®
+    public final int readUnsignedByte() throws IOException {
+        int ch = in.read();//byteç±»åå 1ä¸ªå­è
+        if (ch &lt; 0)
+            throw new EOFException();
+        return ch;
+    }
+    //è¯»å1ä¸ªshortç±»åæ°æ®
+    public final short readShort() throws IOException {
+        int ch1 = in.read();//shortç±»åå 2ä¸ªå­è
+        int ch2 = in.read();
+        if ((ch1 | ch2) &lt; 0)
+            throw new EOFException();
+        return (short)((ch1 &lt;&lt; 8) + (ch2 &lt;&lt; 0));
+    }
+    //è¯»å1ä¸ªæ ç¬¦å·çshortç±»åæ°æ®
+    public final int readUnsignedShort() throws IOException {
+        int ch1 = in.read();//æ ç¬¦å·çshortç±»åå 2ä¸ªå­è
+        int ch2 = in.read();
+        if ((ch1 | ch2) &lt; 0)
+            throw new EOFException();
+        return (ch1 &lt;&lt; 8) + (ch2 &lt;&lt; 0);
+    }
+    //è¯»å1ä¸ªcharç±»åæ°æ®
+    public final char readChar() throws IOException {
+        int ch1 = in.read();//charç±»åå 2ä¸ªå­è
+        int ch2 = in.read();
+        if ((ch1 | ch2) &lt; 0)
+            throw new EOFException();
+        return (char)((ch1 &lt;&lt; 8) + (ch2 &lt;&lt; 0));
+    }
+    //è¯»å1ä¸ªintç±»åæ°æ®
+    public final int readInt() throws IOException {
+        int ch1 = in.read();//charç±»åå 4ä¸ªå­è
+        int ch2 = in.read();
+        int ch3 = in.read();
+        int ch4 = in.read();
+        if ((ch1 | ch2 | ch3 | ch4) &lt; 0)
+            throw new EOFException();
+        return ((ch1 &lt;&lt; 24) + (ch2 &lt;&lt; 16) + (ch3 &lt;&lt; 8) + (ch4 &lt;&lt; 0));
+    }
 
-# é¢è§åå»ºææ¡£ï¼åæ´å½ä»¤ï¼éè¦å®¡æ¹ï¼
-openclaw external preview lark docs_create \
-  --param title="ä¼è®®çºªè¦ 2026-05-10" \
-  --param content="# ä¼è®®çºªè¦\n\n## åä¸äºº\n- ..."
+    private byte readBuffer[] = new byte[8];
+    //è¯»å1ä¸ªlongç±»åæ°æ®
+    public final long readLong() throws IOException {
+        readFully(readBuffer, 0, 8);//longç±»åå 8ä¸ªå­è
+        return (((long)readBuffer[0] &lt;&lt; 56) +
+                ((long)(readBuffer[1] &amp; 255) &lt;&lt; 48) +
+                ((long)(readBuffer[2] &amp; 255) &lt;&lt; 40) +
+                ((long)(readBuffer[3] &amp; 255) &lt;&lt; 32) +
+                ((long)(readBuffer[4] &amp; 255) &lt;&lt; 24) +
+                ((readBuffer[5] &amp; 255) &lt;&lt; 16) +
+                ((readBuffer[6] &amp; 255) &lt;&lt;  8) +
+                ((readBuffer[7] &amp; 255) &lt;&lt;  0));
+    }
+    //è¯»å1ä¸ªfloatç±»åæ°æ®
+    public final float readFloat() throws IOException {
+        return Float.intBitsToFloat(readInt());
+    }
+    //è¯»å1ä¸ªdoubleç±»åæ°æ®
+    public final double readDouble() throws IOException {
+        return Double.longBitsToDouble(readLong());
+    }
 
-# å®¡æ¹åæ§è¡
-openclaw external execute lark docs_create \
-  --param title="ä¼è®®çºªè¦ 2026-05-10" \
-  --param content="# ä¼è®®çºªè¦\n\n## åä¸äºº\n- ..." \
-  --yes
+    public final String readUTF() throws IOException {
+        return readUTF(this);
+    }
+    //ä»å¥åçè¾å¥æµä¸­è¯»åUTF-8ç¼ç æ ¼å¼,ï¼å¹¶ä»¥Stringå­ç¬¦ä¸²çå½¢å¼è¿åã
+    public final static String readUTF(DataInput in) throws IOException {
+        //UTF-8æ°æ®çé¿åº¦åå«å¨å®çåä¸¤ä¸ªå­èå½ä¸­ï¼éè¿readUnsignedShort()è¯»ååºåä¸¤ä¸ªå­èå¯¹åºçæ­£æ´æ°å°±æ¯UTF-8æ°æ®çé¿åº¦ã
+        int utflen = in.readUnsignedShort();
+        byte[] bytearr = null;
+        char[] chararr = null;
+        //å¤æ­å¥åçè¾å¥æµæ¬èº«æ¯ä¸æ¯DataInputStreamç±»å
+        if (in instanceof DataInputStream) {
+            DataInputStream dis = (DataInputStream)in;
+            if (dis.bytearr.length &lt; utflen){
+                //å¦æå¥åçè¾å¥æµæ¯DataInputStreamç±»åå¹¶ä¸è¯»åçUTF-8æ°æ®çé¿åº¦utflen&gt;80ï¼åå°byte[] bytearræ°ç»åchar[] chararræ°ç»çé¿åº¦è®¾ç½®ä¸ºutflenï¼è¯»åçUTF-8æ°æ®çé¿åº¦ï¼*2
+                dis.bytearr = new byte[utflen*2];
+                dis.chararr = new char[utflen*2];
+            }
+            //å¦æå¥åçè¾å¥æµæ¯DataInputStreamç±»åå¹¶ä¸è¯»åçUTF-8æ°æ®çé¿åº¦&lt;=80ï¼byte[] bytearræ°ç»åchar[] chararræ°ç»çé¿åº¦è®¾ç½®ä¸º80
+            chararr = dis.chararr;
+            bytearr = dis.bytearr;
+        } else {
+            //å¦æå¥åçè¾å¥æµä¸æ¯DataInputStreamç±»åï¼åå°byte[] bytearræ°ç»åchar[] chararræ°ç»çé¿åº¦è®¾ç½®ä¸ºutflenï¼è¯»åçUTF-8æ°æ®çé¿åº¦ï¼
+            bytearr = new byte[utflen];
+            chararr = new char[utflen];
+        }
+
+        int c, char2, char3;
+        int count = 0;
+        int chararr_count=0;
+        //å°UTF-8æ°æ®å¨é¨è¯»åå°å­èæ°ç»byte[] bytearrä¸­
+        in.readFully(bytearr, 0, utflen);
+
+        //å¯¹åå­èæ°æ®è¡¨ç¤ºçUTF-8ç¼ç åè¿è¡å¤ç
+        while (count &lt; utflen) {
+            c = (int) bytearr[count] &amp; 0xff;//åå°æ¯ä¸ªåå­èè¡¨ç¤ºçUTF-8ç¼ç è½¬æ¢æintå¼
+            if (c &gt; 127) break;// UTF-8çåå­èæ°æ®çå¼ä¸ä¼è¶è¿127ï¼æä»¥ï¼å½æè¶è¿127çåå­èæ°æ®æ¶ï¼åéåºã
+            count++;
+            chararr[chararr_count++]=(char)c;// åè½¬æ¢ä¸ºchar cï¼å°cä¿å­å°å­ç¬¦æ°ç»char[] chararrä¸­
+        }
+
+        while (count &lt; utflen) {
+            //ç°å°byteç±»åè¡¨ç¤ºçUTF-8æ ¼å¼ç¼ç çæ°æ®è½¬æ¢æintç±»å
+            c = (int) bytearr[count] &amp; 0xff;
+            switch (c &gt;&gt; 4) {//å¤æ­è¯¥UTF-8æ ¼å¼ç¼ç çæ°æ®æ¯å å­èçæ¨¡æ¿ï¼æ»å±æ4ç§ä¸åé¿åº¦å­èç»æçæ¨¡æ¿åå«ä¸ºï¼1å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ã2å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ã3å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ã4å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®
+                case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
+                    //1å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ï¼è¯¥å­èå³ç§»4ä½ä¹ååå¼èå´ä¸º0~7
+                    /* 0xxxxxxx*/
+                    count++;
+                    chararr[chararr_count++]=(char)c;
+                    break;
+                case 12: case 13:
+                    //2å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ï¼ç¬¬1ä¸ªå­èæ¯ç¨æ¥ç¡®å®æ¨¡æ¿ç±»åçï¼ç¬¬1ä¸ªå­èå³ç§»4ä½ä»¥åï¼ç¬¬1ä¸ªå­èçåå¼èå´ä¸º12~13
+                    /* 110x xxxx   10xx xxxx*/
+                    count += 2;
+                    if (count &gt; utflen)
+                        throw new UTFDataFormatException(
+                            "malformed input: partial character at end");
+                    char2 = (int) bytearr[count-1];
+                    if ((char2 &amp; 0xC0) != 0x80)
+                        throw new UTFDataFormatException(
+                            "malformed input around byte " + count);
+                    chararr[chararr_count++]=(char)(((c &amp; 0x1F) &lt;&lt; 6) |
+                                                    (char2 &amp; 0x3F));
+                    break;
+                case 14:
+                    //3å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ï¼ç¬¬1ä¸ªå­èæ¯ç¨æ¥ç¡®å®æ¨¡æ¿ç±»åçï¼ç¬¬1ä¸ªå­èå³ç§»4ä½ä»¥åï¼ç¬¬1ä¸ªå­èä¸å®ä¸º14
+                    /* 1110 xxxx  10xx xxxx  10xx xxxx */
+                    count += 3;
+                    if (count &gt; utflen)
+                        throw new UTFDataFormatException(
+                            "malformed input: partial character at end");
+                    char2 = (int) bytearr[count-2];
+                    char3 = (int) bytearr[count-1];
+                    if (((char2 &amp; 0xC0) != 0x80) || ((char3 &amp; 0xC0) != 0x80))
+                        throw new UTFDataFormatException(
+                            "malformed input around byte " + (count-1));
+                    chararr[chararr_count++]=(char)(((c     &amp; 0x0F) &lt;&lt; 12) |
+                                                    ((char2 &amp; 0x3F) &lt;&lt; 6)  |
+                                                    ((char3 &amp; 0x3F) &lt;&lt; 0));
+                    break;
+                default:
+                    //4å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ï¼ç¬¬1ä¸ªå­èæ¯ç¨æ¥ç¡®å®æ¨¡æ¿ç±»åçï¼ç¬¬1ä¸ªå­èå³ç§»4ä½ä»¥åï¼ç¬¬1ä¸ªå­èä¸å®ä¸º15
+                    //Javaä¸­ä¸æ¯æ4å­èé¿åº¦çUTF-8ç¼ç æ°æ®è§£æï¼åç°4å­èé¿åº¦çUTF-8ç¼ç æ°æ®ï¼åæåºä¸ä¸ªUTFDataFormatException
+                    /* 10xx xxxx,  1111 xxxx */
+                    throw new UTFDataFormatException(
+                        "malformed input around byte " + count);
+            }
+        }
+        // The number of chars produced may be less than utflen
+        return new String(chararr, 0, chararr_count);
+    }
+}
 </code></pre>
-<h3 id="118-æäººæ¹å¼è®©-ai-å©æèªå¨éç½®">11.8 æäººæ¹å¼ï¼è®© AI å©æèªå¨éç½®ï¼</h3>
-<p>ä½ ä¹å¯ä»¥è®© AI å©æèªå¨å®æå¤§é¨åéç½®å·¥ä½ï¼</p>
-<pre><code>å¸®æéç½®é£ä¹¦äºææ¡£è½åãè¯·æä»¥ä¸æ­¥éª¤åï¼
+<h5 id="21datainputstreamclassçreadutfå½æ°">2.1ãDataInputStream.classçreadUTF()å½æ°</h5>
+<p>ââreadUTF()å½æ°æ¯ç¨æ¥ä»è¾å¥æµä¸­è¯»åUTF-8ç¼ç çæ°æ®ï¼å¹¶ä»¥Stringå­ç¬¦ä¸²çå½¢å¼è¿åï¼UTF-8çè¯¦ç»ç¼ç è§ååè§£æè§åï¼è¯·æ¥çæçå¦ä¸ç¯åå®¢ï¼<a href="https://www.cnblogs.com/Carey-ccl/p/19981026" title="11ãï¼ByteArrayInputStreamåDataInputStreamçæºç åæåä½¿ç¨æ¹æ³è¯¦ç»åæåè¨ï¼UTF-8 ç¼ç è§å" target="_blank">11ãï¼ByteArrayInputStreamåDataInputStreamçæºç åæåä½¿ç¨æ¹æ³è¯¦ç»åæåè¨ï¼UTF-8 ç¼ç è§å</a><br>
+DataInputStream.class::readUTF()å½æ°çæºç å¦ä¸ï¼</p>
+<pre><code>public
+class DataInputStream extends FilterInputStream implements DataInput {
+    ...çç¥é¨åä»£ç ...
+  
+    //ä»å¥åçè¾å¥æµä¸­è¯»åUTF-8ç¼ç æ ¼å¼,ï¼å¹¶ä»¥Stringå­ç¬¦ä¸²çå½¢å¼è¿åã
+    public final static String readUTF(DataInput in) throws IOException {
+        //UTF-8æ°æ®çé¿åº¦åå«å¨å®çåä¸¤ä¸ªå­èå½ä¸­ï¼éè¿readUnsignedShort()è¯»ååºåä¸¤ä¸ªå­èå¯¹åºçæ­£æ´æ°å°±æ¯UTF-8æ°æ®çé¿åº¦ã
+        int utflen = in.readUnsignedShort();
+        byte[] bytearr = null;
+        char[] chararr = null;
+        //å¤æ­å¥åçè¾å¥æµæ¬èº«æ¯ä¸æ¯DataInputStreamç±»å
+        if (in instanceof DataInputStream) {
+            DataInputStream dis = (DataInputStream)in;
+            if (dis.bytearr.length &lt; utflen){
+                //å¦æå¥åçè¾å¥æµæ¯DataInputStreamç±»åå¹¶ä¸è¯»åçUTF-8æ°æ®çé¿åº¦utflen&gt;80ï¼åå°byte[] bytearræ°ç»åchar[] chararræ°ç»çé¿åº¦è®¾ç½®ä¸ºutflenï¼è¯»åçUTF-8æ°æ®çé¿åº¦ï¼*2
+                dis.bytearr = new byte[utflen*2];
+                dis.chararr = new char[utflen*2];
+            }
+            //å¦æå¥åçè¾å¥æµæ¯DataInputStreamç±»åå¹¶ä¸è¯»åçUTF-8æ°æ®çé¿åº¦&lt;=80ï¼byte[] bytearræ°ç»åchar[] chararræ°ç»çé¿åº¦è®¾ç½®ä¸º80
+            chararr = dis.chararr;
+            bytearr = dis.bytearr;
+        } else {
+            //å¦æå¥åçè¾å¥æµä¸æ¯DataInputStreamç±»åï¼åå°byte[] bytearræ°ç»åchar[] chararræ°ç»çé¿åº¦è®¾ç½®ä¸ºutflenï¼è¯»åçUTF-8æ°æ®çé¿åº¦ï¼
+            bytearr = new byte[utflen];
+            chararr = new char[utflen];
+        }
 
-1. æ£æ¥æ¯å¦å®è£äº lark-cliï¼å¦ææ²¡æåæ§è¡ï¼
-   npm install -g @larksuite/cli
+        int c, char2, char3;
+        int count = 0;
+        int chararr_count=0;
+        //å°UTF-8æ°æ®å¨é¨è¯»åå°å­èæ°ç»byte[] bytearrä¸­
+        in.readFully(bytearr, 0, utflen);
 
-2. è¿è¡ lark-cli doctor æ£æ¥å½åç¶æ
-
-3. å¦ææ¾ç¤ºç¼ºå°å­è¯éç½®ï¼é®æ App ID å App Secret
-
-4. æ¿å°å­è¯åå®æéç½®ï¼
-   echo "AppSecret" | lark-cli config init --app-id "AppID" --app-secret-stdin --brand feishu
-
-5. è¿è¡ lark-cli auth login --no-wait --recommend --json
-   æè¿åç verification_url åç»æï¼åè¯ææ«ç ææ
-
-6. ææ«ç ç¡®è®¤åï¼ç¨è¿åç device_code æ§è¡ç»å½
-
-7. å¦æç¼ºå°æç´¢æéï¼æä¸é¢çæ¹å¼åèµ°ä¸éæææµç¨è¡¥å search:docs:read
-
-8. å¨é¨å®æåï¼ç¨ä»¥ä¸å½ä»¤éªè¯åé¡¹è½åï¼
-   - lark-cli docs +search --query "ææ¡£" --as user
-   - lark-cli docs +create --title "æµè¯ææ¡£" --markdown "# ä½ å¥½"
-   - lark-cli calendar +agenda --as user
+        //å¯¹åå­èæ°æ®è¡¨ç¤ºçUTF-8ç¼ç åè¿è¡é¢å¤çï¼å¦æå¤çè¿ç¨ä¸­ç¢°å°å¤å­èæ°æ®è¡¨ç¤ºçutf-8ç¼ç ï¼å°±åéåºé¢å¤ç
+        while (count &lt; utflen) {
+            c = (int) bytearr[count] &amp; 0xff;//åå°æ¯ä¸ªåå­èè¡¨ç¤ºçUTF-8ç¼ç è½¬æ¢æintå¼
+            if (c &gt; 127) break;// UTF-8çåå­èæ°æ®çå¼ä¸ä¼è¶è¿127ï¼æä»¥ï¼å½æè¶è¿127çåå­èæ°æ®æ¶ï¼åéåºã
+            count++;
+            chararr[chararr_count++]=(char)c;// åè½¬æ¢ä¸ºchar cï¼å°cä¿å­å°å­ç¬¦æ°ç»char[] chararrä¸­
+        }
+        //æ­£å¼è¯»åç¯è
+        while (count &lt; utflen) {
+            //ç°å°byteç±»åè¡¨ç¤ºçUTF-8æ ¼å¼ç¼ç çæ°æ®è½¬æ¢æintç±»å
+            c = (int) bytearr[count] &amp; 0xff;
+            switch (c &gt;&gt; 4) {//å¤æ­è¯¥UTF-8æ ¼å¼ç¼ç çæ°æ®æ¯å å­èçæ¨¡æ¿ï¼æ»å±æ4ç§ä¸åé¿åº¦å­èç»æçæ¨¡æ¿åå«ä¸ºï¼1å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ã2å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ã3å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ã4å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®
+                case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
+                    //1å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ï¼è¯¥å­èå³ç§»4ä½ä¹ååå¼èå´ä¸º0~7
+                    /* 0xxxxxxx*/
+                    count++;
+                    chararr[chararr_count++]=(char)c;
+                    break;
+                case 12: case 13:
+                    //2å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ï¼ç¬¬1ä¸ªå­èæ¯ç¨æ¥ç¡®å®æ¨¡æ¿ç±»åçï¼ç¬¬1ä¸ªå­èå³ç§»4ä½ä»¥åï¼ç¬¬1ä¸ªå­èçåå¼èå´ä¸º12~13
+                    /* 110x xxxx   10xx xxxx*/
+                    count += 2;
+                    if (count &gt; utflen)
+                        throw new UTFDataFormatException(
+                            "malformed input: partial character at end");
+                    char2 = (int) bytearr[count-1];
+                    if ((char2 &amp; 0xC0) != 0x80)
+                        throw new UTFDataFormatException(
+                            "malformed input around byte " + count);
+                    chararr[chararr_count++]=(char)(((c &amp; 0x1F) &lt;&lt; 6) |
+                                                    (char2 &amp; 0x3F));
+                    break;
+                case 14:
+                    //3å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ï¼ç¬¬1ä¸ªå­èæ¯ç¨æ¥ç¡®å®æ¨¡æ¿ç±»åçï¼ç¬¬1ä¸ªå­èå³ç§»4ä½ä»¥åï¼ç¬¬1ä¸ªå­èä¸å®ä¸º14
+                    /* 1110 xxxx  10xx xxxx  10xx xxxx */
+                    count += 3;
+                    if (count &gt; utflen)
+                        throw new UTFDataFormatException(
+                            "malformed input: partial character at end");
+                    char2 = (int) bytearr[count-2];
+                    char3 = (int) bytearr[count-1];
+                    if (((char2 &amp; 0xC0) != 0x80) || ((char3 &amp; 0xC0) != 0x80))
+                        throw new UTFDataFormatException(
+                            "malformed input around byte " + (count-1));
+                    chararr[chararr_count++]=(char)(((c     &amp; 0x0F) &lt;&lt; 12) |
+                                                    ((char2 &amp; 0x3F) &lt;&lt; 6)  |
+                                                    ((char3 &amp; 0x3F) &lt;&lt; 0));
+                    break;
+                default:
+                    //4å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ï¼ç¬¬1ä¸ªå­èæ¯ç¨æ¥ç¡®å®æ¨¡æ¿ç±»åçï¼ç¬¬1ä¸ªå­èå³ç§»4ä½ä»¥åï¼ç¬¬1ä¸ªå­èä¸å®ä¸º15
+                    //Javaä¸­ä¸æ¯æ4å­èé¿åº¦çUTF-8ç¼ç æ°æ®è§£æï¼åç°4å­èé¿åº¦çUTF-8ç¼ç æ°æ®ï¼åæåºä¸ä¸ªUTFDataFormatException
+                    /* 10xx xxxx,  1111 xxxx */
+                    throw new UTFDataFormatException(
+                        "malformed input around byte " + count);
+            }
+        }
+        // The number of chars produced may be less than utflen
+        return new String(chararr, 0, chararr_count);
+    }  
+}
 </code></pre>
-<hr>
-<h2 id="åäºå®æ´-lark-cli-è½åä¸è§">åäºãå®æ´ lark-cli è½åä¸è§</h2>
-<table>
-<thead>
-<tr>
-<th>æ¨¡å</th>
-<th>è½å</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>docs</strong></td>
-<td>æç´¢ææ¡£ãåå»ºææ¡£ãè¯»åææ¡£ãæ´æ°ææ¡£ãåäº«ææ¡£</td>
-</tr>
-<tr>
-<td><strong>sheets</strong></td>
-<td>è¯»åè¡¨æ ¼ãåå¥ååæ ¼ãæ·»å è¡/å</td>
-</tr>
-<tr>
-<td><strong>message</strong></td>
-<td>åéææ¬æ¶æ¯ãå¡çæ¶æ¯ãå¾çæ¶æ¯</td>
-</tr>
-<tr>
-<td><strong>calendar</strong></td>
-<td>æ¥è¯¢æ¥ç¨ãåå»ºæ¥ç¨</td>
-</tr>
-<tr>
-<td><strong>mail</strong></td>
-<td>æç´¢é®ä»¶ãè¯»åé®ä»¶ãåéé®ä»¶</td>
-</tr>
-<tr>
-<td><strong>contact</strong></td>
-<td>æç´¢ç¨æ·ãæ¥è¯¢é¨é¨</td>
-</tr>
-<tr>
-<td><strong>wiki</strong></td>
-<td>æç´¢ç¥è¯åºãè¯»åç¥è¯åºé¡µé¢</td>
-</tr>
-<tr>
-<td><strong>meeting</strong></td>
-<td>æ¥è¯¢ä¼è®®çºªè¦</td>
-</tr>
-<tr>
-<td><strong>drive</strong></td>
-<td>æä»¶ä¸ä¼ ãä¸è½½ãç®¡ç</td>
-</tr>
-<tr>
-<td><strong>bitable</strong></td>
-<td>å¤ç»´è¡¨æ ¼æä½</td>
-</tr>
-<tr>
-<td><strong>approval</strong></td>
-<td>å®¡æ¹æµç¨æ¥è¯¢/æä½</td>
-</tr>
-<tr>
-<td><strong>okr</strong></td>
-<td>OKR æ¥è¯¢/åå»º</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="åä¸æä½³å®è·µä¸æ³¨æäºé¡¹">åä¸ãæä½³å®è·µä¸æ³¨æäºé¡¹</h2>
-<h3 id="131-å®å¨æä½³å®è·µ">13.1 å®å¨æä½³å®è·µ</h3>
-<ol>
-<li><strong>æå°æéåå</strong> â åªå¼éå®ééè¦çæé</li>
-<li><strong>å®¡æ¹åæ´æä½</strong> â ææåå¥/åæ´å½ä»¤åºè®¾ç½® <code>RequiresApproval: true</code></li>
-<li><strong>ä½¿ç¨åªè¯»é¢è®¾</strong> â åå§éç½®åªå¯ç¨è¯»æä½ï¼æéå¼å¯åæä½</li>
-<li><strong>çæ§å®¡è®¡æ¥å¿</strong> â å®ææ£æ¥ <code>external_cli</code> çå®¡è®¡è®°å½</li>
-<li><strong>éç½®å¯é¥è±æ</strong> â ä¸ºæ¶åææå­è¯çå½ä»¤æ·»å  <code>RedactionRules</code></li>
-<li><strong>è®¾ç½®åçè¶æ¶</strong> â æ ¹æ®å½ä»¤ç¹æ§è®¾ç½® <code>TimeoutSeconds</code></li>
-</ol>
-<h3 id="132-å¸¸è§é®é¢ææ¥">13.2 å¸¸è§é®é¢ææ¥</h3>
-<table>
-<thead>
-<tr>
-<th>é®é¢</th>
-<th>ææ¥æ¹æ³</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>å½ä»¤æ§è¡å¤±è´¥</td>
-<td>æ£æ¥ <code>lark-cli doctor</code> è¾åºï¼ç¡®è®¤å­è¯åææç¶æ</td>
-</tr>
-<tr>
-<td>æéä¸è¶³</td>
-<td>å¨é£ä¹¦å¼æ¾å¹³å°æ£æ¥åºç¨æéæ¯å¦å·²å¼éå¹¶åå¸</td>
-</tr>
-<tr>
-<td>å®¡æ¹æçº¹ä¸å¹é</td>
-<td>å½ä»¤åæ°ææ¨¡æ¿å¯è½å¨å®¡æ¹ååçååï¼éæ°é¢è§è·åæ°æçº¹</td>
-</tr>
-<tr>
-<td>è¾åºä¸ºç©º</td>
-<td>æ£æ¥ <code>StructuredOutput</code> è®¾ç½®æ¯å¦ä¸ CLI å®éè¾åºæ ¼å¼å¹é</td>
-</tr>
-<tr>
-<td>è¶æ¶</td>
-<td>å¢å  <code>TimeoutSeconds</code> è®¾ç½®</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="ååæ»ç»">ååãæ»ç»</h2>
-<p>OpenClaw.NET ç External CLI Connectors æä¾äºä¸ä¸ª<strong>å®å¨ãåæ§ãå¯å®¡è®¡</strong>çæ¡æ¶ï¼å°åç§å®æ¹å¹³å° CLI éæå° AI Agent çå·¥å·è°ç¨ä½ç³»ä¸­ãéè¿<strong>å½åå½ä»¤ç½ååãåæ°æ¨¡æ¿ãé£é©è¯åãé¢è§-å®¡æ¹æµç¨ãå¯é¥è±æåå®¡è®¡æ¥å¿</strong>ç­å¤éå®å¨æºå¶ï¼å®ç°äºå¨ä¿æå¹³å°æ·±åº¦çåæ¶ç¡®ä¿æä½å®å¨ã</p>
-<p>å¯¹äºé£ä¹¦/Feishu éæï¼éè¿ <code>lark-cli</code> å¤é¨ CLI è¿æ¥å¨ï¼AI Agent å¯ä»¥å®å¨å°è¯»åé£ä¹¦äºææ¡£ãæ¥è¯¢æ¥åãåéæ¶æ¯ç­ï¼ææåæ´æä½é½éè¦æ¾å¼å®¡æ¹ï¼ç¡®ä¿ä¼ä¸æ°æ®å®å¨ã</p>
+<p>å¯ä»¥ä½¿ç¨ä¸é¢çä»£ç ååæçwindowsç³»ç»ä¸çD:\utf-8_Test.txt æä»¶ä¸­åå¥3ä¸ªUTF-8ç¼ç çå­ç¬¦"ä¸­AÃ©"ï¼å¦ä¸æç¤ºï¼</p>
+<pre><code>package com.chelong.bio;
+import java.io.*;
+
+public class DataInputStreamTest {
+   public static void main(String[] args) throws FileNotFoundException {
+      File file = new File("D:\\utf-8_Test.txt");
+      try {
+         // åå»º FileOutputStream å¯¹è±¡ï¼æå®è¦åå¶ä¸­åå¥æ°æ®çæä»¶
+         FileOutputStream fos = new FileOutputStream(file);
+         // åå»º DataOutputStream å¯¹è±¡ï¼ç¨æ¥åæä»¶ä¸­åå¥æ°æ®
+         DataOutputStream dos = new DataOutputStream(fos);
+         dos.writeUTF("ä¸­AÃ©"); // å°å­ç¬¦ä¸²åå¥æä»¶ä¸­
+         dos.close();
+         fos.close();
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+   }
+}
+</code></pre>
+<p>éè¿ä¸é¢çä»£ç åæçwindowsç³»ç»ä¸çD:\utf-8_Test.txt æä»¶ä¸­åå¥äº3ä¸ªUTF-8ç¼ç çå­ç¬¦"ä¸­AÃ©"ä¹åï¼è¯¥D:\utf-8_Test.txt æä»¶çåå®¹å¦ä¸ï¼<br>
+<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510224848411-580968948.png" class="lazyload"></p>
+<p>ç¶ååä½¿ç¨ä¸é¢çä»£ç ä»ä¸æä¸­åå¥çD:\utf-8_Test.txtæä»¶ä¸­è¯»åUTF-8ç¼ç ç3ä¸ªå­ç¬¦"ä¸­AÃ©"ï¼å¦ä¸æç¤ºï¼</p>
+<pre><code>package com.chelong.bio;
+import java.io.*;
+
+public class DataInputStreamTest {
+   public static void main(String[] args) throws FileNotFoundException {
+      File file = new File("D:\\utf-8_Test.txt");
+      try {
+         // åå»º FileInputStream å¯¹è±¡ï¼æå®è¦ä»ä¸­è¯»åæ°æ®çæä»¶
+         FileInputStream fis = new FileInputStream(file);
+         // åå»º DataInputStream å¯¹è±¡ï¼ç¨æ¥ä»æä»¶ä¸­è¯»åæ°æ®
+         DataInputStream dis = new DataInputStream(fis);
+         System.out.println("readUTF æ¹æ³è¯»åæ°æ®ï¼" + dis.readUTF()); // è¯»åå­ç¬¦ä¸²
+         dis.close();
+         fis.close();
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+   }
+}
+</code></pre>
+<p>è¯»åUTF-8ç¼ç çå­ç¬¦çä»£ç çæ§è¡ç»æå¦ä¸ï¼<br>
+<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510224941213-622084597.png" class="lazyload"></p>
+<p>2.1.1ãreadUTF()å½æ°çæ§è¡è¿ç¨è¯¦è§£<br>
+ââå½æ§è¡ä¸æä¸­ç</p>
+<pre><code>dis.readUTF()
+</code></pre>
+<p>å½æ°æ¶ï¼è¯¥å½æ°ä¼ä»åå¥çD:\utf-8_Test.txtæä»¶ä¸­è¯»åUTF-8ç¼ç çå­ç¬¦ä¸²ï¼æ´ä¸ªæ§è¡è¿ç¨åä¸ºä»¥ä¸4æ­¥ï¼<br>
+â ãéè¿readUnsignedShort()å½æ°è¯»ååºåä¸¤ä¸ªå­èå¯¹åºçæ­£æ´æ°utflen=6ï¼ä¹å°±è¯¥æä»¶ä¸­UTF-8æ°æ®çæ»é¿åº¦ï¼ï¼ç¶åå°å­èæ°ç»byte[] bytearråå­ç¬¦æ°ç»char[] chararrçé¿åº¦é½è®¾ç½®ä¸º80ï¼å¦ä¸æç¤ºï¼<br>
+<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510225058643-1286415082.png" class="lazyload"></p>
+<p>â¡ãç¶ååå§åæä½å­èæ°ç»byte[] bytearræ°ç»çæéint count = 0;åæä½char[] chararræ°ç»çæé int chararr_count=0;åéè¿</p>
+<pre><code>in.readFully(bytearr, 0, utflen);
+</code></pre>
+<p>å½æ°ï¼å°UTF-8æ°æ®å¨é¨è¯»åå°å­èæ°ç»byte[] bytearrä¸­ï¼å¦ä¸æç¤ºï¼<br>
+<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510225120789-368682448.png" class="lazyload"></p>
+<p>â¢ãç¶åå¯¹åå­èæ°æ®è¡¨ç¤ºçUTF-8ç¼ç åè¿è¡é¢å¤çï¼å¦æé¢å¤çè¿ç¨ä¸­ç¢°å°å¤å­èæ°æ®è¡¨ç¤ºçutf-8ç¼ç ï¼å°±åéåºé¢å¤çï¼<br>
+â£ãæåè¿å¥æ­£å¼è¯»åUTF-8ç¼ç çç¯èï¼æ­£å¼è¯»åUTF-8ç¼ç çç¯èååä¸ºä»¥ä¸3æ­¥ï¼<br>
+aãåä»å­èæ°ç»byte[] bytearrä¸­è¯»åç¬¬1ä¸ªå­èæ¥å¤æ­å½åè¿ä¸ªUTF-8ç¼ç çæ°æ®æ¯å å­èæ¨¡æ¿ï¼UTF-8ç¼ç çæ°æ®æ4ç§é¿åº¦çå­èæ¨¡æ¿ï¼ä½æ¯å¨Javaä¸­åªä½¿ç¨1~3å­èé¿åº¦çå­èæ¨¡æ¿ï¼</p>
+<pre><code>c = (int) bytearr[count] &amp; 0xff;
+switch (c &gt;&gt; 4) {
+    case 14:
+</code></pre>
+<p>ç¬¬1ä¸ªUTF-8ç¼ç çæ°æ®âä¸­âï¼UTF-8 ç¼ç ä¸º 0xE4 0xB8 0xADï¼ä¼å¹éå°3å­èçæ¨¡æ¿ï¼å¦ä¸æç¤ºï¼<br>
+<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510225210269-410539545.png" class="lazyload"></p>
+<p>ç¶åè¿è¡åé¢2ä¸ªå­èçè¯»åï¼æåååå¹¶ä»è¿3ä¸ªå­èä¸­åå°çææå³äºUTF-8çç¼ç çbitä½ï¼ç»æå®æ´çUTF-8ç¼ç çæ°æ®</p>
+<pre><code>                    //3å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ï¼ç¬¬1ä¸ªå­èæ¯ç¨æ¥ç¡®å®æ¨¡æ¿ç±»åçï¼ç¬¬1ä¸ªå­èå³ç§»4ä½ä»¥åï¼ç¬¬1ä¸ªå­èä¸å®ä¸º14
+                    /* 1110 xxxx  10xx xxxx  10xx xxxx */
+                    count += 3;
+                    if (count &gt; utflen)
+                        throw new UTFDataFormatException(
+                            "malformed input: partial character at end");
+                    char2 = (int) bytearr[count-2];//è¯»å3å­èæ¨¡çç»æçUTF-8ç¼ç æ°æ®ä¸­çç¬¬2ä¸ªå­è
+                    char3 = (int) bytearr[count-1];//è¯»å3å­èæ¨¡çç»æçUTF-8ç¼ç æ°æ®ä¸­çç¬¬3ä¸ªå­è
+                    //æ ¡éª3å­èæ¨¡çç»æçUTF-8ç¼ç æ°æ®ä¸­çç¬¬2ã3ä¸ªå­è
+                    if (((char2 &amp; 0xC0) != 0x80) || ((char3 &amp; 0xC0) != 0x80))
+                        throw new UTFDataFormatException(
+                            "malformed input around byte " + (count-1));
+                    //åå¹¶ç¬¬1ã2ã3ä¸ªå­èç»ææç»ç3å­èæ¨¡çç»æçUTF-8ç¼ç æ°æ®
+                    chararr[chararr_count++]=(char)(((c     &amp; 0x0F) &lt;&lt; 12) |
+                                                    ((char2 &amp; 0x3F) &lt;&lt; 6)  |
+                                                    ((char3 &amp; 0x3F) &lt;&lt; 0));
+                    break;
+</code></pre>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510225301114-805610767.png" class="lazyload"></p>
+<p>bãè¯»åå®å3ä¸ªå­èä¹åä¾¿å®æäºç¬¬1ä¸ªUTF-8ç¼ç çæ°æ®âä¸­âçè§£æï¼ç¶åå¼å§è¯»åå­èæ°ç»byte[] bytearrçç¬¬4ä¸ªå­èï¼è¯¥å­èä¹æ¯ç¨æ¥å¤æ­å½åè¿ä¸ªUTF-8ç¼ç çæ°æ®æ¯å å­èæ¨¡æ¿çï¼UTF-8ç¼ç çæ°æ®æ4ç§é¿åº¦çå­èæ¨¡æ¿ï¼ä½æ¯å¨Javaä¸­åªä½¿ç¨1~3å­èé¿åº¦çå­èæ¨¡æ¿ï¼</p>
+<pre><code>c = (int) bytearr[count] &amp; 0xff;
+switch (c &gt;&gt; 4) {
+    case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
+</code></pre>
+<p>ç¬¬2ä¸ªUTF-8ç¼ç çæ°æ®âAâï¼ UTF-8 ç¼ç ä¸º0x41ï¼ä¼å¹éå°1å­èçæ¨¡æ¿ï¼å¦ä¸æç¤ºï¼<br>
+<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510225330241-1864104262.png" class="lazyload"><br>
+ç¶åå¯¹count++ï¼å°è¿1ä¸ªå­èä¸­è¯»åå°çå³äºUTF-8çç¼ç çbitä½ï¼è½¬æ¢ä¸º2å­èçcharç±»åæ°æ®ï¼æ¾å¥å°å­ç¬¦æ°ç»char[] chararrä¸­</p>
+<pre><code>                    //1å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ï¼è¯¥å­èå³ç§»4ä½ä¹ååå¼èå´ä¸º0~7
+                    /* 0xxxxxxx*/
+                    count++;
+                    chararr[chararr_count++]=(char)c;
+                    break;
+</code></pre>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510225417345-95710388.png" class="lazyload"></p>
+<p>cãè¯»åå®ç¬¬4ä¸ªå­èä¹åä¾¿å®æäºç¬¬2ä¸ªUTF-8ç¼ç çæ°æ®âAâçè§£æï¼ç¶åå¼å§è¯»åå­èæ°ç»byte[] bytearrçç¬¬5ä¸ªå­èï¼è¯¥å­èä¹æ¯ç¨æ¥å¤æ­å½åè¿ä¸ªUTF-8ç¼ç çæ°æ®æ¯å å­èæ¨¡æ¿çï¼UTF-8ç¼ç çæ°æ®æ4ç§é¿åº¦çå­èæ¨¡æ¿ï¼ä½æ¯å¨Javaä¸­åªä½¿ç¨1~3å­èé¿åº¦çå­èæ¨¡æ¿ï¼</p>
+<pre><code>c = (int) bytearr[count] &amp; 0xff;
+switch (c &gt;&gt; 4) {
+    case 12: case 13:
+</code></pre>
+<p>ç¬¬3ä¸ªUTF-8ç¼ç çæ°æ®âÃ©âï¼ UTF-8 ç¼ç ä¸º0xC3 0xA9ï¼ä¼å¹éå°2å­èçæ¨¡æ¿ï¼å¦ä¸æç¤ºï¼<br>
+<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510225455658-12701351.png" class="lazyload"></p>
+<p>ç¶åè¿è¡åé¢1ä¸ªå­èçè¯»åï¼æåååå¹¶ä»è¿2ä¸ªå­èä¸­åå°çææå³äºUTF-8çç¼ç çbitä½ï¼ç»æå®æ´çUTF-8ç¼ç çæ°æ®</p>
+<pre><code>                    //2å­èé¿åº¦ç»æçUTF-8ç¼ç æ°æ®ï¼ç¬¬1ä¸ªå­èæ¯ç¨æ¥ç¡®å®æ¨¡æ¿ç±»åçï¼ç¬¬1ä¸ªå­èå³ç§»4ä½ä»¥åï¼ç¬¬1ä¸ªå­èçåå¼èå´ä¸º12~13
+                    /* 110x xxxx   10xx xxxx*/
+                    count += 2;
+                    if (count &gt; utflen)
+                        throw new UTFDataFormatException(
+                            "malformed input: partial character at end");
+                    char2 = (int) bytearr[count-1];
+                    if ((char2 &amp; 0xC0) != 0x80)
+                        throw new UTFDataFormatException(
+                            "malformed input around byte " + count);
+                    chararr[chararr_count++]=(char)(((c &amp; 0x1F) &lt;&lt; 6) |
+                                                    (char2 &amp; 0x3F));
+                    break;
+</code></pre>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510225520710-1227227180.png" class="lazyload"></p>
+<p>2.1.2ãJavaä¸­byteç±»åçæç¬¦å·æ´æ°çè¡¨ç¤ºæ¹å¼<br>
+ââä¸æä¸­çUTF-8ç¼ç çæ°æ®"ä¸­"å¨byte[] bytearrå­èæ°ç»ä¸­æ¯ç¨è¯¥å­èæ°ç»ç[0,3)ç´¢å¼ä½ç½®ï¼å·¦é­å³å¼ï¼çå­èæ¥è¡¨ç¤ºçï¼è¿3ä¸ªå­èåå«æ¯-28ï¼-72ï¼-23ï¼åå«å¯¹åºç8ä½äºè¿å¶è¡¨ç¤ºä¸ºï¼1110 0100ã1011 1000ã1010 1101ï¼å¦ä¸æç¤ºï¼<br>
+<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510225623770-11678734.png" class="lazyload"></p>
+<p>è¿ç§è¡¨ç¤ºæ¹å¼æ¯å ä¸ºJavaä¸­çæç¬¦å·æ´æ°ï¼æ¯ä½¿ç¨äºè¿å¶è¡¥ç çæ¹å¼æ¥è¡¨ç¤ºçï¼-28çäºè¿å¶è¡¥ç çè®¡ç®æ­¥éª¤åä¸ºä»¥ä¸3æ­¥ï¼<br>
+â ãåæ±&nbsp;+28&nbsp;çäºè¿å¶ï¼ç»æå¦ä¸æç¤ºï¼</p>
+<pre><code>0001 1100
+</code></pre>
+<p>â¡ãåæ±åç ï¼æä½ååï¼ï¼å¦ä¸æç¤ºï¼</p>
+<pre><code>1110 0011
+</code></pre>
+<p>â¢ãå¯¹æ­¥éª¤â¡ä¸­çåç  +1 ï¼å¾å°è¡¥ç ï¼å¦ä¸æç¤ºï¼</p>
+<pre><code>1110 0100ï¼æé«ä½ä¸º&nbsp;1ï¼è¡¨ç¤ºè´æ°ï¼
+</code></pre>
+<p>å¯ä»¥ä½¿ç¨ä»£ç è¿è¡éªè¯ï¼å¦ä¸æç¤ºï¼</p>
+<pre><code>public class Main {
+    public static void main(String[] args) {
+        byte a = -28;
+        System.out.println(Integer.toBinaryString(a &amp; 0xFF));// è¾åºï¼11100100
+    }
+}
+</code></pre>
+<p>ä¸è¿°ä»£ç çè¿è¡ç»æå¦ä¸ï¼<br>
+<img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2485827/202605/2485827-20260510225844966-1515924660.png" class="lazyload"><br>
+ââ-72ï¼-23åçï¼å¨Javaä¸­ä¹æ¯ä½¿ç¨è¡¥ç è¡¨ç¤ºçï¼æ­¤å¤ä¸åèµè¿°ã</p>
 
 
-</div>
-<div id="MySignature" role="contentinfo">
-    <p>æ¬¢è¿å¤§å®¶æ«æä¸é¢äºç»´ç æä¸ºæçå®¢æ·ï¼æ¶ä½ ä¸äº</p>
-<img src="https://images.cnblogs.com/cnblogs_com/shanyou/57459/o_220125090408_%E9%82%80%E8%AF%B7%E4%BA%8C%E7%BB%B4%E7%A0%81-258px.jpeg" width="170">
 </div>
 <div class="clear"></div>
 
             </div>
             <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-05-10 22:45">2026-05-10 22:44</span>&nbsp;
-<a href="https://www.cnblogs.com/shanyou">å¼ åå</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+<span id="post-date" data-last-update-days="0.0006944444444444445" data-date-updated="2026-05-10 23:02">2026-05-10 23:01</span>&nbsp;
+<a href="https://www.cnblogs.com/Carey-ccl">Carey_ccl</a>&nbsp;
+éè¯»(<span id="post_view_count">2</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(20009085);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fshanyou%2Fp%2F20009085&amp;targetId=20009085&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+<a href="javascript:void(0)" onclick="AddToWz(20009118);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FCarey-ccl%2Fp%2F20009118&amp;targetId=20009118&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
