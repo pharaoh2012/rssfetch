@@ -3,174 +3,22 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-07-14T13:19:54.779Z</lastBuildDate>
+        <lastBuildDate>2026-07-14T17:07:51.314Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
-    <title><![CDATA[ Podman æ¥éï¼æ®éç¨æ·æ æ³è¿è¡ rootless Podman æä¹å ]]></title>
-    <link>https://www.cnblogs.com/jyzhao/p/21468669</link>
-    <guid>bc7b88d2a621959a31154f67e661773c</guid>
-    <description>
-    <![CDATA[ 
-    <a name="top"></a>
-    <h2><a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/jyzhao/p/21468669" title="åå¸äº 2026-07-14 21:14">
-    
-
-    <span role="heading" aria-level="2">Podman æ¥éï¼æ®éç¨æ·æ æ³è¿è¡ rootless Podman æä¹å</span>
-    
-
-</a>
-</h2>
-    <small>
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-07-14 21:14">2026-07-14 21:14</span>&nbsp;
-<a href="https://www.cnblogs.com/jyzhao">AlfredZhao</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(21468669);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fjyzhao%2Fp%2F21468669&amp;targetId=21468669&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</small>
-    <div class="entry">
-        <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>å¨ RHEL 8.10 ç¯å¢ä¸­ï¼<code>root</code> ç¨æ·æ§è¡ <code>podman ps</code> æ­£å¸¸ï¼ä½åæ¢å° <code>oracle</code> æ®éç¨æ·åå´æ¥éãè¿ä¸ªé®é¢çèµ·æ¥åç£çç©ºé´ä¸è¶³ï¼å®éå³é®ç¹å¨äº rootless Podman ä¾èµç User Namespace æ²¡æå¯ç¨ã</p>
-<h2 id="01--é®é¢ç°è±¡">01 | é®é¢ç°è±¡</h2>
-<p><code>root</code> ç¨æ·æ§è¡æ­£å¸¸ï¼</p>
-<pre><code class="language-bash">podman ps
-</code></pre>
-<p>è¿åï¼</p>
-<pre><code class="language-text">CONTAINER ID IMAGE COMMAND CREATED STATUS PORTS NAMES
-</code></pre>
-<p>åæ¢å° <code>oracle</code> ç¨æ·åï¼</p>
-<pre><code class="language-bash">su - oracle
-podman ps
-</code></pre>
-<p>æ¥éå¦ä¸ï¼</p>
-<pre><code class="language-text">cannot clone: No space left on device
-user namespaces are not enabled in /proc/sys/user/max_user_namespaces
-Error: cannot re-exec process
-</code></pre>
-<p>è¿éæå³é®çä¸è¡æ¯ï¼</p>
-<pre><code class="language-text">user namespaces are not enabled in /proc/sys/user/max_user_namespaces
-</code></pre>
-<p>å®è¯´æå½åç³»ç»æ²¡æä¸ºæ®éç¨æ·å¯ç¨ User Namespaceï¼å æ­¤ rootless Podman æ æ³æ­£å¸¸å¯å¨ã</p>
-<h2 id="02--æ ¹å å®ä½">02 | æ ¹å å®ä½</h2>
-<p>Rootless Podman ä¾èµ Linux User Namespaceãå¯ä»¥åæ£æ¥å½åéç½®ï¼</p>
-<pre><code class="language-bash">cat /proc/sys/user/max_user_namespaces
-</code></pre>
-<p>å¦æè¾åºä¸ºï¼</p>
-<pre><code class="language-text">0
-</code></pre>
-<p>å°±è¡¨ç¤º User Namespace è¢«ç¦ç¨ã</p>
-<p>æ¬æ¬¡ç¯å¢ä¸­è¿åç°äºå¤ä¸ª sysctl éç½®æä»¶ï¼</p>
-<pre><code class="language-text">/etc/sysctl.conf
-/etc/sysctl.d/99-sysctl.conf
-</code></pre>
-<p>å¶ä¸­é½éç½®äºï¼</p>
-<pre><code class="language-text">user.max_user_namespaces = 0
-</code></pre>
-<p>è¿ä¼å¸¦æ¥ä¸ä¸ªå®¹æå¿½ç¥çé®é¢ï¼å³ä½¿æ°å¢äºä¸é¢çéç½®æä»¶ï¼</p>
-<pre><code class="language-text">/etc/sysctl.d/99-podman.conf
-user.max_user_namespaces = 28633
-</code></pre>
-<p>æ§è¡ï¼</p>
-<pre><code class="language-bash">sysctl --system
-</code></pre>
-<p>ä¹åï¼éç½®ä»å¯è½è¢«åé¢ç <code>user.max_user_namespaces = 0</code> è¦çï¼å¯¼è´é®é¢æ²¡æçæ­£è§£å³ã</p>
-<h2 id="03--è§£å³æ­¥éª¤">03 | è§£å³æ­¥éª¤</h2>
-<h3 id="-å¯ç¨-user-namespace">â  å¯ç¨ User Namespace</h3>
-<p>å»ºè®®ç»ä¸ä¿çä¸ä¸ªææéç½®ï¼ä¾å¦ï¼</p>
-<pre><code class="language-text">user.max_user_namespaces = 28633
-</code></pre>
-<p>æèï¼</p>
-<pre><code class="language-text">user.max_user_namespaces = 65536
-</code></pre>
-<p>ç¶åéæ°å è½½ sysctl éç½®ï¼</p>
-<pre><code class="language-bash">sysctl --system
-</code></pre>
-<p>ç¡®è®¤å½åå¼ï¼</p>
-<pre><code class="language-bash">cat /proc/sys/user/max_user_namespaces
-</code></pre>
-<p>ææè¾åºä¸ºï¼</p>
-<pre><code class="language-text">28633
-</code></pre>
-<p>æèï¼</p>
-<pre><code class="language-text">65536
-</code></pre>
-<p>åªè¦è¯¥å¼å¤§äº <code>0</code>ï¼rootless Podman å°±å·å¤ç»§ç»­è¿è¡çåºç¡æ¡ä»¶ã</p>
-<h3 id="-éç½®æ®éç¨æ·-uidgid-æ å°">â¡ éç½®æ®éç¨æ· UID/GID æ å°</h3>
-<p>ç»§ç»­æ£æ¥ <code>oracle</code> ç¨æ·æ¯å¦éç½®äº subuid å subgidï¼</p>
-<pre><code class="language-bash">grep '^oracle:' /etc/subuid /etc/subgid
-</code></pre>
-<p>å¦ææ²¡æç»æï¼å¯ä»¥æ§è¡ï¼</p>
-<pre><code class="language-bash">usermod \
- --add-subuids 100000-165535 \
- --add-subgids 100000-165535 \
- oracle
-</code></pre>
-<p>ç¡®è®¤ç»æåºç±»ä¼¼ï¼</p>
-<pre><code class="language-text">/etc/subuid:oracle:100000:65536
-/etc/subgid:oracle:100000:65536
-</code></pre>
-<h3 id="-æ£æ¥è¾å©å·¥å·">â¢ æ£æ¥è¾å©å·¥å·</h3>
-<p>è¿éè¦ç¡®è®¤ <code>newuidmap</code> å <code>newgidmap</code> å­å¨ï¼</p>
-<pre><code class="language-bash">which newuidmap
-which newgidmap
-</code></pre>
-<p>ææè¾åºï¼</p>
-<pre><code class="language-text">/usr/bin/newuidmap
-/usr/bin/newgidmap
-</code></pre>
-<h2 id="04--æåéªè¯">04 | æåéªè¯</h2>
-<p>éæ°åæ¢å°æ®éç¨æ·ï¼</p>
-<pre><code class="language-bash">su - oracle
-</code></pre>
-<p>æ§è¡ï¼</p>
-<pre><code class="language-bash">podman ps
-</code></pre>
-<p>å¦ææ­£å¸¸è¿åï¼</p>
-<pre><code class="language-text">CONTAINER ID IMAGE COMMAND CREATED STATUS PORTS NAMES
-</code></pre>
-<p>è¯´æ rootless Podman å·²ç»å¯ä»¥æ­£å¸¸å·¥ä½ã</p>
-<p><code>user.max_user_namespaces</code> è¡¨ç¤ºç³»ç»åè®¸åå»ºç User Namespace æå¤§æ°éã<code>0</code> è¡¨ç¤ºç¦ç¨ï¼rootless Podman æ æ³ä½¿ç¨ï¼<code>28633</code> å <code>65536</code> é½æ¯å¯ç¨éç½®ãå¯¹äºéè¦è¿è¡ rootless Podman ç RHEL/ODA ç¯å¢ï¼éç¹ä¸æ¯åºå®æä¸ªæ°å­ï¼èæ¯ç¡®ä¿è¯¥å¼å¤§äº <code>0</code>ï¼å¹¶é¿åè¢«å¶ä» sysctl éç½®è¦çã</p>
-<p>å³æ³¨æï¼åAIä¸èµ·æé¿~</p>
-
-
-</div>
-<div id="MySignature" role="contentinfo">
-    <a href="https://www.cnblogs.com/jyzhao/" target="_blank">AlfredZhao</a>Â©çæææãä»Oracleèµ·èªï¼é¢ç¥ç²¾å½©çITææ¯ãã<br>
-è½¬è½½è¯·æ³¨æåæé¾æ¥ï¼<a href="https://www.cnblogs.com/jyzhao/p/21468669" target="_blank">https://www.cnblogs.com/jyzhao/p/21468669</a>
-<hr>
-<div style="text-align:center; margin-top:30px;">
-  <p style="font-size:14px;color:#555;">
-    ð æè°¢éè¯»ï¼æ¬¢è¿å³æ³¨æçå¬ä¼å· <b>ãèµµéå®ã</b>
-  </p>
-  <img src="https://images.cnblogs.com/cnblogs_com/jyzhao/824234/o_250208075013_qrcode-zjy.jpg" width="160" style="border:1px solid #ddd;border-radius:8px;">
-</div>
-</div>
-<div class="clear"></div>
-
-        <div class="clear"></div>
-        
-</div>
-    <ul class="postmetadata">
-        <vc:categories-tags blog-app="jyzhao" blog-id="186567" post-id="21468669"></vc:categories-tags>
-    </ul>
- ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ ãå¼æºé¡¹ç®ãç¨ Rust éæä¸­æ TTSï¼kokoroi-rs é«æ§è½è¯­é³åæå¼æä»ç» ]]></title>
-    <link>https://www.cnblogs.com/doiito/p/21468133</link>
-    <guid>e07977878a82b6615b7ea3c7a67a068c</guid>
+    <title><![CDATA[ å¦ä½èªå®ä¹ UIScrollView çåéç³»æ° ]]></title>
+    <link>https://www.cnblogs.com/chaoguo1234/p/21472426</link>
+    <guid>c23aeb2cea39d4e1457ee8787b540f77</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/doiito/p/21468133" title="åå¸äº 2026-07-14 20:42">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/chaoguo1234/p/21472426" title="åå¸äº 2026-07-15 00:08">
     
 
-    <span role="heading" aria-level="2">ãå¼æºé¡¹ç®ãç¨ Rust éæä¸­æ TTSï¼kokoroi-rs é«æ§è½è¯­é³åæå¼æä»ç»</span>
+    <span role="heading" aria-level="2">å¦ä½èªå®ä¹ UIScrollView çåéç³»æ°</span>
     
 
 </a>
@@ -178,335 +26,129 @@ which newgidmap
             </h1>
             <div class="clear"></div>
             <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h1 id="ç¨-rust-éæä¸­æ-ttskokoroi-rs-é«æ§è½è¯­é³åæå¼æä»ç»">ç¨ Rust éæä¸­æ TTSï¼kokoroi-rs é«æ§è½è¯­é³åæå¼æä»ç»</h1>
-<blockquote>
-<p><strong>æè¦</strong>ï¼kokoroi-rs æ¯åºäº Rust å ONNX Runtime éæçé«æ§è½ä¸­æ TTS å¼æï¼æ¯æ CLI å HTTP API ä¸¤ç§ä½¿ç¨æ¹å¼ï¼æä¾ 50+ ç§å¤è¯­è¨åé³äººï¼å®ç°é¶ä¾èµéæç¼è¯é¨ç½²ï¼å®æ¶çå¯è¾¾ 5-10 åï¼æ¯çäº§çº§è¯­é³åæåºæ¯ççæ³éæ©ã<br>
-<strong>å³é®è¯</strong>ï¼Rust TTSãä¸­æè¯­é³åæãKokoroãONNX Runtimeãé«æ§è½è¯­é³å¼æãéæç¼è¯ãé¶ä¾èµé¨ç½²ãæµå¼è¯­é³åæ</p>
-</blockquote>
-<h2 id="åå¨åé¢">åå¨åé¢</h2>
-<p>å¦æä½ å³æ³¨è¿å¼æºè¯­é³åæï¼TTSï¼é¢åï¼å¤§æ¦å¯¹ <strong>Kokoro</strong> è¿ä¸ªåå­ä¸éçãä½ä¸ºä¸ä¸ªè½»éçº§ãå¤è¯­è¨ç TTS æ¨¡åï¼Kokoro å­å 82M åæ°éå Apache-2.0 å¼æºåè®®ï¼å¨ç¤¾åºéæ¶è·äºä¸å°å³æ³¨ãä¸è¿ï¼Kokoro çåçå®ç°ä¸»è¦æ¯ Python çæï¼ä¾èµ PyTorch åå¤§éç Python è¿è¡æ¶ââè¿å¨çäº§ç¯å¢ä¸­å¾å¾ä¼å¸¦æ¥é¨ç½²ä½ç§¯å¤§ãå¯å¨æ¢ãå¹¶åè½ååéç­é®é¢ã</p>
-<p>é£ä¹é®é¢æ¥äºï¼<strong>è½ä¸è½æ Kokoro æ¬å° Rust éï¼è·åºæ´é«çæçï¼</strong></p>
-<p>ç­æ¡å°±æ¯ä»å¤©è¦èçä¸»è§ââ<strong>kokoroi-rs</strong>ã</p>
-<blockquote>
-<p>kokoroi-rs æ¯ Kokoro TTS ç Rust å®ç°ï¼åºäº ONNX Runtime è¿è¡æ¨çï¼æä¾ CLI å·¥å·å HTTP API æå¡ä¸¤ç§ä½¿ç¨æ¹å¼ã</p>
-</blockquote>
-<p>ç®åæ¥è¯´ï¼å®æ Kokoro ç Python å®ç°ç¨ Rust éåäºä¸éï¼å¹¶ä¸éè¿ ONNX æ ¼å¼çæ¨¡åæä»¶æ¥é©±å¨æ¨çãè¿æ ·åçå¥½å¤éå¸¸ç´æ¥ï¼<strong>æ´å°çé¨ç½²ä½ç§¯ãæ´å¿«çå¯å¨éåº¦ãæ´é«çå¹¶ååå</strong>ââå¯¹äºæ³æ TTS è½åéæå°åç«¯æå¡éçå¼åèæ¥è¯´ï¼è¿äºä¼å¿å ä¹é½æ¯åéã</p>
-<h2 id="ä¸ºä»ä¹æ¯-rust--onnx">ä¸ºä»ä¹æ¯ Rust + ONNXï¼</h2>
-<p>å¨æ·±å¥ä»ç»åè½ä¹åï¼åèèææ¯éåèåçé»è¾ã</p>
-<p>Kokoro åçæ¯ Python + PyTorch çå®ç°ï¼è kokoroi-rs éæ©äº <strong>Rust + ONNX Runtime</strong> çç»åãè¿ä¸ªéæ©å¸¦æ¥äºå ä¸ªæ ¸å¿ä¼å¿ï¼</p>
+                    <div id="cnblogs_post_description" style="display: none">
+        
+        å¦ä½èªå®ä¹ UIScrollView çåéç³»æ°
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p><code>decelerationRate</code>å±æ§ç¨æ¥å®ä¹ç¨æ·æ»å¨<code>UIScrollView</code>ï¼ææç¦»å¼<code>UIScrollView</code>åï¼<code>UIScrollView</code>åéæåå°çé»åã</p>
+<p><code>decelerationRate</code>æ¯ä¸ä¸ªæµ®ç¹æ°ç±»åï¼ç³»ç»æä¾äºé¢åå®ä¹çä¸¤ä¸ªå¼:</p>
 <ul>
-<li><strong>é¶è¿è¡æ¶ä¾èµ</strong>ï¼Rust ç¼è¯æéæäºè¿å¶ï¼ä¸éè¦è£ Python ç¯å¢ãä¸éè¦è£ PyTorchãä¸éè¦æå¿çæ¬å²çªãå°¤å¶æ¯ Linux ä¸éç¨ musl å¨éæç¼è¯ï¼æ·è¿å»å°±è½è·ã</li>
-<li><strong>é«æ§è½æ¨ç</strong>ï¼ONNX Runtime æ¬èº«éå¯¹ CPU/GPU æ¨çåäºå¤§éä¼åï¼éå Rust çå¤çº¿ç¨æµæ°´çº¿æ¶æï¼å®æ¶çå¯ä»¥è¾¾å° 5-10 åã</li>
-<li><strong>åå­å®å¨</strong>ï¼Rust çææææ¨¡åä¿è¯äºå¨å¤çº¿ç¨åºæ¯ä¸ä¸ä¼åºç°æ°æ®ç«äºï¼è¿å¯¹äºéè¦å¹¶è¡å¤çå¤ä¸ª TTS è¯·æ±çæå¡ç«¯æ¥è¯´å°¤ä¸ºéè¦ã</li>
+<li><code>UIScrollViewDecelerationRateNormal</code></li>
+<li><code>UIScrollViewDecelerationRateFast</code></li>
 </ul>
-<h2 id="æ ¸å¿åè½ä¸è§">æ ¸å¿åè½ä¸è§</h2>
-<p>kokoroi-rs ç®åæä¾äºä¸¤ç§ä¸»è¦çä½¿ç¨æ¹å¼ï¼<strong>CLI å½ä»¤è¡å·¥å·</strong>å <strong>HTTP API æå¡</strong>ã</p>
-<h3 id="cli-å·¥å·ç®åç´æ¥çè¯­é³åæ">CLI å·¥å·ï¼ç®åç´æ¥çè¯­é³åæ</h3>
-<p>å¦æä½ åªæ¯æ³å¿«éæä¸æ®µæå­è½¬æè¯­é³ï¼CLI å·¥å·æ¯æç´æ¥çæ¹å¼ï¼</p>
-<pre><code class="language-bash"># åºæ¬ç¨æ³
-./koko --text "ä½ å¥½ï¼æ¬¢è¿ä½¿ç¨ Kokoro è¯­é³åæç³»ç»ã" -o output.wav
+<p>å¶ä¸­<code>UIScrollViewDecelerationRateNormal</code>æ¯é»è®¤å¼ã</p>
+<h1 id="1-normal-å-fast-çå¼">1 Normal å Fast çå¼</h1>
+<p><code>UIScrollViewDecelerationRateNormal</code>å<code>UIScrollViewDecelerationRateFast</code>çå¼ï¼æå°å¦ä¸:</p>
+<pre><code class="language-bash"># UIScrollViewDecelerationRateNormal
+(lldb) po @import UIKit
+(lldb) p (UIScrollViewDecelerationRate)UIScrollViewDecelerationRateNormal
+(UIScrollViewDecelerationRate) 0.998
 
-# ä»æä»¶è¯»åææ¬
-./koko -i input.txt -o output.wav
-
-# æå®åé³äººé£æ ¼
-./koko --text "ä»å¤©å¤©æ°çå¥½" --style zf_xiaobei -o output.wav
-
-# è°æ´è¯­éåçº¿ç¨æ°
-./koko --text "å¤§å®¶å¥½" --speed 1.2 --threads 4 -o output.wav
-
-# ç´æ¥æ­æ¾é³é¢ï¼éè¦ aplay æ ffplayï¼
-./koko --text "æ­æ¾æµè¯" --play
+# UIScrollViewDecelerationRateFast
+(lldb) p (UIScrollViewDecelerationRate)UIScrollViewDecelerationRateFast
+(UIScrollViewDecelerationRate) 0.98999999999999999
 </code></pre>
-<p>å¯¹äºæ¹éå¤çãèæ¬éæç­åºæ¯ï¼CLI å·¥å·å·²ç»è¶³å¤å¥½ç¨ã</p>
-<h3 id="http-api-æå¡ä¸ºçäº§ç¯å¢èç">HTTP API æå¡ï¼ä¸ºçäº§ç¯å¢èç</h3>
-<p>å¯¹äºéè¦æ TTS è½åéæå° Web åºç¨ãå°ç¨åºãæºè½å©æç­åºæ¯çå¼åèæ¥è¯´ï¼HTTP API æå¡ææ¯éå¤´æã</p>
-<p>å¯å¨æå¡åªéè¦ä¸è¡å½ä»¤ï¼</p>
-<pre><code class="language-bash">./kokoros-server
+<p><code>decelerationRate</code>çæ°å¼è¶å°ï¼åéè¶å¿«ã</p>
+<p><code>UIScrollViewDecelerationRateFast</code>å°±æ¯æµ®ç¹æ°<code>0.99</code>ã</p>
+<p>ç±äºè®¡ç®æºå¯¹æµ®ç¹æ°è¡¨ç¤ºç²¾åº¦é®é¢ï¼æ¾ç¤ºä¸º<code>0.98999999999999999</code>ã</p>
+<h1 id="2-decelerationrate-setter-çå®ç°">2 decelerationRate setter çå®ç°</h1>
+<p><code>decelerationRate</code>çè®¾ç½®å½æ°ä»£ç æ¯è¾ç­ï¼ç´æ¥è´´åºæ¥:</p>
+<pre><code class="language-c">UIKitCore`-[UIScrollView setDecelerationRate:]:
+-&gt;  0x1a2a4998c &lt;+0&gt;:  adrp   x8, 5091
+    // 1. è¯»åéå¼å° d1
+    0x1a2a49990 &lt;+4&gt;:  ldr    d1, [x8, #0x558]
+    // 2. å°è¦è®¾ç½®çå¼ä¸éå¼æ¯è¾
+    0x1a2a49994 &lt;+8&gt;:  fcmp   d0, d1
+    // 3. å¦æè¦è®¾ç½®çå¼ &lt; éå¼ï¼w8 ç½®ä¸º 1ï¼å¦åï¼w8 ç½®ä¸º 0
+    0x1a2a49998 &lt;+12&gt;: cset   w8, lt
+    0x1a2a4999c &lt;+16&gt;: adrp   x9, 5091
+    // 4. x9 å­å¨ UIScrollViewDecelerationRateNormal å UIScrollViewDecelerationRateFast ç»æçæ°ç»é¦å°å
+    0x1a2a499a0 &lt;+20&gt;: add    x9, x9, #0x5a0            ; UIScrollTestParametersLengthAutomatic + 128
+    // 5. å° UIScrollViewDecelerationRateNormal æè UIScrollViewDecelerationRateFast è¯»åå° d0
+    0x1a2a499a4 &lt;+24&gt;: ldr    d0, [x9, w8, uxtw #3]
+    0x1a2a499a8 &lt;+28&gt;: adrp   x8, 416465
+    0x1a2a499ac &lt;+32&gt;: ldrsw  x8, [x8, #0xf9c]
+    0x1a2a499b0 &lt;+36&gt;: add    x8, x0, x8
+    // 6. å­å¨ decelerationRate å° UIScrollView å¯¹è±¡
+    0x1a2a499b4 &lt;+40&gt;: stp    d0, d0, [x8]
+    0x1a2a499b8 &lt;+44&gt;: ret 
 </code></pre>
-<p>é»è®¤çå¬ <code>0.0.0.0:3000</code>ï¼æå¼æµè§å¨å°±è½çå° Web æ¼ç¤ºçé¢ã</p>
-<p>æå¡æä¾äºå ä¸ªæ ¸å¿ API ç«¯ç¹ï¼</p>
-<table>
-<thead>
-<tr>
-<th>æ¹æ³</th>
-<th>è·¯å¾</th>
-<th>è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>GET</code></td>
-<td><code>/</code></td>
-<td>Web æ¼ç¤ºé¡µé¢</td>
-</tr>
-<tr>
-<td><code>GET</code></td>
-<td><code>/health</code></td>
-<td>å¥åº·æ£æ¥</td>
-</tr>
-<tr>
-<td><code>GET</code></td>
-<td><code>/voices</code></td>
-<td>è·åææå¯ç¨åé³äºº</td>
-</tr>
-<tr>
-<td><code>POST</code></td>
-<td><code>/tts</code></td>
-<td>ææ¬è½¬è¯­é³ï¼è¿å WAV Base64ï¼</td>
-</tr>
-<tr>
-<td><code>POST</code></td>
-<td><code>/tts/stream</code></td>
-<td>æµå¼ææ¬è½¬è¯­é³ï¼SSEï¼</td>
-</tr>
-</tbody>
-</table>
-<p>å¶ä¸­ <strong>SSE æµå¼æ¥å£</strong>æ¯ä¸ä¸ªå¾æææçè®¾è®¡ââé³é¢å¯ä»¥è¾¹çæè¾¹æ¨éç»å®¢æ·ç«¯ï¼ç¹å«éå Web ç«¯ä½å»¶è¿äº¤äºåºæ¯ï¼æ¯å¦ AI å¯¹è¯å©æçå®æ¶è¯­é³åå¤ã</p>
-<h2 id="ç³»ç»æ¶æ">ç³»ç»æ¶æ</h2>
-<p>ä¸é¢æ¯ kokoroi-rs çæ´ä½æ¶æå¾ï¼</p>
-<div class="mermaid">flowchart TB
-    subgraph Input["è¾å¥å±"]
-        CLI["CLI å½ä»¤è¡"]
-        HTTP["HTTP API æå¡"]
-        SSE["SSE æµå¼æ¥å£"]
-    end
-
-    subgraph Core["æ ¸å¿å¤çå±"]
-        direction TB
-        Router["è·¯ç±åå"]
-        TTS["TTS å¼ææ ¸å¿"]
-        G2P["G2P å­ç´ è½¬é³ç´ "]
-        Splitter["æºè½ææ¬åç"]
-    end
-
-    subgraph Inference["æ¨çå±"]
-        ORT["ONNX Runtime"]
-        Model["Kokoro ONNX æ¨¡å"]
-        Voices["åé³äººæ°æ®"]
-    end
-
-    subgraph Output["è¾åºå±"]
-        WAV["WAV é³é¢"]
-        Stream["æµå¼é³é¢"]
-    end
-
-    CLI --&gt; Router
-    HTTP --&gt; Router
-    SSE --&gt; Router
-    Router --&gt; TTS
-    TTS --&gt; G2P
-    TTS --&gt; Splitter
-    TTS --&gt; ORT
-    ORT --&gt; Model
-    ORT --&gt; Voices
-    ORT --&gt; WAV
-    ORT --&gt; Stream
-</div><p>æ´ä¸ªæ¶æåä¸ºåå±ï¼</p>
-<ol>
-<li><strong>è¾å¥å±</strong>ï¼æ¯æ CLIãHTTP REST API å SSE æµå¼ä¸ç§æ¥å¥æ¹å¼ï¼è¦çä»èæ¬è°ç¨å° Web éæçåç§åºæ¯ã</li>
-<li><strong>æ ¸å¿å¤çå±</strong>ï¼åå«è·¯ç±ååãTTS å¼æãG2Pï¼å­ç´ è½¬é³ç´ ï¼å¼æåæºè½ææ¬åçæ¨¡åãå¶ä¸­æºè½åçç­ç¥åºäºé³ç´ éå¶ï¼è½å¨çæéåº¦åèªç¶åº¦ä¹é´åå¾å¹³è¡¡ã</li>
-<li><strong>æ¨çå±</strong>ï¼åºäº ONNX Runtime å è½½ Kokoro æ¨¡åååé³äººæ°æ®è¿è¡æ¨çãå¤çº¿ç¨æµæ°´çº¿æ¶ææ¯æå¹¶è¡çæã</li>
-<li><strong>è¾åºå±</strong>ï¼æ¯ææ å WAV æ ¼å¼è¾åºå SSE æµå¼è¾åºã</li>
-</ol>
-<h2 id="åé³äººæ¯æ50-ç§éæ©">åé³äººæ¯æï¼50+ ç§éæ©</h2>
-<p>kokoroi-rs ç»§æ¿äº Kokoro çå¤è¯­è¨ãå¤é£æ ¼åé³äººä½ç³»ï¼æ»å±æ¯æ <strong>50+ ç§åé³äºº</strong>ï¼</p>
-<table>
-<thead>
-<tr>
-<th>åç¼</th>
-<th>è¯­è¨</th>
-<th>ç¤ºä¾</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>zf_</code>, <code>zm_</code></td>
-<td>ä¸­æ</td>
-<td><code>zf_xiaobei</code>, <code>zm_yunyang</code></td>
-</tr>
-<tr>
-<td><code>af_</code>, <code>am_</code></td>
-<td>è±æ</td>
-<td><code>af_bella</code>, <code>am_adam</code></td>
-</tr>
-<tr>
-<td><code>jf_</code>, <code>jm_</code></td>
-<td>æ¥æ</td>
-<td><code>jf_alpha</code>, <code>jm_kumo</code></td>
-</tr>
-<tr>
-<td><code>bf_</code>, <code>bm_</code></td>
-<td>è±å¼è±æ</td>
-<td><code>bf_alice</code>, <code>bm_daniel</code></td>
-</tr>
-<tr>
-<td><code>ef_</code>, <code>em_</code></td>
-<td>è¥¿ç­çæ</td>
-<td><code>ef_dora</code>, <code>em_alex</code></td>
-</tr>
-<tr>
-<td><code>ff_</code></td>
-<td>æ³æ</td>
-<td><code>ff_siwis</code></td>
-</tr>
-<tr>
-<td><code>hf_</code>, <code>hm_</code></td>
-<td>å°å°æ</td>
-<td><code>hf_alpha</code>, <code>hm_omega</code></td>
-</tr>
-</tbody>
-</table>
-<p>ä¸­æåé³äººåæ¬ <code>zf_xiaobei</code>ã<code>zm_yunyang</code> ç­ï¼è¦çäºä¸åçé³è²é£æ ¼ãå¯¹äºéè¦å¤è¯­è¨æ··è¯»çåºæ¯ï¼æ¯å¦ä¸­è±æ··è¾ï¼ï¼kokoroi-rs åç½®ç G2P å¼æä¹è½è¾å¥½å°å¤çã</p>
-<h2 id="é¨ç½²åå¥½å¤å¹³å°éæç¼è¯">é¨ç½²åå¥½ï¼å¤å¹³å°éæç¼è¯</h2>
-<p>å¯¹äºåç«¯å¼åèæ¥è¯´ï¼é¨ç½²çä¾¿å©æ§å¾å¾å³å®äºæ¯å¦æ¿æéç¨æä¸ªå·¥å·ãkokoroi-rs å¨è¿æ¹é¢åå¾ç¸å½å°ä½ï¼</p>
-<p><strong>Linux å¹³å°</strong>ï¼éç¨ musl å¨éæç¼è¯ï¼çæçå¯æ§è¡æä»¶ä¸ä¾èµä»»ä½å¤é¨å¨æåºãæ è®ºæ¯ x86_64 è¿æ¯ ARM64 æ¶æï¼æ·è¿å»å°±è½ç´æ¥è¿è¡ã</p>
-<p><strong>Windows å¹³å°</strong>ï¼éç¨ MSVC ç¼è¯ï¼<code>onnxruntime.dll</code> å·²æåå¨åç¼©ååï¼è§£åå³ç¨ã</p>
-<p>è¿æå³çä»ä¹ï¼æå³çä½ ä¸éè¦å¨æå¡å¨ä¸è£ Pythonãä¸éè¦é PyTorch ç¯å¢ãä¸éè¦æå¿ CUDA çæ¬å¼å®¹æ§ââ<strong>ä¸ä¸ªäºè¿å¶æä»¶ + ä¸ä¸ªæ¨¡åæä»¶ï¼å°±æå®äºæ´å¥ TTS æå¡</strong>ã</p>
-<h2 id="æ§è½è¡¨ç°">æ§è½è¡¨ç°</h2>
-<p>æ ¹æ®é¡¹ç®ææ¡£ï¼kokoroi-rs çå¤çº¿ç¨æµæ°´çº¿æ¶ææ¯æå¹¶è¡çæï¼<strong>å®æ¶çå¯è¾¾ 5-10 å</strong>ãç®åæ¥è¯´ï¼çæ 1 ç§éçé³é¢ï¼å®éèæ¶åªæ 0.1-0.2 ç§ã</p>
-<p>è¿ä¸ªæ§è½æ°´å¹³æå³çï¼</p>
-<ul>
-<li>å¯¹äº Web åºç¨ï¼ç¨æ·å ä¹æè§ä¸å°ç­å¾å»¶è¿</li>
-<li>å¯¹äºæ¹éå¤çä»»å¡ï¼å¯ä»¥å¤§å¹ç¼©ç­æ»èæ¶</li>
-<li>å¯¹äºæµå¼åºæ¯ï¼é³é¢å¯ä»¥è¾¹çæè¾¹æ­æ¾ï¼ä½éªæ´æµç</li>
-</ul>
-<h2 id="å¿«éä¸æ">å¿«éä¸æ</h2>
-<h3 id="1-ä¸è½½äºè¿å¶æä»¶">1. ä¸è½½äºè¿å¶æä»¶</h3>
-<p>ä»é¡¹ç®ç Releases é¡µé¢ä¸è½½å¯¹åºå¹³å°çç¼è¯äº§ç©ï¼</p>
-<table>
-<thead>
-<tr>
-<th>å¹³å°</th>
-<th>æä»¶</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>x86_64 Linux</td>
-<td><code>kokoro-x86_64-unknown-linux-musl.tar.gz</code></td>
-</tr>
-<tr>
-<td>ARM64 Linux</td>
-<td><code>kokoro-aarch64-unknown-linux-musl.tar.gz</code></td>
-</tr>
-<tr>
-<td>x86_64 Windows</td>
-<td><code>kokoro-x86_64-pc-windows-msvc.zip</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="2-ä¸è½½æ¨¡åæä»¶">2. ä¸è½½æ¨¡åæä»¶</h3>
-<p>éè¦åå¤ä¸ä¸ªæä»¶ï¼</p>
-<ul>
-<li><code>models/kokoro-v1.0.onnx</code>ï¼çº¦ 80MBï¼</li>
-<li><code>data/voices-v1.0.bin</code>ï¼çº¦ 150MBï¼</li>
-<li><code>config.toml</code>ï¼é¡¹ç®æ ¹ç®å½å·²æä¾ï¼</li>
-</ul>
-<p>æ¨¡åå¯ä»¥ä» Kokoro å®æ¹é¡¹ç®ä¸è½½ï¼æèè¿è¡é¡¹ç®èªå¸¦ç <code>./scripts/download_models.sh</code> èæ¬èªå¨è·åã</p>
-<h3 id="3-å¼å§ä½¿ç¨">3. å¼å§ä½¿ç¨</h3>
-<p>CLI æ¨¡å¼ï¼</p>
-<pre><code class="language-bash">./koko --text "ä½ å¥½ä¸ç" -o output.wav
+<p>æ³¨é<code>1</code>ï¼è¯»åéå¼å°å¯å­å¨<code>d1</code>ã</p>
+<p>ä»£ç åé¢ä¼å°è¦è®¾ç½®çå¼ä¸éå¼æ¯è¾ã</p>
+<p>æå°éå¼ä¸º:</p>
+<pre><code class="language-bash">(lldb) p $d1
+(double) 0.99399999999999999
 </code></pre>
-<blockquote>
-<p><strong>å®æç¤ºä¾</strong>ï¼ä½¿ç¨ curl è°ç¨ HTTP API çæè¯­é³å¹¶ä¿å­ä¸ºæä»¶ãåç¡®ä¿ <code>kokoros-server</code> å·²å¨åå°è¿è¡ï¼ç¶åæ§è¡ä»¥ä¸èæ¬ï¼</p>
-</blockquote>
-<pre><code class="language-bash">#!/bin/bash
-# è°ç¨ /tts æ¥å£çæè¯­é³å¹¶ä¿å­ä¸º WAV æä»¶
-curl -X POST http://localhost:3000/tts \
-  -H "Content-Type: application/json" \
-  -d '{"text": "ä½ å¥½ï¼æ¬¢è¿ä½¿ç¨ kokoroi-rs è¯­é³åæå¼æã", "voice": "zf_xiaobei"}' \
-  -o response.json
-
-# ä»è¿åç JSON ä¸­æå Base64 é³é¢æ°æ®å¹¶è§£ç ä¸º WAV æä»¶
-python3 -c "
-import json, base64
-data = json.load(open('response.json'))
-wav_bytes = base64.b64decode(data['audio'])
-with open('output.wav', 'wb') as f:
-    f.write(wav_bytes)
-print('è¯­é³å·²ä¿å­ä¸º output.wav')
-"
+<p>å¯ä»¥çå°ï¼éå¼å°±æ¯<code>0.994</code>ã</p>
+<p>è¿ä¸ªéå¼ï¼æ­£å¥½æ¯<code>UIScrollViewDecelerationRateNormal</code>å<code>UIScrollViewDecelerationRateFast</code>çä¸­é´å¼ã</p>
+<p>åæ ·ç±äºè®¡ç®æºæµ®ç¹æ°ç²¾åº¦é®é¢ï¼è¡¨ç¤ºä¸º<code>0.99399999999999999</code>ã</p>
+<p>æ³¨é<code>2</code>ï¼æ³¨é<code>3</code>ï¼å°è¦è®¾ç½®çå¼ä¸éå¼è¿è¡æ¯è¾ã</p>
+<p>å¦æè¦è®¾ç½®çå¼æ¯éå¼å°ï¼é£ä¹å¯å­å¨<code>w8</code>è¢«ç½®ä¸º<code>1</code>ï¼å¦åï¼<code>w8</code>è¢«ç½®ä¸º<code>0</code>ã</p>
+<p>å¯å­å¨<code>w8</code>çå¼ï¼åé¢ä¼çå°æä¸ºæ°ç»ç´¢å¼ã</p>
+<p>æ³¨é<code>4</code>ï¼å°<code>UIScrollViewDecelerationRateNormal</code>å<code>UIScrollViewDecelerationRateFast</code>ç»æçæ°ç»é¦å°åï¼è¯»å¥å¯å­å¨<code>x9</code>ã</p>
+<p>å¯ä»¥æå°è¿ä¸ªæ°ç»çåå®¹:</p>
+<pre><code class="language-bash">(lldb) x/2fg $x9
+0x1a3e2c5a0: 0.998
+0x1a3e2c5a8: 0.98999999999999999
 </code></pre>
-<p>æå¡æ¨¡å¼ï¼</p>
-<pre><code class="language-bash">./kokoros-server
-# è®¿é® http://localhost:3000 å³å¯ä½éª Web çé¢
+<p>ä»æå°åå®¹å¯ä»¥çå°ï¼æ°ç»ç¬¬ä¸é¡¹ï¼æ¯<code>UIScrollViewDecelerationRateNormal</code>ï¼æ°ç»ç¬¬äºé¡¹æ¯<code>UIScrollViewDecelerationRateFast</code>ã</p>
+<p>æ³¨é<code>5</code>ï¼æ ¹æ®å¯å­å¨<code>w8</code>åç´¢å¼ï¼è¯»å¥ç¸åºçå¼å°å¯å­å¨<code>d0</code>ã</p>
+<p>å¦æè¦è®¾ç½®çå¼æ¯éå¼å¤§ï¼é£ä¹å°±è¯»å¥<code>UIScrollViewDecelerationRateNormal</code>ï¼å¦åï¼è¯»å¥<code>UIScrollViewDecelerationRateFast</code>ã</p>
+<p>æ³¨é<code>6</code>ï¼å°æç»çå¼å­å¥å°<code>UIScrollView</code>å¯¹è±¡ä¸­ã</p>
+<p>å­å¨<code>decelerationRate</code>çå®ä¾åéç¸å¯¹äº<code>UIScrollView</code>é¦å°ååç§»éå­å¨å¨å¯å­å¨<code>x8</code>ï¼æå°ä¸º:</p>
+<pre><code class="language-bash">(lldb) p/x $x8
+(unsigned long) 0x0000000000000358
 </code></pre>
-<blockquote>
-<p><strong>å®æç¤ºä¾</strong>ï¼ä½¿ç¨ Python requests åºè°ç¨ <code>/tts</code> å <code>/tts/stream</code> æ¥å£ï¼å±ç¤ºåæ­¥åæµå¼ä¸¤ç§è°ç¨æ¹å¼ã</p>
-</blockquote>
-<pre><code class="language-python">import requests
-import base64
-import json
-
-# æå¡å°å
-BASE_URL = "http://localhost:3000"
-
-# 1. åæ­¥è°ç¨ /tts æ¥å£
-def tts_sync(text: str, voice: str = "zf_xiaobei", output_file: str = "sync_output.wav"):
-    """è°ç¨ /tts æ¥å£çæè¯­é³å¹¶ä¿å­ä¸º WAV æä»¶"""
-    resp = requests.post(
-        f"{BASE_URL}/tts",
-        json={"text": text, "voice": voice}
-    )
-    resp.raise_for_status()
-    data = resp.json()
-    wav_bytes = base64.b64decode(data["audio"])
-    with open(output_file, "wb") as f:
-        f.write(wav_bytes)
-    print(f"åæ­¥åæå®æï¼è¯­é³å·²ä¿å­è³ {output_file}")
-
-# 2. æµå¼è°ç¨ /tts/stream æ¥å£
-def tts_stream(text: str, voice: str = "zf_xiaobei", output_file: str = "stream_output.wav"):
-    """éè¿ SSE æµå¼æ¥å£éåæ¥æ¶é³é¢æ°æ®å¹¶åå¹¶ä¿å­"""
-    resp = requests.post(
-        f"{BASE_URL}/tts/stream",
-        json={"text": text, "voice": voice},
-        stream=True
-    )
-    resp.raise_for_status()
-    audio_chunks = []
-    for line in resp.iter_lines():
-        if line:
-            decoded = line.decode("utf-8")
-            if decoded.startswith("data: "):
-                chunk = decoded[6:]  # å»æ "data: " åç¼
-                if chunk == "[DONE]":
-                    break
-                audio_chunks.append(base64.b64decode(chunk))
-    with open(output_file, "wb") as f:
-        for chunk in audio_chunks:
-            f.write(chunk)
-    print(f"æµå¼åæå®æï¼è¯­é³å·²ä¿å­è³ {output_file}")
-
-# ä½¿ç¨ç¤ºä¾
-if __name__ == "__main__":
-    # åæ­¥åæ
-    tts_sync("ä»å¤©å¤©æ°çå¥½ï¼éååºå»èµ°èµ°ã", voice="zm_yunyang")
-
-    # æµå¼åæï¼éåå®æ¶æ­æ¾åºæ¯ï¼
-    tts_stream("è¿æ¯ä¸æ®µæµå¼åæçè¯­é³ï¼å¯ä»¥è¾¹çæè¾¹æ­æ¾ã", voice="zf_xiaobei")
+<p>éè¿<code>_ivarDescription</code>æ¹æ³æå°<code>UIScrollView</code>çææå®ä¾åéï¼ç»è¿å°è¯ï¼å¯ä»¥åç°ï¼åç§»é<code>0x358</code>å¤çå®ä¾åéä¸º<code>_decelerationFactor</code>:</p>
+<pre><code class="language-bash">(lldb) po class_getInstanceVariable(UIScrollView.class, "_decelerationFactor")
+0x000000020a6adbd8
+(lldb) po ivar_getOffset(0x000000020a6adbd8)
+0x0000000000000358
 </code></pre>
-<p><strong>è¯´æ</strong>ï¼</p>
-<ul>
-<li>åæ­¥æ¥å£ <code>/tts</code> éåä¸æ¬¡æ§çæå®æ´é³é¢ï¼è¿å Base64 ç¼ç ç WAV æ°æ®ã</li>
-<li>æµå¼æ¥å£ <code>/tts/stream</code> éè¿ SSEï¼Server-Sent Eventsï¼éåæ¨éé³é¢æ°æ®ï¼éåéè¦ä½å»¶è¿æ­æ¾çåºæ¯ï¼å¦ AI å¯¹è¯å©æçå®æ¶è¯­é³åå¤ã</li>
-<li>è¿è¡åè¯·ç¡®ä¿ <code>kokoros-server</code> å·²å¨ <code>localhost:3000</code> å¯å¨ã</li>
-</ul>
-<h2 id="è°éåå³æ³¨è¿ä¸ªé¡¹ç®">è°éåå³æ³¨è¿ä¸ªé¡¹ç®ï¼</h2>
-<ul>
-<li><strong>åç«¯å¼åè</strong>ï¼æ³å¨æå¡ç«¯éæè½»éçº§ TTS è½åï¼åä¸æ³è¢« Python çæçé¨ç½²é®é¢å°æ°</li>
-<li><strong>Rust ç±å¥½è</strong>ï¼æ³çç Rust å¨ AI æ¨çåºæ¯ä¸çå®éåºç¨æ¡ä¾</li>
-<li><strong>AI åºç¨å¼åè</strong>ï¼éè¦ä¸ºæºè½å©æãèå¤©æºå¨äººãæå£°åå®¹çæç­åºæ¯æ·»å è¯­é³è½å</li>
-<li><strong>è¾¹ç¼è®¡ç®/åµå¥å¼å¼åè</strong>ï¼éè¦å°ä½ç§¯ãä½ä¾èµç TTS è§£å³æ¹æ¡</li>
-</ul>
-<h2 id="ä¸ç¹æè">ä¸ç¹æè</h2>
-<p>kokoroi-rs è¿ä¸ªé¡¹ç®æææçå°æ¹å¨äºï¼å®ä¸ä»ä»æ¯å¯¹ Kokoro çç®åæ¬è¿ï¼èæ¯ç¨ Rust çæç»´éæ°æèäº TTS ç³»ç»çå·¥ç¨å®ç°ââ<strong>éæç¼è¯ãé¶ä¾èµé¨ç½²ãå¤çº¿ç¨æµæ°´çº¿ãSSE æµå¼è¾åº</strong>ï¼è¿äºé½æ¯çäº§çº§æå¡æä¼è®¤çèèçé®é¢ã</p>
-<p>å½ç¶ï¼é¡¹ç®è¿å¨æç»­è¿­ä»£ä¸­ãå¦æä½ å¯¹ Rust + TTS è¿ä¸ªæ¹åæå´è¶£ï¼ä¸å¦¨å» GitHub ä¸ççï¼è¯è¯è·èµ·æ¥çææï¼ä¹æ¬¢è¿æäº¤ Issue å PR ä¸èµ·åä¸å±å»ºã</p>
-<blockquote>
-<p>é¡¹ç®å°åï¼<a href="https://github.com/doiito/kokoroi-rs" target="_blank" rel="noopener nofollow">https://github.com/doiito/kokoroi-rs</a></p>
-</blockquote>
+<p><code>_decelerationFactor</code>æ¯ä¸ä¸ªç»æä½ï¼å­å¨è¿æ°´å¹³ååç´åéæ¯ä¾å¼:</p>
+<pre><code class="language-c">_decelerationFactor (struct CGSize): {0.998, 0.998}
+</code></pre>
+<p>æ»ç»ä¸ä¸ï¼å¦æè®¾ç½®<code>UIScrollView</code>ç<code>decelerationRate</code>å±æ§ï¼ç³»ç»ä¼å°è®¾ç½®çå¼ä¸éå¼<code>0.994</code>è¿è¡æ¯è¾:</p>
+<p>å¦æè®¾ç½®çå¼å¤§äºéå¼ï¼é£ä¹ç³»ç»ä¼éæ©<code>UIScrollViewDecelerationRateNormal</code>;</p>
+<p>å¦æè®¾ç½®çå¼å°äºéå¼ï¼é£ä¹ç³»ç»ä¼éæ©<code>UIScrollViewDecelerationRateFast</code>ã</p>
+<p>ä¹å°±æ¯è¯´ï¼æ è®ºå¤çè®¾ç½®ä½ç§å¼ï¼ç³»ç»åªä¼å¨<code>UIScrollViewDecelerationRateNormal</code>å<code>UIScrollViewDecelerationRateFast</code>ä¸­è¿è¡éæ©ã</p>
+<h1 id="3-decelerationrate-getter-çå®ç°">3 decelerationRate getter çå®ç°</h1>
+<p><code>decelerationRate</code>ç<code>getter</code>æ¹æ³ä¹å¾ç­ï¼ä»£ç å¦ä¸:</p>
+<pre><code class="language-c">UIKitCore`-[UIScrollView decelerationRate]:
+    0x1a3ba2354 &lt;+0&gt;:  adrp   x8, 412024
+    0x1a3ba2358 &lt;+4&gt;:  ldrsw  x8, [x8, #0xf9c]
+    // 1. è¯»å _decelerationFactor çæ°´å¹³å¼
+-&gt;  0x1a3ba235c &lt;+8&gt;:  ldr    d0, [x0, x8]
+    0x1a3ba2360 &lt;+12&gt;: ret  
+</code></pre>
+<p>æ³¨é<code>1</code>ï¼å¯å­å¨<code>x8</code>å­å¨è¿<code>_decelerationFactor</code>ç»æä½ç¸å¯¹äº<code>UIScrollView</code>é¦å°åçåç§»é:</p>
+<pre><code class="language-bash">(lldb) p/x $x8
+(unsigned long) 0x0000000000000358
+</code></pre>
+<p>è¿éå°<code>_decelerationFactor</code>çæ°´å¹³å¼è¯»ååºæ¥ï¼ä½ä¸ºç»æè¿åã</p>
+<h1 id="4-_decelerationfactor-ç»æä½">4 _decelerationFactor ç»æä½</h1>
+<p>å¦ææä»¬ç´æ¥è®¾ç½®<code>UIScrollView</code>ç<code>decelerationRate</code>å±æ§ï¼ç³»ç»å§ç»ä¼æè®¾ç½®çå¼è°æ´ä¸ºé¢å®ä¹ç<code>UIScrollViewDecelerationRateNormal</code>æè<code>UIScrollViewDecelerationRateFast</code>ã</p>
+<p>é£ä¹ï¼æä»¬è½å¦ç´æ¥è®¾ç½®<code>_decelerationFactor</code>ç»æä½ï¼ä»èä½¿ç¨ä¸åçåéç³»æ°å¢ï¼</p>
+<p>éè¿è°ç¨<code>_methodDescription</code>æ¥ç<code>UIScrollView</code>çæææ¹æ³ï¼å¯ä»¥æ¾å°å¦ä¸<code>2</code>ä¸ªç§ææ¹æ³:</p>
+<pre><code class="language-c">- (void) setHorizontalScrollDecelerationFactor:(double)arg1; (0x138bd7d00)
+- (void) setVerticalScrollDecelerationFactor:(double)arg1; (0x138bd7d70)
+</code></pre>
+<p>è¿ä¸¤ä¸ªæ¹æ³ï¼è¿æ¯è®¾ç½®<code>_decelerationFactor</code>ç»æä½çæ°´å¹³å¼ååç´å¼ã</p>
+<p>æä»¬åç<code>setHorizontalScrollDecelerationFactor:</code>æ¹æ³çå®ç°ï¼åç´æ¹æ³çå®ç°ç±»ä¼¼:</p>
+<pre><code class="language-c">UIKitCore`-[UIScrollView setHorizontalScrollDecelerationFactor:]:
+-&gt;  0x1a3ba2378 &lt;+0&gt;:  adrp   x8, 412024
+    0x1a3ba237c &lt;+4&gt;:  ldrsw  x8, [x8, #0xf9c]
+    // 1. å°è®¾ç½®çå¼ç´æ¥å­å¥å° _decelerationFactor ç»æä½çæ°´å¹³åé
+    0x1a3ba2380 &lt;+8&gt;:  str    d0, [x0, x8]
+    0x1a3ba2384 &lt;+12&gt;: ret  
+</code></pre>
+<p>æ³¨é<code>1</code>ï¼å°è®¾ç½®çå¼ç´æ¥å­å¥å°<code>_decelerationFactor</code>ç»æä½çæ°´å¹³åéã</p>
+<p>å æ­¤ï¼éè¿ä¸é¢ä¸¤ä¸ªç§ææ¹æ³ï¼å°±å¯ä»¥è®¾ç½®<code>decelerationRate</code>çå¼ä¸º<code>[0, 1)</code>ç´æ¥çå¼ã</p>
+<p>æ³¨æï¼ä¸è½éè¿ä¸é¢<code>2</code>ä¸ªç§ææ¹æ³ï¼å°<code>decelerationRate</code>çå¼è®¾ç½®ä¸º<code>1.0</code>ï¼å¦åæ»å¨æ¶ä¼åçå´©æºã</p>
+<p>æ¯å¦å¦ææä»¬è°ç¨<code>setVerticalScrollDecelerationFactor:</code>æ¹æ³ï¼å°åç´åéç³»æ°è®¾ç½®ä¸º<code>0.999999</code>ï¼é£ä¹å°±ä¼åç°æå¨<code>UIScrollView</code>ä¹åçåééå¸¸ç¼æ¢ã</p>
+<p><img alt="ScreenRecording_07-14-2026 22-49-39_1" loading="lazy" data-src="https://img2024.cnblogs.com/blog/489427/202607/489427-20260715000709496-249173635.gif" class="lazyload"></p>
+<p>è¿ééè¦æ³¨æï¼å¦æè®¾ç½®äº<code>_decelerationFactor</code>çåç´åéï¼æå¥½ä¸èµ·è®¾ç½®æ°´å¹³åéï¼å ä¸º<code>decelerationRate</code>ç<code>getter</code>æ¹æ³ï¼åªè¿åæ°´å¹³åéçå¼ã</p>
 
 
 </div>
@@ -514,13 +156,340 @@ if __name__ == "__main__":
 
             </div>
             <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.0006944444444444445" data-date-updated="2026-07-14 20:43">2026-07-14 20:42</span>&nbsp;
-<a href="https://www.cnblogs.com/doiito">doiito</a>&nbsp;
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-07-15 00:08">2026-07-15 00:08</span>&nbsp;
+<a href="https://www.cnblogs.com/chaoguo1234">chaoguo1234</a>&nbsp;
 éè¯»(<span id="post_view_count">0</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(21468133);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fdoiito%2Fp%2F21468133&amp;targetId=21468133&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+<a href="javascript:void(0)" onclick="AddToWz(21472426);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fchaoguo1234%2Fp%2F21472426&amp;targetId=21472426&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ Gitæäº¤è§èç¬è®°:featåfixå°åºè¯¥æä¹å ]]></title>
+    <link>https://www.cnblogs.com/FatTiger4399/p/21471570</link>
+    <guid>77a42f8794df87f13202eb4e92aa3f35</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/FatTiger4399/p/21471570" title="åå¸äº 2026-07-14 23:28">
+    
+
+    <span role="heading" aria-level="2">Gitæäº¤è§èç¬è®°:featåfixå°åºè¯¥æä¹å</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
+<h1>Gitæäº¤è§èç¬è®°:featåfixå°åºè¯¥æä¹å</h1>
+<p>çæµ:</p>
+<pre><code class="language-text">è¿å¥è§èå« Conventional Commits
+
+å¸¸ç¨æ ¼å¼:
+type(scope): description
+
+feat = æ°åè½
+fix  = ä¿® bug
+
+scope å¯é:
+feat: add login
+feat(auth): add login
+
+ä¸è¦å:
+feat(): add login
+
+ç ´åæ§åæ´:
+feat(api)!: change user endpoint</code></pre>
+<p>å¥½å®¶ä¼,</p>
+<p>ä»å¤©æ´ç Git æäº¤ä¿¡æ¯è§èã</p>
+<p>è¿å¥åæ³æ¥èª <a href="https://www.conventionalcommits.org/en/v1.0.0/" rel="noopener nofollow">Conventional Commits 1.0.0</a> å®æ¹è§è,ä¸æ¯ Git å¼ºå¶è¯­æ³,èæ¯ä¸å¥ç¤¾åºçº¦å®ã</p>
+<p>å®çä»·å¼å¾ç®å:</p>
+<pre><code class="language-text">è®©äººä¸ç¼çæè¿æ¬¡æäº¤åäºä»ä¹ã
+ä¹è®©å·¥å·è½æ ¹æ®æäº¤ä¿¡æ¯çæ changelog æå¤æ­çæ¬å·ã</code></pre>
+<p>Conventional Commits å®æ¹è§èä¹è¯´æ,å®å¾å¤§ç¨åº¦ä¸å Angular Commit Guidelines å¯åã</p>
+<h2>0.ä¸ºä»ä¹æäº¤ä¿¡æ¯ä¹è¦æè§è</h2>
+<p>åè¯´ä¸ä¸ªå¾ç°å®çé®é¢ã</p>
+<p>å¦æä¸ä¸ªé¡¹ç®çæäº¤è®°å½é¿è¿æ ·:</p>
+<pre><code class="language-text">update
+fix
+ä¿®æ¹
+åæ¹ä¸ä¸
+ä¸´æ¶æäº¤
+bug fix</code></pre>
+<p>è¿ä¸¤å¨ååå¤´ç,åºæ¬ç­äºæ²¡åã</p>
+<p>ä½ åªè½ä¸ä¸ªä¸ªç¹å¼ diff ç:</p>
+<pre><code class="language-text">è¿æ¬¡å°åºæ¹äºä»ä¹?
+æ¯å åè½?
+æ¯ä¿® bug?
+æ¯æ¹ææ¡£?
+è¿æ¯åªæ¯æ ¼å¼å?</code></pre>
+<p>æäº¤ä¿¡æ¯è§èè¦è§£å³çå°±æ¯è¿ä¸ªé®é¢ã</p>
+<p>å®ä¸æ¯ä¸ºäºè£ä¸ä¸ã</p>
+<p>å®æ¯ä¸ºäºè®©æäº¤è®°å½è½è¢«äººçæ,ä¹è½è¢«å·¥å·è¯å«ã</p>
+<p>æ¯å¦:</p>
+<pre><code class="language-text">feat
+fix
+docs
+refactor
+test
+chore</code></pre>
+<p>è¿äºè¯æ¾å¨æäº¤ä¿¡æ¯æåé¢,ç¸å½äºç»æ¯æ¬¡æäº¤æäºä¸ä¸ªç±»åæ ç­¾ã</p>
+<p>ä»¥åçæ¥å¿æ¶,å°±è½å¿«éç¥é:</p>
+<pre><code class="language-text">åªäºæäº¤æ¯æ°åè½
+åªäºæäº¤æ¯ä¿® bug
+åªäºæäº¤åªæ¯ææ¡£ææµè¯
+åªäºæäº¤å¯è½å½±åçæ¬å·</code></pre>
+<h2>1.åçåºæ¬æ ¼å¼</h2>
+<p>Conventional Commits çåºæ¬æ ¼å¼å¯ä»¥åè®°æè¿æ ·:</p>
+<pre><code class="language-text">&lt;type&gt;(&lt;scope&gt;): &lt;description&gt;</code></pre>
+<p>æ´å®æ´ä¸ç¹æ¯:</p>
+<pre><code class="language-text">&lt;type&gt;[optional scope][!]: &lt;description&gt;
+
+[optional body]
+
+[optional footer(s)]</code></pre>
+<p>åå«è¢«å®æ´æ ¼å¼åå°ã</p>
+<p>æ¥å¸¸æå¸¸ç¨çå°±æ¯ç¬¬ä¸è¡ã</p>
+<p>æ¯å¦:</p>
+<pre><code class="language-text">feat(blog): add draft import command
+fix(publish): avoid duplicate image upload
+docs(readme): add setup guide</code></pre>
+<p>å¯ä»¥çè¿å¼ å¾:</p>
+<p><img src="https://img2024.cnblogs.com/blog/2501855/202607/2501855-20260714232758510-2053165877.jpg" alt="Conventional Commitsç»æ"></p>
+<p>éé¢æå³é®çæ¯åå:</p>
+<pre><code class="language-text">type: è¿æ¬¡æ¹å¨æ¯ä»ä¹ç±»å
+scope: è¿æ¬¡å½±ååªä¸ªæ¨¡å,å¯é
+!: æ¯å¦æ¯ç ´åæ§åæ´,å¯é
+description: ä¸å¥è¯è¯´æåäºä»ä¹</code></pre>
+<p>æä»¥ä¸è¦æå®çè§£æå¤æè¯­æ³ã</p>
+<p>å®æ¬è´¨ä¸å°±æ¯:</p>
+<pre><code class="language-text">ç¨åºå®æ ¼å¼è¯´æ¸æ¥è¿æ¬¡æäº¤çæ§è´¨ã</code></pre>
+<h2>2.featæ¯ä»ä¹</h2>
+<p><code>feat</code> è¡¨ç¤º:</p>
+<pre><code class="language-text">æ°å¢åè½ã</code></pre>
+<p>æ¯å¦ä½ ç»é¡¹ç®å äºä¸ä¸ªä¹åæ²¡æçè½å:</p>
+<pre><code class="language-text">feat(auth): add password login
+feat(blog): support markdown import
+feat(api): add user profile endpoint</code></pre>
+<p>è¿äºé½å±äº <code>feat</code>ã</p>
+<p>æç°å¨çå¤æ­æ¹æ³æ¯:</p>
+<pre><code class="language-text">ç¨æ·æè°ç¨æ¹è½æç¥å°ä¸ä¸ªæ°è½å,å¤§æ¦çå°±æ¯ featã</code></pre>
+<p>æ¯å¦å¨è¿ä¸ªåå®¢é¡¹ç®é:</p>
+<pre><code class="language-text">æ¯æå¯¼å¥ Markdown æä»¶
+æ¯æä¸ä¼ å¾çå°åå®¢å­
+æ¯æçæåå¸é¢è§</code></pre>
+<p>è¿äºé½ç®åè½ã</p>
+<p>æä»¥å¯ä»¥å:</p>
+<pre><code class="language-text">feat(draft): import markdown file
+feat(publish): upload local images
+feat(preview): generate cnblogs publish preview</code></pre>
+<h2>3.fixæ¯ä»ä¹</h2>
+<p><code>fix</code> è¡¨ç¤º:</p>
+<pre><code class="language-text">ä¿®å¤ bugã</code></pre>
+<p>æ¯å¦ä¹ååè½å·²ç»å­å¨,ä½æ¯æé®é¢:</p>
+<pre><code class="language-text">fix(publish): handle png upload failure
+fix(parser): keep code block indentation
+fix(cli): show readable error on missing token</code></pre>
+<p>æç°å¨çå¤æ­æ¹æ³æ¯:</p>
+<pre><code class="language-text">åæ¥åºè¯¥è½æ­£å¸¸å·¥ä½,ä½å®éä¸æ­£å¸¸,è¿æ¬¡æå®ä¿®å¥½äº,å°±æ¯ fixã</code></pre>
+<p>æ¯å¦:</p>
+<pre><code class="language-text">å¾çè·¯å¾æ²¡æè¢«æ¿æ¢æè¿ç¨å°å
+åå¸æ¶éå¤ä¸ä¼ åä¸å¼ å¾ç
+Markdown è¡¨æ ¼æ¸²æéä½
+å½ä»¤æ¥éä¿¡æ¯ä¸æ¸æ¥</code></pre>
+<p>è¿äºé½æ´éåå <code>fix</code>ã</p>
+<h2>4.scopeæ¯ä»ä¹</h2>
+<p>scope å°±æ¯æ¬å·éçé¨åã</p>
+<p>æ¯å¦:</p>
+<pre><code class="language-text">feat(auth): add password login
+fix(publish): retry image upload
+docs(readme): add install steps</code></pre>
+<p>è¿éç:</p>
+<pre><code class="language-text">auth
+publish
+readme</code></pre>
+<p>å°±æ¯ scopeã</p>
+<p>å®è¡¨ç¤ºè¿æ¬¡æäº¤ä¸»è¦å½±ååªä¸ªèå´ã</p>
+<p>scope ä¸æ¯å¿é¡»çã</p>
+<p>å¦æä¸ç¨ scope,å°±ç´æ¥å:</p>
+<pre><code class="language-text">feat: add markdown import
+fix: avoid empty title</code></pre>
+<p>æ³¨æè¿éæä¸ä¸ªå®¹æåéçå°æ¹:</p>
+<pre><code class="language-text">feat(): add markdown import</code></pre>
+<p>è¿ç§åæ³ä¸æ¨èã</p>
+<p>å ä¸º scope æ¯å¯éçã</p>
+<p>å¦ææ²¡æ scope,å°±ææ¬å·æ´ä¸ªçæ:</p>
+<pre><code class="language-text">feat: add markdown import</code></pre>
+<p>å¦ææ scope,ååæ¬å·:</p>
+<pre><code class="language-text">feat(draft): add markdown import</code></pre>
+<p>ä¹å°±æ¯è¯´:</p>
+<pre><code class="language-text">æèå´ -&gt; feat(scope): xxx
+æ²¡èå´ -&gt; feat: xxx</code></pre>
+<p>ä¸è¦åç©ºæ¬å·ã</p>
+<h2>5.é¤äºfeatåfix,è¿æåªäºå¸¸è§type</h2>
+<p>ä¸å¼å§ä¸ç¨èå¤ªå¤ã</p>
+<p>åæè¿äºå¸¸è§çç¨åå°±è¡:</p>
+<p><img src="https://img2024.cnblogs.com/blog/2501855/202607/2501855-20260714232759033-1525925349.jpg" alt="å¸¸è§æäº¤type"></p>
+<p>æç°å¨ä¼è¿æ ·è®°:</p>
+<p>| type | ä»ä¹æ¶åç¨ | | --- | --- | | <code>feat</code> | æ°å¢åè½ | | <code>fix</code> | ä¿®å¤ bug | | <code>docs</code> | åªæ¹ææ¡£ | | <code>style</code> | åªæ¹æ ¼å¼,ä¸å½±åé»è¾ | | <code>refactor</code> | éæä»£ç ,è¡ä¸ºä¸å | | <code>test</code> | æ°å¢æä¿®æ¹æµè¯ | | <code>chore</code> | æé¡¹ç»´æ¤ | | <code>perf</code> | æ§è½ä¼å | | <code>build</code> | æå»ºç³»ç»ç¸å³ | | <code>ci</code> | CI/CD æµæ°´çº¿ç¸å³ |</p>
+<p>æ¯å¦:</p>
+<pre><code class="language-text">docs(api): add publish command example
+style(markdown): format heading spacing
+refactor(storage): split json store helpers
+test(publish): cover cnblogs image upload
+chore(deps): update dev dependencies
+perf(search): reduce repeated file scan
+ci(test): run unit tests on pull request</code></pre>
+<p>è¿éæä¸ªå¤æ­æå·§:</p>
+<pre><code class="language-text">çè¿æ¬¡æäº¤ç»é¡¹ç®å¸¦æ¥çä¸»è¦ååæ¯ä»ä¹ã</code></pre>
+<p>å¦æåæ¶æ¹äºå¾å¤ä¸è¥¿,è¯´æè¿æ¬¡æäº¤å¯è½å¤ªå¤§äºã</p>
+<p>æå¥½ææå¤æ¬¡æäº¤ã</p>
+<h2>6.ç ´åæ§åæ´æä¹å</h2>
+<p>å¦æè¿æ¬¡æäº¤ä¼ç ´ååæ¥çä½¿ç¨æ¹å¼,å°±è¦æ åºæ¥ã</p>
+<p>æ¯å¦ä¸ä¸ªæ¥å£åæ¥æ¯:</p>
+<pre><code class="language-text">GET /api/user?id=1</code></pre>
+<p>ç°å¨æ¹æ:</p>
+<pre><code class="language-text">GET /api/users/1</code></pre>
+<p>èä»£ç ä¼æã</p>
+<p>è¿å°±æ¯ç ´åæ§åæ´ã</p>
+<p>Conventional Commits éå¯ä»¥è¿æ ·å:</p>
+<pre><code class="language-text">feat(api)!: change user endpoint path</code></pre>
+<p>æèå¨ footer éå:</p>
+<pre><code class="language-text">feat(api): change user endpoint path
+
+BREAKING CHANGE: /api/user?id=1 was replaced by /api/users/:id</code></pre>
+<p>è¿éç <code>!</code> å¾éç®ã</p>
+<p>å®åè¯å«äºº:</p>
+<pre><code class="language-text">è¿æ¬¡æäº¤ä¸æ¯æ®é feat,å¯è½éè¦æ¹è°ç¨ä»£ç ã</code></pre>
+<p>å¦æé¡¹ç®åçæ¬ç®¡ç,ç ´åæ§åæ´éå¸¸ä¼å¯¹åº major çæ¬åçº§ã</p>
+<h2>7.æäº¤æ­£æåfooterä»ä¹æ¶åå</h2>
+<p>å¤§å¤æ°æ¥å¸¸æäº¤,ä¸è¡å°±å¤ã</p>
+<p>æ¯å¦:</p>
+<pre><code class="language-text">fix(publish): handle empty image alt text</code></pre>
+<p>ä½å¦æè¿æ¬¡æ¹å¨æ¯è¾å¤æ,å¯ä»¥å æ­£æ:</p>
+<pre><code class="language-text">fix(publish): handle empty image alt text
+
+Some markdown images may not provide alt text.
+Use an empty string instead of failing the publish flow.</code></pre>
+<p>æ­£æä¸»è¦è§£é:</p>
+<pre><code class="language-text">ä¸ºä»ä¹è¿ä¹æ¹
+æä»ä¹èæ¯
+æä»ä¹å½±å</code></pre>
+<p>footer éå¸¸æ¾è¿äºä¸è¥¿:</p>
+<pre><code class="language-text">BREAKING CHANGE
+Closes #123
+Refs #456</code></pre>
+<p>æ¯å¦:</p>
+<pre><code class="language-text">fix(publish): retry cnblogs image upload
+
+Closes #18</code></pre>
+<p>è¿ä¸ªå¯¹å¼æºé¡¹ç®åå¢éåä½æ´æç¨ã</p>
+<p>ä¸ªäººé¡¹ç®å¯ä»¥åä¸å¤æåã</p>
+<h2>8.æç°å¨ä¼æä¹å</h2>
+<p>å¦æåªæ¯æèªå·±çé¡¹ç®,æä¼åå®ä¸ä¸ªç®åçæ¬:</p>
+<pre><code class="language-text">feat: æ°åè½
+fix: ä¿® bug
+docs: ææ¡£
+refactor: éæ
+test: æµè¯
+chore: æé¡¹</code></pre>
+<p>scope å¯ä»¥ç¨,ä½ä¸è¦æ»¥ç¨ã</p>
+<p>æ¯å¦è¿ä¸ªé¡¹ç®å¯ä»¥æ:</p>
+<pre><code class="language-text">draft
+publish
+style
+cli
+storage
+cnblogs</code></pre>
+<p>æäº¤æ¶å°±å:</p>
+<pre><code class="language-text">feat(draft): import markdown article
+fix(cnblogs): upload png images before publish
+docs(flow): add publish checklist
+refactor(cli): split publish commands
+test(storage): cover publication record update
+chore: clean generated cache</code></pre>
+<p>æä¼é¿åè¿äºæäº¤ä¿¡æ¯:</p>
+<pre><code class="language-text">update
+fix bug
+wip
+æ¹ä¸ä¸
+ä¸´æ¶æäº¤</code></pre>
+<p>ä¸æ¯è¯´è¿äºç»å¯¹ä¸è½ç¨ã</p>
+<p>ä½å¦æä¸ä¸ªé¡¹ç®å¨æ¯è¿ç§æäº¤,åé¢åå¤´çæ¥å¿ä¼å¾çè¦ã</p>
+<h2>9.å®¹æè¸©çå</h2>
+<p>ç¬¬ä¸ä¸ªå:</p>
+<pre><code class="language-text">ææææäº¤é½åæ fixã</code></pre>
+<p>å åè½ä¸æ¯ fixã</p>
+<p>æ¹ææ¡£ä¹ä¸æ¯ fixã</p>
+<p>éæä¹ä¸æ¯ fixã</p>
+<p>ç¬¬äºä¸ªå:</p>
+<pre><code class="language-text">feat(): xxx</code></pre>
+<p>å¦ææ²¡æ scope,ä¸è¦åç©ºæ¬å·ã</p>
+<p>å:</p>
+<pre><code class="language-text">feat: xxx</code></pre>
+<p>ç¬¬ä¸ä¸ªå:</p>
+<pre><code class="language-text">ä¸æ¬¡æäº¤å¡å¤ªå¤ä¸è¥¿ã</code></pre>
+<p>æ¯å¦ä¸ä¸ªæäº¤éåæ¶:</p>
+<pre><code class="language-text">å åè½
+ä¿® bug
+æ¹ææ¡£
+æ ¼å¼åå¨é¡¹ç®</code></pre>
+<p>è¿ç§æäº¤å¾é¾åæ¸æ¥ typeã</p>
+<p>æ´å¥½çåæ³æ¯æå¼ã</p>
+<p>ç¬¬åä¸ªå:</p>
+<pre><code class="language-text">description åå¾å¤ªèã</code></pre>
+<p>æ¯å¦:</p>
+<pre><code class="language-text">feat: update code
+fix: fix problem</code></pre>
+<p>è¿è·æ²¡åå·®ä¸å¤ã</p>
+<p>æ´å¥½ä¸ç¹:</p>
+<pre><code class="language-text">feat(publish): add cnblogs preview command
+fix(markdown): preserve fenced code indentation</code></pre>
+<h2>10.æ»ç»</h2>
+<p>è¿ç¯åè®°ä½ä¸å¥è¯:</p>
+<pre><code class="language-text">Conventional Commits ä¸æ¯è®©æäº¤ä¿¡æ¯åå¤æ,èæ¯è®©æäº¤åå²åæ¸æ¥ã</code></pre>
+<p>æå¸¸ç¨æ ¼å¼:</p>
+<pre><code class="language-text">type(scope): description</code></pre>
+<p>æå¸¸ç¨ä¸¤ä¸ª type:</p>
+<pre><code class="language-text">feat: æ°åè½
+fix: ä¿® bug</code></pre>
+<p>scope æ¯å¯éç:</p>
+<pre><code class="language-text">feat(draft): import markdown file
+feat: import markdown file</code></pre>
+<p>ä¸è¦å:</p>
+<pre><code class="language-text">feat(): import markdown file</code></pre>
+<p>å¦æä¸ä¸ªæäº¤åä¸æ¸æ¥ type,éå¸¸è¯´æ:</p>
+<pre><code class="language-text">è¿æ¬¡æäº¤å¤ªå¤§äº,åºè¯¥æã</code></pre>
+<p>ä¸ä¸æ¬¡åæäº¤ä¿¡æ¯æ¶,æä¼åé®èªå·±:</p>
+<pre><code class="language-text">è¿æ¬¡æäº¤ç»é¡¹ç®å¸¦æ¥çä¸»è¦ååæ¯ä»ä¹?</code></pre>
+<p>ç¶ååé typeã</p>
+<h2>åèèµæ</h2>
+<p>è¿æ¯ Conventional Commits çå®æ¹è§èãè¿éä¸»è¦åèå®å¯¹ <code>feat</code>ã<code>fix</code>ãscopeãç ´åæ§åæ´åæäº¤æ ¼å¼çå®ä¹ã</p>
+<ul>
+<li><a href="https://www.conventionalcommits.org/en/v1.0.0/" rel="noopener nofollow">Conventional Commits 1.0.0</a></li>
+</ul>
+<p>Conventional Commits å®æ¹è§èæå°å®å Angular æäº¤è§èå¯åãè¿éå¼ç¨å®,æ¯ä¸ºäºè¯´æ <code>feat</code>ã<code>fix</code> è¿ç±»åæ³å¨åç«¯åå¼æºç¤¾åºéå¾æ©å°±æå®è·µæ¥æºã</p>
+<ul>
+<li><a href="https://github.com/angular/angular/blob/main/CONTRIBUTING.md#commit" rel="noopener nofollow">Angular Commit Message Guidelines</a></li>
+</ul>
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0.001388888888888889" data-date-updated="2026-07-14 23:30">2026-07-14 23:28</span>&nbsp;
+<a href="https://www.cnblogs.com/FatTiger4399">å»è¥èè</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(21471570);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FFatTiger4399%2Fp%2F21471570&amp;targetId=21471570&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -1762,7 +1731,7 @@ Thread 2aa0:
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-07-14 17:05">2026-07-14 17:04</span>&nbsp;
 <a href="https://www.cnblogs.com/huangxincheng">ä¸çº¿ç å</a>&nbsp;
-éè¯»(<span id="post_view_count">141</span>)&nbsp;
+éè¯»(<span id="post_view_count">161</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(21461680);return false;">æ¶è</a>&nbsp;
@@ -2093,7 +2062,7 @@ if __name__ == "__main__":
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0.0006944444444444445" data-date-updated="2026-07-14 16:16">2026-07-14 16:15</span>&nbsp;
 <a href="https://www.cnblogs.com/yclh">ä¸ç¬ä½</a>&nbsp;
-éè¯»(<span id="post_view_count">31</span>)&nbsp;
+éè¯»(<span id="post_view_count">42</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(21458073);return false;">æ¶è</a>&nbsp;
@@ -2103,16 +2072,180 @@ if __name__ == "__main__":
     </description>
     </item>
 <item>
-    <title><![CDATA[ 11 ä¸ Star ç Spec Kitï¼90% çå·¥ç¨å¸åªç¨å®è§£å³äº 10% çé®é¢ ]]></title>
-    <link>https://www.cnblogs.com/uniqueDong/p/21445296</link>
-    <guid>8138da5fe588fcea36281d1a1f8c1bc2</guid>
+    <title><![CDATA[ Day 0 å®æµï½å¨ GPUStack ä¸é¨ç½² GLM-5.2-FP8-DSpark ]]></title>
+    <link>https://www.cnblogs.com/gpustack/p/21471301</link>
+    <guid>a5c1971d7b9304f6f267a2135a71131b</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/uniqueDong/p/21445296" title="åå¸äº 2026-07-14 12:01">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/gpustack/p/21471301" title="åå¸äº 2026-07-14 22:59">
     
 
-    <span role="heading" aria-level="2">11 ä¸ Star ç Spec Kitï¼90% çå·¥ç¨å¸åªç¨å®è§£å³äº 10% çé®é¢</span>
+    <span role="heading" aria-level="2">Day 0 å®æµï½å¨ GPUStack ä¸é¨ç½² GLM-5.2-FP8-DSpark</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                    <div id="cnblogs_post_description" style="display: none">
+        <img src="https://img2024.cnblogs.com/blog/3471680/202607/3471680-20260714225843485-1317442302.png" alt="Day 0 å®æµï½å¨ GPUStack ä¸é¨ç½² GLM-5.2-FP8-DSpark" class="desc_img">
+        æ¬æç± GPUStack ç¤¾åºç¨æ·å®æµåäº«æ´çãGLM-5.2-FP8-DSpark æ¯å¨ GLM-5.2-FP8 åºç¡ä¸ï¼éè¿æè½½ RedHatAI æä¾çå¤ç½®èç¨¿æ¨¡åï¼Speculatorï¼åææºè§£ç ï¼Speculative Decodingï¼çå¢å¼ºæ¹æ¡ââåä¸ä»½ä¸»æ¨¡åæéï¼é¢å¤å è½½ä¸ä¸ªèç¨¿æ¨¡åï¼ç¨æ¥æåè§£ç ååãç¤¾åºç¨æ·å¨æ¨¡åæ¾åºå½å¤©ï¼Day 0ï¼å°±å¨ **8 å¡ H20-141G** ç¯å¢ä¸ï¼éè¿ GPUStack å®æäºé¨ç½²ï¼å¹¶ååç GLM-5.2-FP8 åäºåç¡¬ä»¶å¯¹æ¯åæµã
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<blockquote>
+<p>æ¬æç± GPUStack ç¤¾åºç¨æ·å®æµåäº«æ´çãGLM-5.2-FP8-DSpark æ¯å¨ GLM-5.2-FP8 åºç¡ä¸ï¼éè¿æè½½ RedHatAI æä¾çå¤ç½®èç¨¿æ¨¡åï¼Speculatorï¼åææºè§£ç ï¼Speculative Decodingï¼çå¢å¼ºæ¹æ¡ââåä¸ä»½ä¸»æ¨¡åæéï¼é¢å¤å è½½ä¸ä¸ªèç¨¿æ¨¡åï¼ç¨æ¥æåè§£ç ååãç¤¾åºç¨æ·å¨æ¨¡åæ¾åºå½å¤©ï¼Day 0ï¼å°±å¨ <strong>8 å¡ H20-141G</strong> ç¯å¢ä¸ï¼éè¿ GPUStack å®æäºé¨ç½²ï¼å¹¶ååç GLM-5.2-FP8 åäºåç¡¬ä»¶å¯¹æ¯åæµã</p>
+</blockquote>
+<p>åæç»è®ºæ¾å¨æåé¢ï¼è¿æ¬¡çç»ææ¯è¾ãä¸¤é¢ãï¼å»ºè®®å®¢è§çå¾ï¼</p>
+<ul>
+<li><strong>åå¹¶å</strong>ï¼è¯éªåºé DSpark <strong>çº¦ 171 TPS</strong>ï¼åç GLM-5.2-FP8 <strong>çº¦ 72 TPS</strong>ï¼å¿«å°çº¦ <strong>2.2 å</strong>ï¼</li>
+<li><strong>é«å¹¶åï¼64K/3Kï¼</strong>ï¼DSpark è¾åºåå <strong>59.8 TPS</strong>ï¼åè<strong>ä½äº</strong>åç MTP æ¹æ¡ç <strong>99.2 TPS</strong>ââå¤ç½®èç¨¿æ¨¡åå¯¹ Random æ°æ®éæ¥åçåä½ï¼é«å¹¶åä¸ä¸ä½æ²¡ææåï¼çè³åºç°åéï¼</li>
+<li><strong>ä¸å¥è¯å»ºè®®</strong>ï¼å°±æ¬æ¬¡è¿ä»½å¤ç½®èç¨¿æ¨¡å + GLM-5.2-FP8 çç»åèè¨ï¼ç®åæ´éå<strong>åå¹¶å / ä½å¹¶åãå¯¹é¦ Token åäº¤äºå¼ååææ</strong>çåºæ¯ï¼æç¨äº<strong>ç§ç éªè¯</strong>ï¼é«å¹¶åçäº§å»ºè®®åç­æ¥åçæ´é«çèç¨¿æ¨¡åçæ¬ãï¼ä»¥ä¸ç»è®ºä»éå¯¹æ¬æ¬¡å®æµæç¨çèç¨¿æ¨¡åä¸æ°æ®éï¼ä¸ä»£è¡¨ DSpark ææºè§£ç æ¹æ¡æ¬èº«çä¸éãï¼</li>
+</ul>
+<p>ä¸é¢æ¯å®æ´çé¨ç½²ä¸å®æµè¿ç¨ã</p>
+<hr>
+<h2 id="ä¸å¨-gpustack-ä¸é¨ç½²-glm-52-fp8-dspark">ä¸ãå¨ GPUStack ä¸é¨ç½² GLM-5.2-FP8-DSpark</h2>
+<p>DSpark éè¦ä¸ä¸ªè¾æ°ç vLLM éåï¼v0.25.0ï¼æ¥æ¯æå¤ç½®èç¨¿æ¨¡åçææºè§£ç ãæä»¬åªéä¸º GPUStack ä¸­å¯ææç vLLM åç«¯å¢å ä¸ä¸ªéåçæ¬ï¼æ´ä¸ªè¿ç¨å¨ Web çé¢ä¸ç¹å ä¸å³å¯å®æã</p>
+<h3 id="-è¿å¥æ¨çåç«¯ä¸º-vllm-æ·»å çæ¬">â  è¿å¥ãæ¨çåç«¯ãï¼ä¸º vLLM æ·»å çæ¬</h3>
+<p>å·¦ä¾§èåè¿å¥ <strong>æ¨çåç«¯</strong>ï¼æ¾å° vLLM å¡çç¹ãç¼è¾ãï¼å¨ãçæ¬éç½®ãéç¹ã<strong>æ·»å çæ¬</strong>ãï¼æ°å¢ä¸ä¸ªçæ¬å·ä¸º <code>25</code> ççæ¬ï¼éååç§°å¡«åï¼</p>
+<pre><code>vllm/vllm-openai:v0.25.0
+</code></pre>
+<p>æ¡æ¶éæ© <strong>CUDA</strong>ï¼ä¿å­åå³å¾å°ä¸ä¸ªå¯éç <code>25-custom</code> çæ¬ã</p>
+<p><img alt="ä¸º vLLM æ·»å  v0.25.0 çæ¬" loading="lazy" data-src="https://gpustack-cn-blogs.oss-cn-shanghai.aliyuncs.com/assets/glm5.2-dspark/01.png" class="lazyload"></p>
+<h3 id="-æ°å»ºé¨ç½²éæ¨¡åä¸åç«¯">â¡ æ°å»ºé¨ç½²ï¼éæ¨¡åä¸åç«¯</h3>
+<p>åå° <strong>é¨ç½²</strong> é¡µé¢ï¼ç¹å³ä¸è§ãé¨ç½²æ¨¡åãï¼æä¸å¾å¡«ååºæ¬ä¿¡æ¯ï¼</p>
+<ul>
+<li>æ¥æºéæ© <strong>ModelScope</strong>ï¼ä»åº ID å¡« <code>ZhipuAI/GLM-5.2-FP8</code></li>
+<li>åç«¯é <strong>vLLM</strong></li>
+<li>åç«¯çæ¬éåææ·»å ç <strong>25-custom</strong></li>
+</ul>
+<p><img alt="éæ©æ¨¡åæ¥æºä¸åç«¯çæ¬" loading="lazy" data-src="https://gpustack-cn-blogs.oss-cn-shanghai.aliyuncs.com/assets/glm5.2-dspark/02.png" class="lazyload"></p>
+<h3 id="-éç½®åç«¯åæ°">â¢ éç½®åç«¯åæ°</h3>
+<p>å¨ãé«çº§ãééé¡¹å¡«å¥åç«¯åæ°ï¼ä»¥ 8 å¡ H20-141G ä¸ºä¾ï¼ï¼</p>
+<pre><code class="language-bash">--max-model-len 131072
+--tensor-parallel-size 8
+--tool-call-parser glm47
+--enable-auto-tool-choice
+--reasoning-parser glm45
+--enable-expert-parallel
+--trust-remote-code
+--gpu-memory-utilization=0.9
+--max-num-batched-tokens 32768
+--max-num-seqs 16
+--speculative-config '{"model":"/var/lib/gpustack/cache/model_scope/RedHatAI/GLM-5.2-speculator.dspark","num_speculative_tokens":7,"method":"dspark"}'
+</code></pre>
+<p>å³é®å¨äº <code>--speculative-config</code>ï¼<code>method</code> è®¾ä¸º <code>dspark</code>ï¼<code>model</code> æåä¸è½½å¥½çå¤ç½®èç¨¿æ¨¡åè·¯å¾ãè¥å¼æå è½½è¾æ¢ï¼å¯å ä¸ä¸ªç¯å¢åé <code>VLLM_ENGINE_READY_TIMEOUT_S=3600</code> æ¾å®½å°±ç»ªè¶æ¶ã</p>
+<p><img alt="å¡«å vLLM åç«¯åæ°" loading="lazy" data-src="https://gpustack-cn-blogs.oss-cn-shanghai.aliyuncs.com/assets/glm5.2-dspark/03.png" class="lazyload"></p>
+<blockquote>
+<p>èç¨¿æ¨¡åä¸è½½å°åï¼<br>
+<a href="https://modelscope.cn/models/RedHatAI/GLM-5.2-speculator.dspark" target="_blank" rel="noopener nofollow">https://modelscope.cn/models/RedHatAI/GLM-5.2-speculator.dspark</a></p>
+</blockquote>
+<p>æäº¤åå®ä¾è¿å¥ <strong>Running</strong> å³é¨ç½²å®æã</p>
+<hr>
+<h2 id="äºæ§è½å®æµdspark-vs-åç-glm-52-fp8">äºãæ§è½å®æµï¼DSpark vs åç GLM-5.2-FP8</h2>
+<p>å¨<strong>ç¸åç¡¬ä»¶ï¼8 å¡ H20-141Gï¼</strong>ä¸ï¼åå«ä»ãåå¹¶åäº¤äºãåãé«å¹¶åæ¹éãä¸¤ä¸ªè§åº¦åäºå¯¹æ¯ã</p>
+<h3 id="åºæ¯-1åå¹¶åè¯éªåºäº¤äº">åºæ¯ 1ï¼åå¹¶åï¼è¯éªåºäº¤äºï¼</h3>
+<p>ç´æ¥å¨ GPUStack è¯éªåºéå¯¹è¯ï¼è§å¯å³ä¸è§å®æ¶è¾åºååã</p>
+<p><strong>GLM-5.2-FP8-DSparkï¼</strong> è¾åºåå <strong>171.6 Tokens/s</strong>ï¼ç¨³å®å¨ 170+ åºé´ã</p>
+<p><img alt="DSpark åå¹¶åçº¦ 171 TPS" loading="lazy" data-src="https://gpustack-cn-blogs.oss-cn-shanghai.aliyuncs.com/assets/glm5.2-dspark/04.png" class="lazyload"></p>
+<p><strong>åç GLM-5.2-FP8ï¼</strong> è¾åºåå <strong>71.81 Tokens/s</strong>ã</p>
+<p><img alt="åç GLM-5.2-FP8 åå¹¶åçº¦ 72 TPS" loading="lazy" data-src="https://gpustack-cn-blogs.oss-cn-shanghai.aliyuncs.com/assets/glm5.2-dspark/05.png" class="lazyload"></p>
+<blockquote>
+<p>åå¹¶åä¸ DSpark â 171 TPSï¼æ¯åççæ¬ï¼â72ï¼ççº¦ <strong>2.2 å</strong>ââè¿æ¯ææºè§£ç å¨ä½å¹¶ååºæ¯æå¸åçæ¶çã</p>
+</blockquote>
+<h3 id="åºæ¯-2é«å¹¶åæ¹é64k--3k10-è¯·æ±">åºæ¯ 2ï¼é«å¹¶åæ¹éï¼64K / 3Kï¼10 è¯·æ±ï¼</h3>
+<p>ç¨ GPUStack åç½®åºåæµè¯è· 64K è¾å¥ / 3K è¾åºã10 ä¸ªè¯·æ±ï¼å®æµå¹¶ååå¼çº¦ 6ï¼ç Random æ°æ®éãè¿éçå¯¹æ¯åºçº¿æ¯<strong>åæ ·å¼å¯äºææºè§£ç çåç MTP æ¹æ¡</strong>ã</p>
+<p><strong>åç MTPï¼<code>method: mtp</code>, <code>num_speculative_tokens: 5</code>ï¼ï¼</strong> æ»åå <strong>2216.39 Tokens/s</strong>ï¼è¾åºåå <strong>99.22 Tokens/s</strong>ï¼TPOT 63.92 msã</p>
+<p><img alt="åç MTP é«å¹¶ååºå" loading="lazy" data-src="https://gpustack-cn-blogs.oss-cn-shanghai.aliyuncs.com/assets/glm5.2-dspark/06.png" class="lazyload"></p>
+<p><strong>DSparkï¼<code>method: dspark</code>, <code>num_speculative_tokens: 7</code>ï¼ï¼</strong> æ»åå <strong>1336.12 Tokens/s</strong>ï¼è¾åºåå <strong>59.82 Tokens/s</strong>ï¼TPOT 103.08 msã</p>
+<p><img alt="DSpark é«å¹¶ååºå" loading="lazy" data-src="https://gpustack-cn-blogs.oss-cn-shanghai.aliyuncs.com/assets/glm5.2-dspark/07.png" class="lazyload"></p>
+<blockquote>
+<p>é«å¹¶ååºæ¯ä¸ DSpark çè¾åºååï¼59.8ï¼<strong>ä¸ååé</strong>ï¼ææ¾ä½äºåç MTPï¼99.2ï¼ï¼TPOT ä¹æ´é«ãåå æ¯ RedHatAI æä¾çå¤ç½®èç¨¿æ¨¡åå¯¹ Random æ°æ®éç<strong>æ¥åçåä½</strong>ââææºè§£ç ä¸æ¦å½ä¸­çä¸è¶³ï¼é¢å¤çèç¨¿è®¡ç®åèä¼æç´¯æ´ä½ååã</p>
+</blockquote>
+<h3 id="æ°æ®æ±æ»">æ°æ®æ±æ»</h3>
+<table>
+<thead>
+<tr>
+<th>åºæ¯</th>
+<th>ææ </th>
+<th>åç GLM-5.2-FP8</th>
+<th>GLM-5.2-FP8-DSpark</th>
+<th>å¯¹æ¯</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>åå¹¶åï¼è¯éªåºï¼</td>
+<td>è¾åº TPS</td>
+<td>â 71.8</td>
+<td><strong>â 171.6</strong></td>
+<td>â 2.2Ã</td>
+</tr>
+<tr>
+<td>é«å¹¶å 64K/3K</td>
+<td>æ»åå (TPS)</td>
+<td>2216.39ï¼MTPï¼</td>
+<td>1336.12</td>
+<td>â 0.60Ã</td>
+</tr>
+<tr>
+<td>é«å¹¶å 64K/3K</td>
+<td>è¾åºåå (TPS)</td>
+<td>99.22ï¼MTPï¼</td>
+<td>59.82</td>
+<td>â 0.60Ã</td>
+</tr>
+<tr>
+<td>é«å¹¶å 64K/3K</td>
+<td>TPOT (ms)</td>
+<td>63.92ï¼MTPï¼</td>
+<td>103.08</td>
+<td>æ´é«</td>
+</tr>
+</tbody>
+</table>
+<h2 id="æ»ç»">æ»ç»</h2>
+<p>GLM-5.2-FP8-DSpark çè¡¨ç°ãä¸¤é¢æ§ãå¾ææ¾ï¼</p>
+<ol>
+<li><strong>åå¹¶å / ä½å¹¶å</strong>ï¼ææºè§£ç æ¶çæ¾èï¼å®æµè½å°åç GLM-5.2-FP8 ç <strong>1.2â2.2 å</strong>ï¼éåäº¤äºå¼ãå¯¹åè·¯åååååºéåº¦ææçåºæ¯ã</li>
+<li><strong>é«å¹¶å</strong>ï¼æ¬æ¬¡è¿ä»½å¤ç½®èç¨¿æ¨¡åå¨ Random æ°æ®éä¸çæ¥åçåä½ï¼ååå ä¹æ²¡ææ¬è´¨æåï¼çè³ä½äºåç MTP æ¹æ¡ï¼æä¸å»ºè®®ç´æ¥ç¨äºåç±»é«å¹¶åçäº§ã</li>
+<li><strong>å»ºè®®</strong>ï¼å°±æ¬æ¬¡å®æµçæ¨¡åä¸åºæ¯æ¥çï¼ç°é¶æ®µæ´éå<strong>ç§ç éªè¯ä¸ä½å¹¶ååºæ¯</strong>ï¼é«å¹¶åçäº§ä¸çº¿ï¼å»ºè®®ç­å¾å¨è¿ç±»è´è½½ä¸æ¥åçæ´é«çèç¨¿æ¨¡åçæ¬ãï¼ä»¥ä¸ä»éå¯¹æ¬æ¬¡æç¨èç¨¿æ¨¡åä¸æ°æ®éï¼ä¸ä»£è¡¨ DSpark ææºè§£ç æ¹æ¡æ¬èº«çä¸éãï¼</li>
+</ol>
+<p>å¾çäº GPUStack å¯ææç vLLM åç«¯ï¼æ è®ºæ¯å éåçæ¬ãæå¤ç½®èç¨¿æ¨¡åè¿æ¯åæ¢å¯¹æ¯æ¹æ¡ï¼æ´ä¸ªè¿ç¨é½å¨ Web çé¢ç¹å ä¸å°±è½å®æï¼Day 0 å°±è½ææ°æ¨¡åè·èµ·æ¥åå®¢è§è¯æµã</p>
+<blockquote>
+<p>å®æµç¯å¢ï¼8 å¡ H20-141G ï½ GPUStack v2 ï½ vLLM v0.25.0ï¼25-custom éåï¼</p>
+<p>æè°¢ç¤¾åºç¨æ·çå®æµåäº«ã</p>
+</blockquote>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-07-14 22:59">2026-07-14 22:59</span>&nbsp;
+<a href="https://www.cnblogs.com/gpustack">GPUStack</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(21471301);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fgpustack%2Fp%2F21471301&amp;targetId=21471301&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ é«åè°±æ¼æ¥ç®æ³ï¼å«ï¼ä»ç¹å¾å¹éå°å¾åæ¼æ¥ ]]></title>
+    <link>https://www.cnblogs.com/Goblinscholar/p/21470008</link>
+    <guid>e45d157d6ba30929e98f6539ce07a0ec</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/Goblinscholar/p/21470008" title="åå¸äº 2026-07-14 22:40">
+    
+
+    <span role="heading" aria-level="2">é«åè°±æ¼æ¥ç®æ³ï¼å«ï¼ä»ç¹å¾å¹éå°å¾åæ¼æ¥</span>
     
 
 </a>
@@ -2121,406 +2254,268 @@ if __name__ == "__main__":
             <div class="clear"></div>
             <div class="postBody">
                 <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>ä¸ä¸ªææå¨ç¨ Claude Code å¼åä¸ä¸ªæ°åè½ï¼éæ±è¯´å¾å¾æ¸æ¥ï¼ãç»ç¨æ·åè¡¨é¡µå ä¸ä¸ªææ³¨åæ¶é´æåºçåè½ãã</p>
-<p>AI ç»åºçä»£ç çèµ·æ¥å¾å®æ´ââæ¥å£ãService å±ãåç«¯ç»ä»¶é½æãä½è·èµ·æ¥åç°ï¼æåºé»è¾ç¨çæ¯åç«¯åé¡µåçæ¬å°æåºï¼ä¸æ¯æ°æ®åºå±é¢çæåºãæ°æ®ä¸å¤å°±åºäºã</p>
-<p>æ¹å®è¿ä¸ªï¼ååç°å®ç¨çæ¯åå»ºæ¶é´å­æ®µï¼èä¸æ¯æ³¨åæ¶é´ã</p>
-<p>æè±äºåå°æ¶ Promptï¼AI è±äºåå°æ¶ãæ¹ãï¼æåä»£ç æ¹äºä¸å«çï¼è¿æ¯æé®é¢ã</p>
-<p>è¿å°±æ¯ vibe coding çå¸åæ­»æ³ââ<strong>AI åå¾å¾å¿«ï¼ä½æ¹åä»ä¸å¼å§å°±åäºï¼éåº¦è¶å¿«è¶é¾æ¶</strong>ã</p>
-<p>GitHub å¨ä»å¹´ 5 æå¼æºäºä¸ä¸ªå« Spec Kit çå·¥å·ï¼ä¸é¨è§£å³è¿ä¸ªé®é¢ãåå¸ä¸å°ä¸ä¸ªæï¼å®å·²ç»æ¿å°äº <strong>11 ä¸ Starã9,700 ä¸ª Fork</strong>ï¼æªè³ 2026 å¹´ 6 æ 8 æ¥ï¼ï¼æ¯ä»å¹´ GitHub ä¸å¢é¿æå¿«ç AI å·¥å·ç±»é¡¹ç®ä¹ä¸ã</p>
-<p>è¿ç¯æç« çæ ¸å¿ç»è®ºåæ¾å¨è¿éï¼<strong>è§èæä»¶ï¼spec.mdï¼æ¯ AI ç¼ç éæè¢«ä½ä¼°çåºç¡è®¾æ½ã</strong> åå¥½å®ï¼ä½ è· AI çå¯¹è¯è´¨éä¼æè´¨çæåï¼ä¸æ¯å ä¸º Prompt æå·§åå¥½äºï¼èæ¯å ä¸º AI ç»äºç¥éå®è¦åçæ¯ä»ä¹ã</p>
-<h2 id="ä¸ºä»ä¹-vibe-coding-çå¤©è±æ¿è¿ä¹ä½">ä¸ºä»ä¹ Vibe Coding çå¤©è±æ¿è¿ä¹ä½</h2>
-<p>åè¯´æ¸æ¥é®é¢ï¼åè¯´è§£å³æ¹æ¡ã</p>
-<p>vibe coding è¿ä¸ªè¯æ¯ Andrej Karpathy æåºçï¼åææ¯ãé¡ºçæè§åä»£ç ï¼è®© AI å¤çç»èããå¨ååéªè¯é¶æ®µï¼è¿ä¸ªæ¹å¼éå¸¸ææââä½ æè¿°ä¸ªå¤§æ¦ï¼AI ç»ä½ ä¸ä¸ªè½è·èµ·æ¥çæ¶å­ï¼5 åéåçå°ææã</p>
-<p>ä½è¿å¥çæ­£çåè½å¼åä¹åï¼è¿ä¸ªæ¨¡å¼ä¼éå°ä¸ä¸ªåå¨çç¾ï¼</p>
-<p><strong>AI Agent ä¸æ¯æç´¢å¼æï¼å®æ¯ãå­é¢æææ§è¡èãã</strong></p>
-<p>ä½ è¯´ãå ä¸ä¸ªæåºåè½ãï¼å®å°±å æåºåè½ãå®ä¸ç¥éä½ çæ°æ®éæå¤å¤§ï¼ä¸ç¥éä½ çåé¡µé»è¾å¨åªä¸å±ï¼ä¸ç¥éãæ³¨åæ¶é´ãåãåå»ºæ¶é´ãå¨ä½ ç schema éæ¯ä¸æ¯åä¸ä¸ªå­æ®µãå®æææè¿äºæ¨¡ç³çç©ºé´ï¼ç¨å®è®¤ä¸ºãåçãççæµå¡«æ»¡äºã</p>
-<p>è¿å°±æ¯ GitHub å®æ¹æç« éè¯´çé£å¥è¯ï¼"it looks right, but doesn't quite work"ââçèµ·æ¥å¯¹ï¼ä½è·èµ·æ¥ä¸å¯¹ã</p>
-<p>æ´æ·±çé®é¢æ¯<strong>éæ±æ¼ç§»ï¼context driftï¼</strong>ãä½ å¨ä¸ä¸ªé¿å¯¹è¯éåå¤ä¿®æ¹éæ±ï¼AI çãè®°å¿ãä¼éæ¸åç¦»æåçæå¾ãç¬¬ 10 è½®ä¿®æ¹çä»£ç ï¼åç¬¬ 1 è½®çéæ±ä¹é´ï¼å¯è½å·²ç»æ²¡æç´æ¥çå¯¹åºå³ç³»äºã</p>
-<p>è¿ä¸æ¯ AI çæºåé®é¢ï¼æ¯ä¿¡æ¯ç»æçé®é¢ã</p>
-<p>vibe coding æ¬è´¨ä¸æ¯æãéæ±ãèå¨äºå¯¹è¯åå²éï¼åæ£å¨åå æ¡æ¶æ¯çæ¥åéãAI æ¯æ¬¡çæä»£ç ï¼é½éè¦ä»è¿äºç¢çééå»ºä¸ä¸æï¼æ¯æ¬¡éå»ºé½å¯è½ä¸¢å¤±ç»èã</p>
-<p><strong>Spec Kit çè§£æ³æ¯ï¼æéæ±ä»å¯¹è¯éæ¿åºæ¥ï¼æ¾å°ä¸ä¸ªç»æåçæä»¶éã</strong></p>
-<p>è¿ä¸ªæä»¶å°±æ¯ spec.mdï¼å®æ¯æ´ä¸ªå¼åæµç¨çåä¸çç¸æºãAI æ¯æ¬¡åä»»ä½å³ç­ï¼é½ä»è¿éåä¿¡æ¯ï¼èä¸æ¯ä»å¯¹è¯åå²éçã</p>
-<p><img alt="vibe coding ä¸è§èé©±å¨å¼åçå¯¹æ¯ï¼éæ±æ¼ç§» vs åä¸çç¸æº" loading="lazy" data-src="https://magebyte.oss-cn-shenzhen.aliyuncs.com/myself/037-github-spec-kit-fig01-cmp.png" class="lazyload"><br>
-<em>å¾ï¼å·¦è¾¹æ¯ vibe coding çä¿¡æ¯ç»æââéæ±æ£è½å¨å¯¹è¯éï¼AI æ¯æ¬¡é½å¨çï¼å³è¾¹æ¯ SDD çä¿¡æ¯ç»æââspec.md æ¯å¯ä¸çç¸æºï¼AI ä»è¿éåä¿¡æ¯</em></p>
-<h2 id="spec-kit-çæ ¸å¿è®¾è®¡ä¸æ­¥å·¥ä½æµ">Spec Kit çæ ¸å¿è®¾è®¡ï¼ä¸æ­¥å·¥ä½æµ</h2>
-<p>Spec Kit çå®è£å¾ç®åï¼æ ¸å¿æ¯ä¸å¥ä¸æ­¥å·¥ä½æµï¼æ¯ä¸æ­¥çæä¸ä¸ªæä»¶ï¼è¿äºæä»¶å±åææä¸ä¸ªåè½çãå®æ´è§èä½ç³»ãã</p>
-<p>å¨çå·ä½å½ä»¤ä¹åï¼åçè§£è¿ä¸ªè®¾è®¡å²å­¦ï¼</p>
-<p><strong>è§èåäºå®ç°ï¼æä»¶åäºä»£ç ã</strong></p>
-<p>ä¼ ç»å¼åæ¯ååä»£ç ï¼éå°é®é¢åè¡¥ææ¡£ãSpec Kit æ¯ååè§èï¼è®©è§èé©±å¨ä»£ç çæãè¿ä¸ªé¡ºåºçæ¹åï¼æä¹è¿å¤§äºå·¥å·æ¬èº«çåè½ã</p>
-<h3 id="ä¸æ­¥å·¥ä½æµå¨æ¯">ä¸æ­¥å·¥ä½æµå¨æ¯</h3>
+<p>æ¬ç¯ä»£ç ä»ä½ï¼<a href="https://github.com/Goblinsscholar/Hyperspectral-Image-Mosaicking/blob/main/Stitch_v1/stitch.md" target="_blank" rel="noopener nofollow">ImageStitching</a></p>
+<hr>
+<p>ç»è¿åé¢ä¸ç¯çéºå«ï¼æä»¬å·²ç»å¾å°äºç²¾ç¡®å¹éçåç¹éåä¸ä¸ªæè¿°å¾åé´å ä½å³ç³»çå¨å±ååºæ§ç©éµã</p>
+<p><strong>è½ç¶å¨ç°ä»£æ¼æ¥ç®¡éä¸­ä»æå¾å¤å¶ä»å¤çæ­¥éª¤åç¸åºç®æ³ï¼ä½å°±æä»¬ç®åææ¥æçææï¼å·²ç»å¯ä»¥å°è¯è¿è¡ä¸æ¬¡æç®æçå¾åæ¼æ¥ã</strong></p>
+<p>å¤è¿°ä¸ä¸æä»¬ç°æçææï¼</p>
+<ol>
+<li>å¾å A åå¾å Bï¼äºèä¹é´å­å¨éå åºåã</li>
+<li>ç»è¿ USAC æçº¯çå¹éç¹éåä¸ä¸ªå¨å±ååºæ§ç©éµ <span class="math inline">\(H\)</span>ï¼æè¿°äºä»å¾å A å°å¾å B çæå½±åæ¢å³ç³»ã</li>
+</ol>
+<p>èå¾åæ¼æ¥çåºæ¬æè·¯æ¯è¿æ ·çï¼</p>
+<blockquote>
+<p><strong>éæ©å¶ä¸­ä¸å¼ å¾åä½ä¸ºåèåæ ç³»ï¼éè¿ååºæ§ç©éµå°å¶ä»ææå¾åé½åæ¢å°è¿ä¸ªåæ ç³»ä¸ï¼ç¶åå¡«ååç´ ã</strong></p>
+</blockquote>
+<h1 id="1-æå»ºç»å¸">1. æå»ºç»å¸</h1>
+<p>æäºååºæ§ç©éµä¹åï¼ä¸æ¯ç´æ¥æå¾å A éè¿ååºæ§ç©éµåæ¢å°å¾å B ä¸ï¼é¦åè¦è§£å³çé®é¢æ¯ï¼</p>
+<blockquote>
+<p><strong>åæ¢åçå¾ååºè¯¥æ¾å¨åªéï¼</strong></p>
+</blockquote>
+<p>è¿å¹¶ä¸æ¯ç®åçææ¹åæ¼å¨ä¸èµ·ï¼å ä¸º<strong>æ­£ç¡®çååºæ§åæ¢ä¼ååºçå®éå¤´é´çå ä½å³ç³»ï¼å¾åçä½ç½®åå¤§å°é½ä¼åçæ¹åã</strong> ä¾å¦è´åæ ãè¶åºäºåå¾èå´ä»¥åæ´å¹å¾åçæè½¬å¾æç­ã</p>
+<p><img src="https://img2024.cnblogs.com/blog/3708248/202607/3708248-20260714222312851-492604815.png" alt="c42d28ac-02ec-4f31-9358-4dfe756d4b3c.png" loading="lazy"></p>
+<p>å æ­¤ï¼å¨çæ­£å¼å§åç´ æ å°ä¹åï¼éè¦ååå»ºä¸ä¸ªè¶³å¤å¤§ç<strong>ç®æ ç»å¸ï¼Canvasï¼</strong>ã</p>
+<p>å·ä½åæ³å¦ä¸ï¼</p>
+<ol>
+<li><strong>åä¿æåèå¾å B çä½ç½®ä¸åã</strong></li>
+<li><strong>å©ç¨ååºæ§ç©éµ <span class="math inline">\(H\)</span>ï¼è®¡ç®å¾å A åä¸ªé¡¶ç¹åæ¢åçåæ ã</strong></li>
+<li><strong>ç»è®¡ææé¡¶ç¹çåæ èå´ï¼</strong> å°å¾å B çåä¸ªè§ç¹ä¸å¾å A åæ¢åçåä¸ªè§ç¹ç»ä¸æ¾å°åä¸åæ ç³»ä¸­ï¼åå«ç»è®¡ <span class="math inline">\(x_{\min}, x_{\max},y_{\min},y_{\max}\)</span> ã</li>
+<li><strong>æ´ä½å¹³ç§»åæ ç³»ï¼</strong> ç±äºå¾åæ°ç»ä¸è½ä½¿ç¨è´åæ ä½ä¸ºç´¢å¼ï¼å æ­¤éè¦å¯¹ææå¾å**ç»ä¸æ½å ä¸ä¸ªå¹³ç§»ï¼</li>
+</ol>
+<p></p><div class="math display">\[T=  
+\begin{bmatrix}  
+1&amp;0&amp;-x_{\min}\\  
+0&amp;1&amp;-y_{\min}\\  
+0&amp;0&amp;1  
+\end{bmatrix}  
+\]</div><p></p><ol start="5">
+<li><strong>æå»ºæç»ç»å¸ï¼</strong> æ ¹æ®å¹³ç§»åçåæ èå´åå»ºä¸ä¸ªè½å¤åå´ææå¾åçæå°ç©å½¢ï¼å¶å®½ãé«åå«ä¸º</li>
+</ol>
+<p></p><div class="math display">\[\text{width}=x_{\max}-x_{\min}
+\]</div><p></p><p></p><div class="math display">\[\text{height}=y_{\max}-y_{\min}
+\]</div><p></p><p>è¿æ ·å¾å°çç©å½¢ä¾¿æ¯æç»ç¨äºæ¼æ¥çç»å¸ï¼</p>
+<p><img src="https://img2024.cnblogs.com/blog/3708248/202607/3708248-20260714222252988-1956681335.png" alt="bc4b4bcb-029f-4b88-8590-377026baf652.png" loading="lazy"></p>
+<h1 id="2-å¡«åç»å¸">2. å¡«åç»å¸</h1>
+<p>ç°å¨ï¼æä»¬æäºåéçåºåå»æ¾ç½®åæ¢åçå¾åï¼èä¸è³äºå å¾åæ¬èº«çå°ºå¯¸éå¶å¯¼è´è£åªã<br>
+ä½ç®åç»å¸åªæ¯ä¸ä¸ª<strong>ç©ºçåç´ æ°ç»</strong>ï¼å®æ¬èº«æ²¡æä»»ä½å¾ååå®¹ã<br>
+å æ­¤ï¼è¿æ­¥ææ¯æ¼æ¥çéç¹å·¥ä½ï¼</p>
+<blockquote>
+<p><strong>å©ç¨ä¸¤å¼ åå§å¾åå»å¡«åè¿ä¸ªç»å¸ã</strong></p>
+</blockquote>
+<h2 id="21-åèå¾åå¹³ç§»å¤å¶">2.1 åèå¾åï¼å¹³ç§»å¤å¶</h2>
+<p>åèå¾å B ä¸éè¦å ä½åæ¢ï¼å®åªéè¦æ ¹æ®ä¸ä¸æ­¥å¾å°çå¹³ç§»ç©éµ <span class="math inline">\(T\)</span> è¿è¡ä¸æ¬¡æ´ä½å¹³ç§»ï¼ä¹åç´æ¥å¤å¶åç´ å¼å³å¯ã</p>
+<p></p><div class="math display">\[T=  
+\begin{bmatrix}  
+1&amp;0&amp;-x_{\min}\\  
+0&amp;1&amp;-y_{\min}\\  
+0&amp;0&amp;1  
+\end{bmatrix}  
+\]</div><p></p><p></p><div class="math display">\[B' = T B  
+\]</div><p></p><h2 id="22-åæ¢å¾åååæ å°">2.2 åæ¢å¾åï¼ååæ å°</h2>
+<p>é¦åè¦è¯´æçæ¯ï¼<strong>è¿æ­¥åä¸ä¸æ­¥å¹¶ä¸æ¯ååé¡ºåºå³ç³»ï¼å¾å A å¹¶ä¸æ¯å¨å·²ç»åå« B çç»å¸ä¸æ å°çï¼èæ¯ç¬ç«çï¼è¿åä¸ä¸æ­¥èåæå³ã</strong></p>
+<p>æäºååºæ§ç©éµåï¼å¾å A åæ¢çæç´æ¥æ³æ³æ¯è¿æ ·çï¼</p>
+<blockquote>
+<p><strong>éååå§å¾å A ä¸­çæ¯ä¸ªåç´ ï¼ç¨ <span class="math inline">\(H\)</span> è®¡ç®åºå®å¨ç»å¸ä¸­çä½ç½®ï¼æåç´ å¼å¡«è¿å»ã</strong></p>
+</blockquote>
+<p>è¿ç§æ¹æ³è¢«ç§°ä¸º<strong>ååæ å°ï¼Forward Warpingï¼</strong>ï¼</p>
+<p></p><div class="math display">\[\begin{bmatrix}
+x' \\
+y' \\
+1
+\end{bmatrix}
+=
+H
+\begin{bmatrix}
+x \\
+y \\
+1
+\end{bmatrix}
+\]</div><p></p><p>ä½ååæ å°å­å¨ä¸ä¸ªä¸¥éé®é¢ï¼</p>
+<blockquote>
+<p><strong>åæ¢åçåæ  <span class="math inline">\((x', y')\)</span> å ä¹ä¸å¯è½æ°å¥½è½å¨æ´æ°åç´ ä½ç½®ä¸ã</strong></p>
+</blockquote>
+<p>è¿æ ·ä¼å¯¼è´ä¸¤ç±»å¸¸è§åæï¼</p>
+<ol>
+<li>åç´ å¯è½è¢«æ å°å°ç®æ å¾åä¸­ç"ç¼é"éï¼å¯¼è´ç»æä¸­åºç°å¤§é<strong>ç©ºæ´</strong>ã</li>
+<li>å¤ä¸ªåç´ æ å°å°åä¸ä¸ªä½ç½®å¯¼è´<strong>éå </strong>ã</li>
+</ol>
+<p><img src="https://img2024.cnblogs.com/blog/3708248/202607/3708248-20260714222335781-2051137496.png" alt="bdc75d81-af51-48fe-bbc9-8a9a5042660a.png" loading="lazy"></p>
+<p>å æ­¤ï¼å®éå·¥ç¨ä¸­å ä¹ä»ä¸ä½¿ç¨ååæ å°ï¼åèä»£ä¹çæ¯<strong>ååæ å°ï¼Backward/Inverse Warpingï¼</strong>ï¼</p>
+<blockquote>
+<p><strong>éåç»å¸ä¸­çæ¯ä¸ªæ´æ°åç´ ä½ç½®ï¼ç¨ <span class="math inline">\(H^{-1}\)</span> è®¡ç®å®å¨åå§å¾åä¸­çå¯¹åºä½ç½®ï¼ç¶åéæ ·åç´ å¼ãä½åªæè½å¤æ å°ååå¾ææåºåçåç´ æä¼è¢«èµå¼ã</strong></p>
+</blockquote>
+<p>ååæ å°çè¿ç¨å¦ä¸ï¼</p>
+<ol>
+<li>å¯¹ç»å¸ä¸­æ¯ä¸ªæ´æ°åç´ åæ  <span class="math inline">\((x', y')\)</span>ï¼è®¡ç®ï¼</li>
+</ol>
+<p></p><div class="math display">\[H' = T H  
+\]</div><p></p><p></p><div class="math display">\[\begin{bmatrix}
+x \\
+y \\
+1
+\end{bmatrix}
+\sim
+H'^{-1}
+\begin{bmatrix}
+x' \\
+y' \\
+1
+\end{bmatrix}
+\]</div><p></p><ol start="2">
+<li>å¨åå§å¾å A ç <span class="math inline">\((x, y)\)</span> ä½ç½®<strong>æå¼éæ ·</strong>åç´ å¼ï¼å¡«å¥ç»å¸ç <span class="math inline">\((x', y')\)</span>ã</li>
+</ol>
+<p>ç±äº <span class="math inline">\(H^{-1}\)</span> çè®¡ç®ç»æéå¸¸ä¹æ¯æµ®ç¹æ°ï¼å æ­¤ä»ç¶ä¼éå°"éæ´æ°åæ "çé®é¢ã<br>
+è¿æ¯èåæ³ï¼<strong>æå¼ï¼å¨å¾åæ¼æ¥ä¸­ï¼åçº¿æ§æå¼å¾å¾æ¯æ§ä»·æ¯æé«çéæ©ã</strong></p>
+<p><img src="https://img2024.cnblogs.com/blog/3708248/202607/3708248-20260714222242098-910046318.png" alt="393706d5-ec9f-4cad-865c-defec6806be5.png" loading="lazy"></p>
+<h1 id="3-å¾åèå">3. å¾åèå</h1>
+<p>ç»è¿ä¸ä¸æ­¥ï¼æä»¬å·²ç»å®æäºä»åå§å¾åå°ç»å¸çæ å°ï¼ä½è¿éè¿æä¸ä¸ªææ¾é®é¢ï¼</p>
+<blockquote>
+<p><strong>æ¼æ¥å¾å AB é´å­å¨éå åºï¼è¿é¨ååç´ å¼ç¨è°çï¼æä¹å¤çï¼</strong></p>
+</blockquote>
+<p>è¿ä¾¿æ¯å¾åèåé¨åçé»è¾äºï¼è¿éåå¼å¥æåºç¡çåå®¹ï¼</p>
+<h2 id="31-éå åºè¯å«">3.1 éå åºè¯å«</h2>
+<p>éå åºçè¯å«æ¯å¤ççåæï¼èè¿å¶å®å¨ä¸ä¸æ­¥å¡«åæ¶åæ­¥è¿è¡çï¼</p>
+<blockquote>
+<p><strong>å¨å¾å AB åå¸è¿è¡ç»å¸å¡«åæ¶åæ­¥çæåèªæ©ç ï¼æå¯¼å¾åèåï¼å¯ä»¥çè§£ä¸ºååå«çæä¸¤å¼ å·²ç»å¯¹é½å°åä¸ç»å¸ä¸çå¾åï¼åæ ¹æ®æ©ç å³å®æç»è¾åºã</strong></p>
+</blockquote>
+<p>å·ä½å¦ä¸ï¼</p>
+<ol>
+<li>å½åèå¾åå¤å¶æåæ¢å¾åæ å°å®æåï¼ä¸ºå¶çæä¸ç»åç»å¸å°ºå¯¸ç¸åçæ©ç ï¼è¦çé¨åå¼ä¸º 1 ï¼åä¹ä¸º 0 ã</li>
+<li>å¨èåé¨åæ ¹æ®æ©ç æåµè¿è¡ç¸åºå¤å«ï¼æå¯¼æç»èåï¼
+<ul>
+<li>maskA=1, maskB=0 â ééå ï¼ç´æ¥å¤å¶ A å¼ã</li>
+<li>maskA=0, maskB=1 â ééå ï¼ç´æ¥å¤å¶ B å¼ã</li>
+<li><strong>maskA=1, maskB=1 â éå åºåï¼æ§è¡èåå¤çã</strong></li>
+</ul>
+</li>
+</ol>
+<p><img src="https://img2024.cnblogs.com/blog/3708248/202607/3708248-20260714222126870-94534662.png" alt="warping_visualization.png" loading="lazy"></p>
+<h2 id="32-èåç®æ³">3.2 èåç®æ³</h2>
+<p>èåç®æ³æ¬èº«å°±åä¹åçç¹å¾å¹éãè¯¯åé¤ä¸æ ·ï¼æ¯æ¼æ¥ç®¡éçæ ¸å¿æ¨¡åï¼å¶åæ ·æ¥æä¸°å¯çæ¹æ³ä»¥åæç»­çæ¼è¿è¿ç¨ï¼ç®ååä¸¾å¦ä¸ï¼</p>
 <table>
 <thead>
 <tr>
-<th>æ­¥éª¤</th>
-<th>å½ä»¤</th>
-<th>çææä»¶</th>
-<th>æ ¸å¿ä½ç¨</th>
+<th>æ¹æ³</th>
+<th>æ ¸å¿ææ³</th>
+<th>ä¼ç¹</th>
+<th>ç¼ºç¹</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>1</td>
-<td><code>/speckit.constitution</code></td>
-<td><code>.specify/memory/constitution.md</code></td>
-<td>é¡¹ç®æ²»çååï¼ææåç»­å³ç­çåºçº¿</td>
+<td><strong>ç´æ¥è¦çï¼Direct Copyï¼</strong></td>
+<td>éå åºåç´æ¥éç¨ä¸å¹å¾åçåç´ </td>
+<td>å®ç°æç®åï¼éåº¦æå¿«</td>
+<td>æ¥ç¼ææ¾ï¼äº®åº¦ååçªå</td>
 </tr>
 <tr>
-<td>2</td>
-<td><code>/speckit.specify</code></td>
-<td><code>specs/[FEATURE]/spec.md</code></td>
-<td>ç¨æ·æäºååè½éæ±ï¼onlyãwhatãåãwhyãï¼</td>
+<td><strong>å æèåï¼Feather Blendingï¼</strong></td>
+<td>æ ¹æ®è·ç¦»è¾¹ççæéå¯¹ä¸¤å¹å¾è¿è¡çº¿æ§å æ</td>
+<td>å®ç°ç®åï¼å¯ææåå¼±æ¥ç¼</td>
+<td>å­å¨éå½±ï¼å¯¹éåè¯¯å·®è¾ææ</td>
 </tr>
 <tr>
-<td>3</td>
-<td><code>/speckit.plan</code></td>
-<td><code>specs/[FEATURE]/plan.md</code></td>
-<td>ææ¯æ¶æåææ¯æ éå</td>
+<td><strong>å¤é¢å¸¦èåï¼Multi-band Blendingï¼</strong></td>
+<td>å©ç¨ææ®ææ¯éå­å¡å¨ä¸åé¢çåå«èå</td>
+<td>æ¥ç¼èªç¶ï¼æ¯ç»å¸æ¼æ¥ç®æ³çä¸»æµæ¹æ¡</td>
+<td>è®¡ç®éè¾å¤§ï¼å®ç°å¤æ</td>
 </tr>
 <tr>
-<td>4</td>
-<td><code>/speckit.clarify</code></td>
-<td>â</td>
-<td>è§£å³æ­§ä¹ï¼æåæ´é²åè®¾</td>
+<td><strong>æä¼ç¼åï¼Seam Findingï¼</strong></td>
+<td>å¨éå åºå¯»æ¾æä¸æ¾ç¼çæ¼æ¥ç¼ï¼åè¿è¡èå</td>
+<td>è½ææé¿å¼è¿å¨ç©ä½åææ¾éä½</td>
+<td>å¯¹æåå·®å¼ä»è¾ææï¼éå¸¸éç»åå¶ä»èåæ¹æ³</td>
 </tr>
 <tr>
-<td>5</td>
-<td><code>/speckit.tasks</code></td>
-<td><code>specs/[FEATURE]/tasks.md</code></td>
-<td>å¸¦ä¾èµå³ç³»çä»»å¡æ¸å</td>
+<td><strong>æ¢¯åº¦åèåï¼Poisson Blendingï¼</strong></td>
+<td>ä¿ææ¢¯åº¦è¿ç»­ï¼éè¿æ±è§£æ³æ¾æ¹ç¨å®æèå</td>
+<td>åç§è¿æ¸¡èªç¶ï¼é¢è²ä¸è´æ§å¥½</td>
+<td>æ±è§£èæ¶ï¼ä¸éåå¤§è§æ¨¡å®æ¶æ¼æ¥</td>
 </tr>
 <tr>
-<td>6</td>
-<td><code>/speckit.analyze</code></td>
-<td>â</td>
-<td>è·¨æä»¶ä¸è´æ§éªè¯</td>
-</tr>
-<tr>
-<td>7</td>
-<td><code>/speckit.implement</code></td>
-<td>å®éä»£ç </td>
-<td>ç³»ç»æ§æ§è¡ææä»»å¡</td>
+<td><strong>æ·±åº¦å­¦ä¹ èå</strong></td>
+<td>å©ç¨ç¥ç»ç½ç»å­¦ä¹ éå åºåçèåæ¹å¼</td>
+<td>å¯¹å¤æåºæ¯å·æè¾å¥½çéåºè½å</td>
+<td>ä¾èµè®­ç»æ°æ®ï¼è®¡ç®ææ¬é«</td>
 </tr>
 </tbody>
 </table>
-<p>è¿ä¸æ­¥éï¼æå®¹æè¢«è·³è¿çæ¯ç¬¬ 4 æ­¥ï¼clarifyï¼åç¬¬ 6 æ­¥ï¼analyzeï¼ãè·³è¿è¿ä¸¤æ­¥çä»£ä»·ï¼å¾å¾å¨ç¬¬ 7 æ­¥ææ´é²åºæ¥ââä»»å¡è·å°ä¸åï¼åç°ä¸¤ä¸ªæ¨¡åçæ¥å£ä¸å¼å®¹ï¼æèæä¸ªè¾¹çæåµæ ¹æ¬æ²¡èèè¿å»ã</p>
-<p>æå®è·µèå¨å®æ´èµ°å®ä¸ä¸ª Azure å¾®æå¡é¡¹ç®åæ¥åï¼å¨ analyze é¶æ®µèªå¨åç°äº 9 ä¸ªæ½å¨é®é¢ï¼åæ¬ãç¼ºå¤± FluentValidation éªè¯å¨ãåãDI æ³¨åé¡ºåºéè¯¯ãââè¿ä¸¤ä¸ªå¦æç­å° implement é¶æ®µæåç°ï¼ä»£ä»·æ¯å®å¨ä¸åçã</p>
-<p><strong>æç»çæçç®å½ç»ææ¯è¿æ ·çï¼</strong></p>
-<pre><code>specs/[FEATURE]/
-âââ spec.md         # ç¨æ·æäºååè½éæ±
-âââ plan.md         # ææ¯æ¶æåå³ç­
-âââ tasks.md        # å¸¦ä¾èµå³ç³»çå·¥ä½åè§£
-âââ data-model.md   # æ°æ®åº schema
-âââ contracts/      # REST API å¥çº¦
-âââ research.md     # ææ¯æ éªè¯
-
-.specify/
-âââ memory/
-â   âââ constitution.md    # é¡¹ç®æ²»çåå
-âââ templates/
-âââ presets/
-</code></pre>
-<p>æ³¨æ <code>specs/</code> å <code>.specify/</code> æ¯ä¸¤ä¸ªä¸åçç®å½ï¼åèæ¯åè½çº§å«çè§èï¼åèæ¯é¡¹ç®çº§å«çéç½®ã</p>
-<h2 id="5-åéä¸æä»å®è£å°ç¬¬ä¸ä¸ª-spec">5 åéä¸æï¼ä»å®è£å°ç¬¬ä¸ä¸ª spec</h2>
-<p>çè®ºè¯´å®äºï¼ç´æ¥ä¸æã</p>
-<h3 id="ç¯å¢åå¤">ç¯å¢åå¤</h3>
-<p>Spec Kit ä¾èµ Python 3.11+ å uv åç®¡çå¨ãåç¡®è®¤ uv å·²å®è£ï¼</p>
-<pre><code class="language-bash">uv --version
-</code></pre>
-<p>å¦ææ²¡æ uvï¼ä¸è¡å½ä»¤å®è£ï¼</p>
-<pre><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh
-</code></pre>
-<h3 id="ç¬¬ä¸æ­¥å®è£-specify-cli">ç¬¬ä¸æ­¥ï¼å®è£ specify-cli</h3>
-<pre><code class="language-bash">uv tool install specify-cli --from git+https://github.com/github/spec-kit.git@v0.9.5
-</code></pre>
-<p>å®è£å®æåéªè¯ï¼</p>
-<pre><code class="language-bash">specify --version
-</code></pre>
-<p>é¢æè¾åºç±»ä¼¼ï¼</p>
-<pre><code>specify-cli 0.9.5
-</code></pre>
-<blockquote>
-<p><strong>è¸©åè®°å½</strong>ï¼å¦æä½ ç¨çæ¯è¾èçæ¬ç uvï¼å¯è½éå° <code>No module named 'specify'</code> éè¯¯ãåæ§è¡ <code>uv self update</code> åçº§ uvï¼åéæ°å®è£ã</p>
-</blockquote>
-<h3 id="ç¬¬äºæ­¥åå§åé¡¹ç®">ç¬¬äºæ­¥ï¼åå§åé¡¹ç®</h3>
-<p>å¨ä½ çé¡¹ç®æ ¹ç®å½æ§è¡ï¼</p>
-<pre><code class="language-bash">specify init my-project --integration claude
-</code></pre>
-<p><code>--integration</code> åæ°æå®ä½ ç¨ç AI å·¥å·ãæ¯æçå¼åæ¬ <code>claude</code>ã<code>copilot</code>ã<code>gemini</code>ã<code>cursor</code>ã<code>codex</code> ç­ï¼å®æ´åè¡¨ç¨ <code>specify integration list</code> æ¥çã</p>
-<p>å¯¹äº Claude Code ç¨æ·ï¼è¿ä¸æ­¥ä¼ä»¥ Skill æ¨¡å¼å®è£ï¼èä¸æ¯ slash commandsââè¿æå³çè§èå½ä»¤ä¼ä»¥ Claude Code ç Skill å½¢å¼å è½½è¿æ¥ï¼èä¸æ¯æ®éçææ å½ä»¤ãè¿ä¸ªåºå«å¨å®éä½¿ç¨æ¶å ä¹æç¥ä¸å°ï¼ä½åºå±æºå¶ä¸åã</p>
-<h3 id="ç¬¬ä¸æ­¥å»ºç«é¡¹ç®è§èconstitution">ç¬¬ä¸æ­¥ï¼å»ºç«é¡¹ç®è§èï¼constitutionï¼</h3>
-<p>å¨ Claude Code éæ§è¡ï¼</p>
-<pre><code>/speckit.constitution
-</code></pre>
-<p>è¿ä¸æ­¥ä¼çæ <code>.specify/memory/constitution.md</code>ï¼åå®¹æ¯ä½ çé¡¹ç®æ²»çååï¼ææ¯æ çº¦å®ãä»£ç é£æ ¼è¦æ±ãä¸åè®¸å¼å¥çä¾èµãå®å¨è¦æ±ç­ã</p>
-<p>ä¸ä¸ªå®éç constitution.md çæ®µæ¯è¿æ ·çï¼</p>
-<pre><code class="language-markdown"># é¡¹ç®æ²»çåå
-
-## ææ¯æ çº¦å®
-- åç«¯ï¼Java 17 + Spring Boot 3.x
-- æ°æ®åºï¼MySQL 8.0ï¼ç¦æ­¢ä½¿ç¨ JSON å­æ®µåæ ¸å¿ä¸å¡æ¥è¯¢
-- ORMï¼MyBatis-Plusï¼ç¦æ­¢ååç SQL å° Service å±
-
-## æ§è½è¦æ±
-- åè¡¨æ¥å£ P99 â¤ 200msï¼æ°æ®é &lt; 100 ä¸æ¶ï¼
-- åé¡µå¿é¡»å¨æ°æ®åºå±é¢å®æï¼ç¦æ­¢åç«¯åé¡µ
-
-## ç¦æ­¢è¡ä¸º
-- ç¦æ­¢å¨ Controller å±åä¸å¡é»è¾
-- ç¦æ­¢ @Transactional æ³¨è§£ç¨å¨ private æ¹æ³ä¸
-</code></pre>
-<p>è¿ä¸ªæä»¶åå¾è¶è¯¦ç»ï¼åç»­æ¯ä¸ª spec çè´¨éå°±è¶é«ââå ä¸º AI å¨çæ plan å tasks æ¶ï¼ä¼æè¿äºçº¦æèªå¨å¸¦è¿å»ã</p>
-<h3 id="ç¬¬åæ­¥åç¬¬ä¸ä¸ª-spec">ç¬¬åæ­¥ï¼åç¬¬ä¸ä¸ª spec</h3>
-<p>åè®¾ä½ è¦å®ç°ãç¨æ·åè¡¨ææ³¨åæ¶é´æåºãè¿ä¸ªåè½ï¼å¨ Claude Code éæ§è¡ï¼</p>
-<pre><code>/speckit.specify
-</code></pre>
-<p>AI ä¼å¼å¯¼ä½ æè¿°éæ±ï¼æç»çæ <code>specs/001-user-list-sort/spec.md</code>ã</p>
-<p>ä¸ä¸ªè§èç spec.md é¿è¿æ ·ï¼</p>
-<pre><code class="language-markdown"># ç¨æ·åè¡¨æåºåè½
-
-## èæ¯
-è¿è¥å¢ééè¦è½å¤ææ³¨åæ¶é´å¯¹ç¨æ·åè¡¨è¿è¡æåºï¼ä»¥ä¾¿ä¼åèç³»ææ°æ³¨åçç¨æ·ã
-
-## ç¨æ·æäº
-ä½ä¸ºè¿è¥äººåï¼æå¸æè½å¤å¨ç¨æ·åè¡¨é¡µææ³¨åæ¶é´ï¼ååº/éåºï¼æåºï¼
-ä»¥ä¾¿æè½å¿«éå®ä½éè¦è·è¿çæ°ç¨æ·ã
-
-## åè½éæ±
-- æ¯ææ `registered_at` å­æ®µæåºï¼é `created_at`ï¼
-- é»è®¤ææ³¨åæ¶é´éåº
-- æåºå¿é¡»å¨æ°æ®åºå±é¢å®æï¼æ¯æåé¡µåºæ¯ä¸çæ­£ç¡®æ§
-- åç«¯æ§ä»¶ï¼åè¡¨å¤´é¨çå¯ç¹å»æåºç®­å¤´
-
-## ä¸å¨èå´å
-- å¤å­æ®µç»åæåº
-- æåºåå¥½çæä¹åï¼ä¸è®°å¿ç¨æ·ä¸æ¬¡çæåºéæ©ï¼
-
-## éªæ¶æ å
-- [ ] 10 ä¸æ¡æ°æ®éä¸ï¼æåºæ¥å£ååº &lt; 200ms
-- [ ] æåºä¸åé¡µåæ¶ä½¿ç¨æ¶ï¼ç»ææ­£ç¡®
-</code></pre>
-<p>æ³¨æ spec.md éåªåãä»ä¹ãåãä¸ºä»ä¹ãï¼<strong>ä¸åææ¯å®ç°ç»è</strong>ââå­æ®µç¨åªä¸ªç´¢å¼ãæ¥å£åæ°æä¹è®¾è®¡ï¼è¿äºçç»ä¸ä¸æ­¥ç plan.md å¤çã</p>
-<h3 id="ç¬¬äºæ­¥çæè®¡ååä»»å¡">ç¬¬äºæ­¥ï¼çæè®¡ååä»»å¡</h3>
-<pre><code>/speckit.plan    # çæææ¯æ¶ææ¹æ¡
-/speckit.clarify # ï¼å¯éä½å¼ºçå»ºè®®ï¼è®© AI æåºå®çå°æç¹ï¼ä½ æ¥åç­
-/speckit.tasks   # çæå¸¦ä¾èµå³ç³»çä»»å¡æ¸å
-/speckit.analyze # éªè¯åæä»¶ä¹é´çä¸è´æ§
-</code></pre>
-<p>analyze å®æåï¼æ§è¡ï¼</p>
-<pre><code>/speckit.implement
-</code></pre>
-<p>AI ä¼ç³»ç»æ§å°æ§è¡ tasks.md éçæ¯ä¸ä¸ªä»»å¡ï¼èä¸æ¯ãççåãã</p>
-<p>å®æ´æµç¨æ»ç»ï¼</p>
-<p><img alt="Spec Kit ä¸æ­¥å·¥ä½æµï¼ä» constitution å° implement çå®æ´è·¯å¾" loading="lazy" data-src="https://magebyte.oss-cn-shenzhen.aliyuncs.com/myself/037-github-spec-kit-fig02-flow.png" class="lazyload"><br>
-<em>å¾ï¼Spec Kit ä¸æ­¥å·¥ä½æµï¼æ¯ä¸æ­¥é½ææç¡®çè¾å¥åè¾åºï¼AI å¨æ´ä¸ªè¿ç¨ä¸­æ¯æ§è¡èèéå³ç­è</em></p>
-<h2 id="ä¸å¼ å¯¹æ¯å¾vibe-coding-vs-sdd-ççå®å·®å¼">ä¸å¼ å¯¹æ¯å¾ï¼vibe coding vs SDD ççå®å·®å¼</h2>
-<p>åè¯´åçä¸å¤ç´è§ï¼ææ¥ç»ä¸å¼ æ´å·ä½çå¯¹æ¯ã</p>
-<p>åè®¾ä½ è¦å¼åãç¨æ·æ³¨åé®ä»¶éªè¯ãåè½ã</p>
-<p><strong>vibe coding è·¯å¾ï¼</strong></p>
-<p>ç¬¬ 1 è½® Promptï¼ãå¸®æå®ç°ç¨æ·æ³¨åçé®ä»¶éªè¯åè½ã<br>
-â AI ç»äºä¸ä¸ªå®æ´çå®ç°ï¼ç¨äºæä¸ªé®ä»¶åºï¼æéªè¯ç é»è¾</p>
-<p>ç¬¬ 2 è½®ï¼ãéªè¯ç çææææ¹æ 10 åéã<br>
-â AI æ¹äºï¼ä½é¡ºä¾¿æéªè¯ç é¿åº¦ä¹æ¹äºï¼ä½ æ²¡è¯´ä¿æä¸åï¼</p>
-<p>ç¬¬ 3 è½®ï¼ãéªè¯é¾æ¥è¦åå«ç¨æ· ID åï¼ã<br>
-â AI è¯´ãå¯ä»¥ãï¼ç¶åæ¹äºå®ç°ï¼ä½æ°ç URL æ ¼å¼åä½ çè·¯ç±éç½®å²çªäº</p>
-<p>ç¬¬ 4 è½®ï¼ãè·¯ç±æ¥ 404ã<br>
-â ...</p>
-<p><strong>SDD è·¯å¾ï¼Spec Kitï¼ï¼</strong></p>
-<p>spec.md éæç¡®åäºï¼</p>
-<ul>
-<li>éªè¯æ¹å¼ï¼é¾æ¥ï¼ä¸æ¯éªè¯ç </li>
-<li>æææï¼10 åé</li>
-<li>URL æ ¼å¼ï¼<code>/verify?token={jwt_token}</code>ï¼token åå« user_idï¼ä¸æ´é²å¨ URL é</li>
-<li>ä¾èµåºï¼å·²æç <code>spring-boot-starter-mail</code>ï¼ä¸å¼å¥æ°ä¾èµ</li>
-</ul>
-<p>plan.md éæç¡®åäºï¼</p>
-<ul>
-<li>ç¨ Redis å­å¨ tokenï¼key æ ¼å¼ <code>email:verify:{token}</code>ï¼TTL 10 åé</li>
-<li>éªè¯æ¥å£ <code>GET /verify</code> çåæ°åååºæ ¼å¼</li>
-</ul>
-<p>tasks.md éæç¡®åäºï¼</p>
-<ul>
-<li>Task 1ï¼Redis å­å¨é»è¾ï¼æ åç½®ä¾èµï¼</li>
-<li>Task 2ï¼é®ä»¶åéæå¡ï¼ä¾èµ Task 1ï¼</li>
-<li>Task 3ï¼éªè¯æ¥å£ï¼ä¾èµ Task 1ï¼</li>
-<li>Task 4ï¼åç«¯ãå·²åééªè¯é®ä»¶ãæç¤ºé¡µï¼æ åç«¯ä¾èµï¼</li>
-</ul>
-<p>AI æ§è¡ <code>/speckit.implement</code> çæ¶åï¼å®ç¥éæ¯ä¸ä¸ª task è¦åä»ä¹ãä¸è½åä»ä¹ãä¾èµä»ä¹ã33 ä¸ª taskï¼éä¸ âã</p>
-<p>è¿ä¸æ¯è¯´ SDD æ²¡æè¿å·¥ï¼èæ¯è¿å·¥åçå¨ãåææ¡£ãé¶æ®µï¼èä¸æ¯ãè·æµè¯ãé¶æ®µââ<strong>å¨ spec éæ¹ä¸è¡å­çä»£ä»·ï¼è¿ä½äºå¨ä»£ç é debug ä¸ä¸ªå°æ¶</strong>ã</p>
-<p><img alt="vibe coding vs è§èé©±å¨å¼åçè¿å·¥ææ¬å¯¹æ¯" loading="lazy" data-src="https://magebyte.oss-cn-shenzhen.aliyuncs.com/myself/037-github-spec-kit-fig03-cmp.png" class="lazyload"><br>
-<em>å¾ï¼ä¸¤ç§æ¨¡å¼ä¸çè¿å·¥æ¶æºå¯¹æ¯ââSDD æé®é¢æ´é²å¨ãåè§èãé¶æ®µï¼vibe coding æé®é¢çå°ãè·ä»£ç ãé¶æ®µ</em></p>
-<h2 id="è¿å¥æ¹æ³çè¾¹çå¨åªé">è¿å¥æ¹æ³çè¾¹çå¨åªé</h2>
-<p>Spec Kit ä¸æ¯é¶å¼¹ï¼æå ä¸ªåºæ¯å®ä¸éåï¼</p>
-<p><strong>1. 5 åéçå¿«éåå</strong></p>
-<p>å¦æä½ åªæ¯æ³ççãè¿ä¸ª API è½ä¸è½ç¨ããè¿ä¸ª UI å¤§æ¦é¿ä»ä¹æ ·ãï¼vibe coding æ´å¿«ãSpec Kit çä¸æ­¥å·¥ä½æµæ¯æææ¬çï¼è¿ä¸ªææ¬å¨ååéªè¯é¶æ®µä¸åç®ã</p>
-<p><strong>2. éæ±é«åº¦ä¸ç¡®å®çæ¢ç´¢æ</strong></p>
-<p>å¦æä½ è¿ãè¦åä»ä¹ãé½è¿æ²¡æ³æ¸æ¥ï¼å spec ä¼å¾çè¦ââä½ ä¸ç¥éè¦å¾éå¡«ä»ä¹ï¼æèæ¯å¤©é½å¨æ¹ãè¿ä¸ªé¶æ®µ vibe coding åèæ¯åççï¼å ä¸ºä½ å¨ç¨ä»£ç æ¥æ¢ç´¢éæ±ã</p>
-<p><strong>3. ç¬ç«å¼åèçä¸ªäººå°é¡¹ç®</strong></p>
-<p>äºæ­¥è§èæµç¨å¯¹ä¸ä¸ªäººåçå°å·¥å·æ¥è¯´å¤ªéäºãä¸è¿å³ä½¿ä¸ç¨å®æ´æµç¨ï¼constitution.md è¿ä¸ªåä¸æä»¶å°±å¼å¾åââå®ç¸å½äºä½ ç» AI çå¨å±éç½®ï¼æ¯æ¯æ¬¡ Prompt ééå¤è¯´çº¦æé«æå¾å¤ã</p>
-<p><strong>Spec Kit çæ­£åæ¥ä»·å¼çåºæ¯æ¯ï¼</strong></p>
-<ul>
-<li>å¤äººåä½é¡¹ç®ï¼AI éè¦åä¸åæåççº¦å®ä¿æä¸è´</li>
-<li>åè½å¤æåº¦é«ï¼æ¶åå¤ä¸ªæ¨¡ååæ¥å£å¥çº¦</li>
-<li>æéçç³»ç»ï¼éè¦å¨å·²æä»£ç çº¦å®ä¸åæ°å¼å</li>
-<li>å¯¹äº¤ä»è´¨éææç¡®éªæ¶æ åçåè½</li>
-</ul>
-<p>ç¨ GitHub èªå·±çåç±»ï¼ç»¿å°æ°é¡¹ç®ï¼greenfieldï¼ãå·²æç³»ç»å åè½ï¼N+1ï¼ãéçç³»ç»æ¹é ââSpec Kit å¯¹è¿ä¸ç±»é½æå·ä½çé¢è®¾æ¯æã</p>
-<p>ç®åå®å·²ç»æ <strong>105 ä¸ªç¤¾åºæ©å±ã22 ä¸ªé¢è®¾</strong>ï¼åæ¬ä¸é¨éå¯¹ Spring Boot é¡¹ç®ãGo å¾®æå¡ãåç«¯ç»ä»¶åºçç¹åçæ¬ãè£å®åºç¡å·¥å·åï¼ç¨ <code>specify extension list</code> å¯ä»¥çå°å®æ´ç®å½ã</p>
-<h2 id="å¸¸è§é®é¢">å¸¸è§é®é¢</h2>
-<p><strong>Qï¼å spec.md å¾è±æ¶é´ï¼æè¿ç§å¿«èå¥å¢éç¨å¾èµ·åï¼</strong></p>
-<p>è¿ä¸ªé®é¢çéå«åè®¾æ¯ãåææ¡£ = é¢å¤ææ¬ããæ¢ä¸ªè§åº¦ï¼ä½ ç°å¨è±å¨è§£ééæ±ãä¿® AI çéãåå¹¶å²çªä¸çæ¶é´ï¼æå¤å°ï¼spec.md æè¿äºææ¬åç½®äºãæ Peter Saktor çå®æµç»éªï¼å®æ´èµ°å® Spec Kit æµç¨çé¡¹ç®ï¼33 ä¸ªä»»å¡å¨é¨æ­£ç¡®å®æï¼0 ç¼è¯éè¯¯ââèä¸èµ°è§èæµç¨æ¶ï¼åç­å¤æåº¦çåè½éå¸¸éè¦å¤è½®è¿å·¥ã</p>
-<p><strong>Qï¼Spec Kit æ¯æä¸­æå spec åï¼</strong></p>
-<p>å®å¨æ¯æãconstitution.md å spec.md é½å¯ä»¥ç¨ä¸­æåï¼AI çè§£æ²¡æé®é¢ãçè³æ´æ¨èä¸­æåââå ä¸ºä½ çå¢éç¨ä¸­ææèéæ±ï¼åè§èçæ¶åç¨ä¸­ææ´ä¸å®¹æåºç°ç¿»è¯å±çä¿¡æ¯æèã</p>
-<p><strong>Qï¼æç°å¨ç¨ Cursorï¼éè¦æ¢å·¥å·åï¼</strong></p>
-<p>ä¸éè¦ãSpec Kit æ¯æ Cursor ç <code>.cursorrules</code> æ¨¡å¼ï¼<code>specify init my-project --integration cursor</code> å°±è¡ãå®çè®¾è®¡æ¬æ¥å°±æ¯å·¥å·æ å³çï¼è§èæä»¶ï¼spec.md/plan.md/tasks.mdï¼æ¯çº¯ Markdownï¼ä»»ä½ AI å·¥å·é½è½è¯»ã</p>
-<p><strong>Qï¼Spec Kit æ¬èº«ä¼è¿æ¶åï¼</strong></p>
-<p>è¿æ¯ä¸ªå¥½é®é¢ãAGENTS.md å CLAUDE.md è¿ç±»ãAI éç½®æä»¶ãççæå·²ç»å¨å¿«éæ ååï¼Linux Foundation æä¸å·²æ 60+ å·¥å·æ¯æ AGENTS.md è¿ä¸ªæ ¼å¼ãSpec Kit ç constitution.md æ¯è¿ä¸è¶å¿çè¿åçââå¦æè¯´ AGENTS.md æ¯ç» AI çä½¿ç¨è¯´æä¹¦ï¼constitution.md æ¯ç» AI çå·¥ç¨å¥çº¦ãæ¹åæ¯å¯¹çï¼æ ååç¨åº¦åªä¼è¶æ¥è¶é«ã</p>
-<p><strong>Qï¼è§èæä»¶å¤ªè¯¦ç»ä¼ä¸ä¼éå¶ AI åæ¥ï¼</strong></p>
-<p>è¿éæä¸ªè®¤ç¥è¯¯åºï¼æä»¬ä¸æ¯æ³è®© AIãåæ¥åæãï¼æä»¬æ³è®© AIãåç¡®æ§è¡æå¾ããè§èæä»¶éå¶çä¸æ¯ AI çè½åï¼æ¯ AI ççæµç©ºé´ââè®©å®å°çï¼å¤åãçäº§ä»£ç é AI çãåæåæ¥ãï¼å¤§å¤æ°æåµä¸æ¯éº»ç¦çæ¥æºï¼èä¸æ¯ä»·å¼çæ¥æºã</p>
-<h2 id="åèèµæ">åèèµæ</h2>
-<ul>
-<li><a href="https://github.com/github/spec-kit" target="_blank" rel="noopener nofollow">GitHub Spec Kit å®æ¹ä»åº</a>ï¼å½å v0.9.5ï¼2026 å¹´ 6 æ 5 æ¥åå¸ï¼</li>
-<li><a href="https://github.blog/ai-and-ml/generative-ai/spec-driven-development-with-ai-get-started-with-a-new-open-source-toolkit/" target="_blank" rel="noopener nofollow">Spec-driven development with AI: Get started with a new open source toolkit</a>ï¼GitHub å®æ¹åå®¢ï¼</li>
-<li><a href="https://github.github.com/spec-kit/" target="_blank" rel="noopener nofollow">GitHub Spec Kit Documentation</a>ï¼å®æ¹ææ¡£ï¼<br>
-<img alt="beeaa00ee37c5db0e2fb2c5c5efe4f29" loading="lazy" data-src="https://img2024.cnblogs.com/blog/735767/202605/735767-20260526114014236-744639895.png" class="lazyload"></li>
-</ul>
-<p>è¯´å°åºï¼Spec Kit è§£å³çä¸æ¯ãæä¹è· AI è¯´è¯ãçé®é¢ï¼æ¯ãæä»ä¹ä¸è¥¿åè¯ AIãçé®é¢ãPrompt åå¥½ï¼ä¹åªæ¯å¨ä¼åãä¿¡æ¯ä¼ éçæçãï¼spec.md æ¹åçæ¯ãä½ ç» AI çä¿¡æ¯ç»æãââè¿ä¸¤ä»¶äºçéçº§ä¸å¨åä¸ä¸ªå±é¢ã</p>
-<p>æå¨å ä¸ªé¡¹ç®éæ¨å¹¿ä¸æ¥çæåæ¯ï¼åä¸æ¬¡ç¨ Spec Kit ä¼è§å¾ãè¿ä¹å¤ªç¹çäºãï¼ç¬¬åæ¬¡å¼å§å°±ä¸æ³åå»äºï¼å ä¸ºä½ ä¼æ¸æ¥å°æåå°å°è¿å·¥æå¤ç½ãä¸ä¸ç¯æç®æè§£ constitution.md çå®æ´åæ³ï¼ç»åºéå¯¹ä¸åææ¯æ çä¸­ææ¨¡æ¿ï¼æå´è¶£çå³æ³¨ä¸ä¸ãå¦æä½ èº«è¾¹æå¢éæ­£å¨è§æ¨¡åæ¨å¹¿ AI ç¼ç ï¼è¿ç¯å¯ä»¥ç´æ¥ç©ç»ä»ä»¬ï¼æ¯éæ°è§£éä¸éçäºã</p>
+<p>é¨åå·ä½ç®æ³ä¼å¨ä¹ååè¯¦ç»å±å¼ã</p>
+<h1 id="4-æ´å¤æ¼æ¥ç»ä»¶">4. æ´å¤æ¼æ¥ç»ä»¶</h1>
+<p>è³æ­¤ï¼æä»¬å·²ç»å®æäºä¸æ¡æåºç¡çå¾åæ¼æ¥æµç¨ï¼<strong>å©ç¨å ä½åæ¢å°ä¸¤å¹å¾åæ å°å°ç»ä¸åæ ç³»ï¼åéè¿èåçææç»ç»æã</strong><br>
+ç¨ä¸ç»<strong>ç®åæ°æ®</strong>æµè¯å¦ä¸ï¼<br>
+<img src="https://img2024.cnblogs.com/blog/3708248/202607/3708248-20260714222719118-1822481781.png" alt="stitched_result.png" loading="lazy"></p>
+<p>åè¯è¯æä»¬ä¹åä¸ç´çé£ç»ï¼<br>
+<img src="https://img2024.cnblogs.com/blog/3708248/202607/3708248-20260714223922809-2035415595.png" alt="image" loading="lazy"></p>
+<p>å¯ä»¥åç°æ¼æ¥çç»æä¸­å­å¨<strong>éå½±</strong>ï¼èè¿æ¯å ä¸ºè¿ç»æ°æ®å­å¨çå®éå¤´çç§»å¨åè§å·®ç­å ç´ ï¼ç¸æ¯ä¸é¢é£ç»ç´æ¥æªå¾çæ°æ®å­å¨æ´å¤æçå ä½å³ç³»ã</p>
+<p>ä¸ºæ­¤ï¼å°±åå¼å§è¯´çï¼æ¼æ¥ç®¡éä¸­ä»ç¶å­å¨æ´å¤åå®¹ï¼å½é¢å¯¹å¤å¾ãå¤§è§å·®ãæåååä»¥åå¤æåºæ¯æ¶ï¼ç°ä»£å¾åæ¼æ¥éå¸¸åå«å¦ä¸ç»ä»¶ï¼</p>
+<table>
+<thead>
+<tr>
+<th>æ¨¡å</th>
+<th>ä½ç¨</th>
+<th>å¸åæ¹æ³</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ç¹å¾æåä¸æè¿°</strong></td>
+<td>æåç¨³å®çå±é¨ç¹å¾å¹¶å»ºç«å¹éå³ç³»</td>
+<td>SIFTãSURFãORBãSuperPoint</td>
+</tr>
+<tr>
+<td><strong>é²æ£å ä½ä¼°è®¡</strong></td>
+<td>åé¤è¯¯å¹éï¼ä¼°è®¡å¨å±ååºæ§ç©éµ</td>
+<td>RANSACãUSAC</td>
+</tr>
+<tr>
+<td><strong>å±é¨å ä½ä¼å</strong></td>
+<td>æé«éå¹³é¢åºæ¯ä¸çéåç²¾åº¦</td>
+<td>APAPãSPHPãAANAP</td>
+</tr>
+<tr>
+<td><strong>å¨å±ä¼åï¼å¤å¾ï¼</strong></td>
+<td>èåä¼åææå¾åçç¸æºåæ°ï¼åå°ç´¯è®¡è¯¯å·®</td>
+<td>Bundle Adjustment</td>
+</tr>
+<tr>
+<td><strong>æ¥ç¼æç´¢ï¼Seam Findingï¼</strong></td>
+<td>èªå¨å¯»æ¾æä¸ææ¾çæ¼æ¥è¾¹ç</td>
+<td>Graph CutãDynamic Programming</td>
+</tr>
+<tr>
+<td><strong>æåè¡¥å¿</strong></td>
+<td>æ¶é¤ä¸åå¾åä¹é´çäº®åº¦ãé¢è²å·®å¼</td>
+<td>Gain CompensationãBlock Gain Compensation</td>
+</tr>
+<tr>
+<td><strong>å¾åèåï¼Blendingï¼</strong></td>
+<td>å¹³æ»éå åºåï¼ä½¿æ¥ç¼èªç¶è¿æ¸¡</td>
+<td>FeatheringãMulti-band BlendingãPoisson Blending</td>
+</tr>
+<tr>
+<td><strong>æç»è£åªä¸ç«æ­£</strong></td>
+<td>å»é¤é»è¾¹ï¼æ ¡æ­£æ´ä½ç»é¢</td>
+<td>Auto CroppingãWave Correction</td>
+</tr>
+</tbody>
+</table>
+<p>è¿äºæä»¬é½ä¼å¨ä¹åéä¸ªå±å¼ã</p>
 
 
-</div>
-<div id="MySignature" role="contentinfo">
-    å æå¾®ä¿¡è¿å»ä¸å±ææ¯ç¾¤ï¼æ¬¢è¿è¯»èæåºæè§ï¼åæ¬¢è¯·å³æ³¨åå®¢åä¸ªäººå¬ä¼å·ï¼ç å¥å­è
 </div>
 <div class="clear"></div>
 
             </div>
             <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-07-14 12:02">2026-07-14 12:01</span>&nbsp;
-<a href="https://www.cnblogs.com/uniqueDong">ç å¥å­è</a>&nbsp;
-éè¯»(<span id="post_view_count">192</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(21445296);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FuniqueDong%2Fp%2F21445296&amp;targetId=21445296&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ ç¨ Python å¯¹æ¯ä¸¤ä¸ª Word ææ¡£å·®å¼ (æ é Office) ]]></title>
-    <link>https://www.cnblogs.com/jazz-z/p/21444242</link>
-    <guid>525ae8667bf89e2c47e7574bf6359d7f</guid>
-    <description>
-    <![CDATA[ 
-            <div class="postcontent">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<section id="mp-md" style="-webkit-font-smoothing: antialiased; text-autospace: normal; text-align: left; padding: 1em; font-family: &quot;PingFang SC&quot;, system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif; font-size: 16px; line-height: 1.75; word-wrap: break-word; color: rgba(44, 44, 44, 1)"><p style="box-sizing: border-box; overflow-wrap: break-word; margin: 5px 0 20px; line-height: 1.75em; text-align: start; font-size: 16px; font-weight: 400; color: rgba(44, 44, 44, 1); word-break: break-all"><span style="box-sizing: border-box; margin: 0">å¨æ¥å¸¸åå¬åºæ¯ä¸­ï¼ååå®¡æ¹ãææ¯ææ¡£è¿­ä»£ãå¬æä¿®è®¢ç­å·¥ä½ä¸­ï¼ç»å¸¸éè¦å¯¹æ¯ä¸¤ä¸ª Word ææ¡£çæ¬ä¹é´çå·®å¼ãè½ç¶ Word æ¬èº«æä¾äºâæ¯è¾âåè½ï¼ä½å½éè¦æ¹éå¤çæéæå°èªå¨åæµç¨ä¸­æ¶ï¼éè¿ç¼ç¨æ¹å¼å®ç°ææ¡£å¯¹æ¯å°±åå¾éå¸¸å¿è¦ãæ¬æå°ä»ç»å¦ä½ä½¿ç¨ Python å Free Spire.Doc for Python åºæ¥å®ç° Word ææ¡£çèªå¨å¯¹æ¯ã</span></p>
-<blockquote style="box-sizing: border-box; margin: 20px 0; padding: 16px 20px; border-left: 4px solid rgba(43, 174, 133, 1); background: rgba(43, 174, 133, 0.05); border-radius: 0 4px 4px 0">
-<p style="box-sizing: border-box; overflow-wrap: break-word; line-height: 1.75em; text-align: start; font-size: 16px; font-weight: 400; word-break: break-all; margin: 8px 0 0; color: rgba(102, 102, 102, 1)"><strong style="box-sizing: border-box; margin: 0; font-weight: 700; color: rgba(43, 174, 133, 1)">è¯´æ</strong><span style="box-sizing: border-box; margin: 0">ï¼æ¬æä½¿ç¨ç Free Spire.Doc for Python æ¯åè´¹åºï¼æç¯å¹éå¶ï¼ï¼æ éå®è£ Microsoft Officeï¼å¯å¨ Python ç¯å¢ä¸­ç¬ç«è¿è¡ã</span></p>
-</blockquote>
-<h2 style="box-sizing: border-box; margin: 36px 0 24px; overflow-wrap: break-word; color: rgba(43, 174, 133, 1); font-weight: 700; line-height: 1.4em; word-break: break-all; font-family: &quot;PingFang SC&quot;, system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif; font-size: 24px"><span style="box-sizing: border-box; margin: 0">ä¸ãç¯å¢åå¤</span></h2>
-<h3 style="box-sizing: border-box; margin: 28px 0 20px; overflow-wrap: break-word; color: rgba(43, 174, 133, 1); font-weight: 700; line-height: 1.4em; word-break: break-all; font-family: &quot;PingFang SC&quot;, system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif; font-size: 20px"><span style="box-sizing: border-box; margin: 0">1.1 å®è£åº</span></h3>
-<p style="box-sizing: border-box; overflow-wrap: break-word; margin: 5px 0 20px; line-height: 1.75em; text-align: start; font-size: 16px; font-weight: 400; color: rgba(44, 44, 44, 1); word-break: break-all"><span style="box-sizing: border-box; margin: 0">åè´¹ Python åºå¯ä»¥éè¿ pip ç´æ¥å®è£ï¼</span></p>
-<pre style="box-sizing: border-box; margin: 20px 0; padding: 0; background: rgba(246, 250, 248, 1); border-top: 1px solid rgba(212, 229, 222, 1); border-right: 1px solid rgba(212, 229, 222, 1); border-bottom: 1px solid rgba(212, 229, 222, 1); border-left: 3px solid rgba(43, 174, 133, 1); border-radius: 4px; overflow: hidden"><code class="language-bash" style="box-sizing: border-box; margin: 0; background: rgba(0, 0, 0, 0); display: block; padding: 16px 20px; color: rgba(44, 44, 44, 1); font-family: &quot;SF Mono&quot;, Consolas, Monaco, &quot;Courier New&quot;, monospace; font-size: 14px; line-height: 1.6; border: none; border-radius: 0; overflow-x: auto">pip install Spire.Doc.Free
-</code></pre>
-<h3 style="box-sizing: border-box; margin: 28px 0 20px; overflow-wrap: break-word; color: rgba(43, 174, 133, 1); font-weight: 700; line-height: 1.4em; word-break: break-all; font-family: &quot;PingFang SC&quot;, system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif; font-size: 20px"><span style="box-sizing: border-box; margin: 0">1.2 æ ¸å¿ API è¯´æ</span></h3>
-<p style="box-sizing: border-box; overflow-wrap: break-word; margin: 5px 0 20px; line-height: 1.75em; text-align: start; font-size: 16px; font-weight: 400; color: rgba(44, 44, 44, 1); word-break: break-all"><span style="box-sizing: border-box; margin: 0">åºä¸­ </span><code style="box-sizing: border-box; margin: 0; font-family: &quot;SF Mono&quot;, Consolas, Monaco, &quot;Courier New&quot;, monospace; font-size: 14px; padding: 2px 4px; background-color: rgba(0, 0, 0, 0.05); border-radius: 2px; color: rgba(44, 44, 44, 1)">Document</code><span style="box-sizing: border-box; margin: 0"> ç±»æä¾äº </span><code style="box-sizing: border-box; margin: 0; font-family: &quot;SF Mono&quot;, Consolas, Monaco, &quot;Courier New&quot;, monospace; font-size: 14px; padding: 2px 4px; background-color: rgba(0, 0, 0, 0.05); border-radius: 2px; color: rgba(44, 44, 44, 1)">Compare()</code><span style="box-sizing: border-box; margin: 0"> æ¹æ³ï¼ç¨äºå°å½åææ¡£ä¸å¦ä¸ææ¡£è¿è¡æ¯å¯¹ï¼è¯­æ³å¦ä¸ï¼</span></p>
-<pre style="box-sizing: border-box; margin: 20px 0; padding: 0; background: rgba(246, 250, 248, 1); border-top: 1px solid rgba(212, 229, 222, 1); border-right: 1px solid rgba(212, 229, 222, 1); border-bottom: 1px solid rgba(212, 229, 222, 1); border-left: 3px solid rgba(43, 174, 133, 1); border-radius: 4px; overflow: hidden"><code style="box-sizing: border-box; margin: 0; background: rgba(0, 0, 0, 0); display: block; padding: 16px 20px; color: rgba(44, 44, 44, 1); font-family: &quot;SF Mono&quot;, Consolas, Monaco, &quot;Courier New&quot;, monospace; font-size: 14px; line-height: 1.6; border: none; border-radius: 0; overflow-x: auto">document.Compare(Document document, string author)
-</code></pre>
-<p style="box-sizing: border-box; overflow-wrap: break-word; margin: 5px 0 20px; line-height: 1.75em; text-align: start; font-size: 16px; font-weight: 400; color: rgba(44, 44, 44, 1); word-break: break-all"><code style="box-sizing: border-box; margin: 0; font-family: &quot;SF Mono&quot;, Consolas, Monaco, &quot;Courier New&quot;, monospace; font-size: 14px; padding: 2px 4px; background-color: rgba(0, 0, 0, 0.05); border-radius: 2px; color: rgba(44, 44, 44, 1)">document</code><span style="box-sizing: border-box; margin: 0">ï¼å¾æ¯å¯¹çå¦ä¸ä¸ª </span><code style="box-sizing: border-box; margin: 0; font-family: &quot;SF Mono&quot;, Consolas, Monaco, &quot;Courier New&quot;, monospace; font-size: 14px; padding: 2px 4px; background-color: rgba(0, 0, 0, 0.05); border-radius: 2px; color: rgba(44, 44, 44, 1)">Document</code><span style="box-sizing: border-box; margin: 0"> å¯¹è±¡
-</span><code style="box-sizing: border-box; margin: 0; font-family: &quot;SF Mono&quot;, Consolas, Monaco, &quot;Courier New&quot;, monospace; font-size: 14px; padding: 2px 4px; background-color: rgba(0, 0, 0, 0.05); border-radius: 2px; color: rgba(44, 44, 44, 1)">author</code><span style="box-sizing: border-box; margin: 0">ï¼ä¿®è®¢æ è®°çä½èåç§°ï¼ç¨äºæ è¯æ¯è°ååºçä¿®æ¹</span></p>
-<p style="box-sizing: border-box; overflow-wrap: break-word; margin: 5px 0 20px; line-height: 1.75em; text-align: start; font-size: 16px; font-weight: 400; color: rgba(44, 44, 44, 1); word-break: break-all"><span style="box-sizing: border-box; margin: 0">æ¯å¯¹å®æåï¼å·®å¼ä¼ä»¥ä¿®è®¢ï¼Track Changesï¼çå½¢å¼æ è®°å¨åææ¡£å¯¹è±¡ä¸­ï¼ä¿å­åå³å¯å¨ Word ä¸­æ¥çã</span></p>
-<h2 style="box-sizing: border-box; margin: 36px 0 24px; overflow-wrap: break-word; color: rgba(43, 174, 133, 1); font-weight: 700; line-height: 1.4em; word-break: break-all; font-family: &quot;PingFang SC&quot;, system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif; font-size: 24px"><span style="box-sizing: border-box; margin: 0">äºãåºç¡ææ¡£å¯¹æ¯</span></h2>
-<h3 style="box-sizing: border-box; margin: 28px 0 20px; overflow-wrap: break-word; color: rgba(43, 174, 133, 1); font-weight: 700; line-height: 1.4em; word-break: break-all; font-family: &quot;PingFang SC&quot;, system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif; font-size: 20px"><span style="box-sizing: border-box; margin: 0">2.1 åºç¡ä»£ç ç¤ºä¾</span></h3>
-<p style="box-sizing: border-box; overflow-wrap: break-word; margin: 5px 0 20px; line-height: 1.75em; text-align: start; font-size: 16px; font-weight: 400; color: rgba(44, 44, 44, 1); word-break: break-all"><span style="box-sizing: border-box; margin: 0">ä¸é¢æ¯æåºç¡çå¯¹æ¯ä»£ç ï¼å è½½ä¸¤ä¸ªææ¡£åæ§è¡æ¯å¯¹ï¼ç´æ¥è¾åºå¸¦ä¿®è®¢æ è®°çç»ææä»¶ã</span></p>
-<pre style="box-sizing: border-box; margin: 20px 0; padding: 0; background: rgba(246, 250, 248, 1); border-top: 1px solid rgba(212, 229, 222, 1); border-right: 1px solid rgba(212, 229, 222, 1); border-bottom: 1px solid rgba(212, 229, 222, 1); border-left: 3px solid rgba(43, 174, 133, 1); border-radius: 4px; overflow: hidden"><code class="language-python" style="box-sizing: border-box; margin: 0; background: rgba(0, 0, 0, 0); display: block; padding: 16px 20px; color: rgba(44, 44, 44, 1); font-family: &quot;SF Mono&quot;, Consolas, Monaco, &quot;Courier New&quot;, monospace; font-size: 14px; line-height: 1.6; border: none; border-radius: 0; overflow-x: auto"><span class="hljs-keyword" style="color: rgba(152, 103, 106, 1); box-sizing: border-box; margin: 0">from</span> spire.doc <span class="hljs-keyword" style="color: rgba(152, 103, 106, 1); box-sizing: border-box; margin: 0">import</span> *
-<span class="hljs-keyword" style="color: rgba(152, 103, 106, 1); box-sizing: border-box; margin: 0">from</span> spire.doc.common <span class="hljs-keyword" style="color: rgba(152, 103, 106, 1); box-sizing: border-box; margin: 0">import</span> *
-<p><span class="hljs-comment" style="color: rgba(165, 122, 76, 1); box-sizing: border-box; margin: 0"># å è½½åå§ææ¡£ï¼åºåçæ¬ï¼</span><br>
-firstDoc = Document(<span class="hljs-string" style="color: rgba(136, 155, 74, 1); box-sizing: border-box; margin: 0">"Original.docx"</span>)</p>
-<p><span class="hljs-comment" style="color: rgba(165, 122, 76, 1); box-sizing: border-box; margin: 0"># å è½½ä¿®è®¢ææ¡£ï¼å¯¹æ¯çæ¬ï¼</span><br>
-secondDoc = Document(<span class="hljs-string" style="color: rgba(136, 155, 74, 1); box-sizing: border-box; margin: 0">"Revised.docx"</span>)</p>
-<p><span class="hljs-comment" style="color: rgba(165, 122, 76, 1); box-sizing: border-box; margin: 0"># æ§è¡å¯¹æ¯ï¼ä»¥ firstDoc ä¸ºåºåï¼è¯å« secondDoc ç¸å¯¹äºå®çæææ¹å¨</span><br>
-<span class="hljs-comment" style="color: rgba(165, 122, 76, 1); box-sizing: border-box; margin: 0"># ç¬¬äºä¸ªåæ°ä¸ºä¿®è®¢äººåç§°ï¼ä¼æ¾ç¤ºå¨ä¿®è®¢æ è®°ä¸­</span><br>
-firstDoc.Compare(secondDoc, <span class="hljs-string" style="color: rgba(136, 155, 74, 1); box-sizing: border-box; margin: 0">"ç³»ç»å®¡è®¡å"</span>)</p>
-<p><span class="hljs-comment" style="color: rgba(165, 122, 76, 1); box-sizing: border-box; margin: 0"># å°å¯¹æ¯ç»æä¿å­ä¸ºæ°ææ¡£</span><br>
-firstDoc.SaveToFile(<span class="hljs-string" style="color: rgba(136, 155, 74, 1); box-sizing: border-box; margin: 0">"å¯¹æ¯ç»æ.docx"</span>, FileFormat.Docx2016)</p>
-</code><p><code class="language-python" style="box-sizing: border-box; margin: 0; background: rgba(0, 0, 0, 0); display: block; padding: 16px 20px; color: rgba(44, 44, 44, 1); font-family: &quot;SF Mono&quot;, Consolas, Monaco, &quot;Courier New&quot;, monospace; font-size: 14px; line-height: 1.6; border: none; border-radius: 0; overflow-x: auto"><span class="hljs-comment" style="color: rgba(165, 122, 76, 1); box-sizing: border-box; margin: 0"># éæ¾èµæº</span><br>
-firstDoc.Dispose()<br>
-secondDoc.Dispose()<br>
-</code></p></pre><p></p>
-<p style="box-sizing: border-box; overflow-wrap: break-word; margin: 5px 0 20px; line-height: 1.75em; text-align: start; font-size: 16px; font-weight: 400; color: rgba(44, 44, 44, 1); word-break: break-all"><span style="box-sizing: border-box; margin: 0">ä»£ç é»è¾éå¸¸ç®æ´ï¼å®ä¾åä¸¤ä¸ª </span><code style="box-sizing: border-box; margin: 0; font-family: &quot;SF Mono&quot;, Consolas, Monaco, &quot;Courier New&quot;, monospace; font-size: 14px; padding: 2px 4px; background-color: rgba(0, 0, 0, 0.05); border-radius: 2px; color: rgba(44, 44, 44, 1)">Document</code><span style="box-sizing: border-box; margin: 0"> å¯¹è±¡åå«è£è½½åå§ææ¡£ä¸ä¿®è®¢ææ¡£ï¼è°ç¨ </span><code style="box-sizing: border-box; margin: 0; font-family: &quot;SF Mono&quot;, Consolas, Monaco, &quot;Courier New&quot;, monospace; font-size: 14px; padding: 2px 4px; background-color: rgba(0, 0, 0, 0.05); border-radius: 2px; color: rgba(44, 44, 44, 1)">Compare()</code><span style="box-sizing: border-box; margin: 0"> æ¹æ³åï¼ææå·®å¼ä¼ä»¥ Word ä¿®è®¢æ¨¡å¼è®°å½å¨æ°ææ¡£ä¸­ï¼æåä¿å­å³å¯ã</span></p>
-<h3 style="box-sizing: border-box; margin: 28px 0 20px; overflow-wrap: break-word; color: rgba(43, 174, 133, 1); font-weight: 700; line-height: 1.4em; word-break: break-all; font-family: &quot;PingFang SC&quot;, system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif; font-size: 20px"><span style="box-sizing: border-box; margin: 0">2.2 è¿è¡ç»æ</span></h3>
-<p style="box-sizing: border-box; overflow-wrap: break-word; margin: 5px 0 20px; line-height: 1.75em; text-align: start; font-size: 16px; font-weight: 400; color: rgba(44, 44, 44, 1); word-break: break-all"><span style="box-sizing: border-box; margin: 0">æ§è¡ä¸è¿°ä»£ç åï¼çæç </span><code style="box-sizing: border-box; margin: 0; font-family: &quot;SF Mono&quot;, Consolas, Monaco, &quot;Courier New&quot;, monospace; font-size: 14px; padding: 2px 4px; background-color: rgba(0, 0, 0, 0.05); border-radius: 2px; color: rgba(44, 44, 44, 1)">å¯¹æ¯ç»æ.docx</code><span style="box-sizing: border-box; margin: 0"> ä¼åå«å®æ´çä¿®è®¢æ è®°ï¼</span></p>
-<ul style="box-sizing: border-box; margin: 8px 0; padding-left: 20px; list-style-type: disc; color: rgba(43, 174, 133, 1)">
-<li style="box-sizing: border-box; margin: 0; line-height: 1.6; padding-left: 0; font-family: &quot;PingFang SC&quot;, system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif"><span style="box-sizing: border-box; margin: 0">æ°å¢åå®¹ä»¥</span><strong style="box-sizing: border-box; margin: 0; font-weight: 700; color: rgba(43, 174, 133, 1)">ä¸åçº¿</strong><span style="box-sizing: border-box; margin: 0">æ</span><strong style="box-sizing: border-box; margin: 0; font-weight: 700; color: rgba(43, 174, 133, 1)">ä¸åé¢è²</strong><span style="box-sizing: border-box; margin: 0">æ è®°</span></li>
-<li style="box-sizing: border-box; margin: 0; line-height: 1.6; padding-left: 0; font-family: &quot;PingFang SC&quot;, system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif"><span style="box-sizing: border-box; margin: 0">å é¤åå®¹ä»¥</span><strong style="box-sizing: border-box; margin: 0; font-weight: 700; color: rgba(43, 174, 133, 1)">å é¤çº¿</strong><span style="box-sizing: border-box; margin: 0">æ è®°</span></li>
-<li style="box-sizing: border-box; margin: 0; line-height: 1.6; padding-left: 0; font-family: &quot;PingFang SC&quot;, system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif"><span style="box-sizing: border-box; margin: 0">æ¯å¤ä¿®è®¢é½ä¼æ¾ç¤ºä¿®è®¢äººä¿¡æ¯</span></li>
-</ul>
-<h2 style="box-sizing: border-box; margin: 36px 0 24px; overflow-wrap: break-word; color: rgba(43, 174, 133, 1); font-weight: 700; line-height: 1.4em; word-break: break-all; font-family: &quot;PingFang SC&quot;, system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif; font-size: 24px"><span style="box-sizing: border-box; margin: 0">ä¸ãèªå®ä¹æ¯è¾éé¡¹</span></h2>
-<p style="box-sizing: border-box; overflow-wrap: break-word; margin: 5px 0 20px; line-height: 1.75em; text-align: start; font-size: 16px; font-weight: 400; color: rgba(44, 44, 44, 1); word-break: break-all"><span style="box-sizing: border-box; margin: 0">å¨å®éåºç¨ä¸­ï¼ææ¶æä»¬åªå³å¿ææ¬åå®¹çååï¼èä¸å¸ææ ¼å¼ä¿®æ¹ï¼å¦å­ä½ãå­å·ãé¢è²ç­ï¼è¢«æ è®°ä¸ºä¿®è®¢ãè¿æ¶å¯ä»¥ä½¿ç¨ </span><code style="box-sizing: border-box; margin: 0; font-family: &quot;SF Mono&quot;, Consolas, Monaco, &quot;Courier New&quot;, monospace; font-size: 14px; padding: 2px 4px; background-color: rgba(0, 0, 0, 0.05); border-radius: 2px; color: rgba(44, 44, 44, 1)">CompareOptions</code><span style="box-sizing: border-box; margin: 0"> ç±»æ¥å®å¶æ¯è¾è¡ä¸ºã</span></p>
-<h3 style="box-sizing: border-box; margin: 28px 0 20px; overflow-wrap: break-word; color: rgba(43, 174, 133, 1); font-weight: 700; line-height: 1.4em; word-break: break-all; font-family: &quot;PingFang SC&quot;, system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif; font-size: 20px"><span style="box-sizing: border-box; margin: 0">3.1 å¿½ç¥æ ¼å¼å·®å¼</span></h3>
-<pre style="box-sizing: border-box; margin: 20px 0; padding: 0; background: rgba(246, 250, 248, 1); border-top: 1px solid rgba(212, 229, 222, 1); border-right: 1px solid rgba(212, 229, 222, 1); border-bottom: 1px solid rgba(212, 229, 222, 1); border-left: 3px solid rgba(43, 174, 133, 1); border-radius: 4px; overflow: hidden"><code class="language-python" style="box-sizing: border-box; margin: 0; background: rgba(0, 0, 0, 0); display: block; padding: 16px 20px; color: rgba(44, 44, 44, 1); font-family: &quot;SF Mono&quot;, Consolas, Monaco, &quot;Courier New&quot;, monospace; font-size: 14px; line-height: 1.6; border: none; border-radius: 0; overflow-x: auto"><span class="hljs-keyword" style="color: rgba(152, 103, 106, 1); box-sizing: border-box; margin: 0">from</span> spire.doc <span class="hljs-keyword" style="color: rgba(152, 103, 106, 1); box-sizing: border-box; margin: 0">import</span> *
-<span class="hljs-keyword" style="color: rgba(152, 103, 106, 1); box-sizing: border-box; margin: 0">from</span> spire.doc.common <span class="hljs-keyword" style="color: rgba(152, 103, 106, 1); box-sizing: border-box; margin: 0">import</span> *
-<p><span class="hljs-comment" style="color: rgba(165, 122, 76, 1); box-sizing: border-box; margin: 0"># å è½½ææ¡£</span><br>
-firstDoc = Document(<span class="hljs-string" style="color: rgba(136, 155, 74, 1); box-sizing: border-box; margin: 0">"Original.docx"</span>)<br>
-secondDoc = Document(<span class="hljs-string" style="color: rgba(136, 155, 74, 1); box-sizing: border-box; margin: 0">"Revised.docx"</span>)</p>
-<p><span class="hljs-comment" style="color: rgba(165, 122, 76, 1); box-sizing: border-box; margin: 0"># åå»ºæ¯è¾éé¡¹å¹¶è®¾ç½®å¿½ç¥æ ¼å¼</span><br>
-compareOptions = CompareOptions()<br>
-compareOptions.IgnoreFormatting = <span class="hljs-literal" style="color: rgba(247, 154, 50, 1); box-sizing: border-box; margin: 0">True</span></p>
-<p><span class="hljs-comment" style="color: rgba(165, 122, 76, 1); box-sizing: border-box; margin: 0"># æ§è¡å¯¹æ¯æ¶ä¼ å¥æ¯è¾éé¡¹</span><br>
-firstDoc.Compare(secondDoc, <span class="hljs-string" style="color: rgba(136, 155, 74, 1); box-sizing: border-box; margin: 0">"ç³»ç»å®¡è®¡å"</span>, compareOptions)</p>
-<p><span class="hljs-comment" style="color: rgba(165, 122, 76, 1); box-sizing: border-box; margin: 0"># ä¿å­ç»æ</span><br>
-firstDoc.SaveToFile(<span class="hljs-string" style="color: rgba(136, 155, 74, 1); box-sizing: border-box; margin: 0">"å¯¹æ¯ç»æ_ä»åå®¹å·®å¼.docx"</span>, FileFormat.Docx2016)</p>
-</code><p><code class="language-python" style="box-sizing: border-box; margin: 0; background: rgba(0, 0, 0, 0); display: block; padding: 16px 20px; color: rgba(44, 44, 44, 1); font-family: &quot;SF Mono&quot;, Consolas, Monaco, &quot;Courier New&quot;, monospace; font-size: 14px; line-height: 1.6; border: none; border-radius: 0; overflow-x: auto">firstDoc.Dispose()<br>
-secondDoc.Dispose()<br>
-</code></p></pre><p></p>
-<p style="box-sizing: border-box; overflow-wrap: break-word; margin: 5px 0 20px; line-height: 1.75em; text-align: start; font-size: 16px; font-weight: 400; color: rgba(44, 44, 44, 1); word-break: break-all"><span style="box-sizing: border-box; margin: 0">è®¾ç½® </span><code style="box-sizing: border-box; margin: 0; font-family: &quot;SF Mono&quot;, Consolas, Monaco, &quot;Courier New&quot;, monospace; font-size: 14px; padding: 2px 4px; background-color: rgba(0, 0, 0, 0.05); border-radius: 2px; color: rgba(44, 44, 44, 1)">IgnoreFormatting = True</code><span style="box-sizing: border-box; margin: 0"> åï¼å¯¹æ¯ç»æä¸­å°åªä½ç°ææ¬åå®¹çå¢å æ¹ï¼å­ä½ãé¢è²ãæ®µè½æ ¼å¼ç­ååä¸ä¼è¢«æ è®°ä¸ºä¿®è®¢ã</span></p>
-<h3 style="box-sizing: border-box; margin: 28px 0 20px; overflow-wrap: break-word; color: rgba(43, 174, 133, 1); font-weight: 700; line-height: 1.4em; word-break: break-all; font-family: &quot;PingFang SC&quot;, system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif; font-size: 20px"><span style="box-sizing: border-box; margin: 0">3.2 å¶ä»æ¯è¾éé¡¹</span></h3>
-<p style="box-sizing: border-box; overflow-wrap: break-word; margin: 5px 0 20px; line-height: 1.75em; text-align: start; font-size: 16px; font-weight: 400; color: rgba(44, 44, 44, 1); word-break: break-all"><span style="box-sizing: border-box; margin: 0">æ ¹æ®çæ¬ä¸åï¼</span><code style="box-sizing: border-box; margin: 0; font-family: &quot;SF Mono&quot;, Consolas, Monaco, &quot;Courier New&quot;, monospace; font-size: 14px; padding: 2px 4px; background-color: rgba(0, 0, 0, 0.05); border-radius: 2px; color: rgba(44, 44, 44, 1)">CompareOptions</code><span style="box-sizing: border-box; margin: 0"> è¿æ¯ææ´å¤ç²¾ç»åæ§å¶ï¼</span></p>
-<figure class="figure-table" style="box-sizing: border-box; margin: 20px 0; overflow-x: auto; -webkit-overflow-scrolling: touch"><table style="box-sizing: border-box; width: 100%; border-collapse: collapse; font-size: 15px; margin: 0"><thead style="box-sizing: border-box; margin: 0"><tr style="box-sizing: border-box; margin: 0"><th style="box-sizing: border-box; margin: 0; padding: 12px; text-align: left; font-weight: 700; color: rgba(44, 44, 44, 1); background: rgba(248, 249, 250, 1); border-bottom: 2px solid rgba(43, 174, 133, 1)"><span style="box-sizing: border-box; margin: 0">å±æ§</span></th><th style="box-sizing: border-box; margin: 0; padding: 12px; text-align: left; font-weight: 700; color: rgba(44, 44, 44, 1); background: rgba(248, 249, 250, 1); border-bottom: 2px solid rgba(43, 174, 133, 1)"><span style="box-sizing: border-box; margin: 0">è¯´æ</span></th></tr></thead><tbody style="box-sizing: border-box; margin: 0"><tr style="box-sizing: border-box; margin: 0"><td style="box-sizing: border-box; margin: 0; padding: 12px; border-bottom: 1px solid rgba(224, 224, 224, 1); color: rgba(44, 44, 44, 1)"><code style="box-sizing: border-box; margin: 0; font-family: &quot;SF Mono&quot;, Consolas, Monaco, &quot;Courier New&quot;, monospace; font-size: 14px; padding: 2px 4px; background-color: rgba(0, 0, 0, 0.05); border-radius: 2px; color: rgba(44, 44, 44, 1)">IgnoreFormatting</code></td><td style="box-sizing: border-box; margin: 0; padding: 12px; border-bottom: 1px solid rgba(224, 224, 224, 1); color: rgba(44, 44, 44, 1)"><span style="box-sizing: border-box; margin: 0">å¿½ç¥æ ¼å¼å·®å¼</span></td></tr><tr style="box-sizing: border-box; margin: 0; background: rgba(248, 249, 250, 1)"><td style="box-sizing: border-box; margin: 0; padding: 12px; border-bottom: 1px solid rgba(224, 224, 224, 1); color: rgba(44, 44, 44, 1)"><code style="box-sizing: border-box; margin: 0; font-family: &quot;SF Mono&quot;, Consolas, Monaco, &quot;Courier New&quot;, monospace; font-size: 14px; padding: 2px 4px; background-color: rgba(0, 0, 0, 0.05); border-radius: 2px; color: rgba(44, 44, 44, 1)">IgnoreHeadersAndFooters</code></td><td style="box-sizing: border-box; margin: 0; padding: 12px; border-bottom: 1px solid rgba(224, 224, 224, 1); color: rgba(44, 44, 44, 1)"><span style="box-sizing: border-box; margin: 0">å¿½ç¥é¡µç/é¡µèåå®¹çå·®å¼</span></td></tr><tr style="box-sizing: border-box; margin: 0"><td style="box-sizing: border-box; margin: 0; padding: 12px; border-bottom: 1px solid rgba(224, 224, 224, 1); color: rgba(44, 44, 44, 1)"><code style="box-sizing: border-box; margin: 0; font-family: &quot;SF Mono&quot;, Consolas, Monaco, &quot;Courier New&quot;, monospace; font-size: 14px; padding: 2px 4px; background-color: rgba(0, 0, 0, 0.05); border-radius: 2px; color: rgba(44, 44, 44, 1)">TextCompareLevel</code></td><td style="box-sizing: border-box; margin: 0; padding: 12px; border-bottom: 1px solid rgba(224, 224, 224, 1); color: rgba(44, 44, 44, 1)"><span style="box-sizing: border-box; margin: 0">æ§å¶ææ¬å¯¹æ¯ç²åº¦çæ ¸å¿å±æ§ï¼é»è®¤å¼ä¸º Wordï¼åè¯çº§å¯¹æ¯ï¼</span></td></tr></tbody></table></figure>
-<h2 style="box-sizing: border-box; margin: 36px 0 24px; overflow-wrap: break-word; color: rgba(43, 174, 133, 1); font-weight: 700; line-height: 1.4em; word-break: break-all; font-family: &quot;PingFang SC&quot;, system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif; font-size: 24px"><span style="box-sizing: border-box; margin: 0">åãå¤çåå«ä¿®è®¢çææ¡£</span></h2>
-<p style="box-sizing: border-box; overflow-wrap: break-word; margin: 5px 0 20px; line-height: 1.75em; text-align: start; font-size: 16px; font-weight: 400; color: rgba(44, 44, 44, 1); word-break: break-all"><span style="box-sizing: border-box; margin: 0">å¨å®éå·¥ä½ä¸­ï¼å¾å¯¹æ¯çææ¡£å¯è½æ¬èº«å°±åå«ä¿®è®¢è®°å½ãéè¦æ³¨æçæ¯ï¼</span><strong style="box-sizing: border-box; margin: 0; font-weight: 700; color: rgba(43, 174, 133, 1)">åä¸å¯¹æ¯çä¸¤ä¸ªææ¡£ä¸è½åå«æªå¤ççä¿®è®¢</strong><span style="box-sizing: border-box; margin: 0">ï¼å¦åä¼æåºå¼å¸¸ã</span></p>
-<p style="box-sizing: border-box; overflow-wrap: break-word; margin: 5px 0 20px; line-height: 1.75em; text-align: start; font-size: 16px; font-weight: 400; color: rgba(44, 44, 44, 1); word-break: break-all"><span style="box-sizing: border-box; margin: 0">è§£å³æ¹æ¡æ¯å¨å¯¹æ¯ååæ¥åï¼Acceptï¼ææä¿®è®¢ï¼</span></p>
-<pre style="box-sizing: border-box; margin: 20px 0; padding: 0; background: rgba(246, 250, 248, 1); border-top: 1px solid rgba(212, 229, 222, 1); border-right: 1px solid rgba(212, 229, 222, 1); border-bottom: 1px solid rgba(212, 229, 222, 1); border-left: 3px solid rgba(43, 174, 133, 1); border-radius: 4px; overflow: hidden"><code class="language-python" style="box-sizing: border-box; margin: 0; background: rgba(0, 0, 0, 0); display: block; padding: 16px 20px; color: rgba(44, 44, 44, 1); font-family: &quot;SF Mono&quot;, Consolas, Monaco, &quot;Courier New&quot;, monospace; font-size: 14px; line-height: 1.6; border: none; border-radius: 0; overflow-x: auto"><span class="hljs-keyword" style="color: rgba(152, 103, 106, 1); box-sizing: border-box; margin: 0">from</span> spire.doc <span class="hljs-keyword" style="color: rgba(152, 103, 106, 1); box-sizing: border-box; margin: 0">import</span> *
-<span class="hljs-keyword" style="color: rgba(152, 103, 106, 1); box-sizing: border-box; margin: 0">from</span> spire.doc.common <span class="hljs-keyword" style="color: rgba(152, 103, 106, 1); box-sizing: border-box; margin: 0">import</span> *
-<p><span class="hljs-comment" style="color: rgba(165, 122, 76, 1); box-sizing: border-box; margin: 0"># å è½½ææ¡£å¹¶æ¥åææä¿®è®¢</span><br>
-firstDoc = Document(<span class="hljs-string" style="color: rgba(136, 155, 74, 1); box-sizing: border-box; margin: 0">"Original_with_revisions.docx"</span>)<br>
-firstDoc.AcceptChanges()</p>
-<p><span class="hljs-comment" style="color: rgba(165, 122, 76, 1); box-sizing: border-box; margin: 0"># éæ°å è½½æç´æ¥ä½¿ç¨å·²æ¸ççææ¡£</span><br>
-secondDoc = Document(<span class="hljs-string" style="color: rgba(136, 155, 74, 1); box-sizing: border-box; margin: 0">"Revised.docx"</span>)</p>
-<p><span class="hljs-comment" style="color: rgba(165, 122, 76, 1); box-sizing: border-box; margin: 0"># æ­¤æ¶å¯ä»¥æ­£å¸¸å¯¹æ¯</span><br>
-firstDoc.Compare(secondDoc, <span class="hljs-string" style="color: rgba(136, 155, 74, 1); box-sizing: border-box; margin: 0">"ç³»ç»å®¡è®¡å"</span>)<br>
-firstDoc.SaveToFile(<span class="hljs-string" style="color: rgba(136, 155, 74, 1); box-sizing: border-box; margin: 0">"å¯¹æ¯ç»æ.docx"</span>, FileFormat.Docx2016)</p>
-</code><p><code class="language-python" style="box-sizing: border-box; margin: 0; background: rgba(0, 0, 0, 0); display: block; padding: 16px 20px; color: rgba(44, 44, 44, 1); font-family: &quot;SF Mono&quot;, Consolas, Monaco, &quot;Courier New&quot;, monospace; font-size: 14px; line-height: 1.6; border: none; border-radius: 0; overflow-x: auto">firstDoc.Dispose()<br>
-secondDoc.Dispose()<br>
-</code></p></pre><p></p>
-<p style="box-sizing: border-box; overflow-wrap: break-word; margin: 5px 0 20px; line-height: 1.75em; text-align: start; font-size: 16px; font-weight: 400; color: rgba(44, 44, 44, 1); word-break: break-all"><span style="box-sizing: border-box; margin: 0">æèï¼åå°æ¸çåçææ¡£ä¿å­ä¸ºæ°æä»¶ï¼åéæ°å è½½è¿è¡å¯¹æ¯ã</span></p>
-<hr style="box-sizing: border-box; border: none; height: 2px; background: linear-gradient(90deg, rgba(0, 0, 0, 0), rgba(43, 174, 133, 1), rgba(0, 0, 0, 0)); margin: 32px 0">
-<h2 style="box-sizing: border-box; margin: 36px 0 24px; overflow-wrap: break-word; color: rgba(43, 174, 133, 1); font-weight: 700; line-height: 1.4em; word-break: break-all; font-family: &quot;PingFang SC&quot;, system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif; font-size: 24px"><span style="box-sizing: border-box; margin: 0">äºãå°ç»</span></h2>
-<p style="box-sizing: border-box; overflow-wrap: break-word; margin: 5px 0 20px; line-height: 1.75em; text-align: start; font-size: 16px; font-weight: 400; color: rgba(44, 44, 44, 1); word-break: break-all"><span style="box-sizing: border-box; margin: 0">éè¿ä»¥ä¸ä»£ç ç¤ºä¾å¯ä»¥çåºï¼ä½¿ç¨ Python éå Free Spire.Doc å®ç° Word ææ¡£å¯¹æ¯åªéè¦å¯¥å¯¥æ°è¡æ ¸å¿ä»£ç ãè¯¥æ¹æ¡çä¸»è¦ä¼å¿å¨äºï¼</span></p>
-<ul style="box-sizing: border-box; margin: 8px 0; padding-left: 20px; list-style-type: disc; color: rgba(43, 174, 133, 1)">
-<li style="box-sizing: border-box; margin: 0; line-height: 1.6; padding-left: 0; font-family: &quot;PingFang SC&quot;, system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif"><strong style="box-sizing: border-box; margin: 0; font-weight: 700; color: rgba(43, 174, 133, 1)">èªå¨å</strong><span style="box-sizing: border-box; margin: 0">ï¼å¯æ¹éå¤çå¤§éææ¡£å¯¹æ¯ä»»å¡</span></li>
-<li style="box-sizing: border-box; margin: 0; line-height: 1.6; padding-left: 0; font-family: &quot;PingFang SC&quot;, system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif"><strong style="box-sizing: border-box; margin: 0; font-weight: 700; color: rgba(43, 174, 133, 1)">ç¬ç«æ§</strong><span style="box-sizing: border-box; margin: 0">ï¼ä¸ä¾èµ Microsoft Office ç¯å¢</span></li>
-<li style="box-sizing: border-box; margin: 0; line-height: 1.6; padding-left: 0; font-family: &quot;PingFang SC&quot;, system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif"><strong style="box-sizing: border-box; margin: 0; font-weight: 700; color: rgba(43, 174, 133, 1)">å¯å®å¶</strong><span style="box-sizing: border-box; margin: 0">ï¼æ¯æå¿½ç¥æ ¼å¼ãé¡µçé¡µèãè¡¨æ ¼ç­å·®å¼</span></li>
-<li style="box-sizing: border-box; margin: 0; line-height: 1.6; padding-left: 0; font-family: &quot;PingFang SC&quot;, system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif"><strong style="box-sizing: border-box; margin: 0; font-weight: 700; color: rgba(43, 174, 133, 1)">è¾åºæ å</strong><span style="box-sizing: border-box; margin: 0">ï¼å¯¹æ¯ç»æç´æ¥è¾åºä¸ºå¸¦ä¿®è®¢æ è®°çæ å Word ææ¡£</span></li>
-</ul>
-<p style="box-sizing: border-box; overflow-wrap: break-word; margin: 5px 0 0; line-height: 1.75em; text-align: start; font-size: 16px; font-weight: 400; color: rgba(44, 44, 44, 1); word-break: break-all"><span style="box-sizing: border-box; margin: 0">æ è®ºæ¯ç¨äºææ¡£å®¡æ ¸ãçæ¬ç®¡çè¿æ¯èªå¨ååå¬æµç¨ï¼è¿å¥æ¹æ¡é½è½æ¾èæåå·¥ä½æçï¼å°éå¤æ§çæå¨æ ¸å¯¹å·¥ä½è½¬åä¸ºå¯é çèªå¨åèæ¬ã</span></p></section>
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="itemdesc">
-                åè¡¨äº 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-07-14 11:44">2026-07-14 11:44</span>&nbsp;
-<a href="https://www.cnblogs.com/jazz-z">LAYONTHEGROUND</a>&nbsp;
-éè¯»(<span id="post_view_count">123</span>)&nbsp;
+<span id="post-date" data-last-update-days="0.013888888888888888" data-date-updated="2026-07-14 23:00">2026-07-14 22:40</span>&nbsp;
+<a href="https://www.cnblogs.com/Goblinscholar">å¥å¸æå­¦è</a>&nbsp;
+éè¯»(<span id="post_view_count">4</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(21444242);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fjazz-z%2Fp%2F21444242&amp;targetId=21444242&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-
-            </div>
+<a href="javascript:void(0)" onclick="AddToWz(21470008);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FGoblinscholar%2Fp%2F21470008&amp;targetId=21470008&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
          ]]>
     </description>
     </item>
