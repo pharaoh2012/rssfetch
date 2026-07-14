@@ -3,171 +3,12 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-07-14T17:07:51.314Z</lastBuildDate>
+        <lastBuildDate>2026-07-14T20:54:19.357Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
-    <title><![CDATA[ å¦ä½èªå®ä¹ UIScrollView çåéç³»æ° ]]></title>
-    <link>https://www.cnblogs.com/chaoguo1234/p/21472426</link>
-    <guid>c23aeb2cea39d4e1457ee8787b540f77</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/chaoguo1234/p/21472426" title="åå¸äº 2026-07-15 00:08">
-    
-
-    <span role="heading" aria-level="2">å¦ä½èªå®ä¹ UIScrollView çåéç³»æ°</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                    <div id="cnblogs_post_description" style="display: none">
-        
-        å¦ä½èªå®ä¹ UIScrollView çåéç³»æ°
-    </div>
-<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p><code>decelerationRate</code>å±æ§ç¨æ¥å®ä¹ç¨æ·æ»å¨<code>UIScrollView</code>ï¼ææç¦»å¼<code>UIScrollView</code>åï¼<code>UIScrollView</code>åéæåå°çé»åã</p>
-<p><code>decelerationRate</code>æ¯ä¸ä¸ªæµ®ç¹æ°ç±»åï¼ç³»ç»æä¾äºé¢åå®ä¹çä¸¤ä¸ªå¼:</p>
-<ul>
-<li><code>UIScrollViewDecelerationRateNormal</code></li>
-<li><code>UIScrollViewDecelerationRateFast</code></li>
-</ul>
-<p>å¶ä¸­<code>UIScrollViewDecelerationRateNormal</code>æ¯é»è®¤å¼ã</p>
-<h1 id="1-normal-å-fast-çå¼">1 Normal å Fast çå¼</h1>
-<p><code>UIScrollViewDecelerationRateNormal</code>å<code>UIScrollViewDecelerationRateFast</code>çå¼ï¼æå°å¦ä¸:</p>
-<pre><code class="language-bash"># UIScrollViewDecelerationRateNormal
-(lldb) po @import UIKit
-(lldb) p (UIScrollViewDecelerationRate)UIScrollViewDecelerationRateNormal
-(UIScrollViewDecelerationRate) 0.998
-
-# UIScrollViewDecelerationRateFast
-(lldb) p (UIScrollViewDecelerationRate)UIScrollViewDecelerationRateFast
-(UIScrollViewDecelerationRate) 0.98999999999999999
-</code></pre>
-<p><code>decelerationRate</code>çæ°å¼è¶å°ï¼åéè¶å¿«ã</p>
-<p><code>UIScrollViewDecelerationRateFast</code>å°±æ¯æµ®ç¹æ°<code>0.99</code>ã</p>
-<p>ç±äºè®¡ç®æºå¯¹æµ®ç¹æ°è¡¨ç¤ºç²¾åº¦é®é¢ï¼æ¾ç¤ºä¸º<code>0.98999999999999999</code>ã</p>
-<h1 id="2-decelerationrate-setter-çå®ç°">2 decelerationRate setter çå®ç°</h1>
-<p><code>decelerationRate</code>çè®¾ç½®å½æ°ä»£ç æ¯è¾ç­ï¼ç´æ¥è´´åºæ¥:</p>
-<pre><code class="language-c">UIKitCore`-[UIScrollView setDecelerationRate:]:
--&gt;  0x1a2a4998c &lt;+0&gt;:  adrp   x8, 5091
-    // 1. è¯»åéå¼å° d1
-    0x1a2a49990 &lt;+4&gt;:  ldr    d1, [x8, #0x558]
-    // 2. å°è¦è®¾ç½®çå¼ä¸éå¼æ¯è¾
-    0x1a2a49994 &lt;+8&gt;:  fcmp   d0, d1
-    // 3. å¦æè¦è®¾ç½®çå¼ &lt; éå¼ï¼w8 ç½®ä¸º 1ï¼å¦åï¼w8 ç½®ä¸º 0
-    0x1a2a49998 &lt;+12&gt;: cset   w8, lt
-    0x1a2a4999c &lt;+16&gt;: adrp   x9, 5091
-    // 4. x9 å­å¨ UIScrollViewDecelerationRateNormal å UIScrollViewDecelerationRateFast ç»æçæ°ç»é¦å°å
-    0x1a2a499a0 &lt;+20&gt;: add    x9, x9, #0x5a0            ; UIScrollTestParametersLengthAutomatic + 128
-    // 5. å° UIScrollViewDecelerationRateNormal æè UIScrollViewDecelerationRateFast è¯»åå° d0
-    0x1a2a499a4 &lt;+24&gt;: ldr    d0, [x9, w8, uxtw #3]
-    0x1a2a499a8 &lt;+28&gt;: adrp   x8, 416465
-    0x1a2a499ac &lt;+32&gt;: ldrsw  x8, [x8, #0xf9c]
-    0x1a2a499b0 &lt;+36&gt;: add    x8, x0, x8
-    // 6. å­å¨ decelerationRate å° UIScrollView å¯¹è±¡
-    0x1a2a499b4 &lt;+40&gt;: stp    d0, d0, [x8]
-    0x1a2a499b8 &lt;+44&gt;: ret 
-</code></pre>
-<p>æ³¨é<code>1</code>ï¼è¯»åéå¼å°å¯å­å¨<code>d1</code>ã</p>
-<p>ä»£ç åé¢ä¼å°è¦è®¾ç½®çå¼ä¸éå¼æ¯è¾ã</p>
-<p>æå°éå¼ä¸º:</p>
-<pre><code class="language-bash">(lldb) p $d1
-(double) 0.99399999999999999
-</code></pre>
-<p>å¯ä»¥çå°ï¼éå¼å°±æ¯<code>0.994</code>ã</p>
-<p>è¿ä¸ªéå¼ï¼æ­£å¥½æ¯<code>UIScrollViewDecelerationRateNormal</code>å<code>UIScrollViewDecelerationRateFast</code>çä¸­é´å¼ã</p>
-<p>åæ ·ç±äºè®¡ç®æºæµ®ç¹æ°ç²¾åº¦é®é¢ï¼è¡¨ç¤ºä¸º<code>0.99399999999999999</code>ã</p>
-<p>æ³¨é<code>2</code>ï¼æ³¨é<code>3</code>ï¼å°è¦è®¾ç½®çå¼ä¸éå¼è¿è¡æ¯è¾ã</p>
-<p>å¦æè¦è®¾ç½®çå¼æ¯éå¼å°ï¼é£ä¹å¯å­å¨<code>w8</code>è¢«ç½®ä¸º<code>1</code>ï¼å¦åï¼<code>w8</code>è¢«ç½®ä¸º<code>0</code>ã</p>
-<p>å¯å­å¨<code>w8</code>çå¼ï¼åé¢ä¼çå°æä¸ºæ°ç»ç´¢å¼ã</p>
-<p>æ³¨é<code>4</code>ï¼å°<code>UIScrollViewDecelerationRateNormal</code>å<code>UIScrollViewDecelerationRateFast</code>ç»æçæ°ç»é¦å°åï¼è¯»å¥å¯å­å¨<code>x9</code>ã</p>
-<p>å¯ä»¥æå°è¿ä¸ªæ°ç»çåå®¹:</p>
-<pre><code class="language-bash">(lldb) x/2fg $x9
-0x1a3e2c5a0: 0.998
-0x1a3e2c5a8: 0.98999999999999999
-</code></pre>
-<p>ä»æå°åå®¹å¯ä»¥çå°ï¼æ°ç»ç¬¬ä¸é¡¹ï¼æ¯<code>UIScrollViewDecelerationRateNormal</code>ï¼æ°ç»ç¬¬äºé¡¹æ¯<code>UIScrollViewDecelerationRateFast</code>ã</p>
-<p>æ³¨é<code>5</code>ï¼æ ¹æ®å¯å­å¨<code>w8</code>åç´¢å¼ï¼è¯»å¥ç¸åºçå¼å°å¯å­å¨<code>d0</code>ã</p>
-<p>å¦æè¦è®¾ç½®çå¼æ¯éå¼å¤§ï¼é£ä¹å°±è¯»å¥<code>UIScrollViewDecelerationRateNormal</code>ï¼å¦åï¼è¯»å¥<code>UIScrollViewDecelerationRateFast</code>ã</p>
-<p>æ³¨é<code>6</code>ï¼å°æç»çå¼å­å¥å°<code>UIScrollView</code>å¯¹è±¡ä¸­ã</p>
-<p>å­å¨<code>decelerationRate</code>çå®ä¾åéç¸å¯¹äº<code>UIScrollView</code>é¦å°ååç§»éå­å¨å¨å¯å­å¨<code>x8</code>ï¼æå°ä¸º:</p>
-<pre><code class="language-bash">(lldb) p/x $x8
-(unsigned long) 0x0000000000000358
-</code></pre>
-<p>éè¿<code>_ivarDescription</code>æ¹æ³æå°<code>UIScrollView</code>çææå®ä¾åéï¼ç»è¿å°è¯ï¼å¯ä»¥åç°ï¼åç§»é<code>0x358</code>å¤çå®ä¾åéä¸º<code>_decelerationFactor</code>:</p>
-<pre><code class="language-bash">(lldb) po class_getInstanceVariable(UIScrollView.class, "_decelerationFactor")
-0x000000020a6adbd8
-(lldb) po ivar_getOffset(0x000000020a6adbd8)
-0x0000000000000358
-</code></pre>
-<p><code>_decelerationFactor</code>æ¯ä¸ä¸ªç»æä½ï¼å­å¨è¿æ°´å¹³ååç´åéæ¯ä¾å¼:</p>
-<pre><code class="language-c">_decelerationFactor (struct CGSize): {0.998, 0.998}
-</code></pre>
-<p>æ»ç»ä¸ä¸ï¼å¦æè®¾ç½®<code>UIScrollView</code>ç<code>decelerationRate</code>å±æ§ï¼ç³»ç»ä¼å°è®¾ç½®çå¼ä¸éå¼<code>0.994</code>è¿è¡æ¯è¾:</p>
-<p>å¦æè®¾ç½®çå¼å¤§äºéå¼ï¼é£ä¹ç³»ç»ä¼éæ©<code>UIScrollViewDecelerationRateNormal</code>;</p>
-<p>å¦æè®¾ç½®çå¼å°äºéå¼ï¼é£ä¹ç³»ç»ä¼éæ©<code>UIScrollViewDecelerationRateFast</code>ã</p>
-<p>ä¹å°±æ¯è¯´ï¼æ è®ºå¤çè®¾ç½®ä½ç§å¼ï¼ç³»ç»åªä¼å¨<code>UIScrollViewDecelerationRateNormal</code>å<code>UIScrollViewDecelerationRateFast</code>ä¸­è¿è¡éæ©ã</p>
-<h1 id="3-decelerationrate-getter-çå®ç°">3 decelerationRate getter çå®ç°</h1>
-<p><code>decelerationRate</code>ç<code>getter</code>æ¹æ³ä¹å¾ç­ï¼ä»£ç å¦ä¸:</p>
-<pre><code class="language-c">UIKitCore`-[UIScrollView decelerationRate]:
-    0x1a3ba2354 &lt;+0&gt;:  adrp   x8, 412024
-    0x1a3ba2358 &lt;+4&gt;:  ldrsw  x8, [x8, #0xf9c]
-    // 1. è¯»å _decelerationFactor çæ°´å¹³å¼
--&gt;  0x1a3ba235c &lt;+8&gt;:  ldr    d0, [x0, x8]
-    0x1a3ba2360 &lt;+12&gt;: ret  
-</code></pre>
-<p>æ³¨é<code>1</code>ï¼å¯å­å¨<code>x8</code>å­å¨è¿<code>_decelerationFactor</code>ç»æä½ç¸å¯¹äº<code>UIScrollView</code>é¦å°åçåç§»é:</p>
-<pre><code class="language-bash">(lldb) p/x $x8
-(unsigned long) 0x0000000000000358
-</code></pre>
-<p>è¿éå°<code>_decelerationFactor</code>çæ°´å¹³å¼è¯»ååºæ¥ï¼ä½ä¸ºç»æè¿åã</p>
-<h1 id="4-_decelerationfactor-ç»æä½">4 _decelerationFactor ç»æä½</h1>
-<p>å¦ææä»¬ç´æ¥è®¾ç½®<code>UIScrollView</code>ç<code>decelerationRate</code>å±æ§ï¼ç³»ç»å§ç»ä¼æè®¾ç½®çå¼è°æ´ä¸ºé¢å®ä¹ç<code>UIScrollViewDecelerationRateNormal</code>æè<code>UIScrollViewDecelerationRateFast</code>ã</p>
-<p>é£ä¹ï¼æä»¬è½å¦ç´æ¥è®¾ç½®<code>_decelerationFactor</code>ç»æä½ï¼ä»èä½¿ç¨ä¸åçåéç³»æ°å¢ï¼</p>
-<p>éè¿è°ç¨<code>_methodDescription</code>æ¥ç<code>UIScrollView</code>çæææ¹æ³ï¼å¯ä»¥æ¾å°å¦ä¸<code>2</code>ä¸ªç§ææ¹æ³:</p>
-<pre><code class="language-c">- (void) setHorizontalScrollDecelerationFactor:(double)arg1; (0x138bd7d00)
-- (void) setVerticalScrollDecelerationFactor:(double)arg1; (0x138bd7d70)
-</code></pre>
-<p>è¿ä¸¤ä¸ªæ¹æ³ï¼è¿æ¯è®¾ç½®<code>_decelerationFactor</code>ç»æä½çæ°´å¹³å¼ååç´å¼ã</p>
-<p>æä»¬åç<code>setHorizontalScrollDecelerationFactor:</code>æ¹æ³çå®ç°ï¼åç´æ¹æ³çå®ç°ç±»ä¼¼:</p>
-<pre><code class="language-c">UIKitCore`-[UIScrollView setHorizontalScrollDecelerationFactor:]:
--&gt;  0x1a3ba2378 &lt;+0&gt;:  adrp   x8, 412024
-    0x1a3ba237c &lt;+4&gt;:  ldrsw  x8, [x8, #0xf9c]
-    // 1. å°è®¾ç½®çå¼ç´æ¥å­å¥å° _decelerationFactor ç»æä½çæ°´å¹³åé
-    0x1a3ba2380 &lt;+8&gt;:  str    d0, [x0, x8]
-    0x1a3ba2384 &lt;+12&gt;: ret  
-</code></pre>
-<p>æ³¨é<code>1</code>ï¼å°è®¾ç½®çå¼ç´æ¥å­å¥å°<code>_decelerationFactor</code>ç»æä½çæ°´å¹³åéã</p>
-<p>å æ­¤ï¼éè¿ä¸é¢ä¸¤ä¸ªç§ææ¹æ³ï¼å°±å¯ä»¥è®¾ç½®<code>decelerationRate</code>çå¼ä¸º<code>[0, 1)</code>ç´æ¥çå¼ã</p>
-<p>æ³¨æï¼ä¸è½éè¿ä¸é¢<code>2</code>ä¸ªç§ææ¹æ³ï¼å°<code>decelerationRate</code>çå¼è®¾ç½®ä¸º<code>1.0</code>ï¼å¦åæ»å¨æ¶ä¼åçå´©æºã</p>
-<p>æ¯å¦å¦ææä»¬è°ç¨<code>setVerticalScrollDecelerationFactor:</code>æ¹æ³ï¼å°åç´åéç³»æ°è®¾ç½®ä¸º<code>0.999999</code>ï¼é£ä¹å°±ä¼åç°æå¨<code>UIScrollView</code>ä¹åçåééå¸¸ç¼æ¢ã</p>
-<p><img alt="ScreenRecording_07-14-2026 22-49-39_1" loading="lazy" data-src="https://img2024.cnblogs.com/blog/489427/202607/489427-20260715000709496-249173635.gif" class="lazyload"></p>
-<p>è¿ééè¦æ³¨æï¼å¦æè®¾ç½®äº<code>_decelerationFactor</code>çåç´åéï¼æå¥½ä¸èµ·è®¾ç½®æ°´å¹³åéï¼å ä¸º<code>decelerationRate</code>ç<code>getter</code>æ¹æ³ï¼åªè¿åæ°´å¹³åéçå¼ã</p>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-07-15 00:08">2026-07-15 00:08</span>&nbsp;
-<a href="https://www.cnblogs.com/chaoguo1234">chaoguo1234</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(21472426);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fchaoguo1234%2Fp%2F21472426&amp;targetId=21472426&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
     <title><![CDATA[ Gitæäº¤è§èç¬è®°:featåfixå°åºè¯¥æä¹å ]]></title>
     <link>https://www.cnblogs.com/FatTiger4399/p/21471570</link>
     <guid>77a42f8794df87f13202eb4e92aa3f35</guid>
@@ -1800,7 +1641,7 @@ Thread 2aa0:
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0.001388888888888889" data-date-updated="2026-07-14 16:42">2026-07-14 16:40</span>&nbsp;
 <a href="https://www.cnblogs.com/chaosfe">ä¸é¢å°è¡æ-</a>&nbsp;
-éè¯»(<span id="post_view_count">90</span>)&nbsp;
+éè¯»(<span id="post_view_count">139</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(21459795);return false;">æ¶è</a>&nbsp;
@@ -2072,6 +1913,320 @@ if __name__ == "__main__":
     </description>
     </item>
 <item>
+    <title><![CDATA[ GitZip Pro æºç è§£æï¼ä¸ä¸ª GitHub æä»¶/æä»¶å¤¹ä¸è½½æ©å±æ¯å¦ä½å·¥ä½çï¼äºï¼GitHub é¡µé¢æ³¨å¥ä¸æä»¶éæ© ]]></title>
+    <link>https://www.cnblogs.com/myvin/p/21473069</link>
+    <guid>15ac92e7f1c5681bfc69ae28a2cf94ae</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/myvin/p/21473069" title="åå¸äº 2026-07-15 01:14">
+    
+
+    <span role="heading" aria-level="2">GitZip Pro æºç è§£æï¼ä¸ä¸ª GitHub æä»¶/æä»¶å¤¹ä¸è½½æ©å±æ¯å¦ä½å·¥ä½çï¼äºï¼GitHub é¡µé¢æ³¨å¥ä¸æä»¶éæ©</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                    <div id="cnblogs_post_description" style="display: none">
+        <img src="https://img2024.cnblogs.com/blog/779193/202607/779193-20260715011257516-1086987152.png" alt="GitZip Pro æºç è§£æï¼ä¸ä¸ª GitHub æä»¶/æä»¶å¤¹ä¸è½½æ©å±æ¯å¦ä½å·¥ä½çï¼äºï¼GitHub é¡µé¢æ³¨å¥ä¸æä»¶éæ©" class="desc_img">
+        GitHub åæ¬æ²¡ææ¹éå¾éä¸è½½åè½ï¼GitZip Pro å´è½å¨æä»¶åè¡¨éå¡è¿éæ©æ¡åä¸è½½æé®ã`content.js` å°±åä¸å±è´´å¨ GitHub é¡µé¢ä¸çå¢å¼ºç®è¤ï¼è´è´£è¯å«é¡µé¢ãæ«ææä»¶è¡åæ¥ç®¡ç¨æ·éæ©ã
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>é¡¹ç®å°åï¼<a href="https://github.com/fthux/GitZipPro" target="_blank" rel="noopener nofollow">fthux/GitZipPro</a>ãè¿ä¸ç¯åºäº GitZip Pro çå¼æºæºç ï¼ç»§ç»­åæå®å¦ä½å¢å¼º GitHub æä»¶åè¡¨é¡µé¢ã</p>
+<p>ä¸ä¸ç¯ä» <code>manifest.json</code> çäº GitZip Pro çæ´ä½è£éå³ç³»ãè¿ä¸ç¯è¿å¥ç¬¬ä¸ä¸ªçæ­£çä¸å¡å¥å£ï¼<code>source/content.js</code>ã</p>
+<p><code>content.js</code> çèè´£å¯ä»¥æ¦æ¬æä¸å¥è¯ï¼å¨ GitHub ä»åºæä»¶é¡µéæ¾å°æä»¶åè¡¨ï¼ç»æ¯ä¸è¡å ä¸å¯éæ©è½åï¼åæç¨æ·éä¸­çæä»¶ææä»¶å¤¹äº¤ç»ä¸è½½å¨ã</p>
+<p>å®ä¸ç´æ¥çæ zipï¼ä¹ä¸ç´æ¥ä¿å­ä¸è½½åå²ãå®æ´åä¸ä¸ªé¡µé¢ééå±ï¼è´è´£æ GitHub åæ¬çæä»¶æµè§çé¢æ¹é æ GitZip Pro å¯ä»¥æä½çä¸è½½çé¢ã</p>
+<h2 id="æ³¨å¥å¥å£">æ³¨å¥å¥å£</h2>
+<p><code>content.js</code> ä¸æ¯ç¨æ·ä¸»å¨æå¼çé¡µé¢ï¼èæ¯ç± <code>manifest.json</code> æ³¨å¥å° GitHub é¡µé¢ï¼</p>
+<pre><code class="language-json">"content_scripts": [
+  {
+    "matches": ["https://github.com/*"],
+    "js": [
+      "constants.js",
+      "i18n.js",
+      "jszip.min.js",
+      "downloader.js",
+      "content.js"
+    ],
+    "css": ["content.css"],
+    "run_at": "document_idle"
+  }
+]
+</code></pre>
+<p>è¿éçé¡ºåºå³å®äº <code>content.js</code> å¯ä»¥ç´æ¥ä½¿ç¨å ä¸ªåç½®è½åï¼<code>GZP_CONSTANTS</code> æä¾éç½®ï¼<code>GZP_I18N</code> æä¾ç¿»è¯ï¼<code>JSZip</code> æä¾åç¼©è½åï¼<code>window.GZPDownloader</code> æä¾ä¸è½½å¥å£ãä¹å°±æ¯è¯´ï¼<code>content.js</code> å¹¶ä¸æ¯å­¤ç«èæ¬ï¼å®æ¯å¨åé¢å ä¸ªæ¨¡ååå¤å®æåï¼æåæ¥ç®¡ GitHub é¡µé¢äº¤äºã</p>
+<h2 id="é¡µé¢æ³¨å¥æ»æµç¨">é¡µé¢æ³¨å¥æ»æµç¨</h2>
+<p><img src="https://img2024.cnblogs.com/blog/779193/202607/779193-20260715011136746-949825545.png" alt="GitZip Pro" loading="lazy"></p>
+<div class="mermaid">flowchart TD
+  A["init()"] --&gt; B["loadSettings()&lt;br/&gt;è¯»åä¸»é¢ãæé®ä½ç½®ãæä»¶å¤§å°æ¾ç¤ºç­éç½®"]
+  B --&gt; C["isRepoFilePage()&lt;br/&gt;å¤æ­æ¯å¦ä¸ºä»åºæä»¶é¡µ"]
+  C --&gt; D["getFileRows()&lt;br/&gt;æ¥æ¾æä»¶/ç®å½è¡"]
+  D --&gt; E["attachRowBehavior(row)&lt;br/&gt;ç»æ¯ä¸è¡ç»å®éæ©è¡ä¸º"]
+  E --&gt; F["createCheckbox(row)&lt;br/&gt;æå¥å¤éæ¡"]
+  E --&gt; G["setupRowContextMenu(row)&lt;br/&gt;ç»å®å³é®èåä¿¡æ¯"]
+  F --&gt; H["updateDownloadButton()&lt;br/&gt;æ´æ°æµ®å¨ä¸è½½æé®"]
+  H --&gt; I["ensureDownloadButton()&lt;br/&gt;åå»ºæå¤ç¨ä¸è½½æé®"]
+  I --&gt; J["GZPDownloader.start()&lt;br/&gt;å¯å¨ä¸è½½"]
+</div><p>è¿æ¡é¾è·¯å¯ä»¥å¸®å©æä»¬æ <code>content.js</code> éçå½æ°åæå ç±»ï¼é¡µé¢è¯å«å½æ°ãDOM æ¥è¯¢å½æ°ãè¡å¢å¼ºå½æ°ãæé®å½æ°ãå¯¼èªçå¬å½æ°åè®¾ç½®åºç¨å½æ°ã</p>
+<h2 id="å¤æ­å½åé¡µé¢æ¯å¦å¯å¤ç">å¤æ­å½åé¡µé¢æ¯å¦å¯å¤ç</h2>
+<p>GitHub é¡µé¢å¾å¤ï¼ä»åºé¦é¡µãissuesãpull requestsãactionsãreleases é½å¨ <code>github.com</code> ä¸ãGitZip Pro åªåºè¯¥å¨ä»åºæä»¶åè¡¨é¡µå·¥ä½ï¼æä»¥ç¬¬ä¸æ­¥æ¯å¤æ­é¡µé¢ç±»åã</p>
+<p><code>isRepoFilePage()</code> çä½ç¨å°±æ¯åè¿ä¸ªè¿æ»¤ãå®ä¼æ ¹æ®å½å <code>location.pathname</code> å¤æ­è·¯å¾æ¯å¦åä»åºæä»¶é¡µãå¸åè·¯å¾åæ¬ï¼</p>
+<pre><code class="language-text">/{owner}/{repo}
+/{owner}/{repo}/tree/{branch}
+/{owner}/{repo}/tree/{branch}/{path}
+</code></pre>
+<p>è issuesãpullãwikiãsettingsãactions ç­é¡µé¢ä¸å±äºæä»¶åè¡¨é¡µï¼ä¸åºè¯¥æ³¨å¥éæ©æ¡åä¸è½½æé®ã</p>
+<p>è¿ç§å¤æ­å¾éè¦ãcontent script è½ç¶ä¼å¨ææ <code>https://github.com/*</code> é¡µé¢å è½½ï¼ä½å è½½ä¸ç­äºæ¯ä¸ªé¡µé¢é½è¦æ§è¡å¢å¼ºé»è¾ãåå¤æ­é¡µé¢ç±»åï¼å¯ä»¥é¿åå¯¹éä»åºæä»¶é¡µé æ DOM å¹²æ°ã</p>
+<h2 id="æ¥æ¾-github-æä»¶åè¡¨è¡">æ¥æ¾ GitHub æä»¶åè¡¨è¡</h2>
+<p>é¡µé¢ç¡®è®¤ä¹åï¼ä¸ä¸æ­¥æ¯æ¾å° GitHub çæä»¶/ç®å½è¡ãå¯¹åºå½æ°æ¯ <code>getFileRows()</code>ã</p>
+<p>GitHub çåç«¯ DOM å¹¶ä¸æ¯åºå®ä¸åçï¼é¡¹ç®ä¸­å¹¶æ²¡æåªä¾èµä¸ä¸ªéæ©å¨ï¼èæ¯ä¸ºä¸åç»æåå¤äºå¤ç§å¹éæ¹å¼ã<code>content.js</code> éè¿æ <code>getTargetCell(row)</code> è¿æ ·çè¾å©å½æ°ï¼ç¨æ¥æ¾å°æ¯ä¸è¡éæéåæå¥å¤éæ¡çååæ ¼ã</p>
+<p>è¿ç§åæ³è¯´æ <code>content.js</code> é¢å¯¹çä¸æ¯ä¸ä¸ªç±èªå·±å®å¨æ§å¶çé¡µé¢ï¼èæ¯ GitHub å®æ¹é¡µé¢ãæ©å±åªè½âè´´âå¨å«äººå·²æç DOM ä¸ï¼å æ­¤éè¦å¼å®¹ä¸åé¡µé¢ç»æãååºå¼å¸å±ä»¥å GitHub åç»­å¯è½è°æ´è¿ç classã</p>
+<h2 id="ä»ä¸è¡ä¸­æåè·¯å¾">ä»ä¸è¡ä¸­æåè·¯å¾</h2>
+<p>è¡è¢«æ¾å°ä¹åï¼è¿éè¦ç¥éè¿ä¸è¡å¯¹åºåªä¸ªæä»¶ææä»¶å¤¹ãè¿ä¸ªå·¥ä½ç± <code>getPathFromRow(row)</code> å®æã</p>
+<p>GitHub æä»¶åè¡¨ä¸­çé¾æ¥éå¸¸åå« <code>/tree/</code> æ <code>/blob/</code>ï¼</p>
+<pre><code class="language-text">/owner/repo/tree/main/src
+/owner/repo/blob/main/README.md
+</code></pre>
+<p><code>tree</code> ä»£è¡¨ç®å½ï¼<code>blob</code> ä»£è¡¨æä»¶ã<code>content.js</code> å¨é¡µé¢å±ä¸éè¦å®æ´è§£æ ownerãrepoãbranchãpathï¼å®åªè¦æ href æ¶éèµ·æ¥å³å¯ãçæ­£çç»æåè§£æä¼äº¤ç» <code>downloader.js</code> ç <code>parseGitHubUrl()</code>ã</p>
+<p>è¿ä¹æ¯ä¸ä¸ªææ¾çåå±ï¼é¡µé¢å±åªæ¶é GitHub é¾æ¥ï¼ä¸è½½å±åæé¾æ¥è§£ææä¸è½½ä»»å¡ã</p>
+<h2 id="ç»æä»¶è¡æå¥å¤éæ¡">ç»æä»¶è¡æå¥å¤éæ¡</h2>
+<p>æ ¸å¿å¢å¼ºé»è¾å¨ <code>attachRowBehavior(row)</code> å <code>createCheckbox(row)</code>ã</p>
+<p><code>attachRowBehavior(row)</code> ä¼åå¤æ­è¿ä¸è¡æ¯å¦å·²ç»åå§åè¿ï¼</p>
+<pre><code class="language-js">if (row.classList.contains('gzp-row-initialized')) return;
+</code></pre>
+<p>è¿æ¯ä¸ºäºé¿åéå¤æå¥ãGitHub é¡µé¢ä¼å ä¸ºå¯¼èªãå±é¨å·æ°ãæ»å¨ç­åå åå¤è§¦å DOM å¤çï¼å¦ææ²¡æè¿ä¸ªæ è®°ï¼åä¸è¡å¯è½è¢«æå¥å¤ä¸ªå¤éæ¡ã</p>
+<p>æ¥çå®ä¼è·³è¿ç¶ç®å½è¡ï¼ä¹å°±æ¯ <code>..</code> æ âGo to parent directoryâ è¿ç§è¿åä¸ä¸çº§çè¡ãå ä¸ºè¿ç±»è¡ä¸æ¯å®éä¸è½½ç®æ ï¼ä¸åºè¯¥åºç°å¨éæ©åè¡¨éã</p>
+<p>çæ­£åå»ºå¤éæ¡çæ¯ <code>createCheckbox(row)</code>ãå®ä¼åå»ºä¸ä¸ª <code>span.gzp-cb-wrapper</code> åè£¹ <code>input.gzp-checkbox</code>ãå½å¤éæ¡ç¶æååæ¶ï¼ä»£ç ä¼æ´æ°ä¸ä¸ªæ ¸å¿ç¶æï¼</p>
+<pre><code class="language-js">selectedItems.set(row, getPathFromRow(row));
+</code></pre>
+<p>å¦æåæ¶éæ©ï¼åä» <code>selectedItems</code> ä¸­å é¤ãè¿éç <code>selectedItems</code> æ¯ <code>Map</code>ï¼key æ¯å½å DOM è¡ï¼value æ¯å¯¹åºç GitHub hrefãè¿ä¸ªç»æåæ¶ä¿çäºé¡µé¢åç´ åä¸è½½è·¯å¾ï¼åç»­æ¢å¯ä»¥æ´æ° UIï¼ä¹å¯ä»¥æè·¯å¾ä¼ ç»ä¸è½½å¨ã</p>
+<h2 id="åå»éæ©ä¸éä¸­æ">åå»éæ©ä¸éä¸­æ</h2>
+<p>é¤äºç´æ¥ç¹å»å¤éæ¡ï¼<code>attachRowBehavior(row)</code> è¿æ¯æåå»éæ©ãå®éè¿è®°å½ <code>lastClickTime</code> å¤æ­ä¸¤æ¬¡ç¹å»æ¯å¦åçå¨ 500ms åãå¦æè®¾ç½®é¡¹ <code>doubleClickSelect</code> å¼å¯ï¼å°±åæ¢å¤éæ¡ç¶æï¼å¹¶ä¸»å¨æ´¾å <code>change</code> äºä»¶ï¼è®©ç¶ææ´æ°é»è¾å¤ç¨å¤éæ¡çå¤çæµç¨ã</p>
+<p>éä¸­åï¼è¡ä¼æ·»å æ ·å¼ç±»ï¼</p>
+<pre><code class="language-js">row.classList.add('gzp-row--selected');
+</code></pre>
+<p>åæ¶ååç§»é¤ãè§è§æ ·å¼ç± <code>content.css</code> è´è´£ï¼è¿æ · JS åªæ§å¶ç¶æï¼å·ä½åç°äº¤ç» CSSã</p>
+<h2 id="æµ®å¨ä¸è½½æé®">æµ®å¨ä¸è½½æé®</h2>
+<p>å½ç¨æ·éæ©äºè³å°ä¸ä¸ªæä»¶æç®å½ï¼é¡µé¢éè¦åºç°ä¸è½½æé®ãè¿é¨åç± <code>ensureDownloadButton()</code> å <code>updateDownloadButton()</code> è´è´£ã</p>
+<p><code>updateDownloadButton()</code> ä¼è¯»å <code>selectedItems.size</code>ãå¦ææ°éå¤§äº 0ï¼å°±æ¾ç¤ºæé®å¹¶æ´æ° badgeï¼å¦ææ°éä¸º 0ï¼å¹¶ä¸æé®å¤äº idle ç¶æï¼å°±éèæé®ã</p>
+<p>ç¹å»ä¸è½½æé®æ¶ï¼<code>content.js</code> ä¼è°ç¨ï¼</p>
+<pre><code class="language-js">window.GZPDownloader.start(selectedItems, callbacks)
+</code></pre>
+<p>æ³¨æè¿éä¼ è¿å»çä¸æ¯æ°ç»ï¼èæ¯åé¢ç»´æ¤ç <code>Map</code>ãä¸è½½å¨ä¼éåå¶ä¸­ç hrefï¼éä¸ªè§£ææ GitHub ä¸è½½ä»»å¡ã</p>
+<h2 id="å³é®èåä¿¡æ¯åæ­¥">å³é®èåä¿¡æ¯åæ­¥</h2>
+<p><code>content.js</code> ä¸­è¿æ <code>setupRowContextMenu(row)</code>ãå½ç¨æ·å¨æä¸è¡ä¸å³é®æ¶ï¼å®ä¼è¯»åè¿ä¸è¡ç href åå±ç¤ºåç§°ï¼ç¶åå background åéæ¶æ¯ï¼</p>
+<pre><code class="language-js">chrome.runtime.sendMessage({
+  type: 'GZP_UPDATE_CONTEXT_MENU',
+  href,
+  itemName
+});
+</code></pre>
+<p>background æ¶å°åä¼æ´æ°å³é®èåæ é¢ãè¿æ ·æµè§å¨å³é®èåéçâä¸è½½å½åé¡¹ç®âå°±è½ç¥éç¨æ·ååå³é®çæ¯åªä¸ä¸ªæä»¶ææä»¶å¤¹ã</p>
+<h2 id="éé-github-ç-spa-å¯¼èª">éé GitHub ç SPA å¯¼èª</h2>
+<p>GitHub é¡µé¢ä¸æ¯ä¼ ç»çæ¯æ¬¡å¯¼èªé½å®æ´å·æ°ãä»åºåé¨åæ¢ç®å½æ¶ï¼é¡µé¢å¯è½åçå±é¨æ´æ°ã<code>content.js</code> éæ <code>interceptLinkClicks()</code>ã<code>onNavigate()</code>ã<code>attachAllRows()</code> ç­å½æ°ï¼ç¨æ¥å¨å¯¼èªåéæ°æ«ææä»¶è¡ãæ¸çæ§ç¶æå¹¶éæ°æ³¨å¥ UIã</p>
+<p>å¯ä»¥æè¿ä¸å±çè§£ä¸º GitHub é¡µé¢ééå¨ï¼</p>
+<div class="mermaid">flowchart LR
+  A["GitHub URL æ DOM åå"] --&gt; B["onNavigate()"]
+  B --&gt; C["æ¸çæ§éæ©åæä»¶å¤§å°è¯·æ±"]
+  C --&gt; D["attachAllRows()"]
+  D --&gt; E["éæ°æ«ææä»¶è¡"]
+  E --&gt; F["éæ°æå¥å¤éæ¡åå³é®é»è¾"]
+</div><p>å¦ææ²¡æè¿å±å¤çï¼æ©å±å¯è½åªå¨é¦æ¬¡æå¼é¡µé¢æ¶ææï¼è¿å¥å­ç®å½åå°±å¤±æã</p>
+<h2 id="æ¬ç¯å°ç»">æ¬ç¯å°ç»</h2>
+<p><code>content.js</code> æ¯ GitZip Pro çé¡µé¢å¥å£ãå®çæ ¸å¿å·¥ä½ä¸æ¯ä¸è½½ï¼èæ¯æ GitHub æä»¶åè¡¨æ¹é æä¸ä¸ªå¯äº¤äºçéæ©çé¢ã</p>
+<p>è¿ä¸ç¯å¯ä»¥å¾å°ä¸æ¡æ¸æ°çæºç ä¸»çº¿ï¼</p>
+<pre><code class="language-text">init()
+  -&gt; loadSettings()
+  -&gt; isRepoFilePage()
+  -&gt; getFileRows()
+  -&gt; attachRowBehavior(row)
+  -&gt; createCheckbox(row)
+  -&gt; updateDownloadButton()
+  -&gt; GZPDownloader.start(selectedItems)
+</code></pre>
+<p>ä¸ä¸ç¯è¿å¥ <code>downloader.js</code> çååé¨åï¼ç GitZip Pro å¦ä½æé¡µé¢ä¸­æ¶éå°ç GitHub é¾æ¥è§£ææ ownerãrepoãbranchãpathï¼å¹¶éè¿ GitHub API è¯·æ±æä»¶åç®å½æ°æ®ã</p>
+<p>å®æ´æºç è§ <a href="https://github.com/fthux/GitZipPro" target="_blank" rel="noopener nofollow">fthux/GitZipPro</a>ãå¦æè¿ç¯å¯¹ä½ çè§£æµè§å¨æ©å± content script æå¸®å©ï¼ä¹æ¬¢è¿ç» GitZip Pro ä¸ä¸ª Starã</p>
+<p>å¦æä½ ä¹å¥½å¥è¿ä¸ª Pro çä¸ºä»ä¹ä¼åèµ·æ¥ï¼å¯ä»¥æ¥ççè¿ç¯é¡¹ç®ç¼èµ·ï¼<a href="https://www.cnblogs.com/myvin/p/21268259" target="_blank">ç¨äº GitZip è¿ä¹å¤å¹´ï¼æå¨æåäºä¸ä¸ªãProãç</a>ã</p>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-07-15 01:14">2026-07-15 01:14</span>&nbsp;
+<a href="https://www.cnblogs.com/myvin">fthux</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(21473069);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fmyvin%2Fp%2F21473069&amp;targetId=21473069&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ å¦ä½èªå®ä¹ UIScrollView çåéç³»æ° ]]></title>
+    <link>https://www.cnblogs.com/chaoguo1234/p/21472426</link>
+    <guid>c23aeb2cea39d4e1457ee8787b540f77</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/chaoguo1234/p/21472426" title="åå¸äº 2026-07-15 00:08">
+    
+
+    <span role="heading" aria-level="2">å¦ä½èªå®ä¹ UIScrollView çåéç³»æ°</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                    <div id="cnblogs_post_description" style="display: none">
+        
+        å¦ä½èªå®ä¹ UIScrollView çåéç³»æ°
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p><code>decelerationRate</code>å±æ§ç¨æ¥å®ä¹ç¨æ·æ»å¨<code>UIScrollView</code>ï¼ææç¦»å¼<code>UIScrollView</code>åï¼<code>UIScrollView</code>åéæåå°çé»åã</p>
+<p><code>decelerationRate</code>æ¯ä¸ä¸ªæµ®ç¹æ°ç±»åï¼ç³»ç»æä¾äºé¢åå®ä¹çä¸¤ä¸ªå¼:</p>
+<ul>
+<li><code>UIScrollViewDecelerationRateNormal</code></li>
+<li><code>UIScrollViewDecelerationRateFast</code></li>
+</ul>
+<p>å¶ä¸­<code>UIScrollViewDecelerationRateNormal</code>æ¯é»è®¤å¼ã</p>
+<h1 id="1-normal-å-fast-çå¼">1 Normal å Fast çå¼</h1>
+<p><code>UIScrollViewDecelerationRateNormal</code>å<code>UIScrollViewDecelerationRateFast</code>çå¼ï¼æå°å¦ä¸:</p>
+<pre><code class="language-bash"># UIScrollViewDecelerationRateNormal
+(lldb) po @import UIKit
+(lldb) p (UIScrollViewDecelerationRate)UIScrollViewDecelerationRateNormal
+(UIScrollViewDecelerationRate) 0.998
+
+# UIScrollViewDecelerationRateFast
+(lldb) p (UIScrollViewDecelerationRate)UIScrollViewDecelerationRateFast
+(UIScrollViewDecelerationRate) 0.98999999999999999
+</code></pre>
+<p><code>decelerationRate</code>çæ°å¼è¶å°ï¼åéè¶å¿«ã</p>
+<p><code>UIScrollViewDecelerationRateFast</code>å°±æ¯æµ®ç¹æ°<code>0.99</code>ã</p>
+<p>ç±äºè®¡ç®æºå¯¹æµ®ç¹æ°è¡¨ç¤ºç²¾åº¦é®é¢ï¼æ¾ç¤ºä¸º<code>0.98999999999999999</code>ã</p>
+<h1 id="2-decelerationrate-setter-çå®ç°">2 decelerationRate setter çå®ç°</h1>
+<p><code>decelerationRate</code>çè®¾ç½®å½æ°ä»£ç æ¯è¾ç­ï¼ç´æ¥è´´åºæ¥:</p>
+<pre><code class="language-c">UIKitCore`-[UIScrollView setDecelerationRate:]:
+-&gt;  0x1a2a4998c &lt;+0&gt;:  adrp   x8, 5091
+    // 1. è¯»åéå¼å° d1
+    0x1a2a49990 &lt;+4&gt;:  ldr    d1, [x8, #0x558]
+    // 2. å°è¦è®¾ç½®çå¼ä¸éå¼æ¯è¾
+    0x1a2a49994 &lt;+8&gt;:  fcmp   d0, d1
+    // 3. å¦æè¦è®¾ç½®çå¼ &lt; éå¼ï¼w8 ç½®ä¸º 1ï¼å¦åï¼w8 ç½®ä¸º 0
+    0x1a2a49998 &lt;+12&gt;: cset   w8, lt
+    0x1a2a4999c &lt;+16&gt;: adrp   x9, 5091
+    // 4. x9 å­å¨ UIScrollViewDecelerationRateNormal å UIScrollViewDecelerationRateFast ç»æçæ°ç»é¦å°å
+    0x1a2a499a0 &lt;+20&gt;: add    x9, x9, #0x5a0            ; UIScrollTestParametersLengthAutomatic + 128
+    // 5. å° UIScrollViewDecelerationRateNormal æè UIScrollViewDecelerationRateFast è¯»åå° d0
+    0x1a2a499a4 &lt;+24&gt;: ldr    d0, [x9, w8, uxtw #3]
+    0x1a2a499a8 &lt;+28&gt;: adrp   x8, 416465
+    0x1a2a499ac &lt;+32&gt;: ldrsw  x8, [x8, #0xf9c]
+    0x1a2a499b0 &lt;+36&gt;: add    x8, x0, x8
+    // 6. å­å¨ decelerationRate å° UIScrollView å¯¹è±¡
+    0x1a2a499b4 &lt;+40&gt;: stp    d0, d0, [x8]
+    0x1a2a499b8 &lt;+44&gt;: ret 
+</code></pre>
+<p>æ³¨é<code>1</code>ï¼è¯»åéå¼å°å¯å­å¨<code>d1</code>ã</p>
+<p>ä»£ç åé¢ä¼å°è¦è®¾ç½®çå¼ä¸éå¼æ¯è¾ã</p>
+<p>æå°éå¼ä¸º:</p>
+<pre><code class="language-bash">(lldb) p $d1
+(double) 0.99399999999999999
+</code></pre>
+<p>å¯ä»¥çå°ï¼éå¼å°±æ¯<code>0.994</code>ã</p>
+<p>è¿ä¸ªéå¼ï¼æ­£å¥½æ¯<code>UIScrollViewDecelerationRateNormal</code>å<code>UIScrollViewDecelerationRateFast</code>çä¸­é´å¼ã</p>
+<p>åæ ·ç±äºè®¡ç®æºæµ®ç¹æ°ç²¾åº¦é®é¢ï¼è¡¨ç¤ºä¸º<code>0.99399999999999999</code>ã</p>
+<p>æ³¨é<code>2</code>ï¼æ³¨é<code>3</code>ï¼å°è¦è®¾ç½®çå¼ä¸éå¼è¿è¡æ¯è¾ã</p>
+<p>å¦æè¦è®¾ç½®çå¼æ¯éå¼å°ï¼é£ä¹å¯å­å¨<code>w8</code>è¢«ç½®ä¸º<code>1</code>ï¼å¦åï¼<code>w8</code>è¢«ç½®ä¸º<code>0</code>ã</p>
+<p>å¯å­å¨<code>w8</code>çå¼ï¼åé¢ä¼çå°æä¸ºæ°ç»ç´¢å¼ã</p>
+<p>æ³¨é<code>4</code>ï¼å°<code>UIScrollViewDecelerationRateNormal</code>å<code>UIScrollViewDecelerationRateFast</code>ç»æçæ°ç»é¦å°åï¼è¯»å¥å¯å­å¨<code>x9</code>ã</p>
+<p>å¯ä»¥æå°è¿ä¸ªæ°ç»çåå®¹:</p>
+<pre><code class="language-bash">(lldb) x/2fg $x9
+0x1a3e2c5a0: 0.998
+0x1a3e2c5a8: 0.98999999999999999
+</code></pre>
+<p>ä»æå°åå®¹å¯ä»¥çå°ï¼æ°ç»ç¬¬ä¸é¡¹ï¼æ¯<code>UIScrollViewDecelerationRateNormal</code>ï¼æ°ç»ç¬¬äºé¡¹æ¯<code>UIScrollViewDecelerationRateFast</code>ã</p>
+<p>æ³¨é<code>5</code>ï¼æ ¹æ®å¯å­å¨<code>w8</code>åç´¢å¼ï¼è¯»å¥ç¸åºçå¼å°å¯å­å¨<code>d0</code>ã</p>
+<p>å¦æè¦è®¾ç½®çå¼æ¯éå¼å¤§ï¼é£ä¹å°±è¯»å¥<code>UIScrollViewDecelerationRateNormal</code>ï¼å¦åï¼è¯»å¥<code>UIScrollViewDecelerationRateFast</code>ã</p>
+<p>æ³¨é<code>6</code>ï¼å°æç»çå¼å­å¥å°<code>UIScrollView</code>å¯¹è±¡ä¸­ã</p>
+<p>å­å¨<code>decelerationRate</code>çå®ä¾åéç¸å¯¹äº<code>UIScrollView</code>é¦å°ååç§»éå­å¨å¨å¯å­å¨<code>x8</code>ï¼æå°ä¸º:</p>
+<pre><code class="language-bash">(lldb) p/x $x8
+(unsigned long) 0x0000000000000358
+</code></pre>
+<p>éè¿<code>_ivarDescription</code>æ¹æ³æå°<code>UIScrollView</code>çææå®ä¾åéï¼ç»è¿å°è¯ï¼å¯ä»¥åç°ï¼åç§»é<code>0x358</code>å¤çå®ä¾åéä¸º<code>_decelerationFactor</code>:</p>
+<pre><code class="language-bash">(lldb) po class_getInstanceVariable(UIScrollView.class, "_decelerationFactor")
+0x000000020a6adbd8
+(lldb) po ivar_getOffset(0x000000020a6adbd8)
+0x0000000000000358
+</code></pre>
+<p><code>_decelerationFactor</code>æ¯ä¸ä¸ªç»æä½ï¼å­å¨è¿æ°´å¹³ååç´åéæ¯ä¾å¼:</p>
+<pre><code class="language-c">_decelerationFactor (struct CGSize): {0.998, 0.998}
+</code></pre>
+<p>æ»ç»ä¸ä¸ï¼å¦æè®¾ç½®<code>UIScrollView</code>ç<code>decelerationRate</code>å±æ§ï¼ç³»ç»ä¼å°è®¾ç½®çå¼ä¸éå¼<code>0.994</code>è¿è¡æ¯è¾:</p>
+<p>å¦æè®¾ç½®çå¼å¤§äºéå¼ï¼é£ä¹ç³»ç»ä¼éæ©<code>UIScrollViewDecelerationRateNormal</code>;</p>
+<p>å¦æè®¾ç½®çå¼å°äºéå¼ï¼é£ä¹ç³»ç»ä¼éæ©<code>UIScrollViewDecelerationRateFast</code>ã</p>
+<p>ä¹å°±æ¯è¯´ï¼æ è®ºå¤çè®¾ç½®ä½ç§å¼ï¼ç³»ç»åªä¼å¨<code>UIScrollViewDecelerationRateNormal</code>å<code>UIScrollViewDecelerationRateFast</code>ä¸­è¿è¡éæ©ã</p>
+<h1 id="3-decelerationrate-getter-çå®ç°">3 decelerationRate getter çå®ç°</h1>
+<p><code>decelerationRate</code>ç<code>getter</code>æ¹æ³ä¹å¾ç­ï¼ä»£ç å¦ä¸:</p>
+<pre><code class="language-c">UIKitCore`-[UIScrollView decelerationRate]:
+    0x1a3ba2354 &lt;+0&gt;:  adrp   x8, 412024
+    0x1a3ba2358 &lt;+4&gt;:  ldrsw  x8, [x8, #0xf9c]
+    // 1. è¯»å _decelerationFactor çæ°´å¹³å¼
+-&gt;  0x1a3ba235c &lt;+8&gt;:  ldr    d0, [x0, x8]
+    0x1a3ba2360 &lt;+12&gt;: ret  
+</code></pre>
+<p>æ³¨é<code>1</code>ï¼å¯å­å¨<code>x8</code>å­å¨è¿<code>_decelerationFactor</code>ç»æä½ç¸å¯¹äº<code>UIScrollView</code>é¦å°åçåç§»é:</p>
+<pre><code class="language-bash">(lldb) p/x $x8
+(unsigned long) 0x0000000000000358
+</code></pre>
+<p>è¿éå°<code>_decelerationFactor</code>çæ°´å¹³å¼è¯»ååºæ¥ï¼ä½ä¸ºç»æè¿åã</p>
+<h1 id="4-_decelerationfactor-ç»æä½">4 _decelerationFactor ç»æä½</h1>
+<p>å¦ææä»¬ç´æ¥è®¾ç½®<code>UIScrollView</code>ç<code>decelerationRate</code>å±æ§ï¼ç³»ç»å§ç»ä¼æè®¾ç½®çå¼è°æ´ä¸ºé¢å®ä¹ç<code>UIScrollViewDecelerationRateNormal</code>æè<code>UIScrollViewDecelerationRateFast</code>ã</p>
+<p>é£ä¹ï¼æä»¬è½å¦ç´æ¥è®¾ç½®<code>_decelerationFactor</code>ç»æä½ï¼ä»èä½¿ç¨ä¸åçåéç³»æ°å¢ï¼</p>
+<p>éè¿è°ç¨<code>_methodDescription</code>æ¥ç<code>UIScrollView</code>çæææ¹æ³ï¼å¯ä»¥æ¾å°å¦ä¸<code>2</code>ä¸ªç§ææ¹æ³:</p>
+<pre><code class="language-c">- (void) setHorizontalScrollDecelerationFactor:(double)arg1; (0x138bd7d00)
+- (void) setVerticalScrollDecelerationFactor:(double)arg1; (0x138bd7d70)
+</code></pre>
+<p>è¿ä¸¤ä¸ªæ¹æ³ï¼è¿æ¯è®¾ç½®<code>_decelerationFactor</code>ç»æä½çæ°´å¹³å¼ååç´å¼ã</p>
+<p>æä»¬åç<code>setHorizontalScrollDecelerationFactor:</code>æ¹æ³çå®ç°ï¼åç´æ¹æ³çå®ç°ç±»ä¼¼:</p>
+<pre><code class="language-c">UIKitCore`-[UIScrollView setHorizontalScrollDecelerationFactor:]:
+-&gt;  0x1a3ba2378 &lt;+0&gt;:  adrp   x8, 412024
+    0x1a3ba237c &lt;+4&gt;:  ldrsw  x8, [x8, #0xf9c]
+    // 1. å°è®¾ç½®çå¼ç´æ¥å­å¥å° _decelerationFactor ç»æä½çæ°´å¹³åé
+    0x1a3ba2380 &lt;+8&gt;:  str    d0, [x0, x8]
+    0x1a3ba2384 &lt;+12&gt;: ret  
+</code></pre>
+<p>æ³¨é<code>1</code>ï¼å°è®¾ç½®çå¼ç´æ¥å­å¥å°<code>_decelerationFactor</code>ç»æä½çæ°´å¹³åéã</p>
+<p>å æ­¤ï¼éè¿ä¸é¢ä¸¤ä¸ªç§ææ¹æ³ï¼å°±å¯ä»¥è®¾ç½®<code>decelerationRate</code>çå¼ä¸º<code>[0, 1)</code>ç´æ¥çå¼ã</p>
+<p>æ³¨æï¼ä¸è½éè¿ä¸é¢<code>2</code>ä¸ªç§ææ¹æ³ï¼å°<code>decelerationRate</code>çå¼è®¾ç½®ä¸º<code>1.0</code>ï¼å¦åæ»å¨æ¶ä¼åçå´©æºã</p>
+<p>æ¯å¦å¦ææä»¬è°ç¨<code>setVerticalScrollDecelerationFactor:</code>æ¹æ³ï¼å°åç´åéç³»æ°è®¾ç½®ä¸º<code>0.999999</code>ï¼é£ä¹å°±ä¼åç°æå¨<code>UIScrollView</code>ä¹åçåééå¸¸ç¼æ¢ã</p>
+<p><img alt="ScreenRecording_07-14-2026 22-49-39_1" loading="lazy" data-src="https://img2024.cnblogs.com/blog/489427/202607/489427-20260715000709496-249173635.gif" class="lazyload"></p>
+<p>è¿ééè¦æ³¨æï¼å¦æè®¾ç½®äº<code>_decelerationFactor</code>çåç´åéï¼æå¥½ä¸èµ·è®¾ç½®æ°´å¹³åéï¼å ä¸º<code>decelerationRate</code>ç<code>getter</code>æ¹æ³ï¼åªè¿åæ°´å¹³åéçå¼ã</p>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-07-15 00:08">2026-07-15 00:08</span>&nbsp;
+<a href="https://www.cnblogs.com/chaoguo1234">chaoguo1234</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(21472426);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fchaoguo1234%2Fp%2F21472426&amp;targetId=21472426&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
     <title><![CDATA[ Day 0 å®æµï½å¨ GPUStack ä¸é¨ç½² GLM-5.2-FP8-DSpark ]]></title>
     <link>https://www.cnblogs.com/gpustack/p/21471301</link>
     <guid>a5c1971d7b9304f6f267a2135a71131b</guid>
@@ -2231,290 +2386,6 @@ if __name__ == "__main__":
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(21471301);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fgpustack%2Fp%2F21471301&amp;targetId=21471301&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ é«åè°±æ¼æ¥ç®æ³ï¼å«ï¼ä»ç¹å¾å¹éå°å¾åæ¼æ¥ ]]></title>
-    <link>https://www.cnblogs.com/Goblinscholar/p/21470008</link>
-    <guid>e45d157d6ba30929e98f6539ce07a0ec</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/Goblinscholar/p/21470008" title="åå¸äº 2026-07-14 22:40">
-    
-
-    <span role="heading" aria-level="2">é«åè°±æ¼æ¥ç®æ³ï¼å«ï¼ä»ç¹å¾å¹éå°å¾åæ¼æ¥</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>æ¬ç¯ä»£ç ä»ä½ï¼<a href="https://github.com/Goblinsscholar/Hyperspectral-Image-Mosaicking/blob/main/Stitch_v1/stitch.md" target="_blank" rel="noopener nofollow">ImageStitching</a></p>
-<hr>
-<p>ç»è¿åé¢ä¸ç¯çéºå«ï¼æä»¬å·²ç»å¾å°äºç²¾ç¡®å¹éçåç¹éåä¸ä¸ªæè¿°å¾åé´å ä½å³ç³»çå¨å±ååºæ§ç©éµã</p>
-<p><strong>è½ç¶å¨ç°ä»£æ¼æ¥ç®¡éä¸­ä»æå¾å¤å¶ä»å¤çæ­¥éª¤åç¸åºç®æ³ï¼ä½å°±æä»¬ç®åææ¥æçææï¼å·²ç»å¯ä»¥å°è¯è¿è¡ä¸æ¬¡æç®æçå¾åæ¼æ¥ã</strong></p>
-<p>å¤è¿°ä¸ä¸æä»¬ç°æçææï¼</p>
-<ol>
-<li>å¾å A åå¾å Bï¼äºèä¹é´å­å¨éå åºåã</li>
-<li>ç»è¿ USAC æçº¯çå¹éç¹éåä¸ä¸ªå¨å±ååºæ§ç©éµ <span class="math inline">\(H\)</span>ï¼æè¿°äºä»å¾å A å°å¾å B çæå½±åæ¢å³ç³»ã</li>
-</ol>
-<p>èå¾åæ¼æ¥çåºæ¬æè·¯æ¯è¿æ ·çï¼</p>
-<blockquote>
-<p><strong>éæ©å¶ä¸­ä¸å¼ å¾åä½ä¸ºåèåæ ç³»ï¼éè¿ååºæ§ç©éµå°å¶ä»ææå¾åé½åæ¢å°è¿ä¸ªåæ ç³»ä¸ï¼ç¶åå¡«ååç´ ã</strong></p>
-</blockquote>
-<h1 id="1-æå»ºç»å¸">1. æå»ºç»å¸</h1>
-<p>æäºååºæ§ç©éµä¹åï¼ä¸æ¯ç´æ¥æå¾å A éè¿ååºæ§ç©éµåæ¢å°å¾å B ä¸ï¼é¦åè¦è§£å³çé®é¢æ¯ï¼</p>
-<blockquote>
-<p><strong>åæ¢åçå¾ååºè¯¥æ¾å¨åªéï¼</strong></p>
-</blockquote>
-<p>è¿å¹¶ä¸æ¯ç®åçææ¹åæ¼å¨ä¸èµ·ï¼å ä¸º<strong>æ­£ç¡®çååºæ§åæ¢ä¼ååºçå®éå¤´é´çå ä½å³ç³»ï¼å¾åçä½ç½®åå¤§å°é½ä¼åçæ¹åã</strong> ä¾å¦è´åæ ãè¶åºäºåå¾èå´ä»¥åæ´å¹å¾åçæè½¬å¾æç­ã</p>
-<p><img src="https://img2024.cnblogs.com/blog/3708248/202607/3708248-20260714222312851-492604815.png" alt="c42d28ac-02ec-4f31-9358-4dfe756d4b3c.png" loading="lazy"></p>
-<p>å æ­¤ï¼å¨çæ­£å¼å§åç´ æ å°ä¹åï¼éè¦ååå»ºä¸ä¸ªè¶³å¤å¤§ç<strong>ç®æ ç»å¸ï¼Canvasï¼</strong>ã</p>
-<p>å·ä½åæ³å¦ä¸ï¼</p>
-<ol>
-<li><strong>åä¿æåèå¾å B çä½ç½®ä¸åã</strong></li>
-<li><strong>å©ç¨ååºæ§ç©éµ <span class="math inline">\(H\)</span>ï¼è®¡ç®å¾å A åä¸ªé¡¶ç¹åæ¢åçåæ ã</strong></li>
-<li><strong>ç»è®¡ææé¡¶ç¹çåæ èå´ï¼</strong> å°å¾å B çåä¸ªè§ç¹ä¸å¾å A åæ¢åçåä¸ªè§ç¹ç»ä¸æ¾å°åä¸åæ ç³»ä¸­ï¼åå«ç»è®¡ <span class="math inline">\(x_{\min}, x_{\max},y_{\min},y_{\max}\)</span> ã</li>
-<li><strong>æ´ä½å¹³ç§»åæ ç³»ï¼</strong> ç±äºå¾åæ°ç»ä¸è½ä½¿ç¨è´åæ ä½ä¸ºç´¢å¼ï¼å æ­¤éè¦å¯¹ææå¾å**ç»ä¸æ½å ä¸ä¸ªå¹³ç§»ï¼</li>
-</ol>
-<p></p><div class="math display">\[T=  
-\begin{bmatrix}  
-1&amp;0&amp;-x_{\min}\\  
-0&amp;1&amp;-y_{\min}\\  
-0&amp;0&amp;1  
-\end{bmatrix}  
-\]</div><p></p><ol start="5">
-<li><strong>æå»ºæç»ç»å¸ï¼</strong> æ ¹æ®å¹³ç§»åçåæ èå´åå»ºä¸ä¸ªè½å¤åå´ææå¾åçæå°ç©å½¢ï¼å¶å®½ãé«åå«ä¸º</li>
-</ol>
-<p></p><div class="math display">\[\text{width}=x_{\max}-x_{\min}
-\]</div><p></p><p></p><div class="math display">\[\text{height}=y_{\max}-y_{\min}
-\]</div><p></p><p>è¿æ ·å¾å°çç©å½¢ä¾¿æ¯æç»ç¨äºæ¼æ¥çç»å¸ï¼</p>
-<p><img src="https://img2024.cnblogs.com/blog/3708248/202607/3708248-20260714222252988-1956681335.png" alt="bc4b4bcb-029f-4b88-8590-377026baf652.png" loading="lazy"></p>
-<h1 id="2-å¡«åç»å¸">2. å¡«åç»å¸</h1>
-<p>ç°å¨ï¼æä»¬æäºåéçåºåå»æ¾ç½®åæ¢åçå¾åï¼èä¸è³äºå å¾åæ¬èº«çå°ºå¯¸éå¶å¯¼è´è£åªã<br>
-ä½ç®åç»å¸åªæ¯ä¸ä¸ª<strong>ç©ºçåç´ æ°ç»</strong>ï¼å®æ¬èº«æ²¡æä»»ä½å¾ååå®¹ã<br>
-å æ­¤ï¼è¿æ­¥ææ¯æ¼æ¥çéç¹å·¥ä½ï¼</p>
-<blockquote>
-<p><strong>å©ç¨ä¸¤å¼ åå§å¾åå»å¡«åè¿ä¸ªç»å¸ã</strong></p>
-</blockquote>
-<h2 id="21-åèå¾åå¹³ç§»å¤å¶">2.1 åèå¾åï¼å¹³ç§»å¤å¶</h2>
-<p>åèå¾å B ä¸éè¦å ä½åæ¢ï¼å®åªéè¦æ ¹æ®ä¸ä¸æ­¥å¾å°çå¹³ç§»ç©éµ <span class="math inline">\(T\)</span> è¿è¡ä¸æ¬¡æ´ä½å¹³ç§»ï¼ä¹åç´æ¥å¤å¶åç´ å¼å³å¯ã</p>
-<p></p><div class="math display">\[T=  
-\begin{bmatrix}  
-1&amp;0&amp;-x_{\min}\\  
-0&amp;1&amp;-y_{\min}\\  
-0&amp;0&amp;1  
-\end{bmatrix}  
-\]</div><p></p><p></p><div class="math display">\[B' = T B  
-\]</div><p></p><h2 id="22-åæ¢å¾åååæ å°">2.2 åæ¢å¾åï¼ååæ å°</h2>
-<p>é¦åè¦è¯´æçæ¯ï¼<strong>è¿æ­¥åä¸ä¸æ­¥å¹¶ä¸æ¯ååé¡ºåºå³ç³»ï¼å¾å A å¹¶ä¸æ¯å¨å·²ç»åå« B çç»å¸ä¸æ å°çï¼èæ¯ç¬ç«çï¼è¿åä¸ä¸æ­¥èåæå³ã</strong></p>
-<p>æäºååºæ§ç©éµåï¼å¾å A åæ¢çæç´æ¥æ³æ³æ¯è¿æ ·çï¼</p>
-<blockquote>
-<p><strong>éååå§å¾å A ä¸­çæ¯ä¸ªåç´ ï¼ç¨ <span class="math inline">\(H\)</span> è®¡ç®åºå®å¨ç»å¸ä¸­çä½ç½®ï¼æåç´ å¼å¡«è¿å»ã</strong></p>
-</blockquote>
-<p>è¿ç§æ¹æ³è¢«ç§°ä¸º<strong>ååæ å°ï¼Forward Warpingï¼</strong>ï¼</p>
-<p></p><div class="math display">\[\begin{bmatrix}
-x' \\
-y' \\
-1
-\end{bmatrix}
-=
-H
-\begin{bmatrix}
-x \\
-y \\
-1
-\end{bmatrix}
-\]</div><p></p><p>ä½ååæ å°å­å¨ä¸ä¸ªä¸¥éé®é¢ï¼</p>
-<blockquote>
-<p><strong>åæ¢åçåæ  <span class="math inline">\((x', y')\)</span> å ä¹ä¸å¯è½æ°å¥½è½å¨æ´æ°åç´ ä½ç½®ä¸ã</strong></p>
-</blockquote>
-<p>è¿æ ·ä¼å¯¼è´ä¸¤ç±»å¸¸è§åæï¼</p>
-<ol>
-<li>åç´ å¯è½è¢«æ å°å°ç®æ å¾åä¸­ç"ç¼é"éï¼å¯¼è´ç»æä¸­åºç°å¤§é<strong>ç©ºæ´</strong>ã</li>
-<li>å¤ä¸ªåç´ æ å°å°åä¸ä¸ªä½ç½®å¯¼è´<strong>éå </strong>ã</li>
-</ol>
-<p><img src="https://img2024.cnblogs.com/blog/3708248/202607/3708248-20260714222335781-2051137496.png" alt="bdc75d81-af51-48fe-bbc9-8a9a5042660a.png" loading="lazy"></p>
-<p>å æ­¤ï¼å®éå·¥ç¨ä¸­å ä¹ä»ä¸ä½¿ç¨ååæ å°ï¼åèä»£ä¹çæ¯<strong>ååæ å°ï¼Backward/Inverse Warpingï¼</strong>ï¼</p>
-<blockquote>
-<p><strong>éåç»å¸ä¸­çæ¯ä¸ªæ´æ°åç´ ä½ç½®ï¼ç¨ <span class="math inline">\(H^{-1}\)</span> è®¡ç®å®å¨åå§å¾åä¸­çå¯¹åºä½ç½®ï¼ç¶åéæ ·åç´ å¼ãä½åªæè½å¤æ å°ååå¾ææåºåçåç´ æä¼è¢«èµå¼ã</strong></p>
-</blockquote>
-<p>ååæ å°çè¿ç¨å¦ä¸ï¼</p>
-<ol>
-<li>å¯¹ç»å¸ä¸­æ¯ä¸ªæ´æ°åç´ åæ  <span class="math inline">\((x', y')\)</span>ï¼è®¡ç®ï¼</li>
-</ol>
-<p></p><div class="math display">\[H' = T H  
-\]</div><p></p><p></p><div class="math display">\[\begin{bmatrix}
-x \\
-y \\
-1
-\end{bmatrix}
-\sim
-H'^{-1}
-\begin{bmatrix}
-x' \\
-y' \\
-1
-\end{bmatrix}
-\]</div><p></p><ol start="2">
-<li>å¨åå§å¾å A ç <span class="math inline">\((x, y)\)</span> ä½ç½®<strong>æå¼éæ ·</strong>åç´ å¼ï¼å¡«å¥ç»å¸ç <span class="math inline">\((x', y')\)</span>ã</li>
-</ol>
-<p>ç±äº <span class="math inline">\(H^{-1}\)</span> çè®¡ç®ç»æéå¸¸ä¹æ¯æµ®ç¹æ°ï¼å æ­¤ä»ç¶ä¼éå°"éæ´æ°åæ "çé®é¢ã<br>
-è¿æ¯èåæ³ï¼<strong>æå¼ï¼å¨å¾åæ¼æ¥ä¸­ï¼åçº¿æ§æå¼å¾å¾æ¯æ§ä»·æ¯æé«çéæ©ã</strong></p>
-<p><img src="https://img2024.cnblogs.com/blog/3708248/202607/3708248-20260714222242098-910046318.png" alt="393706d5-ec9f-4cad-865c-defec6806be5.png" loading="lazy"></p>
-<h1 id="3-å¾åèå">3. å¾åèå</h1>
-<p>ç»è¿ä¸ä¸æ­¥ï¼æä»¬å·²ç»å®æäºä»åå§å¾åå°ç»å¸çæ å°ï¼ä½è¿éè¿æä¸ä¸ªææ¾é®é¢ï¼</p>
-<blockquote>
-<p><strong>æ¼æ¥å¾å AB é´å­å¨éå åºï¼è¿é¨ååç´ å¼ç¨è°çï¼æä¹å¤çï¼</strong></p>
-</blockquote>
-<p>è¿ä¾¿æ¯å¾åèåé¨åçé»è¾äºï¼è¿éåå¼å¥æåºç¡çåå®¹ï¼</p>
-<h2 id="31-éå åºè¯å«">3.1 éå åºè¯å«</h2>
-<p>éå åºçè¯å«æ¯å¤ççåæï¼èè¿å¶å®å¨ä¸ä¸æ­¥å¡«åæ¶åæ­¥è¿è¡çï¼</p>
-<blockquote>
-<p><strong>å¨å¾å AB åå¸è¿è¡ç»å¸å¡«åæ¶åæ­¥çæåèªæ©ç ï¼æå¯¼å¾åèåï¼å¯ä»¥çè§£ä¸ºååå«çæä¸¤å¼ å·²ç»å¯¹é½å°åä¸ç»å¸ä¸çå¾åï¼åæ ¹æ®æ©ç å³å®æç»è¾åºã</strong></p>
-</blockquote>
-<p>å·ä½å¦ä¸ï¼</p>
-<ol>
-<li>å½åèå¾åå¤å¶æåæ¢å¾åæ å°å®æåï¼ä¸ºå¶çæä¸ç»åç»å¸å°ºå¯¸ç¸åçæ©ç ï¼è¦çé¨åå¼ä¸º 1 ï¼åä¹ä¸º 0 ã</li>
-<li>å¨èåé¨åæ ¹æ®æ©ç æåµè¿è¡ç¸åºå¤å«ï¼æå¯¼æç»èåï¼
-<ul>
-<li>maskA=1, maskB=0 â ééå ï¼ç´æ¥å¤å¶ A å¼ã</li>
-<li>maskA=0, maskB=1 â ééå ï¼ç´æ¥å¤å¶ B å¼ã</li>
-<li><strong>maskA=1, maskB=1 â éå åºåï¼æ§è¡èåå¤çã</strong></li>
-</ul>
-</li>
-</ol>
-<p><img src="https://img2024.cnblogs.com/blog/3708248/202607/3708248-20260714222126870-94534662.png" alt="warping_visualization.png" loading="lazy"></p>
-<h2 id="32-èåç®æ³">3.2 èåç®æ³</h2>
-<p>èåç®æ³æ¬èº«å°±åä¹åçç¹å¾å¹éãè¯¯åé¤ä¸æ ·ï¼æ¯æ¼æ¥ç®¡éçæ ¸å¿æ¨¡åï¼å¶åæ ·æ¥æä¸°å¯çæ¹æ³ä»¥åæç»­çæ¼è¿è¿ç¨ï¼ç®ååä¸¾å¦ä¸ï¼</p>
-<table>
-<thead>
-<tr>
-<th>æ¹æ³</th>
-<th>æ ¸å¿ææ³</th>
-<th>ä¼ç¹</th>
-<th>ç¼ºç¹</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>ç´æ¥è¦çï¼Direct Copyï¼</strong></td>
-<td>éå åºåç´æ¥éç¨ä¸å¹å¾åçåç´ </td>
-<td>å®ç°æç®åï¼éåº¦æå¿«</td>
-<td>æ¥ç¼ææ¾ï¼äº®åº¦ååçªå</td>
-</tr>
-<tr>
-<td><strong>å æèåï¼Feather Blendingï¼</strong></td>
-<td>æ ¹æ®è·ç¦»è¾¹ççæéå¯¹ä¸¤å¹å¾è¿è¡çº¿æ§å æ</td>
-<td>å®ç°ç®åï¼å¯ææåå¼±æ¥ç¼</td>
-<td>å­å¨éå½±ï¼å¯¹éåè¯¯å·®è¾ææ</td>
-</tr>
-<tr>
-<td><strong>å¤é¢å¸¦èåï¼Multi-band Blendingï¼</strong></td>
-<td>å©ç¨ææ®ææ¯éå­å¡å¨ä¸åé¢çåå«èå</td>
-<td>æ¥ç¼èªç¶ï¼æ¯ç»å¸æ¼æ¥ç®æ³çä¸»æµæ¹æ¡</td>
-<td>è®¡ç®éè¾å¤§ï¼å®ç°å¤æ</td>
-</tr>
-<tr>
-<td><strong>æä¼ç¼åï¼Seam Findingï¼</strong></td>
-<td>å¨éå åºå¯»æ¾æä¸æ¾ç¼çæ¼æ¥ç¼ï¼åè¿è¡èå</td>
-<td>è½ææé¿å¼è¿å¨ç©ä½åææ¾éä½</td>
-<td>å¯¹æåå·®å¼ä»è¾ææï¼éå¸¸éç»åå¶ä»èåæ¹æ³</td>
-</tr>
-<tr>
-<td><strong>æ¢¯åº¦åèåï¼Poisson Blendingï¼</strong></td>
-<td>ä¿ææ¢¯åº¦è¿ç»­ï¼éè¿æ±è§£æ³æ¾æ¹ç¨å®æèå</td>
-<td>åç§è¿æ¸¡èªç¶ï¼é¢è²ä¸è´æ§å¥½</td>
-<td>æ±è§£èæ¶ï¼ä¸éåå¤§è§æ¨¡å®æ¶æ¼æ¥</td>
-</tr>
-<tr>
-<td><strong>æ·±åº¦å­¦ä¹ èå</strong></td>
-<td>å©ç¨ç¥ç»ç½ç»å­¦ä¹ éå åºåçèåæ¹å¼</td>
-<td>å¯¹å¤æåºæ¯å·æè¾å¥½çéåºè½å</td>
-<td>ä¾èµè®­ç»æ°æ®ï¼è®¡ç®ææ¬é«</td>
-</tr>
-</tbody>
-</table>
-<p>é¨åå·ä½ç®æ³ä¼å¨ä¹ååè¯¦ç»å±å¼ã</p>
-<h1 id="4-æ´å¤æ¼æ¥ç»ä»¶">4. æ´å¤æ¼æ¥ç»ä»¶</h1>
-<p>è³æ­¤ï¼æä»¬å·²ç»å®æäºä¸æ¡æåºç¡çå¾åæ¼æ¥æµç¨ï¼<strong>å©ç¨å ä½åæ¢å°ä¸¤å¹å¾åæ å°å°ç»ä¸åæ ç³»ï¼åéè¿èåçææç»ç»æã</strong><br>
-ç¨ä¸ç»<strong>ç®åæ°æ®</strong>æµè¯å¦ä¸ï¼<br>
-<img src="https://img2024.cnblogs.com/blog/3708248/202607/3708248-20260714222719118-1822481781.png" alt="stitched_result.png" loading="lazy"></p>
-<p>åè¯è¯æä»¬ä¹åä¸ç´çé£ç»ï¼<br>
-<img src="https://img2024.cnblogs.com/blog/3708248/202607/3708248-20260714223922809-2035415595.png" alt="image" loading="lazy"></p>
-<p>å¯ä»¥åç°æ¼æ¥çç»æä¸­å­å¨<strong>éå½±</strong>ï¼èè¿æ¯å ä¸ºè¿ç»æ°æ®å­å¨çå®éå¤´çç§»å¨åè§å·®ç­å ç´ ï¼ç¸æ¯ä¸é¢é£ç»ç´æ¥æªå¾çæ°æ®å­å¨æ´å¤æçå ä½å³ç³»ã</p>
-<p>ä¸ºæ­¤ï¼å°±åå¼å§è¯´çï¼æ¼æ¥ç®¡éä¸­ä»ç¶å­å¨æ´å¤åå®¹ï¼å½é¢å¯¹å¤å¾ãå¤§è§å·®ãæåååä»¥åå¤æåºæ¯æ¶ï¼ç°ä»£å¾åæ¼æ¥éå¸¸åå«å¦ä¸ç»ä»¶ï¼</p>
-<table>
-<thead>
-<tr>
-<th>æ¨¡å</th>
-<th>ä½ç¨</th>
-<th>å¸åæ¹æ³</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>ç¹å¾æåä¸æè¿°</strong></td>
-<td>æåç¨³å®çå±é¨ç¹å¾å¹¶å»ºç«å¹éå³ç³»</td>
-<td>SIFTãSURFãORBãSuperPoint</td>
-</tr>
-<tr>
-<td><strong>é²æ£å ä½ä¼°è®¡</strong></td>
-<td>åé¤è¯¯å¹éï¼ä¼°è®¡å¨å±ååºæ§ç©éµ</td>
-<td>RANSACãUSAC</td>
-</tr>
-<tr>
-<td><strong>å±é¨å ä½ä¼å</strong></td>
-<td>æé«éå¹³é¢åºæ¯ä¸çéåç²¾åº¦</td>
-<td>APAPãSPHPãAANAP</td>
-</tr>
-<tr>
-<td><strong>å¨å±ä¼åï¼å¤å¾ï¼</strong></td>
-<td>èåä¼åææå¾åçç¸æºåæ°ï¼åå°ç´¯è®¡è¯¯å·®</td>
-<td>Bundle Adjustment</td>
-</tr>
-<tr>
-<td><strong>æ¥ç¼æç´¢ï¼Seam Findingï¼</strong></td>
-<td>èªå¨å¯»æ¾æä¸ææ¾çæ¼æ¥è¾¹ç</td>
-<td>Graph CutãDynamic Programming</td>
-</tr>
-<tr>
-<td><strong>æåè¡¥å¿</strong></td>
-<td>æ¶é¤ä¸åå¾åä¹é´çäº®åº¦ãé¢è²å·®å¼</td>
-<td>Gain CompensationãBlock Gain Compensation</td>
-</tr>
-<tr>
-<td><strong>å¾åèåï¼Blendingï¼</strong></td>
-<td>å¹³æ»éå åºåï¼ä½¿æ¥ç¼èªç¶è¿æ¸¡</td>
-<td>FeatheringãMulti-band BlendingãPoisson Blending</td>
-</tr>
-<tr>
-<td><strong>æç»è£åªä¸ç«æ­£</strong></td>
-<td>å»é¤é»è¾¹ï¼æ ¡æ­£æ´ä½ç»é¢</td>
-<td>Auto CroppingãWave Correction</td>
-</tr>
-</tbody>
-</table>
-<p>è¿äºæä»¬é½ä¼å¨ä¹åéä¸ªå±å¼ã</p>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.013888888888888888" data-date-updated="2026-07-14 23:00">2026-07-14 22:40</span>&nbsp;
-<a href="https://www.cnblogs.com/Goblinscholar">å¥å¸æå­¦è</a>&nbsp;
-éè¯»(<span id="post_view_count">4</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(21470008);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FGoblinscholar%2Fp%2F21470008&amp;targetId=21470008&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
