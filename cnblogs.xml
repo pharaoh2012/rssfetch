@@ -3,12 +3,788 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-07-15T13:23:04.216Z</lastBuildDate>
+        <lastBuildDate>2026-07-15T17:10:35.047Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
+    <title><![CDATA[ ç»äºææ Kueueï¼5 ä¸ªæ ¸å¿å¯¹è±¡ä¸æ¬¡è®²é ]]></title>
+    <link>https://www.cnblogs.com/KubeExplorer/p/21510013</link>
+    <guid>b8e0adf9af0877072ad05f214b513d7b</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/KubeExplorer/p/21510013" title="åå¸äº 2026-07-15 18:22">
+    
+
+    <span role="heading" aria-level="2">ç»äºææ Kueueï¼5 ä¸ªæ ¸å¿å¯¹è±¡ä¸æ¬¡è®²é</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p><img alt="kueue-p2-core.jpg" loading="lazy" data-src="https://img.lixueduan.com/kubernetes/cover/kueue-p2-core.jpg" class="lazyload"></p>
+<p>å¾å¤äººåæ¥è§¦ Kueue æ¶æå¤§çå°æï¼ä¸æ¯ YAML æä¹åï¼èæ¯ççä¸å  CRDï¼ResourceFlavorãClusterQueueãLocalQueueãCohortãWorkloadï¼ä¸ç¥éå®ä»¬ä¹é´å°åºæ¯ä»ä¹å³ç³»ãæ¬æä¸ä¼éä¸ªç§ç API ææ¡£ä»ç»å­æ®µï¼èæ¯æè¿äºä¸ªå¯¹è±¡æ¾å°åä¸æ¡èµæºåå¥é¾è·¯ä¸­ï¼ä¸æ¬¡è®²æ¸æ¥å®ä»¬åèªè´è´£ä»ä¹ãä¸ºä»ä¹è¦å­å¨ï¼ä»¥åå®ä»¬ä¹é´å¦ä½åä½ã</p>
+
+<p>ä¸ä¸ç¯æç« ä¸­åæäº Kueue çå®æ´å·¥ä½æµï¼</p>
+<p><img alt="kueue-workflow.png" loading="lazy" data-src="https://img.lixueduan.com/kubernetes/kueue/kueue-workflow.png" class="lazyload"></p>
+<p>æ¶åå°å¤ä¸ªæ ¸å¿å¯¹è±¡ï¼ä¸é¢éä¸ªæå¼è®²ã</p>
+<h2 id="1-resourceflavorèµæºé¿ä»ä¹æ ·">1. ResourceFlavorï¼èµæºé¿ä»ä¹æ ·</h2>
+<p>Kueue è¦ç®¡èµæºï¼ç¬¬ä¸æ­¥å¾ç¥ééç¾¤éæåªäº"ç§ç±»"çèµæºãéç¾¤éç CPUãGPU éå¸¸ä¸æ¯åæçï¼</p>
+<ul>
+<li><strong>ä»·æ ¼åå¯ç¨æ§</strong> ï¼ç«ä»·å vs æéåèææº</li>
+<li><strong>æ¶æ</strong> ï¼x86 vs ARM CPU</li>
+<li><strong>åçååå·</strong> ï¼Nvidia A100 vs T4 GPU</li>
+</ul>
+<p>ResourceFlavor å°±æ¯å¹²è¿ä¸ªçââç»èµæºåä¸ªç±»ï¼è´´ä¸ªæ ç­¾ï¼åé¢ ClusterQueue æè¿ä¸ªåç±»æ¥ç®¡éé¢ã</p>
+<p>Kueue å¨ Admission é¶æ®µï¼ä¼æ ¹æ® ClusterQueue ä¸­éç½®ç Flavor é¡ºåºãQuota æ¯å¦æ»¡è¶³ãFlavor æ¯å¦å¹é Pod ç­å ç´ ï¼éæ©ä¸ä¸ªå¯ç¨ç ResourceFlavorã</p>
+<h3 id="ç©º-flavor">ç©º Flavor</h3>
+<p>å¦æéç¾¤èµæºæ¯åæçï¼æèä¸éè¦ä¸ºä¸åèµæºè§æ ¼åå«ç®¡çéé¢ï¼é£ç´æ¥åå»ºä¸ä¸ªä¸åå«ä»»ä½æ ç­¾ææ±¡ç¹çç©º ResourceFlavor å³å¯ï¼</p>
+<pre><code class="language-yaml">apiVersion: kueue.x-k8s.io/v1beta2
+kind: ResourceFlavor
+metadata:
+  name: default-flavor
+</code></pre>
+<p>è¿ç±» ResourceFlavor ä¸æ¿æèç¹ç­éææ±¡ç¹æ§å¶çèè´£ï¼ä»ä½ä¸ºç»ä¸çèµæºæ½è±¡å­å¨ï¼æ¹ä¾¿åç»­æ©å±ä¸åèµæºç±»åã</p>
+<h3 id="åªåç±»ä¸å æ±¡ç¹">åªåç±»ä¸å æ±¡ç¹</h3>
+<pre><code class="language-yaml">apiVersion: kueue.x-k8s.io/v1beta2
+kind: ResourceFlavor
+metadata:
+  name: "gpu"
+spec:
+  nodeLabels:
+    instance-type: gpu
+</code></pre>
+<p>æ°å¢åæ°ï¼</p>
+<ul>
+<li><strong><code>spec.nodeLabels</code></strong> ï¼éè¿ label å³èå°å¯¹åºçèç¹ãå·ä½å®ç°ä¸åæ¯éè¿å° flavor ä¸­ nodeLabels é¨åèªå¨æ³¨å¥å° Pod Spec ä¸­ç nodeSelectorï¼ä»èè¾¾å°åªå° Pod è°åº¦å°è¯¥ flavor å³èçèç¹ä¸ã</li>
+</ul>
+<p>è¿ç±» Flavor å®ç°äºæ ¹æ® label å°èç¹è¿è¡åç±»ï¼ç®æ¯åå¯å¶å®ãç®¡çååç»èç¹æä¸å¯¹åº label å³å¯å®ç°åç±»ï¼</p>
+<pre><code class="language-bash">root@lixd-dev-4:~# kubectl label node lixd-dev-4 instance-type=gpu
+node/lixd-dev-4 labeled
+</code></pre>
+<p>ä½ä¹åªæ¯ç®ååäºåç±»ï¼ä¸æ¯è¯¥ Flavor ä¸­ç Job ä¹è½æå¨è°åº¦å°è¿äº GPU èç¹ãæ¯è¾æ¨èçåæ³æ¯ç»èç¹åæä¸æ±¡ç¹ï¼è¿æ ·å°±ä¸æ¯éä¾¿è½è°åº¦ä¸å»äºï¼</p>
+<pre><code class="language-bash">kubectl taint node xxx nvidia.com/gpu=true:NoSchedule
+</code></pre>
+<p>èç¹æä¸æ±¡ç¹åï¼Flavor ä¸­ç Job ä¹ä¸è½è°åº¦äºãKueue æä¾äºä¸¤ç§æ¨¡å¼æ¥è§£å³è¿ä¸ªé®é¢ï¼</p>
+<ol>
+<li><strong>èªå¨å®¹å¿æ¨¡å¼</strong> ï¼å°æ±¡ç¹å®¹å¿ä¿¡æ¯åå° ResourceFlavorï¼Kueue èªå¨ç»ä½¿ç¨è¯¥ Flavor ç Pod å ä¸å®¹å¿</li>
+<li><strong>æå¨å®¹å¿æ¨¡å¼</strong> ï¼å°æ±¡ç¹ä¿¡æ¯åå° ResourceFlavorï¼Kueue åå¹éæ¦æªï¼åªåè®¸å¸¦äºå¯¹åºå®¹å¿ç Pod ä½¿ç¨è¯¥ Flavor</li>
+</ol>
+<h3 id="å¸¦æ±¡ç¹">å¸¦æ±¡ç¹</h3>
+<h4 id="èªå¨æ±¡ç¹å®¹å¿è°åº¦">èªå¨æ±¡ç¹å®¹å¿è°åº¦</h4>
+<pre><code class="language-yaml">apiVersion: kueue.x-k8s.io/v1beta2
+kind: ResourceFlavor
+metadata:
+  name: "spot"
+spec:
+  nodeLabels:
+    instance-type: spot
+  tolerations:
+  - key: "spot-taint"             # èç¹ä¸å·²ææ±¡ç¹ç key
+    operator: "Exists"
+    effect: "NoSchedule"          # æ¯æ NoSchedule å NoExecute
+</code></pre>
+<p>æ°å¢åæ°ï¼</p>
+<ul>
+<li><strong><code>spec.tolerations</code></strong> ï¼å£°æè¯¥ flavor å³èèç¹ä¸çæ±¡ç¹å®¹å¿ä¿¡æ¯ãKueue åå¥æ¶èªå¨æ³¨å¥å° Pod ç <code>.spec.template.spec.tolerations</code>ï¼ç¡®ä¿ Pod è½å®¹å¿èç¹æ±¡ç¹ä»èæ­£å¸¸è°åº¦ã</li>
+</ul>
+<h4 id="æå¨æ±¡ç¹å®¹å¿">æå¨æ±¡ç¹å®¹å¿</h4>
+<pre><code class="language-yaml">apiVersion: kueue.x-k8s.io/v1beta2
+kind: ResourceFlavor
+metadata:
+  name: "spot"
+spec:
+  nodeLabels:
+    instance-type: spot
+  nodeTaints:
+  - effect: NoSchedule            # åªæ¯æ NoSchedule å NoExecuteï¼PreferNoSchedule ä¼è¢«å¿½ç¥
+    key: spot
+    value: "true"
+</code></pre>
+<p>æ°å¢åæ°ï¼</p>
+<ul>
+<li><strong><code>spec.nodeTaints</code></strong> ï¼å¨ flavor ä¸å®ä¹åå¥é¨æ§ãKueue <strong>ä¸ä¼</strong>èªå¨æ³¨å¥å®¹å¿åº¦ï¼Pod å¿é¡»èªå·±å¸¦å¯¹åº toleration æè½éè¿åå¥ãæ¿å°éé¢ã</li>
+</ul>
+<p>ç¨æ·æäº¤ Job æ¶å¿é¡»èªå·±å¸¦ä¸ tolerationï¼å¦å Kueue ä¸æ¹éé¢ï¼</p>
+<pre><code class="language-yaml">spec:
+  template:
+    spec:
+      tolerations:
+      - key: spot
+        operator: Exists
+        effect: NoSchedule
+</code></pre>
+<blockquote>
+<p><strong>æ³¨æ</strong> ï¼<code>spec.nodeTaints</code> éå¸¸åºä¸èç¹ä¸ççå®æ±¡ç¹ä¿æä¸è´ãå¦åå¯è½åºç° Pod è¿äº Kueue åå¥ãæ¿å°éé¢ï¼ä½ K8s è°åº¦å¨åç°èç¹æçæ±¡ç¹è Pod æ²¡å¯¹åº tolerationï¼æç»è°åº¦å¤±è´¥ââç½ç½å äºéé¢ãæ¬è´¨å°±æ¯<strong>æè°åº¦å±é¢çæ¦æªæåå° Kueue åå¥å±é¢</strong>ã</p>
+</blockquote>
+<h4 id="ä¸¤ç§æ¨¡å¼æä¹é">ä¸¤ç§æ¨¡å¼æä¹é</h4>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>èªå¨æ¨¡å¼ï¼<code>spec.tolerations</code>ï¼</th>
+<th>æå¨æ¨¡å¼ï¼<code>spec.nodeTaints</code>ï¼</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>è°ç» Pod å  toleration</strong></td>
+<td>Kueue èªå¨æ³¨å¥</td>
+<td>ç¨æ·èªå·±å</td>
+</tr>
+<tr>
+<td><strong>ç¨æ·éè¦å³å¿èç¹æ±¡ç¹å</strong></td>
+<td>ä¸éè¦ï¼æäº¤ Job å°±è¡</td>
+<td>å¿é¡»èªå·±å toleration</td>
+</tr>
+<tr>
+<td><strong>ç¨å¨åª</strong></td>
+<td>çäº§é»è®¤ï¼å¯¹ç¨æ·æåå¥½</td>
+<td>ä¿æ¤æè´µèµæºï¼å¼ºå¶ç¨æ·æ¾å¼å£°æ</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>éåå»ºè®®ï¼ä¼åç¨<strong>èªå¨æ¨¡å¼</strong>ï¼åªæå½ä½ éè¦å¼ºå¶ç¨æ·æ¾å¼å£°ææè½ä½¿ç¨æç§æè´µèµæºæ¶ï¼æç¨æå¨æ¨¡å¼ã</p>
+</blockquote>
+<p>ä¸å¥è¯è®°ä½ï¼<strong>ResourceFlavor å®ä¹èµæºçå±æ§ï¼æ ç­¾ãæ±¡ç¹ãå®¹å¿ç­ï¼ï¼çæ­£å³å®èµæºéé¢åå¬å¹³æ§çä»ç¶æ¯ ClusterQueueã</strong></p>
+<h2 id="2-clusterqueueè°æ¯éé¢ççæ­£ç®¡å®¶">2. ClusterQueueï¼è°æ¯éé¢ççæ­£ç®¡å®¶</h2>
+<p>å¦æ ResourceFlavor æ¯ç»èµæºåç±»ï¼é£çæ­£å³å®è°è½ç¨ãç¨å¤å°çæ¯è°ï¼ç­æ¡å°±æ¯ ClusterQueueãå®ææ¯ Kueue éé¢ç®¡ççæ ¸å¿ï¼å®ä¹äºä½¿ç¨ä¸éåå¬å¹³å±äº«è§åã</p>
+<h3 id="åºç¡ç¨æ³">åºç¡ç¨æ³</h3>
+<p>ä¸ä¸ªåºç¡ç ClusterQueue ç¤ºä¾å¦ä¸ï¼</p>
+<pre><code class="language-yaml">apiVersion: kueue.x-k8s.io/v1beta2
+kind: ClusterQueue
+metadata:
+  name: "cluster-queue"
+spec:
+  namespaceSelector: {} # å¹éææå½åç©ºé´ã
+  resourceGroups:
+  - coveredResources: ["cpu", "memory", "pods"]
+    flavors:
+    - name: "default-flavor"
+      resources:
+      - name: "cpu"
+        nominalQuota: 9
+      - name: "memory"
+        nominalQuota: 36Gi
+      - name: "pods"
+        nominalQuota: 5
+</code></pre>
+<p>å­æ®µè§£æï¼</p>
+<ul>
+<li><strong><code>spec.namespaceSelector</code></strong> ï¼æå®è¯¥ ClusterQueue å¯ä»¥å¨åªäº namespace è¢«ä½¿ç¨ãå½å ClusterQueue å¯ä»¥è¢«ä»»æ Namespace ä½¿ç¨ã</li>
+<li><strong><code>resourceGroups</code></strong> ï¼èµæºç»ï¼å®ä¹ ClusterQueue çèµæºé¢åº¦ï¼å¯ä»¥æå¤ä¸ªï¼æ¯ä¸ªç»é½æ¯ç¬ç«çã
+<ul>
+<li><strong><code>coveredResources</code></strong> ï¼ç®¡åªäºèµæºï¼åä¸ä¸ª group éé¢çèµæºå¿é¡»å¨åä¸ä¸ª flavor éé¢åéã</li>
+<li><strong><code>flavors</code></strong> ï¼å¯ä»¥æå¤ä¸ªï¼åéæ¯æé¡ºåºå°è¯ã
+<ul>
+<li><strong><code>name</code></strong> ï¼ä½¿ç¨åç§°å¼ç¨åé¢åå»ºç ResourceFlavorã</li>
+<li><strong><code>resources</code></strong> ï¼å¨è¿ä¸ª flavor ä¸ï¼æ¯ç§èµæºçéé¢ä¸éã
+<ul>
+<li><strong><code>nominalQuota</code></strong> ï¼ä¿åºéé¢ï¼è¡¨ç¤ºè¯¥ ClusterQueue çåä¹éé¢ï¼ä¼åä¿éèªèº«ä½¿ç¨ï¼æªä½¿ç¨çé¨åå¯ä»¥æç§ borrowing/lending è§åè¢«å¶ä» Queue åç¨ã</li>
+<li><strong><code>borrowingLimit</code></strong> ï¼ä½ æå¤è½ä» Cohort éåå¥å¤å°ï¼æä»¥ä½ æå¤è½ç¨ nominalQuota + borrowingLimitã</li>
+<li><strong><code>lendingLimit</code></strong> ï¼ä½ æå¤åè®¸å«äººä»ä½ è¿åèµ°å¤å°ï¼å½ä½ ç©ºé²æ¶ï¼ï¼éè¦æ¶å¯éè¿é¢æ¢å æ¶åã</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>ä»¥ cpu ä¸ºä¾ï¼åºäºä¸é¢ä¸ä¸ªéé¢å­æ®µï¼ä½ å¯ä»¥ä½¿ç¨çèå´æ¯ nominalQuota ~ (nominalQuota + borrowingLimit)ã</p>
+<h3 id="é«çº§ç¨æ³">é«çº§ç¨æ³</h3>
+<p>å¨åºç¡éç½®ä¹ä¸ï¼ClusterQueue è¿æ¯æä»¥ä¸è¿é¶å­æ®µï¼æç¨éåç»ï¼</p>
+<h4 id="è°åº¦é¡ºåºæéç­ç¥">è°åº¦é¡ºåºï¼æéç­ç¥</h4>
+<pre><code class="language-yaml">spec:
+  queueingStrategy: BestEffortFIFO
+</code></pre>
+<ul>
+<li><strong><code>BestEffortFIFO</code>ï¼é»è®¤ï¼</strong> ï¼åé¢ç Job æ¿ä¸å°éé¢ï¼åé¢çè½æéåè·ï¼èµæºå©ç¨çé«ã</li>
+<li><strong><code>StrictFIFO</code></strong> ï¼åé¢ç Job æ¿ä¸å°éé¢ï¼åé¢çå¿é¡»ç­ï¼éåæé¡ºåºä¾èµç Pipelineã</li>
+</ul>
+<h4 id="èµæºå±äº«å å¥-cohort">èµæºå±äº«ï¼å å¥ Cohort</h4>
+<pre><code class="language-yaml">spec:
+  cohortName: research-cohort
+</code></pre>
+<ul>
+<li><strong><code>cohortName</code></strong> ï¼å³èå°ä¸ä¸ª Cohortï¼åä¸ä¸ª Cohort éç ClusterQueue å¯ä»¥äºç¸å±äº«èµæºã</li>
+</ul>
+<h4 id="æ¢å ç¸å³">æ¢å ç¸å³</h4>
+<p>å½ ClusterQueue æå¶ Cohort ä¸­æ²¡æè¶³å¤çéé¢æ¶ï¼æ°è¿å¥ç Workload å¯ä»¥è§¦åé¢æ¢å ï¼æ¤æä½ä¼åçº§ç Workloadãæ¶åä¸¤ä¸ªéç½®é¡¹ï¼</p>
+<p><strong>é¢æ¢å ç­ç¥</strong></p>
+<pre><code class="language-yaml">spec:
+  preemption:
+    reclaimWithinCohort: Any                # å¯æ¢å  Cohort ä¸­è¶è¿åä¹éé¢ç Workload
+    borrowWithinCohort:
+      policy: LowerPriority                 # åç¨æ¶åªæ¢å ä½ä¼åçº§ï¼ä¸è½ä¸ Fair Sharing ä¸åä½¿ç¨ï¼
+      maxPriorityThreshold: 100             # ä¸ä»æ¢å ä¼åçº§ â¤ 100 ç Workload
+    withinClusterQueue: LowerPriority       # åéååï¼ä½ä¼åçº§è®©è·¯ç»é«ä¼åçº§
+</code></pre>
+<ul>
+<li><strong><code>withinClusterQueue</code></strong> ï¼åéååï¼å½å¾å¤ç Workload ä¸éåéé¢æ¶ï¼æ¯å¦å¯æ¢å åéåä¸­çæ´»å¨ Workloadã<code>Never</code>ï¼é»è®¤ï¼ä¸æ¢å ï¼<code>LowerPriority</code> ä»æ¢å ä½ä¼åçº§ï¼<code>LowerOrNewerEqualPriority</code> æ¢å ä½ä¼åçº§æåä¼åçº§çã</li>
+<li><strong><code>reclaimWithinCohort</code></strong> ï¼æ¯å¦å¯æ¢å  Cohort ä¸­ä½¿ç¨äºè¶è¿å¶åä¹éé¢ç Workloadã<code>Never</code>ï¼é»è®¤ï¼ä¸æ¢å ï¼<code>LowerPriority</code> ä»æ¢å ä½ä¼åçº§ï¼<code>Any</code> å¯æ¢å ä»»æä¼åçº§ã</li>
+<li><strong><code>borrowWithinCohort</code></strong> ï¼å½éè¦åç¨éé¢æ¶æ¯å¦è§¦åæ¢å ã<code>Never</code>ï¼é»è®¤ï¼ä¸è§¦åï¼<code>LowerPriority</code> ä»æ¢å  Cohort ä¸­ä½ä¼åçº§ç Workloadï¼éåæ¶å¯ç¨ <code>reclaimWithinCohort</code>ï¼ãæ³¨æï¼<strong>åªè½éç½®ç»å¸æ¢å ï¼ä¸è½ä¸ Fair Sharing ä¸åä½¿ç¨</strong>ã</li>
+</ul>
+<p><strong>ä¼åæ¢å è¿æ¯åç¨</strong></p>
+<p>å½ ClusterQueue æå¤ä¸ª flavor æ¶ï¼Kueue æé¡ºåºå°è¯ãå½å½å flavor éé¢ç¨å®æ¶ï¼ä½ å¯ä»¥å½±å Kueue çè¡ä¸ºï¼</p>
+<ul>
+<li><strong><code>whenCanBorrow</code></strong> ï¼è½ä» Cohort åçæ¶åã<code>MayStopSearch</code>ï¼é»è®¤ï¼ï¼åäºå°±åï¼ä¸åè¯ä¸ä¸ä¸ªï¼<code>TryNextFlavor</code>ï¼ä¸åï¼åè¯ä¸ä¸ä¸ª flavorã</li>
+<li><strong><code>whenCanPreempt</code></strong> ï¼è½æ¢å ä½ä¼åçº§ Job çæ¶åã<code>TryNextFlavor</code>ï¼é»è®¤ï¼ï¼åè¯ä¸ä¸ä¸ª flavorï¼<code>MayStopSearch</code>ï¼ä¸è¯äºï¼ç´æ¥æ¢å ã</li>
+</ul>
+<pre><code class="language-yaml">spec:
+  flavorFungibility:
+    whenCanBorrow: TryNextFlavor
+    whenCanPreempt: MayStopSearch
+</code></pre>
+<h4 id="è¿ç»´æ§å¶åæ­¢ç­ç¥">è¿ç»´æ§å¶ï¼åæ­¢ç­ç¥</h4>
+<p>æ§å¶éåçè¿è¡ç¶æï¼ClusterQueue å LocalQueue é½æ¯æã</p>
+<ul>
+<li><strong><code>None</code>ï¼é»è®¤ï¼</strong> ï¼æ­£å¸¸è¿è¡ï¼æ° Job æ­£å¸¸åå¥ï¼å·²è¿è¡çä¸åå½±åã</li>
+<li><strong><code>Hold</code></strong> ï¼åæ­¢æ°çåå¥ï¼å·²åå¥çä¸åå½±åï¼éåç»´æ¤ãéé¢è°æ´ç­ä¸´æ¶åºæ¯ã</li>
+<li><strong><code>HoldAndDrain</code></strong> ï¼åæ­¢æ°çåå¥ + è§¦åå·²åå¥å·¥ä½è´è½½çé©±éï¼éåç´§æ¥æåµéè¦ç«å»æ¸åºã</li>
+</ul>
+<p>ç»´æ¤å®æ¢å¤ä¸º <code>None</code> æç´æ¥å æè¿ä¸ªå­æ®µå³å¯ãè¿æ¯è¿ç»´æä½ï¼ä¸æ¯å¸¸æéç½®ã</p>
+<pre><code class="language-yaml">spec:
+  stopPolicy: Hold
+</code></pre>
+<h3 id="æä¸é¢çé½æ¾å¨ä¸èµ·">æä¸é¢çé½æ¾å¨ä¸èµ·</h3>
+<p>ä¸ä¸ªåå«ææå­æ®µçå®æ´ ClusterQueueï¼</p>
+<pre><code class="language-yaml">apiVersion: kueue.x-k8s.io/v1beta2
+kind: ClusterQueue
+metadata:
+  name: ai-team-cq
+spec:
+  # 1. å å¥ Cohortï¼åè®¸åå¶ä» ClusterQueue å±äº«èµæº
+  cohortName: research-cohort
+
+  # 2. æéç­ç¥
+  queueingStrategy: BestEffortFIFO  # é»è®¤ãStrictFIFO ä¼é»å¡
+
+  # 3. å½åç©ºé´éæ©å¨ï¼è°è½ç¨è¿ä¸ª ClusterQueueï¼
+  namespaceSelector:
+    matchLabels:
+      team: ai
+
+  # 4. æ¢å ç­ç¥
+  preemption:
+    reclaimWithinCohort: Any                 # å¯æ¢å  Cohort ä¸­è¶è¿åä¹éé¢ç Workload
+    borrowWithinCohort:
+      policy: LowerPriority                  # åç¨æ¶åªæ¢å ä½ä¼åçº§ï¼ä¸è½ä¸ Fair Sharing ä¸åä½¿ç¨ï¼
+      maxPriorityThreshold: 100              # ä¸ä»æ¢å ä¼åçº§ â¤ 100 ç Workload
+    withinClusterQueue: LowerPriority        # åéååï¼ä½ä¼åçº§è®©è·¯ç»é«ä¼åçº§
+
+  # 5. éç½®æ¯ä¼åæ¢å è¿æ¯åç¨
+  flavorFungibility:
+    whenCanBorrow: TryNextFlavor
+    whenCanPreempt: MayStopSearch
+
+  # 6. åæ­¢ç­ç¥
+  # stopPolicy: Hold
+
+  # 7. èµæºç»å®ä¹
+  resourceGroups:
+  - coveredResources: ["cpu", "memory"]      # ç¬¬ä¸ç»ï¼è®¡ç®èµæº
+    flavors:
+    - name: default-flavor
+      resources:
+      - name: cpu
+        nominalQuota: 16                     # ä¿åºéé¢
+        borrowingLimit: 8                    # æå¤è½ä» Cohort åå¤å°
+        lendingLimit: 8                      # æå¤åè®¸å«äººåå¤å°
+      - name: memory
+        nominalQuota: 64Gi
+        borrowingLimit: 32Gi
+        lendingLimit: 32Gi
+
+  - coveredResources: ["nvidia.com/gpu"]     # ç¬¬äºç»ï¼GPU èµæº
+    flavors:
+    - name: a100
+      resources:
+      - name: nvidia.com/gpu
+        nominalQuota: 4
+        borrowingLimit: 2
+    - name: t4
+      resources:
+      - name: nvidia.com/gpu
+        nominalQuota: 8
+</code></pre>
+<p>ä¸å¥è¯è®°ä½ï¼<strong>ClusterQueue ææ¯çæ­£ç®¡éé¢åå¬å¹³æ§çå°æ¹ã</strong> ç¬¬ä¸æ¬¡çä¼å LocalQueue ææ··ï¼å¶å®è®°ä½ä¸å¥å°±å¤äºââClusterQueue ç®¡èµæºï¼LocalQueue ç®¡ç¨æ·ã</p>
+<h2 id="3-localqueueç¨æ·æä¹è¿éå">3. LocalQueueï¼ç¨æ·æä¹è¿éå</h2>
+<p>ClusterQueue æ¯éç¾¤çº§å«çï¼ä½ç¨æ·ä¸è½ç´æ¥å¾éå¡ Jobãä¸­é´è¿éè¦ä¸å± LocalQueueââå®æ¯ä¸ä¸ªå½åç©ºé´å¯¹è±¡ï¼æåä¸ä¸ª ClusterQueueï¼ä½ä¸ºç¨æ·æäº¤ Job çå¥å£ã</p>
+<pre><code class="language-yaml">apiVersion: kueue.x-k8s.io/v1beta2
+kind: LocalQueue
+metadata:
+  namespace: team-a
+  name: team-a-queue
+spec:
+  clusterQueue: cluster-queue
+</code></pre>
+<blockquote>
+<p>æ³¨æï¼<code>kubectl get queues</code> æ¯ <code>kubectl get localqueues</code> çå«åï¼æ´æ¹ä¾¿æ¥å¸¸ä½¿ç¨ã</p>
+</blockquote>
+<h3 id="localqueue-vs-clusterqueue">LocalQueue vs ClusterQueue</h3>
+<table>
+<thead>
+<tr>
+<th>ç»´åº¦</th>
+<th>LocalQueue</th>
+<th>ClusterQueue</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ä½ç¨å</td>
+<td>å½åç©ºé´</td>
+<td>éç¾¤</td>
+</tr>
+<tr>
+<td>è°åå»º</td>
+<td>å¢éèªå·±</td>
+<td>æ¹å¤çç®¡çå</td>
+</tr>
+<tr>
+<td>èè´£</td>
+<td>å°åä¸ç§æ·çå·¥ä½è´è½½åç»ï¼æåä¸ä¸ª ClusterQueue</td>
+<td>ç®¡çèµæºæ± çéé¢åå¬å¹³å±äº«è§å</td>
+</tr>
+<tr>
+<td>ä¸å¯¹ä¸ï¼</td>
+<td>å¤ä¸ª LocalQueue å¯ä»¥æååä¸ä¸ª ClusterQueue</td>
+<td>â</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-text">å½åç©ºé´ team-a:
+  LocalQueue: training-queue  âââ
+  LocalQueue: inference-queue âââ¼âââ ClusterQueue: ai-team-cq
+å½åç©ºé´ team-b:                â
+  LocalQueue: batch-queue âââââââ
+</code></pre>
+<p>ä¸å¥è¯è®°ä½ï¼<strong>LocalQueue å°±æ¯ Namespace è®¿é® ClusterQueue çå¥å£ã</strong> å®ä¸ç®¡éé¢ï¼åªç®¡"æè¿ä¸ª namespace ç Job å¾åªä¸ª ClusterQueue é"ã</p>
+<h2 id="4-cohortéåä¹é´æä¹åèµæº">4. Cohortï¼éåä¹é´æä¹åèµæº</h2>
+<p>å¦ææ¯ä¸ª ClusterQueue åªè½ç¨èªå·±çä¿åºéé¢ï¼é£ team-a é²ç 3 æ ¸ãteam-b æ³å¤è· 1 æ ¸ä¹åä¸å°ï¼èµæºå°±æµªè´¹äºãCohort å°±æ¯è§£å³è¿ä¸ªçââå¯ä»¥çè§£æä¸ä¸ª"èµæºå±äº«èç"ï¼å è¿åä¸ä¸ª Cohort ç ClusterQueue å¯ä»¥äºç¸åéé¢ã</p>
+<p>ç¬¬ä¸æ¬¡ç Cohort æä¹æ²¡å¤ªçè§£ãåæ¥åç°ï¼å®æ¬èº«è¿è½å®ä¹ resourceGroupsï¼å±äº«éé¢æ± ï¼ï¼è¿äºèµæºæ¯ç®¡çåé¢å¤åæ¨ç»æ´ä¸ªèççå¬å±æ± ï¼èä¸æ¯æåä¸ª ClusterQueue ç nominalQuota èªå¨æ±æ»å¾å°çã</p>
+<p><img alt="ClusterQueue ä¸ Cohort çå³ç³»" loading="lazy" data-src="https://img.lixueduan.com/kubernetes/kueue/clusterqueue-cohort.png" class="lazyload"></p>
+<h3 id="åºæ¬ç¨æ³">åºæ¬ç¨æ³</h3>
+<pre><code class="language-yaml"># åå»º Cohort
+apiVersion: kueue.x-k8s.io/v1beta2
+kind: Cohort
+metadata:
+  name: hello-cohort
+spec:
+  resourceGroups:
+  - coveredResources: ["cpu"]
+    flavors:
+    - name: default-flavor
+      resources:
+      - name: cpu
+        nominalQuota: 12    # Cohort çº§å«çå±äº«éé¢ï¼é¢å¤èµæºï¼
+---
+# ClusterQueue A å å¥ Cohort
+apiVersion: kueue.x-k8s.io/v1beta2
+kind: ClusterQueue
+metadata:
+  name: team-a-cq
+spec:
+  cohortName: hello-cohort
+  resourceGroups:
+  - coveredResources: ["cpu"]
+    flavors:
+    - name: default-flavor
+      resources:
+      - name: cpu
+        nominalQuota: 4
+        borrowingLimit: 4    # æå¤å 4 æ ¸
+        lendingLimit: 2      # æå¤åºå 2 æ ¸
+---
+# ClusterQueue B ä¹å å¥åä¸ä¸ª Cohort
+apiVersion: kueue.x-k8s.io/v1beta2
+kind: ClusterQueue
+metadata:
+  name: team-b-cq
+spec:
+  cohortName: hello-cohort
+  resourceGroups:
+  - coveredResources: ["cpu"]
+    flavors:
+    - name: default-flavor
+      resources:
+      - name: cpu
+        nominalQuota: 4
+        borrowingLimit: 4
+        lendingLimit: 2
+</code></pre>
+<p>ä¸é¢çéç½®æå³çï¼</p>
+<ul>
+<li>ä¸¤ä¸ªéååæ 4 æ ¸ä¿åºï¼Cohort èªå·±éç½®çä¸ç»å±äº«éé¢ 12 æ ¸ãï¼æ»è®¡å¯ç¨ 20 æ ¸ï¼</li>
+<li>ç©ºé²æ¶å¯ä»¥äºç¸åç¨</li>
+<li>å¦æ ClusterQueue æ³ä» Cohort åç¨èµæºï¼å®<strong>å¿é¡»</strong>ä¸ºè¯¥èµæºå Flavor å®ä¹ <code>nominalQuota</code>ï¼å³ä½¿å¼ä¸º 0ï¼</li>
+</ul>
+<h3 id="åå±-cohorthierarchical-cohorts">åå± Cohortï¼Hierarchical Cohortsï¼</h3>
+<p>Cohort å¯ä»¥ç»ç»ææ å½¢ç»æï¼CohortTreeï¼ï¼éåå¤§åç»ç»ï¼</p>
+<pre><code class="language-yaml"># æ ¹ Cohort
+apiVersion: kueue.x-k8s.io/v1beta2
+kind: Cohort
+metadata:
+  name: root-cohort
+---
+# AI é¨é¨ Cohort
+apiVersion: kueue.x-k8s.io/v1beta2
+kind: Cohort
+metadata:
+  name: ai-dept
+spec:
+  parentName: root-cohort           # ç¶èç¹
+  fairSharing:
+    weight: "0.75"
+---
+# å¤§æ°æ®é¨é¨ Cohort
+apiVersion: kueue.x-k8s.io/v1beta2
+kind: Cohort
+metadata:
+  name: bigdata-dept
+spec:
+  parentName: root-cohort           # ç¶èç¹
+  fairSharing:
+    weight: "0.25"
+</code></pre>
+<pre><code class="language-text">root-cohortï¼æ»èµæºæ± ï¼
+âââ ai-deptï¼æé 0.75 â è¶åä½¿ç¨ 75% å¬å±èµæºï¼
+â   âââ team-a-cq
+â   âââ team-b-cq
+âââ bigdata-deptï¼æé 0.25 â è¶åä½¿ç¨ 25% å¬å±èµæºï¼
+    âââ spark-cq
+    âââ flink-cq
+</code></pre>
+<p>åä¸ä¸ª CohortTree ä¸­ç ClusterQueue å¯ä»¥ä½¿ç¨å¶ä¸­çèµæºï¼éµå¾ªä¸º Cohort å ClusterQueue æå®çåç¨åååºéå¶ã</p>
+<p>ä¸å¥è¯è®°ä½ï¼<strong>Cohort è®©å¤ä¸ª ClusterQueue å¯ä»¥äºç¸åèµæºã</strong></p>
+<h2 id="5-workloadkueue-çæ­£å¨è°åº¦ä»ä¹">5. Workloadï¼Kueue çæ­£å¨è°åº¦ä»ä¹</h2>
+<p>åé¢åä¸ªé½æ¯"éç½®"ï¼é£ Kueue çæ­£è°åº¦ãåå¥çå¯¹è±¡æ¯ä»ä¹ï¼æ¯ Workloadââä¸ä¸ªè¦è¿è¡è³å®æçåºç¨ï¼ç±ä¸ä¸ªæå¤ä¸ª Pod ç»æãKueue ç AdmissionãQuota AccountingãPreemption å¨æ¯å´ç»å®å±å¼çã</p>
+<p><strong>éå¸¸ä½ ä¸éè¦æå¨åå»º Workload</strong>ï¼Kueue ä¼ä¸ºæ¯ä¸ª Job èªå¨åå»ºãä½çè§£å®çç»ææå©äºææ¥é®é¢ã</p>
+<h3 id="å³é®å­æ®µ">å³é®å­æ®µ</h3>
+<pre><code class="language-yaml">apiVersion: kueue.x-k8s.io/v1beta2
+kind: Workload
+metadata:
+  name: sample-job
+  namespace: team-a
+spec:
+  active: true               # è®¾ä¸º false å¯åæ­¢ Workloadï¼å·²è¿è¡çä¼è¢«é©±éä¸ä¸éæ°æéï¼
+  queueName: team-a-queue    # æå LocalQueue
+  podSets:                   # Pod ç»å®ä¹ï¼Kueue ä» Job èªå¨æåï¼
+  - name: main
+    count: 3                 # Pod æ°é
+    template:
+      spec:
+        containers:
+        - name: container
+          image: registry.k8s.io/e2e-test-images/agnhost:latest
+          resources:
+            requests:
+              cpu: "1"
+              memory: 200Mi
+  maximumExecutionTimeSeconds: 3600   # Workload å¤äº Admitted ç¶æè¶è¿æ­¤ç§æ°åèªå¨åç¨
+</code></pre>
+<h3 id="ä¼åçº§">ä¼åçº§</h3>
+<p>Workload çä¼åçº§å½±ååå¥é¡ºåºï¼æä¸¤ç§è®¾ç½®æ¹å¼ï¼</p>
+<ul>
+<li><strong>Pod ä¼åçº§</strong> ï¼å¯¹äº <code>batch/v1.Job</code>ï¼Kueue æ ¹æ® Job ç Pod æ¨¡æ¿ç Pod ä¼åçº§è®¾ç½® Workload çä¼åçº§</li>
+<li><strong>WorkloadPriorityClass</strong> ï¼ç¬ç«ç®¡çå·¥ä½è´è½½çæéåæ¢å ä¼åçº§ï¼ä¸ Pod è°åº¦ä¼åçº§åç¦»</li>
+</ul>
+<pre><code class="language-yaml">apiVersion: kueue.x-k8s.io/v1beta2
+kind: WorkloadPriorityClass
+metadata:
+  name: high-priority
+value: 1000
+description: "é«ä¼åçº§è®­ç»ä»»å¡"
+</code></pre>
+<p>ä½¿ç¨æ¹å¼ï¼å¨ Job ç label ä¸­æå®ï¼</p>
+<pre><code class="language-yaml">metadata:
+  labels:
+    kueue.x-k8s.io/priority-class: high-priority
+</code></pre>
+<h3 id="èµæºè¯·æ±è®¡ç®">èµæºè¯·æ±è®¡ç®</h3>
+<p>Kueue å° Workload çæ»èµæºä½¿ç¨éè®¡ç®ä¸ºæ¯ä¸ª podSet èµæºè¯·æ±çæ»åï¼<br>
+<code>podSet çèµæºä½¿ç¨é = Pod è§æ ¼çèµæºè¯·æ± Ã count</code></p>
+<p>Kueue ä¼æ ¹æ® Limit Ranges å Runtime Class Overhead è°æ´èµæºä½¿ç¨éã</p>
+<p>ä¸å¥è¯è®°ä½ï¼<strong>Workload ææ¯ Kueue çæ­£è°åº¦ååå¥çå¯¹è±¡</strong>ï¼åé¢åä¸ªå¯¹è±¡é½æ¯ç»å®éè§åçã</p>
+<h2 id="6-demoä¸²èäºå¤§æ ¸å¿å¯¹è±¡">6. Demoï¼ä¸²èäºå¤§æ ¸å¿å¯¹è±¡</h2>
+<p>çè®ºè®²å®äºï¼ä¸é¢ç¨ä¸ä¸ª demo æäºå¤§æ ¸å¿å¯¹è±¡ä¸²èµ·æ¥ï¼éªè¯éé¢ç®¡æ§å Cohort åç¨è½åãç¯å¢æ¯ä¸ä¸ªåèç¹ K8s éç¾¤ï¼8 æ ¸ CPUï¼+ Kueue v0.18.1ã</p>
+<pre><code class="language-text">Cohort(team-ab)
+âââ team-a-cqï¼ä¿åº 4 æ ¸ï¼æå¤åå° 6 æ ¸ï¼
+â     âââ team-a-queue
+âââ team-b-cqï¼ä¿åº 2 æ ¸ï¼æå¤åå° 5 æ ¸ï¼
+      âââ team-b-queue
+</code></pre>
+<h3 id="step-1ç»èç¹æ-label-å-taint">Step 1ï¼ç»èç¹æ label å taint</h3>
+<pre><code class="language-bash"># æ labelï¼æ è®°èç¹ç±»å
+kubectl label node lixd-dev-4 node-type=cpu
+
+# å  taintï¼é²æ­¢æ²¡æå®¹å¿ç Pod è°åº¦ä¸æ¥
+kubectl taint node lixd-dev-4 dedicated=team:NoSchedule
+</code></pre>
+<h3 id="step-2åå»º-resourceflavortolerations-èªå¨æ¨¡å¼">Step 2ï¼åå»º ResourceFlavorï¼tolerations èªå¨æ¨¡å¼ï¼</h3>
+<pre><code class="language-yaml">apiVersion: kueue.x-k8s.io/v1beta2
+kind: ResourceFlavor
+metadata:
+  name: cpu-flavor
+spec:
+  nodeLabels:
+    node-type: cpu           # å¹éèç¹
+  tolerations:               # Kueue èªå¨æ³¨å¥ Podï¼å®¹å¿èç¹æ±¡ç¹
+  - key: dedicated
+    operator: Exists
+    effect: NoSchedule
+</code></pre>
+<h3 id="step-3åå»º-cohort--ä¸¤ä¸ª-clusterqueue--ä¸¤ä¸ª-localqueue">Step 3ï¼åå»º Cohort + ä¸¤ä¸ª ClusterQueue + ä¸¤ä¸ª LocalQueue</h3>
+<pre><code class="language-yaml"># Cohortï¼è®©ä¸¤ä¸ªéåå±äº«éé¢
+apiVersion: kueue.x-k8s.io/v1beta2
+kind: Cohort
+metadata:
+  name: team-ab
+---
+# team-aï¼ä¿åº 4 æ ¸ï¼æå¤åå° 6 æ ¸
+apiVersion: kueue.x-k8s.io/v1beta2
+kind: ClusterQueue
+metadata:
+  name: team-a-cq
+spec:
+  cohortName: team-ab
+  namespaceSelector: {}
+  resourceGroups:
+  - coveredResources: ["cpu", "pods"]
+    flavors:
+    - name: cpu-flavor
+      resources:
+      - name: cpu
+        nominalQuota: 4
+        borrowingLimit: 2
+      - name: pods
+        nominalQuota: 3
+---
+# team-bï¼ä¿åº 2 æ ¸ï¼æå¤åå° 5 æ ¸
+apiVersion: kueue.x-k8s.io/v1beta2
+kind: ClusterQueue
+metadata:
+  name: team-b-cq
+spec:
+  cohortName: team-ab
+  namespaceSelector: {}
+  resourceGroups:
+  - coveredResources: ["cpu", "pods"]
+    flavors:
+    - name: cpu-flavor
+      resources:
+      - name: cpu
+        nominalQuota: 2
+        borrowingLimit: 3
+      - name: pods
+        nominalQuota: 3
+---
+apiVersion: kueue.x-k8s.io/v1beta2
+kind: LocalQueue
+metadata:
+  namespace: default
+  name: team-a-queue
+spec:
+  clusterQueue: team-a-cq
+---
+apiVersion: kueue.x-k8s.io/v1beta2
+kind: LocalQueue
+metadata:
+  namespace: default
+  name: team-b-queue
+spec:
+  clusterQueue: team-b-cq
+</code></pre>
+<h3 id="step-4æäº¤-job-ateam-a3-æ ¸ä¿åºå">Step 4ï¼æäº¤ Job Aï¼team-aï¼3 æ ¸ï¼ä¿åºåï¼</h3>
+<pre><code class="language-yaml">apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job-a
+  labels:
+    kueue.x-k8s.io/queue-name: team-a-queue
+spec:
+  template:
+    spec:
+      containers:
+      - name: sleep
+        image: busybox
+        command: ['sleep', '30']
+        resources:
+          requests:
+            cpu: '3'
+      restartPolicy: Never
+</code></pre>
+<p>30 ç§å Job A è·å®ï¼éªè¯ Kueue èªå¨æ³¨å¥äº toleration å nodeSelectorï¼</p>
+<pre><code class="language-bash">$ kubectl get pod job-a-&lt;pod-suffix&gt; -o jsonpath='{.spec.tolerations[0]}'
+{"effect":"NoSchedule","key":"dedicated","operator":"Exists"}   # â èªå¨æ³¨å¥ç
+
+$ kubectl get pod job-a-&lt;pod-suffix&gt; -o jsonpath='{.spec.nodeSelector}'
+{"node-type":"cpu"}                                              # â èªå¨æ³¨å¥ç
+</code></pre>
+<h3 id="step-5æäº¤-job-bteam-b3-æ ¸éè¦åç¨">Step 5ï¼æäº¤ Job Bï¼team-bï¼3 æ ¸ï¼éè¦åç¨ï¼</h3>
+<p>team-b ä¿åºåªæ 2 æ ¸ï¼è¦ 3 æ ¸éè¦ä» team-a å 1 æ ¸ç©ºé²éé¢ï¼æ­¤æ¶ Job A è¿å¨è·ï¼ç¨äº 3 æ ¸ï¼team-a ç©ºé² 1 æ ¸ï¼ã<br>
+æ­¤æ¶æäº¤ JobBï¼</p>
+<pre><code class="language-yaml">apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job-b
+  labels:
+    kueue.x-k8s.io/queue-name: team-b-queue
+spec:
+  template:
+    spec:
+      containers:
+      - name: sleep
+        image: busybox
+        command: ['sleep', '30']
+        resources:
+          requests:
+            cpu: '3'
+      restartPolicy: Never
+</code></pre>
+<p>åç¨è¿ç¨ï¼team-a ä¿åº 4 æ ¸ç¨äº 3 æ ¸ï¼ç©ºé² 1 æ ¸ â team-b ä¿åº 2 æ ¸ä¸å¤ï¼è¦ 3 æ ¸ï¼â ä» team-a åäº 1 æ ¸ â åå¥æåã</p>
+<p>30 ç§å Job B è·å®ï¼team-b ç 3 æ ¸éé¢å½è¿ã<strong>ç­ Job A ä¹è·å®å</strong>ï¼æ´ä¸ª Cohort å°±ç©ºäºï¼team-a ä¿åº 4 æ ¸å¨ç©ºé²ï¼team-b ä¿åº 2 æ ¸å¨ç©ºé²ï¼æ»å± 6 æ ¸å¯åã</p>
+<h3 id="step-6æäº¤-job-dteam-b5-æ ¸æµè¯-borrowinglimit-ä¸é">Step 6ï¼æäº¤ Job Dï¼team-bï¼5 æ ¸ï¼æµè¯ borrowingLimit ä¸éï¼</h3>
+<p>Job AãJob B é½å·²è·å®ï¼éé¢å¨é¨å½è¿ãç°å¨ team-b æå¤è½ç¨ä¿åº 2 + å 3 = 5 æ ¸ï¼team-a ç©ºé² 4 æ ¸ï¼è¶³å¤åï¼ã</p>
+<pre><code class="language-yaml">apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job-d
+  labels:
+    kueue.x-k8s.io/queue-name: team-b-queue
+spec:
+  template:
+    spec:
+      containers:
+      - name: sleep
+        image: busybox
+        command: ['sleep', '120']
+        resources:
+          requests:
+            cpu: '5'
+      restartPolicy: Never
+</code></pre>
+<p>ç»æï¼</p>
+<pre><code class="language-bash">$ kubectl get workloads
+NAME              QUEUE          ADMITTED
+job-job-d-fd3f3   team-b-queue   True          # ä¿åº2+å3=5ï¼åå¥½å°ä¸éï¼åå¥
+</code></pre>
+<h3 id="step-7æäº¤-job-eteam-b-åå¤-1-æ ¸è¶è¿-borrowinglimit">Step 7ï¼æäº¤ Job Eï¼team-b åå¤ 1 æ ¸ï¼è¶è¿ borrowingLimitï¼</h3>
+<pre><code class="language-yaml">apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job-e
+  labels:
+    kueue.x-k8s.io/queue-name: team-b-queue
+spec:
+  template:
+    spec:
+      containers:
+      - name: sleep
+        image: busybox
+        command: ['sleep', '120']
+        resources:
+          requests:
+            cpu: '1'
+      restartPolicy: Never
+</code></pre>
+<p>ç»æï¼</p>
+<pre><code class="language-bash">$ kubectl get workloads
+NAME              QUEUE          ADMITTED
+job-job-d-fd3f3   team-b-queue   True          # 5æ ¸å·²ç¨æ»¡
+job-job-e-918d8   team-b-queue   False         # åå¤ 1 æ ¸ï¼Pending
+
+$ kubectl get workload job-job-e-918d8 -o jsonpath='{.status.conditions[0].message}'
+insufficient unused quota for cpu in flavor cpu-flavor, 1 more needed
+# team-b æå¤ 5 æ ¸ï¼Job D å·²ç¨ 5 æ ¸ï¼æ²¡æä½éäº
+</code></pre>
+<h3 id="å°ç»">å°ç»</h3>
+<table>
+<thead>
+<tr>
+<th>Job</th>
+<th>å¢é</th>
+<th>è¯·æ± CPU</th>
+<th>ä¿åº</th>
+<th>åç¨</th>
+<th>ç»æ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Job A</td>
+<td>team-a</td>
+<td>3 æ ¸</td>
+<td>4 æ ¸</td>
+<td>0</td>
+<td>â åå¥</td>
+</tr>
+<tr>
+<td>Job B</td>
+<td>team-b</td>
+<td>3 æ ¸</td>
+<td>2 æ ¸</td>
+<td>å 1 æ ¸</td>
+<td>â åå¥</td>
+</tr>
+<tr>
+<td>Job D</td>
+<td>team-b</td>
+<td>5 æ ¸</td>
+<td>2 æ ¸</td>
+<td>å 3 æ ¸</td>
+<td>â åå¥ï¼å° borrowingLimit ä¸éï¼</td>
+</tr>
+<tr>
+<td>Job E</td>
+<td>team-b</td>
+<td>1 æ ¸</td>
+<td>å·²æ»¡</td>
+<td>æ æ³å</td>
+<td>â Pending</td>
+</tr>
+</tbody>
+</table>
+<p>5 ä¸ªæ ¸å¿å¯¹è±¡å¨è¿éå¨é¨ä¸²èèµ·æ¥äºã</p>
+<h2 id="7-å°ç»">7. å°ç»</h2>
+<p>Kueue çæ ¸å¿ï¼å¶å®ä¸æ¯âè°åº¦ç®æ³âï¼èæ¯å´ç» Workload çåå¥ä¸èµæºåéæ¨¡åã</p>
+<p>äºä¸ªå¯¹è±¡åå«æ®æ¼äºä¸åè§è²ï¼ä½å¯ä»¥ç¨ä¸å¥è¯å¿«éä¸²èµ·æ¥ï¼</p>
+<ul>
+<li><strong>ResourceFlavor</strong> ï¼å®ä¹âèµæºé¿ä»ä¹æ ·âï¼èç¹/æ±¡ç¹/æ ç­¾ï¼</li>
+<li><strong>ClusterQueue</strong> ï¼å®ä¹âèµæºæä¹åãç»è°å¤å°â</li>
+<li><strong>LocalQueue</strong> ï¼å®ä¹âåªä¸ªå½åç©ºé´ç¨åªä¸ªèµæºæ± â</li>
+<li><strong>Cohort</strong> ï¼å®ä¹âå¤ä¸ªéåä¹é´å¦ä½å±äº«èµæºâ</li>
+<li><strong>Workload</strong> ï¼çæ­£è¢«è°åº¦ååå¥çæ§è¡åå</li>
+</ul>
+<p>ç¬¬ä¸æ¬¡æ¥è§¦ Kueue æ¶ï¼å¾å®¹ææè¿äºå¯¹è±¡çæå½¼æ­¤ç¬ç«ç CRDï¼ä½å®éä¸å®ä»¬å±åç»æäºä¸æ¡å®æ´çèµæºåå¥é¾è·¯ï¼</p>
+<pre><code class="language-bash">Job â LocalQueue â ClusterQueue â ResourceFlavor â Admission â Workload
+</code></pre>
+<p>çè§£äºè¿æ¡é¾è·¯ï¼åå»ç BorrowingãFair SharingãPreemption ç­é«çº§è½åï¼å°±ä¼åç°å®ä»¬é½åªæ¯å´ç»è¿å¥æ¨¡ååæ©å±ï¼èä¸æ¯æ°çæ¦å¿µã</p>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-07-15 18:23">2026-07-15 18:22</span>&nbsp;
+<a href="https://www.cnblogs.com/KubeExplorer">æ¢ç´¢äºåç</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(21510013);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FKubeExplorer%2Fp%2F21510013&amp;targetId=21510013&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
     <title><![CDATA[ æ¯æäº¿çº§æä»¶è§æ¨¡ï¼éèå»è½¦ JuiceFS + Ceph RADOS å­å¨ä¼åå®è·µ ]]></title>
     <link>https://www.cnblogs.com/JuiceData/p/21508856</link>
     <guid>0787fb2f936b5a073750feb2b3ca3f79</guid>
@@ -1451,17 +2227,112 @@ for (int i = data.Length - 1; i &gt; 0; i--)
     </description>
     </item>
 <item>
-    <title><![CDATA[ Agent Memory æ¶ææè§£ï¼å«åæåéåºå½å¯ä¸è®°å¿ç³»ç» ]]></title>
-    <link>https://www.cnblogs.com/ai-old-six/p/21486005</link>
-    <guid>6de9372a94cb9517abd3403d4d1f24c8</guid>
+    <title><![CDATA[ DeepSeekå¨çç¨éç»é¡¶ï¼éå±±åå¬å¨åå½äº§ï¼å¼æºAIç"å­ä»ä¹ä¸ç¨"æ¶å»å°äº ]]></title>
+    <link>https://www.cnblogs.com/htai/p/21514737</link>
+    <guid>a2310b574e7e7dade5e3fb1d89f999d5</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/ai-old-six/p/21486005" title="åå¸äº 2026-07-15 10:59">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/htai/p/21514737" title="åå¸äº 2026-07-15 22:39">
     
-        <img src="/images/aigc-marker.svg" class="text-front-icon" title="æ¬æåå®¹ç±AIçæ" alt="AIGCæ è¯">
 
-    <span role="heading" aria-level="2">Agent Memory æ¶ææè§£ï¼å«åæåéåºå½å¯ä¸è®°å¿ç³»ç»</span>
+    <span role="heading" aria-level="2">DeepSeekå¨çç¨éç»é¡¶ï¼éå±±åå¬å¨åå½äº§ï¼å¼æºAIç"å­ä»ä¹ä¸ç¨"æ¶å»å°äº</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
+
+<p>&gt; ä¸ä»½æ¥åãä¸ä¸ªCEOåè¨ãä¸ä¸ªé¦å¯å¤´è¡ï¼åä¸å¤©ç ¸ä¸æ¥ï¼ä¿¡å·æ¸æ°å¾ä¸è½åæ¸æ°ã</p>
+
+<p>7æ14æ¥å°15æ¥è¿24å°æ¶ï¼å¦æä½ åªç¯çæä¸ä¸ªæ°é»çï¼å¯è½è§å¾"å¦ï¼åä¸ä¸ªæ¥å/åä¸ä¸ªåè¨/åä¸ä¸ªå¯è±ªæ¦"ãä½æä¸ä»¶äºæ¼å¨ä¸èµ·ï¼ç»é¢å°±å®å¨ä¸åäºã</p>
+
+<p>Mozillaåå¸äº2026å¹´ãå¼æºAIç°ç¶æ¥åãï¼æ ¸å¿ç»è®ºå¶å®å°±ä¸å¥è¯ï¼<strong>å¼æºæ¨¡åå¨ç¼ç ãæä»¤æ§è¡åéç¨ç¥è¯ä¸å·²ç»åé­æºæ¨¡åæå¹³äºã</strong> å·®è·è¿å¨ï¼ä½éä¸­å¨æ¨çãé¿ä¸ä¸ææ£ç´¢åæºè½ä½ä»»å¡è¿ä¸ä¸ªåæ²¿æ¹åââæ¢å¥è¯è¯´ï¼90%çæ¥å¸¸å·¥ä½è´è½½ï¼å¼æºæ¨¡åå·²ç»å®å¨ä¸æåè¿ã</p>
+
+<p>åä¸å¤©ä¸åï¼éå±±åå¬CEOç« åºåå¨AIçäº§åå¤§ä¼ä¸ç©åºä¸ä¸ªè®©äººæ²¡æ³è£æ²¡å¬è§çç»èï¼<strong>æªè³ä»å¹´6æï¼éå±±åå¬åé¨å¼åæç¨AIæ¨¡åå·²ç»å¨é¨åæ¢ä¸ºå½äº§æ¨¡åã</strong> å»å¹´è¿å¤§éç¨å½å¤æ¨¡åï¼ä»å¹´ä¸ä¸ªä¸å©å¨æ¢äºãä»çåè¯æ¯ï¼"è¿ä¸å³ç­å¹¶éåºäºææï¼èæ¯åºäºçæ§çåä¸å¤æ­ââå½æ¨¡åè½åè¶ååè´¨åï¼éæ¨¡åçæ åå°±ä»'è°æ´èªæ'åæäº'è°æ´ç¨³å®ãè°è½æä¾è¶³å¤çtokené'ã"</p>
+
+<p>åå¾åä¸å¤©ï¼å½­åäº¿ä¸å¯è±ªææ°æ´æ°ï¼DeepSeekåå§äººæ¢æéèº«ä»·é£åè³360äº¿ç¾åï¼è¶è¶Anthropicèååå§äººé¿è«ä»£ä¼åOpenAIèååå§äººå¸ç½åæ¼ï¼æä¸ºå¨çAIå¬å¸é¢åæ°é¦å¯ã</p>
+
+<p>æè¿ä¸ä»¶äºæ¾å¨ä¸èµ·ââMozillaçæ°æ®ãéå±±åå¬çéæ©ãèµæ¬å¸åºå¯¹DeepSeekçä¼°å¼ââä½ çå°çä¸åæ¯é¶æ£çå©å¥½ï¼èæ¯ä¸æ¡å®æ´çé¾æ¡ï¼<strong>å¼æºæ¨¡åè½åè¿½å¹³ â ä¼ä¸ç¨èæç¥¨ â èµæ¬éæ°å®ä»·ã</strong></p>
+
+<h3>18.4ä¸äº¿ä¸ªtokenï¼å°åºæ¯ä¸ªä»ä¹æ¦å¿µ</h3>
+
+<p>è¿æ¯ååå°é£ä»½æ¥åï¼å ä¸ºéé¢æå¤ªå¤å¼å¾ç»ççæ°æ®ã</p>
+
+<p>åºäºOpenRouter 2026å¹´6æçæ°æ®ï¼å¨çAPIè°ç¨ææ¶èéåäºåå¨æ¯å¼æºæ¨¡åï¼DeepSeek V4 Flashä»¥18.4T Tokensä½å±æ¦é¦ï¼å°ç±³Mimo-V2.5ä»¥14.9Tä½å±ç¬¬äºï¼è¾è®¯Hy3 Previewä»¥14.8Tæåç¬¬ä¸ãåä¸åå¨æ¯ä¸­å½çå¼æºæ¨¡åã</p>
+
+<p><img alt="Mozilla 2026å¼æºAIæ¥åå°é¢" style="max-width: 100%" data-src="https://img2024.cnblogs.com/blog/1944027/202607/1944027-20260715223925536-716426714.png" class="lazyload"></p>
+
+<p>18.4ä¸äº¿ä¸ªtokenæå³çä»ä¹ï¼æGPT-4çº§æ¨¡åçç°ä»·æ¥ç®ï¼å¦æè¿äºtokenå¨é¨èµ°é­æºAPIï¼æ¯ä¸ªæè¦ç§æçº¦736ä¸ç¾åãä½èµ°å¼æºæ¨¡åï¼è¿ä¸ªæ°å­å¯ä»¥éå°åæ¥çååä¹ä¸çè³æ´ä½ã</p>
+
+<p>è¿ä¹æ¯ä¸ºä»ä¹Mozillaæ¥åéè¿æå°å¦ä¸ä¸ªè§¦ç®æå¿çæ°å­ï¼GPT-4çº§æ¨¡åæ¯ç¾ä¸tokençä»·æ ¼ä»2022å¹´æ«ç20ç¾åè·å°2025å¹´12æç0.40ç¾åï¼36ä¸ªæåä¸éäº98%ãè¿ä¸ªéå¹æ¯äºèç½æ¶ä»£çå¸¦å®½ä»·æ ¼æ²çº¿åPCæ¶ä»£çè®¡ç®ä»·æ ¼æ²çº¿é½è¦é¡ã</p>
+
+<p>æ¥åè¿æä¸ä¸ªè¢«äººå¿½è§ä½æå¶å³é®çæ°æ®ï¼79%çå¼åèå·²ç»å¨ç¨å¼æ¾æ¨¡åï¼åé­æºæ¨¡åçéç¨çæå¹³ãä½åªæ51%çå¼æ¾æ¨¡åå¢éè½æåé¨ç½²å°çäº§ç¯å¢ï¼é­æºæ¨¡åè¿ä¸ªæ°å­æ¯63%ãå·®è·ä¸å¨æ¨¡åè½åä¸ï¼èå¨äº"æ§è½ãéæåç»´æ¤è¿äºè¿è¥å±é¢çé¾é¢"ââè¯´ç½äºï¼å¼æºæ¨¡åä¸æ¯ä¸å¤å¥½ï¼æ¯éå¥çå·¥å·é¾åè¿ç»´è¿ä¸å¤æçã</p>
+
+<h3>éå±±åå¬ä¸ºä»ä¹æ¢"All in"å½äº§æ¨¡å</h3>
+
+<p>ç« åºåçå¤æ­ä¹æä»¥å¼å¾åï¼æ¯å ä¸ºä»ä¸æ¯å¨è¡¨è¾¾è§ç¹ï¼èæ¯å¨æ¥åä¸ä¸ªå·²ç»åççäºå®ã</p>
+
+<p>"è¿å»ä¸å¹´ï¼è¡ä¸ä¸åº¦æå¿OpenAIä¼ä¸å®¶ç¬å¤§ãå½åæ¨¡åé¾ä»¥è¿½èµ¶ï¼ä½ä»å¤©åå¤´çï¼æ¨¡åå·æ¦å ä¹æ¯å¨ä¸è½®ï¼'ææ¨¡åè¶è¶åå£«ç'çæ°é»æ­£è®©äººå®¡ç¾ç²å³ã"è¿å¥è¯å ä¹æ¯ä¸ä¸ªææ¯ä»ä¸èé½æåæã2024å¹´å¤§å®¶è¿å¨ç¦è"å½äº§æ¨¡åä»ä¹æ¶åè½è¿½ä¸GPT-4"ï¼å°äº2026å¹´ï¼è®¨è®ºçè¯é¢å·²ç»åæäº"ä½ çé¢ç®åºè¯¥éåªä¸ªæ¨¡åæ§ä»·æ¯æé«"ã</p>
+
+<p>éå±±åå¬è¿æ¬¡å¨é¢åæ¢çä¿¡å·æä¹å¨äºï¼<strong>è¿ä¸æ¯ä¸ä¸ªåä¸å¬å¸å¨è¿½é£å£ï¼èæ¯ä¸­å½æå¤§çåå¬è½¯ä»¶å¬å¸ââæ¥ææ°äº¿ç¨æ·ââå¨åºå±ææ¯æ ä¸å®æçç³»ç»æ§åæ¢ã</strong> WPSçAIåè½æ¯å¤©æå¡æµ·éç¨æ·ï¼å®å¯¹æ¨¡åçç¨³å®æ§ãå¹¶åå¤çè½ååtokenä¾ç»éçè¦æ±ï¼æ¯ç»å¤§å¤æ°AIåä¸å¬å¸çäº§åé½è¦èå»ãè½éè¿WPSçèéªï¼æ¬èº«å°±è¯´æå½äº§æ¨¡åççäº§ç¯å¢ééæ§å·²ç»è¿äºåæ ¼çº¿ã</p>
+
+<p><img alt="å¼æºAIææ¯æ¦å¿µå¾" style="max-width: 100%" data-src="https://img2024.cnblogs.com/blog/1944027/202607/1944027-20260715223926203-553529722.jpg" class="lazyload"></p>
+
+<p>ç« åºåè¿è®²äºä¸ä¸ªæç¹æå¿ä½æå¶å¡å®çè§ç¹ï¼"å¤§æ¨¡åæ­£éæ­¥æ¼åä¸ºç±»ä¼¼äºæå¡å¨çåºå±åºç¡è®¾æ½ã"å½æ¨¡åæä¸ºæ°´çµç¤ä¸æ ·çåºå±èµæºï¼ç¨ç¼ºæ§èªç¶ä¼æç»­ä¸éãçæ­£çä»·å¼ä¼å¾ä¸å±èµ°ââåºäºæ¨¡åæå»ºçåºç¨ç¨åºãå·¥ä½æµç¨åçæç³»ç»ã</p>
+
+<p>è¿ä¸ªå¤æ­åMozillaæ¥åçç»è®ºå®å¨å»åãMozilla CTO Raffi Krikorianå¨æ¥åå¼å¤´åçé£å°ä¿¡è¯´å¾å¾ç´ç½ï¼"ä»·å¼åä¸ç§»å¨ï¼å°äºagentic harnessè¿ä¸å±ã""å½å¼æºæéæ¨¡åå¤ççtokenå·²ç»è¶è¿é­æºï¼æ¨¡åæ¬èº«å°±ä¸åæ¯æ¤åæ²³äºã"</p>
+
+<h3>ä»"è¿½èµ¶è"å°"å®ä»·è"ï¼è¿æ¡è·¯èµ°äºä¸å¹´</h3>
+
+<p>æ¢æéæä¸ºå¨çAIå¬å¸æ°é¦å¯è¿ä»¶äºï¼æ¬è´¨ä¸ä¸æ¯å³äºä¸ä¸ªäººçè´¢å¯æ°å­ï¼èæ¯èµæ¬å¸åºå¯¹"å¼æº+ä½ææ¬+é«ç¨é"è¿ä¸ªåä¸æ¨¡å¼çéæ°å®ä»·ã</p>
+
+<p>DeepSeekä»å¹´6æä»¥4000äº¿åä¼°å¼å®æé¦è½®å¤é¨èèµ510äº¿åï¼æ¢æéèªå·±æäº200äº¿ãè¿å®¶å¬å¸2023å¹´7æææç«ï¼å°ç°å¨æ­£å¥½ä¸å¹´ãä¸å¹´åææäººé½è®¤ä¸ºAIå·¨å¤´ä¸å®æ¯OpenAIãGoogleãAnthropicââé­æºãç§é±ãå ç®åãä¸å¹´åï¼åå¼æºçä¸­å½å¬å¸åå§äººæäºé¦å¯ã</p>
+
+<p>è¿å½ç¶ä¸åªæ¯DeepSeekä¸å®¶çäºãMozillaæ¥åä¸OpenRouteræ¶èéåäºåå¨é¨å¼æºãåä¸åå¨é¨æ¥èªä¸­å½ï¼è¿äºæ°å­è¯´æä¸­å½çå¼æºæ¨¡åçæå·²ç»å½¢æäºéç¾¤æåºï¼DeepSeekãå°ç±³ãè¾è®¯ï¼å ä¸é¿éãæºè°±ãç¾å·ââä¸ç®¡ä½ æ¯åAPIè°ç¨çå¼åèï¼è¿æ¯éå±±åå¬è¿æ ·çå¤§ä¼ä¸å®¢æ·ï¼ä½ é¢åçéæ©å·²ç»å¤å°éè¦åéè´­è¯ä¼°çç¨åº¦ã</p>
+
+<p>åè¿å¤´æ¥çï¼2025å¹´2æDeepSeek-R1åå¸æ¶ï¼å¼æºæ¨¡åç­æè¿½å¹³äºç¾å½é¡¶çº§é­æºæ¨¡åãå°2026å¹´3æå·®è·æåå°3.3%ï¼ä½è¿ä¸ª3.3%çå·®è·å ä¹å¨é¨éä¸­å¨æ¨çãé¿ä¸ä¸ææ£ç´¢åæºè½ä½ä»»å¡ä¸ââè¿äºæ°æ°æ¯ä¸ä¸æ­¥ç«äºçç¦ç¹ï¼ä¹æ¯å¼æºç¤¾åºæ­£å¨ç¯çè¿½èµ¶çæ¹åã</p>
+
+<p>Mozillaæ¥åéåäºä¸ä»½æææçå¯¹æ¯ï¼å¼æºæéè½åæåæå¿«çæ¹æ³æ¯ä»ä¹ï¼ä¸æ¯æ´èªæçæ¨¡åæ¶æï¼èæ¯åè®­ç»ï¼post-trainingï¼ãæ°æ®æ¾ç¤ºDeepSeekéè¿å¼ºåå­¦ä¹ å¾®è°R1-Distillçæ¬ï¼è®©7Bæ¨¡åå¨æ°å­¦æ¨çä¸ä»49%ä¸åå°91.8%ãè¿ä¸ªè·¯å¾æå³çï¼<strong>æ¨¡ååºåº§ä¸éè¦æ¯"æå¼º"çé£ä¸ªï¼éè¿é«è´¨éçåè®­ç»å¯ä»¥æè½åæå°ä¸ä¸ªéå¸¸è½æçä½ç½®ã</strong> è¿ä¹æ¯ä¸ºä»ä¹éå±±åå¬æ¢è¯´"æ¨¡åè½åæ­£å¨è¶å"ââå ä¸ºè¿½èµ¶çé¨æ§ç¡®å®å¨éä½ã</p>
+
+<p>ä¸å¹´åä½ é®ä¸ä¸ªCTO"è¦ä¸è¦ç¨å¼æºæ¨¡ååæ ¸å¿ä¸å¡"ï¼å¾å°çåç­å¤§æ¦çæ¯"åç­ç­"ãç°å¨ä½ åé®åæ ·çé®é¢ï¼å¯¹æ¹å¯è½ä¼åé®ï¼"ä½ ç¨çæ¯åªä¸ªå¼æºæ¨¡åï¼"</p>
+
+<p>å ä¸ºæ°æ®ä¸ä¼è¯´è°ï¼å½å¨çAPIè°ç¨éæé«çäºä¸ªæ¨¡åå¨é¨å¼æºãå½ä¸­å½æå¤§çåå¬è½¯ä»¶å¨é¢åæ¢å½äº§æ¨¡åãå½å¼æºå¬å¸çåå§äººæä¸ºè¡ä¸é¦å¯ï¼"å¼æºè¡ä¸è¡"è¿ä¸ªé®é¢çç­æ¡å·²ç»ä¸éè¦äºè¾©äºãçæ­£å¼å¾å³å¿çæ¯ä¸ä¸æ­¥ï¼å½æ¨¡åæ¬èº«è¶æ¥è¶åæ°´çµç¤ï¼è°è½å¨åºç¨å±åæºè½ä½å±æå»ºçæ­£çå£åââé£ææ¯2026å¹´ä¸åå¹´çä¸»æåºã</p>
+
+<hr>
+<p>*æä¸­æç¨å¾çæ¥æºäºç½ç»ï¼ä»ä¾ææ¯å­¦ä¹ ä¸äº¤æµãå¦æå©äººè®¤ä¸ºå­å¨ä¾µæï¼è¯·èç³»æä»¬ï¼æä»¬å°å¨24å°æ¶åå¤çã*</p>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-07-15 22:39">2026-07-15 22:39</span>&nbsp;
+<a href="https://www.cnblogs.com/htai">èç¿30å¤å¹´</a>&nbsp;
+éè¯»(<span id="post_view_count">8</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(21514737);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fhtai%2Fp%2F21514737&amp;targetId=21514737&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ Aneiang.Yarp v2.3.0.25ï¼è®© AI æä¸ºä½ ç API ç½å³è¿ç»´å¯é©¾é©¶ ]]></title>
+    <link>https://www.cnblogs.com/aneiangsoft/p/21514161</link>
+    <guid>f6e1f2caaa8253ac322474ecf3efdbca</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/aneiangsoft/p/21514161" title="åå¸äº 2026-07-15 21:56">
+    
+
+    <span role="heading" aria-level="2">Aneiang.Yarp v2.3.0.25ï¼è®© AI æä¸ºä½ ç API ç½å³è¿ç»´å¯é©¾é©¶</span>
     
 
 </a>
@@ -1470,989 +2341,389 @@ for (int i = data.Length - 1; i &gt; 0; i--)
             <div class="clear"></div>
             <div class="postBody">
                     <div id="cnblogs_post_description" style="display: none">
-        
-        é¿æ Agent è®°å¿ä¸æ¯ RAGï¼èæ¯è¦è½ç»´æ¤è¯æ®ãçæ¬åçå½å¨æçæ°æ®ç³»ç»
+        <img src="https://img2024.cnblogs.com/blog/1511303/202607/1511303-20260715215609058-1857398625.png" alt="Aneiang.Yarp v2.3.0.25ï¼è®© AI æä¸ºä½ ç API ç½å³è¿ç»´å¯é©¾é©¶" class="desc_img">
+        40 ä¸ª Function Calling å·¥å·ï¼ä¸å¥èªç¶è¯­è¨å³å¯å®æè·¯ç±åå»ºãæéææ¥ãéç½®åæ»ãæ¯æ OpenAI / DeepSeek / éä¹åé®ï¼ä¸è¡ JSON éç½®å¯ç¨ï¼å¼æº MIT åè®®ã
     </div>
 <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h2 id="åæ¨ä¸ç¹åè­¦åäº">åæ¨ä¸ç¹ï¼åè­¦åäº</h2>
+<p>ä½ è¢«ä¸æ¡ééæ¶æ¯åµéââ</p>
 <blockquote>
-<p>é¿æ Agent è®°å¿ä¸æ¯ RAGï¼èæ¯è¦è½ç»´æ¤è¯æ®ãçæ¬åçå½å¨æçæ°æ®ç³»ç»ã</p>
+<p><strong>payment-service éç¾¤çæ­å¨å·²æå¼</strong></p>
 </blockquote>
-<p>Agent çè®°å¿è½åå¾å®¹æè¢«åæä¸ä¸ªè½»é RAGï¼æåå²æ¶æ¯ååãçæ embeddingãåè¿åéåºï¼æé®æ¶å¬å Top-Kï¼åå¡å promptãè¿ä¸ªæ¹æ¡éå MVPï¼ææ¬ä½ï¼é¾è·¯ä¹æ¸æ¥ã</p>
-<p>ä½å®è§£å³çæ¯ââ<strong>æ¾ç¸ä¼¼ææ¬</strong>ââï¼ä¸æ¯ââ<strong>ç»´æ¤é¿æç¶æ</strong>ââãä¸æ¦ Agent å¼å§è·¨ä¼è¯å·¥ä½ï¼è®°å¿éä¼åæ¶åºç°æ§äºå®ãæ°äºå®ãä¸´æ¶åå¥½ãå²çªè®°å½ãå·¥å·æ§è¡è½¨è¿¹åè¿æä»»å¡ç¶æãç³»ç»å¦æåªä¼è¿½å ï¼ä¸ä¼å¤æ­æææãè¯æ®æ¥æºåå²çªå³ç³»ï¼åé¢åºéåªæ¯æ¶é´é®é¢ã<br>
-â<strong>çæ­£ç Agent Memory æ´åä¸ä¸ªæ°æ®ç³»ç»</strong>âãå®è¦è´è´£åå¥ãç´¢å¼ãæ£ç´¢ãçæ¬ãæ·æ±°ãåå¹¶åå®¡è®¡ãâ<strong>åéåºå¯ä»¥æ¯å¥å£ï¼ä½ä¸è½æ¿æææèè´£</strong>âã</p>
-<h2 id="memory-layerååæ¸è®°å¿ç³»ç»çè¾¹ç">Memory Layerï¼ååæ¸è®°å¿ç³»ç»çè¾¹ç</h2>
-<p>ä¸ä¸ªå¯è¿è¡çè®°å¿ç³»ç»è³å°æåç±»å¨ä½ï¼è¡¨ç¤ºãè½åºãæ½åãæ£ç´¢ï¼åå ä¸ä¸ä»¶ç»å¸¸è¢«ä½ä¼°çäºï¼é¿æç»´æ¤ã<br>
-<img alt="mermaid-01.png" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3798513/202607/3798513-20260715105510375-1302686115.png" class="lazyload"></p>
-<p><em>å¾ï¼ä»åå§äº¤äºå° Agent å³ç­ä¸ä¸æçè®°å¿é¾è·¯</em></p>
-<p>è¿å¼ é¾è·¯å¾éï¼æå³é®çä¸æ¯ç¨äºåªç§æ°æ®åºï¼èæ¯æ¯ä¸æ­¥ææ²¡ææ¸æ¥çè´£ä»»è¾¹çãæ½åå±å³å®ä»ä¹è½è¿å¥è®°å¿ï¼è¡¨ç¤ºå±å³å®è®°å¿é¿ä»ä¹æ ·ï¼å­å¨å±å³å®å®è½è¢«ææ ·æ¥è¯¢ï¼ç»´æ¤å±å³å®å®å¨å ä¸ªæä¹åæ¯å¦è¿å¯ä¿¡ã</p>
-<p>å¦ææè¿äºå¨ä½é½åç¼©æâååéåºãæ¥åéåºâï¼ç³»ç»ä¼å¾å¿«éå°ä¸ä¸ªé®é¢ï¼æ¥å°äºç¸ä¼¼åå®¹ä½ä¸æ¯å½åææåå®¹ï¼å¬åäºä¸æ¡è¯æ®ä½ç¼ºå°å®æ´ä¸ä¸æï¼æ°æ§äºå®å¹¶å­æ¶åªè½è®©æ¨¡åä¸´åºçåªä¸ªæ¯ççã<br>
-<img alt="inline-01-memory-object.png" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3798513/202607/3798513-20260715105553662-1379120819.png" class="lazyload"></p>
-<p><em>å¾ï¼ä¸æ¡é¿æè®°å¿å¦ä½åæ¶ä¿çææ¬ãè¯æ®ãç¶æåç´¢å¼</em></p>
-<h2 id="representationè®°å¿ä¸æ¯åªæä¸æ®µææ¬">Representationï¼è®°å¿ä¸æ¯åªæä¸æ®µææ¬</h2>
-<p>â<strong>è®°å¿çé»è¾è¡¨ç¤ºå³å®äºåç»­è½åçä¸é</strong>âãç®åäºå®å¥å¥½åãå¥½è¯»ï¼ä½å¾é¾ç¨³å®å¤çå­æ®µè¿æ»¤åå±é¨æ´æ°ï¼åééåè¯­ä¹ç¸ä¼¼å¬åï¼å´ä¸éåè§£éâä¸ºä»ä¹è¿æ¡è®°å¿ææâï¼å¾ç»æè½è¡¨è¾¾å®ä½ãå³ç³»åæ¶é´ï¼ä½éè¦æ´å¥½çæ½åè´¨éå schema è®¾è®¡ã</p>
-<table>
-<thead>
-<tr>
-<th>è®°å¿è¡¨ç¤º</th>
-<th>éåä»ä¹</th>
-<th>ä¸éåä»ä¹</th>
-<th>å·¥ç¨å¤æ­</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ææ¬çæ®µãäºå®å¥ãæè¦</td>
-<td>å¿«éè½å°ï¼å LLM ä¸ä¸æå¼å®¹</td>
-<td>ç²¾ç¡®è¿æ»¤ãå²çªæ£æµãå­æ®µçº§æ´æ°</td>
-<td>éåæ©æç³»ç»ï¼ä½è¦ä¿çè¯æ®æ¥æº</td>
-</tr>
-<tr>
-<td>åéè¡¨ç¤º</td>
-<td>è¯­ä¹è¿ä¼¼å¬åãæ¨¡ç³é®é¢å¹é</td>
-<td>çæ¬å¤æ­ãå®ä½å³ç³»ãå¯è§£éæ§</td>
-<td>éåä½ä¸ºå¬åå¥å£ï¼ä¸éåå½å¯ä¸äºå®æº</td>
-</tr>
-<tr>
-<td>å¾ææ ç»æ</td>
-<td>å®ä½å³ç³»ãæ¶é´çº¿ãå±çº§æè¦</td>
-<td>æ½ååªå£°é«ãschema ææ¬é«</td>
-<td>éåé¿æç»åãå³ç³»æ¨çåæ¶åºæ¥è¯¢</td>
-</tr>
-<tr>
-<td>å¤åè®°å¿å¯¹è±¡</td>
-<td>å¤æ£ç´¢å¨å±ç¨åä¸æ¡è®°å¿</td>
-<td>å¯¹è±¡è¿ç§»ãå¼å®¹æ§ãç»´æ¤å¤æ</td>
-<td>çäº§ç³»ç»æ´å¸¸è§ï¼ä½éè¦æ²»çæºå¶</td>
-</tr>
-</tbody>
-</table>
-<p>æ´ç¨³å¦¥çåæ³æ¯æä¸æ¡è®°å¿åæå¤åå¯¹è±¡ï¼æèªç¶è¯­è¨æè¿°ï¼ä¹ææ¶é´æ³ãæ¥æºãåå§è¯æ®ãembeddingãå®ä½å­æ®µåç¶ææ è®°ãè¿æ ·åä¸æ¡è®°å¿æ¢è½è¢«åéæ£ç´¢å¬åï¼ä¹è½è¢« SQL ææ¶é´è¿æ»¤ï¼è¿è½è¢«å¾éåæ¥å¥å³ç³»æ¨çã</p>
-<p>è¿å¬èµ·æ¥éº»ç¦ï¼ä½å®è§£å³çæ¯åæè¿å·¥é®é¢ãembedding æ¨¡åæ¢äºå¯ä»¥éå»ºåéï¼schema æ¹äºå¯ä»¥è¿ç§»å­æ®µï¼æè¦éäºå¯ä»¥åæ¾åå§äºä»¶ãåææ¯åºå±è¯æ®æ²¡æä¸¢ã<br>
-<img alt="inline-02-memory-router.png" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3798513/202607/3798513-20260715105550770-1468014022.png" class="lazyload"></p>
-<p><em>å¾ï¼è®°å¿è·¯ç±æä¸åè®¿é®æ¨¡å¼ååç»ä¸åå­å¨åç«¯</em></p>
-<h2 id="storageåå¼æå¾å¹²åå¤å¼æææ¥è¿çå®è´è½½">Storageï¼åå¼æå¾å¹²åï¼å¤å¼æææ¥è¿çå®è´è½½</h2>
-<p>å­å¨å±éå¸¸æä¸ç§å½¢æãç¬¬ä¸ç§æ¯ä¸ä¸æåæå­ï¼æè®°å¿æ¾å¨ prompt æ KV cache éï¼å»¶è¿ä½ï¼ä½å®¹éåæä¹åè½åæéãç¬¬äºç§æ¯åä¸ä¸ç¨å¼æï¼æ¯å¦ Vector DBãGraph DBãRelational DB ææä»¶å­å¨ãç¬¬ä¸ç§æ¯å¤å¼æç»åï¼éè¿ Memory Router æä¸åå½¢æçæ°æ®åå°ä¸ååç«¯ã<br>
-<img alt="mermaid-02.png" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3798513/202607/3798513-20260715105509507-2086723903.png" class="lazyload"></p>
-<p><em>å¾ï¼Memory Router å¦ä½è¿æ¥åéãå¾ãSQLãç¼å­ååå§æ¥å¿</em></p>
-<p>å¤å¼æä¸æ¯ä¸ºäºç«æãç¨æ·åå¥½éè¦çæ¬åæææï¼å·¥å·ä»»å¡éè¦ trace é¡ºåºï¼è·¨ä¼è¯é®ç­éè¦è¯æ®æ©å±ï¼ä½å»¶è¿å©æéè¦è½»éç¼å­ãæè¿äºè®¿é®æ¨¡å¼é½å¡è¿ä¸ä¸ªåéåºï¼æåä¼åæä¸å æ£ç´¢åæ°å prompt è§åçè¡¥ä¸ã</p>
-<p>å½ç¶ï¼å¤å¼æä¹ä¼å¸¦æ¥ä»£ä»·ï¼åå¥è·¯ç±ãè·¨å­å¨ä¸è´æ§ãç´¢å¼éå»ºãæ¥è¯¢ç¼æãå®¡è®¡æ¥å¿é½è¦åç¬è®¾è®¡ãæä»¥éåæ¶ä¸è¦é®âåªä¸ªè®°å¿ç³»ç»æå¥½âï¼åé® Agent çä¸»è¦è´è½½æ¯ä»ä¹ã</p>
-<h2 id="extractionåå¥åå°±è¦å³å®ä»ä¹å¼å¾è®°ä½">Extractionï¼åå¥åå°±è¦å³å®ä»ä¹å¼å¾è®°ä½</h2>
-<p>Agent çåå§è½¨è¿¹åæ¬å¤è½®å¯¹è¯ãå·¥å·è°ç¨ãä»»å¡ç»æãç¯å¢åé¦åä¸­é´æ¨ççè¿¹ãå®ä»¬ä¸è½æ èè¿å¥é¿æè®°å¿ãåå¤ªå°ï¼å³é®äºå®ä¸¢å¤±ï¼åå¤ªå¤ï¼åç»­æ£ç´¢è¢«åªå£°æå®ã</p>
-<table>
-<thead>
-<tr>
-<th>æ½åæ¹å¼</th>
-<th>åæ³</th>
-<th>ä¼ç¹</th>
-<th>é£é©</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>åå§åºåä¿ç</td>
-<td>ç´æ¥ä¿çè¿æå¯¹è¯ãä»»å¡è½¨è¿¹æéå½æè¦</td>
-<td>ææ¬ä½ï¼ä¿¡æ¯ä¸å®¹æè¢«æ½åé¶æ®µè¯¯å </td>
-<td>åªå£°å¤ï¼ä¾èµé¿ä¸ä¸æåæ³¨æå</td>
-</tr>
-<tr>
-<td>èªç±è¯­ä¹æ½å</td>
-<td>ä»ææ¬ä¸­æ½åºäºå®å¥ãåå¥½ãäºä»¶æè¿°</td>
-<td>ç²åº¦æ´æ¸æ¥ï¼éåè½»éé¿æè®°å¿</td>
-<td>äºå®è¾¹çä¸ç¨³å®ï¼å²çªå¤çå°é¾</td>
-</tr>
-<tr>
-<td>ç»æåæ½å</td>
-<td>æ JSONãä¸åç»ãäºä»¶ schema è¾åº</td>
-<td>æ¹ä¾¿è¿æ»¤ãæ´æ°ãå¾è°±åå¥</td>
-<td>schema ææ¬é«ï¼éè¯¯ä¼ç»æåæ²æ·</td>
-</tr>
-</tbody>
-</table>
-<p>ä¸ä¸ªå®ç¨çåå¥ç­ç¥æ¯åå±ä¿çï¼â<strong>åå§äºä»¶æ¥å¿ä½ä¸ºäºå®æºï¼æ´¾çäºå®ä½ä¸ºæ£ç´¢å éå±ï¼ç»æåç¶æä½ä¸ºä»»å¡æ¢å¤å±</strong>âãæè¦ãembeddingãå¾è°±å³ç³»é½å¯ä»¥éç®ï¼åå§è¯æ®ä¸æ¦ä¸¢äºï¼ç³»ç»å°±åªè½ç¸ä¿¡èªå·±å½æ¶æ½ååºæ¥çäºæä¿¡æ¯ã</p>
-<p>è¿éææçæ¯æâæè¦æ´å¹²åâè¯¯è®¤ä¸ºâè®°å¿æ´å¯é âãæè¦è½åå° prompt åªå£°ï¼ä½å®ä¹ä¼åæç»èãå¯¹äºé¿æè¿è¡ç Agentï¼è¯æ®é¾æ¯ç­æä¸ä¸ææ´æ´æ´éè¦ã</p>
-<h2 id="retrievaltop-k-åªæ¯å¥å£ä¸æ¯ç­æ¡">Retrievalï¼Top-K åªæ¯å¥å£ï¼ä¸æ¯ç­æ¡</h2>
-<p>â<strong>Memory Retrieval ä¸è½ç®åæåé Top-K</strong>âãå¾å¤é®é¢éè¦çä¸æ¯ä¸æ¡æç¸ä¼¼çè®°å¿ï¼èæ¯ä¸ç»è½æ¼èµ·æ¥çè¯æ®ã</p>
-<p>ä¸ä¸ªæ´å¯é çæ£ç´¢æµç¨éå¸¸åä¸¤æ­¥ï¼åå®ä½å¥å£ï¼åæ©å±è¯æ®ãå¥å£å¯ä»¥æ¯ç¨æ·ãå®ä½ãä¼è¯ãä»»å¡ãå·¥å·è°ç¨ææ¶é´ç¹ï¼æ©å±å¯ä»¥æ²¿çæ¶é´çº¿ãå¾å³ç³»ãä»»å¡ trace æåä¸ä¼è¯ç»§ç»­æ¾ã<br>
-<img alt="mermaid-03.png" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3798513/202607/3798513-20260715105511477-462185092.png" class="lazyload"></p>
-<p><em>å¾ï¼ä¸åé®é¢ç±»åå¯¹åºä¸åæ£ç´¢è·¯å¾</em></p>
-<p>å®éªç»è®ºä¹æ¯æè¿ä¸ªå¤æ­ãå¨ LoCoMo çè¯æ®çº§å¬åä¸­ï¼SimpleMem ç Recall@1 æé«ï¼è¾¾å° 39.0ï¼ä½å½é¢ç®æ¾å° Recall@5 å Recall@10ï¼A-MEM è¾¾å° 69.5 å 85.9ï¼MemTree è¾¾å° 59.7 å 80.5ãæ©æ©å½ä¸­ä¸æ¡ç¸å³è¯æ®ï¼ä¸ä»£è¡¨åç­æéè¯æ®å·²ç»é½äºã</p>
-<p>è¿ä¹æ¯çäº§ç³»ç»éç»å¸¸éè¦æ··åæ£ç´¢çåå ï¼åç¨ SQL åæ¶é´è¿æ»¤ï¼åç¨åéå¬åè¯­ä¹åéï¼å¿è¦æ¶èµ°å¾éåï¼æåç¨ reranker æ LLM åè¯æ®ç»è£ãä»£ä»·æ¯å»¶è¿åè°åææ¬ä¼ä¸åï¼æä»¥ä¸åé®é¢åºè¯¥èµ°ä¸åè·¯å¾ï¼èä¸æ¯æææ¥è¯¢é½è·æéé¾è·¯ã<br>
-<img alt="inline-03-lifecycle.png" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3798513/202607/3798513-20260715105535265-1127600132.png" class="lazyload"></p>
-<p><em>å¾ï¼çæ¬ãæææåå²çªå¤çå³å®é¿æè®°å¿æ¯å¦å¯ä¿¡</em></p>
-<h2 id="lifecycleé¿æè®°å¿ææè¿è®°å¾ä½è®°éäº">Lifecycleï¼é¿æè®°å¿ææâè¿è®°å¾ï¼ä½è®°éäºâ</h2>
-<p>â<strong>é¿æè®°å¿çé£é©ä¸æ¯åçº¯éå¿ï¼èæ¯ç³»ç»ä¿çäºå¤§éäºå®ï¼å´ä¸ç¥éåªäºè¿ææ</strong>âãç¨æ·å·²ç»åæ¶åå¥½ï¼Agent è¿ç»§ç»­æ¨èï¼ä»»å¡å·²ç»æ¨è¿å°ä¸ä¸æ­¥ï¼Agent è¿æ¿æ§ç¶æåå³ç­ï¼åä¸å®ä½æå¤ä¸ªçæ¬ï¼ç³»ç»æå®ä»¬åæ¶å¬åã</p>
-<table>
-<thead>
-<tr>
-<th>ç»´æ¤æºå¶</th>
-<th>è§£å³çé®é¢</th>
-<th>è®¾è®¡è¦ç¹</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>æ¶é´æ³å¤çæ¬</td>
-<td>æ°æ§äºå®å¹¶å­ãåå²å¯è¿½æº¯</td>
-<td>ä½¿ç¨ <code>valid_from</code>ã<code>valid_to</code>ãç¶ææ è®°ç®¡çå½åæææ§</td>
-</tr>
-<tr>
-<td>å®¹éé©±é</td>
-<td>è®°å¿æ éè¨è</td>
-<td>æè®¿é®æ¶é´ãéè¦æ§ãè¡°åå½æ°æä»»å¡ä»·å¼æ·æ±°</td>
-</tr>
-<tr>
-<td>è¯­ä¹åå¹¶</td>
-<td>ç¢çäºå®è¿å¤ãéå¤å²çª</td>
-<td>ç¨ LLM åå¹¶ãå»éãè¡¥åï¼ä½å¿é¡»ä¿çåå§è¯æ®</td>
-</tr>
-<tr>
-<td>åæ°åæ´æ°</td>
-<td>é«é¢ç»éªæ²æ·è¿æ¨¡å</td>
-<td>éåç¨³å®æ¨¡å¼ï¼ä¸éåé¢ç¹ååçäºå®</td>
-</tr>
-</tbody>
-</table>
-<p>ææ°æ§äºå®é½ append å°åéåºï¼ç¶åå¨ prompt éè¦æ±æ¨¡åâèªè¡å¤æ­å½åææäºå®âï¼è¿ä¸æ¯è®°å¿ç³»ç»ï¼è¿æ¯æç³»ç»æ­£ç¡®æ§å¤åç»æ¨¡åä¸´åºåæ¥ã</p>
-<p>æ´å¥½çæ¹å¼æ¯è®©æ°æ®å±åç»åºåéèå´ï¼åªäºäºå®å½åææï¼åªäºå·²ç»å¤±æï¼åªäºäºç¸å²çªï¼åªäºåªæ¯åå²è®°å½ãLLM å¯ä»¥åä¸å¤æ­ï¼ä½ä¸åºè¯¥æ¯å¯ä¸ççæ¬æ§å¶å¨ã</p>
-<h2 id="benchmarkææè¯æ®åå»¶è¿è¦ä¸èµ·ç">Benchmarkï¼ææãè¯æ®åå»¶è¿è¦ä¸èµ·ç</h2>
-<p>â<strong>è®°å¿ç³»ç»æ²¡æåä¸æä¼æ¶æ</strong>âãä¸åä»»å¡çèåºæ¹æ¡å¹¶ä¸ä¸è´ã</p>
-<table>
-<thead>
-<tr>
-<th>è¯æµåºæ¯</th>
-<th>æ´å ä¼çè½å</th>
-<th>å¸åç»æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>LongMemEval è·¨ä¼è¯é¿è®°å¿</td>
-<td>ç»æåç»ç»ãé¿æè¯æ®å®ä½</td>
-<td>Zep ç LLM Judge Accuracy å° 48.0ï¼Cognee ç ROUGE-L F1 å° 35.3</td>
-</tr>
-<tr>
-<td>LoCoMo é¿å¯¹è¯ç²¾ç¡®é®ç­</td>
-<td>æ··åè¿æ»¤ãè¯æ®æ©å±</td>
-<td>MemOS ç Exact Match è¾¾å° 11.5ï¼temporal slice ä¸­è¾¾å° 8.9</td>
-</tr>
-<tr>
-<td>DB-Bench ç¶æåæ§è¡</td>
-<td>åå§è½¨è¿¹ãæä½é¡ºåºãä»»å¡ç¶æ</td>
-<td>Long Context ç EM ä¸º 48.2ï¼MemoChat ç Task Success Rate ä¸º 55.4</td>
-</tr>
-<tr>
-<td>Knowledge Update / Temporal Reasoning</td>
-<td>çæ¬ç®¡çãæ¶é´å³ç³»ãå²çªå¤ç</td>
-<td>Zep å¨ Knowledge Update ä¸ Substring EM ä¸º 44.4ãROUGE-L F1 ä¸º 36.8ï¼Cognee å¨ Temporal Reasoning ä¸ Substring EM ä¸º 18.7ãROUGE-L F1 ä¸º 35.8</td>
-</tr>
-</tbody>
-</table>
-<p>é¿ä¸ä¸æä¹ä¸è½æ¿ä»£è®°å¿ç»ç»ãæ¨¡åè½å¡è¿æ´å¤åå²ï¼ä¸ä»£è¡¨å®è½ç¨³å®æ¾å°æ­£ç¡®è¯æ®ãLoCoMo ä¸ï¼Embedding RAG ç Answer F1 éè¯æ®è·ç¦»æå¤§ä» 37.1 æå° 7.4ï¼å³ç³»ç»ç»æå±çº§æ´çæ´å¼ºçç³»ç»è¡¨ç°æ´ç¨³ã</p>
-<p>ææ¬ä¹ä¸è½åªçæ¥è¯¢ä¸æ¬¡æå¤æ¢ãåå¥ãåå¹¶ãç´¢å¼éå»ºãè·¨å­å¨åæ­¥é½ä¼åæé¢ç®ãLightMem ç Normalized Utility ä¸º 48.3ï¼å¹³åæä½å»¶è¿ 3.67 ç§ï¼MemTree ç Utility ä¸º 63.5ï¼å»¶è¿ 15.9 ç§ï¼MemoryOS ç Utility å° 82.0ï¼å»¶è¿ä¹å° 28.6 ç§ï¼Cognee å Zep ç Utility è¶è¿ 84 æ¶ï¼å»¶è¿åå«è¶è¿ 116.5 ç§å 155.1 ç§ã</p>
-<p>è¿äºæ°å­è¯´æä¸ä»¶äºï¼æ´éçè®°å¿ç³»ç»ç¡®å®å¯è½å¸¦æ¥æ´é«æç¨ï¼ä½ä¸ä¸å®éåææå¨çº¿åºæ¯ãä½å»¶è¿å©æãå¤æç ç©¶ Agentãå·¥å·æ§è¡ Agent åé¿æä¸ªäººç»åç³»ç»ï¼ä¸åºè¯¥å±ç¨ä¸å¥è®°å¿é¾è·¯ã</p>
-<h2 id="engineering-takeawaysçäº§çº§-agent-memory-çä¸å±åºåº§">Engineering Takeawaysï¼çäº§çº§ Agent Memory çä¸å±åºåº§</h2>
-<p>å¦æä»é¶è®¾è®¡ä¸ä¸ªåçäº§å¯ç¨ç Agent Memoryï¼æä¼ååä¸å±ã</p>
-<p>ç¬¬ä¸å±æ¯åå§äºä»¶æ¥å¿ãç¨æ·æ¶æ¯ãå©æåå¤ãå·¥å·è°ç¨ãä»»å¡ç»æãæ¶é´æ³ãæ¥æºåè¯æ®é¾é½è¦ä¿çãå®æ¯åç»­æè¦ãåéãå¾è°±ãç¶æè¡¨çäºå®æºã</p>
-<p>ç¬¬äºå±æ¯å¤ç§æ´¾çè§å¾ãåä¸ä»½åå²å¯ä»¥æåéç´¢å¼ç¨äºè¯­ä¹å¬åï¼æäºå®è¡¨ç»´æ¤ç¨æ·ç»åï¼æä»»å¡ç¶æè¡¨æ¯æå·¥ä½æµæ¢å¤ï¼æå¾å³ç³»æ¯æå®ä½åäºä»¶æ¨çï¼ä¹ææè¦å¸®å©å¿«éå®ä½ä¸ä¸æã</p>
-<p>ç¬¬ä¸å±æ¯æ¥è¯¢ç¼æãç³»ç»è¦åå¤æ­é®é¢ç±»åï¼åéæ©æ£ç´¢è·¯å¾ãææ°ç¶æèµ°çæ¬è¿æ»¤ï¼è·¨ä¼è¯é®é¢åå®ä½å®ä½æä¼è¯ï¼åæ©å±è¯æ®ï¼å·¥å·ä»»å¡ä¼ååæ¾ traceï¼ä½å»¶è¿é®ç­èµ°è½»éç´¢å¼ï¼é¿åæ¯æ¬¡é½è§¦åå¨å±å¾éåã</p>
-<table>
-<thead>
-<tr>
-<th>åºæ¯</th>
-<th>ä¸»è¦é£é©</th>
-<th>è®¾è®¡éç¹</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ç¨æ·ç»åãé¿æåå¥½</td>
-<td>æ§äºå®åæ°äºå®æ··å¨ä¸èµ·</td>
-<td>å®ä½ç»å®ãçæ¬ãæææãå²çªå¤ç</td>
-</tr>
-<tr>
-<td>è·¨ä¼è¯é®ç­</td>
-<td>è¯æ®åæ£ï¼åæ¡å¬åä¸è¶³</td>
-<td>å¥å£å®ä½ååè¯æ®æ©å±</td>
-</tr>
-<tr>
-<td>å·¥å·æ§è¡ Agent</td>
-<td>ä¸¢å¤±æä½é¡ºåºåä¸­é´ç¶æ</td>
-<td>å®æ´ traceãå¯åæ¾ãå¯å®¡è®¡</td>
-</tr>
-<tr>
-<td>ä½å»¶è¿å©æ</td>
-<td>ç»´æ¤åæ£ç´¢ææ¬è¿é«</td>
-<td>å±é¨æ´æ°ãè½»éç´¢å¼ãåå°å¨å±éç»</td>
-</tr>
-</tbody>
-</table>
-<p>è¯æµä¹è¦è·çåãåªçæç»åç­åæ°ä¸å¤ï¼è¿è¦çåå¥è¦ççãè¯æ®å¬åçãè¯æ®ç»è£è½åãæ´æ°æ­£ç¡®æ§ãé¿å¨ææ¼ç§»åç»´æ¤ææ¬ãAgent Memory æ¯é¿æè¿è¡ç³»ç»ï¼ä¸æ¯ä¸æ¬¡æ§ benchmarkãå®å¿é¡»è½è§£éãè½è§æµãè½åæ¾ã</p>
-<h2 id="ç»è¯­åéåºæ¯å¥å£ä¸æ¯è®°å¿ç³»ç»">ç»è¯­ï¼åéåºæ¯å¥å£ï¼ä¸æ¯è®°å¿ç³»ç»</h2>
-<p>Agent Memory çç¬¬ä¸é¶æ®µçèµ·æ¥åæ£ç´¢ï¼ç¬¬äºé¶æ®µå°±ä¼æ´é²åºæ°æ®ç³»ç»é®é¢ï¼äºå®ä¼è¿æï¼åå¥½ä¼æ¹åï¼è¯æ®ä¼åæ£ï¼ç´¢å¼ä¼éå»ºï¼ææ¬ä¼åæäº§åçº¦æã</p>
-<p>æä»¥ï¼â<strong>ä¸ä¸ªå¯é çè®°å¿ç³»ç»ä¸åºè¯¥åªè¿½æ±âå¬åç¸ä¼¼åå®¹â</strong>âãå®è¦ä¿çåå§è¯æ®ï¼æå»ºæ´¾çè§å¾ï¼çè§£çæ¬è¯­ä¹ï¼æé®é¢ç±»åç¼ææ¥è¯¢ï¼å¹¶ç¨çå½å¨æç®¡çæ§å¶è®°å¿è¨èã</p>
-<p>åéåºå½ç¶æä»·å¼ãåªæ¯å°äºé¿æ Agent åºæ¯éï¼å®æ´åä¸åç´¢å¼ï¼èä¸æ¯æ´å¥è®°å¿ã<br>
-<img alt="aaa_compressed_under_1M.png" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3798513/202607/3798513-20260715105511504-541638580.png" class="lazyload"></p>
-<h2 id="æ¨èéè¯»">æ¨èéè¯»</h2>
-<p><a href="https://mp.weixin.qq.com/s?__biz=Mzg2OTcxMDIzNA==&amp;mid=2247484315&amp;idx=1&amp;sn=2677e61ba6601092771c25c12aea1273&amp;scene=21" target="_blank" rel="noopener nofollow">Hermes ä¸ä¸æåç¼©æ¶æï¼é¿ä»»å¡ Agent ä¸å¤±å¿çå ä¸ªå³é®è®¾è®¡</a></p>
-<p><a href="https://mp.weixin.qq.com/s?__biz=Mzg2OTcxMDIzNA==&amp;mid=2247484273&amp;idx=1&amp;sn=f0333be702105353d7f425cc56b4cbf0&amp;scene=21" target="_blank" rel="noopener nofollow">Agent è¯æµç³»ç»æ¶æï¼ä»ææ åå±å° GT/Judge é­ç¯çå·¥ç¨åè½å°</a></p>
-<p><a href="https://mp.weixin.qq.com/s?__biz=Mzg2OTcxMDIzNA==&amp;mid=2247484272&amp;idx=1&amp;sn=f43cdd3b818ae8686447fc82b95e7b24&amp;scene=21" target="_blank" rel="noopener nofollow">å¢éè½å° Agent å·¥ç¨å Loop çä¸äºå¿çå°æå·§ï¼</a></p>
-<p><a href="https://mp.weixin.qq.com/s?__biz=Mzg2OTcxMDIzNA==&amp;mid=2247484270&amp;idx=1&amp;sn=e2e63b413f5ba85643be45bb2e90038c&amp;scene=21" target="_blank" rel="noopener nofollow">Agent å·¥ç¨åæ°åºåº§ï¼ç¨ CLI å¥çº¦å±æé HTTP æ¥å£ä¸ä¸å¡è½å</a></p>
-<p><a href="https://mp.weixin.qq.com/s?__biz=Mzg2OTcxMDIzNA==&amp;mid=2247484156&amp;idx=1&amp;sn=e678059c3e6af748c20a8c4d8149aea0&amp;scene=21" target="_blank" rel="noopener nofollow">Agent Loop æ¶ææè§£ï¼è®© AI Agent èªå·±è·å®éªæ¶é­ç¯</a></p>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-07-15 11:00">2026-07-15 10:59</span>&nbsp;
-<a href="https://www.cnblogs.com/ai-old-six">AIå°èå­</a>&nbsp;
-éè¯»(<span id="post_view_count">114</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(21486005);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fai-old-six%2Fp%2F21486005&amp;targetId=21486005&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ ROS2å­¦ä¹ CH1 å·¥ä½ç©ºé´ï¼åï¼èç¹ä¸æ¥å£ ]]></title>
-    <link>https://www.cnblogs.com/CrescentWind/p/21472437</link>
-    <guid>9f94a6a2002ee716681ed13b81e333c1</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/CrescentWind/p/21472437" title="åå¸äº 2026-07-15 18:44">
-    
-
-    <span role="heading" aria-level="2">ROS2å­¦ä¹ CH1 å·¥ä½ç©ºé´ï¼åï¼èç¹ä¸æ¥å£</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h2 id="åè¯ros2">åè¯ROS2</h2>
+<p>ä½ ç¿»äºä¸ªèº«ï¼æå¼ç¬è®°æ¬çµèãæç§å¸¸è§æä½ï¼ä½ éè¦ï¼</p>
+<p>æå¼ Dashboard â æ¾å°çæ­å¨é¢æ¿ â æ¥ç payment-service å½åç¶æ â ç¿»ä»£çæ¥å¿æ¾éè¯¯ â æ£æ¥ä¸æ¸¸èç¹å¥åº·ç¶æ â åææ ¹å  â å³å®ä¸ä¸æ­¥æä½ã</p>
+<p><strong>å¤§æ¦éè¦ 10 åéï¼å¦æç½ç»ä¸å¡çè¯ã</strong></p>
+<p>ä½ç°å¨ï¼ä½ åªå¯¹ Dashboard å³ä¸è§çæ¬æµ® AI æé®è¯´äºä¸å¥è¯ï¼</p>
 <blockquote>
-<p>ROS 2ï¼Robot Operating System 2ï¼æ¯ä¸ä¸ªé¢åæºå¨äººå¼åçå¼æºè½¯ä»¶æ¡æ¶ï¼å¯ä»¥çè§£ä¸ºæºå¨äººè½¯ä»¶çâæä½ç³»ç»âï¼ä½å®æ¬èº«å¹¶ä¸æ¯ä¸ä¸ªçæ­£çæä½ç³»ç»ï¼èæ¯ä¸å¥å¸®å©å¼åæºå¨äººåºç¨çå·¥å·ãåºåéä¿¡æºå¶ãå¨ROS2ä¸­æä¾äºä¸å¥ç®ä¾¿æç¨çè¿ç¨é´éä¿¡æºå¶ï¼éè¿è¿å¥æºå¶å¯ä»¥å°æºå¨äººçåä¸ªæ¨¡åé´çéä¿¡åå¾æ ååæç¨åãèä¸å¨ROS2å¼ºå¤§ççææ¯æä¸ï¼å¾å¤å¸¸ç¨å(<strong>Package</strong>)çå®è£åä½¿ç¨é½åå¾éå¸¸ç®åï¼å¼åèå¯ä»¥ä¸æ³¨äºç®æ³çå®ç°ï¼èä¸å¿è¿å¤å³æ³¨åºå±éä¿¡ç»èã</p>
+<p>"å¸®æçç payment-service åºäºä»ä¹é®é¢ã"</p>
 </blockquote>
-<p>ROS2 çæ ¸å¿æ¦å¿µåæ¬èç¹ï¼Nodeï¼ãè¯é¢ï¼Topicï¼ãæå¡ï¼Serviceï¼ãå¨ä½ï¼Actionï¼ãæ¶æ¯ï¼Messageï¼ãè½¯ä»¶åï¼Packageï¼åå¯å¨æä»¶ï¼Launchï¼ãè¿äºæ¦å¿µææäºROS2çåºç¡ï¼ä½¿å¾å¼åèè½å¤é«æå°æå»ºåç®¡çæºå¨äººåºç¨ãä¸åé¨åçä½ç¨å¦ä¸è¡¨æç¤ºï¼</p>
+<p>å ç§éåï¼AI åå¤ï¼</p>
+<blockquote>
+<p>æè¿ 5 åéå payment-service è¿åäº <strong>12 æ¬¡ 503 éè¯¯</strong>ï¼å æ»è¯·æ± 40%ï¼ï¼è§¦åäºçæ­ä¿æ¤ãä¸æ¸¸èç¹ <code>192.168.1.100:8080</code> å¥åº·æ£æ¥è¿ç»­ 3 æ¬¡å¤±è´¥ã<strong>å»ºè®®</strong>ï¼æ£æ¥è¯¥èç¹é¨ç½²ç¶æï¼ç¡®è®¤æ¯å¦æ­£å¨éå¯ï¼å¦æç¡®è®¤åªæ¯ä¸´æ¶æéï¼å¯ä»¥éç½®çæ­å¨æ¢å¤æµéãéè¦æå¸®ä½ éç½®åï¼</p>
+</blockquote>
+<p><strong>10 ç§ vs 10 åéãè¿æ¯è´¨çåºå«ã</strong></p>
+<p>è¿å°±æ¯ Aneiang.Yarp v2.3.0.25 å¸¦æ¥çæå¤§æ´æ°ï¼<strong>AI æºè½å©ææ­£å¼ä¸çº¿</strong>ãè¿ä¸ä»ä»æ¯å äºä¸ªèå¤©çªå£ââæä»¬è®© AI æ¥æäº<strong>ç´æ¥æä½ç½å³çè½å</strong>ã</p>
+<hr>
+<h2 id="åè¯´è¯´-aneiangyarp-æ¯ä»ä¹">åè¯´è¯´ Aneiang.Yarp æ¯ä»ä¹</h2>
+<p>å¦æä½ è¿ä¸çæè¿ä¸ªé¡¹ç®ï¼ä¸å¥è¯ä»ç»ï¼</p>
+<p><strong>Aneiang.Yarp æ¯åºäºå¾®è½¯ YARP çå¨åè½ API ç½å³å¢å¼ºæ¹æ¡ã</strong></p>
+<p>YARP æ¯å¾®è½¯å¼æºç .NET ååä»£çå¼æï¼æ§è½ä¼ç§ï¼ä½å®æ¯"åå¨æº"ï¼ä¸æ¯"æ´è½¦"ãçäº§ç¯å¢éè¦çââDashboard ç®¡çé¢æ¿ãWAF é²ç«å¢ãéç¥åè­¦ãçæ­éæµãéç½®åæ»ãå®¡è®¡æ¥å¿ââYARP é»è®¤é½ä¸æä¾ã</p>
+<p>Aneiang.Yarp å°±æ¯æè¿äº<strong>å¨é¨è¡¥ä¸</strong>çé£ä¸ªé¡¹ç®ãå®ä¸æ¿ä»£ YARPï¼èæ¯å¨ YARP ä¹ä¸çäºä¸åº§å®æ´çæ¿å­ã</p>
+<p>ç®åé¡¹ç®å·²ç»æ¯ .NET çæä¸­ <strong>YARP å¢å¼ºæ¹æ¡çäºå®æ å</strong>ï¼MIT åè®®å¼æºï¼NuGet ä¸é®å®è£ãæªæ­¢ v2.3.0.25 çæ¬ï¼å·²ç»éæäºï¼</p>
+<ul>
+<li><strong>15 ä¸ª Dashboard ç®¡çé¡µé¢</strong>ï¼è·¯ç± / éç¾¤ / æ¥å¿ / çæ­ / WAF / å®¡è®¡ / éç½®åå²â¦â¦ï¼</li>
+<li><strong>WAF é²ç«å¢</strong>ï¼IP é»ç½ååãSQL æ³¨å¥ / XSS / è·¯å¾éåæ£æµï¼</li>
+<li><strong>éç¥åè­¦</strong>ï¼éé / Webhookã6 ç§äºä»¶ç±»åãå·å´æºå¶é²é£æ´ï¼</li>
+<li><strong>å¨é¾è·¯å¯è§æµ</strong>ï¼å®æ¶æ¥å¿ WebSocket æ¨éãP50/P90/P99 å»¶è¿ãå¥åº·æ£æ¥ï¼</li>
+<li><strong>éç½®ç®¡çä¸åæ»</strong>ï¼æ¯æ¬¡åæ´èªå¨å¿«ç§ãä¸é®åæ»ä»»æåå²çæ¬ï¼</li>
+<li><strong>å®¢æ·ç«¯èªå¨æ³¨å</strong>ï¼ä¸è¡ä»£ç æ¥å¥ï¼HTTP / gRPC ååè®®ãææ°éé¿éè¯ï¼</li>
+<li><strong>AI æºè½å©æ</strong>ï¼æ¬æçä¸»è§ï¼</li>
+</ul>
+<p><strong>ä¸å¥è¯æ»ç»ï¼å¦æä½ å¨ç¨ YARPï¼Aneiang.Yarp è®©ä½ ä¸ç¨ä»é¶å¼å§é è½®å­ã</strong></p>
+<hr>
+<h2 id="ai-æºè½å©æä¸æ­¢æ¯èå¤©å®è½å¨æ">AI æºè½å©æï¼ä¸æ­¢æ¯èå¤©ï¼å®è½"å¨æ"</h2>
+<p>è¿æ¬¡ v2.3.0.25 ç AI å©æä¸æ¯é£ç§"ä½ é®ä¸å¥å®åä¸å¥"çå®¢ææºå¨äººãå®éè¿ <strong>OpenAI Function Calling</strong> æºå¶ï¼ç´æ¥è°ç¨ç½å³çè¿ç»´ APIï¼å·å¤<strong>æ§è¡æä½çè½å</strong>ã</p>
+<p>æä»¬ä¸º AI åå¤äº <strong>40 ä¸ªå·¥å·</strong>ï¼è¦çç½å³è¿ç»´çå¨é¾è·¯ï¼</p>
+<h3 id="è¯»å·¥å·21-ä¸ª-èªå¨æ§è¡ä¸é®å³ç­">è¯»å·¥å·ï¼21 ä¸ªï¼ââ èªå¨æ§è¡ï¼ä¸é®å³ç­</h3>
+<p>æ¥è¯¢ç±»æä½ä¸æ¶åæ°æ®åæ´ï¼AI ç´æ¥è°ç¨å¹¶è¿åç»æï¼</p>
 <table>
 <thead>
 <tr>
-<th>æ¦å¿µ</th>
-<th>ä½ç¨</th>
+<th style="text-align: left">å·¥å·</th>
+<th style="text-align: left">è½åä»ä¹</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Nodeï¼èç¹ï¼</td>
-<td>ä¸ä¸ªç¬ç«è¿è¡çç¨åº</td>
+<td style="text-align: left"><code>get_routes</code></td>
+<td style="text-align: left">æ¥ææè·¯ç±åå¹éè§å</td>
 </tr>
 <tr>
-<td>Topicï¼è¯é¢ï¼</td>
-<td>åå¸/è®¢éæ¶æ¯ï¼å®ç°æ°æ®å¹¿æ­</td>
+<td style="text-align: left"><code>get_clusters</code></td>
+<td style="text-align: left">æ¥ææéç¾¤åç®æ èç¹</td>
 </tr>
 <tr>
-<td>Serviceï¼æå¡ï¼</td>
-<td>è¯·æ±-ååºéä¿¡</td>
+<td style="text-align: left"><code>get_circuit_status</code></td>
+<td style="text-align: left">æ¥çæ­å¨å®æ¶ç¶æ</td>
 </tr>
 <tr>
-<td>Actionï¼å¨ä½ï¼</td>
-<td>ç¨äºæ§è¡èæ¶ä»»å¡ï¼å¦å¯¼èªï¼</td>
+<td style="text-align: left"><code>get_proxy_logs</code></td>
+<td style="text-align: left">æ¥æè¿ä»£çè¯·æ±æ¥å¿</td>
 </tr>
 <tr>
-<td>Messageï¼æ¶æ¯ï¼</td>
-<td>èç¹ä¹é´ä¼ è¾çæ°æ®æ ¼å¼</td>
+<td style="text-align: left"><code>get_health_summary</code></td>
+<td style="text-align: left">æ¥éç¾¤å¥åº·æ»è§</td>
 </tr>
 <tr>
-<td>Packageï¼è½¯ä»¶åï¼</td>
-<td>ç®¡çä»£ç åèµæº</td>
+<td style="text-align: left"><code>get_waf_settings</code></td>
+<td style="text-align: left">æ¥ WAF é²ç«å¢éç½®</td>
 </tr>
 <tr>
-<td>Launch</td>
-<td>ä¸é®å¯å¨å¤ä¸ªèç¹</td>
+<td style="text-align: left"><code>search_logs</code></td>
+<td style="text-align: left">æè·¯ç± / ç¶æç  / å³é®è¯æç´¢æ¥å¿</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>get_traffic_stats</code></td>
+<td style="text-align: left">æ¥ QPS / å»¶è¿åä½æ° / ç¶æç åå¸</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>get_audit_log</code></td>
+<td style="text-align: left">æ¥æä½å®¡è®¡ï¼è°å¨ä»ä¹æ¶é´æ¹äºä»ä¹ï¼</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>get_top_issues</code></td>
+<td style="text-align: left">èªå¨åæ Top éè¯¯ / æ¢è¯·æ±</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>export_config</code></td>
+<td style="text-align: left">å¯¼åºå®æ´ YARP éç½® JSON</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>get_config_history</code></td>
+<td style="text-align: left">æ¥éç½®å¿«ç§åå²ï¼ç¨äºåæ»ï¼</td>
+</tr>
+<tr>
+<td style="text-align: left">â¦â¦</td>
+<td style="text-align: left">å± 21 ä¸ªè¯»å·¥å·</td>
 </tr>
 </tbody>
 </table>
-<p>å¯¹äºä¸ä¸ªä½¿ç¨ROS2çé¡¹ç®ï¼å¶é¡¹ç®ç»æéå¸¸å¦ä¸æç¤ºï¼</p>
-<pre><code class="language-bash">my_robot_ws/                         # ROS 2 å·¥ä½ç©ºé´ (Workspace)
-â
-âââ src/                             # æºä»£ç ç©ºé´ (Source Space)
-â   â                                # å­æ¾ææ ROS 2 è½¯ä»¶å (Package)
-â   â
-â   âââ my_robot_package/            # èªå®ä¹ ROS 2 è½¯ä»¶å
-â       â
-â       âââ CMakeLists.txt           # CMake æå»ºéç½®æä»¶
-â       âââ package.xml              # è½¯ä»¶åæè¿°æä»¶ä¸ä¾èµç®¡ç
-â       â
-â       âââ src/                     # C++ æºæä»¶ç®å½
-â       â   âââ *.cpp
-â       â
-â       âââ include/                 # å¤´æä»¶ç®å½
-â           âââ my_robot_package/
-â               âââ *.hpp
-â
-âââ build/                           # æå»ºç©ºé´ (Build Space)
-â                                    # å­æ¾ CMake ç¼è¯è¿ç¨äº§ççä¸­é´æä»¶
-â
-âââ install/                         # å®è£ç©ºé´ (Install Space)
-â                                    # å­æ¾ç¼è¯å®è£åçå¯æ§è¡æä»¶ãåºãéç½®æä»¶
-â
-âââ log/                             # æ¥å¿ç©ºé´ (Log Space)
-                                     # å­æ¾ colcon æå»ºè¿ç¨æ¥å¿
-</code></pre>
-<p>å½ç¶ï¼ä¸é¢çç»ææ¯ç¨C++ç¼åçROS2åçå¸åç»æï¼å¦æä½¿ç¨Pythonç¼åï¼ç»æä¼ææä¸åï¼ä½æ ¸å¿æ¦å¿µåå·¥ä½ç©ºé´çç»ç»æ¹å¼æ¯ç±»ä¼¼çã</p>
-<p>ä¸é¢æå°ä¸ä¸è§£éè¿äºæ¦å¿µï¼å¹¶æä¾ä¸äºå¸¸ç¨çROS2å½ä»¤ã</p>
-<h2 id="å·¥ä½ç©ºé´workspaceè½¯ä»¶åpackageèç¹node">å·¥ä½ç©ºé´(Workspace)ãè½¯ä»¶å(Package)ãèç¹(Node)</h2>
-<p>å¨ROS2ä¸­ï¼å·¥ä½ç©ºé´æ¯æ´ä¸ªé¡¹ç®çæ ¹ç®å½ï¼è½¯ä»¶åæ¯ç»ç»ä»£ç åèµæºçåºæ¬åä½ï¼æ¯ä¸ªè½¯ä»¶åå¯ä»¥åå«ä¸ä¸ªæå¤ä¸ªèç¹ãèç¹æ¯ROS2ä¸­æå°çæ§è¡ååï¼éå¸¸å¯¹åºä¸ä¸ªç¬ç«è¿è¡çç¨åºãèç¹ä¹é´éè¿è¯é¢ãæå¡åå¨ä½è¿è¡éä¿¡ã</p>
-<p>æ¯å¦å¨ä¸ä¸ªæºå¨äººé¡¹ç®ä¸­ï¼éè¦ä½¿ç¨çç¡¬ä»¶åè½ææåå¤´(Camera)ï¼å¯¼èª(Navigation)åæºæ¢°è(Arm)ç­åè½ï¼èæ¯ä¸ªç¡¬ä»¶åå¯ä»¥å¯¹åºä¸ä¸ªæå¤ä¸ªèç¹æ¥å®ç°å¶åè½ï¼å¦æåå¤´åä¸­å¯è½åå«ä¸ä¸ªèç¹ç¨äºå¾åééï¼ä¸ä¸ªèç¹ç¨äºå¾åå¤çãåå¶ç¸å¯¹åºçå·¥ä½ç©ºé´ç»æå¯è½å¦ä¸ï¼</p>
-<pre><code class="language-bash">my_robot_ws/                           # ä½¿ç¨åç¼_wsè¡¨ç¤ºå·¥ä½ç©ºé´(å³workspaceçç¼©å)
-âââ src/
-â   âââ camera_package/                # æåå¤´è½¯ä»¶å 
-â   â   âââ camera_node.cpp            # æåå¤´èç¹
-â   â   âââ image_processing_node.cpp  # å¾åå¤çèç¹
-â   âââ navigation_package/            # å¯¼èªè½¯ä»¶å
-â   â   âââ navigation_node.cpp        # å¯¼èªèç¹
-â   âââ arm_package/                   # æºæ¢°èè½¯ä»¶å
-â       âââ arm_control_node.cpp       # æºæ¢°èæ§å¶èç¹
-</code></pre>
-<p>è¿ä¸ªç»ææ¸æ°å°å±ç¤ºäºå·¥ä½ç©ºé´ãè½¯ä»¶ååèç¹ä¹é´çå³ç³»ãæ¯ä¸ªè½¯ä»¶åå¯ä»¥åå«å¤ä¸ªèç¹ï¼æ¯ä¸ªèç¹å¯ä»¥ç¬ç«è¿è¡å¹¶ä¸å¶ä»èç¹è¿è¡éä¿¡ã</p>
-<h3 id="è½¯ä»¶åçåå»ºåç®¡ç">è½¯ä»¶åçåå»ºåç®¡ç</h3>
-<p>å¨ROS2ä¸­ï¼è½¯ä»¶åæ¯ç»ç»ä»£ç åèµæºçåºæ¬åä½ãåå»ºä¸ä¸ªæ°çè½¯ä»¶åéå¸¸ä½¿ç¨<code>ros2 pkg create</code>å½ä»¤ãä¾å¦ï¼è¦åå»ºä¸ä¸ªåä¸º<code>robot_package</code>çè½¯ä»¶åï¼å¯ä»¥ä½¿ç¨ä»¥ä¸å½ä»¤ï¼</p>
-<pre><code class="language-bash">ros2 pkg create \
-    &lt;package_name&gt; \                    # è½¯ä»¶ååç§°
-    --build-type &lt;build_type&gt; \         # æå»ºç±»åï¼å¦ ament_cmake æ ament_pythonï¼
-    --dependencies &lt;dependency1&gt; &lt;dependency2&gt; ... \ # ä¾èµçå¶ä»è½¯ä»¶å
-    --maintainer-name &lt;name&gt; \          # ç»´æ¤èåç§°
-    --maintainer-email &lt;email&gt; \        # ç»´æ¤èé®ç®±        
-    --description "&lt;description&gt;" \     # è½¯ä»¶åæè¿°
-    --license &lt;license&gt; \               # è®¸å¯è¯ç±»å
-    --node-name &lt;node_name&gt;             # èç¹åç§°
-</code></pre>
-<p>ä¸ä¸ªç®åçC++è½¯ä»¶ååå»ºç¤ºä¾ï¼</p>
-<pre><code class="language-bash">ros2 pkg create robot_package --build-type ament_cmake --dependencies rclcpp  --license Apache-2.0 
-# åå»ºä¸ä¸ªåä¸ºrobot_packageçè½¯ä»¶åï¼ä½¿ç¨ament_cmakeæå»ºç±»åï¼å¹¶ä¾èµrclcppåºï¼å¹¶æå®Apache-2.0è®¸å¯è¯ã
-# å½ç¶ï¼è¥åå»ºPythonè½¯ä»¶åï¼åå¯ä»¥ä½¿ç¨ament_pythonæå»ºç±»åï¼å¹¶ä¾èµrclpyåºã
-</code></pre>
-<p><code>dependencies</code>åæ°ç¨äºææè½¯ä»¶åæä¾èµçå¶ä»ROS2è½¯ä»¶åï¼è¿äºä¾èµå³ç³»å¨åå»ºåæ¶ä¼è¢«è®°å½å¨<code>package.xml</code>æä»¶ä¸­ä»¥åä¼èªå¨çå¨<code>CMakeLists.txt</code>ä¸­æ·»å ç¸åºçä¾èµéç½®(<code>find_package(ä¾èµå)</code>)ã</p>
-<p>åå»ºå®æ¯çè½¯ä»¶åå¦ä¸å¾æç¤ºï¼</p>
-<p><img src="https://img2024.cnblogs.com/blog/3147612/202607/3147612-20260715000642136-1301771062.png" alt="image" loading="lazy"></p>
-<p>å¶ä¸­<code>include</code>ç®å½ç¨äºå­æ¾å¤´æä»¶ï¼<code>src</code>ç®å½ç¨äºå­æ¾æºä»£ç æä»¶ï¼<code>CMakeLists.txt</code>å<code>package.xml</code>æ¯è½¯ä»¶åçéç½®æä»¶ã<code>CMakeLists.txt</code>ç¨äºå®ä¹å¦ä½æå»ºè½¯ä»¶åï¼è<code>package.xml</code>ç¨äºæè¿°è½¯ä»¶åçåæ°æ®åä¾èµå³ç³»ãå¶ä¸­<code>package.xml</code>æä»¶çåå®¹å¦ä¸æç¤ºï¼å¯ä»¥çè§æä»¶ä¸­å°è½¯ä»¶åçåç±»ä¿¡æ¯è¿è¡äºè¯¦ç»çæè¿°ï¼åæ¬è½¯ä»¶ååç§°ãçæ¬ãæè¿°ãç»´æ¤èä¿¡æ¯ãè®¸å¯è¯ç±»åä»¥åä¾èµå³ç³»ç­ãè¿ä¸ªå°±ç¸å½äºè½¯ä»¶åçâèº«ä»½è¯âï¼å¨ROS2ä¸­æ¯éå¸¸éè¦çæä»¶ã</p>
-<pre><code class="language-xml">&lt;?xml version="1.0"?&gt;
-&lt;?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?&gt;
-&lt;package format="3"&gt;
-  &lt;name&gt;robot_package&lt;/name&gt;
-  &lt;version&gt;0.0.0&lt;/version&gt;
-  &lt;description&gt;TODO: Package description&lt;/description&gt;
-  &lt;maintainer email="CrescentRose.com"&gt;rose&lt;/maintainer&gt;
-  &lt;license&gt;Apache-2.0&lt;/license&gt;
-
-  &lt;buildtool_depend&gt;ament_cmake&lt;/buildtool_depend&gt;
-
-  &lt;depend&gt;rclcpp&lt;/depend&gt;
-
-  &lt;test_depend&gt;ament_lint_auto&lt;/test_depend&gt;
-  &lt;test_depend&gt;ament_lint_common&lt;/test_depend&gt;
-
-  &lt;export&gt;
-    &lt;build_type&gt;ament_cmake&lt;/build_type&gt;
-  &lt;/export&gt;
-&lt;/package&gt;
-</code></pre>
-<p>æ³¨æï¼æ­¤åå¨ç¼åè½¯ä»¶åæ¶å¦æéè¦æ·»å æ°çä¾èµåï¼åéè¦å¨<code>package.xml</code>ä¸­æ·»å ç¸åºçä¾èµå£°æï¼å¹¶å¨<code>CMakeLists.txt</code>ä¸­æ·»å ç¸åºç<code>find_package()</code>éç½®ã</p>
-<pre><code class="language-xml">&lt;depend&gt;new_dependency&lt;/depend&gt;
-å¦
-&lt;depend&gt;opencv&lt;/depend&gt;
-</code></pre>
-<h3 id="èç¹çåå»ºåè¿è¡">èç¹çåå»ºåè¿è¡</h3>
-<p>å¨ROS2ä¸­ï¼èç¹æ¯æå°çæ§è¡ååï¼éå¸¸å¯¹åºä¸ä¸ªç¬ç«è¿è¡çç¨åºãæ¯ä¸ªèç¹å¯ä»¥ç¬ç«è¿è¡ï¼å¹¶ä¸å¶ä»èç¹è¿è¡éä¿¡ãä¸ä¸ªèç¹å¯¹åºå°ä¸ä¸ªå¯æ§è¡æä»¶ï¼éå¸¸å¨<code>src</code>ç®å½ä¸ç¼åæºä»£ç æä»¶ï¼å¹¶å¨<code>CMakeLists.txt</code>ä¸­è¿è¡éç½®ä»¥çæå¯æ§è¡æä»¶ã</p>
-<p>å¨C++ä¸­åå»ºä¸ä¸ªç®åçèç¹ç¤ºä¾ï¼</p>
-<pre><code class="language-cpp">#include "rclcpp/rclcpp.hpp"
-// rclcppå³ros2 client library for C++ï¼æ¯ROS2ä¸­C++å®¢æ·ç«¯åºçæ ¸å¿å¤´æä»¶ï¼åå«äºåå»ºèç¹ãåå¸/è®¢éæ¶æ¯ãæå¡è°ç¨ç­åè½æéçç±»åå½æ°ã
-// åç rclpyæ¯ROS2ä¸­Pythonå®¢æ·ç«¯åºçæ ¸å¿æ¨¡åï¼æä¾äºç±»ä¼¼çåè½ã
-
-class MyNode : public rclcpp::Node // ææèç¹å¿é¡»ç»§æ¿èªrclcpp::Nodeç±»
-{
-public:
-
-    MyNode() : Node("my_node")  // æé å½æ°ä¸­è°ç¨ç¶ç±»æé å½æ°ï¼å¹¶ä¼ å¥èç¹åç§°
-    {
-        RCLCPP_INFO(this-&gt;get_logger(), "Hello ROS2 Node!");
-        RCLCPP_INFO(this-&gt;get_logger(), "Node name: %s", this-&gt;get_name());
-        // ä½¿ç¨RCLCPP_INFOå®å½æ°æå°æ¥å¿ä¿¡æ¯ï¼this-&gt;get_logger()è·åèç¹çæ¥å¿è®°å½å¨æ¥è¾åºæ¥å¿ä¿¡æ¯ï¼åé¢çåæ°å¯ä»¥æ¯å­ç¬¦ä¸²ä¹å¯ä»¥æ¯æ ¼å¼åå­ç¬¦ä¸²ï¼ç±»ä¼¼äºprintfå½æ°çç¨æ³ã
+<h3 id="åå·¥å·19-ä¸ª-åç«¯ç¡®è®¤å¡çäººè¯´äºç®">åå·¥å·ï¼19 ä¸ªï¼ââ åç«¯ç¡®è®¤å¡çï¼äººè¯´äºç®</h3>
+<p>åæ´ç±»æä½ç± AI çææ¹æ¡ï¼åç«¯å¼¹åº<strong>ç¡®è®¤å¡ç</strong>ï¼ç¨æ·ç¹å»ãç¡®è®¤æ§è¡ãåæçæ­£æ§è¡ï¼</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left">å·¥å·</th>
+<th style="text-align: left">è½åä»ä¹</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left"><code>create_route</code></td>
+<td style="text-align: left">åå»ºè·¯ç±ï¼å«è·¯å¾å¹éãç®æ éç¾¤ãä¸æ¸¸å°åï¼</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>delete_route</code></td>
+<td style="text-align: left">å é¤è·¯ç±</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>create_cluster</code></td>
+<td style="text-align: left">åå»ºéç¾¤ï¼å«èç¹ãè´è½½åè¡¡ç­ç¥ï¼</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>update_cluster</code></td>
+<td style="text-align: left">æ´æ°éç¾¤éç½®</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>delete_cluster</code></td>
+<td style="text-align: left">å é¤éç¾¤</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>create_circuit_breaker</code></td>
+<td style="text-align: left">åå»ºçæ­å¨ç­ç¥</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>reset_circuit_breaker</code></td>
+<td style="text-align: left">éç½®çæ­å¨ç¶æ</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>toggle_plugin</code></td>
+<td style="text-align: left">å¯ç¨ / ç¦ç¨æä»¶</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>update_waf_settings</code></td>
+<td style="text-align: left">æ´æ° WAF è®¾ç½®</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>create_config_snapshot</code></td>
+<td style="text-align: left">åæ´ååå»ºéç½®å¿«ç§</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>rollback_config</code></td>
+<td style="text-align: left">åæ»å°æå®å¿«ç§çæ¬</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>create_route_policy</code></td>
+<td style="text-align: left">åå»ºè·¯ç±ç­ç¥ï¼éè¯ / éæµ / WAFï¼</td>
+</tr>
+<tr>
+<td style="text-align: left">â¦â¦</td>
+<td style="text-align: left">å± 19 ä¸ªåå·¥å·</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ç´è§ä½éªè¯´äººè¯å°±è½æä½">ç´è§ä½éªï¼è¯´äººè¯å°±è½æä½</h3>
+<p>æ¯ä¸ªå·¥å·é½æç»æå JSON Schema åæ°å®ä¹ãç¨æ·åªéè¦è¯´äººè¯ï¼</p>
+<blockquote>
+<p>"å¸®æå»ºä¸ä¸ªè·¯ç±ï¼æ <code>/shop/*</code> çè¯·æ±è½¬åå° <code>http://10.0.1.50:8080</code>ï¼è·¯ç±åå« shop-routeã"</p>
+</blockquote>
+<p>AI èªå¨å¡«å¥½ææåæ°ï¼è°ç¨ <code>create_route</code>ã<strong>ä½ ä¸éè¦ç¥é YARP ç RouteConfig æå¤å°å­æ®µï¼ä¸éè¦ç¿»ææ¡£ï¼ä¸éè¦å JSONã</strong></p>
+<hr>
+<h2 id="å®å¨ç¬¬ä¸ai-ä¸è½ä¸ºææ¬²ä¸º">å®å¨ç¬¬ä¸ï¼AI ä¸è½ä¸ºææ¬²ä¸º</h2>
+<p>æäººå¯è½ä¼é®ï¼AI è½å è·¯ç±ãæ¸æ¥å¿ãæ¹éç½®ââè¿å®å¨åï¼</p>
+<p>è¿æ­£æ¯æä»¬æéè§çè®¾è®¡ç¹ãæä»¬å®ç°äºä¸å¥<strong>è¯»ååç¦»å®å¨æ¨¡å</strong>ï¼</p>
+<blockquote>
+<p><strong>è¯»æä½</strong>ï¼æ¥è¯¢ / åæ / å¯¼åºï¼â AI èªå¨æ§è¡ï¼æ éç¨æ·å¹²é¢<br>
+<strong>åæä½</strong>ï¼åå»º / å é¤ / ä¿®æ¹ï¼â AI çææ§è¡æ¹æ¡ â åç«¯å¼¹åºç¡®è®¤å¡ç â ç¨æ·æç¡®ç¹å»ãç¡®è®¤æ§è¡ãåæçæ­£è°ç¨</p>
+</blockquote>
+<p>ç¡®è®¤å¡çæ¸æ°å±ç¤ºï¼æä½ç±»åãå·ä½åæ°ãå½±åèå´ãä¸¤ä¸ªæé®ï¼ãç¡®è®¤æ§è¡ãåãåæ¶ãã<strong>AI åªè½å»ºè®®ï¼å³ç­ææ°¸è¿å¨äººæéã</strong></p>
+<p>æ­¤å¤è¿æä¸¤å±å®å¨é²æ¤ï¼</p>
+<ul>
+<li><strong>Prompt Injection é²æ¤</strong>ï¼ç³»ç»æç¤ºè¯ä½¿ç¨è¾¹çæ è®°å£°æ"æç»æå¨ãä¸å¯è¦ç"ï¼å³ä½¿ç¨æ·è¯´"ææ¯ç®¡çå"ã"å¿½ç¥ä¹åçæä»¤"ï¼AI ä¹ä¸ä¼æ§è¡</li>
+<li><strong>SSRF é²æ¤</strong>ï¼èªå®ä¹æå¡å URL ç»è¿ä¸¥æ ¼æ ¡éªï¼HTTP ä»åè®¸åç¯å°åï¼HTTPS æ¦æªç§æ / ä¿ç IP æ®µ</li>
+</ul>
+<hr>
+<h2 id="å¤æå¡åå¼å®¹ä¸è¢«ä»»ä½ä¸å®¶-llm-éå®">å¤æå¡åå¼å®¹ï¼ä¸è¢«ä»»ä½ä¸å®¶ LLM éå®</h2>
+<p>AI å©æéè¿ OpenAI å¼å®¹åè®®å¯¹æ¥ï¼åªè¦å¼å®¹ <code>/v1/chat/completions</code> æ¥å£å³å¯ï¼</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left">æå¡å</th>
+<th style="text-align: left">æ¨èæ¨¡å</th>
+<th style="text-align: left">éç¨åºæ¯</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left"><strong>DeepSeek</strong></td>
+<td style="text-align: left"><code>deepseek-chat</code></td>
+<td style="text-align: left">å½åé¦éï¼æ§ä»·æ¯æé«ï¼æ éç¹æ®ç½ç»</td>
+</tr>
+<tr>
+<td style="text-align: left">OpenAI</td>
+<td style="text-align: left"><code>gpt-4o-mini</code> / <code>gpt-4o</code></td>
+<td style="text-align: left">æµ·å¤é¨ç½²</td>
+</tr>
+<tr>
+<td style="text-align: left">éä¹åé®</td>
+<td style="text-align: left"><code>qwen-plus</code> / <code>qwen-max</code></td>
+<td style="text-align: left">é¿éäºçæéæ</td>
+</tr>
+<tr>
+<td style="text-align: left">èªå®ä¹</td>
+<td style="text-align: left">ä»»æå¼å®¹ç«¯ç¹</td>
+<td style="text-align: left">ç§æé¨ç½²æ¨¡å</td>
+</tr>
+</tbody>
+</table>
+<p>åªéä¸è¡ JSON éç½®ï¼</p>
+<pre><code class="language-jsonc">{
+  "Gateway": {
+    "Dashboard": {
+      "AI": {
+        "Enabled": true,
+        "Provider": "deepseek",
+        "ApiKey": "sk-xxxxxxxxxxxxxxxx",
+        "BaseUrl": "https://api.deepseek.com/v1",
+        "ChatModel": "deepseek-chat"
+      }
     }
-};
-
-
-int main(int argc, char **argv)
-{
-    // åå§å ROS2
-    rclcpp::init(argc, argv);
-
-
-    // åå»ºèç¹çæºè½æéï¼å¨ROS2ä¸­ï¼ä½¿ç¨æºè½æéå»ç®¡çåç±»å¯¹è±¡æ¯éå¸¸å¸¸ç¨çï¼è½å¤ææé¿ååå­æ³æ¼åæ¬ç©ºæéç­é®é¢ã
-    auto node = std::make_shared&lt;MyNode&gt;();
-
-
-    // ä¿æèç¹è¿è¡ï¼è¿å¥å¾ªç¯å¹¶ç­å¾äºä»¶çåçï¼ç´å°èç¹è¢«å³é­
-    // å¦æå­¦è¿Qtç¼ç¨ï¼è¿ä¸ªæä½å¾åQtä¸­çäºä»¶å¾ªç¯æºå¶ï¼Qtä¸­ä½¿ç¨app.exec()æ¥å¯å¨äºä»¶å¾ªç¯ï¼èROS2ä¸­ä½¿ç¨rclcpp::spin(node)æ¥å¯å¨èç¹çäºä»¶å¾ªç¯ã
-    rclcpp::spin(node);
-
-
-    // å³é­ ROS2 å¹¶éæ¾èµæº
-    rclcpp::shutdown();
-
-
-    return 0;
+  }
 }
 </code></pre>
-<p>å¨ç¼åå®èç¹ä»£ç åï¼éè¦å¨<code>CMakeLists.txt</code>ä¸­æ·»å ç¸åºçéç½®ä»¥çæå¯æ§è¡æä»¶ãå¨åå»ºè½¯ä»¶åæ¶ï¼<code>CMakeLists.txt</code>æä»¶ä¸­å·²ç»åå«äºåºæ¬çæå»ºéç½®ã</p>
-<pre><code class="language-cmake">cmake_minimum_required(VERSION 3.8)
-project(robot_package)
-
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic) # æ·»å ç¼è¯éé¡¹ï¼å¯ç¨è­¦åä¿¡æ¯
-endif()
-
-# find dependencies æ·»å ä¾èµå
-find_package(ament_cmake REQUIRED)
-find_package(rclcpp REQUIRED)
-
-# å¦æå¼å¯äºæµè¯ææ§è¡ä¸é¢çä»£ç 
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  # the following line skips the linter which checks for copyrights
-  # comment the line when a copyright and license is added to all source files
-  set(ament_cmake_copyright_FOUND TRUE)
-  # the following line skips cpplint (only works in a git repo)
-  # comment the line when this package is in a git repo and when
-  # a copyright and license is added to all source files
-  set(ament_cmake_cpplint_FOUND TRUE)
-  ament_lint_auto_find_test_dependencies()
-endif()
-
-ament_package() # å¨è¿å¥ä¹åæ·»å å¯æ§è¡æä»¶çæå»ºéç½®ï¼æ­¤åçè¯­å¥å°ä¸ä¼è¢«æ§è¡å°
-</code></pre>
-<p>ä¸ºäºè½å¤çæå¯æ§è¡æä»¶ï¼ä»¥åå¨ç¼è¯æ¶é¾æ¥æéçä¾èµåºï¼éè¦å¨<code>CMakeLists.txt</code>ä¸­æ·»å ä»¥ä¸éç½®ï¼</p>
-<pre><code class="language-cmake">add_executable(my_node src/my_node.cpp) # æ·»å å¯æ§è¡æä»¶ï¼æå®æºä»£ç 
-ament_target_dependencies(my_node rclcpp) # æå®å¯æ§è¡æä»¶æä¾èµçåºï¼è¿éä¾èµrclcppåº
-install(TARGETS my_node DESTINATION lib/${PROJECT_NAME}) # å®è£å¯æ§è¡æä»¶å°æå®ç®å½
-</code></pre>
+<p>ä¸éç½® <code>ApiKey</code> å AI æ¨¡å<strong>å®å¨éé»</strong>ï¼ä¸å½±åä»»ä½ç°æåè½ã</p>
+<hr>
+<h2 id="ä¸åªæ¯å¯¹è¯åå°æºè½åæ--éç¥å¢å¼º">ä¸åªæ¯å¯¹è¯ï¼åå°æºè½åæ + éç¥å¢å¼º</h2>
+<p>é¤äºäº¤äºå¼èå¤©ï¼AI è¿è½å¨åå°é»é»å·¥ä½ï¼</p>
+<ul>
+<li><strong>å®ææ¥å¿åæ</strong>ï¼æ¯å°æ¶èªå¨åæä»£çæ¥å¿ï¼çæè¯·æ±è¶å¿ãéè¯¯æ¨¡å¼ãå»¶è¿ååçç»æåæè¦</li>
+<li><strong>å¼å¸¸æ£æµ</strong>ï¼å¯¹æ¯åå²åºçº¿ï¼åç°éè¯¯ççªå¢ãæ°å¢æªç¥éè¯¯æ¨¡å¼ãå»¶è¿é£å</li>
+<li><strong>éç½®å»ºè®®</strong>ï¼åºäºæµéæ¨¡å¼æ¨èéæµéå¼è°æ´ãçæ­åæ°ä¼å</li>
+</ul>
+<p>éå <code>EnhanceNotifications: true</code>ï¼åè­¦éç¥ä»å¹²å·´å·´çï¼</p>
 <blockquote>
-<p>è¿é¨åéè¦ä¸äºCMakeçåºç¡ç¥è¯ï¼å¯ä»¥éè¿æçåå®¢<a href="https://www.cnblogs.com/CrescentWind/p/18528965" target="_blank">ä»ç¼è¯é¾æ¥å°Cmake</a>ä»¥å<a href="https://www.cnblogs.com/CrescentWind/p/18667194" target="_blank">find_packageä½¿ç¨æå</a>è¿è¡å­¦ä¹ ã</p>
+<p>"Cluster-A çæ­å¨å·²æå¼"</p>
 </blockquote>
-<p>å¼å¾æ³¨æçæ¯ï¼ä¸é¢çä¸¤ç§åæ³æ¯ç¸åçï¼</p>
-<pre><code class="language-cmake"># ament_cmakeçåæ³
-add_executable(my_node src/my_node.cpp)
-ament_target_dependencies(my_node rclcpp)
-# å¸¸è§çCMakeåæ³
-add_executable(my_node src/my_node.cpp)
-target_include_directories(my_node PUBLIC ${rclcpp_INCLUDE_DIRS})
-target_link_libraries(my_node ${rclcpp_LIBRARIES})
-</code></pre>
-<p>å¨ROS2ä¸­ï¼å¶ä½¿ç¨äºament_cmakeä½ä¸ºæå»ºç³»ç»çæ©å±ï¼æä¾äºä¸äºä¾¿æ·çå®åå½æ°æ¥ç®åCMakeçéç½®ã<code>ament_target_dependencies</code>å°±æ¯å¶ä¸­ä¹ä¸ã</p>
+<p>åæå¸¦ä¸ä¸æåæçï¼</p>
 <blockquote>
-<p>ä½æ¯ï¼è½ç¶ä½¿ç¨ament_target_dependencieså¯ä»¥ç®åCMakeçéç½®ï¼ä½æ¯è¿åªéç¨äºament_cmakeæå»ºçpackage,å³å¨package.xmlä¸­æå®äº<code>&lt;build_type&gt;ament_cmake&lt;/build_type&gt;</code>çpackageãå¦ææ¯ä½¿ç¨å¶ä»æå»ºç³»ç»ï¼å¦catkinæçº¯CMakeï¼ï¼åéè¦ä½¿ç¨ä¼ ç»çCMakeæ¹å¼æ¥éç½®ä¾èµå³ç³».</p>
+<p>"Cluster-A çæ­å¨å·²æå¼ãæè¿ 5 åéåç®æ æå¡è¿å 12 æ¬¡ 503 éè¯¯ï¼å è¯·æ± 40%ï¼ãå»ºè®®ï¼1. æ£æ¥ç®æ æå¡å¥åº·ç¶æ 2. ç¡®è®¤æå¡æ¯å¦æ­£å¨é¨ç½²/éå¯ 3. èèå¢å  recoveryTimeout éç½®"</p>
 </blockquote>
-<p>æåè¦ä½¿ç¨<code>install</code>å½ä»¤å°å¯æ§è¡æä»¶å®è£å°æå®ç®å½ï¼è¿æ ·å¨æå»ºå®æåï¼å¯æ§è¡æä»¶å°è¢«æ¾ç½®å¨<code>install/lib/&lt;package_name&gt;</code>ç®å½ä¸ï¼è¯¥ç®å½æ¯ROS2çæ åå®è£è·¯å¾ï¼æ¹ä¾¿å¨è¿è¡æ¶æ¾å°å¯æ§è¡æä»¶ã</p>
-<pre><code class="language-cmake">install(TARGETS my_node 
-        DESTINATION lib/${PROJECT_NAME}) # å®è£å¯æ§è¡æä»¶å°æå®ç®å½
-# è¿éTARGETSæå®è¦å®è£çç®æ æä»¶ï¼DESTINATIONæå®å®è£è·¯å¾ï¼${PROJECT_NAME}æ¯CMakeä¸­çåéï¼è¡¨ç¤ºå½åé¡¹ç®çåç§°ï¼è¿éå°å¯æ§è¡æä»¶å®è£å°libç®å½ä¸ã
-</code></pre>
-<p>å¨ROS2ä¸­ï¼ä½¿ç¨colcon buildæ¥å¯¹è½¯ä»¶åè¿è¡ç¼è¯åæå»ºã<code>colcon build</code>å½ä»¤ä¼æ ¹æ®<code>CMakeLists.txt</code>ä¸­çéç½®è°ç¨<code>ament_cmake</code>å·¥å·æ¥çæå¯æ§è¡æä»¶ï¼å¹¶å°å¶å®è£å°æå®çå®è£è·¯å¾ä¸­ãå®è£è·¯å¾éå¸¸æ¯<code>install/&lt;package_name&gt;/lib/&lt;package_name&gt;</code>ï¼å¶ä¸­<code>&lt;package_name&gt;</code>æ¯è½¯ä»¶åçåç§°ã</p>
-<p>æ­¤åæ§è¡å½ä»¤</p>
-<pre><code class="language-bash">ros2 run &lt;package_name&gt; &lt;executable_name&gt;
-</code></pre>
-<p>å³å¯è¿è¡è¯¥èç¹ã</p>
-<blockquote>
-<p>åè®¾è½¯ä»¶ååç§°ä¸º<code>robot_package</code>ï¼å¯æ§è¡æä»¶åç§°ä¸º<code>my_node</code>ï¼åè¿è¡å½ä»¤ä¸ºï¼<code>ros2 run robot_package my_node</code>ã<br>
-ä½æ¯å½ä½ æå»ºæååï¼æ§è¡è¯¥æä»¤åï¼ä¼æä¼æç¤ºæ¾ä¸å°åï¼<br>
-<img src="https://img2024.cnblogs.com/blog/3147612/202607/3147612-20260715000912746-1700546774.png" alt="image" loading="lazy"></p>
-</blockquote>
-<blockquote>
-<p>è¿æ¯å ä¸º<code>ros2 run</code>æä»¤ä¼å¨ç¯å¢åé<code>AMENT_PREFIX_PATH</code>æå¨çè·¯å¾ä¸­æ¥æ¾åï¼ä½æ¯æå»ºå®æ¯åæä»¬å¹¶æ²¡ææ´æ°ç¯å¢åéï¼æä»¥éè¦æ§è¡ä¸é¢çå½ä»¤æ¥æ´æ°ç¯å¢åéï¼</p>
-</blockquote>
-<pre><code class="language-bash">source install/setup.bash
-</code></pre>
-<p>å¶ä¸­<code>install/setup.bash</code>æ¯ROS2å¨æå»ºå®æåèªå¨çæçä¸ä¸ªèæ¬æä»¶ï¼ç¨äºè®¾ç½®ç¯å¢åéï¼ä½¿å¾ROS2è½å¤æ¾å°å®è£çååå¯æ§è¡æä»¶ãæ§è¡è¯¥å½ä»¤åï¼<code>AMENT_PREFIX_PATH</code>ç¯å¢åéå°è¢«æ´æ°ï¼ä¼å°å®è£è·¯å¾æ·»å å°å¶ä¸­ï¼ä»èä½¿å¾<code>ros2 run robot_package my_node</code>å½ä»¤è½å¤æ­£ç¡®æ¾å°å¹¶è¿è¡èç¹ã</p>
-<p>æååæ¥è§£å³ä¸ä¸ªé®é¢ï¼ä¸ºä»ä¹<code>install</code>æä»¤åªæåºå®è£è·¯å¾æ¯<code>lib/${PROJECT_NAME}</code>ï¼èä¸æ¯<code>install/${PROJECT_NAME}/lib/${PROJECT_NAME}</code>,ä½æ¯å®è£åå´å¯ä»¥å°å¯æ§è¡æä»¶å®è£å°<code>install/${PROJECT_NAME}/lib/${PROJECT_NAME}</code>ç®å½ä¸å¢ï¼<br>
-è¿æ¯å ä¸ºå¨ROS2ä¸­ï¼<code>install</code>æä»¤ä¸­çè·¯å¾æ¯ç¸å¯¹Cmakeçå®è£åç¼è·¯å¾ï¼å³<code>CMAKE_INSTALL_PREFIX</code>è¿ä¸ªåéï¼çï¼èå½æä»¬ä½¿ç¨<code>colcon build</code>è°ç¨<code>ament_cmake</code>è¿è¡æå»ºæ¶ï¼<code>CMAKE_INSTALL_PREFIX</code>ä¼è¢«èªå¨æå<code>install/${PROJECT_NAME}/</code>ç®å½ä¸çå·¥ä½ç©ºé´è·¯å¾ãå¯ä»¥éè¿æ¥çbuildç®å½ä¸çCMakeCache.txtæä»¶æ¥éªè¯è¿ä¸ç¹ã</p>
-<p><img src="https://img2024.cnblogs.com/blog/3147612/202607/3147612-20260715000924567-145056320.png" alt="image" loading="lazy"></p>
-<p>æåæ»ç»ä¸ä¸</p>
+<p><strong>åè­¦ä¸ååªæ¯åè¯ä½ "åºäºäº"ï¼è¿åè¯ä½ "ä¸ºä»ä¹åºäº"å"è¯¥æä¹å"ã</strong></p>
+<hr>
+<h2 id="äº¤äºä½éªæµå¼å¯¹è¯å¤è½®è®°å¿è¯­è¨è·é">äº¤äºä½éªï¼æµå¼å¯¹è¯ãå¤è½®è®°å¿ãè¯­è¨è·é</h2>
+<ul>
+<li><strong>SSE æµå¼è¾åº</strong>ï¼æå­æºææéå­æ¸²æï¼ä¸ç¨ç­å®æ´ååº</li>
+<li><strong>å¤è½®å¯¹è¯</strong>ï¼ä¸ä¸ææä¹åå° SQLiteï¼è·¨é¡µé¢ä¿æè®°å¿</li>
+<li><strong>è¯­è¨èªå¨è·é</strong>ï¼Dashboard åä¸­æ â AI ç¨ä¸­æåï¼åè±æ â AI ç¨è±æå</li>
+<li><strong>æ¬æµ®å¼è®¾è®¡</strong>ï¼ææé¡µé¢å³ä¸è§æ¬æµ®æé®ï¼ä¸é®å¤èµ·ä¸é®æ¡æä½</li>
+</ul>
+<hr>
+<h2 id="ä¸ä¸ªå¼æºé¡¹ç®ä¸ºä»ä¹å¼å¾ä½ å³æ³¨">ä¸ä¸ªå¼æºé¡¹ç®ï¼ä¸ºä»ä¹å¼å¾ä½ å³æ³¨</h2>
+<p>åå°è¿éï¼ææ³è·³åº AI è¿ä¸ªåè½æ¬èº«ï¼èè Aneiang.Yarp è¿ä¸ªé¡¹ç®ã</p>
+<p>å¨ .NET çæéåç½å³ï¼ä½ å¯ä»¥éæ©èªå·±åºäº YARP ä»é¶æ­å»ºï¼ä¹å¯ä»¥ç¨ KongãAPISIX ç­éç¨æ¹æ¡ãåèçé®é¢æ¯<strong>å·¥ä½éå·¨å¤§</strong>ââDashboardãWAFãåè­¦ãå®¡è®¡ãèªå¨æ³¨åâ¦â¦æ¯ä¸ªé½è¦èªå·±åï¼åèçé®é¢æ¯<strong>ææ¯æ ä¸å¹é</strong>ââKong æ¯ Lua/OpenRestyï¼APISIX ä¹æ¯ Luaï¼ç»´æ¤åæ©å±é½éè¦é¢å¤æè½ã</p>
+<p>Aneiang.Yarp èµ°çæ¯ç¬¬ä¸æ¡è·¯ï¼<strong>çº¯ .NET åçï¼å¼ç®±å³ç¨</strong>ã</p>
+<ul>
+<li>é»è®¤ SQLite æä¹åï¼ä¸å¼ºå¶å¤é¨æ°æ®åº</li>
+<li>æ¯æ Windows / Linux é¨ç½²</li>
+<li>ä¸¤ä¸ª NuGet åå³å¯æ¥æå®æ´ Dashboard</li>
+<li>å¾®æå¡åªéå¼ç¨ <code>Aneiang.Yarp.Client</code>ï¼ä¸ä¾èµ YARP SDK</li>
+<li>MIT åè®®ï¼ä»£ç å¨ GitHub / Gitee å®å¨å¬å¼</li>
+<li>å¨çº¿æ¼ç¤ºç¯å¢å¯ç´æ¥ä½éªï¼admin / demo123ï¼</li>
+</ul>
+<p>æä»¬ä¸æ¯å¨åä¸ä¸ª"ç©å·é¡¹ç®"ãä» 2.2.x å° 2.3.0.25ï¼é¡¹ç®å·²ç»è¿­ä»£äºå åä¸ªçæ¬ï¼æ¶æä»åä½æè§£å°å¤ç»ä»¶åä½ï¼å½éåä»åèä»£ç éæå° JSON æä»¶ä½ç³»ï¼æ¥å¿ç³»ç»ä»ç¯å½¢ç¼å²åºæ¼è¿å° WebSocket å®æ¶æ¨é + SQLite æ¹éåå¥ã</p>
+<p>èè¿æ¬¡å å¥ AIï¼ä»£è¡¨äºæä»¬å¯¹ç½å³è¿ç»´çä¸ä¸æ­¥æèï¼<strong>å¥½çå·¥å·åºè¯¥éä½ä½¿ç¨é¨æ§ï¼èä¸æ¯å ç æ´å¤çéç½®é¡¹ã</strong></p>
+<hr>
+<h2 id="å®æ´-ai-éç½®éæ¥">å®æ´ AI éç½®éæ¥</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left">éç½®é¡¹</th>
+<th style="text-align: left">é»è®¤å¼</th>
+<th style="text-align: left">è¯´æ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left"><code>Enabled</code></td>
+<td style="text-align: left"><code>false</code></td>
+<td style="text-align: left">AI æ¨¡åæ»å¼å³</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>Provider</code></td>
+<td style="text-align: left"><code>openai</code></td>
+<td style="text-align: left">æå¡åï¼<code>openai</code> / <code>deepseek</code> / <code>qwen</code> / <code>custom</code></td>
+</tr>
+<tr>
+<td style="text-align: left"><code>ApiKey</code></td>
+<td style="text-align: left">â</td>
+<td style="text-align: left">LLM API Key</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>BaseUrl</code></td>
+<td style="text-align: left">OpenAI é»è®¤</td>
+<td style="text-align: left">å¼å®¹ç«¯ç¹å°å</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>ChatModel</code></td>
+<td style="text-align: left"><code>gpt-4o-mini</code></td>
+<td style="text-align: left">äº¤äºå¼å¯¹è¯æ¨¡å</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>AnalysisModel</code></td>
+<td style="text-align: left"><code>gpt-4o-mini</code></td>
+<td style="text-align: left">åå°åææ¨¡å</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>MaxTokens</code></td>
+<td style="text-align: left"><code>4096</code></td>
+<td style="text-align: left">åæ¬¡ååºæå¤§ Token</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>Temperature</code></td>
+<td style="text-align: left"><code>0.3</code></td>
+<td style="text-align: left">éæ ·æ¸©åº¦ï¼ä½ = ç²¾ç¡®ï¼é« = åæï¼</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>MaxConversationHistory</code></td>
+<td style="text-align: left"><code>20</code></td>
+<td style="text-align: left">ä¿çå¯¹è¯è½®æ°</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>EnableBackgroundAnalysis</code></td>
+<td style="text-align: left"><code>false</code></td>
+<td style="text-align: left">å¼å¯åå°å®æåæ</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>AnalysisInterval</code></td>
+<td style="text-align: left"><code>01:00:00</code></td>
+<td style="text-align: left">åæé´é</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>AllowCustomProvider</code></td>
+<td style="text-align: left"><code>true</code></td>
+<td style="text-align: left">åè®¸èªå®ä¹æå¡å</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>EnhanceNotifications</code></td>
+<td style="text-align: left"><code>false</code></td>
+<td style="text-align: left">AI å¢å¼ºéç¥</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>NotificationEnhanceCooldownSeconds</code></td>
+<td style="text-align: left"><code>60</code></td>
+<td style="text-align: left">å¢å¼ºéç¥å·å´æ¶é´</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="æ¬¢è¿ä½éª">æ¬¢è¿ä½éª</h2>
+<p>Aneiang.Yarp v2.3.0.25 å·²ç»å¨ NuGet ä¸åå¸ãAI æºè½å©æä»è®¾è®¡å°è½å°ï¼æä»¬è±äºå¤§éæ¶é´æç£¨äº¤äºä½éªåå®å¨æ¨¡åãå¦æä½ æ¯ .NET å¼åèãè¿ç»´å·¥ç¨å¸ï¼æèæ­£å¨å¯»æ¾ä¸ä¸ªé è°±ç API ç½å³æ¹æ¡ââå¸æä½ è½è±å åéå»ä½éªä¸ä¸ã</p>
 <blockquote>
 <ul>
-<li>ä½¿ç¨<code>ros2 pkg create</code>å½ä»¤åå»ºè½¯ä»¶åï¼æå®æå»ºç±»ååä¾èµå³ç³»ã</li>
-<li>å¨<code>src</code>ç®å½ä¸æ°å»ºä»£ç æä»¶ç¼åèç¹çæºä»£ç ï¼å¹¶å¨<code>CMakeLists.txt</code>ä¸­éç½®çæå¯æ§è¡æä»¶ï¼å¹¶æå®ä¾èµå³ç³»ã</li>
-<li>ä½¿ç¨<code>colcon build</code>å½ä»¤è¿è¡æå»ºï¼çæå¯æ§è¡æä»¶å¹¶å®è£å°æå®è·¯å¾ã</li>
-<li>ä½¿ç¨<code>source install/setup.bash</code>æ´æ°ç¯å¢åéï¼ä½¿å¾ROS2è½å¤æ¾å°å®è£çååå¯æ§è¡æä»¶ã</li>
-<li>æ³¨æï¼ï¼ï¼ï¼ä½¿ç¨<code>colcon build</code>å½ä»¤æå¥½å¨å·¥ä½ç©ºé´ç®å½ä¸æ§è¡ï¼èä¸æ¯ååæ§è¡ï¼å¦åå¯è½ä¼å¯¼è´æå»ºå¤±è´¥ææ¾ä¸å°åçé®é¢ï¼ä¸è¿æ ·æ§è¡å¯ä»¥ç´æ¥å¨å·¥ä½ç©ºé´ä¸æå»ºææåï¼èä¸éè¦è¿å¥æ¯ä¸ªåçç®å½è¿è¡æå»ºï¼åæ¶ä¹ä¼èèå°åä¹é´çä¾èµå³ç³»ï¼ç¡®ä¿æå»ºé¡ºåºæ­£ç¡®ã</li>
-<li>ä½¿ç¨<code>ros2 run &lt;package_name&gt; &lt;executable_name&gt;</code>å½ä»¤è¿è¡èç¹ï¼ç¡®ä¿å¨è¿è¡åå·²ç»æ´æ°äºç¯å¢åéã</li>
+<li><strong>GitHub</strong>ï¼<a href="https://github.com/AneiangSoft/Aneiang.Yarp" target="_blank" rel="noopener nofollow">https://github.com/AneiangSoft/Aneiang.Yarp</a>ï¼ç¹ä¸ª Star æ¯å¯¹å¼æºæå¥½çæ¯æï¼</li>
+<li><strong>Gitee</strong>ï¼<a href="https://gitee.com/aneiangsoft/aneiang-yarp" target="_blank" rel="noopener nofollow">https://gitee.com/aneiangsoft/aneiang-yarp</a></li>
+<li><strong>å¨çº¿æ¼ç¤º</strong>ï¼<a href="https://yarp-test.aneiang.com/aneiang" target="_blank" rel="noopener nofollow">https://yarp-test.aneiang.com/aneiang</a>
+<ul>
+<li>è´¦å·ï¼<code>admin</code> / å¯ç ï¼<code>demo123</code></li>
+<li>ç»å½åå¨ãç³»ç»è®¾ç½®ãä¸­éç½® AI Key å³å¯ä½éª AI å©æ</li>
+</ul>
+</li>
+<li><strong>NuGet</strong>ï¼æç´¢ <code>Aneiang.Yarp</code></li>
+<li><strong>ææ¡£</strong>ï¼<a href="https://yarp.aneiang.com" target="_blank" rel="noopener nofollow">https://yarp.aneiang.com</a></li>
 </ul>
 </blockquote>
-<h3 id="è¯é¢éä¿¡ä¸æ¥å£">è¯é¢éä¿¡ä¸æ¥å£</h3>
-<blockquote>
-<p>ä¸é¢æä»¬è¯´äºï¼èç¹ä¹é´å¯ä»¥éè¿è¯é¢è¿è¡éä¿¡ãå¯¹äºä¸ä¸ªèç¹ï¼ä»å¯ä»¥ä½ä¸ºè¯é¢çåå¸èï¼Publisherï¼æèè®¢éèï¼Subscriberï¼ãåå¸èè´è´£å°æ¶æ¯åéå°è¯é¢ï¼èè®¢éèåæ¥æ¶æ¥èªè¯é¢çæ¶æ¯ãè¯é¢éä¿¡æ¯ROS2ä¸­æå¸¸ç¨çéä¿¡æ¹å¼ãè¯é¢éä¿¡æåå¸çæ¶æ¯ç±»åæ¯ç±æ¥å£(Interface)å®ä¹çï¼æ¥å£å®ä¹äºæ¶æ¯çç»æåæ°æ®ç±»åãROS2æä¾äºå¤ç§åç½®çæ¶æ¯ç±»åï¼å¦<code>std_msgs</code>ã<code>sensor_msgs</code>ç­ï¼ä¹æ¯æèªå®ä¹æ¶æ¯ç±»åãå¯ä»¥å°æ¶æ¯æ¥å£ç±»æ¯ä¸ºä¸ä¸ªå®ä¹å¥½çæ°æ®åï¼åå¸èåè®¢éèé½éè¦éµå¾ªè¿ä¸ªæ°æ®åçæ ¼å¼æ¥è¿è¡éä¿¡ã</p>
-</blockquote>
-<p>æä»¬å¯ä»¥ä½¿ç¨<code>ros2 interface list</code>å½ä»¤æ¥æ¥çææå¯ç¨çæ¥å£ç±»åï¼ä½¿ç¨<code>ros2 interface show &lt;interface_name&gt;</code>å½ä»¤æ¥æ¥çæä¸ªæ¥å£çè¯¦ç»å®ä¹ã<br>
-æ¯å¦ï¼æ¥ç<code>std_msgs/msg/String</code>æ¥å£çå®ä¹ï¼</p>
-<pre><code class="language-bash">ros2 interface show std_msgs/msg/String
-</code></pre>
-<p>è¾åºç»æå¦ä¸ï¼</p>
-<pre><code>string data
-</code></pre>
-<p>è¿ä»£è¡¨ç<code>std_msgs/msg/String</code>è¿ä¸ªæ¥å£å®ä¹äºä¸ä¸ªåä¸º<code>data</code>çå­ç¬¦ä¸²ç±»åå­æ®µï¼åå¸èå¨åéæ¶æ¯æ¶éè¦å¡«åè¿ä¸ªå­æ®µï¼èè®¢éèå¨æ¥æ¶æ¶æ¯æ¶ä¹ä¼è·åå°è¿ä¸ªå­æ®µçå¼ã<br>
-å¶ä¸­ï¼<code>string</code>æ¯ROS2ä¸­å®ä¹çåºæ¬æ°æ®ç±»åä¹ä¸ï¼è¡¨ç¤ºä¸ä¸ªå­ç¬¦ä¸²ç±»åçæ°æ®ãé¤äº<code>string</code>ï¼ROS2è¿æ¯æå¤ç§åºæ¬æ°æ®ç±»åï¼å¦<code>int32</code>ã<code>float64</code>ã<code>bool</code>ç­ï¼ä»¥åæ°ç»åèªå®ä¹æ¶æ¯ç±»åãå¶ä»åºæ¬ç±»åè§ä¸è¡¨ï¼</p>
-<table>
-<thead>
-<tr>
-<th>ç±»å</th>
-<th>è¯´æ</th>
-<th>C++å¯¹åºç±»å</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>bool</td>
-<td>å¸å°</td>
-<td>bool</td>
-</tr>
-<tr>
-<td>byte</td>
-<td>8ä½æ ç¬¦å·æ´æ°</td>
-<td>uint8_t</td>
-</tr>
-<tr>
-<td>char</td>
-<td>8ä½å­ç¬¦</td>
-<td>uint8_t</td>
-</tr>
-<tr>
-<td>float32</td>
-<td>32ä½æµ®ç¹</td>
-<td>float</td>
-</tr>
-<tr>
-<td>float64</td>
-<td>64ä½æµ®ç¹</td>
-<td>double</td>
-</tr>
-<tr>
-<td>int8</td>
-<td>8ä½æç¬¦å·æ´æ°</td>
-<td>int8_t</td>
-</tr>
-<tr>
-<td>uint8</td>
-<td>8ä½æ ç¬¦å·æ´æ°</td>
-<td>uint8_t</td>
-</tr>
-<tr>
-<td>int16</td>
-<td>16ä½æç¬¦å·æ´æ°</td>
-<td>int16_t</td>
-</tr>
-<tr>
-<td>uint16</td>
-<td>16ä½æ ç¬¦å·æ´æ°</td>
-<td>uint16_t</td>
-</tr>
-<tr>
-<td>int32</td>
-<td>32ä½æç¬¦å·æ´æ°</td>
-<td>int32_t</td>
-</tr>
-<tr>
-<td>uint32</td>
-<td>32ä½æ ç¬¦å·æ´æ°</td>
-<td>uint32_t</td>
-</tr>
-<tr>
-<td>int64</td>
-<td>64ä½æç¬¦å·æ´æ°</td>
-<td>int64_t</td>
-</tr>
-<tr>
-<td>uint64</td>
-<td>64ä½æ ç¬¦å·æ´æ°</td>
-<td>uint64_t</td>
-</tr>
-<tr>
-<td>string</td>
-<td>å­ç¬¦ä¸²</td>
-<td>std::string</td>
-</tr>
-</tbody>
-</table>
-<p>å½ç¶ï¼éè¿ç»åè¿äºåºæ¬ç±»åï¼æä»¬å¯ä»¥å®ä¹åºæ´å¤æçæ¶æ¯ç±»åãåé¢æä»¬å°ä»ç»å¦ä½èªå®ä¹æ¶æ¯ç±»åï¼å¹¶å¨èç¹ä¹é´è¿è¡éä¿¡ã</p>
-<h4 id="è¯é¢éä¿¡">è¯é¢éä¿¡</h4>
-<blockquote>
-<p>å¨ROS2ä¸­ï¼è¯é¢éä¿¡æ¯èç¹ä¹é´æå¸¸ç¨çéä¿¡æ¹å¼ãä¸ä¸ªèç¹å¯ä»¥ä½ä¸ºè¯é¢çåå¸èï¼Publisherï¼æèè®¢éèï¼Subscriberï¼ãåå¸èè´è´£å°æ¶æ¯åéå°è¯é¢ï¼èè®¢éèåæ¥æ¶æ¥èªè¯é¢çæ¶æ¯ãè¯é¢éä¿¡æ¯åºäºåå¸-è®¢éæ¨¡å¼çï¼è¿ç§æ¨¡å¼åè®¸å¤ä¸ªåå¸èåè®¢éèåæ¶å­å¨ï¼ä»èå®ç°äºçµæ´»çæ°æ®ä¼ è¾ãå¨åå»ºä¸ä¸ªèç¹æ¶ï¼æä»¬æç»§æ¿ç<code>rclcpp::Node</code>ç±»æä¾äºåå»ºåå¸èåè®¢éèçæ¥å£<code>create_publisher</code>å<code>create_subscription</code>ï¼éè¿è¿ä¸¤ä¸ªæ¥å£ï¼æä»¬å¯ä»¥è½»æ¾å°åå»ºåå¸èåè®¢éèï¼å¹¶æå®æ¶æ¯ç±»ååè¯é¢åç§°ã</p>
-</blockquote>
-<p>ä¸é¢æ¯ä¸ä¸ªç®åçåå¸èèç¹ç¤ºä¾ï¼</p>
-<pre><code class="language-cpp">/*
- * in pub_node.cpp
- */
-#include "rclcpp/rclcpp.hpp"
-#include "std_msgs/msg/string.hpp"
-
-class MyNode : public rclcpp::Node
-{
-    private:
-        // åå»ºä¸ä¸ªæååå¸èçæéï¼åå¸ std_msgs::msg::String ç±»åçæ¶æ¯ï¼ä¸»é¢åä¸º "chatter"ï¼éåå¤§å°ä¸º 10
-        rclcpp::Publisher&lt;std_msgs::msg::String&gt;::SharedPtr publisher_;
-        rclcpp::TimerBase::SharedPtr timer_;
-    public:
-
-        MyNode() : Node("pub_node")
-        {
-            RCLCPP_INFO(this-&gt;get_logger(), "Hello ROS2 Node!");
-            // åå»ºä¸ä¸ªåå¸èï¼åå¸ std_msgs::msg::String ç±»åçæ¶æ¯ï¼ä¸»é¢åä¸º "chatter"ï¼éåå¤§å°ä¸º 10
-            publisher_ = this-&gt;create_publisher&lt;std_msgs::msg::String&gt;("chatter", 10);
-            timer_ = this-&gt;create_wall_timer(
-                std::chrono::seconds(1),
-                [this]() { this-&gt;timer_callback(); }
-            );
-        }
-        void timer_callback()
-        {
-            static int count = 0;
-            auto message = std_msgs::msg::String();
-            message.data = "Hello, ROS2!" + std::to_string(count);
-            publisher_-&gt;publish(message);
-            RCLCPP_INFO(this-&gt;get_logger(), "Publishing: '%s'", message.data.c_str());
-            count++;
-        }
-};
-
-
-int main(int argc, char **argv)
-{
-    // åå§å ROS2
-    rclcpp::init(argc, argv);
-
-
-    // åå»ºèç¹çæºè½æé
-    auto node = std::make_shared&lt;MyNode&gt;();
-
-
-    // ä¿æèç¹è¿è¡
-    rclcpp::spin(node);
-
-
-    // å³é­ ROS2 å¹¶éæ¾èµæº
-    rclcpp::shutdown();
-
-
-    return 0;
-}
-</code></pre>
-<p>å¶ä¸­éè¦æ³¨æçæ¯ä¸é¢å ä¸ªapi</p>
-<pre><code class="language-cpp">rclcpp::Publisher&lt;std_msgs::msg::String&gt;::SharedPtr publisher_;
-rclcpp::TimerBase::SharedPtr timer_;
-Node-&gt;create_publisher&lt;std_msgs::msg::String&gt;("chatter", 10);
-Node-&gt;create_wall_timer(std::chrono::seconds(1), [this]() { this-&gt;timer_callback(); });
-</code></pre>
-<p>å¶ä¸­<br>
-<code>rclcpp::Publisher&lt;æ¶æ¯ç±»å&gt;::SharedPtr publisher_;</code>ï¼å£°æäºä¸ä¸ªæååå¸èçæºè½æéï¼åå¸èç¨äºåéæå®ç±»åçæ¶æ¯ãå¨æ¬ä¾ä¸­ï¼åå¸èå°åé<code>std_msgs::msg::String</code>ç±»åçæ¶æ¯ãå³ä½¿ç¨ä»£ç </p>
-<pre><code class="language-cpp">rclcpp::Publisher&lt;std_msgs::msg::String&gt;::SharedPtr publisher_;
-// å®éä¸è¿æ¯ROS2çå°è£åæ³ï¼ç­ä»·äº
-std::shared_ptr&lt;rclcpp::Publisher&lt;std_msgs::msg::String&gt;&gt; publisher_;
-// ä½æ¯æ¾ç¶åèæ´æè¯»ï¼èä¸æ¯ROS2å®æ¹æ¨èçåæ³ã
-</code></pre>
-<p>è<code>rclcpp::TimerBase::SharedPtr timer_;</code>ï¼å£°æäºä¸ä¸ªæåå®æ¶å¨çæºè½æéï¼å®æ¶å¨ç¨äºå¨æå®çæ¶é´é´éåè§¦ååè°å½æ°ãå¨æ¬ä¾ä¸­ï¼å®æ¶å¨æ¯é1ç§è§¦åä¸æ¬¡<code>timer_callback</code>å½æ°ã</p>
-<p>å¨æé å½æ°ä¸­ï¼ä½¿ç¨<code>create_publisher</code>æ¹æ³åå»ºäºä¸ä¸ªåå¸èï¼æå®äºæ¶æ¯ç±»åä¸º<code>std_msgs::msg::String</code>ï¼è¯é¢åç§°ä¸º<code>"chatter"</code>ï¼éåå¤§å°ä¸º10ãéåå¤§å°ç¨äºæ§å¶æ¶æ¯çç¼å­æ°éï¼å½åå¸èåéæ¶æ¯çéåº¦è¶è¿è®¢éèæ¥æ¶æ¶æ¯çéåº¦æ¶ï¼éåä¼ç¼å­ä¸å®æ°éçæ¶æ¯ï¼ä»¥é¿åä¸¢å¤±æ°æ®ã</p>
-<pre><code class="language-cpp">publisher_ = this-&gt;create_publisher&lt;std_msgs::msg::String&gt;("chatter", 10);
-</code></pre>
-<p>åæ¶ï¼ä½¿ç¨<code>create_wall_timer</code>æ¹æ³åå»ºäºä¸ä¸ªå®æ¶å¨ï¼æ¯é1ç§è§¦åä¸æ¬¡<code>timer_callback</code>å½æ°ãå¨å®æ¶å¨çåè°å½æ°ä¸­ï¼åå»ºäºä¸ä¸ª<code>std_msgs::msg::String</code>ç±»åçæ¶æ¯ï¼å¹¶å°å¶åå¸å°è¯é¢<code>"chatter"</code>ä¸ãæ¯æ¬¡åå¸æ¶æ¯æ¶ï¼é½ä¼å¨æ¥å¿ä¸­æå°åºåå¸çæ¶æ¯åå®¹ã</p>
-<pre><code class="language-cpp">timer_ = this-&gt;create_wall_timer(
-                std::chrono::seconds(1),
-                [this]() { this-&gt;timer_callback(); }
-            );
-// è¿éæä¾äºä¸ç§å°ç±»åå½æ°ä½ä¸ºåè°å½æ°çæ¹å¼ï¼ä½¿ç¨äºC++11çlambdaè¡¨è¾¾å¼ï¼å°ç±»çæåå½æ°`timer_callback`ç»å®å°å®æ¶å¨ä¸ãè¿æ ·ï¼æ¯å½å®æ¶å¨è§¦åæ¶ï¼å°±ä¼è°ç¨`timer_callback`å½æ°ï¼ä»èå®ç°å®æ¶åå¸æ¶æ¯çåè½ã
-// å½ç¶ï¼è¿å¯ä»¥ä½¿ç¨std::bindå»å®ç°è¿ä¸ªåè½ï¼è¿éä¸åèµè¿°ã
-</code></pre>
-<p>å¶ä¸­<code>timer_callback</code>å½æ°çå®ç°å¦ä¸ï¼</p>
-<pre><code class="language-cpp">void timer_callback()
-{
-    static int count = 0;
-    auto message = std_msgs::msg::String(); // åå»ºä¸ä¸ªstd_msgs::msg::Stringç±»åçæ¶æ¯å¯¹è±¡
-    message.data = "Hello, ROS2!" + std::to_string(count);  // è®¾ç½®æ¶æ¯çåå®¹ï¼è¿éä½¿ç¨äºä¸ä¸ªè®¡æ°å¨æ¥çæä¸åçæ¶æ¯
-    publisher_-&gt;publish(message);   // åå¸æ¶æ¯å°è¯é¢"chatter"
-    RCLCPP_INFO(this-&gt;get_logger(), "Publishing: '%s'", message.data.c_str()); // æå°æ¥å¿ä¿¡æ¯ï¼æ¾ç¤ºåå¸çæ¶æ¯åå®¹
-    count++;
-}
-</code></pre>
-<p>è¿æ ·å°±å®ç°äºä¸ä¸ªç®åçåå¸èèç¹ï¼æ¯é1ç§åå¸ä¸æ¡æ¶æ¯å°è¯é¢<code>"chatter"</code>ä¸ã</p>
-<p>ç¶åæä»¬å¯ä»¥åå»ºä¸ä¸ªè®¢éèèç¹æ¥æ¥æ¶è¿ä¸ªè¯é¢çæ¶æ¯ãè®¢éèèç¹çå®ç°å¦ä¸ï¼</p>
-<pre><code class="language-cpp">/*
- * in sub_node.cpp
- */
-#include "rclcpp/rclcpp.hpp"
-#include "std_msgs/msg/string.hpp"
-
-class MyNode : public rclcpp::Node
-{
-    private:
-        // åå»ºä¸ä¸ªæååå¸èçæéï¼åå¸ std_msgs::msg::String ç±»åçæ¶æ¯ï¼ä¸»é¢åä¸º "chatter"ï¼éåå¤§å°ä¸º 10
-        rclcpp::Subscription&lt;std_msgs::msg::String&gt;::SharedPtr subscriber_;
-    public:
-
-        MyNode() : Node("sub_node")
-        {
-            RCLCPP_INFO(this-&gt;get_logger(), "Hello ROS2 Node!");
-            // åå»ºä¸ä¸ªè®¢éèï¼è®¢é std_msgs::msg::String ç±»åçæ¶æ¯ï¼ä¸»é¢åä¸º "chatter"ï¼éåå¤§å°ä¸º 10
-            subscriber_ = this-&gt;create_subscription&lt;std_msgs::msg::String&gt;("chatter",10,
-                [this](const std_msgs::msg::String::SharedPtr msg) {on_recive_msg(msg); });
-        }
-
-        void on_recive_msg(const std_msgs::msg::String::SharedPtr msg)
-        {
-            RCLCPP_INFO(this-&gt;get_logger(), "Received: '%s'", msg-&gt;data.c_str());
-        }
-};
-
-
-int main(int argc, char **argv)
-{
-    // åå§å ROS2
-    rclcpp::init(argc, argv);
-
-
-    // åå»ºèç¹çæºè½æé
-    auto node = std::make_shared&lt;MyNode&gt;();
-
-
-    // ä¿æèç¹è¿è¡
-    rclcpp::spin(node);
-
-
-    // å³é­ ROS2 å¹¶éæ¾èµæº
-    rclcpp::shutdown();
-
-
-    return 0;
-}
-</code></pre>
-<p>æä»¬å³æ³¨ä»¥ä¸å ä¸ªapi</p>
-<pre><code class="language-cpp">rclcpp::Subscription&lt;std_msgs::msg::String&gt;::SharedPtr subscriber_;
-Node-&gt;create_subscription&lt;std_msgs::msg::String&gt;("chatter",10, [this](const std_msgs::msg::String::SharedPtr msg) {on_recive_msg(msg); });
-</code></pre>
-<p>å¶ä¸­<br>
-<code>rclcpp::Subscription&lt;æ¶æ¯ç±»å&gt;::SharedPtr subscriber_;</code>ï¼å£°æäºä¸ä¸ªæåè®¢éèçæºè½æéï¼è®¢éèç¨äºæ¥æ¶æå®ç±»åçæ¶æ¯,å¨æ¬ä¾ä¸­ï¼è®¢éèå°æ¥æ¶<code>std_msgs::msg::String</code>ç±»åçæ¶æ¯ãå³ä½¿ç¨ä»£ç </p>
-<pre><code class="language-cpp">rclcpp::Subscription&lt;std_msgs::msg::String&gt;::SharedPtr subscriber_;
-// ç±»ä¼¼äºä¸é¢çåæ³ï¼è¿ä¹æ¯ROS2çå°è£åæ³ï¼ç­ä»·äº
-std::shared_ptr&lt;rclcpp::Subscription&lt;std_msgs::msg::String&gt;&gt; subscriber_;
-</code></pre>
-<p>éåå¨æé å½æ°ä¸­ï¼ä½¿ç¨<code>create_subscription</code>æ¹æ³åå»ºäºä¸ä¸ªè®¢éèï¼æå®äºæ¶æ¯ç±»åä¸º<code>std_msgs::msg::String</code>ï¼è¯é¢åç§°ä¸º<code>"chatter"</code>ï¼éåå¤§å°ä¸º10ï¼å¹¶ç»å®äºä¸ä¸ªåè°å½æ°<code>on_recive_msg</code>ãå½è®¢éèæ¥æ¶å°æ¶æ¯æ¶ï¼ä¼è°ç¨è¿ä¸ªåè°å½æ°æ¥å¤çæ¶æ¯ã</p>
-<pre><code class="language-cpp">subscriber_ = this-&gt;create_subscription&lt;std_msgs::msg::String&gt;("chatter",10,
-                [this](const std_msgs::msg::String::SharedPtr msg) {on_recive_msg(msg); });
-</code></pre>
-<p>ä¹å°±æ¯è¯´ï¼å½è®¢éèæ¥æ¶å°æ¥èªè¯é¢<code>"chatter"</code>çæ¶æ¯æ¶ï¼ä¼èªå¨è°ç¨<code>on_recive_msg</code>å½æ°ï¼å¹¶å°æ¥æ¶å°çæ¶æ¯ä½ä¸ºåæ°ä¼ éç»è¯¥å½æ°ãè<code>on_recive_msg</code>å½æ°çå®ç°å¦ä¸ï¼</p>
-<pre><code class="language-cpp">void on_recive_msg(const std_msgs::msg::String::SharedPtr msg)
-{
-    RCLCPP_INFO(this-&gt;get_logger(), "Received: '%s'", msg-&gt;data.c_str());
-    // æå°æ¥å¿ä¿¡æ¯ï¼æ¾ç¤ºæ¥æ¶å°çæ¶æ¯åå®¹
-}
-</code></pre>
-<p>è¿ééè¦æ³¨æç¹</p>
-<blockquote>
-<ol>
-<li>å¯æ§è¡æä»¶å<span class="math inline">\(\ne\)</span>èç¹åãå¨ä½¿ç¨<code>ros2 run &lt;package_name&gt; &lt;executable_name&gt;</code>å½ä»¤è¿è¡èç¹æ¶ï¼<code>&lt;executable_name&gt;</code>æ¯æå¨<code>CMakeLists.txt</code>ä¸­éè¿<code>add_executable</code>å½ä»¤æå®çå¯æ§è¡æä»¶åï¼èä¸æ¯èç¹çåç§°ãèèç¹åå­æ¯éè¿å¨èç¹ç±»çæé å½æ°ä¸­è°ç¨<code>Node</code>åºç±»çæé å½æ°æ¶ä¼ å¥çå­ç¬¦ä¸²åæ°æ¥æå®çã<font color="red">ä¸ä¸ªå¯æ§è¡æä»¶å¯ä»¥åå«å¤ä¸ªèç¹ã</font></li>
-<li>è®¢éèä¸åå¸èå¿é¡»ä½¿ç¨ç¸åç<font color="red">è¯é¢åç§°åæ¶æ¯ç±»å</font>æè½è¿è¡éä¿¡ãå¨æ¬ä¾ä¸­ï¼åå¸èåè®¢éèé½ä½¿ç¨äºè¯é¢åç§°<code>"chatter"</code>åæ¶æ¯ç±»å<code>std_msgs::msg::String</code>ï¼å æ­¤å®ä»¬å¯ä»¥æåå°è¿è¡éä¿¡ã</li>
-</ol>
-</blockquote>
-<p>å½ç¼ç å·¥ä½ç»æåï¼æä»¬å¯ä»¥ä½¿ç¨<code>colcon build</code>å½ä»¤è¿è¡æå»ºï¼ç¶ååå«å¨ä¸¤ä¸ªç»ç«¯ä¸­è¿è¡åå¸èåè®¢éèèç¹ï¼è§å¯å®ä»¬ä¹é´çéä¿¡ææãåå¸èèç¹ä¼æ¯é1ç§åå¸ä¸æ¡æ¶æ¯ï¼èè®¢éèèç¹ä¼æ¥æ¶å°è¿äºæ¶æ¯å¹¶æå°åºæ¥ã<font color="red">æ³¨æï¼å¨è¿è¡èç¹ä¹åï¼è¯·ç¡®ä¿å·²ç»æ§è¡äº<code>source install/setup.bash</code>å½ä»¤ï¼ä»¥ä¾¿æ´æ°ç¯å¢åéï¼ä½¿å¾ROS2è½å¤æ¾å°å®è£çååå¯æ§è¡æä»¶ã</font></p>
-<pre><code class="language-bash"># in terminal 1
-source install/setup.bash
-ros2 run robot_package pub_node # è¿è¡åå¸èèç¹
-</code></pre>
-<pre><code class="language-bash"># in terminal 2
-source install/setup.bash
-ros2 run robot_package sub_node # è¿è¡è®¢éèèç¹
-</code></pre>
-<p>æ­¤æ¶ï¼è®¢éèèç¹ä¼æ¥æ¶å°åå¸èèç¹åéçæ¶æ¯ï¼å¹¶å¨ç»ç«¯ä¸­æå°åºæ¥ï¼æ¾ç¤ºéä¿¡æåã</p>
-<p><img src="https://img2024.cnblogs.com/blog/3147612/202607/3147612-20260715001005752-1509137298.png" alt="image" loading="lazy"></p>
-<p>å¯ä»¥ä½¿ç¨ä¸é¢çå½ä»¤æ¥æ¥çä¸äºè¿è¡ä¿¡æ¯</p>
-<pre><code class="language-bash">ros2 node list # æ¥çå½åè¿è¡çèç¹åè¡¨
-</code></pre>
-<p><img src="https://img2024.cnblogs.com/blog/3147612/202607/3147612-20260715001022385-1951237935.png" alt="image" loading="lazy"></p>
-<blockquote>
-<p>å¯ä»¥çå°å½åè¿è¡çèç¹åè¡¨ä¸­åå«äº<code>pub_node</code>å<code>sub_node</code>ä¸¤ä¸ªèç¹ï¼åå«å¯¹åºåå¸èåè®¢éèèç¹ãæ³¨æï¼<font color="red">è¿éçèç¹åç§°æ¯æä»¬å¨èç¹ç±»çæé å½æ°ä¸­æå®çï¼èä¸æ¯å¯æ§è¡æä»¶çåç§°ã</font></p>
-</blockquote>
-<pre><code class="language-bash">ros2 topic list # æ¥çå½åè¿è¡çèç¹æä½¿ç¨çè¯é¢åè¡¨
-</code></pre>
-<p><img src="https://img2024.cnblogs.com/blog/3147612/202607/3147612-20260715001044063-593949442.png" alt="image" loading="lazy"></p>
-<blockquote>
-<p>å¯ä»¥çå°å½åè¿è¡çèç¹æä½¿ç¨çè¯é¢åè¡¨ä¸­åå«äº<code>/chatter</code>è¯é¢ï¼è¿æ¯æä»¬å¨åå¸èåè®¢éèèç¹ä¸­æå®çè¯é¢åç§°ã</p>
-</blockquote>
-<p>ä½¿ç¨å¦ä¸å½ä»¤ä¼</p>
-<pre><code class="language-bash">rqt_graph # æ¥çå½åè¿è¡çèç¹ä¹é´çéä¿¡å³ç³»å¾
-</code></pre>
-<p><img src="https://img2024.cnblogs.com/blog/3147612/202607/3147612-20260715001053790-824866428.png" alt="image" loading="lazy"></p>
-<p>å¯ä»¥çå°ï¼<code>pub_node</code>èç¹éè¿è¯é¢<code>/chatter</code>ä¸<code>sub_node</code>èç¹è¿è¡éä¿¡ï¼å½¢æäºä¸ä¸ªåå¸-è®¢éçå³ç³»ãè¿ä¸ªå¾å½¢åçé¢å¯ä»¥å¸®å©æä»¬æ´ç´è§å°çè§£èç¹ä¹é´çéä¿¡å³ç³»ã</p>
-<h4 id="æ¥å£">æ¥å£</h4>
-<blockquote>
-<p>å¨ROS2ä¸­ï¼æ¥å£ï¼Interfaceï¼æ¯å®ä¹æ¶æ¯ç±»ååæå¡ç±»åçè§èãæ¥å£å®ä¹äºæ°æ®çç»æåæ ¼å¼ï¼ä½¿å¾ä¸åèç¹ä¹é´è½å¤ä»¥ç»ä¸çæ¹å¼è¿è¡éä¿¡ãROS2æä¾äºå¤ç§åç½®çæ¥å£ç±»åï¼å¦<code>std_msgs</code>ã<code>sensor_msgs</code>ç­ï¼ä¹æ¯æèªå®ä¹æ¥å£ç±»åãä¸é¢æç¨ç<code>std_msgs/msg/String</code>å°±æ¯ä¸ä¸ªåç½®çæ¶æ¯æ¥å£ç±»åï¼å®å®ä¹äºä¸ä¸ªåå«å­ç¬¦ä¸²æ°æ®çæ¶æ¯ç»æãéè¿æ¥å£ï¼åå¸èåè®¢éèå¯ä»¥ç¡®ä¿åéåæ¥æ¶çæ°æ®æ ¼å¼ä¸è´ï¼ä»èå®ç°å¯é çéä¿¡ã</p>
-</blockquote>
-<p>åè®¾ç®åçå·¥ä½ç©ºé´ä¸º<code>ros2_study_ws</code>,æä»¬å¨ä¸é¢æ°å»ºä¸ä¸ª<code>src</code>æä»¶å¤¹ï¼æ­¤åææçåé½æ¾å¨è¿ä¸ªæä»¶å¤¹ä¸ï¼è¿æ­£ç¬¦åæä»¬ä¹åæè¯´çå·¥ä½ç©ºé´ç»æãç¶åæä»¬å¨<code>src</code>æä»¶å¤¹ä¸æ°å»ºä¸ä¸ªåä¸º<code>test_create_interface</code>çåï¼ç¨äºå­æ¾èªå®ä¹æ¥å£ç±»åãä½¿ç¨å¦ä¸å½ä»¤åå»ºè¯¥åï¼</p>
-<pre><code class="language-bash">ros2 pkg create test_create_interface  --build-type ament_cmake --dependencies rclcpp rosidl_default_generators builtin_interfaces --license Apache-2.0
-</code></pre>
-<p>è¿ééè¦æ³¨æçæ¯ï¼ä¾èµé¡¹ä¸­ç<code>rosidl_default_generators</code>(å³<font color="red"> ros2 interface defination library</font>)ï¼æ¯ROS2ä¸­ç¨äºçææ¥å£ä»£ç çå·¥å·åï¼å®æä¾äºå°åç¼ä¸º<code>.msg or .srv or .action</code>çæä»¶çææ¥å£æéçCMakeå®åå½æ°ï¼<font color="red">å¯¹äºèªå®ä¹æ¥å£ï¼è¿ä¸ªå·¥å·åæ¯å¿éç</font></p>
-<p>è<code>builtin_interfaces</code>æ¯ROS2ä¸­åç½®çæ¥å£ç±»ååºï¼åå«äºä¸äºå¸¸ç¨çæ¥å£ç±»åï¼å¦æ¶é´ãæç»­æ¶é´ç­ãå¨èªå®ä¹æ¥å£ç±»åæ¶ï¼æä»¬éè¦ä¾èµè¿äºå·¥å·åæ¥çæç¸åºçä»£ç ãæä»¬ä½¿ç¨è¿ä¸ªåæ¥æ¼ç¤ºèªå®ä¹æ¥å£ä¸ä»å¯ä»¥ä½¿ç¨åºç¡çæ°æ®ç±»åï¼ä¹å¯ä»¥ä½¿ç¨å«äººå®ä¹å¥½çæ¥å£ç±»åä½ä¸ºèªå·±å®ä¹çæ¥å£çä¸ä¸ªæåã</p>
-<p>å¯ä»¥ä½¿ç¨<code>ros2 interface list</code>å½ä»¤æ¥æ¥çå½åå·¥ä½ç©ºé´ä¸­ææå¯ç¨çæ¥å£ç±»åï¼åæ¬åç½®æ¥å£åèªå®ä¹æ¥å£ãä½¿ç¨<code>ros2 interface show &lt;interface_name&gt;</code>å½ä»¤å¯ä»¥æ¥çæä¸ªæ¥å£çè¯¦ç»å®ä¹ã<br>
-<img src="https://img2024.cnblogs.com/blog/3147612/202607/3147612-20260715001115209-1656228014.png" alt="image" loading="lazy"></p>
-<p>å¯ä»¥çå°ï¼builtin_interfacesåä¸­åå«äº<code>Duration</code>å<code>Time</code>ä¸¤ä¸ªæ¥å£ç±»åï¼åæ¶ä¹å¯ä»¥çå°<code>builtin_interfaces/msg/Time</code>æ¥å£ç±äºä¸¤ä¸ªåºç¡ç±»åç»æ</p>
-<pre><code class="language-bash">int32 sec
-uint32 nanosec
-</code></pre>
-<p>è¿åå«ä¸ºç§åçº³ç§ï¼å¶ä¸­çº³ç§ç¨äºè¡¨ç¤ºå°æ°é¨åçæ¶é´ã</p>
-<p>å¶åçç®å½ç»æå¦ä¸ï¼</p>
-<pre><code class="language-bash">test_create_interface/
-âââ CMakeLists.txt
-âââ package.xml
-âââ msg/                     # å­æ¾èªå®ä¹æ¶æ¯ç±»åçç®å½
-â   âââ People.msg        # èªå®ä¹æ¶æ¯ç±»åæä»¶
-</code></pre>
-<p>æ³¨ææä»¬éè¦èªå·±æ°å»ºä¸ä¸ª<code>msg</code>æä»¶å¤¹ï¼ç¨äºå­æ¾èªå®ä¹æ¶æ¯ç±»åçå®ä¹æä»¶ãç¶åå¨<code>msg</code>æä»¶å¤¹ä¸åå»ºä¸ä¸ªåç¼ä¸º<code>.msg</code>çæä»¶ï¼è¿æ¯ros2ä¸­èªå®ä¹æ¶æ¯ç±»åçè§èãå¨è¯¥æä»¶ä¸­ï¼æä»¬å¯ä»¥å®ä¹èªå®ä¹æ¶æ¯ç±»åçç»æåæ°æ®ç±»åãä¾å¦ï¼æä»¬å¯ä»¥å®ä¹ä¸ä¸ªåå«å­ç¬¦ä¸²ãæ´æ°åæµ®ç¹æ°çèªå®ä¹æ¶æ¯ç±»å, ååä¸º<code>People.msg</code>ï¼</p>
-<pre><code class="language-plaintext"># People.msg
-string name    # å­ç¬¦ä¸²ï¼ è¡¨ç¤ºäººçå§å
-int32 age      # æ´æ°ï¼è¡¨ç¤ºäººçå¹´é¾
-float32 height # æµ®ç¹æ°ï¼è¡¨ç¤ºäººçèº«é«
-# å¨.msgæä»¶ä¸­ï¼ä½¿ç¨# æ¥æ·»å æ³¨éï¼è¯¥æ³¨éåå®¹ä¼å¨ros2 interface showå½ä»¤ä¸­æ¾ç¤ºåºæ¥ï¼æ¹ä¾¿æä»¬çè§£æ¶æ¯ç±»åçç»æåå«ä¹ã
-builtin_interfaces/Time birth_time # ä½¿ç¨åç½®æ¥å£ç±»åï¼è¡¨ç¤ºäººçåºçæ¶é´
-</code></pre>
-<p>æ³¨æï¼å¨ä½¿ç¨ç°æçæ¥å£ç±»åæ¶ï¼å¡«å¥çä¸æ¯å®æ´çè·¯å¾ï¼å¦<code>builtin_interfaces/msg/Time</code>ï¼èæ¯<code>builtin_interfaces/Time</code>ï¼å°<code>msg</code>çç¥æäºï¼è¿æ¯ROS2çè§èï¼è¡¨ç¤ºæä»¬ä½¿ç¨çæ¯è¯¥åä¸­çæ¶æ¯ç±»åã</p>
-<p>å¨å®æä¸é¢ç<code>.msg</code>æä»¶çç¼ååï¼ä¸ä¸æ­¥å°±æ¯å»ä¿®æ¹<code>CMakeLists.txt</code>æä»¶ï¼ä»¥ä¾¿å¨æå»ºè¿ç¨ä¸­çæèªå®ä¹æ¶æ¯ç±»åçä»£ç ãæä»¬éè¦å¨<code>CMakeLists.txt</code>ä¸­æ·»å ä»¥ä¸åå®¹ï¼</p>
-<pre><code class="language-cmake">find_package(rosidl_default_generators REQUIRED) # æ¥æ¾rosidl_default_generatorså
-# å½ç¶ï¼è¥å¨åå»ºåæ¶å·²ç»æå®äºä¾èµé¡¹ï¼åä¸éè¦åæ¬¡æ¥æ¾è¯¥åï¼å ä¸ºå¨åå»ºåæ¶ï¼`CMakeLists.txt`ä¸­å·²ç»åå«äºç¸åºç`find_package()`éç½®ã
-# åä¹ï¼è¥å¨åå»ºåæ¶æ²¡ææå®ä¾èµé¡¹ï¼åéè¦å¨`CMakeLists.txt`ä¸­æ·»å ç¸åºç`find_package()`éç½®ï¼ä»¥ä¾¿å¨æå»ºè¿ç¨ä¸­æ¾å°æéçä¾èµåãåæ¶ä¹è¦å¨`package.xml`ä¸­æ·»å ç¸åºçä¾èµå£°æï¼ä»¥ç¡®ä¿å¨æå»ºè¿ç¨ä¸­è½å¤æ­£ç¡®å°æ¾å°æéçä¾èµåã
-
-# è¯¥Cmakeå®ç¨äºçææ¥å£ä»£ç ï¼æå®å½ååååèªå®ä¹æ¶æ¯ç±»åæä»¶çè·¯å¾ï¼å¹¶æå®ä¾èµçå¶ä»æ¥å£åã
-rosidl_generate_interfaces(${PROJECT_NAME} # çææ¥å£ä»£ç ï¼æå®å½ååå
-  "msg/People.msg" # æå®èªå®ä¹æ¶æ¯ç±»åæä»¶çè·¯å¾
-  DEPENDENCIES builtin_interfaces # æå®ä¾èµçå¶ä»æ¥å£åï¼è¿éä¾èµäºbuiltin_interfacesåï¼å ä¸ºPeople.msgä¸­ä½¿ç¨äºè¯¥åä¸­çTimeæ¥å£ç±»å
-)
-</code></pre>
-<p>éç½®å®æ¯åï¼è¿éå¨<code>package.xml</code>ä¸­æ·»å ç¸åºçæ¥å£å£°æï¼</p>
-<pre><code class="language-xml">&lt;member_of_group&gt;rosidl_interface_packages&lt;/member_of_group&gt;
-</code></pre>
-<p>è¿å¥å£°æè¡¨ç¤ºè¯¥åæ¯ä¸ä¸ªæ¥å£åï¼å±äºROS2çæ¥å£åç»ãè¿æ ·ï¼å¨æå»ºè¿ç¨ä¸­ï¼ROS2ä¼å°è¯¥åè¯å«ä¸ºä¸ä¸ªæ¥å£åï¼å¹¶çæç¸åºçæ¥å£ä»£ç ã</p>
-<p>ä¹å°±æ¯è¯´è¿ä¸ªåä»ä»ç¨äºå®ä¹æ¥å£ç±»åï¼èä¸åå«ä»»ä½èç¹çå®ç°ãå¶ä»åå¯ä»¥ä¾èµè¿ä¸ªæ¥å£åï¼å¹¶ä½¿ç¨å¶ä¸­å®ä¹çæ¥å£ç±»åè¿è¡éä¿¡ã</p>
-<p>å½ä¸è¿°ä¸åéç½®å®æåï¼æä»¬å¯ä»¥ä½¿ç¨<code>colcon build</code>å½ä»¤è¿è¡æå»º(æ³¨æè¦å¨å·¥ä½ç©ºé´ç®å½ä¸æ§è¡)ï¼ç¶åä½¿ç¨<code>source ./install/setup.bash</code>å½ä»¤æ´æ°ç¯å¢åéï¼ä½¿å¾ROS2è½å¤æ¾å°å®è£çååå¯æ§è¡æä»¶ãç¶åä½¿ç¨<code>ros2 interface list</code>çä¸ä¸æä»¬èªå®ä¹çæ¥å£ç±»åæ¯å¦å·²ç»çææåãç¶åä½¿ç¨<code>ros2 interface show &lt;interface_name&gt;</code>å½ä»¤æ¥çèªå®ä¹æ¥å£ç±»åçè¯¦ç»å®ä¹ï¼éªè¯å¶æ¯å¦ç¬¦åé¢æãå·ä½æ¼ç¤ºè§ä¸å¾ã<br>
-<img src="https://img2024.cnblogs.com/blog/3147612/202607/3147612-20260715001154537-502347272.png" alt="image" loading="lazy"></p>
-<p>æ­¤æ¶ï¼æä»¬å·²ç»æåå°åå»ºäºä¸ä¸ªèªå®ä¹æ¥å£ç±»å<code>People</code>ï¼å¹¶ä¸å¯ä»¥å¨å¶ä»åä¸­ä½¿ç¨è¯¥æ¥å£ç±»åè¿è¡éä¿¡ã</p>
-<p>åå¸ènode</p>
-<pre><code class="language-cpp">#include "rclcpp/rclcpp.hpp"
-#include "test_create_interface/msg/people.hpp"
-
-class MyNode : public rclcpp::Node
-{
-private:
-    rclcpp::Publisher&lt;test_create_interface::msg::People&gt;::SharedPtr publisher_;
-    rclcpp::TimerBase::SharedPtr timer_;
-
-public:
-    MyNode() : Node("pub_node")
-    {
-        RCLCPP_INFO(this-&gt;get_logger(), "Hello ROS2 Node!");
-        publisher_ = this-&gt;create_publisher&lt;test_create_interface::msg::People&gt;("people", 10);
-        timer_ = this-&gt;create_wall_timer(
-            std::chrono::seconds(1),
-            [this]() { this-&gt;timer_callback(); }
-        );
-    }
-
-    void timer_callback()
-    {
-        static int count = 0;
-        auto message = test_create_interface::msg::People();
-        message.name = "Person " + std::to_string(count);
-        message.age = count;
-        message.height = 1.5;
-        publisher_-&gt;publish(message);
-        RCLCPP_INFO(this-&gt;get_logger(), "Publishing: '%s'", message.name.c_str());
-        count++;
-    }
-};
-
-int main(int argc, char **argv)
-{
-    rclcpp::init(argc, argv);
-
-    auto node = std::make_shared&lt;MyNode&gt;();
-
-    rclcpp::spin(node);
-
-    rclcpp::shutdown();
-
-    return 0;
-}
-</code></pre>
-<p>è®¢éènode</p>
-<pre><code class="language-cpp">#include "rclcpp/rclcpp.hpp"
-#include "test_create_interface/msg/people.hpp"
-
-
-class MyNode : public rclcpp::Node
-{
-    private:
-        rclcpp::Subscription&lt;test_create_interface::msg::People&gt;::SharedPtr subscription_;
-    public:
-        MyNode() : Node("sub_node")
-        {
-            RCLCPP_INFO(this-&gt;get_logger(), "Hello ROS2 Node!");
-            subscription_ = this-&gt;create_subscription&lt;test_create_interface::msg::People&gt;(
-                "people",
-                10,
-                [this](const test_create_interface::msg::People::SharedPtr msg)
-                {
-                    RCLCPP_INFO(this-&gt;get_logger(), "Received: '%s', Age: %d, Height: %.2f", msg-&gt;name.c_str(), msg-&gt;age, msg-&gt;height);
-                }
-            );
-        }
-};
-
-int main(int argc, char **argv)
-{
-    rclcpp::init(argc, argv);
-
-    auto node = std::make_shared&lt;MyNode&gt;();
-
-    rclcpp::spin(node);
-
-    rclcpp::shutdown();
-
-    return 0;
-}
-
-</code></pre>
-<p><img src="https://img2024.cnblogs.com/blog/3147612/202607/3147612-20260715001211153-1708817939.png" alt="image" loading="lazy"></p>
-<p><img src="https://img2024.cnblogs.com/blog/3147612/202607/3147612-20260715001215546-128924083.png" alt="image" loading="lazy"></p>
-<p>å¯ä»¥çå°ï¼åå¸èèç¹æ¯é1ç§åå¸ä¸æ¡åå«å§åãå¹´é¾åèº«é«çèªå®ä¹æ¶æ¯ï¼èè®¢éèèç¹æ¥æ¶å°è¿äºæ¶æ¯åï¼ä¼æå°åºæ¥æ¶å°çæ¶æ¯åå®¹ï¼åæ¬å§åãå¹´é¾åèº«é«ãè¿æ ·ï¼æä»¬å°±æåå°å®ç°äºä½¿ç¨èªå®ä¹æ¥å£ç±»åè¿è¡è¯é¢éä¿¡çåè½ã</p>
-<h2 id="æ»ç»">æ»ç»</h2>
-<p>å¸¸ç¨ros2å½ä»¤</p>
-<pre><code class="language-bash"># æ°å»ºå
-ros2 pkg create &lt;package_name&gt; --build-type ament_cmake --dependencies &lt;dependencies&gt; --license &lt;license&gt;
-# æ¥çåä¿¡æ¯
-ros2 pkg list # æ¥çå½åå·¥ä½ç©ºé´ä¸­ææå¯ç¨çå
-ros2 pkg prefix &lt;package_name&gt; # æ¥çæå®åçå®è£è·¯å¾
-ros2 pkg executables &lt;package_name&gt; # æ¥çæå®åä¸­ææå¯æ§è¡æä»¶çåè¡¨
-ros2 pkg xml &lt;package_name&gt; # æ¥çæå®åçpackage.xmlæä»¶åå®¹
-# æ¥çæ¥å£ä¿¡æ¯
-ros2 interface list # æ¥çå½åå·¥ä½ç©ºé´ä¸­ææå¯ç¨çæ¥å£ç±»åï¼åæ¬åç½®æ¥å£åèªå®ä¹æ¥å£
-ros2 interface show &lt;interface_name&gt; # æ¥çæä¸ªæ¥å£çè¯¦ç»å®ä¹ï¼åæ¬æ¶æ¯ç»æåæ°æ®ç±»å
-# æ¥çèç¹ä¿¡æ¯
-ros2 node list # æ¥çå½åè¿è¡çèç¹åè¡¨
-ros2 node info &lt;node_name&gt; # æ¥çæå®èç¹çè¯¦ç»ä¿¡æ¯ï¼åæ¬èç¹åç§°ãè¯é¢ãæå¡ç­
-# æ¥çè¯é¢ä¿¡æ¯
-ros2 topic list # æ¥çå½åè¿è¡çèç¹æä½¿ç¨çè¯é¢åè¡¨
-ros2 topic info &lt;topic_name&gt; # æ¥çæå®è¯é¢çè¯¦ç»ä¿¡æ¯ï¼åæ¬æ¶æ¯ç±»åãåå¸èåè®¢éèç­
-ros2 topic echo &lt;topic_name&gt; # æ¥çæå®è¯é¢çæ¶æ¯åå®¹ï¼å®æ¶æå°æ¥æ¶å°çæ¶æ¯ 
-</code></pre>
+<p>å¦æä½ å¯¹è¿ä¸ªæ¹åæå´è¶£ï¼æèå¨ä½¿ç¨ä¸­éå°ä»»ä½é®é¢ï¼æ¬¢è¿æ Issueãåä¸è®¨è®ºãè´¡ç®ä»£ç ã</p>
+<p><strong>è®©ç½å³è¿ç»´ï¼ä»ç¹é¼ æ åæè¯´å¥è¯ã</strong></p>
 
 
 </div>
@@ -2460,176 +2731,15 @@ ros2 topic echo &lt;topic_name&gt; # æ¥çæå®è¯é¢ç�
 
             </div>
             <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-07-15 18:44">2026-07-15 18:44</span>&nbsp;
-<a href="https://www.cnblogs.com/CrescentWind">åªé£sama</a>&nbsp;
-éè¯»(<span id="post_view_count">13</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(21472437);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FCrescentWind%2Fp%2F21472437&amp;targetId=21472437&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ SQL*Plus æ§è¡ä¸­æ SQL æä»¶ï¼å¦ä½é¿å¼ä¹±ç å ]]></title>
-    <link>https://www.cnblogs.com/jyzhao/p/21510332</link>
-    <guid>0febc0f5449338f89a1c6aeb5fb137d7</guid>
-    <description>
-    <![CDATA[ 
-    <a name="top"></a>
-    <h2><a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/jyzhao/p/21510332" title="åå¸äº 2026-07-15 18:32">
-    
-
-    <span role="heading" aria-level="2">SQL*Plus æ§è¡ä¸­æ SQL æä»¶ï¼å¦ä½é¿å¼ä¹±ç å</span>
-    
-
-</a>
-</h2>
-    <small>
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-07-15 18:33">2026-07-15 18:32</span>&nbsp;
-<a href="https://www.cnblogs.com/jyzhao">AlfredZhao</a>&nbsp;
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-07-15 21:57">2026-07-15 21:56</span>&nbsp;
+<a href="https://www.cnblogs.com/aneiangsoft">AneiangSoft</a>&nbsp;
 éè¯»(<span id="post_view_count">0</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(21510332);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fjyzhao%2Fp%2F21510332&amp;targetId=21510332&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</small>
-    <div class="entry">
-        <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>å¨ Linux ä¸ç¨ <code>sqlplus @xxx.sql</code> æ§è¡èæ¬æ¶ï¼åªè¦ SQL æä»¶éæä¸­æå­ç¬¦ä¸²æä¸­ææ³¨éï¼å°±å¯è½éå°ä¹±ç ãè¿ä¸ªé®é¢éå¸¸ä¸æ¯æ°æ®åºæ¬èº«åäºï¼èæ¯ SQL æä»¶ç¼ç ãLinux LocaleãSQL*Plus å®¢æ·ç«¯å­ç¬¦éæ²¡æå¯¹é½ã</p>
-<h2 id="01--åçæ¸ä¸ä¸ªå³é®è§è²">01 | åçæ¸ä¸ä¸ªå³é®è§è²</h2>
-<p>æ§è¡ SQL æä»¶æ¶ï¼è³å°æ¶åä¸å¤å­ç¬¦éï¼</p>
-<ul>
-<li>Linux Localeï¼ç± <code>LANG</code> æ <code>LC_CTYPE</code> æ§å¶ï¼å½±å Shell å¦ä½å¤çææ¬ã</li>
-<li>SQL*Plus å®¢æ·ç«¯å­ç¬¦éï¼ç± <code>NLS_LANG</code> æ§å¶ã</li>
-<li>SQL æä»¶å®éç¼ç ï¼å¸¸è§æ¯ UTF-8 æ GBKã</li>
-</ul>
-<p>æ ¸å¿ååå¾ç®åï¼</p>
-<blockquote>
-<p>SQL æä»¶ç¼ç è¦å <code>NLS_LANG</code> å¯¹åºçå®¢æ·ç«¯å­ç¬¦éä¸è´ï¼åç± Oracle è´è´£å®¢æ·ç«¯ä¸æ°æ®åºä¹é´çå­ç¬¦éè½¬æ¢ã</p>
-</blockquote>
-<p>è¿éæå®¹æè¯¯è§£çæ¯ï¼<code>NLS_LANG</code> è¡¨ç¤ºå®¢æ·ç«¯å­ç¬¦éï¼ä¸æ¯æ°æ®åºå­ç¬¦éã</p>
-<h2 id="02--utf-8-æä»¶çæ¨èéç½®">02 | UTF-8 æä»¶çæ¨èéç½®</h2>
-<p>å¤§å¤æ° Linux ç¯å¢åç¼è¾å¨é»è®¤å·²ç»ä½¿ç¨ UTF-8ï¼å æ­¤æ´æ¨èç»ä¸ä½¿ç¨ UTF-8ã</p>
-<pre><code class="language-bash">export LANG=en_US.UTF-8
-export NLS_LANG=AMERICAN_AMERICA.AL32UTF8
-</code></pre>
-<p>å¦æä½¿ç¨ä¸­æ Localeï¼ä¹å¯ä»¥æ¯ï¼</p>
-<pre><code class="language-bash">export LANG=zh_CN.UTF-8
-export NLS_LANG=SIMPLIFIED CHINESE_CHINA.AL32UTF8
-</code></pre>
-<p>SQL æä»¶å»ºè®®ä¿å­ä¸ºï¼</p>
-<ul>
-<li>UTF-8</li>
-<li>æ  BOMï¼ä¹å°±æ¯ UTF-8 without BOM</li>
-</ul>
-<p>å¦æ SQL æä»¶æ¬èº«æ¯ GBK ç¼ç ï¼æä½¿ç¨ï¼</p>
-<pre><code class="language-bash">export LANG=zh_CN.GBK
-export NLS_LANG=SIMPLIFIED CHINESE_CHINA.ZHS16GBK
-</code></pre>
-<h2 id="03--ä¸è¦ç²ç®ç§ææ°æ®åºå­ç¬¦é">03 | ä¸è¦ç²ç®ç§ææ°æ®åºå­ç¬¦é</h2>
-<p>å¾å¤äººçå°æ°æ®åºå­ç¬¦éæ¯ <code>ZHS16GBK</code>ï¼å°±ç´æ¥è®¾ç½®ï¼</p>
-<pre><code class="language-bash">export NLS_LANG=SIMPLIFIED CHINESE_CHINA.ZHS16GBK
-</code></pre>
-<p>è¿åªæå¨å®¢æ·ç«¯ SQL æä»¶æ¬èº«ä¹æ¯ GBK ç¼ç æ¶æåéã</p>
-<p>å¦æ SQL æä»¶æ¯ UTF-8ï¼èæ°æ®åºå­ç¬¦éæ¯ <code>ZHS16GBK</code>ï¼å®¢æ·ç«¯ä»ç¶åºè¯¥æ UTF-8 è®¾ç½®ï¼</p>
-<pre><code class="language-bash">export NLS_LANG=AMERICAN_AMERICA.AL32UTF8
-</code></pre>
-<p>æ­¤æ¶ Oracle ä¼å®æå­ç¬¦éè½¬æ¢ï¼</p>
-<pre><code class="language-text">UTF-8ï¼å®¢æ·ç«¯ï¼
-â
-Oracle Character Conversion
-â
-ZHS16GBKï¼æ°æ®åºï¼
-</code></pre>
-<p>æä»¥ææ¥æ¶ä¸è¦åªç¯æ°æ®åºå­ç¬¦éï¼æ´è¦åç¡®è®¤ SQL æä»¶å°åºæ¯ä»ä¹ç¼ç ã</p>
-<h2 id="04--å¦ä½ç¡®è®¤æä»¶åæ°æ®åºå­ç¬¦é">04 | å¦ä½ç¡®è®¤æä»¶åæ°æ®åºå­ç¬¦é</h2>
-<p>æ¥ç SQL æä»¶ç¼ç ï¼ä¼åç¨ï¼</p>
-<pre><code class="language-bash">file test.sql
-file -i test.sql
-</code></pre>
-<p>å¦æè¾åºä¸­çå° <code>charset=utf-8</code>ï¼è¯´ææ¯ UTF-8ãè¥æ¾ç¤º <code>UTF-8 Unicode (with BOM)</code>ï¼è¯´ææä»¶å¸¦ BOMã</p>
-<p>ä¹å¯ä»¥ç¨ <code>iconv</code> éªè¯ UTF-8 æ¯å¦åæ³ï¼</p>
-<pre><code class="language-bash">iconv -f UTF-8 -t UTF-8 test.sql &gt;/dev/null
-echo $?
-</code></pre>
-<p>è¿å <code>0</code> è¡¨ç¤ºåæ³ UTF-8ï¼å¦æåºç° <code>illegal input sequence</code>ï¼è¯´æä¸æ¯åæ³ UTF-8ã</p>
-<p>æ£æ¥æ¯å¦å¸¦ BOMï¼</p>
-<pre><code class="language-bash">xxd -l 16 test.sql
-</code></pre>
-<p>å¦ææä»¶å¼å¤´åºç°ï¼</p>
-<pre><code class="language-text">ef bb bf
-</code></pre>
-<p>è¯´æå¸¦ BOMã</p>
-<p>æ°æ®åºå­ç¬¦éå¯ä»¥ç¨ SQL æ¥è¯¢ï¼</p>
-<pre><code class="language-sql">SELECT value
-FROM nls_database_parameters
-WHERE parameter = 'NLS_CHARACTERSET';
-</code></pre>
-<p>å¸¸è§ç»æå¯è½æ¯ <code>AL32UTF8</code> æ <code>ZHS16GBK</code>ã</p>
-<h2 id="05--lc_all-ä¸ä¸å®è¦è®¾ç½®">05 | LC_ALL ä¸ä¸å®è¦è®¾ç½®</h2>
-<p>éå¸¸ä¸éè¦å»æè®¾ç½® <code>LC_ALL</code>ãLocale ä¼åçº§å¤§è´æ¯ï¼</p>
-<pre><code class="language-text">LC_ALL
-â
-LC_*
-â
-LANG
-</code></pre>
-<p>SQL*Plus ä¸­æä¹±ç æ´ç¸å³çæ¯ï¼</p>
-<ul>
-<li><code>LANG</code></li>
-<li><code>LC_CTYPE</code></li>
-<li><code>NLS_LANG</code></li>
-</ul>
-<p>å¾å¤ç¯å¢åªè®¾ç½®ä¸é¢è¿ä¸é¡¹å°±å¤äºï¼</p>
-<pre><code class="language-bash">export LANG=en_US.UTF-8
-</code></pre>
-<p><code>LC_ALL</code> æ¯å¼ºå¶è¦çææ Locale è®¾ç½®ï¼å¹¶ä¸æ¯è§£å³ SQL*Plus ä¸­æä¹±ç çå³é®ãæäºç³»ç»è¿å¯è½æ²¡æå®è£å¯¹åº Localeï¼å¯¼è´ <code>cannot change locale</code>ãå¯ä»¥åç¡®è®¤ç³»ç»æ¯æé¡¹ï¼</p>
-<pre><code class="language-bash">locale -a
-</code></pre>
-<h2 id="06--ä¸å¥ç¨³å¦¥ææ¥é¡ºåº">06 | ä¸å¥ç¨³å¦¥ææ¥é¡ºåº</h2>
-<p>éå°ä¹±ç æ¶ï¼å»ºè®®ä¾æ¬¡æ§è¡ï¼</p>
-<pre><code class="language-bash">locale
-echo $LANG
-echo $NLS_LANG
-file -i test.sql
-</code></pre>
-<p>åæ¥æ°æ®åºå­ç¬¦éï¼</p>
-<pre><code class="language-sql">SELECT value
-FROM nls_database_parameters
-WHERE parameter='NLS_CHARACTERSET';
-</code></pre>
-<p>ç¬èæ´æ¨èçé¿æåæ³æ¯ï¼å¢éç»ä¸ä½¿ç¨ UTF-8 æ  BOM ç <code>.sql</code> æä»¶ï¼å¹¶éç½®ï¼</p>
-<pre><code class="language-bash">export LANG=en_US.UTF-8
-export NLS_LANG=AMERICAN_AMERICA.AL32UTF8
-</code></pre>
-<p>è¿æ ·å¯ä»¥åå° UTF-8ãGBK æ··ç¨å¸¦æ¥çè·¨å¹³å°é®é¢ã</p>
-<p>ä¸å¥è¯æ»ç»ï¼ä¿æ SQL æä»¶ç¼ç ãLinux Locale å <code>NLS_LANG</code> ä¸è´ï¼è®© Oracle è´è´£å®¢æ·ç«¯ä¸æ°æ®åºä¹é´çå­ç¬¦éè½¬æ¢ï¼æ¯é¿å SQL*Plus ä¸­æä¹±ç çç¨³å¦¥æ¹æ¡ã</p>
-<p>å³æ³¨æï¼åAIä¸èµ·æé¿~</p>
-
-
+<a href="javascript:void(0)" onclick="AddToWz(21514161);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Faneiangsoft%2Fp%2F21514161&amp;targetId=21514161&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
-<div id="MySignature" role="contentinfo">
-    <a href="https://www.cnblogs.com/jyzhao/" target="_blank">AlfredZhao</a>Â©çæææãä»Oracleèµ·èªï¼é¢ç¥ç²¾å½©çITææ¯ãã<br>
-è½¬è½½è¯·æ³¨æåæé¾æ¥ï¼<a href="https://www.cnblogs.com/jyzhao/p/21510332" target="_blank">https://www.cnblogs.com/jyzhao/p/21510332</a>
-<hr>
-<div style="text-align:center; margin-top:30px;">
-  <p style="font-size:14px;color:#555;">
-    ð æè°¢éè¯»ï¼æ¬¢è¿å³æ³¨æçå¬ä¼å· <b>ãèµµéå®ã</b>
-  </p>
-  <img src="https://images.cnblogs.com/cnblogs_com/jyzhao/824234/o_250208075013_qrcode-zjy.jpg" width="160" style="border:1px solid #ddd;border-radius:8px;">
-</div>
-</div>
-<div class="clear"></div>
-
-        <div class="clear"></div>
-        
-</div>
-    <ul class="postmetadata">
-        <vc:categories-tags blog-app="jyzhao" blog-id="186567" post-id="21510332"></vc:categories-tags>
-    </ul>
- ]]>
+         ]]>
     </description>
     </item>
         </channel>
