@@ -3,12 +3,972 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-07-25T09:40:23.402Z</lastBuildDate>
+        <lastBuildDate>2026-07-25T13:11:04.686Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
+    <title><![CDATA[ åè¡¨æ¥è¯¢ç GraphQL ââ ä¸è¡ä»£ç ç»ç»ä½ ç if-else å°ç±ï¼ ]]></title>
+    <link>https://www.cnblogs.com/zhoxu/p/21920168</link>
+    <guid>8c2f5aafd0219b300fa60830f9972a52</guid>
+    <description>
+    <![CDATA[ 
+		<h1 class="postTitle">
+			<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/zhoxu/p/21920168" title="åå¸äº 2026-07-25 21:01">
+    
+
+    <span role="heading" aria-level="2">åè¡¨æ¥è¯¢ç GraphQL ââ ä¸è¡ä»£ç ç»ç»ä½ ç if-else å°ç±ï¼</span>
+    
+
+</a>
+
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			    <div id="cnblogs_post_description" style="display: none">
+        
+        äº§åå ä¸ä¸ªç­éæ¡ä»¶ï¼ä½ è¦æ¹åå±ä»£ç ãè¿ä¸æ¯ MyBatis çéï¼ä¹ä¸æ¯ JPA çéââæ¯ä½ æ"å£°æ"å"æ§è¡"æ··å¨äºä¸èµ·ãå¦æåè¡¨æ¥è¯¢æ GraphQLï¼ä¼æ¯ä»ä¹æ ·ï¼
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<blockquote>
+<p>ä¸ä¸ªåç«¯å·¥ç¨å¸çèªç½ï¼ä¸ºä»ä¹ä½ åäº 100 è¡ Java ä»£ç ï¼å¶å®åªåäºä¸ä»¶äºââæåç«¯ä¼ è¿æ¥çå ä¸ªåæ°ï¼æ¼æä¸æ¡ SQLã</p>
+</blockquote>
+<hr>
+<h2 id="ä¸é¡µçº¸çéæ±">ä¸é¡µçº¸çéæ±</h2>
+<p>äº§åç»çå°çç»æåäºä¸å¼ ååå¾ãå¾æ®éçåå°ç®¡çé¡µé¢ï¼</p>
+<ul>
+<li>è¡¨æ ¼åé¡µå±ç¤º</li>
+<li>é¡¶é¨åä¸ªç­éæ¡ä»¶ï¼å§åãå¹´é¾åºé´ãé¨é¨ãå¥èæ¶é´</li>
+<li>å¯ä»¥æä»»æåæåº</li>
+<li>åºé¨ç»è®¡ï¼æ»äººæ°ãå¹³åå¹´é¾</li>
+</ul>
+<p>"è¿ä¸ªç®åå§ï¼ä¸åè½ä¸çº¿åï¼"ä»é®ã</p>
+<p>æè¯´ï¼"è½ã"</p>
+<p>ç¶åé»é»æå¼ IDEAï¼å¼å§åä»£ç ã</p>
+<hr>
+<h2 id="å¦æä½ ä¹ç¨-mybatisæ¥ä¸æ¥-30-åéä½ ä¼åä»ä¹">å¦æä½ ä¹ç¨ MyBatisï¼æ¥ä¸æ¥ 30 åéä½ ä¼åä»ä¹</h2>
+<pre><code class="language-java">// é¦åï¼ä½ è¦åä¸æ¡å¨æ SQL
+&lt;select id="searchUsers" resultType="UserVO"&gt;
+  SELECT u.*, d.name as deptName
+  FROM user u LEFT JOIN dept d ON u.dept_id = d.id
+  &lt;where&gt;
+    &lt;if test="name != null and name != ''"&gt;
+      AND u.name LIKE CONCAT('%', #{name}, '%')
+    &lt;/if&gt;
+    &lt;if test="ageMin != null"&gt;
+      AND u.age &gt;= #{ageMin}
+    &lt;/if&gt;
+    &lt;if test="ageMax != null"&gt;
+      AND u.age &amp;lt;= #{ageMax}
+    &lt;/if&gt;
+    &lt;if test="dept != null and dept != ''"&gt;
+      AND d.name = #{dept}
+    &lt;/if&gt;
+    &lt;if test="entryDateStart != null"&gt;
+      AND u.entry_date &gt;= #{entryDateStart}
+    &lt;/if&gt;
+    &lt;if test="entryDateEnd != null"&gt;
+      AND u.entry_date &amp;lt;= #{entryDateEnd}
+    &lt;/if&gt;
+  &lt;/where&gt;
+  &lt;if test="sortField != null and sortOrder != null"&gt;
+    ORDER BY ${sortField} ${sortOrder}
+  &lt;/if&gt;
+  LIMIT #{offset}, #{size}
+&lt;/select&gt;
+</code></pre>
+<p>è¿æ²¡å®ãä½ è¿éè¦ä¸ä¸ªç»è®¡ SQLãä¸ä¸ª Controller æ¹æ³è§£æåæ°ãä¸ä¸ª Service å±ååé¡µè®¡ç®ãä¸ä¸ª Mapper æ¥å£ãä¸ä¸ª VO ç±»ä¸é¨æ¿æ¥æ¥è¯¢ç»æââè¿è¦å°å¿ <code>${}</code> SQL æ³¨å¥ã</p>
+<p>éæ±åªè¯´äºåä¸ªç­éæ¡ä»¶ï¼ä»£ç å·²ç»å¿« 100 è¡äºã</p>
+<p>ç¶åå°çè¯´ï¼"å¯¹äºï¼æé¨é¨ç­éæ¹ææ¯æå¤éãè¿æï¼å ä¸ä¸ªæ§å«ç­éã"</p>
+<p>ä½ æ·±å¸ä¸å£æ°ï¼ç»§ç»­åã</p>
+<p>è¿ä¸æ¯ MyBatis çé®é¢ââæ¢ JPAï¼ä½ ä¹ä¸ä¼æ´è½»æ¾ï¼</p>
+<pre><code class="language-java">Specification&lt;User&gt; spec = (root, query, cb) -&gt; {
+  List&lt;Predicate&gt; predicates = new ArrayList&lt;&gt;();
+  // èè¡¨ï¼è¦æ¥é¨é¨åï¼å JOIN department è¡¨
+  Join&lt;User, Department&gt; deptJoin = root.join("dept", JoinType.LEFT);
+
+  if (StringUtils.isNotBlank(name)) {
+    predicates.add(cb.like(root.get("name"), "%" + name + "%"));
+  }
+  if (ageMin != null) {
+    predicates.add(cb.ge(root.get("age"), ageMin));
+  }
+  if (ageMax != null) {
+    predicates.add(cb.le(root.get("age"), ageMax));
+  }
+  if (StringUtils.isNotBlank(dept)) {
+    predicates.add(cb.equal(deptJoin.get("name"), dept));
+  }
+  // ... åæ ·ç if å°ç±ï¼åªæ¯æ¢äºè¯­æ³
+  return cb.and(predicates.toArray(new Predicate[0]));
+};
+// é¤æ­¤ä¹å¤ï¼è¿æ æåºãåé¡µãæ»æ¡æ°ãå­æ®µç»è®¡ï¼æ¯ä¸é¡¹é½é½éè¦ä½ ä¸æ­çå ç ä»£ç  ...
+</code></pre>
+<p>MyBatis å¨ XML éå <code>&lt;if&gt;</code>ï¼JPA å¨ Java éæ¼ <code>Join</code> + <code>Predicate</code>ãæ¬è´¨æ²¡åââ<strong>ä½ è¿æ¯å¨ç¨æå·¥æ¹å¼æåæ°ç¿»è¯ææ¥è¯¢æ¡ä»¶ã</strong></p>
+<p><strong>è¿ä¸ªé®é¢å­å¨çå¯ä¸åå ï¼å°±æ¯ä½ æ"å£°æ"å"æ§è¡"æ··å¨äºä¸èµ·ã</strong></p>
+<hr>
+<h2 id="å¦ææ¢ä¸ç§ææ³">å¦ææ¢ä¸ç§ææ³</h2>
+<p>æä»¬æ¢ä¸ä¸ªè§è§çè¿ä¸ªé®é¢ã</p>
+<p>æ°æ®åºè¡¨ï¼ä½ å·²ç»å®ä¹å¥½äºãåç«¯è¦æ¥ä»ä¹ï¼ç¨æ·è¯´äºç®ã</p>
+<p>é£ä¸ºä»ä¹ä¸­é´çç¿»è¯å·¥ä½ââæ HTTP åæ°ç¿»è¯æ SQLââéè¦ä½ ä¸è¡ä¸è¡å if-elseï¼</p>
+<p>ææ²¡æå¯è½ï¼è®©ä¸ä¸ªèªæçä¸­é´å±æ¥åè¿ä»¶äºï¼å®ç¥éï¼</p>
+<ul>
+<li>ä½ çå®ä½æåªäºå­æ®µ â è¿å°±æ¯<strong>æ£ç´¢è¾¹ç</strong></li>
+<li>åç«¯ä¼ äºåªäºåæ° â è¿å°±æ¯<strong>æ£ç´¢æå¾</strong></li>
+<li>ä¸¤èä¸ç»å â çæ SQL</li>
+</ul>
+<p>è¿ä¸ªæè·¯ä¸æ¯æçåæãå¨ API é¢åï¼å®æä¸ä¸ªå¦é·è´¯è³çåå­ï¼</p>
+<blockquote>
+<p><strong>GraphQL</strong> â å®¢æ·ç«¯æå®è¦ä»ä¹å­æ®µï¼æå¡ç«¯è¿åä»ä¹å­æ®µãä¸æ¬¡è¯·æ±ï¼æ¿ä»£å¤æ¬¡ REST è°ç¨ã</p>
+</blockquote>
+<p>é£å¨åè¡¨æ¥è¯¢é¢åï¼è½ä¸è½æåæ ·çä¸è¥¿ï¼</p>
+<table>
+<thead>
+<tr>
+<th>ç»´åº¦</th>
+<th>GraphQL</th>
+<th>Bean Searcher</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>é¢å</td>
+<td>API æ°æ®æ¥è¯¢</td>
+<td>æ°æ®åºåè¡¨æ£ç´¢</td>
+</tr>
+<tr>
+<td>å®¢æ·ç«¯æ§å¶ä»ä¹</td>
+<td>è¿ååªäºå­æ®µ</td>
+<td>è¿ååªäºå­æ®µ + æä»ä¹ç­é + æä»ä¹æåº + åé¡µå¤å°</td>
+</tr>
+<tr>
+<td>åè®®</td>
+<td>POST + GraphQL body</td>
+<td>æ å HTTP åæ°ï¼GET/POST åå¯ï¼</td>
+</tr>
+<tr>
+<td>æ ¸å¿ææ³</td>
+<td>å£°æä½ è¦ä»ä¹æ°æ®</td>
+<td>å£°ææ£ç´¢è¾¹çï¼åæ°é©±å¨æ¥è¯¢</td>
+</tr>
+<tr>
+<td>æ¥å¥ææ¬</td>
+<td>æ¹ API å±ãå  Schema</td>
+<td>ä¸ä¸ªä¾èµï¼é¶ä»£ç æ¹é </td>
+</tr>
+</tbody>
+</table>
+<p>ä¸å¥è¯ï¼<strong>GraphQL è®©åç«¯å¨ä¸æ¬¡è¯·æ±ä¸­èªç±æ§å¶è¿åæ°æ®ï¼Bean Searcher è®©åç«¯å¨ä¸æ¬¡è¯·æ±ä¸­èªç±æ§å¶ç­éãæåºãåé¡µåç»è®¡ââç¨ REST æçæç URL åæ°æ¹å¼ã</strong></p>
+<hr>
+<h2 id="åè¡¨æ£ç´¢é¢åç-graphql">åè¡¨æ£ç´¢é¢åç GraphQL</h2>
+<p>ä½ åªéè¦å®ä¹ä¸ä¸ªå®ä½ï¼</p>
+<pre><code class="language-java">@SearchBean(tables = "user u, dept d",  where = "u.dept_id = d.id",  autoMapTo = "u")
+public class UserVO {
+  private Long id;
+  private String name;
+  private Integer age;
+  private String gender;
+  @DbField("d.name")
+  private String deptName;
+  private LocalDate entryDate;
+  // getters &amp; setters...
+}
+</code></pre>
+<p>ç¶åï¼æ´ä¸ªæ£ç´¢æ¥å£<strong>ä¸è¡ä»£ç </strong>ï¼</p>
+<pre><code class="language-java">@GetMapping("/user/search")
+public SearchResult&lt;UserVO&gt; search(HttpServletRequest request) {
+  return beanSearcher.search(UserVO.class, MapUtils.flat(request.getParameterMap()));
+}
+</code></pre>
+<p>åç«¯ç´æ¥ GET è¯·æ±ï¼</p>
+<pre><code>GET /user/search?name=å¼ &amp;age-0=20&amp;age-1=30&amp;age-op=bt&amp;sort=age&amp;order=desc
+</code></pre>
+<p>è¿ä¸è¡ä»£ç è¿åçæ°æ®é¿è¿æ ·ï¼</p>
+<pre><code class="language-json">{
+  "dataList": [
+    { "id": 1, "name": "å¼ ä¸", "age": 25, "deptName": "ææ¯é¨", "entryDate": "2023-03-01" },
+    { "id": 2, "name": "å¼ å°æ", "age": 28, "deptName": "äº§åé¨", "entryDate": "2022-11-15" }
+  ],
+  "totalCount": 47,
+  "summaries": [ 1350 ]
+}
+</code></pre>
+<p><strong>åé¡µãèè¡¨ãå¤æ¡ä»¶ç­éãæåºãç»è®¡ââä¸ä¸ªæ¥å£å¨æå®ã</strong> æ²¡æ XMLãæ²¡æ if-elseãæ²¡æ VO è½¬æ¢ä»£ç ã</p>
+<p>è¿å°±æ¯ <a href="https://github.com/troyzhxu/bean-searcher" target="_blank" rel="noopener nofollow">Bean Searcher</a>ââä¸ä¸ªæç¨äºä¸å¹´ãå¿ä¸ä½æ³å®å©ç»ææåç«¯å·¥ç¨å¸çæ¡æ¶ã</p>
+<hr>
+<h2 id="å®å°åºåäºä»ä¹">å®å°åºåäºä»ä¹</h2>
+<p>è®©æç¨ä¸å¥è¯è§£éå®çæ ¸å¿åçï¼å ä¸ºçè§£äºè¿ä¸ç¹ï¼ä½ å°±çè§£äºå®ä¸ºä»ä¹è½çæ 90% çä»£ç ï¼</p>
+<blockquote>
+<p><strong>å®ä½ç±»å£°ææ£ç´¢è¾¹çï¼HTTP åæ°é©±å¨æ¥è¯¢é»è¾ã</strong></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>ä¼ ç»æ¹å¼ï¼MyBatis / JPAï¼</th>
+<th>Bean Searcher</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ç­éæ¡ä»¶æä¹å®ä¹</td>
+<td>XML éå <code>&lt;if&gt;</code> / Java éæ¼ <code>QueryWrapper</code></td>
+<td>åæ°åç´æ¥æ å°å­æ®µå</td>
+</tr>
+<tr>
+<td>å ä¸ä¸ªæ°ç­éæ¡ä»¶</td>
+<td>æ¹ XML / æ¹ Java ä»£ç  â éæ°ç¼è¯é¨ç½²</td>
+<td>åç«¯ç´æ¥ä¼ æ°åæ°ï¼<strong>åç«¯é¶æ¹å¨</strong></td>
+</tr>
+<tr>
+<td>å¤è¡¨èæ¥</td>
+<td>æå JOIN SQL</td>
+<td>å®ä½ç±»å£°æå³èå³ç³»</td>
+</tr>
+<tr>
+<td>è¿åç»æ</td>
+<td>éè¦ VO è½¬æ¢å±</td>
+<td>SearchBean å°±æ¯ VO</td>
+</tr>
+<tr>
+<td>å®å¨æ§</td>
+<td>èªå·±åæ ¡éª</td>
+<td>é²æ³¨å¥ãé²å¤§é¡µãé²æ·±åº¦åç§»ï¼å¨é¨é»è®¤å¼å¯</td>
+</tr>
+</tbody>
+</table>
+<p>æä¸ªæ¯æ¹ï¼<strong>ä¼ ç»æ¹å¼æ¯"å½ä»¤å¼"ç</strong>ââä½ åè¯æ¡æ¶æ¯ä¸æ­¥æä¹åã<strong>Bean Searcher æ¯"å£°æå¼"ç</strong>ââä½ å£°æ"è½æ¥ä»ä¹"ï¼å®ä½å®ä¹è¾¹çï¼ï¼ç¶ååç«¯éè¿åæ°è¡¨è¾¾"æ³æ¥ä»ä¹"ï¼é©±å¨æ¥è¯¢é»è¾ï¼ã</p>
+<p>ä½ ä¸æ¯å¨åæ¥è¯¢ãä½ æ¯å¨<strong>å£°ææ£ç´¢è¾¹ç</strong>ã</p>
+<hr>
+<h2 id="ä¸ä¸ªä¼è¢«é®å°çé®é¢">ä¸ä¸ªä¼è¢«é®å°çé®é¢</h2>
+<p>"è¿é¾éä¸ä¼è®©åç«¯ä¼ å¤ªå¤åæ°åï¼"</p>
+<p>è¿ä¸ªé®é¢æè¢«é®äºæ æ°æ¬¡ãç­æ¡æ¯ï¼<strong>åç«¯ä¼ å¤å°åæ°ï¼åªåäº§åéæ±çå¤æåº¦æå³ï¼ååç«¯ç¨çä»ä¹æ¡æ¶æ¯«æ å³ç³»ã</strong></p>
+<p>å¦æäº§ååªéè¦ä¸ä¸ªæ¨¡ç³æç´¢æ¡ï¼åç«¯å°±åªä¼  <code>?name=å¼ </code>ï¼ä¸éè¦ <code>name-op</code> å <code>name-ic</code>ãä½ çè³å¯ä»¥<strong>é¶æ³¨è§£</strong>ä½¿ç¨ââä¸ä¸ªåçº¯ç POJOï¼å­æ®µåé»è®¤æ å°ä¸ºæ°æ®åºååï¼é©¼å³°è½¬ä¸åçº¿ï¼ã</p>
+<p>è®°ä½ä¸ä»¶äºï¼Annotation æ¯ç¨æ¥<strong>çº¦æåç²¾ç»åæ§å¶</strong>çï¼ä¸æ¯å¿é¡»çãåè¡¨å®ä½ä»ä¹æ³¨è§£é½ä¸ç¨å ï¼å¤©çå¯æã</p>
+<hr>
+<h2 id="å®å-mybatisjpa-æ¯æäººå">å®å MyBatis/JPA æ¯æäººåï¼</h2>
+<p>ç»å¯¹ä¸æ¯ã</p>
+<p>MyBatis ç®¡å¢å æ¹ï¼Bean Searcher ç®¡åè¡¨æ¥ãåå¸å¶èï¼åè°å±å­ã</p>
+<p>å°±å GraphQL ä¸æ¯ä¸ºäºåä»£ REST èççââå®åªæ¯è®© API æ¥è¯¢æ´çµæ´»ãBean Searcher ä¹ä¸æ¯ä¸ºäºåä»£ MyBatisââå®åªæ¯è®©åè¡¨æ£ç´¢ä¸åçè¦ã</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>ä»ä¹æ¶åç¨</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MyBatis / JPA</td>
+<td>å¢å æ¹ãäºå¡æ§æä½ãå¤æä¸å¡é»è¾</td>
+</tr>
+<tr>
+<td>Bean Searcher</td>
+<td>åå°ç®¡çåè¡¨ãæ°æ®å¯¼åºãæ¥è¡¨æ¥è¯¢ãä»»ä½"å¤æ¡ä»¶å¨æç­é"åºæ¯</td>
+</tr>
+<tr>
+<td>ä¸¤èçå³ç³»</td>
+<td><strong>äºè¡¥ï¼ä¸æ¯æ¿ä»£ãå ä¸ä¸ªä¾èµå°±å¤äºã</strong></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="çå®é¡¹ç®éçä½éª">çå®é¡¹ç®éçä½éª</h2>
+<p>æå¨ä¸ä¸ªé¡¹ç®éæ·±åº¦ä½¿ç¨ Bean Searcherï¼åå«æ¯ Spring Boot 2/3/4 å Solon 3/4ï¼ï¼æå¤§çæåä¸æ¯"ä»£ç å°äº"ââèæ¯<strong>æç»´æ¹å¼åäº</strong>ã</p>
+<p>ä»¥åæ¥å°åè¡¨æ¥è¯¢éæ±ï¼èå­éæ³çæ¯"è¿ä¸ª SQL æä¹åãåæ°æä¹æ¼ãæåºæä¹å¤çãåé¡µä¼ ä»ä¹å¯¹è±¡"ã</p>
+<p>ç°å¨æ¥å°åè¡¨æ¥è¯¢éæ±ï¼èå­éæ³çæ¯"è¿ä¸ªé¡µé¢éè¦åªäºå­æ®µï¼å®ä»¬æ¥èªåªäºè¡¨ï¼åªäºå­æ®µåè®¸åç«¯ç­é"ã</p>
+<p><strong>ä½ ä¸åæ¯ä¸ä¸ª SQL æ¼æ¥å·¥ãä½ æ¯ä¸ä¸ªé¢åå»ºæ¨¡èã</strong></p>
+<p>èå½ä½ æè¿ç§ä½éªåè¯åäºæ¶ï¼ä»ä»¬çç¬¬ä¸ååºéå¸¸æ¯ï¼"è¿ä¸å°±æ¯â¦â¦Java åç«¯çç GraphQLï¼"</p>
+<p>"å¯¹ã"</p>
+<hr>
+<h2 id="è¯è¯ç">è¯è¯ç</h2>
+<p>å¦æä½ è¯»å°è¿éï¼åç°ä¸é¢è¯´ççç¹é½æ¯ä½ æ¯å¤©å¨ç»åçââé£ä½ åºè¯¥è¯ä¸ä¸ã</p>
+<p>ä¸ç¨éæé¡¹ç®ï¼ä¸ç¨æ¿æ¢ ORMï¼ä¸ç¨æ¹åä»»ä½æ¶æãå®æ¯ä¸ä¸ªå®å¨ä¸ä¾µå¥çæ¡æ¶ï¼å MyBatis/JPA/Spring Data JDBC é½è½å±å­ã</p>
+<ul>
+<li>ð <a href="https://bs.zhxu.cn/" target="_blank" rel="noopener nofollow">å®æ´ææ¡£</a></li>
+<li>ð¥ <a href="https://demo-bs.zhxu.cn/" target="_blank" rel="noopener nofollow">å¨çº¿ Demoï¼é¶é¨ç½²ä½éªï¼</a></li>
+<li>â­ <a href="https://github.com/troyzhxu/bean-searcher" target="_blank" rel="noopener nofollow">GitHub</a> ï½ <a href="https://gitee.com/troyzhxu/bean-searcher" target="_blank" rel="noopener nofollow">Gitee</a></li>
+</ul>
+<p>å¦æä½ è§å¾è¿ç©æç¡®å®è§£å³äºä½ ççç¹ï¼ç¹ä¸ª Starï¼è®©æ´å¤è¢«åè¡¨æ¥è¯¢æç£¨ç Java å·¥ç¨å¸çå°å®ã</p>
+<p>æ¯ç« ââ <strong>ä½ æçå½è±å¨å if-else ä¸ï¼ä¸å¦è±å¨æ´æä»·å¼çäºæä¸ã</strong></p>
+
+
+</div>
+<div class="clear"></div>
+
+		</div>
+		<div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-07-25 21:01">2026-07-25 21:01</span>&nbsp;
+<a href="https://www.cnblogs.com/zhoxu">troyzhxu</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(21920168);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fzhoxu%2Fp%2F21920168&amp;targetId=21920168&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+	 ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ åäº«: å¦ä½å©ç¨workbuddyæ¥æå»ºæ¹éèªå¨åä»»å¡. ]]></title>
+    <link>https://www.cnblogs.com/smartfishliu/p/21919950</link>
+    <guid>92d7dc8fc4a8cbcfaf64697f4964951b</guid>
+    <description>
+    <![CDATA[ 
+		<h2>
+			<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/smartfishliu/p/21919950" title="åå¸äº 2026-07-25 20:28">
+    
+
+    <span role="heading" aria-level="2">åäº«: å¦ä½å©ç¨workbuddyæ¥æå»ºæ¹éèªå¨åä»»å¡.</span>
+    
+
+</a>
+
+		</h2>
+		<div class="postText"><div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>æ¬æå®ç°å©ç¨workbuddyæ¥ å®ç°ä¸ä¸ªæ¹éåç å¤æä»»å¡ç¤ºä¾:<br>
+è¦å®æçç®æ . æ¹éèªå¨åå°è®© workbuddyå®ç° éè¯»é¾æ¥, åè½¬çº¯ææ¬ä¿å­, åååºæ»ç»æè¦ä¿å­, æåæå10å¤§å³é®å­ä¿å­.</p>
+<h2 id="1-ç¬¬ä¸æ­¥--è®©workbuddyåä¸ä¸ªpythonç¨åº-è¿ä¸ªpythonç¨åºè½-åworkbuddyæäº¤ä»»å¡è¿è¡">1. ç¬¬ä¸æ­¥:  è®©workbuddyåä¸ä¸ªpythonç¨åº, è¿ä¸ªpythonç¨åºè½ åworkbuddyæäº¤ä»»å¡è¿è¡.</h2>
+<p>workbuddyåçä»£ç å¦ä¸:</p>
+<pre><code class="language-py">#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+WorkBuddy Helper
+================
+è¯»åä¸æ¬èæ¬åç®å½ç task.txtï¼å°å¶åå®¹ç²è´´å° WorkBuddy å·¥ä½å°è¾å¥æ¡ï¼
+å¹¶æ¨¡æåéå¨ä½ã
+
+ç¨æ³:
+    python workbuddy_helper.py
+    python workbuddy_helper.py --file other_task.txt --window WorkBuddy --no-confirm
+    python workbuddy_helper.py --send-mode click --btn-x 1200 --btn-y 980
+
+ä¾èµï¼è¿è¡æ¶èªå¨å®è£ï¼: pywin32, pyautogui, pyperclip
+
+æ³¨æ:
+    - è¿è¡åè¯·ç¡®ä¿ WorkBuddy æ¡é¢ç«¯å·²æå¼ä¸çªå£å¯è§ã
+    - é»è®¤ç¨ Enter é®åéï¼è¥åéæ¹å¼æ¯ç¹å»æé®ï¼è¯·ç¨ --send-mode click
+      å¹¶éè¿ --btn-x / --btn-y æå®åéæé®çå±å¹åæ ã
+    - ä¸­æåå®¹éè¿åªè´´æ¿ç²è´´ï¼æ¯æå¤è¡ææ¬ã
+    - ç´§æ¥ä¸­æ­¢ï¼æé¼ æ å¿«éç§»å°å±å¹å·¦ä¸è§ï¼pyautogui FAILSAFEï¼ã
+"""
+
+import os
+import sys
+import time
+import subprocess
+import argparse
+
+
+def ensure_packages():
+    """è¿è¡æ¶èªå¨å®è£ç¼ºå¤±ä¾èµã"""
+    deps = {
+        'win32gui': 'pywin32',
+        'pyautogui': 'pyautogui',
+        'pyperclip': 'pyperclip',
+    }
+    missing = []
+    for mod, pkg in deps.items():
+        try:
+            __import__(mod)
+        except ImportError:
+            missing.append(pkg)
+    if missing:
+        print(f'[ä¾èµ] æ­£å¨å®è£: {", ".join(missing)}')
+        subprocess.check_call(
+            [sys.executable, '-m', 'pip', 'install', *missing],
+            stdout=subprocess.DEVNULL,
+        )
+        print('[ä¾èµ] å®è£å®æã')
+
+
+ensure_packages()
+
+import win32gui
+import win32con
+import ctypes
+import pyautogui
+import pyperclip
+
+# pyautogui å®å¨è®¾ç½®
+pyautogui.FAILSAFE = True
+pyautogui.PAUSE = 0.1
+
+# é»è®¤éç½®
+DEFAULT_WINDOW_KEYWORD = 'WorkBuddy'
+DEFAULT_SEND_MODE = 'enter'          # enter | click
+DEFAULT_CLICK_Y_RATIO = 0.85         # è¾å¥æ¡å¨çªå£çºµåä½ç½®ï¼0=é¡¶, 1=åºï¼
+DEFAULT_PRE_DELAY = 1.5              # æ¿æ´»çªå£åç­å¾ç§æ°
+DEFAULT_CONFIRM_SECONDS = 3          # åéååæ°ç§æ°ï¼0=ä¸ç¡®è®¤ç´æ¥æ§è¡ï¼
+
+
+def find_window(keyword):
+    """ææ é¢å³é®å­æ¥æ¾å¯è§çªå£å¥æã"""
+    found = []
+
+    def _cb(hwnd, _):
+        if win32gui.IsWindowVisible(hwnd):
+            title = win32gui.GetWindowText(hwnd)
+            if title and keyword.lower() in title.lower():
+                found.append((hwnd, title))
+
+    win32gui.EnumWindows(_cb, None)
+    return found
+
+
+def force_foreground(hwnd):
+    """å¼ºå¶å°ç®æ çªå£ç½®å°åå°ã"""
+    user32 = ctypes.windll.user32
+    # æ¢å¤æå°åç¶æ
+    win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
+    # ALT é®æå·§ç»è¿ SetForegroundWindow çåå°çªå£éå¶
+    user32.keybd_event(win32con.VK_MENU, 0, 0, 0)
+    user32.keybd_event(win32con.VK_MENU, 0, win32con.KEYEVENTF_KEYUP, 0)
+    try:
+        win32gui.SetForegroundWindow(hwnd)
+    except Exception:
+        pass
+
+
+def click_input_area(hwnd, y_ratio):
+    """ç¹å»çªå£ä¸­è¾å¥æ¡å¤§è´åºåä»¥èç¦è¾å¥æ¡ï¼è¿åç¹å»å±å¹åæ ã"""
+    left, top, right, bottom = win32gui.GetWindowRect(hwnd)
+    cx = (left + right) // 2
+    cy = int(top + (bottom - top) * y_ratio)
+    pyautogui.click(cx, cy)
+    time.sleep(0.3)
+    return cx, cy
+
+
+def paste_text(text):
+    """éè¿åªè´´æ¿ç²è´´ææ¬ï¼æ¯æä¸­æä¸å¤è¡ï¼ã"""
+    pyperclip.copy(text)
+    time.sleep(0.2)
+    pyautogui.hotkey('ctrl', 'a')   # å¨éæ¸ç©ºæ§åå®¹
+    time.sleep(0.1)
+    pyautogui.hotkey('ctrl', 'v')  # ç²è´´
+    time.sleep(0.4)
+
+
+def send_enter():
+    pyautogui.press('enter')
+
+
+def send_click(x, y):
+    pyautogui.click(x, y)
+    time.sleep(0.2)
+
+
+def read_task(path):
+    with open(path, 'r', encoding='utf-8') as f:
+        return f.read().strip()
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description='å° task.txt åå®¹æäº¤å° WorkBuddy è¾å¥æ¡å¹¶åé'
+    )
+    here = os.path.dirname(os.path.abspath(__file__))
+    parser.add_argument('--file', default=os.path.join(here, 'task.txt'),
+                        help='ä»»å¡æä»¶è·¯å¾ï¼é»è®¤åç®å½ task.txtï¼')
+    parser.add_argument('--window', default=DEFAULT_WINDOW_KEYWORD,
+                        help='çªå£æ é¢å³é®å­ï¼é»è®¤ WorkBuddyï¼')
+    parser.add_argument('--send-mode', choices=['enter', 'click'],
+                        default=DEFAULT_SEND_MODE, help='åéæ¹å¼')
+    parser.add_argument('--btn-x', type=int, default=0,
+                        help='åéæé®å±å¹ X åæ ï¼send-mode=click æ¶ä½¿ç¨ï¼')
+    parser.add_argument('--btn-y', type=int, default=0,
+                        help='åéæé®å±å¹ Y åæ ï¼send-mode=click æ¶ä½¿ç¨ï¼')
+    parser.add_argument('--click-y-ratio', type=float, default=DEFAULT_CLICK_Y_RATIO,
+                        help='è¾å¥æ¡å¨çªå£çºµåæ¯ä¾ï¼é»è®¤ 0.85ï¼')
+    parser.add_argument('--no-click', action='store_true',
+                        help='ä¸ç¹å»è¾å¥æ¡åºåï¼åè®¾çªå£æ¿æ´»åè¾å¥æ¡å·²èç¦ï¼')
+    parser.add_argument('--pre-delay', type=float, default=DEFAULT_PRE_DELAY,
+                        help='æ¿æ´»çªå£åç­å¾ç§æ°')
+    parser.add_argument('--confirm', type=int, default=DEFAULT_CONFIRM_SECONDS,
+                        help='åéååæ°ç§æ°ï¼0=ä¸ç¡®è®¤ç´æ¥æ§è¡')
+    args = parser.parse_args()
+
+    # 1. è¯»åä»»å¡åå®¹
+    if not os.path.exists(args.file):
+        print(f'[éè¯¯] æ¾ä¸å°ä»»å¡æä»¶: {args.file}')
+        sys.exit(1)
+    text = read_task(args.file)
+    if not text:
+        print('[éè¯¯] task.txt ä¸ºç©º')
+        sys.exit(1)
+    print(f'[1/4] å·²è¯»åä»»å¡åå®¹ï¼{len(text)} å­ç¬¦ï¼: {args.file}')
+
+    # 2. æ¥æ¾çªå£
+    windows = find_window(args.window)
+    if not windows:
+        print(f'[éè¯¯] æªæ¾å°æ é¢åå« "{args.window}" ççªå£ï¼è¯·ç¡®è®¤ WorkBuddy å·²æå¼')
+        sys.exit(1)
+    hwnd, title = windows[0]
+    print(f'[2/4] å·²æ¾å°çªå£: {title}')
+
+    # 3. æ¿æ´»çªå£å¹¶èç¦è¾å¥æ¡
+    force_foreground(hwnd)
+    time.sleep(args.pre_delay)
+    if not args.no_click:
+        cx, cy = click_input_area(hwnd, args.click_y_ratio)
+        print(f'[3/4] å·²æ¿æ´»çªå£å¹¶ç¹å»è¾å¥æ¡åºå ({cx}, {cy})')
+    else:
+        print('[3/4] å·²æ¿æ´»çªå£ï¼è·³è¿ç¹å»è¾å¥æ¡ï¼')
+
+    # 4. ç²è´´å¹¶åé
+    if args.confirm &gt; 0:
+        print(f'[4/4] {args.confirm} ç§åç²è´´å¹¶åé...ï¼é¼ æ ç§»å°å±å¹å·¦ä¸è§å¯ä¸­æ­¢ï¼')
+        for i in range(args.confirm, 0, -1):
+            print(f'  {i}...')
+            time.sleep(1)
+    else:
+        print('[4/4] å¼å§ç²è´´å¹¶åé...')
+
+    paste_text(text)
+    print('  å·²ç²è´´ææ¬')
+
+    if args.send_mode == 'enter':
+        send_enter()
+        print('  å·²æ Enter åé')
+    else:
+        if args.btn_x == 0 and args.btn_y == 0:
+            print('[éè¯¯] click æ¨¡å¼éè¦æä¾ --btn-x å --btn-y')
+            sys.exit(1)
+        send_click(args.btn_x, args.btn_y)
+        print(f'  å·²ç¹å»åéæé® ({args.btn_x}, {args.btn_y})')
+
+    print('å®æã')
+
+
+if __name__ == '__main__':
+    main()
+
+</code></pre>
+<h2 id="ç¬¬äºæ­¥-ç¨ä½ æçæçèæ¬è¯­è¨å»-å©ç¨åæpythonç¨åºå®æ-æ¹éèªå¨å">ç¬¬äºæ­¥: ç¨ä½ æçæçèæ¬è¯­è¨å» å©ç¨åæpythonç¨åºå®æ æ¹éèªå¨å.</h2>
+<p>ç¬èéæ©äºapl.</p>
+<pre><code class="language-apl">/*
+    è¿æ¯ä¸ªèªå¨éè¯»æç« çæµè¯. 
+    è¿ä¸ªä»»å¡åå© workbuddyæ¥å®æéè¯».     
+    
+*/
+
+include "/RY_OS/lib/sandbox/sandbox.apl";
+
+&lt;LISTEXT $$urls&gt;
+
+37.4K Starï¼å¼æºAstrBotï¼è®©AIæ ç¼åµå¥ææèå¤©è½¯ä»¶
+https://www.toutiao.com/article/7665338880299762227/?app=news_article&amp;category_new=__all__&amp;module_name=Android_tt_others&amp;share_did=MS4wLjACAAAAeVX-6RpCkMTHGH2iYzJRLvKVVP4bNGK32agfv6jvBzM&amp;share_uid=MS4wLjABAAAAWH6YI1MY6xc9jZXrifkhTHsXyx7M_or_Vy6p0uwvq50&amp;timestamp=1784909906&amp;tt_from=wechat&amp;upstream_biz=Android_wechat&amp;utm_campaign=client_share&amp;utm_medium=toutiao_android&amp;utm_source=wechat&amp;share_token=83858a41-b370-4df9-9871-0617c3cc6cec&amp;source=m_redirect
+
+èµ·ç¹ä¸­æç½: é­ä¿®åç©¿æµ£çå¸ï¼ç¼ç¾ä¸è¡å°¸å¹¡ï¼
+https://www.qidian.com/chapter/1048345068/891881253/
+
+çªè: èµ¶å±±æçï¼å¼å±å»å­ï¼ç½æ¡ä¸ªåª³å¦
+https://fanqienovel.com/reader/7543148263973585433
+
+https://www.toutiao.com/article/7660562749302292992/?app=news_article&amp;category_new=__all__&amp;module_name=Android_tt_others&amp;share_did=MS4wLjACAAAAeVX-6RpCkMTHGH2iYzJRLvKVVP4bNGK32agfv6jvBzM&amp;share_uid=MS4wLjABAAAAWH6YI1MY6xc9jZXrifkhTHsXyx7M_or_Vy6p0uwvq50&amp;timestamp=1784816031&amp;tt_from=wechat&amp;upstream_biz=Android_wechat&amp;utm_campaign=client_share&amp;utm_medium=toutiao_android&amp;utm_source=wechat&amp;share_token=24feb961-c48f-423e-a32a-5f6aa9641a65&amp;source=m_redirect
+
+DeepSeek V4åè´¹æ¸ éï¼å®æµè½ç¨ï¼ä¸åé±æ²¡è±
+https://www.toutiao.com/article/7664909891089236480/?app=news_article&amp;category_new=text_inner_flow&amp;module_name=Android_tt_others&amp;share_did=MS4wLjACAAAAeVX-6RpCkMTHGH2iYzJRLvKVVP4bNGK32agfv6jvBzM&amp;share_uid=MS4wLjABAAAAWH6YI1MY6xc9jZXrifkhTHsXyx7M_or_Vy6p0uwvq50&amp;timestamp=1784733607&amp;tt_from=wechat&amp;upstream_biz=Android_wechat&amp;utm_campaign=client_share&amp;utm_medium=toutiao_android&amp;utm_source=wechat&amp;share_token=2953795d-5e7a-4ce8-8789-dcc2bec53f60&amp;source=m_redirect
+
+16ä¸ªASRæ¨¡åæãä¸ä¸ªC++åºï¼transcribe.cpp ææ¬å°è¯­é³è½¬å½å·å°æ°é«åº¦
+https://www.toutiao.com/article/7664785505313980968/?app=news_article&amp;category_new=__all__&amp;module_name=Android_tt_others&amp;share_did=MS4wLjACAAAAeVX-6RpCkMTHGH2iYzJRLvKVVP4bNGK32agfv6jvBzM&amp;share_uid=MS4wLjABAAAAWH6YI1MY6xc9jZXrifkhTHsXyx7M_or_Vy6p0uwvq50&amp;timestamp=1784713136&amp;tt_from=wechat&amp;upstream_biz=Android_wechat&amp;utm_campaign=client_share&amp;utm_medium=toutiao_android&amp;utm_source=wechat&amp;share_token=2c2ff7c6-165c-439c-8617-3888fc6cedee&amp;source=m_redirect
+
+NLoptï¼ä¸ä¸ªå¼æºçc++åº
+https://www.toutiao.com/article/7662503684458234368/?app=news_article&amp;category_new=__all__&amp;module_name=Android_tt_others&amp;share_did=MS4wLjACAAAAeVX-6RpCkMTHGH2iYzJRLvKVVP4bNGK32agfv6jvBzM&amp;share_uid=MS4wLjABAAAAWH6YI1MY6xc9jZXrifkhTHsXyx7M_or_Vy6p0uwvq50&amp;timestamp=1784561517&amp;tt_from=wechat&amp;upstream_biz=Android_wechat&amp;utm_campaign=client_share&amp;utm_medium=toutiao_android&amp;utm_source=wechat&amp;share_token=0c4ba8e6-888d-465a-a8d5-2cf7f510f317&amp;source=m_redirect
+
+æ¯å¤© 5 åéçå®å¨ç½ç­ç¹
+https://www.toutiao.com/w/1871116598260739/?app=news_article&amp;category_new=text_inner_flow&amp;module_name=Android_tt_others&amp;share_did=MS4wLjACAAAAeVX-6RpCkMTHGH2iYzJRLvKVVP4bNGK32agfv6jvBzM&amp;share_uid=MS4wLjABAAAAWH6YI1MY6xc9jZXrifkhTHsXyx7M_or_Vy6p0uwvq50&amp;timestamp=1784549941&amp;tt_from=wechat&amp;upstream_biz=Android_wechat&amp;utm_campaign=client_share&amp;utm_medium=toutiao_android&amp;utm_source=wechat&amp;share_token=e3968691-661f-48c5-bc76-eb08c792b33d&amp;source=m_redirect
+
+hermesåè´¹ä½éªdeepseekV4ï¼ https://build.nvidia.com/ ï¼
+https://www.toutiao.com/article/7632486836014760488/?app=news_article&amp;category_new=__all__&amp;module_name=Android_tt_others&amp;share_did=MS4wLjACAAAAeVX-6RpCkMTHGH2iYzJRLvKVVP4bNGK32agfv6jvBzM&amp;share_uid=MS4wLjABAAAAWH6YI1MY6xc9jZXrifkhTHsXyx7M_or_Vy6p0uwvq50&amp;timestamp=1784028421&amp;tt_from=wechat&amp;upstream_biz=Android_wechat&amp;utm_campaign=client_share&amp;utm_medium=toutiao_android&amp;utm_source=wechat&amp;share_token=341f512f-c759-421a-acb4-0699f212182f&amp;source=m_redirect
+
+&lt;/LISTEXT&gt;
+
+
+$$task_template_file="{apl}/runyu/AI_code/AI_Code_apl/deepseek/auto_training/template/read_URL.txt";
+$$task_template=read_text_file($$task_template_file,$bom);
+if($bom!="utf-bom") { $task_template=to_utf8($task_template);}
+
+foreach($$urls,$url)
+{
+    APP::read_url $url;
+    sleep(1000*60);
+}
+
+getche("...");
+
+
+function APP::read_url($url)
+{
+   print_ln "begin read: "+$url[0]; 
+   $task=replace_sub_strings($$task_template,"{URL}", $url[1]);
+   $time=get_current_time($date); 
+   $task=replace_sub_strings($task,"{ä»å¤©æ¥æ}", to_string($date) );
+   $task=replace_sub_strings($task,"{å½åæ¶é´}", to_string($time) );
+   
+   write_text_file("{apl}/runyu/AI_code/AI_Code_apl/deepseek/auto_training/task.txt",$task,"utf8");
+   $cmd="python.exe " +  "d:/apl/runyu/AI_code/AI_Code_apl/deepseek/auto_training/workbuddy_helper.py" ;
+   system $cmd;
+   
+   print_ln "end read"; 
+   
+}
+</code></pre>
+<h2 id="3-ç¬¬ä¸æ­¥--åæ¯è¶-åæ¥å°±å¯ä»¥äº">3. ç¬¬ä¸æ­¥:  åæ¯è¶, åæ¥å°±å¯ä»¥äº.</h2>
+
+
+</div>
+<div class="clear"></div>
+</div>
+		<p class="postfoot">
+			posted on 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-07-25 20:29">2026-07-25 20:28</span>&nbsp;
+<a href="https://www.cnblogs.com/smartfishliu">smartfish_liu</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(21919950);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fsmartfishliu%2Fp%2F21919950&amp;targetId=21919950&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+
+		</p>
+	 ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ ä¸äººå¬å¸OPCçå¿µæ¢ç´¢ï¼å¦ä½æAgentä¸å¡åæé­ç¯ ]]></title>
+    <link>https://www.cnblogs.com/jyzhao/p/21919756</link>
+    <guid>96227b0cdc9266e11585d74d5c62d7b6</guid>
+    <description>
+    <![CDATA[ 
+    <a name="top"></a>
+    <h2><a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/jyzhao/p/21919756" title="åå¸äº 2026-07-25 20:12">
+    
+
+    <span role="heading" aria-level="2">ä¸äººå¬å¸OPCçå¿µæ¢ç´¢ï¼å¦ä½æAgentä¸å¡åæé­ç¯</span>
+    
+
+</a>
+</h2>
+    <small>
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-07-25 20:12">2026-07-25 20:12</span>&nbsp;
+<a href="https://www.cnblogs.com/jyzhao">AlfredZhao</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(21919756);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fjyzhao%2Fp%2F21919756&amp;targetId=21919756&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</small>
+    <div class="entry">
+        <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>ä¸äººå¬å¸æè¿å®å¨æ¯å¤ªç«äºï¼ä½å®å¹¶ä¸æ¯ç®åå°âä¸ä¸ªäººå¹²ææäºâï¼èæ¯æäººçå¤æ­ãAIçæ§è¡è½ååæ¸æ°çä¸å¡è¾¹çç»åèµ·æ¥ãå´ç»âå®å¶å®¢æ·Agentâè¿ä¸ªæ¹åï¼ç¬èçå°ä¸ä¸ªå¾æææçé­ç¯éå½¢ï¼CEOè´è´£æ²éåå³ç­ï¼ä¸åAgentè´è´£äº§åãå¼åãéªè¯åå®¢æï¼æååç¨ç¨æ·åé¦æ¨å¨æç»­ä¿®å¤ã</p>
+<h2 id="01--ä¸äººå¬å¸å¯ä»¥ææ ·åå·¥">01 | ä¸äººå¬å¸å¯ä»¥ææ ·åå·¥</h2>
+<p>è¿ä¸ªæ¨¡å¼éï¼CEOæ¬èº«ä¹æ¯ä¸ä¸ªAgentè§è²ï¼è´è´£æ´ä½åè°åä¸å¡å¤æ­ã</p>
+<p>å´ç»å®ï¼å¯ä»¥ç»§ç»­æåºå ä¸ªå³é®Agentï¼</p>
+<p>äº§åAgentè´è´£äº§åè®¾è®¡ï¼å¯ä»¥åå©ç±»ä¼¼ Google Stitch è¿æ ·çå·¥å·å®æçé¢æäº§åæ¹æ¡æ¢ç´¢ã</p>
+<p>ç¨åºåAgentè´è´£å®ç°ï¼å¯ä»¥ä½¿ç¨ Claude Codeï¼ä¹å¯ä»¥ä½¿ç¨ Codex CLIãä¸ºäºæ§å¶å¹¶ååææ¬ï¼äººä¸ºè®¾ç½®ä¸éï¼ä¾å¦æå¤å¼å¯ 8 ä¸ª instanceã</p>
+<p>éªè¯ç¯èå¿é¡»æ¢ä¸ä¸ªæ¨¡åæ¥åï¼æ¯å¦å¼åç¨ä¸ä¸ªæ¨¡åï¼éªè¯ç¨æ¢å¦ä¸ä¸ªæ¨¡åãè¿æ ·åçéç¹ä¸æ¯è¿½æ±å½¢å¼ä¸çâå¤æ¨¡åâï¼èæ¯é¿ååä¸ä¸ªæ¨¡åæ¢åä»£ç åèªæç¡®è®¤ï¼éä½ç²åºã</p>
+<p>æåè¿æ customer supportï¼ç¨æ¥æ¿æ¥ç¨æ·åé¦ãé®é¢è®°å½ååç»­ä¿®å¤å¥å£ã</p>
+<p>è¿ä¸ªç»æçå³é®å¨äºï¼äººç±»ä¸æ¶å¤±ï¼èæ¯å®ä¹æ¹åãè¾¹çåè´£ä»»ï¼AIä¸åªæ¯èå¤©å·¥å·ï¼èæ¯è¢«æ¾è¿å·ä½å²ä½éæ§è¡ä»»å¡ã</p>
+<h2 id="02--å®å¶å®¢æ·agentçä¸å¡é­ç¯">02 | å®å¶å®¢æ·Agentçä¸å¡é­ç¯</h2>
+<p>è¿ä¸ªä¸äººå¬å¸çä¸å¡å½¢æå¯ä»¥çè§£ä¸ºï¼å¸®å®¢æ·å®å¶Agentã</p>
+<p>æµç¨å¾ç´æ¥ï¼ååå®¢æ·èéæ±ï¼ææ²éç»è®ºæ´çç»ç³»ç»ï¼å å¤©åäº¤ä»ä¸ä¸ªAgentãä¸çº¿åï¼å¦æç¨æ·åé¦åªéä¸å¥½ç¨ï¼ç´æ¥åé¦å°ç³»ç»åè®°å½ä¸æ¥ï¼ç³»ç»å®æ¶æ«ææ°çéæ±ï¼åæ ¹æ®æåµç´æ¥ä¿®å¤ base codeçè³å¼åæ°çåè½æ¨¡åã</p>
+<p>å æ­¤ï¼åé¦å¤§è´å¯ä»¥åæä¸¤ç±»ï¼</p>
+<p>feature requestï¼ä¹å°±æ¯åè½è¯·æ±ã</p>
+<p>bug reportï¼ä¹å°±æ¯éè¯¯åé¦ã</p>
+<p>è¿å°±å½¢æäºä¸ä¸ªå°é­ç¯ï¼éæ±æ²éãAgentäº¤ä»ãç¨æ·åé¦ãä»£ç ä¿®å¤ãåæ¬¡äº¤ä»ã</p>
+<p>æ¯ä¸ªAgentè¿ä¼ç±äººç±»å®ä¹ <code>soul</code> å <code>identity</code> æä»¶ãä¹å°±æ¯è¯´ï¼Agentä¸åªæ¯è°ç¨æ¨¡åï¼è¿éè¦ææ¸æ°çèº«ä»½ãè¯­æ°ãç®æ åè¾¹çã</p>
+<p>åä¸æ¨¡å¼ä¸ï¼å®å¶Agentå¦ä½çå©ï¼æææ¶è´¹ï¼è¿æ¯ä¸æ¬¡æ§ä¹°æ­ï¼è¿æ¯å¶ä»æ´å¥½çæ¨¡å¼ï¼å¤§å®¶å¯ä»¥åæå·±è§ã</p>
+<h2 id="03--çæ­£çé®é¢å¨çäº§ç¯å¢">03 | çæ­£çé®é¢å¨çäº§ç¯å¢</h2>
+<p>è¿ä¸ªæ¨¡å¼å¾å¸å¼äººï¼ä½ä¹æææ¾é®é¢ã</p>
+<p>é¦åæ¯å¸åºæ¯å¦éè¦ä¸äººãè¿éçè®¾æ³æ¯ï¼CEOç´æ¥åå®¢æ·æ²éï¼åæ¶åä¸äºåå®¹åå¸ï¼æ¯å¦ååç±»ç¤¾äº¤å¹³å°ãè¿æå³çè·å®¢ãæ²éãäº¤ä»é½åå¨è¿ä¸ªâCEOè§è²âä¸ã</p>
+<p>å¶æ¬¡æ¯éªè¯é®é¢ãæäººæåºï¼å®éçäº§å®¢æ·ä¼éå°å¾å¤é®é¢ãDemo ready å MVP ready ä¸ç­äº production readyãä¸ä¸ªAgentè½æ¼ç¤ºï¼ä¸ä»£è¡¨å®è½ç¨³å®æ¿æçå®ä¸å¡ã</p>
+<p>è¿æä¸ä¸ªæ ¸å¿å¤æ­æ¯ï¼<code>agent = model * harness</code>ã</p>
+<p>æ¨¡ååªæ¯è½åæ¥æºï¼harness ææ¯ææ¨¡åæ¥è¿ä¸å¡æµç¨çç»æï¼åæ¬å·¥å·ãä¸ä¸æãéªè¯ãåé¦ãéå¶åä¿®å¤æºå¶ã</p>
+<p>æåè¿æè´£ä»»è¾¹çååä¸æ¨¡å¼é®é¢ãå¦æâ100% AIæ¥åâä½æ²¡æ validatedï¼ä½¿ç¨èæ¯å¦æ¿æé®é¢ï¼æå¡æ¹æ¿æå°ä»ä¹ç¨åº¦ï¼è¿äºé½éè¦å¨çæ­£æ¶è´¹åäº¤ä»åæ³æ¸æ¥ã</p>
+<p>ä¸äººå¬å¸OPCçå³é®ï¼ä¸æ¯å¹»æ³AIæ¿ä»£ææäººï¼èæ¯æå·¥ä½ææå¯æ§è¡ãå¯éªè¯ãå¯åé¦çé­ç¯ãåªæé­ç¯æç«ï¼Agentä¸å¡æå¯è½ä»æ¼ç¤ºèµ°åçå®äº¤ä»ã</p>
+<p>å³æ³¨æï¼åAIä¸èµ·æé¿~</p>
+
+
+</div>
+<div id="MySignature" role="contentinfo">
+    <a href="https://www.cnblogs.com/jyzhao/" target="_blank">AlfredZhao</a>Â©çæææãä»Oracleèµ·èªï¼é¢ç¥ç²¾å½©çITææ¯ãã<br>
+è½¬è½½è¯·æ³¨æåæé¾æ¥ï¼<a href="https://www.cnblogs.com/jyzhao/p/21919756" target="_blank">https://www.cnblogs.com/jyzhao/p/21919756</a>
+<hr>
+<div style="text-align:center; margin-top:30px;">
+  <p style="font-size:14px;color:#555;">
+    ð æè°¢éè¯»ï¼æ¬¢è¿å³æ³¨æçå¬ä¼å· <b>ãèµµéå®ã</b>
+  </p>
+  <img src="https://images.cnblogs.com/cnblogs_com/jyzhao/824234/o_250208075013_qrcode-zjy.jpg" width="160" style="border:1px solid #ddd;border-radius:8px;">
+</div>
+</div>
+<div class="clear"></div>
+
+        <div class="clear"></div>
+        
+</div>
+    <ul class="postmetadata">
+        <vc:categories-tags blog-app="jyzhao" blog-id="186567" post-id="21919756"></vc:categories-tags>
+    </ul>
+ ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ å¸¦æ Treap è§£æ ]]></title>
+    <link>https://www.cnblogs.com/DeepSleep0629/p/21919467</link>
+    <guid>ce0f29c61dc1e932acc8809ba3b93eec</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/DeepSleep0629/p/21919467" title="åå¸äº 2026-07-25 19:23">
+    
+
+    <span role="heading" aria-level="2">å¸¦æ Treap è§£æ</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                    <div id="cnblogs_post_description" style="display: none">
+        
+        Treap æ¯ä¸ç§ä¾é éæºæå¼ç»´æ¤å¹³è¡¡æ§çå¹³è¡¡æ ï¼æ¯ææå¥ãå é¤ãç¬¬ $k$ å°ãæåãåé©±ãåç»§ç­å¹³è¡¡æ çåºæ¬åè½ãTreap å©ç¨å åå¹³è¡¡æ çæ§è´¨ï¼å¶ä¸­å ä½¿ç¨çæ¯éæºä¼åçº§ä½ä¸ºå³é®å­ã
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h1 id="treap">Treap</h1>
+<h2 id="ä»ç»">ä»ç»</h2>
+<p>Treap æ¯ä¸ç§ä¾é éæºæå¼ç»´æ¤å¹³è¡¡æ§çå¹³è¡¡æ ï¼æ¯ææå¥ãå é¤ãç¬¬ <span class="math inline">\(k\)</span> å°ãæåãåé©±ãåç»§ç­å¹³è¡¡æ çåºæ¬åè½ãTreap å©ç¨å åå¹³è¡¡æ çæ§è´¨ï¼å¶ä¸­å ä½¿ç¨çæ¯éæºä¼åçº§ä½ä¸ºå³é®å­ãå¯ä»¥è¯æï¼å¹³ååæ¬¡å¤æåº¦æ¯ <span class="math inline">\(O(\log n)\)</span><s>ï¼OI ä¸éè¦è¯æï¼</s>ã</p>
+<h2 id="ç®æ³åå®¹">ç®æ³åå®¹</h2>
+<h3 id="è¾å©å½æ°åç»æä½">è¾å©å½æ°åç»æä½</h3>
+<h4 id="nodeç»æä½">Nodeç»æä½</h4>
+<p>æ²¡å¥å¥½è®²çã</p>
+<pre><code class="language-cpp">struct Node {
+    int lc, rc, rk, sz;
+    int key;
+} node[N];
+int cnt;
+int rt;
+</code></pre>
+<h4 id="push_upåå¶ä»ç®åä»£ç çå½æ°">push_upåå¶ä»ç®åä»£ç çå½æ°</h4>
+<p>ä¸æ ·æ²¡å¥å¥½è®²çã</p>
+<pre><code class="language-cpp">int &amp;lc(int u) {return node[u].lc;}
+int &amp;rc(int u) {return node[u].rc;}
+int &amp;rk(int u) {return node[u].rk;}
+int &amp;sz(int u) {return node[u].sz;}
+int &amp;key(int u) {return node[u].key;}
+void push_up(int u) {
+    sz(u) = sz(lc(u)) + sz(rc(u)) + 1;
+}
+</code></pre>
+<h4 id="æè½¬">æè½¬</h4>
+<p>Treap çæè½¬åä¸ºå·¦æåå³æã</p>
+<p><img src="https://cdn.luogu.com.cn/upload/image_hosting/fkpdtj2s.png" alt="" loading="lazy"></p>
+<p>è¿æ¯ <span class="math inline">\(1\)</span> çå·¦æãç®åæ¥è¯´ï¼å°±æ¯ <span class="math inline">\(1\)</span> åæ <span class="math inline">\(1\)</span> çå³å­©å­çå·¦å­©å­ï¼ <span class="math inline">\(1\)</span> çå³å­©å­åæ¥ççå·¦å­©å­åæ <span class="math inline">\(1\)</span> çå³å­©å­ã</p>
+<pre><code class="language-cpp">void left(int &amp;u) {
+    int v = rc(u), tmp = lc(v);
+    lc(v) = u;
+    rc(u) = tmp;
+    push_up(u), push_up(v);
+    u = v;
+}
+</code></pre>
+<p><img src="https://cdn.luogu.com.cn/upload/image_hosting/i866cnqh.png" alt="" loading="lazy"></p>
+<p>å³æä¹ä¸æ ·ï¼å°±æ¯å·¦æåè¿æ¥ã</p>
+<pre><code class="language-cpp">void right(int &amp;u) {
+    int v = lc(u), tmp = rc(v);
+    rc(v) = u;
+    lc(u) = tmp;
+    push_up(u), push_up(v);
+    u = v;
+}
+</code></pre>
+<h4 id="éæºæ°">éæºæ°</h4>
+<p>ä½¿ç¨ mt19937ï¼è®°å¾å¨æé éåå§åç§å­ã</p>
+<pre><code class="language-cpp">mt19937 engine;
+int randint(int minn = 0x80000000, int maxn = 0x7FFFFFFF) {
+    std::uniform_int_distribution&lt;int&gt; dist(minn, maxn);
+    return dist(engine);
+}
+Treap(int seed = random_device{}()) {
+    rt = 0, cnt = 0;
+    engine.seed(seed);
+}
+</code></pre>
+<h3 id="æå¥">æå¥</h3>
+<p>ç±äºå¹³è¡¡æ æ§è´¨æ´é¾ç»´æ¤ï¼æä»¥åä¾é å¹³è¡¡æ æ§è´¨æå¥ï¼åå¨åæº¯æ¶è¿è¡æè½¬è°æ´ã</p>
+<pre><code class="language-cpp">void insert(int &amp;u, const int &amp;ky) {
+    if(!u) {
+        node[++cnt] = {0, 0, randint(), 1, ky}, u = cnt;
+        return;
+    }
+    sz(u)++;
+    if(ky &lt; key(u)) insert(lc(u), ky);
+    else insert(rc(u), ky);
+    if(lc(u) &amp;&amp; rk(lc(u)) &lt; rk(u)) right(u);
+    if(rc(u) &amp;&amp; rk(rc(u)) &lt; rk(u)) left(u);
+}
+</code></pre>
+<h3 id="å é¤">å é¤</h3>
+<p>å å®åç»´æ¤å æå¼ã</p>
+<pre><code class="language-cpp">void erase(int &amp;u, const int &amp;ky) {
+    if(!u) return;
+    if(key(u) == ky) {
+        if(!lc(u) || !rc(u)) u = lc(u) + rc(u);
+        else if(rk(lc(u)) &lt; rk(rc(u))) right(u), erase(rc(u), ky);
+        else left(u), erase(lc(u), ky);
+    } else if(ky &lt; key(u)) erase(lc(u), ky);
+    else erase(rc(u), ky);
+    if(u) push_up(u);
+}
+</code></pre>
+<h3 id="æååé©±åç»§ç¬¬--å°">æåãåé©±ãåç»§ãç¬¬ <span class="math inline">\(k\)</span> å°</h3>
+<p>è·æ®éç <a href="https://oi-wiki.org/ds/bst" target="_blank" rel="noopener nofollow">BST</a> æ¯ä¸æ ·çï¼ä¸ä¼çå¯ä»¥èªå·±æ¥ã</p>
+<pre><code class="language-cpp">int query_rk(int u, const int &amp;ky) {
+    if(!u) return 1;
+    if(ky &lt;= key(u)) return query_rk(lc(u), ky);
+    else return sz(lc(u)) + 1 + query_rk(rc(u), ky);
+}
+int query_kth(int u, int k) {
+    if(sz(lc(u)) &gt;= k) return query_kth(lc(u), k);
+    if(sz(lc(u)) + 1 == k) return key(u);
+    return query_kth(rc(u), k - sz(lc(u)) - 1);
+}
+int pre(int u, const int &amp;v) {
+    if(!u) return -1e9;
+    if(key(u) &lt; v) return max(key(u), pre(rc(u), v));
+    return pre(lc(u), v);
+}
+int suc(int u, const int &amp;v) {
+    if(!u) return 1e9;
+    if(key(u) &gt; v) return min(key(u), suc(lc(u), v));
+    return suc(rc(u), v);
+}
+</code></pre>
+<h2 id="å®æ´å°è£ä»£ç ">å®æ´å°è£ä»£ç </h2>
+<pre><code class="language-cpp">const int N = 1e5 + 5;
+class Treap {
+private:
+    mt19937 engine;
+    struct Node {
+        int lc, rc, rk, sz;
+        int key;
+    } node[N];
+    int cnt;
+    int rt;
+    int &amp;lc(int u) {return node[u].lc;}
+    int &amp;rc(int u) {return node[u].rc;}
+    int &amp;rk(int u) {return node[u].rk;}
+    int &amp;sz(int u) {return node[u].sz;}
+    int &amp;key(int u) {return node[u].key;}
+    void push_up(int u) {
+        sz(u) = sz(lc(u)) + sz(rc(u)) + 1;
+    }
+    int randint(int minn = 0x80000000, int maxn = 0x7FFFFFFF) {
+        std::uniform_int_distribution&lt;int&gt; dist(minn, maxn);
+        return dist(engine);
+    }
+    void right(int &amp;u) {
+        int v = lc(u), tmp = rc(v);
+        rc(v) = u;
+        lc(u) = tmp;
+        push_up(u), push_up(v);
+        u = v;
+    }
+    void left(int &amp;u) {
+        int v = rc(u), tmp = lc(v);
+        lc(v) = u;
+        rc(u) = tmp;
+        push_up(u), push_up(v);
+        u = v;
+    }
+    void insert(int &amp;u, const int &amp;ky) {
+        if(!u) {
+            node[++cnt] = {0, 0, randint(), 1, ky}, u = cnt;
+            return;
+        }
+        sz(u)++;
+        if(ky &lt; key(u)) insert(lc(u), ky);
+        else insert(rc(u), ky);
+        if(lc(u) &amp;&amp; rk(lc(u)) &lt; rk(u)) right(u);
+        if(rc(u) &amp;&amp; rk(rc(u)) &lt; rk(u)) left(u);
+    }
+    void erase(int &amp;u, const int &amp;ky) {
+        if(!u) return;
+        if(key(u) == ky) {
+            if(!lc(u) || !rc(u)) u = lc(u) + rc(u);
+            else if(rk(lc(u)) &lt; rk(rc(u))) right(u), erase(rc(u), ky);
+            else left(u), erase(lc(u), ky);
+        } else if(ky &lt; key(u)) erase(lc(u), ky);
+        else erase(rc(u), ky);
+        if(u) push_up(u);
+    }
+    int query_rk(int u, const int &amp;ky) {
+        if(!u) return 1;
+        if(ky &lt;= key(u)) return query_rk(lc(u), ky);
+        else return sz(lc(u)) + 1 + query_rk(rc(u), ky);
+    }
+    int query_kth(int u, int k) {
+        if(sz(lc(u)) &gt;= k) return query_kth(lc(u), k);
+        if(sz(lc(u)) + 1 == k) return key(u);
+        return query_kth(rc(u), k - sz(lc(u)) - 1);
+    }
+    int pre(int u, const int &amp;v) {
+        if(!u) return -1e9;
+        if(key(u) &lt; v) return max(key(u), pre(rc(u), v));
+        return pre(lc(u), v);
+    }
+    int suc(int u, const int &amp;v) {
+        if(!u) return 1e9;
+        if(key(u) &gt; v) return min(key(u), suc(lc(u), v));
+        return suc(rc(u), v);
+    }
+public:
+    Treap(int seed = random_device{}()) {
+        rt = 0, cnt = 0;
+        engine.seed(seed);
+    }
+    void insert(const int &amp;ky) {
+        insert(rt, ky);
+    }
+    void erase(const int &amp;ky) {
+        erase(rt, ky);
+    }
+    int query_rk(const int &amp;ky) {
+        return query_rk(rt, ky);
+    }
+    int query_kth(int k) {
+        return query_kth(rt, k);
+    }
+    int pre(const int &amp;ky) {
+        return pre(rt, ky);
+    }
+    int suc(const int &amp;ky) {
+        return suc(rt, ky);
+    }
+};
+Treap t;
+</code></pre>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-07-25 19:24">2026-07-25 19:23</span>&nbsp;
+<a href="https://www.cnblogs.com/DeepSleep0629">deepsleep</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(21919467);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FDeepSleep0629%2Fp%2F21919467&amp;targetId=21919467&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
     <title><![CDATA[ BAOWUNOJå¹³åç³å¤´ ]]></title>
     <link>https://www.cnblogs.com/chenchen2011/p/21912445</link>
     <guid>b5e23a9ec607140694c004e4f57d73cf</guid>
@@ -629,7 +1589,7 @@ int main(){
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-07-25 09:55">2026-07-25 09:54</span>&nbsp;
 <a href="https://www.cnblogs.com/gloamfox">æ®è²ä¹ç</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">90</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(21900189);return false;">æ¶è</a>&nbsp;
@@ -1069,7 +2029,7 @@ v_3 &amp;= E(\{\mathrm{DR}\},\, \mathrm{UL}) \quad &amp;P=\{\mathrm{DR}\},\; Q=\
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-07-25 09:52">2026-07-25 09:51</span>&nbsp;
 <a href="https://www.cnblogs.com/h-elden">H_Elden</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">49</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(21896206);return false;">æ¶è</a>&nbsp;
@@ -1164,7 +2124,7 @@ v_3 &amp;= E(\{\mathrm{DR}\},\, \mathrm{UL}) \quad &amp;P=\{\mathrm{DR}\},\; Q=\
 	<div class="postDesc">posted on 
 <span id="post-date" data-last-update-days="0.0006944444444444445" data-date-updated="2026-07-25 08:55">2026-07-25 08:54</span>&nbsp;
 <a href="https://www.cnblogs.com/xiexj">ç¼ç¨ä¸ç</a>&nbsp;
-éè¯»(<span id="post_view_count">5</span>)&nbsp;
+éè¯»(<span id="post_view_count">86</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(21898731);return false;">æ¶è</a>&nbsp;
@@ -1174,16 +2134,16 @@ v_3 &amp;= E(\{\mathrm{DR}\},\, \mathrm{UL}) \quad &amp;P=\{\mathrm{DR}\},\; Q=\
     </description>
     </item>
 <item>
-    <title><![CDATA[ Redisåéæ£ç´¢ï¼ç¼å­ä¹çå·è¿åéèµé ]]></title>
-    <link>https://www.cnblogs.com/gloamfox/p/21893909</link>
-    <guid>00e1059d5f5455e4fed2d3d3557c5191</guid>
+    <title><![CDATA[ æ·±åº¦ä¼åéåé¢ç®é¢è§£ ]]></title>
+    <link>https://www.cnblogs.com/zhhhanry/p/21918356</link>
+    <guid>af8b118674962a6436b1b459eedc7883</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/gloamfox/p/21893909" title="åå¸äº 2026-07-24 20:53">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/zhhhanry/p/21918356" title="åå¸äº 2026-07-25 18:18">
     
 
-    <span role="heading" aria-level="2">Redisåéæ£ç´¢ï¼ç¼å­ä¹çå·è¿åéèµé</span>
+    <span role="heading" aria-level="2">æ·±åº¦ä¼åéåé¢ç®é¢è§£</span>
     
 
 </a>
@@ -1192,1657 +2152,194 @@ v_3 &amp;= E(\{\mathrm{DR}\},\, \mathrm{UL}) \quad &amp;P=\{\mathrm{DR}\},\; Q=\
             <div class="clear"></div>
             <div class="postBody">
                 <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>æå° Redisï¼å¤§å¤æ°å¼åèçç¬¬ä¸ååºæ¯ç¼å­ãåå¸å¼éãæèæ¶æ¯éåãä½ä½ å¯è½ä¸ç¥éæ¯ï¼è¿ä¸ªéªä¼´äºæä»¬å¾å¤å¹´çèæåï¼å¦ä»å·²ç»å¨åéæ°æ®åºçèµéä¸ä¸è·¯çå¥ââä¸ä»è·å¾å¿«ï¼è¿è·å¾ç¸å½ç¨³ã</p>
-<h2 id="ä»ä¹æ¯åéæ£ç´¢">ä»ä¹æ¯åéæ£ç´¢ï¼</h2>
-<p>ä¼ ç»æç´¢ä¾æå­é¢å¹éé»è¾ï¼å½è¾å¥âè¹æâè¿è¡æ£ç´¢æ¶ï¼ç³»ç»ä»è½å®ä½å°åå«âè¹æâäºå­çææ¡£ï¼è¥ææ¬æ¶åâiPhoneâææ³ææ°´æï¼ä¾¿æ æ³è¢«æ£ç´¢å°ãä¸ä¹ä¸åï¼åéæ£ç´¢éç¨è¯­ä¹å¹éæºå¶ï¼å®è½å¤æ´å¯âè¹æâä¸âiPhoneâå¨ç¹å®è¯­å¢ä¸çå³èæ§ï¼å³ä¾¿ææ¬ä¸­æªåºç°âè¹æâä¸è¯ï¼ä¹è½ç²¾åææåºç¸å³åå®¹ã</p>
-<p>è®¡ç®æºæ æ³ç´æ¥çè§£äººç±»çè¯­è¨æå¾åï¼å¶è¿ç®åºç¡ä»ä¸ºæ°å­ãå æ­¤ï¼åéæ£ç´¢çé¦è¦ç¯èï¼ä¾¿æ¯å°ç°å®ä¸ççäºç©è½¬åä¸ºä¸ç»æ°å­åºåï¼å³åéãä¾å¦ï¼æ¨¡åä¼å°âçâè½¬åä¸ºç±æ°ç¾ä¸ªå°æ°ææçåé<code>[0.5, 0.8, -0.2, ...]</code>ï¼å°âç«âè½¬åä¸º<code>[0.6, 0.7, -0.1, ...]</code>ã</p>
-<p>å¨è®¡ç®æºçè§è§éï¼æ¯ä¸ä¸ªåéé½æ¯é«ç»´ç©ºé´ä¸­çä¸ä¸ªåæ ç¹ãè¯­ä¹ç¸ä¼¼çåå®¹ï¼ç¹ä¸ç¹ä¹é´å°±ç¦»å¾è¿ï¼è¯­ä¹æ å³çï¼å°±ç¦»å¾è¿ãåéæ£ç´¢è¦åçï¼å°±æ¯å¨è¿ä¸ªåºå¤§çåæ å°å¾ä¸ï¼å¿«éæ¾åºç¦»ç®æ ç¹æè¿çå ä¸ªé»å±ã</p>
-<p>å½ç¨æ·æ£ç´¢âå°çâæ¶ï¼ç³»ç»ä¼åå°âå°çâè½¬åä¸ºåéï¼éåå¨åºå¤§çâåæ å°å¾âä¸­ï¼è¿éå®ä½åºä¸âå°çâåéç¹è·ç¦»æè¿çç¹ï¼å¦âå¹¼ç¬ââéæ¯âçåéç¹ï¼å¹¶å°è·ç¦»æè¿çæ£ç´¢ç»ææ¨éç»ç¨æ·ãè¿ä¸ææ¯æ¯æ¨èç³»ç»å®ç°ç¸ä¼¼ååå¹éãæç´¢å¼æè¾¾æä»¥å¾æå¾åè½çæ ¸å¿æ¯æï¼æ¬è´¨ä¸ï¼åéæ£ç´¢æ¯å°ä¸å¡éæ±è½¬åä¸ºæ°å­¦é®é¢ï¼åå©æ°å­¦æ¹æ³å®ç°é«ææ±è§£ã</p>
-<h2 id="redisçåéæ£ç´¢">Redisçåéæ£ç´¢</h2>
-<p>Redis çåéæ£ç´¢è½åä¸»è¦æä¸¤æ¡ææ¯è·¯çº¿ï¼å¦æè¿½æ±åè½æçãéè¦ä¸ç°æ Hash/JSON æ°æ®æ·±åº¦æ´åï¼é Redis Searchï¼å¦æè¿½æ±æç®ãå¸æå¼ç®±å³ç¨å¹¶ä¸ç¨çæ¯ Redis 8.0+ï¼Vector Sets æ¯æ´æ¸ç½çéæ©ã</p>
-<h3 id="redis-search">Redis Search</h3>
-<p>éè¿ Redis Query Engineï¼åèº«æ¯ RediSearch æ¨¡åï¼ï¼ä½ å¯ä»¥å¨ Hash æ JSON ææ¡£ä¸­å­å¨åéå­æ®µï¼å»ºç«åéç´¢å¼ï¼ç¶åæ§è¡ KNNï¼Kè¿é»ï¼æåéèå´æ¥è¯¢ï¼æ¯æ FLATï¼æ´åæç´¢ï¼å HNSWï¼è¿ä¼¼æç´¢ï¼ä¸¤ç§ç´¢å¼ç®æ³ã</p>
-<h3 id="vector-sets80-åçæ¹æ¡">Vector Setsï¼8.0 åçæ¹æ¡ï¼</h3>
-<p>è¿æ¯ Redis 8.0 æ¨åºçéç£æ°ç¹æ§ââåéæä¸º Redis åçæ¯æçæ°æ®ç±»åï¼Vector Set ç±»ä¼¼äºæåºéåï¼Sorted Setï¼ï¼ä½æ¯ä¸ªåç´ å³èçä¸åæ¯ä¸ä¸ªåæ°ï¼scoreï¼ï¼èæ¯ä¸ä¸ªé«ç»´åéã</p>
-<p>ä½¿ç¨èµ·æ¥ä¹æå¶ç®åï¼</p>
-<ul>
-<li><strong>VADD</strong>ï¼å¾åééåéæå¥åç´ åå®çåé</li>
-<li><strong>VSIM</strong>ï¼æ ¹æ®åéç¸ä¼¼åº¦æ¥æ¾æå¹éçåç´ </li>
-</ul>
-<p>ä¸éè¦é¢å¤å è½½æ¨¡åï¼ä¸éè¦ç»´æ¤å¤æçç´¢å¼ï¼å¼ç®±å³ç¨ï¼æ¯ä¸ª Vector Set åé¨èªå¨æå»º HNSW ç´¢å¼ã</p>
-<h2 id="redisä¼ç¹ç®åæç¨">Redisä¼ç¹ï¼ç®åæç¨</h2>
-<h3 id="å»¶è¿ä½å°ä»¤äººåæ">å»¶è¿ä½å°ä»¤äººåæ</h3>
-<p>éåº¦æ¯ Redis çä¼ ç»å¼ºé¡¹ï¼åéæ£ç´¢ä¹ä¸ä¾å¤ãåéæ£ç´¢æææ¢ï¼å°¤å¶æ¯ RAG åºç¨éï¼ç¨æ·é®ä¸ä¸ªé®é¢ï¼èåå¯è½è¦æ¥å¥½å æ¬¡åéåºï¼æ¯æ¬¡å»¶è¿ç´¯å èµ·æ¥ä½éªå°±å´©äºã</p>
-<p>Relevance AI&nbsp;å¬å¸åæ¬ä½¿ç¨èªå»ºçåéæ°æ®åºï¼AI ä»£ççååºå»¶è¿é«è¾¾ 2 ç§ãè¿ç§»å° Redis åï¼æç´¢æ¶é´ç´æ¥éå° 10 æ¯«ç§ï¼æé 99.5%</p>
-<p>åºåæµè¯æ´å¤¸å¼ ï¼åå®¢æ·ç«¯åºæ¯ä¸ï¼Redis çåéæ¥è¯¢æ¯ OpenSearch&nbsp;å¿« 18 åï¼å¤å®¢æ·ç«¯å¹¶åæ¶ï¼æ¯ç§æ¥è¯¢æ°ï¼QPSï¼é«åº 52 åãå¨å¤§è§æ¨¡åºæ¯ä¸ï¼Redis 8 å·²ç»éªè¯äºå¨ 10 äº¿ä¸ª 768 ç»´åéä¸è¿è¡é«ç²¾åº¦å®æ¶æç´¢çè½åã</p>
-<h3 id="ç®åå°å¼ç®±å³ç¨">ç®åå°âå¼ç®±å³ç¨â</h3>
-<p>å¦æä½ å·²ç»å¨ç¨ Redis 8.0 ä»¥ä¸çæ¬ï¼åéæ£ç´¢æ¯é¶é¢å¤ææ¬çââä¸éè¦è£æ¨¡åï¼ä¸éè¦éç½®å¤æç´¢å¼ï¼å æ¡å½ä»¤å°±è½ä¸æï¼</p>
-<ul>
-<li><strong>VADD</strong>ï¼æåéå­è¿å»</li>
-<li><strong>VSIM</strong>ï¼æç¸ä¼¼åº¦æç´¢</li>
-</ul>
-<p>è¿åç¨æ¯äº Redis çå¼åèè®¤ç¥å®å¨ä¸è´ï¼å­¦ä¹ æ²çº¿å ä¹ä¸ºé¶ã</p>
-<h3 id="ä¸åªæ¯åéæç´¢æ··åæ¥è¯¢ææ¯ææé">ä¸åªæ¯åéæç´¢ï¼æ··åæ¥è¯¢ææ¯ææé</h3>
-<p>Redis çç¬ç¹ä¼å¿å¨äºââå®æ¬æ¥å°±æ¯ä¸ªå¨åè½æ°æ®åºãä½ å¯ä»¥æåéæç´¢åå¨ææ£ç´¢ãæ ç­¾è¿æ»¤ãæ°å¼èå´æ¥è¯¢ãå°çç©ºé´æ¥è¯¢ç»åå¨ä¸èµ·ãæ¯å¦ï¼æ¾åºåè¿å¼ å¾çè¯­ä¹ç¸ä¼¼çååï¼åæ¶ä»·æ ¼ä½äº 100 åãåºå­å¤§äº 0ãä¸è·ç¦»ç¨æ· 5 å¬éä»¥åââè¿ç§æ··åæ¥è¯¢å¨ Redis éæ¯ä¸æ¡å½ä»¤çäºã</p>
-<p>Redis 8.4 æ´è¿ä¸æ­¥ï¼æ¨åºäº&nbsp;<code>FT.HYBRID</code>&nbsp;å½ä»¤ï¼æ¯æå¨ææ£ç´¢ä¸åéæ£ç´¢çæ·±åº¦èåï¼å¯ä»¥ç¨ RRF æçº¿æ§å æä¸¤ç§æ¹å¼èåä¸¤ç§æ£ç´¢çå¾å</p>
-<h3 id="åå¥å³æ¥å®æ¶æ§æå¼º">åå¥å³æ¥ï¼å®æ¶æ§æå¼º</h3>
-<p>Redis çåéç´¢å¼æ¯å®æ¶å¢éæ´æ°çââä½ åå¥ä¸æ¡å¸¦åéçæ°æ®ï¼æ¯«ç§çº§åå®å°±å¯ä»¥è¢«æ£ç´¢å°ã</p>
-<p>å¾å¤åéæ°æ®åºéè¦ç­ç´¢å¼æå»ºå®æï¼ç§çº§çè³åéçº§ï¼æè½æ¥è¯¢å°æ°æ°æ®ãå¦æä½ çåºæ¯æ¯å¨æåå®¹ï¼å¦å®æ¶æ´æ°çæ¨èç³»ç»ï¼ï¼Redis çå®æ¶æ§éå¸¸æä»·å¼ã</p>
-<h2 id="åè°ç¼ºç¹redis-çå¿«æ¯æä»£ä»·ç">åè°ç¼ºç¹ï¼Redis çå¿«ï¼æ¯æä»£ä»·ç</h2>
-<h3 id="åå­ææ¬ä¸åº§ç»ä¸è¿çå¤§å±±">åå­ææ¬ï¼ä¸åº§ç»ä¸è¿çå¤§å±±</h3>
-<p>è¿æ¯ Redis åéæ£ç´¢ææ ¸å¿çç­æ¿ãææåéæ°æ®å¿é¡»å¸¸é©»åå­ã768 ç»´ç float32 åéï¼ä¸æ¡å°±è¦å çº¦ 3KBã1000 ä¸æ¡å°±æ¯ 30GB åå­ï¼è¿è¿ä¸ç® HNSW ç´¢å¼çé¢å¤å¼éï¼éå¸¸æ¯åéæ¬èº«ç 2-3 åï¼ã</p>
-<p>åä¸çº§æ¯ Redis åéæ£ç´¢çèéåºï¼äº¿çº§ä»¥ä¸å°±è¦æéæéäºã&nbsp;å®è·µä¸­ï¼Redis åéè§æ¨¡çä¸éå¤§çº¦å¨&nbsp;5000 ä¸&nbsp;å·¦å³ï¼è¶åºåææ¬å°æ¥å§ä¸åã</p>
-<p>å¯ä»¥å¼å¯ int8 éåçåå­ï¼ä½ä»£ä»·æ¯å¬åçä¼ä¸éå ä¸ªç¾åç¹ââçé±çä»£ä»·æ¯çºç²ç²¾åº¦ï¼è¿ç¬è´¦å¾æåç®æ¸æ¥ã</p>
-<h3 id="å¬åçä¸æ¯æé¡¶å°ç">å¬åçä¸æ¯æé¡¶å°ç</h3>
-<p>è¿½æ±æè´ä½å»¶è¿ï¼ææ¶è¦ä»åºå¬åççä»£ä»·ãå¨ä¸äºå¬å¼å¯¹æ¯ä¸­ï¼Redis çå¬åçå¤§çº¦å¨&nbsp;92%&nbsp;å·¦å³ï¼èä¸ç¨åéæ°æ®åºï¼å¦ MilvusãQdrantï¼å¯ä»¥è¾¾å°&nbsp;95%-98%</p>
-<p>å¨ 1000 æ¬¡æ£ç´¢ä¸­ï¼Redis å¯è½æ¯ä¸ç¨åéåºå¤æ¼æå åä¸ªç¸å³ç»æãè¿å¯¹çä½ åæ¬¢ç±»çæ¨èå½±åæéï¼ä½å¯¹äºæ³å¾æä¹¦æ£ç´¢ãå»å­¦æç®æ¥è¯è¿ç±»åºæ¯ï¼æ¯ä¸ä¸ªæ¼æçç»æé½å¯è½å¸¦æ¥å®è´¨æ§å½±åã</p>
-<h3 id="å¤§è§æ¨¡åå¸å¼ä¸æ¯å¼ºé¡¹">å¤§è§æ¨¡åå¸å¼ä¸æ¯å¼ºé¡¹</h3>
-<p>Redis Cluster è½ç¶æ¯æåçï¼ä½æ¶æå¹¶éä¸ºç¾äº¿çº§åéæ£ç´¢è®¾è®¡ã</p>
-<ul>
-<li><strong>æ©å±ä¸éææ¾</strong>ï¼å½æ°æ®éè¾¾å°åäº¿çº§å«æ¶ï¼ä¸ç¨åéæ°æ®åºï¼MilvusãPineconeï¼çåå¸å¼æ©å±è½åæ´å¼ºã</li>
-<li><strong>è·¨åçæ¥è¯¢å¼é</strong>ï¼éç¾¤æ¨¡å¼ä¸çåéæç´¢å¯è½å ä¸ºè·¨åçéä¿¡èå½±åæ§è½ã</li>
-</ul>
-<p>å¦æä½ é¢ä¼°æ°æ®éä¼å¿«éå¢é¿å°äº¿çº§ä»¥ä¸ï¼å¯è½éè¦ä»ä¸å¼å§å°±èè Redis è½å¦æä½ã</p>
-<h3 id="é«çº§ç´¢å¼è½åæé">é«çº§ç´¢å¼è½åæé</h3>
-<p>Redis ç Vector Set ä¸»æ HNSW ç®æ³ï¼ç®åé«æï¼ä½éæ©åä¸ãä¸ç¨åéæ°æ®åºæä¾äºæ´å¤ç´¢å¼éé¡¹ï¼IVFãDiskANNãHNSW çå¤ç§åä½ï¼ï¼è®©ä½ å¨å¬åçãå»¶è¿ãåå­å ç¨ãæå»ºæ¶é´ä¹é´åæ´ç²¾ç»çè°ä¼ã</p>
-<h2 id="æçæ¶æå«äºéä¸å¯ä»¥ç»ååºæ³">æçæ¶æï¼å«äºéä¸ï¼å¯ä»¥ç»ååºæ³</h2>
-<p>Redis åéæ£ç´¢ççæ­£å®ä½ï¼ä¸æ¯åä»£ä¸ç¨åéæ°æ®åºï¼èæ¯å¨âå¿«âè¿ä¸ªç»´åº¦ä¸åæè´ã</p>
-<p>æçç AI æ¶æå¾å¾æ¯ç»åå¼çï¼</p>
-<ul>
-<li>å¨éåéæ°æ® â ä¸ç¨åéæ°æ®åºï¼å¦ Milvusï¼</li>
-<li>ç­ç¹æ¥è¯¢ç»æ â Redis è¯­ä¹ç¼å­</li>
-</ul>
-<p>è¯­ä¹ç¼å­æ¯ Redis åéæ£ç´¢æèªç¶çåºç¨åºæ¯ï¼ç¨æ·é®äºä¸ä¸ªé®é¢ï¼LLM è¿åäºç­æ¡ï¼æâé®é¢åé + ç­æ¡âç¼å­å° Redisãä¸æ¬¡æäººé®è¯­ä¹ç¸ä¼¼çé®é¢ï¼ç´æ¥ä»ç¼å­è¿åï¼æ¢ç LLM API è°ç¨è´¹ï¼åæååºæ¶é´åå°æ¯«ç§çº§ã</p>
-<p>åæ ·çéçä¹éç¨äºæ¨èç³»ç»çç­é¨ç©ååéç¼å­ãRAG ç³»ç»çé«é¢ææ¡£çæ®µç¼å­ã</p>
-<h2 id="åå¨æå">åå¨æå</h2>
-<p>Redis ååéæ£ç´¢ï¼ä¸æ¯è½ä¸è½çé®é¢ï¼èæ¯éåä¸éåçé®é¢ã</p>
-<ul>
-<li>å¦æè¿½æ±æè´çä½å»¶è¿ãæ°æ®éå¨åä¸çº§ä»¥åãéè¦æ··åæ¥è¯¢ãå¸æè¿ç»´ç®åââRedis æ¯éå¸¸ä¼ç§çéæ©ã</li>
-<li>å¦ææ°æ®éå¨äº¿çº§ä»¥ä¸ãå¯¹å¬åçææè´è¦æ±ãéè¦ä¸°å¯çç´¢å¼è°ä¼è½åââä¸ç¨åéæ°æ®åºæ´åéã</li>
-</ul>
-<p>ææ¯éåæ²¡æé¶å¼¹ï¼åªææåéçå·¥å·ãRedis è¿ä½èæåçæ°æè½ï¼å¼å¾äºè§£ï¼ä½è¦ä¸è¦ç¨ãæä¹ç¨ï¼åå³äºçå®åºæ¯ã</p>
-
-
-</div>
-<div id="MySignature" role="contentinfo">
-    <div style="margin-top: 30px;">
-    <div>
-        <img src="https://blog-static.cnblogs.com/files/blogs/688934/%E5%8D%9A%E5%AE%A2%E5%BA%95%E9%83%A8%E5%9B%BE%E7%89%87.gif" style="max-height: 80px; width: 100%;">
-        <center style="color: #666; font-size: 14px; margin: 10px 0;">END</center>
-    </div>
-
-    <div style="
-        background: #f8f9fa;
-        border: 1px solid #e9ecef;
-        border-radius: 10px;
-        overflow: hidden;
-    ">
-        <div style="
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 28px;
-            background: #fff;
-            padding: 24px 28px;
-            border-bottom: 1px solid #e9ecef;
-        ">
-            <div style="
-                position: relative;
-                padding: 6px;
-                background: #fff;
-                border-radius: 6px;
-                border: 1px solid #e1e8ed;
-            ">
-                <img src="https://img2024.cnblogs.com/blog/2504560/202604/2504560-20260414170632125-1137768452.png" alt="å¾®ä¿¡å¬ä¼å·äºç»´ç " style="
-                         width: 130px;
-                         height: 130px;
-                         border-radius: 4px;
-                         display: block;
-                     ">
-                <div style="
-                    position: absolute;
-                    bottom: -10px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    background: #07c160;
-                    color: #fff;
-                    font-size: 11px;
-                    padding: 3px 10px;
-                    border-radius: 10px;
-                    white-space: nowrap;
-                ">
-                    å¾®ä¿¡æ«ä¸æ«
-                </div>
-            </div>
-
-            <div style="text-align: left; max-width: 280px;">
-                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
-                    <img src="https://img2024.cnblogs.com/blog/2504560/202604/2504560-20260414180312490-1882483357.svg" width="20" height="20" alt="å¾®ä¿¡">
-                    <span style="font-size: 14px; color: #666;">å¾®ä¿¡å¬ä¼å·</span>
-                </div>
-
-                <p style="
-                    margin: 0 0 10px 0;
-                    font-size: 18px;
-                    font-weight: 700;
-                    color: #1a1a1a;
-                ">
-                    ç¨åºåæ®ç
-                </p>
-                <p style="
-                    margin: 0 0 8px 0;
-                    font-size: 14px;
-                    color: #555;
-                    line-height: 1.6;
-                ">
-                    ð åäº«ææ¯å¹²è´§ï¼è®°å½æé¿åç¨
-                </p>
-                <p style="
-                    margin: 0;
-                    font-size: 13px;
-                    color: #888;
-                ">
-                    æ«ç å³æ³¨ï¼è·åæ´å¤ææ¯æç« åç¬å®¶åå®¹
-                </p>
-            </div>
-        </div>
-        <div style="padding: 16px 24px; background: #f8f9fa;">
-            <p style="margin: 0 0 6px 0; font-size: 13px; color: #555;">
-                æ¬æä½èï¼<span style="color: #333; font-weight: 500;"><a href="https://www.cnblogs.com/gloamfox/" target="_blank">æ®è²ä¹ç</a></span>
-            </p>
-            <p style="margin: 0 0 6px 0; font-size: 13px; color: #555;">
-                æ¬æé¾æ¥ï¼<a></a><a href="https://www.cnblogs.com/gloamfox/p/21893909" target="_blank">https://www.cnblogs.com/gloamfox/p/21893909</a>
-            </p>
-            <p style="margin: 0; font-size: 13px; color: #666;">
-                çæå£°æï¼æ¬ä½åéç¨
-                <a href="https://creativecommons.org/licenses/by-nc-nd/2.5/cn/" target="_blank" style="color: #0366d6; text-decoration: none;">
-                    ç¥è¯å±äº«ç½²å-éåä¸æ§ä½¿ç¨-ç¦æ­¢æ¼ç» 2.5 ä¸­å½å¤§éè®¸å¯åè®®
-                </a>
-                è¿è¡è®¸å¯ã
-            </p>
-        </div>
-    </div>
-</div>
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-07-24 20:54">2026-07-24 20:53</span>&nbsp;
-<a href="https://www.cnblogs.com/gloamfox">æ®è²ä¹ç</a>&nbsp;
-éè¯»(<span id="post_view_count">77</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(21893909);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fgloamfox%2Fp%2F21893909&amp;targetId=21893909&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ ãAI åºç¨ãä»âå¤å½äººå³âå°å°éä¸­æï¼kokoroi-rs v0.1.2 æ¶æåçº§æ·±åº¦è§£æ ]]></title>
-    <link>https://www.cnblogs.com/doiito/p/21893135</link>
-    <guid>4d7961dc36c18dbc0a163b4d7465f54a</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/doiito/p/21893135" title="åå¸äº 2026-07-24 19:30">
-    
-
-    <span role="heading" aria-level="2">ãAI åºç¨ãä»âå¤å½äººå³âå°å°éä¸­æï¼kokoroi-rs v0.1.2 æ¶æåçº§æ·±åº¦è§£æ</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h1 id="ä»å¤å½äººå³å°å°éä¸­ækokoroi-rs-v012-æ¶æåçº§æ·±åº¦è§£æ">ä»âå¤å½äººå³âå°å°éä¸­æï¼kokoroi-rs v0.1.2 æ¶æåçº§æ·±åº¦è§£æ</h1>
-<blockquote>
-<p><strong>æè¦</strong>ï¼kokoroi-rs v0.1.2 çæ¬å¯¹ä¸­æ TTS å¼æè¿è¡äºéå¤§æ¶æåçº§ï¼æ ¸å¿æ¹è¿åæ¬ G2P å¼æä» IPA å¨é¢åæ¢ä¸º Bopomofo é³ç´ æ¹æ¡ãæ¨¡åä½ç³»ä»åä¸æ¨¡ååçº§ä¸ºä¸æ¡£å¯éï¼S/M/Lï¼ãä»¥åé³é¢åå¤çä»âè¿å¤çâéæä¸ºâæå°å¹²é¢âååãæ¬ææ·±åº¦è§£æäºè¿äºææ¯ç»èä¸è®¾è®¡èéï¼å¸®å©å¼åèçè§£å¦ä½æ¶é¤ä¸­æåæè¯­é³çâå¤å½äººå³âï¼å®ç°æ´èªç¶æµççè¯­é³è¾åºã</p>
-<p><strong>å³é®è¯</strong>ï¼kokoroi-rs, ä¸­æ TTS, G2P, Bopomofo, æ³¨é³ç¬¦å·, é³ç´ è½¬æ¢, æ¨¡åéå, é³é¢åå¤ç, å¼æºé¡¹ç®, Rust</p>
-</blockquote>
-<p>G2P å¼æå¨é¢åæ¢ Bopomofoãæ¨¡åä¸æ¡£å¯éãé³é¢åå¤çéæââä¸æ¬¡è®©ä¸­æ TTS è±èæ¢éª¨çåçº§</p>
-<h2 id="å¼å­ä¸ä¸ªå°æ°å·²ä¹çé®é¢">å¼å­ï¼ä¸ä¸ªå°æ°å·²ä¹çé®é¢</h2>
-<p>å¦æä½ ç¨è¿æ©æç kokoroi-rsï¼å¯è½ä¼æ³¨æå°ä¸ä¸ªç»å¾®ä½é¾ä»¥å¿½è§çé®é¢ï¼åæçä¸­æè¯­é³å¬èµ·æ¥æ»æä¸ç§âå¤å½äººå³âââåé³æ¯åçï¼ä½è¯­è°ãéµå¾æ»è§å¾åªéä¸å¯¹å²ã</p>
-<p>é®é¢åºå¨ <strong>G2Pï¼Grapheme-to-Phonemeï¼å­ç´ è½¬é³ç´ ï¼</strong> ç¯èãv0.1.1 åä¹åçæ¬ä½¿ç¨ IPAï¼å½éé³æ ï¼ä½ä¸ºä¸­æé³ç´ è¡¨ç¤ºï¼ä½ IPA å¯¹ä¸­æå­ç´ çè¦çä¸å¤ç²¾ç¡®ï¼å¯¼è´æ¨¡åå­¦å°çé³ç´ åå¸ä¸çå®ä¸­æè¯­é³å­å¨åå·®ã</p>
-<p>v0.1.2 è§£å³è¿ä¸ªé®é¢çæ¹æ¡å¾ç´æ¥ââ<strong>å¨é¢åæ¢ä¸º Bopomofoï¼æ³¨é³ç¬¦å·ï¼é³ç´ æ¹æ¡</strong>ãè¿åªæ¯ä¸æ¬¡åçº§çå°å±±ä¸è§ï¼æ¬æå°ç³»ç»æè§£è¿æ¬¡æ¶æåçº§èåçææ¯ç»èä¸è®¾è®¡èéã</p>
-<hr>
-<h2 id="ä¸g2p-å¼æéæä»-ipa-å°-bopomofo">ä¸ãG2P å¼æéæï¼ä» IPA å° Bopomofo</h2>
-<h3 id="11-ä¸ºä»ä¹æ¯-bopomofo">1.1 ä¸ºä»ä¹æ¯ Bopomofoï¼</h3>
-<p>Kokoro æ¨¡ååçè®­ç»ä½¿ç¨çæ­£æ¯ Bopomofo é³ç´ è¡¨ç¤ºãæ©æçæ¬éç¨ IPA æ¹æ¡ï¼ç¸å½äºå¨æ¨¡åè¾å¥ç«¯åäºä¸æ¬¡âé³ç´ è½¬è¯âââåæä¸­æè½¬æ IPAï¼åæ å°å°æ¨¡åè¯è¡¨ãè¿ä¸ªè½¬è¯è¿ç¨å¼å¥äºä¿¡æ¯æå¤±ï¼å°¤å¶ä½ç°å¨å£°è°ãè¿è¯»åè°ç­ä¸­æç¹æçéµå¾ç¹å¾ä¸ã</p>
-<p>v0.1.2 å° G2P æµæ°´çº¿å¨é¢åæ¢å° Bopomofoï¼å¹¶éåä¸ä¸ºä¸­æä¼åç <code>ZH_VOCAB</code> è¯è¡¨ï¼è®©æ¨¡åç´æ¥âè¯»æâæ³¨é³ç¬¦å·ï¼æ¶é¤äºä¸­é´è½¬è¯å±ã</p>
-<div class="mermaid">graph LR
-    subgraph v0.1.1["v0.1.1 â IPA æ¹æ¡"]
-        A1[ä¸­æææ¬] --&gt; B1[jieba åè¯]
-        B1 --&gt; C1[æ¼é³è½¬æ¢]
-        C1 --&gt; D1[IPA é³ç´ æ å°]
-        D1 --&gt; E1[MODEL_VOCAB Tokenization]
-        E1 --&gt; F1[ONNX æ¨ç]
-    end
-
-    subgraph v0.1.2["v0.1.2 â Bopomofo æ¹æ¡"]
-        A2[ä¸­æææ¬] --&gt; B2[jieba åè¯ + POS]
-        B2 --&gt; C2[å¤é³å­æ¶æ­§]
-        C2 --&gt; D2[åè°å¤ç]
-        D2 --&gt; E2[Bopomofo æ³¨é³è½¬æ¢]
-        E2 --&gt; F2[ZH_VOCAB Tokenization]
-        F2 --&gt; G2[ONNX æ¨ç]
-    end
-
-    style v0.1.2 fill:#e1f5fe,stroke:#01579b
-    style v0.1.1 fill:#f5f5f5,stroke:#9e9e9e
-</div><h3 id="12-g2p-æµæ°´çº¿å¯¹æ¯">1.2 G2P æµæ°´çº¿å¯¹æ¯</h3>
-<p>v0.1.2 çä¸­æ G2P æµæ°´çº¿å¨å¤ä¸ªç¯èåäºå¢å¼ºï¼</p>
-<div class="mermaid">flowchart TD
-    subgraph è¾å¥å¤ç
-        T[ææ¬è¾å¥] --&gt; N[æ°å­è½¬æ¢]
-        N --&gt; P[æ ç¹æ å°]
-    end
-
-    subgraph v0.1.1["v0.1.1 G2P æµæ°´çº¿"]
-        P --&gt; S_IPA[ç´æ¥åè¯ + IPA æ å°]
-        S_IPA --&gt; T_IPA[MODEL_VOCAB&lt;br/&gt;178 token è¯è¡¨]
-    end
-
-    subgraph v0.1.2["v0.1.2 G2P æµæ°´çº¿"]
-        P --&gt; S_BM[segment_with_pos&lt;br/&gt;è¯æ§æ æ³¨åè¯]
-        S_BM --&gt; PM[pre_merge_for_modify&lt;br/&gt;åå¹¶ä¿®é¥°è¯]
-        PM --&gt; PL[å¤é³å­æ¶æ­§&lt;br/&gt;PolyphonicDisambiguator]
-        PL --&gt; TS[tone_sandhi&lt;br/&gt;åè°å¤ç]
-        TS --&gt; BM[pinyin_to_bopomofo&lt;br/&gt;æ¼é³ â æ³¨é³]
-        BM --&gt; T_BM[ZH_VOCAB&lt;br/&gt;178 token æ©å±è¯è¡¨]
-    end
-
-    T_IPA --&gt; INF[ONNX æ¨ç]
-    T_BM --&gt; INF
-</div><p>å³é®æ¹è¿ç¹ï¼</p>
-<ul>
-<li><strong>è¯æ§æ æ³¨åè¯</strong>ï¼<code>segment_with_pos</code> ä¸ä»åè¯ï¼è¿è¾åºæ¯ä¸ªè¯çè¯æ§ï¼POSï¼ï¼ä¸ºåç»­åè°å¤çæä¾ä¸ä¸æ</li>
-<li><strong>å¤é³å­æ¶æ­§</strong>ï¼<code>PolyphonicDisambiguator</code> åºäºä¸ä¸æè§åå¤çå¤é³å­ï¼ä¾å¦âäºâå¨âäºè§£âä¸­è¯» <code>liÇo</code>ï¼å¨âå¥½äºâä¸­è¯» <code>le</code></li>
-<li><strong>åè°å¤ç</strong>ï¼å®ç°ä¸å£°åè°ï¼ä¸¤ä¸ªä¸å£°ç¸è¿ï¼ååäºå£°ï¼ä»¥åâä¸âãâä¸âçåè°è§å¾</li>
-<li><strong>æ¼é³ â æ³¨é³</strong>ï¼<code>pinyin_to_bopomofo</code> å°å¸¦å£°è°æ°å­çæ¼é³è½¬æ¢ä¸º Bopomofo ç¬¦å·</li>
-</ul>
-<h3 id="13-ææå¯¹æ¯">1.3 ææå¯¹æ¯</h3>
-<table>
-<thead>
-<tr>
-<th>ç»´åº¦</th>
-<th>v0.1.1 (IPA)</th>
-<th>v0.1.2 (Bopomofo)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>ä¸­æè¯­é³èªç¶åº¦</strong></td>
-<td>æå¤å½äººå³é</td>
-<td>èªç¶æµç</td>
-</tr>
-<tr>
-<td><strong>é¦å­å»¶è¿</strong></td>
-<td>~730ms éé³å¯é»</td>
-<td>~50ms æ­£å¸¸åç½®</td>
-</tr>
-<tr>
-<td><strong>å¤çéåº¦ (L æ¨¡å)</strong></td>
-<td>~2.2s</td>
-<td>~1.9s</td>
-</tr>
-<tr>
-<td><strong>å®æ¶ç</strong></td>
-<td>~5.2x</td>
-<td>~5.4x</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="äºæ¨¡åä½ç³»åçº§ä¸æ¡£å¯éä¸°ä¿­ç±äºº">äºãæ¨¡åä½ç³»åçº§ï¼ä¸æ¡£å¯éï¼ä¸°ä¿­ç±äºº</h2>
-<h3 id="21-ä»åä¸å°ä¸æ¡£">2.1 ä»åä¸å°ä¸æ¡£</h3>
-<p>v0.1.1 åªæåä¸ç <code>kokoro-v1.0.onnx</code>ï¼fp32ï¼çº¦ 325MBï¼ãv0.1.2 åçº§ä¸º <strong>v1.1-zh ç³»åä¸æ¡£æ¨¡å</strong>ï¼</p>
-<table>
-<thead>
-<tr>
-<th>æ¨¡å</th>
-<th>ç²¾åº¦</th>
-<th>å¤§å°</th>
-<th>åºæ¯</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>S</strong> (kokoro-v1.1-zh-s.onnx)</td>
-<td>int4</td>
-<td>47MB</td>
-<td>æå°ä½ç§¯ï¼å¿«éå è½½ï¼ä½åå­</td>
-</tr>
-<tr>
-<td><strong>M</strong> (kokoro-v1.1-zh-m.onnx)</td>
-<td>int8</td>
-<td>79MB</td>
-<td><strong>é»è®¤æ¨è</strong>ï¼å¹³è¡¡ä½ç§¯ä¸è´¨é</td>
-</tr>
-<tr>
-<td><strong>L</strong> (kokoro-v1.1-zh-l.onnx)</td>
-<td>fp32</td>
-<td>311MB</td>
-<td>å®æ´ç²¾åº¦ï¼æä½³è´¨é</td>
-</tr>
-</tbody>
-</table>
-<div class="mermaid">pie title æ¨¡åä½ç§¯å¯¹æ¯
-    "v1.0 fp32 (æ§)" : 325
-    "v1.1-zh L fp32" : 311
-    "v1.1-zh M int8" : 79
-    "v1.1-zh S int4" : 47
-</div><p>é»è®¤æ¨¡åä» 325MB ç fp32 æ¨¡ååæ¢å° <strong>79MB ç int8 æ¨¡å</strong>ï¼ä½ç§¯ç¼©å° 75%ï¼èåæè´¨éä¿æé«æ°´å¹³ãå¯¹äºèµæºåéçåºæ¯ï¼å¦åµå¥å¼è®¾å¤ãè¾¹ç¼è®¡ç®ï¼ï¼47MB ç int4 æ¨¡åæä¾äºæ´è½»éçéæ©ã</p>
-<h3 id="22-æ¨¡åè¾å¥è¾åºæ¥å£">2.2 æ¨¡åè¾å¥/è¾åºæ¥å£</h3>
-<p>ææ v1.1-zh æ¨¡åç»ä¸ä½¿ç¨ä»¥ä¸æ¥å£ï¼</p>
-<div class="mermaid">flowchart LR
-    subgraph è¾å¥
-        I1["input_ids&lt;br/&gt;int64[1, N]"]
-        I2["style&lt;br/&gt;float32[1, 256]"]
-        I3["speed&lt;br/&gt;float32[1]"]
-    end
-
-    subgraph æ¨¡å
-        ONNX["ONNX æ¨¡å&lt;br/&gt;v1.1-zh"]
-    end
-
-    subgraph è¾åº
-        O1["waveform&lt;br/&gt;float32[N]"]
-    end
-
-    I1 --&gt; ONNX
-    I2 --&gt; ONNX
-    I3 --&gt; ONNX
-    ONNX --&gt; O1
-
-</div><p>æ¨¡åè¾å¥è¾åºä¿æç¨³å®ï¼åæ¢æ¨¡åæ éä¿®æ¹ä¸å¡ä»£ç ï¼åªéæ´æ¢æ¨¡åæä»¶è·¯å¾ã</p>
-<hr>
-<h2 id="ä¸é³é¢åå¤çä»è¿å¤çå°æå°å¹²é¢">ä¸ãé³é¢åå¤çï¼ä»âè¿å¤çâå°âæå°å¹²é¢â</h2>
-<p>v0.1.1 çé³é¢åå¤çå­å¨è¿åº¦å å·¥çé®é¢ï¼å¨å± DC åç§»æ¶é¤ãRMS çªå£å°¾é¨æ£æµãæ·¡å¥æ·¡åºââè¿äºæä½æ¬ææ¯æåå¬æï¼ä½å®éææéå¾å¶åï¼<strong>éé³åºè¢«åç§»å¼å¥å¡å¡å£°ï¼å°¾é¨è£ååå¸¦æ¥çé³</strong>ã</p>
-<p>v0.1.2 éå<strong>æå°å¹²é¢åå</strong>ï¼ä»ä¿çæ¯å¹éå¼éé³è£åï¼</p>
-<div class="mermaid">flowchart LR
-    subgraph v0.1.1["v0.1.1 â è¿å¤ç"]
-        RAW[æ¨¡ååå§è¾åº&lt;br/&gt;11.65s] --&gt; DC[å¨å± DC åç§»æ¶é¤]
-        DC --&gt; RMS[RMS çªå£å°¾é¨æ£æµ]
-        RMS --&gt; FADE[æ·¡å¥æ·¡åº]
-        FADE --&gt; ERR[!! é®é¢ !!&lt;br/&gt;éé³åºåç§» â å¡å¡å£°&lt;br/&gt;å°¾é¨è£å â çé³]
-    end
-
-    subgraph v0.1.2["v0.1.2 â æå°å¹²é¢"]
-        RAW2[æ¨¡ååå§è¾åº&lt;br/&gt;11.65s] --&gt; SIL[æ¯å¹éå¼éé³è£å&lt;br/&gt;threshold: 0.006]
-        SIL --&gt; OUT[çº¯åè¾åº&lt;br/&gt;9.51sï¼æ å å·¥ä¼ªå½±]
-    end
-
-    style v0.1.2 fill:#e1f5fe,stroke:#01579b
-    style v0.1.1 fill:#f5f5f5,stroke:#9e9e9e
-    style ERR fill:#ffcdd2,stroke:#c62828
-</div><p><strong>ææ</strong>ï¼å°¾é¨åªé³è¢«ç²¾åè£åï¼æä»¶æ¶é¿ä» 11.65s ç²¾ç¡®å° 9.51sï¼æ¶é¤äºçº¦ 1.4s çåä½éé³ï¼ä¸æ ä»»ä½å å·¥ä¼ªå½±ã</p>
-<hr>
-<h2 id="ååæ¨¡åæ¹è¿ä¸è§">åãåæ¨¡åæ¹è¿ä¸è§</h2>
-<h3 id="41-cli-å·¥å·">4.1 CLI å·¥å·</h3>
-<pre><code class="language-diff">- é»è®¤æ¨¡å: models/kokoro-v1.0.onnx (325MB)
-+ é»è®¤æ¨¡å: models/kokoro-v1.1-zh-m.onnx (79MB, int8)
-
-+ æ°å¢ -m/--model åæ°ï¼æ¯ææ¨¡ååæ¢
-+ èªå¨ä¸è½½æåæ¬é¡¹ç® Release
-</code></pre>
-<h3 id="42-http-server">4.2 HTTP Server</h3>
-<pre><code class="language-diff">- Web é¡µé¢: ä» SSE æµå¼æ­æ¾ï¼æ ä¸è½½åè½
-+ Web é¡µé¢: SSE æµå¼æ­æ¾ + èªå¨æ¼æ¥å®æ´ WAV + ä¸è½½é¾æ¥
-
-+ é³é¢åå¤ç: æ¯å¹éå¼éé³è£å
-</code></pre>
-<p>Server ç«¯ç Web æ¼ç¤ºé¡µé¢ç°å¨æ¯æ<strong>æµå¼æ­æ¾çåæ¶èªå¨æ¼æ¥å®æ´é³é¢</strong>ï¼ç¨æ·è¯å¬æ»¡æåå¯ç´æ¥ä¸è½½ WAV æä»¶ï¼ä½éªæ´å®æ´ã</p>
-<h3 id="43-wasm-æ¨¡å">4.3 WASM æ¨¡å</h3>
-<pre><code class="language-diff">- æ¨¡å: åºå® model_fp16.onnx
-+ æ¨¡å: ä¸æ¡£åæ¢ (S int4 / M int8 / L fp32)
-
-+ æ°å¢ phonemizeBopomofo() API
-+ æ°å¢ tokenizeV11() API
-</code></pre>
-<p>WASM æ¨¡åç JavaScript API åæ­¥åçº§ï¼æ¯æ Bopomofo é³ç´ åæ¥å£ï¼åç«¯å¼åèå¯ä»¥æ´çµæ´»å°æ§å¶åææµç¨ã</p>
-<h3 id="44-å·¥ç¨åæ¹è¿">4.4 å·¥ç¨åæ¹è¿</h3>
-<pre><code class="language-diff">+ æ¨¡åæä»¶çº³å¥ Git ç®¡ç (S/Mï¼&lt;100MB)
-+ æ¨¡åä¸è½½ä»æ¬é¡¹ç® Release è·å
-+ ææ¡£æ´æ°: README / README_EN / docs/wasm.md
-+ Server/WASM çé¢æªå¾
-+ ç§»é¤ææ tiandy å­æ ·åå¤é¨ä»åºä¾èµ
-+ ç§»é¤å¼åç¯å¢ç§æè·¯å¾
-</code></pre>
-<p>é¡¹ç®å½»åºæ¸çäºåå²éççå¤é¨ä¾èµåç§æè·¯å¾ï¼ç°å¨å®å¨èªåå«ï¼å¼ç®±å³ç¨ã</p>
-<hr>
-<h2 id="äºåçº§è·¯å¾">äºãåçº§è·¯å¾</h2>
-<p>ä» v0.1.1 åçº§å° v0.1.2 éå¸¸ç®åï¼</p>
-<pre><code class="language-bash"># 1. ä¸è½½æ°æ¨¡åï¼ä»¥ M æ¡£ä¸ºä¾ï¼
-wget https://github.com/doiito/kokoroi-rs/releases/download/v0.1.2/kokoro-v1.1-zh-m.onnx \
-  -O models/kokoro-v1.1-zh-m.onnx
-
-# 2. æ´æ°éç½®æä»¶ config.toml
-# model_path = "models/kokoro-v1.1-zh-m.onnx"
-
-# 3. è¿è¡ï¼CLI èªå¨ä½¿ç¨æ° G2P æµæ°´çº¿ï¼
-./koko --text "ä½ å¥½ä¸ç" --model models/kokoro-v1.1-zh-m.onnx
-</code></pre>
-<p>æ éä¿®æ¹ä¸å¡ä»£ç ï¼æ°æ¶æèªå¨ä½¿ç¨ Bopomofo G2P + ZH_VOCABã</p>
-<hr>
-<h2 id="å­ç³»ç»æ¶ææ»è§">å­ãç³»ç»æ¶ææ»è§</h2>
-<div class="mermaid">graph TB
-    subgraph åç«¯
-        CLI[CLI&lt;br/&gt;koko-cli]
-        API[REST API&lt;br/&gt;kokoros-server]
-        WASM[WASM Browser&lt;br/&gt;kokoros_bg.wasm]
-    end
-
-    subgraph æ ¸å¿å¼æ
-        G2P[G2P å¼æ&lt;br/&gt;ChineseG2P]
-        PH[é³ç´ å&lt;br/&gt;Phonemizer&lt;br/&gt;Bopomofo æ¨¡å¼]
-        TK[Tokenization&lt;br/&gt;ZH_VOCAB]
-        INF[ONNX æ¨ç&lt;br/&gt;OrtKoko]
-        PP[åå¤ç&lt;br/&gt;æ¯å¹éå¼è£å]
-    end
-
-    subgraph æ¨¡åæ°æ®
-        MOD[(ONNX æ¨¡å&lt;br/&gt;v1.1-zh S/M/L)]
-        VOI[(åé³äººåµå¥&lt;br/&gt;voices-v1.0.bin)]
-    end
-
-    CLI --&gt; G2P
-    API --&gt; G2P
-    WASM --&gt; G2P
-
-    G2P --&gt; PH
-    PH --&gt; TK
-    TK --&gt; INF
-    INF --&gt; PP
-
-    INF --&gt; MOD
-    INF --&gt; VOI
-
-    style æ ¸å¿å¼æ fill:#e3f2fd,stroke:#1565c0
-    style æ¨¡åæ°æ® fill:#fff3e0,stroke:#e65100
-    style åç«¯ fill:#f3e5f5,stroke:#6a1b9a
-</div><hr>
-<h2 id="ä¸æ»ç»ä¸å±æ">ä¸ãæ»ç»ä¸å±æ</h2>
-<p>v0.1.2 æ¯ä¸æ¬¡<strong>ä»é³ç´ è¡¨ç¤ºå°æ¨¡åä½ç³»å°é³é¢åå¤ç</strong>çå¨é¾è·¯åçº§ï¼</p>
-<ul>
-<li><strong>G2P å¼æ</strong>ï¼IPA â Bopomofoï¼æ¶é¤âå¤å½äººå³éâ</li>
-<li><strong>æ¨¡åä½ç³»</strong>ï¼ä¸æ¡£å¯éï¼int4/int8/fp32ï¼ï¼é»è®¤æ¨¡åä½ç§¯ç¼©å° 75%</li>
-<li><strong>é³é¢åå¤ç</strong>ï¼ä»è¿å¤çå°æå°å¹²é¢ï¼æ¶é¤çé³åå¡å¡å£°</li>
-<li><strong>åæ¨¡ååæ­¥åçº§</strong>ï¼CLIãServerãWASM å¨é¨ééæ°æ¶æ</li>
-</ul>
-<p>å¦æä½ æ¾å¨ kokoroi-rs ä¸éå°è¿ä¸­æè¯­é³ä¸å¤èªç¶çé®é¢ï¼ç°å¨å¼å¾éæ°ä½éªä¸æ¬¡ã</p>
-<p>é¡¹ç®æç»­è¿­ä»£ä¸­ï¼æ¬¢è¿å° GitHub ä»åºä½éªãæ Issue æè´¡ç®ä»£ç ã</p>
-<blockquote>
-<p>é¡¹ç®å°åï¼<a href="https://github.com/doiito/kokoroi-rs" target="_blank" rel="noopener nofollow">github.com/doiito/kokoroi-rs</a></p>
-</blockquote>
-<hr>
-<p><em>æ¬æåºäº kokoroi-rs v0.1.2 çæ¬æ´æ°æ´çï¼æ¬¢è¿äº¤æµè®¨è®ºã</em></p>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.0006944444444444445" data-date-updated="2026-07-24 19:31">2026-07-24 19:30</span>&nbsp;
-<a href="https://www.cnblogs.com/doiito">doiito</a>&nbsp;
-éè¯»(<span id="post_view_count">40</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(21893135);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fdoiito%2Fp%2F21893135&amp;targetId=21893135&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ DuckDB å­å¨å±å°æ§è¡å±ï¼ SegmentãDataChunkãFilter ä¸ Morsel-Driven Hash Join çå®æ´æ§è¡è¿ç¨ ]]></title>
-    <link>https://www.cnblogs.com/aslanvon/p/21907390</link>
-    <guid>ec77b4e9622f883df1bd2a7d7f014c08</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/aslanvon/p/21907390" title="åå¸äº 2026-07-25 12:45">
-    
-
-    <span role="heading" aria-level="2">DuckDB å­å¨å±å°æ§è¡å±ï¼ SegmentãDataChunkãFilter ä¸ Morsel-Driven Hash Join çå®æ´æ§è¡è¿ç¨</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<blockquote>
-<p>æ¬æä»¥ DuckDB çåéåæ§è¡æ¨¡åä¸ºèæ¯ï¼è¯¦ç»è§£éä¸ä¸ªé®é¢ï¼</p>
-<ol>
-<li>å­å¨å±ä¸­ç <code>ColumnSegment</code> å¦ä½è¢«æ«æä¸ºæ§è¡å±ç <code>DataChunk</code>ï¼</li>
-<li><code>DataChunk</code> ç»è¿ Filter æ¶ï¼æ¯å¤å¶æ°æ®è¿æ¯ä½¿ç¨éæ©åéï¼</li>
-<li>ä¸¤ä¸ªè¡¨åèªç morsel/DataChunk å¦ä½å Filterï¼åå BuildãProbe ä¸¤ä¸ª pipeline å®æå¤çº¿ç¨ Hash Joinã</li>
-</ol>
-<p>æä¸­ç»ä¸ä½¿ç¨ DuckDB çæ­£å¼ç±»åå <strong><code>DataChunk</code></strong>ãå£è¯­ä¸­ç âchunk dataââchunkdateâ åæ <code>DataChunk</code>ã</p>
-</blockquote>
-<hr>
-<h1 id="1-åå»ºç«æ´ä½æ¦å¿µ">1. åå»ºç«æ´ä½æ¦å¿µ</h1>
-<p>DuckDB çæ°æ®ä»ç£çè¿å¥æ¥è¯¢æ§è¡å¼æï¼å¤§è´ç»åä»¥ä¸å±æ¬¡ï¼</p>
-<div class="mermaid">flowchart LR
-    A[ç£çæåå­ä¸­çè¡¨] --&gt; B[Row Group]
-    B --&gt; C1[id åç ColumnSegment]
-    B --&gt; C2[age åç ColumnSegment]
-    B --&gt; C3[city åç ColumnSegment]
-
-    C1 --&gt;|æ«æ / è§£ç | V1[id Vector]
-    C2 --&gt;|æ«æ / è§£ç | V2[age Vector]
-    C3 --&gt;|æ«æ / è§£ç | V3[city Vector]
-
-    V1 --&gt; D[DataChunk]
-    V2 --&gt; D
-    V3 --&gt; D
-
-    D --&gt; F[Filter]
-    F --&gt; G[Filtered DataChunk]
-    G --&gt; H[Hash Join Build æ Probe]
-</div><p>å¶ä¸­ï¼</p>
-<table>
-<thead>
-<tr>
-<th>æ¦å¿µ</th>
-<th>æå±å±æ¬¡</th>
-<th>å«ä¹</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>ColumnSegment</code></td>
-<td>å­å¨å±</td>
-<td>æä¸åçä¸æ®µæ°æ®ï¼å¯è½åç¼©ï¼å¸¦æç»è®¡ä¿¡æ¯åç£çåä½ç½®</td>
-</tr>
-<tr>
-<td><code>Vector</code></td>
-<td>æ§è¡å±</td>
-<td>ä¸åçä¸æ¹å¼ï¼å¯ä»¥æ¯ FlatãConstantãDictionary ç­ç©çæ ¼å¼</td>
-</tr>
-<tr>
-<td><code>DataChunk</code></td>
-<td>æ§è¡å±</td>
-<td>å¤ä¸ªç­é¿ Vector çéåï¼è¡¨ç¤ºä¸æ¹å®æ´çè¡</td>
-</tr>
-<tr>
-<td><code>SelectionVector</code></td>
-<td>æ§è¡å±</td>
-<td>è®°å½åªäºè¡éè¿è¿æ»¤ï¼ä¾å¦ <code>[1, 4, 9]</code></td>
-</tr>
-<tr>
-<td>morsel</td>
-<td>è°åº¦å±</td>
-<td>çº¿ç¨å¯ä»¥é¢åçä¸æ®µæ«æå·¥ä½ï¼ä¸ä¸ª morsel éå¸¸äº§çå¤ä¸ª DataChunk</td>
-</tr>
-<tr>
-<td>pipeline</td>
-<td>æ§è¡è°åº¦å±</td>
-<td>å¯ä»¥è¿ç»­æ§è¡çä¸ä¸²ç®å­ï¼ä¾å¦ <code>Scan â Filter â Hash Join Build</code></td>
-</tr>
-</tbody>
-</table>
-<p>DuckDB å®æ¹æ§è¡æ ¼å¼ææ¡£å° <code>Vector</code> å®ä¹ä¸ºæ§è¡æé´çåå­æ°æ®å®¹å¨ï¼å° <code>DataChunk</code> å®ä¹ä¸ºå¤ä¸ª Vector çéåãå½åé»è®¤ <code>STANDARD_VECTOR_SIZE</code> æ¯ <strong>2048 è¡</strong>ï¼ä½æåä¸ä¸ª chunk æè¿æ»¤åç chunk å¯ä»¥å°äº 2048 è¡ã[1]</p>
-<hr>
-<h1 id="2-segment-å-datachunk-çæ ¹æ¬åºå«">2. Segment å DataChunk çæ ¹æ¬åºå«</h1>
-<p><img src="https://img2024.cnblogs.com/blog/2079976/202607/2079976-20260725124232137-1184678522.png" alt="ChatGPT Image 2026å¹´7æ25æ¥ 13_42_05" loading="lazy"></p>
-<h2 id="21-segment-æ¯æåååçå­å¨åä½">2.1 Segment æ¯æåååçå­å¨åä½</h2>
-<p>åè®¾æä¸å¼ è¡¨ï¼</p>
-<pre><code class="language-sql">CREATE TABLE users (
-    id   INTEGER,
-    age  INTEGER,
-    city VARCHAR
-);
-</code></pre>
-<p>å­å¨å±æ¯åå¼ç»ç»çï¼å¯ä»¥æ½è±¡æï¼</p>
-<pre><code class="language-text">id å                         age å                        city å
-ââââââââââââââââââââââ       ââââââââââââââââââââââ       ââââââââââââââââââââââ
-â ColumnSegment id-0 â       â ColumnSegment age-0â       âColumnSegment city-0â
-â ä¸æ®µè¿ç»­è¡çæ°æ®    â       â ä¸æ®µè¿ç»­è¡çæ°æ®    â       â ä¸æ®µè¿ç»­è¡çæ°æ®    â
-â åç¼© + ç»è®¡ + ä½ç½®  â       â åç¼© + ç»è®¡ + ä½ç½®  â       â åç¼© + ç»è®¡ + ä½ç½®  â
-ââââââââââââââââââââââ       ââââââââââââââââââââââ       ââââââââââââââââââââââ
-ââââââââââââââââââââââ       ââââââââââââââââââââââ       ââââââââââââââââââââââ
-â ColumnSegment id-1 â       â ColumnSegment age-1â       âColumnSegment city-1â
-ââââââââââââââââââââââ       ââââââââââââââââââââââ       ââââââââââââââââââââââ
-            ...                          ...                          ...
-</code></pre>
-<p>ä¸ä¸ª <code>ColumnSegment</code> åªå±äºä¸åãå¶åé¨å¯è½åå«ï¼</p>
-<ul>
-<li>è¯¥æ®µçæ°æ®æ°éï¼</li>
-<li>åç¼©å½æ°ååç¼©ç¶æï¼</li>
-<li>Segment ç»è®¡ä¿¡æ¯ï¼</li>
-<li>å¯¹åºçç£ç BlockãBlock ååç§»ï¼</li>
-<li>æ«æç¶æåè§£ç ç¶æã</li>
-</ul>
-<p>DuckDB ç <code>ColumnSegment</code> æ¥å£æä¾æ«æä¸ä¸ª Vectorãæ SelectionVector éæ©ï¼ä»¥åå¨æ«ææ¶æ§è¡ Filter çå¥å£ã[4]</p>
-<h2 id="22-datachunk-æ¯æè¡æ¹æ¬¡ç»ç»çæ§è¡åä½">2.2 DataChunk æ¯æè¡æ¹æ¬¡ç»ç»çæ§è¡åä½</h2>
-<p>æ§è¡å¼æä¸æ¯ææ°æ®éæ°ç»è£æè¡å¼ç»æï¼</p>
-<pre><code class="language-text">[id1, age1, city1]
-[id2, age2, city2]
-</code></pre>
-<p>èæ¯ç»§ç»­ä¿æåå¼ï¼</p>
-<pre><code class="language-text">DataChunkï¼cardinality = 2048
-
-ââââââââââââââââââââ¬âââââââââââââââââââ¬âââââââââââââââââââ
-â id Vector        â age Vector       â city Vector      â
-â 2048 ä¸ªé»è¾å¼     â 2048 ä¸ªé»è¾å¼     â 2048 ä¸ªé»è¾å¼     â
-ââââââââââââââââââââ´âââââââââââââââââââ´âââââââââââââââââââ
-</code></pre>
-<p>å¯ä»¥å° <code>DataChunk</code> çè§£ä¸ºï¼</p>
-<pre><code class="language-text">DataChunk
-âââ Vector 0ï¼id
-âââ Vector 1ï¼age
-âââ Vector 2ï¼city
-âââ cardinalityï¼è¿äº Vector å±åæ¥æçææè¡æ°
-</code></pre>
-<p>å æ­¤ï¼</p>
-<blockquote>
-<p>Segment æ¯âæä¸åçä¸æ®µå­å¨âï¼DataChunk æ¯âå¤åå¨åä¸è¡å·èå´åç»æçä¸æ¹æ§è¡æ°æ®âã</p>
-</blockquote>
-<p>äºèæ²¡æåºå®çä¸ä¸å¯¹åºå³ç³»ã</p>
-<hr>
-<h1 id="3-segment-å¦ä½æ«ææ-datachunk">3. Segment å¦ä½æ«ææ DataChunk</h1>
-<h2 id="31-ç¬¬ä¸æ­¥æ¥è¯¢åç¡®å®éè¦åªäºå">3.1 ç¬¬ä¸æ­¥ï¼æ¥è¯¢åç¡®å®éè¦åªäºå</h2>
-<p>ä¾å¦ï¼</p>
-<pre><code class="language-sql">SELECT id, city
-FROM users
-WHERE age &gt;= 30;
-</code></pre>
-<p>æ§è¡è®¡åè³å°éè¦è¯»åï¼</p>
-<ul>
-<li><code>age</code>ï¼ç¨äºè¿æ»¤ï¼</li>
-<li><code>id</code>ï¼ç¨äºè¾åºï¼</li>
-<li><code>city</code>ï¼ç¨äºè¾åºã</li>
-</ul>
-<p>æ²¡æè¢«æ¥è¯¢å¼ç¨çå¶ä»åå¯ä»¥è¢«åè£åªï¼ä¸å¿è¿å¥ DataChunkã</p>
-<h2 id="32-ç¬¬äºæ­¥ä»åå-segment-è¯»åç¸åçè¡å·èå´">3.2 ç¬¬äºæ­¥ï¼ä»åå Segment è¯»åç¸åçè¡å·èå´</h2>
-<p>åè®¾æ¬æ¬¡æ«æç®æ æ¯é»è¾è¡ <code>0ï½2047</code>ï¼</p>
-<div class="mermaid">flowchart TB
-    subgraph Storage[å­å¨å±]
-        S1[id ColumnSegment]
-        S2[age ColumnSegment]
-        S3[city ColumnSegment]
-    end
-
-    subgraph Scan[æ«æåè§£ç ]
-        R1[è¯»å id ç 0~2047]
-        R2[è¯»å age ç 0~2047]
-        R3[è¯»å city ç 0~2047]
-    end
-
-    subgraph Execution[æ§è¡å±]
-        V1[id Vector: 2048]
-        V2[age Vector: 2048]
-        V3[city Vector: 2048]
-        C[DataChunk: 2048 è¡]
-    end
-
-    S1 --&gt; R1 --&gt; V1 --&gt; C
-    S2 --&gt; R2 --&gt; V2 --&gt; C
-    S3 --&gt; R3 --&gt; V3 --&gt; C
-</div><p>æ«æå¨ä¼è®©å¤ä¸ªå Vector å¯¹é½å°åä¸æ¹é»è¾è¡ãåªæè¿æ ·ï¼<code>id[i]</code>ã<code>age[i]</code>ã<code>city[i]</code> æå±äºåä¸æ¡è®°å½ã</p>
-<h2 id="33-ç¬¬ä¸æ­¥è§£ç ä¸ç­äºå¨é¨å±å¼æ-flat-vector">3.3 ç¬¬ä¸æ­¥ï¼è§£ç ä¸ç­äºå¨é¨å±å¼æ Flat Vector</h2>
-<p>å¸¸è§è¯¯è§£æ¯ï¼</p>
-<pre><code class="language-text">åç¼© Segment â å®å¨è§£åæè¿ç»­æ°ç» â åå¤å¶è¿ DataChunk
-</code></pre>
-<p>å®éå¹¶ä¸ä¸å®å¦æ­¤ãDuckDB çæ§è¡ Vector æ¯æå¤ç§ç©çæ ¼å¼ï¼[1]</p>
-<h3 id="flat-vector">Flat Vector</h3>
-<pre><code class="language-text">é»è¾å¼ï¼[10, 20, 30, 40]
-ç©çå¼ï¼[10, 20, 30, 40]
-</code></pre>
-<p>æ°æ®ä»¥è¿ç»­æ°ç»ä¿å­ã</p>
-<h3 id="constant-vector">Constant Vector</h3>
-<pre><code class="language-text">é»è¾å¼ï¼[åäº¬, åäº¬, åäº¬, åäº¬]
-ç©çå¼ï¼åäº¬ Ã 1
-</code></pre>
-<p>å­å¨å±å¦æä½¿ç¨å¸¸éåç¼©ï¼å¯ä»¥ç´æ¥äº§ç Constant Vectorï¼ä¸å¿éå¤åå¥ 2048 æ¬¡ã</p>
-<h3 id="dictionary-vector">Dictionary Vector</h3>
-<pre><code class="language-text">child vector = [åäº¬, ä¸æµ·, æ·±å³]
-selection    = [0, 1, 0, 2, 1, ...]
-</code></pre>
-<p>Dictionary Vector ç±ä¸ä¸ª child vector åä¸ä¸ª SelectionVector ææãDuckDB å¯ä»¥å¨è¯»åå­å¸åç¼© Segment æ¶ç»§ç»­ä¿çè¿ç§å½¢å¼ï¼è®©åç¼©è¡¨ç¤ºè¿å¥æ§è¡é¶æ®µã[1]</p>
-<p>å æ­¤ï¼æ´åç¡®çæè¿°æ¯ï¼</p>
-<blockquote>
-<p>Segment è¢«æ«æåè§£ç ä¸ºæ§è¡å±å¯ä»¥æ¶è´¹ç Vectorï¼Vector å¯è½æ¯ Flatï¼ä¹å¯è½ç»§ç»­ä¿æ ConstantãDictionary ç­åç¼©è¡¨ç¤ºã</p>
-</blockquote>
-<h2 id="34-ä¸ä¸ª-segment-å¯ä»¥äº§çå¤ä¸ª-datachunk">3.4 ä¸ä¸ª Segment å¯ä»¥äº§çå¤ä¸ª DataChunk</h2>
-<p>åè®¾æä¸ª Segment å«æ 10,000 ä¸ªå¼ï¼é»è®¤æ¯ä¸ª DataChunk æå¤§å¤ç 2048 è¡ï¼åå®å¯è½ä¾æ¬¡è´¡ç®ç»ï¼</p>
-<pre><code class="language-text">DataChunk 1ï¼è¡ 0ï½2047
-DataChunk 2ï¼è¡ 2048ï½4095
-DataChunk 3ï¼è¡ 4096ï½6143
-DataChunk 4ï¼è¡ 6144ï½8191
-DataChunk 5ï¼è¡ 8192ï½9999ï¼å± 1808 è¡
-</code></pre>
-<p>åè¿æ¥ï¼å¦æä¸ä¸ªæ§è¡æ¹æ¬¡çè¯»åèå´è·¨è¶äº Segment è¾¹çï¼æ«æå¨éè¦ç»æå½å Segment çè¯»åï¼ååæ¢å°ä¸ä¸ Segmentãå·ä½æ«æè·¯å¾å¯è½å¡«ååä¸ä¸ª Vectorï¼ä¹å¯è½å¨è¾¹çå¤è¿åè¾ç­æ¹æ¬¡ï¼å³é®ç»è®ºæ¯ï¼</p>
-<blockquote>
-<p>Segment è¾¹çå DataChunk è¾¹çæ¯ä¸¤ä¸ªä¸åå±æ¬¡çè¾¹çï¼ä¸è½åè®¾å®ä»¬å®å¨éåã</p>
-</blockquote>
-<h2 id="35-segment-ç»è®¡ä¿¡æ¯å¯ä»¥è®©æ´ä¸ª-segment-ä¸è¢«è¯»å">3.5 Segment ç»è®¡ä¿¡æ¯å¯ä»¥è®©æ´ä¸ª Segment ä¸è¢«è¯»å</h2>
-<p>å¯¹äºï¼</p>
-<pre><code class="language-sql">WHERE age &gt;= 30
-</code></pre>
-<p>å¦ææä¸ª <code>age</code> Segment çç»è®¡ä¿¡æ¯è¡¨æï¼</p>
-<pre><code class="language-text">min(age) = 10
-max(age) = 25
-</code></pre>
-<p>é£ä¹è¯¥ Segment ä¸å¯è½äº§çæ»¡è¶³æ¡ä»¶çè¡ï¼æ«æå¨å¯è½ç´æ¥è·³è¿å®ãè¿å±äºè¿æ»¤ä¸æ¨å Segment çº§è£åªï¼å¯ä»¥åå°è§£ç å DataChunk æé å·¥ä½ã</p>
-<hr>
-<h1 id="4-datachunk-ç»è¿-filter-æ¶åçä»ä¹">4. DataChunk ç»è¿ Filter æ¶åçä»ä¹</h1>
-<p>è¿ééè¦åºåä¸¤ç§è·¯å¾ï¼</p>
-<ol>
-<li><strong>Filter è¢«ä¸æ¨å° Table Scan</strong>ï¼æ«æ Segment æ¶å°±ç­éï¼</li>
-<li><strong>ç¬ç«ç <code>PhysicalFilter</code> ç®å­</strong>ï¼Scan å·²äº§ç DataChunkï¼Filter åå¯¹æ´ä¸ª DataChunk è®¡ç®æ¡ä»¶ã</li>
-</ol>
-<p>ä¸¤ç§è·¯å¾çç®æ ç¸åï¼å¾å°âéè¿æ¡ä»¶çè¡ä½ç½®âï¼å°½éé¿åå¤å¶ææåã</p>
-<hr>
-<h1 id="5-physicalfilter-çæ ¸å¿selectionvector">5. <code>PhysicalFilter</code> çæ ¸å¿ï¼SelectionVector</h1>
-<p>åè®¾è¾å¥ DataChunk æ 2048 è¡ã3 åï¼</p>
-<pre><code class="language-text">Input DataChunk
-cardinality = 2048
-
-ââââââââââââââââ¬âââââââââââââââ¬âââââââââââââââ
-â id Vector    â age Vector   â city Vector  â
-â 2048 è¡       â 2048 è¡       â 2048 è¡       â
-ââââââââââââââââ´âââââââââââââââ´âââââââââââââââ
-</code></pre>
-<p>æ¡ä»¶æ¯ï¼</p>
-<pre><code class="language-sql">WHERE age &gt;= 30
-</code></pre>
-<p>è¡¨è¾¾å¼æ§è¡å¨ä¼æ¹éè®¡ç®æ¡ä»¶ï¼å¹¶çæç±»ä¼¼ï¼</p>
-<pre><code class="language-text">SelectionVector = [1, 4, 7, 10, ..., 2046]
-result_count    = 600
-</code></pre>
-<p>è¿è¡¨ç¤ºï¼è¾å¥ chunk ä¸­ç¬¬ 1ã4ã7ã10â¦â¦è¡éè¿è¿æ»¤ã</p>
-<p>DuckDB å½å <code>PhysicalFilter</code> çå³é®è·¯å¾æ¯ï¼[2]</p>
-<pre><code class="language-cpp">idx_t result_count = executor.SelectExpression(input, sel);
-
-if (result_count == input.size()) {
-    output.Reference(input);
-} else if (result_count &gt; 0) {
-    output.Slice(input, sel, result_count);
+<h2 id="1æ»éªæ¯èµ">1.æ»éªæ¯èµ</h2>
+<h3 id="é¢ç®">é¢ç®ï¼</h3>
+<p>ççä»¬çå¨å½å¬å­£æ»éªè¿å¨ä¼çåºå°æ¯ä¸ä¸ªM*Nçç©éµãç©éµä¸­çæ¯ä¸ªå°æ¹æ ¼ä¸çæ°ä»£è¡¨çæ¯æ¯åå°æ¹çé«åº¦ï¼èå´æ¯0å°1000000000ä¹é´çæ´æ°ã<br>
+ç©éµä¸­æäºå°æ¹æ ¼è¢«è®¤ä¸ºæ¯ä¸­è½¬ç¹ï¼ä¸»åæ¹å¸æè½å¤è®¾ç½®ä¸ä¸ªæå°çDå¼ï¼ä½¿å¾æ¯åªççä»ä»»æä¸ä¸ªä¸­è½¬ç¹åºåé½å¯ä»¥å°è¾¾å¶ä»ä»»æçä¸­è½¬ç¹ãæ¯æ¬¡è¡èµ°é½æ¯åç¸é»çå°æ¹æ ¼ç§»å¨çï¼ç¸é»çå°æ¹æ ¼æå¾æ¯ä¸ä¸å·¦å³ç´æ¥ç¸æ¥çå°æ¹æ ¼ãå¦æç¸é»çå°æ¹æ ¼ä¹é´çé«åº¦å·®çç»å¯¹å¼å°äºç­äºDï¼åççå¯ä»¥å¨ä¸¤ä¸ªç¸é»çå°æ¹æ ¼ä¹é´ç§»å¨ã<br>
+è¯·è®¡ç®è¿ä¸ªæå°çDå¼ï¼ä½¿å¾ççè½å¤ä»ä»»æä¸ä¸ªä¸­è½¬ç¹åºåéè¿ç§»å¨å°è¾¾å¶ä»ä»»æä¸­è½¬ç¹ã</p>
+<h3 id="é¢ç®æ¡ä»¶">é¢ç®æ¡ä»¶ï¼</h3>
+<p>1.ç¬¬ä¸è¡æ¯ä¸¤ä¸ªæ­£æ´æ°MåNã<br>
+2.ç¬¬äºè¡å°å°M+1è¡ï¼æ¯è¡Nä¸ªæ´æ°ï¼è¡¨ç¤ºæ¯ä¸ªå°æ¹æ ¼çé«åº¦ã<br>
+3.ç¬¬M+2è¡å°ç¬¬2M+1è¡ï¼æ¯è¡Nä¸ªæ´æ°ï¼è¦ä¹æ¯0ï¼è¦ä¹æ¯1,1è¡¨ç¤ºè¯¥ä½ç½®æå¯¹åºçå°æ¹æ ¼æ¯ä¸­è½¬ç¹ï¼0è¡¨ç¤ºè¯¥ä½ç½®æå¯¹åºçå°æ¹æ ¼ä¸æ¯ä¸­è½¬ç¹ã</p>
+<h3 id="åæ">åæï¼</h3>
+<p>é¦åææ®éçæ¹æ³å°±æ¯æä¸¾Då¼å¹¶å¤æ­å¯ä¸å¯ä»¥åå°ï¼å¾ææ¾è¿æ ·åæ¶é´ä¼è¶éå¾å¤ï¼èæ¯æ¬¡çæ°´æå¤éè¦M*Nçæ¶é´å¤æåº¦ï¼æ¯æ¬¡äºåä¹åæ£æ¥æ è®°æ°ç»ï¼ä»éææå®çä¸­è½¬ç¹åºåï¼åªè¦æ£æ¥æ°ç»æ¯å«çä¸­è½¬ç¹è¢«æ è®°äºå°±å¯ä»¥ãè¿ä¸æ­¥ï¼å¦æDå¼è¶å°ï¼é£ä¹è¶é¾å®æï¼è¿éå°±æåè°æ§ï¼æä»¬å¯ä»¥äºåæä¸¾ç­æ¡ï¼æä¸¾æ¯å¤æ­å³å¯ã</p>
+<h3 id="ç¨åº">ç¨åºï¼</h3>
+<pre><code class="language-c++">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+int n,m,a[501][501],b[501][501],c[501][501],p,q;
+bool f(int x,int y,int z)
+{
+	if(abs(x-y)&lt;=z)
+		return 1;
+	return 0;
+}
+void zs(int x,int y,int z)
+{
+	if(x&lt;1||y&lt;1||x&gt;n||y&gt;m||c[x][y])
+		return;
+	c[x][y]=1;
+	if(f(a[x][y],a[x+1][y],z))
+		zs(x+1,y,z);
+	if(f(a[x][y],a[x-1][y],z))
+		zs(x-1,y,z);
+	if(f(a[x][y],a[x][y+1],z))
+		zs(x,y+1,z);
+	if(f(a[x][y],a[x][y-1],z))
+		zs(x,y-1,z);
+}
+int check(int x)
+{
+	zs(p,q,x);
+	for(int i=1;i&lt;=n;i++)
+		for(int j=1;j&lt;=m;j++)
+			if(b[i][j]&amp;&amp;!c[i][j])
+			{
+				memset(c,0,sizeof(c));
+				return 0;
+			}
+	memset(c,0,sizeof(c));
+	return 1;
+}
+int main()
+{
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	cin&gt;&gt;n&gt;&gt;m;
+	for(int i=1;i&lt;=n;i++)
+		for(int j=1;j&lt;=m;j++)
+	  		cin&gt;&gt;a[i][j];
+	for(int i=1;i&lt;=n;i++)
+		for(int j=1;j&lt;=m;j++)
+		{
+			cin&gt;&gt;b[i][j];
+			if(b[i][j])
+			{
+				p=i;
+				q=j;
+			}
+		}
+	int l=1,r=1e9;
+	while(l&lt;r)
+	{
+		int mid=(l+r)/2;
+		if(!check(mid))
+			l=mid+1;
+		else
+			r=mid;
+	}
+	cout&lt;&lt;l&lt;&lt;'\n';
+	return 0;
 }
 </code></pre>
-<h2 id="51-å¨é¨éè¿">5.1 å¨é¨éè¿</h2>
-<pre><code class="language-text">result_count = 2048
+<h2 id="2çç ">2.çç </h2>
+<h3 id="é¢ç®-1">é¢ç®ï¼</h3>
+<p>æné¢å½¢ç¶åå¤§å°é½ä¸è´ççç ï¼å®ä»¬çééé½ä¸ç¸åãnä¸ºæ´æ°ï¼ææççç ä»1å°nç¼å·ãä½ çä»»å¡æ¯åç°åªé¢çç çééåå¥½å¤äºæ­£ä¸­é´ï¼å³å¨ææçç çééä¸­ï¼è¯¥çç çééå(n+1)/2ä½ãä¸é¢ç»åºå°ä¸å¯¹çç è¿è¡æ¯è¾çåæ³ï¼<br>
+ç»ä½ ä¸æ¶å¤©å¹³ç¨æ¥æ¯è¾çç çééï¼æä»¬å¯ä»¥æ¯åºä¸¤ä¸ªçç åªä¸ªæ´éä¸äºï¼å¨ä½åºä¸ç³»åçæ¯è¾åï¼æä»¬å¯ä»¥å°æäºè¯å®ä¸å·å¤ä¸­é´ééççç æ¿èµ°ã<br>
+ä¾å¦ï¼ä¸åç»åºå¯¹5é¢çç è¿è¡åæ¬¡æ¯è¾çæåµï¼<br>
+1ãçç 2æ¯çç 1é<br>
+2ãçç 4æ¯çç 3é<br>
+3ãçç 5æ¯çç 1é<br>
+4ãçç 4æ¯çç 2é<br>
+æ ¹æ®ä»¥ä¸ç»æï¼è½ç¶æä»¬ä¸è½ç²¾ç¡®å°æ¾åºåªä¸ªçç å·æä¸­é´ééï¼ä½æä»¬å¯ä»¥è¯å®çç 1åçç 4ä¸å¯è½å·æä¸­é´ééï¼å ä¸ºçç 2ã4ã5æ¯çç 1éï¼èçç 1ã2ã3æ¯çç 4è½»ï¼æä»¥æä»¬å¯ä»¥ç§»èµ°è¿ä¸¤é¢çç ã<br>
+åä¸ä¸ªç¨åºç»è®¡åºå±æå¤å°é¢çç è¯å®ä¸ä¼æ¯ä¸­é´ééã</p>
+<h3 id="é¢ç®æ¡ä»¶-1">é¢ç®æ¡ä»¶ï¼</h3>
+<p>1.è¾å¥æä»¶ç¬¬ä¸è¡åå«ä¸¤ä¸ªç¨ç©ºæ ¼éå¼çæ´æ°NåMï¼å¶ä¸­1&lt;=N&lt;=99ï¼ä¸Nä¸ºå¥æ°ï¼Mè¡¨ç¤ºå¯¹çç è¿è¡çæ¯è¾æ¬¡æ°ï¼æ¥ä¸æ¥çMè¡æ¯è¡åå«ä¸¤ä¸ªç¨ç©ºæ ¼éå¼çæ´æ°xåyï¼è¡¨ç¤ºçç xæ¯çç yéã</p>
+<h3 id="åæ-1">åæï¼</h3>
+<p>è¿ééè¦æ¥æ¾ä¸å¯è½æ¯ä¸­é´ééççç æ°éï¼æ¯æ¬¡æä»¬å¯ä»¥çæ°´æ¥è®¡ç®ä¸å®æ¯èèççç éçåä¸å®æ¯èèçç è½»çï¼åªè¦æä¸ä¸ªæ¯n/2è¦å¤§ï¼é£ä¹ç­æ¡å°±å ä¸ï¼å¯ä»¥ç¨ä¸¤ä¸ªå½æ°æ¥è®¡ç®ï¼æ¯è¾æ¹ä¾¿ã</p>
+<h3 id="ç¨åº-1">ç¨åº:</h3>
+<pre><code class="language-c++">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+int n,m,a[101][101],b[101],c[101],s,l,ans;
+void za(int x)
+{
+	for(int i=1;i&lt;=n;i++)
+		if(a[x][i]&amp;&amp;!b[i])
+		{
+			b[i]=1;
+			l++;
+			za(i);
+		}
+}
+void zb(int x)
+{
+	for(int i=1;i&lt;=n;i++)
+		if(a[i][x]&amp;&amp;!c[i])
+		{
+			c[i]=1;
+			s++;
+			zb(i);
+		}
+}
+int main()
+{
+	cin&gt;&gt;n&gt;&gt;m;
+	for(int i=1;i&lt;=m;i++)
+	{
+		int x,y;
+		cin&gt;&gt;x&gt;&gt;y;
+		a[x][y]=1;
+	}
+	for(int i=1;i&lt;=n;i++)
+	{
+		za(i);
+		zb(i);
+		if(l&gt;n/2||s&gt;n/2)
+			ans++;
+		s=0;
+		l=0;
+		memset(b,0,sizeof(b));
+		memset(c,0,sizeof(c));
+	}
+	cout&lt;&lt;ans&lt;&lt;endl;
+	return 0;
+}
 </code></pre>
-<p>è¾åºç´æ¥å¼ç¨è¾å¥ï¼</p>
-<pre><code class="language-text">output.Reference(input)
+<h2 id="3åèå²å±¿">3.åèå²å±¿</h2>
+<h3 id="é¢ç®-2">é¢ç®ï¼</h3>
+<p>è´èåå¶ä»çä¸æ ·æ­£å¨ç¨ååå¼å«©è,æ²¡æèèå°çæç¯å¢é®é¢ãå¥¹æ³¨æå°å¥¹æåæ¬¢å®½éç§åºä¸é£ç§ç®ç®çèãéèé¿å°1ç±³é«çæ¶åå¾é¾æç»èä¸å£å³ä¹èãè¿äºåèéçé«åº¦å¢å å°è¶æ¥è¶åãç»§ç»­å¼ï¼å¥¹æè¯å°è¿ä»¤äººåèå£çé£ç©é¿å¾åå±±ä¸æ ·ï¼å¥½åæ¯ç¾å³ãä¸°å¯çéèæµ·æ´ä¸­çç«ççä¸ä¸ªä¸ªå²å±¿ãè´èç©¿ä¸å·¥ä½æï¼å¥¹å³å®åæµä¸ä¸å¥¹ç°åä¸­ä¸å±æå¤å°ååèå°å±±ãå¥¹æè¦åæµç°åç»å¶æä¸ä¸ªå°å¾ï¼å°å¾ä¸åå«R(1&lt;R&lt;=1000)è¡åC(1&lt;C&lt;=1000)åä¸ª1ç±³*1ç±³çæ­£æ¹å½¢ãå¥¹æµéå¶ä¸­çæ¯ä¸åï¼å¹¶è®°å½ä¸å¶ä¸­èçé«åº¦ãå¥¹ææææ°é²ç¾å³çèé½æ è®°ä¸º0ãå¥¹å¼å§ç»è®¡è¿äºå²å±¿çä¸ªæ°ãæ²¿çä»»ææ¹åç¸é»(8ä¸ªæ¹å)çä¸¤ä¸ªåºåå°è¢«è®¤ä¸ºæ¯åä¸ä¸ªå²å±¿çä¸åé¨åãè¯·è®¡ç®æä¾çæ¯ä¸ªå°å¾ä¸æå¤å°ä¸ªåèå²å±¿ã</p>
+<h3 id="é¢ç®æ¡ä»¶-2">é¢ç®æ¡ä»¶ï¼</h3>
+<p>1.ç¬¬1è¡:ä¸¤ä¸ªç¨ç©ºæ ¼éå¼çæ´æ°R,Cã<br>
+2.ç¬¬2..R+1è¡:ç°åä¿¡æ¯ã<br>
+3.è¾åºåèå²å±¿çæ°éã</p>
+<h3 id="åæ-2">åæï¼</h3>
+<p>è¿éé¢ç®æ¯ä¸éç®åçæ±è¿éåæ°éçé®é¢ï¼ä¸ä¸ªéåå½æ°ææ¯ä¸ä¸ªé¿äºåèçå°æ¹èµ°ä¸éï¼ç¶åä»è¿ä¸ªèçé«åº¦å¹¶ä¸éè¦ï¼åªéè¦çä»æ¯å¦è¶è¿0ï¼ç¶åæ¯æ¬¡çè¿ä¸ªç¹ææ²¡æèµ°è¿ï¼è¾åºç­æ¡å³å¯ã</p>
+<h3 id="ç¨åº-2">ç¨åºï¼</h3>
+<pre><code class="language-c++">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+int r,c,a[1001][1001],b[1001][1001],ans;
+void zs(int x,int y)
+{
+	if(x&lt;1||y&lt;1||x&gt;r||y&gt;c||b[x][y]||!a[x][y])
+		return;
+	b[x][y]=1;
+	zs(x-1,y);
+	zs(x+1,y);
+	zs(x,y-1);
+	zs(x,y+1);
+	zs(x+1,y+1);
+	zs(x+1,y-1);
+	zs(x-1,y+1);
+	zs(x-1,y-1);
+}
+int main()
+{
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	cin&gt;&gt;r&gt;&gt;c;
+	for(int i=1;i&lt;=r;i++)
+		for(int j=1;j&lt;=c;j++)
+			cin&gt;&gt;a[i][j];
+	for(int i=1;i&lt;=r;i++)
+		for(int j=1;j&lt;=c;j++)
+			if(!b[i][j]&amp;&amp;a[i][j])
+			{
+				ans++;
+				zs(i,j);
+			}
+	cout&lt;&lt;ans&lt;&lt;'\n';
+	return 0;
+}
 </code></pre>
-<p>æ²¡æå¿è¦å¢å éæ©å±ã</p>
-<h2 id="52-é¨åéè¿">5.2 é¨åéè¿</h2>
-<pre><code class="language-text">result_count = 600
-</code></pre>
-<p>è¾åºæ§è¡ï¼</p>
-<pre><code class="language-text">output.Slice(input, selection, 600)
-</code></pre>
-<p><code>DataChunk::Slice</code> ä¼å¯¹æ¯ä¸å Vector åºç¨ç¸åç SelectionVectorï¼å¦æè¾å¥æ¬èº«å·²ç»æ¯ Dictionary Vectorï¼DuckDB ä¼åå¹¶éæ©å³ç³»ï¼é¿åæ éå å  Dictionary å±ã[3]</p>
-<p>é»è¾ä¸ï¼ä¸æ¸¸çå°ï¼</p>
-<pre><code class="language-text">Filtered DataChunk
-cardinality = 600
-
-ââââââââââââââââ¬âââââââââââââââ¬âââââââââââââââ
-â id           â age          â city         â
-â 600 ä¸ªé»è¾å¼  â 600 ä¸ªé»è¾å¼  â 600 ä¸ªé»è¾å¼  â
-ââââââââââââââââ´âââââââââââââââ´âââââââââââââââ
-</code></pre>
-<p>ç©çä¸éå¸¸æ´æ¥è¿ï¼</p>
-<pre><code class="language-text">åå§ id Vector   ââ
-åå§ age Vector  ââ¼â è¢«è¾åº Vector å¼ç¨
-åå§ city Vector ââ
-
-å±åçéæ©å³ç³»ï¼sel = [1, 4, 7, 10, ...]
-è¾åº cardinalityï¼600
-</code></pre>
-<h2 id="53-å¨é¨ä¸éè¿">5.3 å¨é¨ä¸éè¿</h2>
-<pre><code class="language-text">result_count = 0
-</code></pre>
-<p>æ¬æ¬¡ä¸ä¼äº§çææè¾åºè¡ãpipeline ä¼ç»§ç»­å Scan è¯·æ±ä¸ä¸æ¹è¾å¥ã</p>
-<hr>
-<h1 id="6-filter-åç©¶ç«æ¯ä¸æ¯åæ¥ç-chunk">6. Filter åç©¶ç«æ¯ä¸æ¯âåæ¥ç Chunkâ</h1>
-<p>éè¦åºåä¸ä¸ªå¯¹è±¡ï¼</p>
-<pre><code class="language-text">1. DataChunk å®¹å¨å¯¹è±¡
-2. DataChunk åç Vector å¯¹è±¡
-3. Vector å¼ç¨çåºå±æ°æ® Buffer
-</code></pre>
-<p>é¨åè¿æ»¤æ¶ï¼éå¸¸æ¯ï¼</p>
-<pre><code class="language-text">è¾å¥ DataChunk å¯¹è±¡ A
-      â
-      â Filter äº§ç sel
-      â¼
-è¾åº DataChunk å¯¹è±¡ B
-      â
-      âââ Vector å¼ç¨ A çåºå±æ°æ®
-      âââ éè¿ SelectionVector æ¹åé»è¾è¡æ å°
-</code></pre>
-<p>å æ­¤æåç¡®çè¯´æ³æ¯ï¼</p>
-<blockquote>
-<p>Filter éå¸¸äº§çä¸ä¸ªæ°çè¾åº DataChunk è§å¾ï¼DataChunk å®¹å¨ä¸æ¯åå¯¹è±¡ï¼ä½åºå±åæ°æ®éå¸¸ä»æ¯å Bufferï¼æ²¡æç«å³å¤å¶ææ°çè¿ç»­æ°ç»ã</p>
-</blockquote>
-<p>å®ä¸æ¯å¨åå§ chunk ä¸ä¿å­ä¸ä¸ªç®åçå¸å°æ°ç»ï¼</p>
-<pre><code class="language-text">false, true, false, true, ...
-</code></pre>
-<p>èæ¯æ´åä¿å­éè¿è¡çç´¢å¼ï¼</p>
-<pre><code class="language-text">1, 3, 8, 12, ...
-</code></pre>
-<h2 id="61-ä»ä¹æ¶åä¼çæ­£å¤å¶æç©å">6.1 ä»ä¹æ¶åä¼çæ­£å¤å¶æç©å</h2>
-<p>åç»­åçä»¥ä¸æä½æ¶ï¼æ°æ®å¯è½è¢«å¤å¶å°æ°çè¿ç»­å­å¨ï¼</p>
-<ul>
-<li>åå¥ Hash Join ç Build å­å¨ï¼</li>
-<li>åå¥ Sort çæåºç¼å²ï¼</li>
-<li>åå¥èåç¶ææä¸´æ¶ç»æï¼</li>
-<li>ç®å­è¦æ± Flat Vectorï¼</li>
-<li>è·¨è¶éè¦æä¹åçæ°æ®çå½å¨æè¾¹çï¼</li>
-<li>è¾åºå°æä»¶ãå®¢æ·ç«¯æåºååæ ¼å¼ã</li>
-</ul>
-<p><code>DataChunk::Copy</code> ä¼æéä¸­æ°æ®å¤å¶å° Flat Vectorï¼è <code>DataChunk::Flatten</code> ä¼å°åå Vector è½¬æ Flat è¡¨ç¤ºã[3]</p>
-<hr>
-<h1 id="7-table-scan-åé¨çè¿æ»¤ä¸æ¨">7. Table Scan åé¨çè¿æ»¤ä¸æ¨</h1>
-<p>å¦ææ¡ä»¶è¶³å¤ç®åï¼DuckDB å¯ä»¥å° Filter æ¨å¥æ«æç®å­ï¼</p>
-<pre><code class="language-text">æ²¡æä¸æ¨ï¼
-Segment â Scan 2048 è¡ â DataChunk â PhysicalFilter â 600 è¡
-
-è¿æ»¤ä¸æ¨ï¼
-Segment â Scan + Filter â ç´æ¥å¾å°ç¬¦åæ¡ä»¶çè¡/Vector
-</code></pre>
-<p><code>ColumnSegment</code> æä¾ï¼</p>
-<pre><code class="language-cpp">Scan(...)
-Select(..., SelectionVector ...)
-Filter(..., SelectionVector ..., TableFilter ...)
-</code></pre>
-<p>è¿è¯´æå­å¨æ«æè·¯å¾æ¬èº«ä¹å¯ä»¥ä½¿ç¨ SelectionVectorï¼å¨æ«æåè§£ç é¶æ®µç¼©å°ç»æã[4]</p>
-<p>ä¸è¿ä»é»è¾æ¨¡åçï¼ä»ç¶å¯ä»¥çè§£ä¸ºï¼</p>
-<pre><code class="language-text">Scan â Filter â ä¸æ¸¸ç®å­
-</code></pre>
-<p>åºå«åªæ¯è¿æ»¤è¢«èåè¿äº Scanï¼èä¸æ¯ä½ä¸ºåç¬ç <code>PhysicalFilter</code> èç¹æ§è¡ã</p>
-<hr>
-<h1 id="8-morsel-å-datachunk-çå³ç³»">8. Morsel å DataChunk çå³ç³»</h1>
-<p>è¿ä¸¤ä¸ªæ¦å¿µä¸è½æ··ä¸ºä¸è°ï¼</p>
-<pre><code class="language-text">è¡¨
-âââ å¤ä¸ª morsel / æ«æä»»å¡èå´       è°åº¦åä½
-    âââ å¤ä¸ª DataChunk               ç®å­å¤çåä½
-        âââ å¤ä¸ª Vector              åæ°æ®
-            âââ åºå± Buffer / åç¼©è¡¨ç¤º
-</code></pre>
-<p>åè®¾ä¸ä¸ª morsel å¯¹åºçº¦ 8192 è¡æ«æå·¥ä½ï¼èé»è®¤ DataChunk æå¤§ 2048 è¡ï¼åï¼</p>
-<pre><code class="language-text">morsel M1
-âââ DataChunk M1-C1ï¼2048 è¡
-âââ DataChunk M1-C2ï¼2048 è¡
-âââ DataChunk M1-C3ï¼2048 è¡
-âââ DataChunk M1-C4ï¼2048 è¡
-</code></pre>
-<p>è¿éç 8192 åªæ¯ç¤ºæãDuckDB çå®éä»»å¡ååä¼æ ¹æ®æ°æ®æºãRow Groupãçº¿ç¨æ°åç®å­ç¹æ§ååãåºå½è®°ä½ï¼</p>
-<blockquote>
-<p>morsel æ¯âçº¿ç¨é¢åå¤å°æ«æå·¥ä½âï¼DataChunk æ¯âç®å­ä¸æ¬¡å¤çå¤å°è¡âã</p>
-</blockquote>
-<hr>
-<h1 id="9-ä¸¤ä¸ªè¡¨-join-æ¶ä¸¤è¾¹é½æèªå·±ç-morsel">9. ä¸¤ä¸ªè¡¨ Join æ¶ï¼ä¸¤è¾¹é½æèªå·±ç morsel</h1>
-<p>èèä¸é¢çæ¥è¯¢ï¼</p>
-<pre><code class="language-sql">SELECT
-    o.order_id,
-    o.amount,
-    c.name
-FROM orders AS o
-JOIN customers AS c
-  ON o.customer_id = c.id
-WHERE c.active = TRUE
-  AND o.amount &gt; 100;
-</code></pre>
-<p>åè®¾ä¼åå¨éæ©ï¼</p>
-<ul>
-<li><code>customers</code> ä¸º Build ä¾§ï¼</li>
-<li><code>orders</code> ä¸º Probe ä¾§ã</li>
-</ul>
-<p>ä¸¤ä¸ªè¡¨åèªæ¥æç¬ç«çæ«æä»»å¡ï¼</p>
-<pre><code class="language-text">customers Build ä¾§
-âââ morsel C1
-âââ morsel C2
-âââ morsel C3
-âââ ...
-
-orders Probe ä¾§
-âââ morsel O1
-âââ morsel O2
-âââ morsel O3
-âââ morsel O4
-âââ ...
-</code></pre>
-<p>ä½ä¸¤ä¸ªè¡¨ç morsel ä¸æ¯åæ¶è¿å¥åä¸ä¸ª Join ç®å­å¹¶âç¸éâãHash Join è¢«ææä¸¤ä¸ªæä¾èµå³ç³»ç pipelineï¼</p>
-<div class="mermaid">flowchart LR
-    subgraph BuildPipeline[Pipeline 1ï¼Build]
-        CB[customers morsels] --&gt; CS[Scan]
-        CS --&gt; CF[Filter: active = true]
-        CF --&gt; HB[Hash Join Build Sink]
-        HB --&gt; HT[Hash Table]
-    end
-
-    HT --&gt;|Finalize å®æåè§£é¤ä¾èµ| DEP[åæ­¥ / Pipeline ä¾èµ]
-
-    subgraph ProbePipeline[Pipeline 2ï¼Probe]
-        OB[orders morsels] --&gt; OS[Scan]
-        OS --&gt; OF[Filter: amount &gt; 100]
-        OF --&gt; HP[Hash Join Probe]
-        HP --&gt; OUT[Result DataChunks]
-    end
-
-    DEP --&gt; HP
-</div><hr>
-<h1 id="10-build-ä¾§morsel-ç-datachunk-å-filteråè¿å¥-hash-join-sink">10. Build ä¾§ï¼morsel ç DataChunk å Filterï¼åè¿å¥ Hash Join Sink</h1>
-<p><img src="https://img2024.cnblogs.com/blog/2079976/202607/2079976-20260725124321215-2109378662.png" alt="ChatGPT Image 2026å¹´7æ25æ¥ 13_42_41" loading="lazy"></p>
-<h2 id="101-ä¸çº¿ç¨é¢å-build-morsel">10.1 ä¸çº¿ç¨é¢å Build morsel</h2>
-<pre><code class="language-text">Thread 1 é¢å customers morsel C1
-Thread 2 é¢å customers morsel C2
-Thread 3 é¢å customers morsel C3
-</code></pre>
-<p>æ¯ä¸ªçº¿ç¨é½æ²¿åä¸æ¡ Build pipeline è¿ç»­æ§è¡ï¼</p>
-<pre><code class="language-text">Scan customers
-    â
-äº§ç DataChunk
-    â
-Filter active = true
-    â
-äº§ç Filtered DataChunk è§å¾
-    â
-è®¡ç® join keyï¼customers.id
-    â
-Hash Join Build Sink
-</code></pre>
-<h2 id="102-ä¸ä¸ªçº¿ç¨åé¨çå·ä½è¿ç¨">10.2 ä¸ä¸ªçº¿ç¨åé¨çå·ä½è¿ç¨</h2>
-<p>åè®¾ Thread 1 ä» C1 ä¸­åå¾ä¸ä¸ª 2048 è¡ DataChunkï¼</p>
-<pre><code class="language-text">customers Chunk C1-1ï¼2048 è¡
-    â Filter active = true
-SelectionVector = [0, 2, 5, 9, ...]
-    â
-Filtered Chunkï¼900 è¡
-    â
-join key Vector = id åç 900 ä¸ªé»è¾å¼
-payload          = name ç­ Build ä¾§å
-    â
-æå¥ Thread 1 çæ¬å° Hash Table
-</code></pre>
-<p>å½å DuckDB Hash Join ç Build Sink ä¼ï¼</p>
-<ol>
-<li>å¯¹å³ä¾§è¾å¥ chunk è®¡ç® join keyï¼</li>
-<li>å¼ç¨æé payload åï¼</li>
-<li>å° join key å payload åå¥çº¿ç¨æ¬å° Hash Tableã[5]</li>
-</ol>
-<p>æºç ä¸­çæ¬å° Sink ç¶ææç¡®ææä¸ä¸ª <strong>thread-local Hash Table</strong>ã[5]</p>
-<h2 id="103-ä¸çº¿ç¨-build-ç¤ºæ">10.3 ä¸çº¿ç¨ Build ç¤ºæ</h2>
-<div class="mermaid">flowchart TB
-    C1[customers morsel C1] --&gt; T1S[Thread 1: Scan]
-    T1S --&gt; T1F[Filter]
-    T1F --&gt; L1[Local Hash Table 1]
-
-    C2[customers morsel C2] --&gt; T2S[Thread 2: Scan]
-    T2S --&gt; T2F[Filter]
-    T2F --&gt; L2[Local Hash Table 2]
-
-    C3[customers morsel C3] --&gt; T3S[Thread 3: Scan]
-    T3S --&gt; T3F[Filter]
-    T3F --&gt; L3[Local Hash Table 3]
-
-    L1 --&gt; COMB[Combine / æ¶éæ¬å°ç¶æ]
-    L2 --&gt; COMB
-    L3 --&gt; COMB
-    COMB --&gt; FIN[Finalize Hash Table]
-</div><p>éè¦çæ¯ï¼</p>
-<blockquote>
-<p>Build ä¾§ä¸æ¯åæææ DataChunk æ¶éå®ï¼åè¿å¥ Hash Joinï¼æ¯ä¸ª Filtered DataChunk ä¸äº§çï¼å°±ç«å³ Sink å°æ¬å° Hash Tableã</p>
-</blockquote>
-<p>é»å¡åçå¨ <strong>Build ä¸ Probe ä¹é´</strong>ï¼ä¸æ¯åçå¨ Scan/Filter ä¸ Build ä¹é´ã</p>
-<hr>
-<h1 id="11-combine-å-finalizeé»å¡ç¹çæ­£å¨åªé">11. Combine å Finalizeï¼é»å¡ç¹çæ­£å¨åªé</h1>
-<p>å½æçº¿ç¨å¤çå®èªå·±é¢åç Build è¾å¥åï¼ä¼å·æ°æ¬å°è¿½å ç¶æï¼å¹¶ææ¬å° Hash Table æ³¨åå°å¨å±ç¶æãå½åå®ç°ç <code>Combine</code> ä¼æ¶éåçº¿ç¨çæ¬å° Hash Tableã[5]</p>
-<pre><code class="language-text">Thread 1 Local HT ââ
-Thread 2 Local HT ââ¼ââ Combine âââº Global Build State
-Thread 3 Local HT ââ
-</code></pre>
-<p>æ¥ä¸æ¥æ§è¡ Finalizeï¼</p>
-<ul>
-<li>ç»è®¡å¨å±æ°æ®è§æ¨¡ï¼</li>
-<li>åå§åå¨å±æéè¡¨æ bucket ç¸å³ç»æï¼</li>
-<li>å»ºç«å¯ä¾ Probe ä½¿ç¨çé¾æ¥ï¼</li>
-<li>å¯è½æ radix partition å¹¶è¡ Finalizeï¼</li>
-<li>å¦ææ°æ®éå°æé®ä¸¥éå¾æï¼ä¹å¯è½éæ©åçº¿ç¨ Finalizeã</li>
-</ul>
-<p>å½åæºç ä¸­ï¼ååºåºæ¯çå¹¶è¡ Finalize ä¼è®©ä¸åçº¿ç¨åå«å¤çä¸å partitionã[5]</p>
-<pre><code class="language-text">Finalize task 1 â Partition 0
-Finalize task 2 â Partition 1
-Finalize task 3 â Partition 2
-</code></pre>
-<p>åªæ Finalize å®æï¼Probe pipeline çä¾èµææ»¡è¶³ã</p>
-<p>å æ­¤æ­£ç¡®é¡ºåºæ¯ï¼</p>
-<pre><code class="language-text">Build morsel æç»­äº§ç chunk
-        â
-æ¯ä¸ª chunkï¼Scan â Filter â Sink
-        â
-ææ Build è¾å¥è¢«æ¶è´¹å®
-        â
-ææ Local State å®æ Combine
-        â
-Finalize Hash Table
-        â
-Probe pipeline å¯ä»¥å¼å§
-</code></pre>
-<hr>
-<h1 id="12-probe-ä¾§å¦ä¸ç»-morsel-ç-datachunk-å-filteråæ¥è¯¢-hash-table">12. Probe ä¾§ï¼å¦ä¸ç» morsel ç DataChunk å Filterï¼åæ¥è¯¢ Hash Table</h1>
-<p>Build å®æåï¼ä¸ä¸ªçº¿ç¨å¯ä»¥å¼å§é¢å <code>orders</code> è¡¨ç Probe morselï¼</p>
-<pre><code class="language-text">Thread 1 é¢å orders morsel O1
-Thread 2 é¢å orders morsel O2
-Thread 3 é¢å orders morsel O3
-</code></pre>
-<p>æ¯ä¸ªçº¿ç¨æ²¿ Probe pipeline æ§è¡ï¼</p>
-<pre><code class="language-text">Scan orders
-    â
-äº§ç DataChunk
-    â
-Filter amount &gt; 100
-    â
-äº§ç Filtered DataChunk
-    â
-è®¡ç® customer_id join key
-    â
-Probe å·²å®æç Hash Table
-    â
-è¾åº Join Result DataChunk
-</code></pre>
-<p>ä¾å¦ï¼</p>
-<pre><code class="language-text">orders Chunk O1-1ï¼2048 è¡
-    â Filter amount &gt; 100
-SelectionVector = [1, 3, 4, 10, ...]
-    â
-Filtered Chunkï¼1300 è¡
-    â
-ç¨ customer_id æ¹éæ¥è¯¢ Hash Table
-    â
-å¹é customers.id
-    â
-è¾åº order_idãamountãcustomer name
-</code></pre>
-<h2 id="121-probe-è¾å¥-chunk-åè¾åº-chunk-ä¸ä¸å®ä¸ä¸å¯¹åº">12.1 Probe è¾å¥ Chunk åè¾åº Chunk ä¸ä¸å®ä¸ä¸å¯¹åº</h2>
-<p>ä¸ä¸ªè¾å¥ chunk å¯è½ï¼</p>
-<ul>
-<li>æ²¡æä»»ä½å¹éï¼è¾åº 0 è¡ï¼</li>
-<li>æ¯è¡æå¤å¹éä¸æ¬¡ï¼è¾åºå°äºæç­äºè¾å¥è¡æ°ï¼</li>
-<li>éå°éå¤ keyï¼ä¸è¡å¹éå¤è¡ï¼è¾åºå¯è½è¶è¿ä¸ä¸ªæ å DataChunkï¼</li>
-<li>å ä¸ºè¾åºè¶è¿ 2048 è¡ï¼éè¦åå¤æ¬¡è¿åç»æ chunkã</li>
-</ul>
-<p>å æ­¤ä¸è½åè®¾ï¼</p>
-<pre><code class="language-text">ä¸ä¸ª Probe DataChunk = ä¸ä¸ª Result DataChunk
-</code></pre>
-<p>Join ç®å­å¯è½ä¸ºåä¸ä¸ª Probe è¾å¥ä¿çå±é¨ç¶æï¼åå¤æ¹äº§çè¾åºã</p>
-<hr>
-<h1 id="13-ä¸çº¿ç¨çå®æ´æ¶é´çº¿">13. ä¸çº¿ç¨çå®æ´æ¶é´çº¿</h1>
-<p>ä¸é¢æ Buildãé»å¡ç¹å Probe æ¾å¨åä¸æ¡æ¶é´çº¿ä¸ï¼</p>
-<div class="mermaid">sequenceDiagram
-    participant T1 as Thread 1
-    participant T2 as Thread 2
-    participant T3 as Thread 3
-    participant G as Global Hash Join State
-
-    Note over T1,T3: Build Pipelineï¼customers
-
-    T1-&gt;&gt;T1: C1: Scan â Filter
-    T1-&gt;&gt;G: Sink å° Local HT 1
-    T2-&gt;&gt;T2: C2: Scan â Filter
-    T2-&gt;&gt;G: Sink å° Local HT 2
-    T3-&gt;&gt;T3: C3: Scan â Filter
-    T3-&gt;&gt;G: Sink å° Local HT 3
-
-    T1-&gt;&gt;T1: ç»§ç»­é¢å C4
-    T2-&gt;&gt;T2: ç»§ç»­é¢å C5
-    T3-&gt;&gt;T3: ç»§ç»­é¢å C6
-
-    T1-&gt;&gt;G: Combine Local HT 1
-    T2-&gt;&gt;G: Combine Local HT 2
-    T3-&gt;&gt;G: Combine Local HT 3
-
-    Note over T1,T3: é»å¡ç¹ï¼Probe ä¾èµå°æªæ»¡è¶³
-    G-&gt;&gt;G: Finalize å¨å± Hash Table
-
-    Note over T1,T3: Probe Pipelineï¼orders
-
-    T1-&gt;&gt;T1: O1: Scan â Filter
-    T1-&gt;&gt;G: Probe Hash Table
-    G--&gt;&gt;T1: Result Chunk
-
-    T2-&gt;&gt;T2: O2: Scan â Filter
-    T2-&gt;&gt;G: Probe Hash Table
-    G--&gt;&gt;T2: Result Chunk
-
-    T3-&gt;&gt;T3: O3: Scan â Filter
-    T3-&gt;&gt;G: Probe Hash Table
-    G--&gt;&gt;T3: Result Chunk
-</div><p>å®éè°åº¦å¹¶ä¸è¦æ±åºå®âThread 1 æ°¸è¿å¤ç morsel 1âãçº¿ç¨å¤çå®ä¸ä¸ªä»»å¡åå¯ä»¥é¢åæ°çä»»å¡ï¼å æ­¤æ´å åç¡®çæ¯ï¼</p>
-<pre><code class="language-text">å±äº«ä»»å¡éåï¼C1 C2 C3 C4 C5 C6 ...
-                 â  â  â
-                T1 T2 T3
-
-æçº¿ç¨åå®æåï¼åé¢åä¸ä¸ä¸ªæªå¤ç morselã
-</code></pre>
-<p>è¿æå©äºè´è½½åè¡¡ï¼å¦ææä¸ª morsel è¿æ»¤åæ°æ®å°ï¼çº¿ç¨ä¼æ´å¿«å®æå¹¶é¢åæ°å·¥ä½ã</p>
-<hr>
-<h1 id="14-build-ä¾§å-probe-ä¾§ç-filter-æ¯å¦ä½¿ç¨åä¸ä¸ª-selectionvector">14. Build ä¾§å Probe ä¾§ç Filter æ¯å¦ä½¿ç¨åä¸ä¸ª SelectionVector</h1>
-<p>ä¸æ¯ã</p>
-<p>ä¸¤ä¸ªè¡¨æ¥æä¸åç DataChunkï¼ä¹æä¸åçè¿æ»¤æ¡ä»¶ï¼</p>
-<pre><code class="language-text">customers Chunk
-Filter: active = true
-SelectionVector C = [0, 2, 5, ...]
-
-orders Chunk
-Filter: amount &gt; 100
-SelectionVector O = [1, 3, 4, ...]
-</code></pre>
-<p>çè³åä¸ä¸ªè¡¨çä¸å DataChunk ä¹æèªå·±ç SelectionVectorï¼</p>
-<pre><code class="language-text">customers chunk 1 â sel C1
-customers chunk 2 â sel C2
-customers chunk 3 â sel C3
-</code></pre>
-<p>SelectionVector çç´¢å¼åªå¯¹å½åè¾å¥ Vector/Chunk çé»è¾è¡æ å°ææä¹ï¼ä¸è½è·¨ chunk ç´æ¥å¤ç¨ã</p>
-<hr>
-<h1 id="15-filtered-chunk-è¿å¥-hash-join-build-æ¶ä¼ä¸ä¼ä¸ç´ä¿æå¼ç¨">15. Filtered Chunk è¿å¥ Hash Join Build æ¶ä¼ä¸ä¼ä¸ç´ä¿æå¼ç¨</h1>
-<p>Filter è¾åºéå¸¸å¯ä»¥ç»§ç»­ä»¥ Dictionary/Selection å½¢å¼è¿å¥ Hash Join ç key è®¡ç®é¶æ®µï¼DuckDB çåéæä½ä¼éè¿ç»ä¸ç Vector æ¥å£è¯»åé»è¾å¼ã</p>
-<p>ä½æ¯ Build Hash Table å¿é¡»è®©æ°æ®è·¨è¶è¾å¥ chunk ççå½å¨æï¼</p>
-<pre><code class="language-text">è¾å¥ chunk å¤çå®æåå¯è½è¢«å¤ç¨
-ä½ Hash Table å¨æ´ä¸ª Probe é¶æ®µé½å¿é¡»å­å¨
-</code></pre>
-<p>å æ­¤ Build é¶æ®µæç»å¿é¡»æéè¦é¿æä¿å­ç join key å payload åå¥ Hash Join èªå·±ç®¡ççå­å¨ç»æã</p>
-<p>å¯ä»¥çè§£ä¸ºï¼</p>
-<pre><code class="language-text">Scan Buffer
-    â å¼ç¨
-Filtered Chunk è§å¾
-    â è¯»åéæ©åçé»è¾å¼
-Hash Table Build Storage  â å¨è¿éå½¢æé¿æä¿å­çæ°æ®
-</code></pre>
-<p>æä»¥ï¼</p>
-<blockquote>
-<p>Filter éå¸¸ä¸å¤å¶æ´æ¹æ°æ®ï¼Hash Join Build ä¸ºäºæä¹ä¿å­ Build ä¾§åå®¹ï¼ä¼å°éè¦çæ°æ®åå¥èªå·±ç Hash Table/tuple storageã</p>
-</blockquote>
-<hr>
-<h1 id="16-å®æ´æ°å¼ç¤ºä¾">16. å®æ´æ°å¼ç¤ºä¾</h1>
-<p>åè®¾ï¼</p>
-<pre><code class="language-text">customersï¼12,000 è¡
-ordersï¼100,000 è¡
-çº¿ç¨æ°ï¼3
-æ å DataChunk æå¤§ï¼2048 è¡
-</code></pre>
-<p>æ¥è¯¢ï¼</p>
-<pre><code class="language-sql">SELECT o.order_id, c.name
-FROM orders o
-JOIN customers c
-  ON o.customer_id = c.id
-WHERE c.active
-  AND o.amount &gt; 100;
-</code></pre>
-<h2 id="161-build-customers">16.1 Build customers</h2>
-<p>åè®¾ customers è¢«ååä¸º 3 ä¸ªè°åº¦èå´ï¼</p>
-<pre><code class="language-text">C1ï¼çº¦ 4,000 è¡
-C2ï¼çº¦ 4,000 è¡
-C3ï¼çº¦ 4,000 è¡
-</code></pre>
-<p>æ¯ä¸ªèå´äº§ççº¦ 2 ä¸ª DataChunkï¼</p>
-<pre><code class="language-text">C1 â 2048 + 1952
-C2 â 2048 + 1952
-C3 â 2048 + 1952
-</code></pre>
-<p>åè®¾ <code>active = true</code> çæ¯ä¾æ¯ 40%ï¼</p>
-<pre><code class="language-text">12,000 è¡
-   â Filter
-çº¦ 4,800 è¡è¿å¥ Build
-</code></pre>
-<p>ä¸ä¸ªçº¿ç¨åå«æå»º Local Hash Tableï¼</p>
-<pre><code class="language-text">Local HT 1ï¼çº¦ 1,600 è¡
-Local HT 2ï¼çº¦ 1,600 è¡
-Local HT 3ï¼çº¦ 1,600 è¡
-</code></pre>
-<p>ç¶åï¼</p>
-<pre><code class="language-text">Combine â Finalize â å¯ Probe ç Hash Table
-</code></pre>
-<h2 id="162-probe-orders">16.2 Probe orders</h2>
-<p>åè®¾ orders æå¤ä¸ª morselï¼ä¸ä¸ªçº¿ç¨å¨æé¢åãæ¯ä¸ª DataChunk æå¤ 2048 è¡ã</p>
-<p>å¦æ <code>amount &gt; 100</code> çéè¿çä¸º 60%ï¼</p>
-<pre><code class="language-text">ä¸ä¸ª 2048 è¡ orders chunk
-        â Filter
-çº¦ 1229 è¡
-        â Hash Join Probe
-æ ¹æ® customer_id æ¥è¯¢ Build Hash Table
-</code></pre>
-<p>å¦æå¶ä¸­ 70% è½å¹é active customerï¼</p>
-<pre><code class="language-text">çº¦ 1229 è¡ Probe è¾å¥
-        â Join
-çº¦ 860 è¡ç»æ
-</code></pre>
-<p>è¿äºç»æè¿å¥ Result DataChunkï¼åéç» ProjectionãAggregateãOrder By ææç»è¾åºç­ä¸æ¸¸ç®å­ã</p>
-<hr>
-<h1 id="17-ä¸å¼ æ»å¾">17. ä¸å¼ æ»å¾</h1>
-<div class="mermaid">flowchart TB
-    subgraph StorageA[customers å­å¨å±]
-        ACS[åå ColumnSegments]
-    end
-
-    subgraph StorageB[orders å­å¨å±]
-        AOS[åå ColumnSegments]
-    end
-
-    subgraph Build[Build Pipelineï¼å¤çº¿ç¨]
-        CM[customers morsels]
-        CSCAN[Scan Segment â DataChunks]
-        CFILTER[Filter active=true&lt;br/&gt;SelectionVector]
-        LHT[åçº¿ç¨ Local Hash Table]
-        COMBINE[Combine]
-        FINALIZE[Finalize Global Hash Table]
-    end
-
-    subgraph Probe[Probe Pipelineï¼å¤çº¿ç¨]
-        OM[orders morsels]
-        OSCAN[Scan Segment â DataChunks]
-        OFILTER[Filter amount&gt;100&lt;br/&gt;SelectionVector]
-        HPROBE[Hash Join Probe]
-        RESULT[Result DataChunks]
-    end
-
-    ACS --&gt; CM --&gt; CSCAN --&gt; CFILTER --&gt; LHT --&gt; COMBINE --&gt; FINALIZE
-    AOS --&gt; OM --&gt; OSCAN --&gt; OFILTER --&gt; HPROBE --&gt; RESULT
-    FINALIZE --&gt;|ä¾èµå®æå Probe æå¯å¨| HPROBE
-</div><hr>
-<h1 id="18-æå®¹ææ··æ·çå ä¸ªé®é¢">18. æå®¹ææ··æ·çå ä¸ªé®é¢</h1>
-<h2 id="181-ä¸ä¸ª-datachunk-æ¯å¦åªæä¸å">18.1 ä¸ä¸ª DataChunk æ¯å¦åªæä¸åï¼</h2>
-<p>ä¸ä¸å®ã<code>DataChunk</code> å¯ä»¥æä¸åï¼ä¹å¯ä»¥æå¾å¤åï¼æ¯åæ¯ä¸ä¸ª Vectorãå®åå«å¤å°ååå³äºæ§è¡è®¡åéè¦åªäºåã</p>
-<h2 id="182-ä¸ä¸ª-segment-æ¯å¦ç­äºä¸ä¸ª-datachunk">18.2 ä¸ä¸ª Segment æ¯å¦ç­äºä¸ä¸ª DataChunkï¼</h2>
-<p>ä¸ç­äºãSegment æ¯å­å¨å±çä¸åçæ®µï¼DataChunk æ¯æ§è¡å±çå¤åæ¹æ¬¡ã</p>
-<h2 id="183-segment-æ¯å¦åå®æ´è§£ååç»è£-datachunk">18.3 Segment æ¯å¦åå®æ´è§£åï¼åç»è£ DataChunkï¼</h2>
-<p>ä¸ä¸å®ãå­å¨å±å¯ä»¥äº§ç FlatãConstantãDictionary ç­ Vectorï¼åç¼©è¡¨ç¤ºå¯è½å»¶ç»­å°æ§è¡é¶æ®µã</p>
-<h2 id="184-filter-æ¯å¦å¤å¶åºä¸ä¸ªæ°çè¿ç»­-chunk">18.4 Filter æ¯å¦å¤å¶åºä¸ä¸ªæ°çè¿ç»­ Chunkï¼</h2>
-<p>éå¸¸ä¸ç«å³å¤å¶ãé¨åéè¿æ¶ï¼è¾åº chunk ä½¿ç¨ SelectionVector/Slice å¼ç¨åæ°æ®ï¼éè¦ç©åæ¶æå¤å¶ã</p>
-<h2 id="185-ä¸¤ä¸ªè¡¨ç-morsel-æ¯å¦åæ¶è¿å¥-hash-join">18.5 ä¸¤ä¸ªè¡¨ç morsel æ¯å¦åæ¶è¿å¥ Hash Joinï¼</h2>
-<p>Hash Join éå¸¸ä¸æ¯ãBuild ä¾§ morsel åéè¿ Build pipeline æå»ºå¹¶ Finalize åå¸è¡¨ï¼ä¹å Probe ä¾§ morsel æè¿å¥ Probe pipelineã</p>
-<h2 id="186-éå°-hash-join-é»å¡ç®å­æ¯ä¸æ¯åå¤çå®æ°æ®åè¿å¥-build">18.6 éå° Hash Join é»å¡ç®å­ï¼æ¯ä¸æ¯åå¤çå®æ°æ®åè¿å¥ Buildï¼</h2>
-<p>ä¸æ¯ãBuild DataChunk ä¼æç»­è¿å¥ Hash Join Sinkï¼ç­å¾åçå¨ Build å®æå Probe å¼å§ä¹é´ã</p>
-<h2 id="187-morsel-æ¯å¦ç­äº-datachunk">18.7 morsel æ¯å¦ç­äº DataChunkï¼</h2>
-<p>ä¸ç­äºãä¸ä¸ª morsel éå¸¸äº§çå¤ä¸ª DataChunkã</p>
-<hr>
-<h1 id="19-æç»æ»ç»">19. æç»æ»ç»</h1>
-<p>å¯ä»¥ç¨åå¥è¯è®°ä½æ´ä¸ªè¿ç¨ï¼</p>
-<ol>
-<li><strong>Segment æ¯å­å¨å±ä¸­ä¸åçä¸æ®µæ°æ®ï¼æ«æå¨å°å¤å Segment çåä¸è¡å·èå´è§£ç æå¤ä¸ª Vectorï¼å¹¶ç»æ DataChunkã</strong></li>
-<li><strong>DataChunk ç»è¿ Filter æ¶ï¼DuckDB éå¸¸çæ SelectionVectorï¼å¹¶è®©è¾åº chunk éè¿ Reference/Slice å¼ç¨å Vectorï¼èä¸æ¯ç«å³å¤å¶å¨é¨éè¿è¡ã</strong></li>
-<li><strong>ä¸¤ä¸ª Join è¾å¥è¡¨åèªæ¥ææ«æä»»å¡/morselï¼Build ä¾§ morsel äº§çç chunk å Filterï¼åæç»­ Sink å°çº¿ç¨æ¬å° Hash Tableã</strong></li>
-<li><strong>ææ Build è¾å¥å®æå¹¶ç»è¿ Combine/Finalize åï¼Probe ä¾§ morsel ç chunk æå¼å§ ScanãFilter å Hash Table Probeï¼æåè¾åºç»æ DataChunkã</strong></li>
-</ol>
-<p>æç²¾ç¼çæ§è¡é¾å¦ä¸ï¼</p>
-<pre><code class="language-text">Build è¡¨ï¼
-ColumnSegments
-  â Build morsels
-  â Scan DataChunks
-  â Filter / SelectionVector
-  â Local Hash Tables
-  â Combine
-  â Finalize
-
-Probe è¡¨ï¼
-ColumnSegments
-  â Probe morsels
-  â Scan DataChunks
-  â Filter / SelectionVector
-  â Probe Finalized Hash Table
-  â Result DataChunks
-</code></pre>
-<hr>
-<h1 id="åèèµæ">åèèµæ</h1>
-<p>æ¬æåºäº DuckDB å®æ¹ææ¡£åä¸»åæ¯æºç æ´çï¼æºç å®ç°å¯è½éçæ¬è°æ´ã</p>
-<ol>
-<li><a href="https://duckdb.org/docs/current/internals/vector" target="_blank" rel="noopener nofollow">DuckDB Execution Formatï¼VectorãDataChunkãSTANDARD_VECTOR_SIZE ä¸ Dictionary Vector</a></li>
-<li><a href="https://github.com/duckdb/duckdb/blob/main/src/execution/operator/filter/physical_filter.cpp" target="_blank" rel="noopener nofollow">DuckDB <code>physical_filter.cpp</code>ï¼SelectExpressionãReference ä¸ Slice</a></li>
-<li><a href="https://github.com/duckdb/duckdb/blob/main/src/common/types/data_chunk.cpp" target="_blank" rel="noopener nofollow">DuckDB <code>data_chunk.cpp</code>ï¼ReferenceãSliceãCopy ä¸ Flatten</a></li>
-<li><a href="https://github.com/duckdb/duckdb/blob/main/src/include/duckdb/storage/table/column_segment.hpp" target="_blank" rel="noopener nofollow">DuckDB <code>column_segment.hpp</code>ï¼ColumnSegment ç ScanãSelect ä¸ Filter æ¥å£</a></li>
-<li><a href="https://github.com/duckdb/duckdb/blob/main/src/execution/operator/join/physical_hash_join.cpp" target="_blank" rel="noopener nofollow">DuckDB <code>physical_hash_join.cpp</code>ï¼Thread-local Hash TableãSinkãCombine ä¸å¹¶è¡ Finalize</a></li>
-<li><a href="https://github.com/duckdb/duckdb/blob/main/src/include/duckdb/execution/operator/join/physical_hash_join.hpp" target="_blank" rel="noopener nofollow">DuckDB <code>physical_hash_join.hpp</code>ï¼Hash Join çå¹¶è¡ Sink è½å</a></li>
-</ol>
-
-
-</div>
-<div id="MySignature" role="contentinfo">
-    <p>æªç»ä½èåæè¯·å¿è½¬è½½</p>
-<p>æ¬ææ¥èªåå®¢å­ä½èï¼<a href="https://www.cnblogs.com/aslanvon/" target="_blank">aixueforever</a>ï¼åæé¾æ¥ï¼<a href="https://www.cnblogs.com/aslanvon/p/21907390" target="_blank">https://www.cnblogs.com/aslanvon/p/21907390</a></p>
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.004166666666666667" data-date-updated="2026-07-25 12:51">2026-07-25 12:45</span>&nbsp;
-<a href="https://www.cnblogs.com/aslanvon">aixueforever</a>&nbsp;
-éè¯»(<span id="post_view_count">3</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(21907390);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Faslanvon%2Fp%2F21907390&amp;targetId=21907390&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ 106 å¼ éå¤´éæ¹å¡ã161 æ®µæ ·çï¼è¿ä¸ª AI æè½è®©ä½ çäº§åè§é¢ä¸ç§æ¥æçµå½±æ ]]></title>
-    <link>https://www.cnblogs.com/lincats/p/21898570</link>
-    <guid>b8a2e62d69a3ebd1114a51b163191c4b</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/lincats/p/21898570" title="åå¸äº 2026-07-25 12:43">
-    
-
-    <span role="heading" aria-level="2">106 å¼ éå¤´éæ¹å¡ã161 æ®µæ ·çï¼è¿ä¸ª AI æè½è®©ä½ çäº§åè§é¢ä¸ç§æ¥æçµå½±æ</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>ä½ æå¼ Remotionï¼æ³ç»äº§ååä¸ªå®£ä¼ çãåæ éªäºååéï¼ä½ è¿å¨çº ç»ç¬¬ä¸ä¸ªéå¤´ç¨ä»ä¹å¨ç»ãåæ°å¡«å¤å°ã</p>
-<p>ä¸æ¯ä½ ä¸ä¼åä»£ç ââ<strong>æ¯ä»é¶è®¾è®¡ä¸å¥å¨æè¯­è¨ï¼æ¯ååä¸ªåè½è¿ç´¯</strong>ãä¸ç§å¨ç»ææ³ï¼é£å¥ãå å ãç¿»é¡µï¼å¨çåªè½å½ä¸æ¬¡ä¸»è§ï¼106 ç§ä½ è¦æä¹éãæä¹è°ï¼</p>
-<p>ä¸ä¸ªå« Vincent Wei çå¼åèæè¿ä»¶äºåæäºå¼æºæè½ï¼<strong>video-shotcraft</strong>ã106 å¼ éæ¹å¡ã161 æ®µæ ·çãä¸æ¯å®æ´æçæ¨¡æ¿ââClaude Code è£ä¸å®ï¼ç´æ¥åèº«çµå½±çº§å¨æå·¥ä½å®¤ã</p>
-<p><img alt="å°é¢å¾" loading="lazy" data-src="https://img2024.cnblogs.com/blog/22554/202607/22554-20260725082934158-895120135.png" class="lazyload"></p>
-<hr>
-<h3 id="è¿æ¯ä»ä¹ä¸è¥¿">è¿æ¯ä»ä¹ä¸è¥¿</h3>
-<p>video-shotcraft æ¯ä¸ä¸ª<strong>ä¸ä¸º AI ç¼ç¨ä»£çæé ç Remotion è§é¢å¶ä½æè½</strong>ãå®ä¸æ¯ä¸ä¸ªæ°çè§é¢æ¡æ¶ï¼èæ¯æ¶å¨ Remotion ä¸é¢çä¸æ´å¥"çµå½±æäº§åå®£ä¼ çæä½ç³»ç»"ã</p>
-<p><strong>æ ¸å¿æ°å­ï¼</strong></p>
-<table>
-<thead>
-<tr>
-<th>èµäº§</th>
-<th>æ°é</th>
-<th>è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>éå¤´éæ¹å¡</td>
-<td>106 å¼ </td>
-<td>æ¯å¼ å«ç¨éãæ¶é¿ãè½éãåæ°è¡¨ãå·²ç¥åãåèå®ç°</td>
-</tr>
-<tr>
-<td>å¨ææ ·ç</td>
-<td>161 æ®µ</td>
-<td>å¨çº¿ç»å»å¯æç´¢é¢è§ï¼ä¸é®å¤å¶å¡å</td>
-</tr>
-<tr>
-<td>æåæ¨¡æ¿</td>
-<td>1 æ¯</td>
-<td>Ink Pressï¼36.2 ç§ã1920x1080ã30fpsã10 ä¸ªå®æ´éå¤´</td>
-</tr>
-<tr>
-<td>é³æèµäº§</td>
-<td>40+ æ¡</td>
-<td>çµå½±ç³» SFXï¼whoosh/impact/riser/sparkleï¼å  5 é¦ BGM</td>
-</tr>
-<tr>
-<td>å¤ç¨ç»ä»¶</td>
-<td>7 ä¸ª</td>
-<td>PageCamï¼2.5D è¿éï¼ãFlashCutãCaptionãDigitRoll ç­</td>
-</tr>
-<tr>
-<td>å®¡ç¾åå</td>
-<td>22 æ¡</td>
-<td>æ¯æ¡éçå®ç¨æ·åé¦åæï¼å«èå¥ãè¿éãå£°é³ãææ¡ãæµç¨</td>
-</tr>
-</tbody>
-</table>
-<p>ä½è&nbsp;<strong>Vincent Weiï¼é­ä¸æï¼</strong>ï¼é¡¹ç®å¼æºå¨ GitHubï¼Apache 2.0 åè®®ï¼å®å¨åè´¹åç¨ã</p>
-<p><img alt="ç¤ºä¾æªå¾" loading="lazy" data-src="https://img2024.cnblogs.com/blog/22554/202607/22554-20260725082934968-1072448801.png" class="lazyload"></p>
-<hr>
-<h3 id="æä¹å®è£">æä¹å®è£</h3>
-<p>ä¸ç§æ¹å¼ï¼ä»æå°é¾ï¼</p>
-<h4 id="æ¹å¼ä¸ç´æ¥è®©-ai-è£æ¨è">æ¹å¼ä¸ï¼ç´æ¥è®© AI è£ï¼æ¨èï¼</h4>
-<p>å¨ Claude Code éè¯´ä¸å¥è¯ï¼</p>
-<pre><code class="language-bash">Install this skill for me: https://github.com/Vincentwei1021/video-shotcraft
-</code></pre>
-<p>AI ä¼èªå¨ clone ä»åºãé¾æ¥å°&nbsp;<code>~/.claude/skills/</code>ï¼å¨ç¨ä¸ç¨æå¨æä½ã</p>
-<h4 id="æ¹å¼äºç¨-npx-skills-cli">æ¹å¼äºï¼ç¨ npx skills CLI</h4>
-<pre><code class="language-bash">npx skills add Vincentwei1021/video-shotcraft
-</code></pre>
-<h4 id="æ¹å¼ä¸æå¨åé">æ¹å¼ä¸ï¼æå¨åé</h4>
-<pre><code class="language-bash">git clone https://github.com/Vincentwei1021/video-shotcraft.git ln -s "$(pwd)/video-shotcraft" ~/.claude/skills/video-shotcraft
-</code></pre>
-<p>è£å®ä¹åï¼å¨ Claude Code éè¾å¥&nbsp;<code>Use video-shotcraft to create a promo for my product.</code>&nbsp;å°±è½æ¿æ´»ã</p>
-<hr>
-<h3 id="æä¹ç¨ä¸ç§æ¨¡å¼">æä¹ç¨ï¼ä¸ç§æ¨¡å¼</h3>
-<p><img alt="æµç¨å¾" loading="lazy" data-src="https://img2024.cnblogs.com/blog/22554/202607/22554-20260725082936133-376521752.png" class="lazyload"></p>
-<h4 id="æ¨¡å¼ä¸æ¨¡æ¿è·¯çº¿æå¿«æ¨èå¥é¨">æ¨¡å¼ä¸ï¼æ¨¡æ¿è·¯çº¿ï¼æå¿«ï¼æ¨èå¥é¨ï¼</h4>
-<p>skill èªå¸¦ä¸æ¯<strong>å·²éªæ¶ç 36.2 ç§æåå®£ä¼ çæ¨¡æ¿ââInk Pressï¼å¢¨åï¼</strong>ï¼çº¸å¢¨ç¥çé£æ ¼ï¼1920x1080ã30fpsï¼å« 10 ä¸ªå®æ´éå¤´ã2.5D çå®é¡µé¢è¿éãå­å¡ãè½¬åºåå·²éå¥½ççµå½±çº§ SFXã</p>
-<p><img alt="ç¤ºä¾æªå¾" loading="lazy" data-src="https://img2024.cnblogs.com/blog/22554/202607/22554-20260725082936925-159343024.png" class="lazyload"></p>
-<p>æä½å¾ç®åï¼å¯å¨ä½ çäº§å dev serverï¼skill ä¼èªå¨æªåé¡µé¢æªå¾ååç´ åæ ï¼æ¿æ¢æ¨¡æ¿éçæªå¾ãææ¡ååçä¿¡æ¯ï¼ç¶åééå¤´ééæ¸²æãä»é¶å°æçï¼<strong>æ¢ç´ æå°±è½ééï¼æå¿«è·¯å¾è¿ä¿è´¨é</strong>ã</p>
-<h4 id="æ¨¡å¼äºèªç±åä½">æ¨¡å¼äºï¼èªç±åä½</h4>
-<p>æ³è¦å¨æ°çè§è§è¯­è¨ï¼skill ä¼æå­é¶æ®µæµæ°´çº¿æ¨è¿ï¼</p>
-<table>
-<thead>
-<tr>
-<th>é¶æ®µ</th>
-<th>åå®¹</th>
-<th>äº§åº</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>é¶æ®µ 0</td>
-<td>å¼å·¥ä¸é®ï¼é³ä¹éå¥½äºå / æ¨¡æ¿è¿æ¯èªç± / æ°æ®åè§ï¼</td>
-<td>æ¹åç¡®è®¤</td>
-</tr>
-<tr>
-<td>é¶æ®µ 1</td>
-<td>ç´ æéé</td>
-<td>çå®é¡µé¢æªå¾ + åç´ åæ è¡¨</td>
-</tr>
-<tr>
-<td>é¶æ®µ 2</td>
-<td>é£æ ¼å®è°</td>
-<td>è²æ¿ãå­ä½ãå¨æé£æ ¼</td>
-</tr>
-<tr>
-<td>é¶æ®µ 3</td>
-<td>åéè®¾è®¡</td>
-<td>åè½æ¸åæ å° + è½éæ²çº¿ + æ¶é´è½´</td>
-</tr>
-<tr>
-<td>é¶æ®µ 4</td>
-<td>ééå¤´å®ç°</td>
-<td>æ¯ä¸ªéå¤´ git commit + éå¸§éªæ¶</td>
-</tr>
-<tr>
-<td>é¶æ®µ 5</td>
-<td>å£°é³è®¾è®¡</td>
-<td>BGM + SFX éå¸§è¡¨</td>
-</tr>
-<tr>
-<td>é¶æ®µ 6</td>
-<td>éªæ¶</td>
-<td>ç¬ç« subagent è§è§å®¡æ¥ + ç»æ¸²æç</td>
-</tr>
-</tbody>
-</table>
-<h4 id="æ¨¡å¼ä¸åéå¤´åå¨æ">æ¨¡å¼ä¸ï¼åéå¤´/åå¨æ</h4>
-<p>åªæ³è¦ä¸ä¸ªç«é·çå¡çé£å¥ææï¼ä» 106 å¼ éæ¹å¡éæä¸å¼ ï¼æèå¨å¨çº¿ç»å»éççæ ·çæï¼skill ä¼è¯»å¡å¨æå å¯¹åºç demo æºç ï¼æé£ä¸ªéå¤´ååºæ¥ã</p>
-<p><img alt="ç¤ºä¾æªå¾" loading="lazy" data-src="https://img2024.cnblogs.com/blog/22554/202607/22554-20260725082937584-21023890.png" class="lazyload"></p>
-<hr>
-<h3 id="æ ¸å¿ç¹ç¹è¿å¥éæ¹å¡å¼ºå¨åª">æ ¸å¿ç¹ç¹ï¼è¿å¥"éæ¹å¡"å¼ºå¨åª</h3>
-<h4 id="106-å¼ éå¤´éæ¹å¡--106-ç§å·²éªè¯çå¨ææ¹æ¡">106 å¼ éå¤´éæ¹å¡ = 106 ç§å·²éªè¯çå¨ææ¹æ¡</h4>
-<p>æ¯ä¸å¼ éå¤´å¡ä¸æ¯"é£å¥ææ"åä¸ªå­é£ä¹ç®åï¼èæ¯ä¸ä»½<strong>å®æ´çå·¥ç¨ææ¡£</strong>ï¼</p>
-<p><img alt="ç¤ºä¾æªå¾" loading="lazy" data-src="https://img2024.cnblogs.com/blog/22554/202607/22554-20260725082938335-238121300.png" class="lazyload"></p>
-<pre><code class="language-bash">å¡åï¼deck-deal-flyin ä¸å¥è¯ï¼æåºéå±èæ¯éçå®ä½çå ç¹åç¯ç»å¼å±ï¼ &nbsp; &nbsp; &nbsp; &nbsp; æè¿åä¸æå¡ååçä¸æ ·ç¡¬å éç©è¿ç½æ ¼ éç¨ï¼å±ç¤º"åå®¹éå¤§ãæºæºä¸æ­æ±å¥"çåè¡¨é¡µä¸å¡çå¢ æ¶é¿ï¼çº¦ 2.6s åçæ®µ + å¯é 2s çå ç¹å è½éï¼é«ï¼èå¥ç¬åæ®µä¸»åï¼ä¸æ¾å¼åºç¬¬ä¸éï¼ åæ°è¡¨ï¼orbit ç¯ç»è§åº¦ | å å é«åº¦ | åçèæå¬å¼ &nbsp; &nbsp; &nbsp; &nbsp; åå¡é£è¡è·¯å¾ | æ¶å°¾ææ½å±çº§ | è¿å¨æ¨¡ç³â¦â¦ å·²ç¥åï¼æ½è±¡ flood äºè½®ä¸æ¶æï¼æ¢"åç"ç©çéå»ä¸è½®éè¿ åèå®ç°ï¼template/src/aifl/live/SceneFlyIn.tsx
-</code></pre>
-<p><strong>æ¯å¼ å¡é½éå¸¦å¯è¿è¡ç demo ä»£ç </strong>ââç¼å¨æ²çº¿ãæ¶å¼éæ¯è¿äºåæ°æ¯çå®ç¨æ·ä¸è½®è½®è°æ ¡åºæ¥çï¼ä¸æ¯ä½ æ°åè½å¤ç°çã</p>
-<p>é¨åç­é¨éå¤´å¡ï¼<code>spotlight-hero-card</code>ï¼èåä¸»è§å¡ï¼ã<code>brand-ink-open</code>ï¼å¢¨çº¿æç»åçå¼åºï¼ã<code>document-typewriter-reveal</code>ï¼ææ¡£æå­æºæ­ç¤ºï¼ã<code>list-stack-press</code>ï¼åè¡¨å å åå¥å è®¡æ°å¨è½å®ï¼â¦â¦</p>
-<h4 id="å£°é³è®¾è®¡äº§åå®£ä¼ ççå¥½è±åå¥å¼">å£°é³è®¾è®¡ï¼äº§åå®£ä¼ çç"å¥½è±åå¥å¼"</h4>
-<p>å¾å¤äººåè§é¢åªå³æ³¨ç»é¢ï¼å£°é³æ¯æåæè´´çãä½ video-shotcraft æå£°é³è®¾è®¡æå°äº<strong>ååéåç­çå°ä½</strong>ï¼</p>
-<ul>
-<li>
-<p>BGM åéå¥½å®è½ééª¨æ¶ï¼éå¼ºé¼ç¹ãå¼ºèå¥ççµå­åº</p>
-</li>
-<li>
-<p>SFX ç¨çµå½±ç³»è¯æ±ï¼whooshï¼è¿éï¼ãimpactï¼è½å°ï¼ãriserï¼éºå«ï¼ãsparkleï¼åæï¼</p>
-</li>
-<li>
-<p>éå¸§è¡¨ç¨ç¸å¯¹è¡¨è¾¾å¼ç®¡çï¼æ¶é´çº¿å¹³ç§»èªå¨è·é</p>
-</li>
-<li>
-<p>ç»å°¾åºå®å¥å¼ï¼riser â impact â sparkleï¼å¬æå°±æ¯"äº§ååå¸ä¼é¢å"</p>
-</li>
-</ul>
-<h4 id="22-æ¡å®¡ç¾ååä¸æ¯ç©ºæ´çåå¥½çç¹">22 æ¡å®¡ç¾ååï¼ä¸æ¯ç©ºæ´ç"åå¥½çç¹"</h4>
-<p>æ¯æ¡ååé½æ¯<strong>è§å + ç¨æ·åè¯å¤ä¾ + èªæ£é®é¢</strong>ä¸è¦ç´ ç»æï¼æ¥èªå¤æ¯å®£ä¼ çå®æè¿å·¥çç»éªæ²æ·ï¼</p>
-<blockquote>
-<p><strong>R1</strong>ï¼åçå­æ è½å®å hold æ»¡ 1 ç§ã</p>
-<p>å¤ä¾ââç¨æ·è¯´"å¼å¤´åç»å°¾çå¨ç»ï¼åºç°åå»¶é¿åç 1 ç§"ã</p>
-<p><strong>Q4</strong>ï¼é«åæ«åä¸ç¾¤åï¼ä¸ä¸ªéå¤´æå¤ç»ä¸»è§ä¸æ¬¡ã</p>
-<p>å¤ä¾ââç¨æ·è¯´"ä¸éè¦æ¯ä¸ªå¡çé½éªçä¸ä¸"ã</p>
-</blockquote>
-<p>22 æ¡ï¼æ¯æ¡é½æ¯çéç½é¶çè¿å·¥æ¢æ¥çãéªæ¶é¶æ®µç¨ç¬ç« subagent æ¿çæ£æ¥æ¸åéæ¡å®¡æ¥ï¼æ¿ä»£ç¨æ·å½äººè QAã</p>
-<h4 id="çå®é¡µé¢æªå¾ä¸ææå-ui">çå®é¡µé¢æªå¾ï¼ä¸ææå UI</h4>
-<p>è¿æ¯ skill æç¡¬æ ¸çè®¾è®¡å²å­¦ä¹ä¸ï¼<strong>è¦åäº§åé¡µé¢ï¼ç¬¬ä¸æ­¥å°±èµ· dev serverï¼ç¨æµè§å¨æªçå®é¡µé¢</strong>ãææ HTML å¤å»çé¡µé¢ä¸ç¼çåï¼æ´æ®µæ¥åºã</p>
-<hr>
-<h3 id="åä¼ ç»-remotion-å¼åæ¯åºå«å¨åª">åä¼ ç» Remotion å¼åæ¯ï¼åºå«å¨åª</h3>
-<p><img alt="å¯¹æ¯å¾" loading="lazy" data-src="https://img2024.cnblogs.com/blog/22554/202607/22554-20260725082938979-635145317.png" class="lazyload"></p>
-<table>
-<thead>
-<tr>
-<th>ç»´åº¦</th>
-<th>è£¸ç¨ Remotion</th>
-<th>å  video-shotcraft</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>èµ·æ­¥</td>
-<td>ç©ºç½ç»å¸ï¼ä» <code>npx create-video</code> å¼å§</td>
-<td>ä¸å¥èªç¶è¯­è¨æä»¤ï¼AI èªå¨å¯¼èª</td>
-</tr>
-<tr>
-<td>å¨æ</td>
-<td>æå¨æ¥ææ¡£ãè°åæ°ãè¸©å</td>
-<td>106 å¼ éæ¹å¡ + demo æºç ï¼åæ°å·²è°å¥½</td>
-</tr>
-<tr>
-<td>å£°é³</td>
-<td>èªå·±æ¾é³æï¼BGM å­æè§é</td>
-<td>40+ æ¡çµå½±ç³» SFX + 5 é¦ BGMï¼éå¸§ç®¡ç</td>
-</tr>
-<tr>
-<td>è´¨é</td>
-<td>èªå·±çå®äº¤æ´»</td>
-<td>22 æ¡å®¡ç¾åå + ç¬ç« subagent å®¡æ¥</td>
-</tr>
-<tr>
-<td>è¿­ä»£</td>
-<td>Claude ä»é¶åä»£ç ï¼10-20 åé/å¤æéå¤´</td>
-<td>æ¢ç´ æééï¼æçæå 3-5 å</td>
-</tr>
-</tbody>
-</table>
-<p>video-shotcraft æ¬è´¨ä¸å°±æ¯"Remotion on rails"ââä¸æ¯æ¿ä»£ Remotionï¼èæ¯å¨ä¸é¢å äºä¸å±"çµå½±çº§äº§åè§é¢çæä½ç³»ç»"ãåéãå¨æãå£°é³ãéªæ¶è¿åä»¶äºä¸åä»é¶åèµ·ã</p>
-<hr>
-<h3 id="è·å¶ä»-ai-è§é¢æ¹æ¡æ¯">è·å¶ä» AI è§é¢æ¹æ¡æ¯</h3>
-<table>
-<thead>
-<tr>
-<th>æ¹æ¡</th>
-<th>å®ä½</th>
-<th>éå</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Remotion å®æ¹ Skills</strong></td>
-<td>Remotion å¬å¸åºåï¼å¨ç»å¥é¨</td>
-<td>æ³ä»é¶å­¦ Remotion</td>
-</tr>
-<tr>
-<td><strong>video-shotcraft</strong></td>
-<td>äº§åå®£ä¼ çä¸ç¨</td>
-<td>æ³åé«è´¨éäº§åè§é¢ï¼ä¸æ³ä»é¶è®¾è®¡</td>
-</tr>
-<tr>
-<td><strong>Hyperframes</strong></td>
-<td>æ½è±¡æä»£ç å±</td>
-<td>éå¼åèï¼è¿½æ±"ä¸å¥è¯åºç"</td>
-</tr>
-<tr>
-<td><strong>wilwaldon Video Toolkit</strong></td>
-<td>å·¥å·ç®±å</td>
-<td>å¤åºæ¯æ¢ç´¢</td>
-</tr>
-<tr>
-<td>video-shotcraft çå®ä½å¾æ¸æ¥ï¼<strong>å®ä¸æ¯ç»éå¼åèç¨çå»çå·¥å·ï¼èæ¯ç»ä¼ç¨ Claude Code çå·¥ç¨å¸ç¨çä¸ä¸å éå¨</strong>ãä½ ä¼åä»£ç ãä¼ç¨ç»ç«¯ãè½è· Remotion æ¸²æââä½ä¸æ³å¨å¨æè®¾è®¡ãå£°é³éåãå®¡ç¾è°æ ¡ä¸æµªè´¹çå½ã</td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h3 id="ä¸æä½éªè£å®åçäºä»ä¹">ä¸æä½éªï¼è£å®åçäºä»ä¹</h3>
-<ol>
-<li>
-<p>è¯´ "Use video-shotcraft to create a promo for my product."</p>
-</li>
-<li>
-<p>skill åé®ï¼ç¨æ¨¡æ¿è¿æ¯èªç±åä½ï¼é³ä¹éå¥½äºåï¼</p>
-</li>
-<li>
-<p>ç¡®è®¤åï¼å®èªå¨å¯å¨ä½ ç dev serverï¼æªå¾ï¼çæé£æ ¼å¾ï¼æåéè¡¨</p>
-</li>
-<li>
-<p>ä½ ç¡®è®¤åéï¼å®ééå¤´å®ç°ââæ¯ä¸ªéå¤´å®äºèªå·±è·æªå¾èªæ£</p>
-</li>
-<li>
-<p>ç»é¢éå®åéº BGM å é SFXï¼ç¬ç« subagent å®¡æ¥ï¼ç»æ¸²æç</p>
-</li>
-</ol>
-<p><strong>ä»"æ³åä¸ªå®£ä¼ ç"å°æ¿å°æçï¼å¨ç¨ä¸éè¦ä½ æå¨åä¸è¡ Remotion ä»£ç ã</strong>&nbsp;ä½ ä¸æ¯å¨æä½å·¥å·ï¼æ¯å¨æ®æ¼å¯¼æ¼ââåå³ç­ãç»åé¦ãè¯´ yes æ noã</p>
-<hr>
-<h3 id="ä¸è½åä»ä¹å¦è¯è¯´æ¸è¾¹ç">ä¸è½åä»ä¹ï¼å¦è¯è¯´æ¸è¾¹ç</h3>
-<p>skill ä½èå¨ææ¡£éæ²¡æåé¿è¿ä¸ç¹ââ<strong>å®çå¨é¨è®¾è®¡åè®¾æ¯"æä¸ä¸ª web ææ¡é¢äº§åå®£ä¼ ç"</strong>ã</p>
-<table>
-<thead>
-<tr>
-<th>ä¸éåçåºæ¯</th>
-<th>åå </th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>ææºç«å±è§é¢</strong></td>
-<td>å¨é¨åæ°è¡¨åæ¨¡æ¿åºäº 1920x1080 æ¨ªå±</td>
-</tr>
-<tr>
-<td><strong>æç¨¿é©±å¨è§é¢</strong></td>
-<td>å®çè¾å¥æ¯äº§å dev serverï¼ä¸æ¯æå­</td>
-</tr>
-<tr>
-<td><strong>éäº§åç±»åäº</strong></td>
-<td>80% çéå¤´å¡æ¯ä¸º UI é¡µé¢è®¾è®¡ç</td>
-</tr>
-<tr>
-<td><strong>é¶ä»£ç ç¨æ·</strong></td>
-<td>å®åè®¾ä½ ä¼å React ä»£ç </td>
-</tr>
-</tbody>
-</table>
-<p>ä½æä¸å±èµäº§æ¯å¯ä»¥éç¨çï¼<strong>å¨æåæ°åº</strong>ï¼ç¼å¨æ²çº¿ãæ¶å¼éæ¯åæ¨ªç«å±æ å³ï¼ã<strong>å£°é³è®¾è®¡æ¹æ³è®º</strong>ï¼40+ æ¡ SFX å éåè¯æ±è¡¨ï¼ã<strong>å®¡ç¾åååéªæ¶ä½ç³»</strong>ï¼22 æ¡ååä¸­ä¸åä»¥ä¸ä¸æåå®¹å½¢æï¼ã</p>
-<p><img alt="ç¤ºä¾æªå¾" loading="lazy" data-src="https://img2024.cnblogs.com/blog/22554/202607/22554-20260725082939565-30582732.png" class="lazyload"></p>
-<hr>
-<h3 id="å°ç»">å°ç»</h3>
-<p>Vincent Wei åçè¿ä»¶äºï¼æ¬è´¨ä¸æ¯æ<strong>ä¸ä¸ªä¸ä¸å¨æå·¥ä½å®¤çå®æ´ç¥è¯ä½ç³»</strong>ââéå¤´è®¾è®¡ãåæ°è°æ ¡ãå£°é³éåãå®¡ç¾å¤æ­ãè´¨ééªæ¶ââ<strong>ç¼ç æäº AI å¯ä»¥ç´æ¥æ¶è´¹çéæ¹å¡å æ¨¡æ¿å æ¹æ³è®º</strong>ã</p>
-<p>AI ä¸ä¼æ¿ä»£è§é¢åä½èãä½ä¼ä½¿ç¨è¿å¥æ­¦å¨åºçåä½èï¼ä¸å®ä¼æ¿ä»£ä¸ä¼ç¨çã</p>
-<pre><code class="language-bash"># 30 ç§å®è£ï¼0 ååç¨ Install this skill for me: https://github.com/Vincentwei1021/video-shotcraft
-</code></pre>
-<hr>
-<p><em>video-shotcraft â AI Video Skill for Claude Code &amp; Codex, Apache 2.0 License</em></p>
-<p><em>å¨çº¿ç»å»ï¼vincentwei1021.github.io/video-shotcraft</em></p>
 
 
 </div>
@@ -2850,145 +2347,13 @@ ColumnSegments
 
             </div>
             <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-07-25 12:44">2026-07-25 12:43</span>&nbsp;
-<a href="https://www.cnblogs.com/lincats">lincats</a>&nbsp;
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-07-25 18:19">2026-07-25 18:18</span>&nbsp;
+<a href="https://www.cnblogs.com/zhhhanry">zhhhanry</a>&nbsp;
 éè¯»(<span id="post_view_count">0</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(21898570);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Flincats%2Fp%2F21898570&amp;targetId=21898570&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ 15å¤©å­¦ä¼AIåºç¨å¼åï¼åå­ï¼LangChainå®ç°å¯¹è¯è®°å¿åè½ ]]></title>
-    <link>https://www.cnblogs.com/aqi00/p/21906204</link>
-    <guid>af2d82d1748646f422040954712f2aeb</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/aqi00/p/21906204" title="åå¸äº 2026-07-25 11:49">
-    
-
-    <span role="heading" aria-level="2">15å¤©å­¦ä¼AIåºç¨å¼åï¼åå­ï¼LangChainå®ç°å¯¹è¯è®°å¿åè½</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
-<span data-cke-copybin-start="1"><span data-cke-copybin-start="1">â</span></span>æ¨¡åæ¬èº«æ¯æ ç¶æçï¼ä¹å°±æ¯ä¸å·å¤è®°å¿åè½ï¼åæ¬¡å¯¹è¯æ æ³çå­ä¸ä¸æä¿¡æ¯ï¼å¤è½®äº¤äºä¸­ä¼éå¿åå²å¯¹è¯åå®¹ãç¨æ·ä¹æä»¥æè§AIå·¥å·æ¥æè®°å¿ï¼æ¯å ä¸ºAIå·¥å·ç»å¤§æ¨¡åå°è£äºä¸å±è®°å¿ã
-<p>LangChainä½ä¸ºä¸»æµçå¤§æ¨¡ååºç¨å¼åæ¡æ¶ï¼åç½®å®åçè®°å¿æ¨¡åï¼Memoryæ¨¡åï¼ï¼è½å¤é«æç®¡çå¯¹è¯åå²è®°å½ï¼è®©AIå®ç°é»è¾è¿è´¯çå¤è½®å¯¹è¯ï¼æ¥ä¸æ¥å°±ä»ç»å¦ä½ä½¿ç¨LangChainå®ç°å¯¹è¯è®°å¿åè½ã</p>
-<h1>ä¸ãè®°å¿åè½ç¨å°çç»ä»¶è¯´æ</h1>
-<p>LangChainå®ç°å¯¹è¯è®°å¿åè½è¦ææ¡ä¸åä¸ä¸ªæ ¸å¿ç»ä»¶ï¼éä¸èéåæè½å®æä¸ä¸æç®¡çå¨æµç¨ï¼</p>
-<h2>1ãå¯¹è¯åå²å­å¨ç»ä»¶</h2>
-<p>ä»¥ChatMessageHistoryä¸ºæ ¸å¿ï¼åºäºåå­ä¸´æ¶å­å¨å¯¹è¯è®°å½ï¼æ éå®è£é¢å¤çæ°æ®åºï¼éåå¼åèå¿«éç¼ç åæµè¯ãå¯¹è¯æ°æ®ä»å¨åºç¨ç¨åºè¿è¡æé´çå­ï¼éå¯åºç¨ç¨åºåä¼æ¸ç©ºå¯¹è¯æ°æ®ï¼å¯æ»¡è¶³AIåºç¨çè½»éåå¯¹è¯åºæ¯éæ±ã</p>
-<h2>2ãè®°å¿ç»å®æ ¸å¿ç»ä»¶</h2>
-<p>RunnableWithMessageHistoryæ¯å¯¹è¯è®°å¿æ¶æçæ ¸å¿ç»ä»¶ï¼å¯åè£LangChainçä»»ææ§è¡é¾ï¼èªå¨å®ç°å¯¹è¯åå²è®°å½çè¯»åãæ¼æ¥åæ´æ°ï¼è½å¤æ¯æå¤ä¸ªä¼è¯æ°æ®çç¸äºéç¦»ï¼è§£å³äºä¼ ç»ç»ä»¶å­å¨çå¤ä¼è¯å²çªé®é¢ã</p>
-<h2>3ãæç¤ºè¯æ¨¡æ¿ç»ä»¶</h2>
-<p>èå¤©æç¤ºè¯æ¨¡æ¿ChatPromptTemplateç¨äºè§èåå¤§æ¨¡åè¾å¥çæç¤ºè¯æ ¼å¼ï¼å®åºå®éç¨âç³»ç»æä»¤+åå²å¯¹è¯+å½åæé®âçç»æï¼è®©å¤§æ¨¡åè½å¤ç²¾åè¯å«ä¸ä¸æä¿¡æ¯ï¼ä¿è¯å½åç¨æ·çå¯¹è¯è®°å¿åè½é»è¾ç»ä¸ï¼ä¸ä¼è¡è¯´å«éã</p>
-<h1>äºãå®ç°è®°å¿åè½çç¯å¢åå¤</h1>
-<p>ChatMessageHistoryç»ä»¶æ¥èªäºlangchain_communityï¼èRunnableWithMessageHistoryåChatPromptTemplateæ¥èªäºlangchain-coreï¼æéæåå®è£ç¸å³çlangchainåã<br>
-å¨å½ä»¤è¡çªå£æ§è¡ä¸é¢å½ä»¤ï¼å³å¯å®è£LangChainåå¶ç¨å°çOllamaæä»¶ï¼ä»¥åè®°å¿åè½éè¦çlangchain_communityï¼</p>
-<div class="cke_widget_wrapper cke_widget_block cke_widget_codeSnippet cke_widget_selected" data-cke-display-name="ä»£ç æ®µ" data-cke-filter="off" data-cke-widget-id="7" data-cke-widget-wrapper="1">
-<pre class="cke_widget_element" data-cke-widget-data="%7B%22code%22%3A%22pip%20install%20langchain%20langchain-core%20langchain-ollama%20langchain_community%22%2C%22classes%22%3Anull%7D" data-cke-widget-keep-attr="0" data-cke-widget-upcasted="1" data-widget="codeSnippet"><code class="hljs">pip install langchain langchain-core langchain-ollama langchain_community</code></pre>
-</div>
-<p>ç¡®ä¿æ¬å°å·²ç»éè¿Ollamaä¸è½½äºç¦»çº¿å¤§æ¨¡åï¼æ¯å¦å¨å½ä»¤è¡çªå£æ§è¡ä¸é¢å½ä»¤ï¼å³å¯ä¸è½½å¤§æ¨¡åqwen2:1.5bï¼</p>
-<div class="cke_widget_wrapper cke_widget_block cke_widget_codeSnippet cke_widget_selected" data-cke-display-name="ä»£ç æ®µ" data-cke-filter="off" data-cke-widget-id="6" data-cke-widget-wrapper="1">
-<pre class="cke_widget_element" data-cke-widget-data="%7B%22code%22%3A%22ollama%20pull%20qwen2%3A1.5b%22%2C%22classes%22%3Anull%7D" data-cke-widget-keep-attr="0" data-cke-widget-upcasted="1" data-widget="codeSnippet"><code class="hljs">ollama pull qwen2:1.5b</code></pre>
-</div>
-<p>ç­å¾å¤§æ¨¡åä¸è½½å®æ¯ï¼å¨å½ä»¤è¡çªå£æ§è¡ä¸é¢å½ä»¤ï¼å³å¯å¯å¨Ollamaå¹¶å è½½å¤§æ¨¡åï¼</p>
-<div class="cke_widget_wrapper cke_widget_block cke_widget_codeSnippet cke_widget_selected" data-cke-display-name="ä»£ç æ®µ" data-cke-filter="off" data-cke-widget-id="5" data-cke-widget-wrapper="1">
-<pre class="cke_widget_element" data-cke-widget-data="%7B%22code%22%3A%22ollama%20serve%22%2C%22classes%22%3Anull%7D" data-cke-widget-keep-attr="0" data-cke-widget-upcasted="1" data-widget="codeSnippet"><code class="hljs">ollama serve</code></pre>
-</div>
-<h1>ä¸ãAIè®°å¿å¯¹è¯çç¼ç å®æ</h1>
-<p>å¨Pythonä»£ç å¼å¤´æ·»å ä¸é¢çå¯¼åè¯­å¥ï¼è¡¨ç¤ºå¼å¥ChatMessageHistoryãRunnableWithMessageHistoryãChatPromptTemplateä¸ä¸ªç»ä»¶ï¼ä»¥åLangChainçå¤§æ¨¡åå·¥å·OllamaLLMï¼</p>
-<div class="cke_widget_wrapper cke_widget_block cke_widget_codeSnippet cke_widget_selected" data-cke-display-name="ä»£ç æ®µ" data-cke-filter="off" data-cke-widget-id="4" data-cke-widget-wrapper="1">
-<pre class="cke_widget_element" data-cke-widget-data="%7B%22code%22%3A%22from%20langchain_core.prompts%20import%20ChatPromptTemplate%2C%20MessagesPlaceholder%5Cnfrom%20langchain_core.runnables.history%20import%20RunnableWithMessageHistory%5Cnfrom%20langchain_community.chat_message_histories%20import%20ChatMessageHistory%5Cnfrom%20langchain_ollama%20import%20OllamaLLM%22%2C%22classes%22%3Anull%7D" data-cke-widget-keep-attr="0" data-cke-widget-upcasted="1" data-widget="codeSnippet"><code class="hljs">from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain_community.chat_message_histories import ChatMessageHistory
-from langchain_ollama import OllamaLLM</code></pre>
-</div>
-<p>å¨OllamaLLMçæé æ¹æ³ä¸­å¡«åmodelåæ°ï¼æå®å½åå¼ç¨çç¦»çº¿å¤§æ¨¡ååç§°ï¼å¦ä¸ï¼</p>
-<div class="cke_widget_wrapper cke_widget_block cke_widget_codeSnippet cke_widget_selected" data-cke-display-name="ä»£ç æ®µ" data-cke-filter="off" data-cke-widget-id="3" data-cke-widget-wrapper="1">
-<pre class="cke_widget_element" data-cke-widget-data="%7B%22code%22%3A%22%23%20%E8%BF%9E%E6%8E%A5%E6%9C%AC%E5%9C%B0%E7%A6%BB%E7%BA%BF%E5%A4%A7%E6%A8%A1%E5%9E%8B%EF%BC%88Ollama%EF%BC%89%5Cnllm%20%3D%20OllamaLLM(model%3D%5C%22qwen2%3A1.5b%5C%22)%22%2C%22classes%22%3Anull%7D" data-cke-widget-keep-attr="0" data-cke-widget-upcasted="1" data-widget="codeSnippet"><code class="hljs"># è¿æ¥æ¬å°ç¦»çº¿å¤§æ¨¡åï¼Ollamaï¼
-llm = OllamaLLM(model="qwen2:1.5b")</code></pre>
-</div>
-<p>ç¶åç¼åä¸é¢çLangChainè°ç¨ä»£ç ï¼åå©ç¨ChatPromptTemplateæé ç»historyåéå ä½çæç¤ºè¯æ¨¡æ¿ï¼æ¥çå¾ChatMessageHistoryç»ä»¶å­å¨å¯¹è¯åå²ï¼åéè¿RunnableWithMessageHistoryå¨å°è£æ§è¡é¾æ¶å¸¦å¥åå²æ°æ®ï¼ç¤ºä¾ä»£ç å¦ä¸ï¼</p>
-<div class="cke_widget_wrapper cke_widget_block cke_widget_codeSnippet cke_widget_selected" data-cke-display-name="ä»£ç æ®µ" data-cke-filter="off" data-cke-widget-id="2" data-cke-widget-wrapper="1">
-<pre class="cke_widget_element" data-cke-widget-data="%7B%22code%22%3A%22%23%201%E3%80%81%E5%AF%B9%E8%AF%9D%E6%A8%A1%E6%9D%BF%EF%BC%88%E7%95%99%E4%B8%80%E4%B8%AA%E4%BD%8D%E7%BD%AE%E6%94%BE%E5%8E%86%E5%8F%B2%EF%BC%89%5Cnprompt%20%3D%20ChatPromptTemplate.from_messages(%5B%5Cn%C2%A0%20%C2%A0%20(%5C%22system%5C%22%2C%20%5C%22%E4%BD%A0%E6%98%AF%E5%8F%8B%E5%A5%BD%E5%8A%A9%E6%89%8B%EF%BC%8C%E8%AE%B0%E4%BD%8F%E5%89%8D%E9%9D%A2%E7%9A%84%E5%AF%B9%E8%AF%9D%E3%80%82%5C%22)%2C%5Cn%C2%A0%20%C2%A0%20MessagesPlaceholder(variable_name%3D%5C%22history%5C%22)%2C%5Cn%C2%A0%20%C2%A0%20(%5C%22human%5C%22%2C%20%5C%22%7Binput%7D%5C%22)%5Cn%5D)%5Cn%5Cn%23%202%E3%80%81%E5%86%85%E5%AD%98%E5%AD%98%E5%82%A8%E5%8E%86%E5%8F%B2%EF%BC%88%E5%A4%9A%E7%94%A8%E6%88%B7%E5%8F%AF%E6%8C%89%20session_id%20%E5%88%86%EF%BC%89%5Cnstore%20%3D%20%7B%7D%5Cn%5Cn%23%20%E8%8E%B7%E5%8F%96%E6%8C%87%E5%AE%9A%E4%BC%9A%E8%AF%9D%E7%9A%84%E5%8E%86%E5%8F%B2%E8%AE%B0%E5%BD%95%5Cndef%20get_history(session_id%3A%20str)%3A%5Cn%C2%A0%20%C2%A0%20if%20session_id%20not%20in%20store%3A%5Cn%C2%A0%20%C2%A0%20%C2%A0%20%C2%A0%20store%5Bsession_id%5D%20%3D%20ChatMessageHistory()%5Cn%C2%A0%20%C2%A0%20return%20store%5Bsession_id%5D%5Cn%5Cn%23%203%E3%80%81%E5%B8%A6%E8%AE%B0%E5%BF%86%E7%9A%84%E6%89%A7%E8%A1%8C%E9%93%BE%5Cnchain%20%3D%20prompt%20%7C%20llm%5Cnchain_with_mem%20%3D%20RunnableWithMessageHistory(%5Cn%C2%A0%20%C2%A0%20chain%2C%5Cn%C2%A0%20%C2%A0%20get_history%2C%5Cn%C2%A0%20%C2%A0%20input_messages_key%3D%5C%22input%5C%22%2C%5Cn%C2%A0%20%C2%A0%20history_messages_key%3D%5C%22history%5C%22%5Cn)%5Cn%5Cn%23%204%E3%80%81%E6%B5%8B%E8%AF%95%E5%AF%B9%E8%AF%9D%5Cnprint(%5C%22%3D%3D%3D%20%E5%B8%A6%E8%AE%B0%E5%BF%86AI%E8%81%8A%E5%A4%A9%EF%BC%88%E8%BE%93%E5%85%A5%20%E9%80%80%E5%87%BA%20%E7%BB%93%E6%9D%9F%EF%BC%89%3D%3D%3D%5C%22)%5Cnwhile%20True%3A%5Cn%C2%A0%20%C2%A0%20user_input%20%3D%20input(%5C%22%E4%BD%A0%EF%BC%9A%5C%22)%5Cn%C2%A0%20%C2%A0%20if%20user_input%20in%20%5B%5C%22%E9%80%80%E5%87%BA%5C%22%2C%20%5C%22exit%5C%22%2C%20%5C%22quit%5C%22%5D%3A%5Cn%C2%A0%20%C2%A0%20%C2%A0%20%C2%A0%20print(%5C%22%E5%AF%B9%E8%AF%9D%E7%BB%93%E6%9D%9F%5C%22)%5Cn%C2%A0%20%C2%A0%20%C2%A0%20%C2%A0%20break%5Cn%5Cn%C2%A0%20%C2%A0%20%23%20%E8%B0%83%E7%94%A8%E6%A8%A1%E5%9E%8B%EF%BC%88%E4%BC%A0%E5%85%A5%E5%8E%86%E5%8F%B2%EF%BC%89%5Cn%C2%A0%20%C2%A0%20response%20%3D%20chain_with_mem.invoke(%7B%5C%22input%5C%22%3A%20user_input%7D%2C%20config%3D%7B%5C%22configurable%5C%22%3A%20%7B%5C%22session_id%5C%22%3A%20%5C%22session_001%5C%22%7D%7D)%5Cn%C2%A0%20%C2%A0%20print(f%5C%22AI%EF%BC%9A%7Bresponse%7D%5C%5Cn%5C%22)%22%2C%22classes%22%3Anull%7D" data-cke-widget-keep-attr="0" data-cke-widget-upcasted="1" data-widget="codeSnippet"><code class="hljs"># 1ãå¯¹è¯æ¨¡æ¿ï¼çä¸ä¸ªä½ç½®æ¾åå²ï¼
-prompt = ChatPromptTemplate.from_messages([
-&nbsp; &nbsp; ("system", "ä½ æ¯åå¥½å©æï¼è®°ä½åé¢çå¯¹è¯ã"),
-&nbsp; &nbsp; MessagesPlaceholder(variable_name="history"),
-&nbsp; &nbsp; ("human", "{input}")
-])
-
-# 2ãåå­å­å¨åå²ï¼å¤ç¨æ·å¯æ session_id åï¼
-store = {}
-
-# è·åæå®ä¼è¯çåå²è®°å½
-def get_history(session_id: str):
-&nbsp; &nbsp; if session_id not in store:
-&nbsp; &nbsp; &nbsp; &nbsp; store[session_id] = ChatMessageHistory()
-&nbsp; &nbsp; return store[session_id]
-
-# 3ãå¸¦è®°å¿çæ§è¡é¾
-chain = prompt | llm
-chain_with_mem = RunnableWithMessageHistory(
-&nbsp; &nbsp; chain,
-&nbsp; &nbsp; get_history,
-&nbsp; &nbsp; input_messages_key="input",
-&nbsp; &nbsp; history_messages_key="history"
-)
-
-# 4ãæµè¯å¯¹è¯
-print("=== å¸¦è®°å¿AIèå¤©ï¼è¾å¥ éåº ç»æï¼===")
-while True:
-&nbsp; &nbsp; user_input = input("ä½ ï¼")
-&nbsp; &nbsp; if user_input in ["éåº", "exit", "quit"]:
-&nbsp; &nbsp; &nbsp; &nbsp; print("å¯¹è¯ç»æ")
-&nbsp; &nbsp; &nbsp; &nbsp; break
-
-&nbsp; &nbsp; # è°ç¨æ¨¡åï¼ä¼ å¥åå²ï¼
-&nbsp; &nbsp; response = chain_with_mem.invoke({"input": user_input}, config={"configurable": {"session_id": "session_001"}})
-&nbsp; &nbsp; print(f"AIï¼{response}\n")</code></pre>
-</div>
-<p>è¿è¡ä¸é¢çPythonä»£ç ï¼æ ¹æ®æç¤ºååè¾å¥é®é¢åå®¹âä½ å«ä»ä¹åå­ï¼âãâä¸å¯¹ï¼ä½ å«å°æâãâä½ å«ä»ä¹åå­ï¼âï¼è¾åºæ¥å¿ç»æå¦ä¸ï¼</p>
-<div class="cke_widget_wrapper cke_widget_block cke_widget_codeSnippet cke_widget_selected" data-cke-display-name="ä»£ç æ®µ" data-cke-filter="off" data-cke-widget-id="1" data-cke-widget-wrapper="1">
-<pre class="cke_widget_element" data-cke-widget-data="%7B%22code%22%3A%22%3D%3D%3D%20%E5%B8%A6%E8%AE%B0%E5%BF%86AI%E8%81%8A%E5%A4%A9%EF%BC%88%E8%BE%93%E5%85%A5%20%E9%80%80%E5%87%BA%20%E7%BB%93%E6%9D%9F%EF%BC%89%3D%3D%3D%5Cn%E4%BD%A0%EF%BC%9A%E4%BD%A0%E5%8F%AB%E4%BB%80%E4%B9%88%E5%90%8D%E5%AD%97%EF%BC%9F%5CnAI%EF%BC%9A%E6%88%91%E5%8F%AB%E5%B0%8F%E5%86%B0%E3%80%82%5Cn%5Cn%E4%BD%A0%EF%BC%9A%E4%B8%8D%E5%AF%B9%EF%BC%8C%E4%BD%A0%E5%8F%AB%E5%B0%8F%E6%98%8E%5CnAI%EF%BC%9A%E6%8A%B1%E6%AD%89%EF%BC%8C%E6%88%91%E8%AE%B0%E9%94%99%E4%BA%86%E3%80%82%5Cn%5Cn%E4%BD%A0%EF%BC%9A%E4%BD%A0%E5%8F%AB%E4%BB%80%E4%B9%88%E5%90%8D%E5%AD%97%EF%BC%9F%5CnAI%EF%BC%9A%E5%B0%8F%E5%86%B0%5Cn%5Cn%E4%BD%A0%EF%BC%9A%E4%B8%8D%E5%AF%B9%EF%BC%8C%E4%BD%A0%E5%8F%AB%E5%B0%8F%E6%98%8E%5CnAI%EF%BC%9A%E6%8A%B1%E6%AD%89%EF%BC%8C%E6%88%91%E8%AE%B0%E9%94%99%E4%BA%86%E3%80%82%E8%AF%B7%E9%97%AE%E6%9C%89%E4%BB%80%E4%B9%88%E6%88%91%E8%83%BD%E5%B8%AE%E5%8A%A9%E6%82%A8%E7%9A%84%E5%90%97%EF%BC%9F%5Cn%5Cn%E4%BD%A0%EF%BC%9A%E4%BD%A0%E5%8F%AB%E4%BB%80%E4%B9%88%E5%90%8D%E5%AD%97%EF%BC%9F%5CnAI%EF%BC%9A%E5%B0%8F%E6%98%8E%22%2C%22classes%22%3Anull%7D" data-cke-widget-keep-attr="0" data-cke-widget-upcasted="1" data-widget="codeSnippet"><code class="hljs">=== å¸¦è®°å¿AIèå¤©ï¼è¾å¥ éåº ç»æï¼===
-ä½ ï¼ä½ å«ä»ä¹åå­ï¼
-AIï¼æå«å°å°ã
-
-ä½ ï¼ä¸å¯¹ï¼ä½ å«å°æ
-AIï¼æ±æ­ï¼æè®°éäºã
-
-ä½ ï¼ä½ å«ä»ä¹åå­ï¼
-AIï¼å°å°
-
-ä½ ï¼ä¸å¯¹ï¼ä½ å«å°æ
-AIï¼æ±æ­ï¼æè®°éäºãè¯·é®æä»ä¹æè½å¸®å©æ¨çåï¼
-
-ä½ ï¼ä½ å«ä»ä¹åå­ï¼
-AIï¼å°æ</code></pre>
-</div>
-<p>ç±æ¥å¿ä¿¡æ¯åç°ï¼AIåºç¨ä¸å¼å§åç­âæå«å°å°âï¼åæ¥è¢«æ¹åååç­èªå·±å«âå°æâãå¯è§éè¿ä½¿ç¨LangChainçè®°å¿ç»ä»¶ï¼åæ­¥å®ç°äºç®åçAIå¯¹è¯è®°å¿åè½ã</p>
-<p>æ¬ç³»åçAIåºç¨å¼åæç« ç®å½ä¸ºã<span class="cke_widget_wrapper cke_widget_inline cke_widget_csdnlink cke_widget_selected" data-cke-display-name="a" data-cke-filter="off" data-cke-widget-id="0" data-cke-widget-wrapper="1">15å¤©å­¦ä¼AIåºç¨å¼åå¨ç®å½ï¼é¶åºç¡å°ç½ï¼é¶Tokenæ¶èï¼ãã</span>â</p>
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-07-25 11:50">2026-07-25 11:49</span>&nbsp;
-<a href="https://www.cnblogs.com/aqi00">aqi00</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(21906204);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Faqi00%2Fp%2F21906204&amp;targetId=21906204&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+<a href="javascript:void(0)" onclick="AddToWz(21918356);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fzhhhanry%2Fp%2F21918356&amp;targetId=21918356&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
