@@ -3,12 +3,213 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-07-30T08:15:41.042Z</lastBuildDate>
+        <lastBuildDate>2026-07-30T13:46:01.247Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
+    <title><![CDATA[ è§£å¯Promptç³»å71. ä»DSparkèèå¤§æ¨¡å Decoding æéçææ¯æ¼å ]]></title>
+    <link>https://www.cnblogs.com/gogoSandy/p/21940384</link>
+    <guid>b125b6223b93669e2cecbad2c4318c6a</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/gogoSandy/p/21940384" title="åå¸äº 2026-07-30 20:30">
+    
+
+    <span role="heading" aria-level="2">è§£å¯Promptç³»å71. ä»DSparkèèå¤§æ¨¡å Decoding æéçææ¯æ¼å</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                    <div id="cnblogs_post_description" style="display: none">
+        <img src="https://img2024.cnblogs.com/blog/1326688/202607/1326688-20260730202928925-1280614782.png" alt="è§£å¯Promptç³»å71. ä»DSparkèèå¤§æ¨¡å Decoding æéçææ¯æ¼å" class="desc_img">
+        ä» DeepMind æåºçâåæ¨¡ååä½âï¼å° DeepSeek æçç MTPï¼å¼æºEAGLEï¼åå°ææ°ç DFlash å DSparkï¼ä»å¤©æä»¬å°±æ¥æä¸æè¿å¥âæ¨çæéå¤§æ³âçææ¯æ¼åå²ã
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>LLM çæ Token æ¯ä¸²è¡çï¼äº§çç¬¬ <span class="math inline">\(N\)</span> ä¸ª Tokenï¼å¿é¡»æå <span class="math inline">\(N-1\)</span> ä¸ª Token ç»ç»å¡åæ¨¡åéï¼éæ°ç®ä¸éç©éµä¹æ³ãç±äºç°ä»£ GPU æ¥ææµ·éçå¹¶è¡è®¡ç®ååï¼ALUï¼ï¼<strong>ä¸æ¬¡åªç®ä¸ä¸ª Token æ ¹æ¬å¡«ä¸æ»¡ GPU çååè½åï¼Memory-bound ä¸¥éï¼</strong>ãè¿å°±åå¼çä¸è¾ 80 å¨çå¤§å¡è½¦ï¼æ¯æ¬¡åªè¿éä¸ç²è±çç±³ã</p>
+<p><strong>é£è½ä¸è½è®©æ¨¡åä¸æ¬¡âååºâå¤ä¸ª Tokenï¼</strong></p>
+<p>æ ¸å¿æè·¯å¾ç®åï¼<strong>åæèç¨¿ï¼Draftingï¼ï¼åç±å¤§æ¨¡åå¹¶è¡æ¹ééªè¯ï¼Verificationï¼</strong>ãä½é®é¢éä¹èæ¥ï¼å¦ä½çæå¾æ´å¿«ï¼åæ¶çæçæ´å¥½ï¼éçº³çä¸ä¸éï¼ï¼æéè¦çæ¯ââ<strong>å¦ä½ä¿è¯è¾åºè´¨éå®å¨ä¸ç¼©æ°´ï¼Losslessï¼ï¼</strong></p>
+<p>ä» DeepMind æåºçâåæ¨¡ååä½âï¼å° DeepSeek æçç MTPï¼åå°ææ°ç DFlash å DSparkï¼ä»å¤©æä»¬å°±æ¥æä¸æè¿å¥âæéå¤§æ³âçææ¯æ¼åå²ã</p>
+<p><img alt="gpt_1785045490914_0" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1326688/202607/1326688-20260726142737985-1046621224.jpg" class="lazyload"></p>
+<h2 id="01-åèæ´¾å¤æ¨¡åææºè§£ç -speculative-decoding">01. åèæ´¾ï¼å¤æ¨¡åææºè§£ç  (Speculative Decoding)</h2>
+<blockquote>
+<p>DeepMindï¼Fast Inference from Transformers via Speculative Decoding</p>
+</blockquote>
+<p>æ¢ç¶å¤§æ¨¡åè®¡ç®è´µãéåº¦æ¢ï¼é£è½ä¸è½æ¾ä¸ªâå°å¼âç»å®æä¸æï¼</p>
+<p>è¿å°±æ¯æç»å¸ç <strong>Speculative Decoding</strong> ææ³ï¼å¼å¥ä¸ä¸ªåæ°éæå°ï¼éå¸¸ä¸ºä¸»æ¨¡åç <span class="math inline">\(1/10\)</span> çè³æ´å°ï¼ç<strong>èç¨¿æ¨¡åï¼Draft Modelï¼</strong> åä¸ä¸ª<strong>ç®æ å¤§æ¨¡åï¼Target Modelï¼</strong>ã</p>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1326688/202607/1326688-20260726142737960-210862265.jpg" class="lazyload"></p>
+<h3 id="11è¿è¡æºå¶">1.1è¿è¡æºå¶</h3>
+<ol>
+<li><strong>èç¨¿çæ</strong>ï¼å°æ¨¡åä¸è·¯çé£ï¼ä»¥èªåå½æ¹å¼å¿«éä¸²è¡çæ <span class="math inline">\(\gamma\)</span> ä¸ª Tokenï¼æ¯å¦ 4 ä¸ªï¼ã</li>
+<li><strong>å¹¶è¡éªè¯</strong>ï¼æè¿ 4 ä¸ªèç¨¿ Token è¿åä¸æä¸æ¬¡æ§æåæ Batchï¼å¡ç»ç®æ å¤§æ¨¡ååä¸æ¬¡ååä¼ æ­ãå¤§æ¨¡ååªç¨1æ¬¡æ¨çå°±è½å¹¶è¡è®¡ç®åºè¿ 4 ä¸ªä½ç½®ççå®æ¦çåå¸ <span class="math inline">\(p(x)\)</span>ã</li>
+<li><strong>æç»éæ ·ï¼Reject Samplingï¼</strong>ï¼<br>
+åè®¾èç¨¿æ¨¡åçè¾åºæ¦çä¸º <span class="math inline">\(q(x)\)</span>ï¼ç®æ æ¨¡åä¸º <span class="math inline">\(p(x)\)</span>ã</li>
+</ol>
+<ul>
+<li>å¦æ <span class="math inline">\(p(x) \ge q(x)\)</span>ï¼è¯´æå¤§æ¨¡åè§å¾å°æ¨¡åâçå¾å¤ªä¿å®äºâï¼ç´æ¥<strong>æ æ¡ä»¶æ¥å</strong>ï¼</li>
+<li>å¦æ <span class="math inline">\(p(x) &lt; q(x)\)</span>ï¼å°æ¨¡åâé£äºâï¼å¤§æ¨¡åä»¥æ¦ç <span class="math inline">\(\frac{p(x)}{q(x)}\)</span> æ¥åå®ãä¸æ¦æä¸ª Token è¢«æç»ï¼åç»­èç¨¿<strong>å¨é¨ä½åº</strong>ãå¤§æ¨¡ååºäºæåæ¥åçtokenæ¨ç1ä¸ªæ°tokenï¼åè¿ä¸ä¸ä¸è½®ã</li>
+</ul>
+<blockquote>
+<p><strong>æ°å­¦ä¸çç¾æ</strong>ï¼è¿ç§æç»éæ ·æºå¶ä»æ¦çè®ºä¸è¯æäºï¼<strong>ææºè§£ç è¾åºçæ¦çåå¸ï¼ä¸çº¯ç²¹ç¨å¤§æ¨¡åä¸æ­¥æ­¥çæçåå¸å®å¨ä¸è´ï¼</strong> çæ­£åå°äºæ æå éã</p>
+</blockquote>
+<h3 id="12-ç¶é¢å¨åª">1.2 ç¶é¢å¨åªï¼</h3>
+<p>åæ¬¡æ¨æµçå¹³åå»¶è¿å¯ä»¥è¡¨ç¤ºä¸ºï¼</p>
+<p></p><div class="math display">\[T_{\text{avg}} = \frac{\gamma \cdot T_{\text{draft}} + T_{\text{verify}}}{\mathbb{E}[\text{Accepted Tokens}]}
+\]</div><p></p><p>è¦æéï¼å¿é¡»æ»¡è¶³ <strong>âèç¨¿åå¾å¿«â</strong> ä¸ <strong>âæ¥åçé«â</strong>ãä½è¿å¾å¾æ¯ä¸ªæè®ºï¼</p>
+<ul>
+<li>æ¾ä¸ªä¸ä¸»æ¨¡ååæºçå°å°ºå¯¸æ¨¡åï¼å¦ç¨ Gemma-1B å¸® Gemma-27B æèç¨¿ï¼ï¼å¨ vLLM ä¸­è½ç¶è½æ¿å° 2~3 åå éï¼</li>
+<li>ä½å¼æ/å°æ¨¡åå¯¹è¯­ä¹åå¥½ãå¤æé»è¾ççè§£åå°å¨ä½å¹¶ä¸ä¸è´ï¼å¯¼è´æ¥åçå¨å¤æä»»å¡ä¸æ­å´å¼ä¸è·ã</li>
+</ul>
+<h2 id="2-èªç»èªè¶³æ´¾medusa-mtp--eagle">2. èªç»èªè¶³æ´¾ï¼Medusa, MTP &amp; EAGLE</h2>
+<p>æ¢ç¶å¤æä¸ä¸ªå°æ¨¡åæâå¿çµä¸ç¸éâçè·¨æ¨¡åä»£æ²ï¼<strong>é£å¹²èè®©å¤§æ¨¡åé¿åºâå¤ä¸ªå¤´âï¼èªå·±ç»èªå·±æèç¨¿ï¼</strong></p>
+<h3 id="21-medusaç¾æèçå¤å¤´å¹¶è¡æ´åå¤æ¨ä½æç¿»è½¦">2.1 Medusaï¼ç¾æèçå¤å¤´å¹¶è¡ï¼æ´åå¤æ¨ï¼ä½æç¿»è½¦ï¼</h3>
+<blockquote>
+<p>Medusa: Simple and Effective Predictive Decoding for Large Language Models</p>
+</blockquote>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1326688/202607/1326688-20260726142737973-474618379.jpg" class="lazyload"></p>
+<p>Medusa çåæ³éå¸¸éè®ï¼<strong>ä¸»å¹²å»ç»ï¼é¡¶å±æ¥æ</strong>ãä¸»è¦è¢«llamaç³»åãMistralç³»åæ¨¡åéçº³ã</p>
+<p>å®å¨ LLM æåä¸å± Hidden Stateï¼ <span class="math inline">\(h_t\)</span>ï¼åï¼å¹¶ææäºKä¸ªç¬ç«çè½»éçº§é¢æµå¤´ï¼Medusa Headsï¼éå¸¸æ¯å¸¦æ®å·®ç 1~2 å± MLPï¼ï¼</p>
+<ul>
+<li><strong>Head 1</strong>ï¼æ¿ç <span class="math inline">\(h_t\)</span>ï¼å¼ºè¡é¢æµ <span class="math inline">\(t+2\)</span> ä½ç½®ç Tokenï¼</li>
+<li><strong>Head 2</strong>ï¼æ¿ç <span class="math inline">\(h_t\)</span>ï¼å¼ºè¡é¢æµ <span class="math inline">\(t+3\)</span> ä½ç½®ç Tokenï¼</li>
+<li>...ä»¥æ­¤ç±»æ¨ã</li>
+</ul>
+<p>è¿å±äºå¸åçâæ ä¸­çæâãå¨ <span class="math inline">\(t\)</span> æ¶å»ï¼è¿ <span class="math inline">\(t+1\)</span> æ¯ä»ä¹é½ä¸ç¥éï¼å°±å­ <span class="math inline">\(h_t\)</span> å¼ºè¡é¢æµ <span class="math inline">\(t+3\)</span>ï¼ç±äºæç ´äºå æé¾ï¼Causal Dependencyï¼ï¼ä½ç½®è¶é åï¼å¤´çéçº³çè¶åææ°çº§è¡°åãå®å°±åè®©ä¸ä¸ªæ²¡çè¿ä¸ä¸é¡µå°è¯´çäººç´æ¥çä¸ä¸é¡µçå§æï¼ç¿»è½¦çæé«ã</p>
+<p>å¹¶ä¸è½»éçº§é¢æµå¤´æ¯å¨å»ç»åºåº§çæåµä¸ï¼åè®©åºåº§æ¨¡ååå¤æ¨çKæ­¥ï¼åç¨ç¬ç«çé¢æµå¤´å»å¹¶è¡é¢æµKæ­¥ï¼å¹¶å°è¯ååºåº§é¢æµææå¯¹é½ï¼ç¨äº¤åçµä½ä¸ºæå¤±å½æ°ï¼æ¬è´¨ä¸é¢æµå¤´æ¯å¨è¸é¦åºåº§æ¨¡åçä¸²è¡æ¨çè½åã</p>
+<h3 id="22-mtpdeepseek-çé¢è®­ç»ä¸²è¡çº§èä¼éçæè´">2.2 MTPï¼DeepSeek çé¢è®­ç»ä¸²è¡çº§èï¼ä¼éçæè´ï¼</h3>
+<blockquote>
+<p>DeepSeek-V3 Technical Report</p>
+</blockquote>
+<p><img alt="æªå¾_éæ©åºå_20260726132837" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1326688/202607/1326688-20260726142738020-712204554.png" class="lazyload"></p>
+<p>DeepSeek-V3 æå¼äº Medusa çâåçåçâï¼æåºäº <strong>Multi-Token Prediction (MTP)</strong>ãå®çæ ¸å¿ææ³æ¯ï¼<strong>æç ´âå¹¶è¡âå¹»è§ï¼ç¨ä¸²è¡çº§èï¼Cascadingï¼ç»´æå æä¸¥è°¨æ§ï¼ä¸åçèå¥é¢è®­ç»ï¼</strong></p>
+<p>ä»¥ MTP Module 1ï¼é¢æµ <span class="math inline">\(t+2\)</span>ï¼ä¸ºä¾ï¼å®çè¾å¥ä¸æ¯ç©ºç©´æ¥é£ï¼èæ¯å°ï¼</p>
+<ol>
+<li>ä¸ä¸æ­¥é¢æµåºç Token <span class="math inline">\(x_{t+1}\)</span> ç»è¿ <strong>å±äº« Embedding</strong> å¾å°çè¯­ä¹åéï¼</li>
+<li>ä¸»å¹²æ¨¡åå¨ <span class="math inline">\(t\)</span> æ¶å»è¾åºçéèç¶æ <span class="math inline">\(h_t\)</span>ï¼</li>
+</ol>
+<p>è¿è¡æ¼æ¥ï¼éå¥ä¸ä¸ªè½»éçº§ Transformer æ¨¡åï¼MTP Layerï¼è®¡ç®åï¼åå¤ç¨ä¸»å¹²ç <strong>LM Head</strong> ååºé¢æµï¼</p>
+<h4 id="ä¸ºä»ä¹-mtp-ææåæä¼ ç»å¤å¤´">ä¸ºä»ä¹ MTP ææåæä¼ ç»å¤å¤´ï¼</h4>
+<ol>
+<li><strong>ä¿çå æé¾ï¼Causal Lineageï¼</strong>ï¼åä¸ä¸ªå¤´çé¢æµ Token éè¿è¿è¯åééç»ä¸ä¸ä¸ªå¤´ï¼ç¡®ä¿äºèªåå½çæ°å­¦ä¸¥è°¨æ§ã</li>
+<li><strong>åçé¢è®­ç»ï¼Native Pre-trainingï¼</strong>ï¼MTP æ å¤´ä¸æ¯åè®­âè¡¥ä¸âï¼èæ¯å¨é¢è®­ç»é¶æ®µå°±ä»¥ 0.3 ç Loss æéåä¸»å¹²æ¨¡åèåè®­ç»ï¼ä¸»å¹²æ¨¡åå¨è®­ç»æ¶å°±å­¦ä¼äºâå¨ Hidden State éå¤å­ä¸ç¹æªæ¥ä¿¡æ¯âãå¹¶ä¸å¨æ¶èå®éªä¸­å ä¸ºå¤æ¨å¤æ­¥é¢æµï¼æä»¥è¿ä¸æ­¥æåäºæ¨¡åæ´ä½ææã</li>
+<li><strong>ææè´çåæ°å¤ç¨</strong>ï¼MTP å¤ç¨äºå·¨æ é¸ç Embedding ç©éµå LM Headï¼å¼å¥çé¢å¤åæ°æå°ã</li>
+<li><strong>æ´æ·±åº¦çå¤æ¨æè</strong>ï¼æ¯ä¸ä¸ªé¢æµå¤´é½æ¥æèªå·±çä¸å±è½»é Transformer Layerï¼å¯¹æ¯MedusaçMLPæµå±æ å°ï¼æ¯ä¸ªè¾åºå¤´è½ææ´å¤çæèç©ºé´ã</li>
+</ol>
+<p>DeepSeek V3ç¨çæ¯1ä¸ªMTPï¼ä¹å°±æ¯åæ¶é¢æµä¸¤ä¸ªtokenï¼ç¬¬äºtokençæ¥åçå¨85%+ï¼æä»¥å¸¦æ¥1.8åå·¦å³çå¹³åæ¨çtpsã</p>
+<h4 id="æ·±åº¦æè">æ·±åº¦æèï¼ï¼</h4>
+<p>ä¸ºä»ä¹MTPä½¿ç¨é¢æµTokenè¿è¯åéï¼èä¸æ¯ç´æ¥ä¼ 1ä¸ªtokenç Hidden Stateï¼</p>
+<p>ææ³å¯è½æ2ä¸ªåå ï¼</p>
+<ul>
+<li><strong>å¯¹é½è®­ç»ä¸æ¨ç</strong>ï¼è®­ç»æ¶åä¸æ­¥æ¯ Ground Truth Tokenï¼æ¨çæ¶æ¯é¢æµ Tokenãä¼  Token Embedding è½ä¿è¯è®­ç»/æ¨ççè¾å¥è¡¨å¾ç©ºé´åå¸é«åº¦ä¸è´ãèä¸»å¹²åheadçè¾åºéèå±å¶å®æ¯æ²¡æå¯¹é½çã</li>
+<li><strong>é¢è®­ç»ä¿¡æ¯æ³¨å¥</strong>ï¼deepseekæ¯å¨é¢è®­ç»å°±å¼å¥äºMTPå¤´ï¼æä»¥ä¸»å¹²æ¨¡åå¤©ç¶å­¦å°äºæè¦âå¤ä¿çä¸äºä¿¡æ¯ç¨äºåå æ­¥çé¢æµâï¼å æ­¤æç»deepseekä¸»å¹²æ¨¡åçhidden stateä¸­æ¬èº«å°±ä¼ä¿çæ´ä¸°å¯çå¤æ¨tokenä¿¡æ¯ã</li>
+</ul>
+<h3 id="23-eagleåè®­ç»é¢åçä¸²è¡æèç¨¿çè">2.3 EAGLEï¼åè®­ç»é¢åçä¸²è¡æèç¨¿çè</h3>
+<blockquote>
+<ul>
+<li><a href="https://github.com/SafeAILab/EAGLE" target="_blank" rel="noopener nofollow">https://github.com/SafeAILab/EAGLE</a></li>
+</ul>
+</blockquote>
+<p>EAGLE ä¸ MTP çæè·¯ä¸è°èåï¼ä½å®çç®æ æ¯âæ¯æé£äºæ²¡æå¨é¢è®­ç»é¶æ®µå å¥ MTP çå¼æºæ¨¡åâã</p>
+<p>åè¯´å±åç¹ï¼EAGLEåMTPçç¸åå¨äº</p>
+<ul>
+<li>é½éè¿ä½¿ç¨åä¸ä¸ªæ¨çtokenè¿åéä½ä¸ºç¹å¾è¾å¥ï¼ä¿çäºä¸²è¡æ¨ççå ææ§</li>
+<li>æ¶æé½åå«åä¸»æ¨¡åå±äº«LM headåEmbeddingå±</li>
+</ul>
+<p>é£å·®å¼å¨åªéå¢ï¼</p>
+<p>ä¸ªäººæè§å·®å¼ä¸»è¦æ¥èªè®­ç»å·®å¼ï¼å ä¸ºä¸åMTPå¨é¢è®­ç»é¶æ®µèå¥ï¼EAGLEè¿æ¯å»ç»ä¸»å¹²å¾®è°ï¼å æ­¤</p>
+<ul>
+<li><strong>èç¨¿å¤´ç»ææ´è½»</strong>ï¼EAGLE-1ä»ä½¿ç¨ä¸å±FC+è§£ç å±ï¼æ²¡ætransformer</li>
+<li><strong>èç¨¿ç¹å¾æ´å¤æ</strong>ï¼åMTPçéæ©ç¸åï¼EAGLEæ²¡æä½¿ç¨ä¸»å¹²éèå±ï¼èæ¯ä½¿ç¨èç¨¿ä¸ä¸ä¸ªtokençéèå±ãåæ ·é¨åå ä¸ºEagleæ¯å»ç»ä¸»å¹²æ¨¡åï¼æä»¥ä¸»å¹²éèå±è¾åºçä¿¡æ¯æéã</li>
+</ul>
+<p>å¦ææ¨¡åå¨é¢è®­ç»é¶æ®µå°±å¼å¥å¤å¤´é¢æµçè¯ï¼æ´ä½ä¸éä¼æ´é«ï¼è¿éå°±ä¸å¤ä»ç»EAGLEäºã</p>
+<h2 id="03-é©å½æ´¾åºäºæ©æ£ä¸åå¹¶è¡çæè´æ´å»-dflash--dspark">03. é©å½æ´¾ï¼åºäºæ©æ£ä¸åå¹¶è¡çæè´æ´å» (DFlash &amp; DSpark)</h2>
+<p>ä¸²è¡å¤å¤´ï¼å¦ MTPï¼è½ç¶éçº³çé«ï¼ä½å ä¸ºâå¤´ä¸å¤´ä¹é´ä¾ç¶æ¯ä¸²è¡è®¡ç®âï¼éå¶äºçæèç¨¿çéåº¦ä¸éã<strong>è½ä¸è½æ¢è¦âå¹¶è¡é½å°âçéåº¦ï¼åè½æ¿å°âä¸²è¡å æâçé«æ¥åçï¼</strong></p>
+<p>ç­æ¡äº¤ç»äº Block Diffusion ä¸ Semi-Autoregressiveã</p>
+<h3 id="dflashblock-diffusion-çå¨å¾éé">DFlashï¼Block Diffusion çå¨å¾éé</h3>
+<blockquote>
+<ul>
+<li>DFlash: Block Diffusion for Flash Speculative Decoding</li>
+</ul>
+</blockquote>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1326688/202607/1326688-20260726142737941-513022282.jpg" class="lazyload"></p>
+<p>DFlash ççå¿µæå¶ç¡¬æ ¸ï¼<strong>æ¾å¼å ææ©ç ï¼Causal Maskï¼ï¼å¼å¥ Block çº§å«çååæ³¨æåï¼Bidirectional Attentionï¼</strong>ã</p>
+<pre><code>ä¼ ç»èªåå½ Mask:              DFlash åå Block Mask:
+1 0 0 0                      1 1 1 1  &lt;ââ ååææ Token
+1 1 0 0                      1 1 1 1      äºç¸å¯è§ï¼
+1 1 1 0                      1 1 1 1      (åå Attention)
+1 1 1 1                      1 1 1 1
+
+</code></pre>
+<ol>
+<li><strong>ä¸»å¹²Hiddenå¨é¢èå¥</strong>ï¼DFlashå¹¶ä¸åªå¨èç¨¿æ¨¡åç¬¬ä¸å±æ³¨å¥ä¸»æ¨¡åç¹å¾ï¼èæ¯å¨èç¨¿ Transformer ç<strong>æ¯ä¸å±</strong>é½åµå¥ä¸»å¹²æ¨¡åçé¡¶å± Hidden Stateï¼è®©ä¸»å¹²è¯­ä¹å½»åºè´¯ç©¿èç¨¿ç½ç»ã</li>
+<li><strong>ååååæ³¨æå</strong>ï¼å¨æèç¨¿ç 8 ä¸ªæ 16 ä¸ª Token åºååï¼Token ä¹é´ä½¿ç¨åå Attentionãè¿è®©èç¨¿ç½ç»å¨é¢æµç¬¬ <span class="math inline">\(k\)</span> ä¸ª Token æ¶ï¼è½åæ¶å¼é¡¾ååæè¯­ä¹ï¼å¤§å¹æåäºå¹¶è¡é¢æµçé»è¾è¿è´¯æ§ã</li>
+<li><strong>æ§è½è¡¨ç°</strong>ï¼Block Size è®¾ç½®ä¸º 8 æ¶ï¼DFlash ä¾ç¶è½ä¿æçº¦ 70% çé«æ¥åçï¼æ¨çéåº¦æ¯ EAGLE-3/MTP å¿«äº 2 åä»¥ä¸ï¼</li>
+</ol>
+<p>æä»¥å¦æç®åæ¥è¯´ï¼æéè¦çå°±æ¯ç¸æ¯Medusaçå¤å¤´ç¬ç«è¾åºï¼DFlashéè¿ååæ³¨æåä½¿å¾è¾åºçå¤ä¸ªtokenä¹é´ææ´å¥½çä¸è´æ§ã</p>
+<h3 id="dsparké©¬å°å¯å¤«åç½®--ç½®ä¿¡åº¦è°åº¦çéå¤§æè">DSparkï¼é©¬å°å¯å¤«åç½® + ç½®ä¿¡åº¦è°åº¦çéå¤§æè</h3>
+<blockquote>
+<ul>
+<li>DSpark: Confidence-Scheduled Speculative Decoding with Semi-Autoregressive Generation</li>
+</ul>
+</blockquote>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/1326688/202607/1326688-20260726142737967-870515288.jpg" class="lazyload"></p>
+<p>æè¿çç«ç <strong>DSpark</strong> ç«å¨äºåäººçè©èä¸ï¼æå·¥ç¨åç®æ³çååæ¨å°äºæè´ã</p>
+<p>DSpark æè¯å°ï¼<strong>å¹¶è¡æ¨æµè½ç¶å¿«ï¼ä½ Block è¶å¤§ï¼ç¼ºå°é»è¿ Token çº¦æçå ææ§ï¼åæ¹é¢æµå°±è¶å®¹æåæ£ã</strong> æä¹è§£å³ï¼DSpark å¼å¥äºä¸¤å¤§ææï¼</p>
+<h4 id="ææä¸é©¬å°å¯å¤«ä¸²è¡å¤´å¼å¥å±é¨å æçº¦æ">ææä¸ï¼é©¬å°å¯å¤«ä¸²è¡å¤´ï¼å¼å¥å±é¨å æçº¦æ</h4>
+<p>DSpark é¢æµç¬¬ <span class="math inline">\(k\)</span> ä¸ªæªæ¥ä½ç½®çæç» Logits åå¸æ¶ï¼éç¨äºå¦ä¸å¬å¼ï¼æ¯ä¸ªtokençæ¦çç±å¹¶è¡é¢æµçç½®ä¿¡åº¦ç»åT-1 Token é©¬å°ç§å¤«è½¬ç§»æ¦çå±åå³å®ã</p>
+<p></p><div class="math display">\[P_k = \text{Softmax}\Big( U_k + B_k(x_{k-1}) \Big)
+\]</div><p></p><ul>
+<li><span class="math inline">\(U_k\)</span>ï¼å¹¶è¡éª¨å¹² Logitsï¼ï¼éè¿ç±»ä¼¼ DFlash çå¹¶è¡ç»æä¸æ¬¡æ§é½å°ç®åºæ¥ç Logitsï¼ä»£è¡¨<strong>å¨å±è¯­ä¹ä¸ä¸æ</strong>ã</li>
+<li><span class="math inline">\(B_k(x_{k-1})\)</span>ï¼é©¬å°å¯å¤«åç½®ï¼ï¼è¿æ¯ä¸ä¸ªæå¶è½»éçè½¬ç§»ç©éµæ¥è¡¨æä½ã<span class="math inline">\(x_{k-1}\)</span> æ¯åä¸ä¸ªä½ç½®åéåºçç¦»æ£ Tokenï¼ç©éµ <span class="math inline">\(B_k\)</span> <strong>ç¬é´æ¥æ¾</strong>åºå®å¯¹å½åä½ç½® <span class="math inline">\(k\)</span> çè½¬ç§»åç½®ãå½ç¶è¿ä¸ªV*V(è¯è¡¨å¤§å°ï¼çå·¨æ é¸ç©éµï¼ä¹å¯ä»¥éè¿ä½ç§©åç¼©åªå­å¨ä½ç§©åéã</li>
+</ul>
+<blockquote>
+<p><strong>çå¨æ¯å»</strong>ï¼å¹¶è¡éª¨å¹²ç®åºæ¥ç¬¬äºå­å¯è½æ¯âç®âæâèâï¼å 50%ï¼ãå¦æåä¸ä¸ªå­ç¡®å®æ¯âè¹âï¼æ¥è¡¨ç©éµ <span class="math inline">\(B_k(\text{âè¹â})\)</span> ç«å³ç»âæâå  100 åï¼ç»âç®âå  10 åã<strong>é¶å»¶æ¶çæ¥è¡¨æä½ï¼ç§çº§çº æ­£äºå¹¶è¡çæçæ åºæ§ï¼</strong></p>
+</blockquote>
+<h4 id="ææäºç½®ä¿¡åº¦åªæå¨æèç¨¿é¿åº¦">ææäºï¼ç½®ä¿¡åº¦åªæï¼å¨æèç¨¿é¿åº¦</h4>
+<p>è½ç¶å¹¶è¡æ¨çå¾å¿«ï¼ä¹è½åæ¶æ¨çå¾å¤§çblock sizeãä½æ¯æ´é¿çèç¨¿ï¼å¹¶ä¸ä¸å®å¸¦æ¥æ´å¿«çæ¨çThrough Putãå ä¸ºæ¥åçè¾ä½ï¼ä¼å¯¼è´åé¢å¨æ ¡éªé¶æ®µè¢«å¤§éä¸¢å¼ï¼å¨ç¨æ·é«å¹¶åè¯·æ±çåºæ¯ä¸ï¼ä¼å¹³ç½æµªè´¹æ¾å¡èµæºã</p>
+<p>DSpark å¨é¡¶å±ææäºä¸ä¸ªç½®ä¿¡åº¦å¤´ï¼é¢æµå½å Token ç<strong>æ¡ä»¶å­æ´»æ¦ç</strong> <span class="math inline">\(c_k \in (0, 1)\)</span>ï¼å<strong>åç¼èåæ¦ç</strong>ï¼ä¹å°±æ¯åºäºæ¦çé¾å¼æ³åï¼æ´ä¸ªèç¨¿åç¼å¨è¢«æ¥åçæ¦çï¼</p>
+<p></p><div class="math display">\[a_{r,j} = \prod_{i \le j} c_{r,i}
+\]</div><p></p><p>åæ¶å¨ä½¿ç¨ä»¥ä¸æ¦çæ¶ï¼DSparkè¿å¼å¥ä»¥ä¸ä¸¤ä¸ªæºå¶</p>
+<ul>
+<li><strong>é¡ºåºæ¸©åº¦ç¼©æ¾ (STS)</strong>ï¼åå§ç¥ç»ç½ç»é¢æµçç½®ä¿¡åº¦å®¹æè¿åº¦èªä¿¡ãDSpark éç¨ä»å·¦å°å³çæ¸©åº¦ç³»æ°éä½æ ¡åï¼ä¿®æ­£ç½®ä¿¡åº¦åå¸ãä½¿å¾é¢ææ¥åtokençææå¼ï¼åçå®æ¥åtokenæ°ä¹é´çè¯¯å·®è¶å°è¶å¥½ã</li>
+</ul>
+<h4 id="ææä¸ç¡¬ä»¶æç¥çè°åº¦å¨">ææä¸ï¼ç¡¬ä»¶æç¥çè°åº¦å¨</h4>
+<p>åé¢çåªææ¯ç¨æ·åæ¡è¯·æ±ä¸ççæ³æåµï¼ä½æ¯ç°å®å¾å¾æå¤ä¸ªç¨æ·è¯·æ±å¹¶åï¼å æ­¤è¿éè¦èèGPUå¤çéåº¦åå¸¦å®½é®é¢ï¼å ä¸º<strong>æç»çç®æ å¶å®æ¯æå¤§åååéåº¦</strong>ãæä»¥ææéªè¯éè¿çæ´é«ï¼ä¹ä¸ä¸å®å°±è½è·å¾æå¿«çæ¨çéåº¦ã</p>
+<p>æä»¥DSParkè¿æä¸å±å¼æ­¥çè°åº¦å¨ï¼è°åº¦å¨ä¼æå¤ä¸ªèç¨¿çæçåç¼æç§ç½®ä¿¡åº¦è¿è¡åæï¼ç¶åä»éåå¤´ï¼æ ¹æ®åå²ä¼°ç®çGPUååæ²ï¼SPSï¼çº¿è¿è¡é¢ä¼°</p>
+<ul>
+<li>ååªéªè¯ç¬¬1ä¸ªè¯ï¼ç½®ä¿¡åº¦æé«ï¼ãç®ç®å½åæ¯ç§è½äº§åºå¤å°è¯ï¼ååé = éªè¯éåº¦ Ã æææ¥åæ°ï¼ãè®°å½ä¸ºâå½åæä¼å¼âã</li>
+<li>è¯æ¢æç¬¬2ä¸ªè¯ä¹å è¿æ¥ï¼æ¹å¤çåå¤§äºï¼ãå ä¸ºæ¹å¤çå¤§äºï¼éªè¯éåº¦å¯è½åæ¢ä¸ç¹ç¹ï¼ä½å¤éªè¯äºä¸ä¸ªè¯ï¼ææäº§åºçæ»è¯æ°åå¤äºãç®ä¸ä¸æ°çæ»ååéã</li>
+<li>å¦ææ°çååé &gt; âå½åæä¼å¼âï¼è¯´æå è¿ä¸ªè¯æ¯èµçï¼ä¿çå®ã</li>
+<li>ç»§ç»­è¯æ¢ç¬¬3ä¸ªãç¬¬4ä¸ªâ¦â¦</li>
+<li>å¦æè¯æ¢å°ç¬¬5ä¸ªè¯æ¶ï¼åç°æç¬¬5ä¸ªè¯å è¿æ¥åï¼å ä¸ºéªè¯éåº¦åæ¢å¤ªå¤ï¼å¯¼è´æ»ååéåèä¸éäºï¼è°åº¦å¨ç«å»åæ­¢ï¼ä¸åå¾åçäºï¼å³ä½¿åé¢ç¬¬6ä¸ªè¯ç½®ä¿¡åº¦å¾é«ä¹ä¸çäºï¼ã</li>
+</ul>
+<p>å¹¶ä¸å¨è°åº¦å¨å®éåGPUéåæ¶ï¼è°åå¨æ¯æ ¹æ®ä¸ä¸ä¸ªbatchçé¢ä¼°ç»æï¼ç¨äºä¸ä¸ä¸ªbatchçå¤æ­ï¼å æ­¤æ éè®©GPUç­å¾CPUå¤æ­å°åºè¦éªè¯å ä¸ªè¯ï¼å®ç°ååæå¤§åã</p>
+<p><strong>æªæ¥ç LLM æ¨çæ¶æä¼èµ°åä½æ¹ï¼</strong><br>
+éç DeepSeek MTP å DSpark çæåï¼é¢è®­ç»ä¸æ¨çè°ä¼ççéæ­£å¨è¢«å½»åºæ¹å¹³ãå°âå¤æ­¥é¢æµè½åâä½ä¸ºæ¨¡åæ¬èº«çåºç¡è®¾æ½è¿è¡åçè®­ç»ï¼å·²ç¶æä¸ºäºå¤§æ¨¡åæ¼è¿çå¿ç¶è¶å¿ï¼</p>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0.0006944444444444445" data-date-updated="2026-07-30 20:31">2026-07-30 20:30</span>&nbsp;
+<a href="https://www.cnblogs.com/gogoSandy">é£é¨ä¸­çå°ä¸</a>&nbsp;
+éè¯»(<span id="post_view_count">5</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(21940384);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FgogoSandy%2Fp%2F21940384&amp;targetId=21940384&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
     <title><![CDATA[ c++éçæè°±ï¼æ  ]]></title>
     <link>https://www.cnblogs.com/wyt1/p/22074532</link>
     <guid>a90b81394b507a094c2d457a203ee849</guid>
@@ -197,7 +398,7 @@ int main() {
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-07-30 15:51">2026-07-30 15:50</span>&nbsp;
 <a href="https://www.cnblogs.com/wyt1">_wyt001</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">16</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(22074532);return false;">æ¶è</a>&nbsp;
@@ -1049,1235 +1250,11 @@ deepdoc å¼æï¼æ¯æ PDFãWordãæ«æä»¶ç­
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-07-30 15:36">2026-07-30 15:35</span>&nbsp;
 <a href="https://www.cnblogs.com/lsjwq">iNeuOSå·¥ä¸äºèç½ç³»ç»</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">56</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(22073673);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Flsjwq%2Fp%2F22073673&amp;targetId=22073673&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ 20260730worklog ]]></title>
-    <link>https://www.cnblogs.com/hoganben/p/22073511</link>
-    <guid>1340ffe79e093449aaa14d51943c2046</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/hoganben/p/22073511" title="åå¸äº 2026-07-30 15:32">
-    
-
-    <span role="heading" aria-level="2">20260730worklog</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                    <div id="cnblogs_post_description" style="display: none">
-        
-        æ¬æ¬¡å®è·µä¸»è¦å´ç»å¤§ä½ç§¯è®¾å¤æ¥å¿çç¦»çº¿åæå±å¼ï¼ä½¿ç¨ C è¯­è¨å®ç°äºä¸¤ä¸ªè½»éçº§æ¥å¿ç»è®¡å·¥å·ãæ´ä½æè·¯éç¨éè¡è¯»åãå³é®å­å¹éåç¶ææºæ§å¶ï¼éåå¤ç 100MB ä»¥ä¸çå¤§æ¥å¿æä»¶ï¼è½å¤å¨è¾ä½åå­å ç¨ä¸å®æäºä»¶ç»è®¡åç»æå¯¼åºã
-    </div>
-<div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
-<p>--------------------------------------------------</p>
-<p><em id="__mceDel">åå®¢è¯´æï¼åºäº C è¯­è¨çå¤§æ¥å¿æä»¶ç»è®¡å·¥å·å®è·µ<br>--------------------------------------------------</em></p>
-<p>ä¸ãé¡¹ç®èæ¯</p>
-<p>æè¿åäºä¸¤ä¸ªåºäº C è¯­è¨çæ¥å¿åæå°å·¥å·ï¼ä¸»è¦ç¨äºå¤çä½ç§¯è¾å¤§çè®¾å¤æ¥å¿æä»¶ï¼ä¾å¦ 100MBã150MB çè³æ´å¤§çæ¥å¿ã</p>
-<p>è¿ç±»æ¥å¿å¦æä¸æ¬¡æ§å¨é¨è¯»å¥åå­ï¼ä¸ä½å ç¨èµæºï¼èä¸ä¸å©äºåç»­æ©å±ãå æ­¤æ´ä½å®ç°éç¨äºâéè¡è¯»å + å³é®å­å¹é + ç¶ææºç»è®¡âçæ¹å¼ãè¿æ ·åçå¥½å¤æ¯ï¼</p>
-<p>1. åå­å ç¨ä½<br>2. éåå¤çå¤§ä½ç§¯æ¥å¿<br>3. é»è¾æ¸æ°ï¼ä¾¿äºç»´æ¤<br>4. åç»­æ°å¢ç»è®¡ç»´åº¦æ¶æ´å®¹ææ©å±</p>
-<p>ä»æ¥å¿åå®¹å¯ä»¥çå°ï¼åå§æ¥å¿ä¸­åæ¶åå«æ¬å°æ¶é´å UTC æ¶é´ï¼ä¾å¦ï¼<br>2026-05-08 18:40:41.580 | 2026-05-08 10:40:41.580 UTC | [main] ... [1]</p>
-<p>è¿ä¹ä¸ºåç»­ææ¶é´ç»´åº¦åç»è®¡æä¾äºåºç¡ã</p>
-<p>äºãå·¥å·ä¸ï¼Motion äºä»¶é¾è·¯ç»è®¡</p>
-<p>1. åè½ç®æ </p>
-<p>ç¬¬ä¸ä»½ä»£ç ç¨äºåæ motion äºä»¶å¨æ¥å¿ä¸­çå®æ´å¤çé¾è·¯ï¼å¹¶ç»è®¡æåç motion å½å¶æ¬¡æ°ã</p>
-<p>ä¸»è¦å³æ³¨çå³é®èç¹åæ¬ï¼</p>
-<p>- motion wait start<br>- motion record start<br>- evr task create<br>- motion video upload start<br>- ä¸ä¼ æåæ¥å¿ä¸­ç _av_x_1.nvt4s</p>
-<p>å¶ä¸­æåä¸ä¸ªèç¹æå³é®ã</p>
-<p>ä¾å¦ï¼<br>_av_9_1.nvt4s<br>è¡¨ç¤ºç¬¬ 10 ä¸ªåçä¸ä¼ å®æï¼å¹¶ä¸ 1 ä»£è¡¨è¿æ¯æåä¸ä¸ªåçï¼ä¹å°±æ¯è¯´æ´ä¸ª motion è§é¢ä¸ä¼ å®æã</p>
-<p>å¦ææ¯ï¼<br>_av_9_0.nvt4s<br>åè¡¨ç¤ºç¬¬ 10 ä¸ªåçä¸ä¼ å®æï¼ä½æ´ä¸ªè§é¢è¿æ²¡æå¨é¨ä¸ä¼ æåã</p>
-<p>å æ­¤ï¼åªæè¯å«å°æåä¸ä¸ªåçä¸ä¼ æåæ¶ï¼æå°è¿ä¸ç» motion è®¡ä¸ºä¸æ¬¡çæ­£çæåäºä»¶ã</p>
-<p>2. ä¸ºä»ä¹ä½¿ç¨ç¶ææº</p>
-<p>è¿äºå³é®å­ä¸æ¯å­¤ç«åºç°çï¼èæ¯æä¸¥æ ¼é¡ºåºå³ç³»çãå æ­¤ç¨åºä½¿ç¨ç¶ææºæ¥æ§å¶æµç¨ã</p>
-<p>ä¸ä¸ªå®æ´çæåé¾è·¯éå¸¸æ¯ï¼</p>
-<p>1. motion wait start<br>2. motion record start<br>3. evr task create<br>4. motion video upload start<br>5. put ... _av_x_1.nvt4s ... success</p>
-<p>åªææ»¡è¶³è¿ç§é¡ºåºï¼æç®ä¸ç»å®æ´çæåè®°å½ã</p>
-<p>å¦æåºç°å¦ä¸æåµï¼</p>
-<p>motion wait start<br>ä¹åç´§æ¥çåºç°<br>motion wait timeout</p>
-<p>åè¯´ææ¬æ¬¡ motion å½å¶è¶æ¶å¤±æï¼è¿ä¸æ¬¡ä¸ä¼è¢«çº³å¥ç»è®¡ã</p>
-<p>3. å¢å  mqtt payload ä¿¡æ¯æå</p>
-<p>åç»­åå¢å äºä¸ä¸ªæ°çå³é®æ¥å¿èç¹ï¼</p>
-<p>mqtt payload[...] = {... "alarmId":"20260708230350" ...}</p>
-<p>è¿ä¸ªæ¥å¿éåå«ä¸¤ä¸ªéå¸¸éè¦çä¿¡æ¯ï¼</p>
-<p>1. è¯¥è¡æ¥å¿æ¬èº«å¯¹åºç UTC æ¶é´<br>2. alarmId çå¼</p>
-<p>ä¾å¦ï¼<br>alarmId = 20260708230350</p>
-<p>å æ­¤å¨æç»è¾åºç»æä¸­ï¼é¤äºè®°å½ motion åé¶æ®µçæ¶é´ï¼è¿é¢å¤è®°å½ï¼</p>
-<p>- mqtt payload å¯¹åºç UTC æ¶é´<br>- alarmId</p>
-<p>è¿æ ·åç»­ææ¥é®é¢æ¶ï¼å¯ä»¥æ´æ¹ä¾¿å°æä¸ä¼ æåæ¥å¿ä¸ä¸å¡äºä»¶å³èèµ·æ¥ã</p>
-<p>4. ä¸ºä»ä¹æ alarmId ç»è®¡æ¶é´</p>
-<p>æå¼å§å¯ä»¥æä¸ä¼ å®ææ¶é´æ¥ç»è®¡æ¯å¤©åæ¯å°æ¶çæ¬¡æ°ï¼ä½è¿ç§æ¹å¼å¹¶ä¸æ»æ¯åç¡®ï¼å ä¸ºä¸ä¼ å®ææ¶é´å¯è½æ»åäºå®éäºä»¶åçæ¶é´ã</p>
-<p>ç¸æ¯ä¹ä¸ï¼alarmId æ´æ¥è¿ motion äºä»¶ççå®è§¦åæ¶é´ã</p>
-<p>ä¾å¦ï¼<br>alarmId = 20260708230350</p>
-<p>å¯ä»¥ç´æ¥è§£æä¸ºï¼<br>- æ¥æï¼20260708<br>- å°æ¶ï¼2026070823</p>
-<p>æä»¥æç» CSV ç»è®¡æ¹ææ alarmId åæ¶é´ååï¼è¿æ ·å¾å°çæ¯å¤©ãæ¯å°æ¶åå¸æ´åç¡®ã</p>
-<p>5. è¾åºç»æè®¾è®¡</p>
-<p>è¿ä»½å·¥å·æç»è¾åºä¸¤ç±»ç»æã</p>
-<p>ç¬¬ä¸ç±»æ¯ TXT æä»¶ï¼ç¨æ¥ä¿å­æ¯ä¸ç»æåäºä»¶çè¯¦ç»ä¿¡æ¯ï¼ä¾å¦ï¼</p>
-<p>- motion wait start æ¶é´<br>- motion record start æ¶é´<br>- evr task create æ¶é´<br>- upload start æ¶é´<br>- upload finish æ¶é´<br>- mqtt payload UTC æ¶é´<br>- alarmId<br>- åçä¿¡æ¯ï¼ä¾å¦ 9_1</p>
-<p>TXT æ´éååæ¡é®é¢ææ¥åäººå·¥æ ¸å¯¹ã</p>
-<p>ç¬¬äºç±»æ¯ CSV æä»¶ï¼ç¨æ¥ä¿å­æ±æ»ç»è®¡ä¿¡æ¯ï¼ä¾å¦ï¼</p>
-<p>time_key,count<br>20260720,42<br>2026072010,5<br>2026072011,7<br>2026072012,8<br>20260721,11<br>2026072113,6<br>2026072114,3</p>
-<p>å¶ä¸­ï¼<br>- 8 ä½è¡¨ç¤ºæå¤©ç»è®¡<br>- 10 ä½è¡¨ç¤ºæå°æ¶ç»è®¡</p>
-<p>è¿æ ·å¯ä»¥ç´æ¥å¯¼å¥ Excel æå¶ä»å·¥å·è¿è¡å¯è§ååæã</p>
-<p>ä¸ãå·¥å·äºï¼ç»è®¡ nv_xxx_main.log.gz æ é¢ååºç°æ¬¡æ°</p>
-<p>1. åè½ç®æ </p>
-<p>ç¬¬äºä»½ä»£ç çç®æ æ¯è¾ç®åï¼ä¸»è¦ç¨äºç»è®¡æ¥å¿ä¸­æç§åºå®æ ¼å¼æ é¢ååºç°çæ¬¡æ°ï¼ä¾å¦ï¼</p>
-<p>----------------------------------<br>|  nv_1783779133066_main.log.gz  |<br>|    2026-07-11 14:12:13 UTC     |<br>----------------------------------</p>
-<p>æèï¼</p>
-<p>----------------------------------<br>|  nv_1783779297926_main.log.gz  |<br>|    2026-07-11 14:14:57 UTC     |<br>----------------------------------</p>
-<p>è¿ç±»æ é¢åéå¸¸ç¨äºæ è¯æä¸ªå­æ¥å¿æä»¶æææ®µæ¥å¿åºé´ã</p>
-<p>2. ç»è®¡æ¡ä»¶</p>
-<p>ç»è®¡é»è¾å¦ä¸ï¼</p>
-<p>- ç¬¬äºè¡å¿é¡»åå« nv_<br>- å¹¶ä¸æä»¶åæ ¼å¼æ»¡è¶³ _main.log.gz<br>- ç¬¬ä¸è¡æ¶é´éè¦è½å¨æå®èå´å<br>- ä¾å¦ï¼20260711 å° 20260729</p>
-<p>åªè¦æ»¡è¶³è¿äºæ¡ä»¶ï¼å°±è®°ä¸ºä¸æ¬¡ææç»è®¡ã</p>
-<p>3. è¾åºæ¹å¼</p>
-<p>è¿ä¸ä»½å·¥å·åªè¾åº TXT æä»¶ï¼åå®¹åæ¬ï¼</p>
-<p>- æ¯ä¸ªå¹éå°çæ é¢å<br>- æç»æ»æ¬¡æ°</p>
-<p>ä¾å¦ï¼</p>
-<p>Count 1:<br>----------------------------------<br>|  nv_1783779133066_main.log.gz  |<br>|    2026-07-11 14:12:13 UTC     |<br>----------------------------------</p>
-<p>Count 2:<br>----------------------------------<br>|  nv_1783779297926_main.log.gz  |<br>|    2026-07-11 14:14:57 UTC     |<br>----------------------------------</p>
-<p>Total count in range [20260711 ~ 20260729]: 2</p>
-<p>åãå®ç°æè·¯æ»ç»</p>
-<p>è¿ä¸¤ä¸ªå·¥å·è½ç¶ç»è®¡ç®æ ä¸åï¼ä½å®ç°æè·¯åºæ¬ä¸è´ã</p>
-<p>1. éè¡æ«ææ¥å¿</p>
-<p>ç¨åºéç¨éè¡è¯»åæ¹å¼å¤çæ¥å¿ï¼éå¸¸éåå¤§æä»¶ãç¸æ¯æ´æä»¶è¯»å¥åå­ï¼è¿ç§æ¹å¼æ´èçèµæºï¼ä¹æ´ç¨³å®ã</p>
-<p>2. åºäºå³é®å­å¹é</p>
-<p>éè¿ strstrãsscanf ç­åºç¡å­ç¬¦ä¸²å¤çæ¹æ³ï¼å°±å¯ä»¥å®æå¤§é¨åæ¥å¿è§£æå·¥ä½ã</p>
-<p>3. ç¶ææºç®¡çæµç¨</p>
-<p>å¯¹äºå motion è¿ç§å­å¨æç¡®ååé¡ºåºçä¸å¡é¾è·¯ï¼ä½¿ç¨ç¶ææºå¯ä»¥ææé¿åè¯¯å¹éï¼ä¹æ´å®¹ææ©å±æ°çç¶æåèç¹ã</p>
-<p>4. ç»æè½çè¾åº</p>
-<p>æç»ç»æç´æ¥è¾åºå°æ¥å¿æå¨ç®å½ä¸ç txt æ csv æä»¶ä¸­ï¼ä¾¿äºå½æ¡£ãåäº«ååç»­åæï¼ä¹é¿åäºæ§å¶å°è¾åºè¿å¤å¯¼è´ä¿¡æ¯ä¸¢å¤±çé®é¢ã</p>
-<p>äºãéç¨åºæ¯</p>
-<p>è¿ç±»å·¥å·éåä»¥ä¸åºæ¯ï¼</p>
-<p>- è®¾å¤ç«¯æ¥å¿åæ<br>- motion äºä»¶æåçç»è®¡<br>- è§é¢ä¸ä¼ é¾è·¯ææ¥<br>- ç¦»çº¿æ¥å¿æ¹éåæ<br>- åµå¥å¼è®¾å¤è¿è¡æ¥å¿æ ¸æ¥</p>
-<p>å¦å¤ï¼ä»æ¥å¿ä¸­ä¹è½çå°ä¸ä¼ ç¸å³ä¿¡æ¯ï¼ä¾å¦ä¸ä¼ è¿ç¨æ¥å¿ä¸­åå« curl ä¼ è¾éçåèæ¶ä¿¡æ¯ [1]ï¼è¿ç±»åå®¹åç»­ä¹å¯ä»¥ç»§ç»­çº³å¥ç»è®¡èå´ï¼ä¾å¦ï¼</p>
-<p>- ä¸ä¼ èæ¶ç»è®¡<br>- ä¸ä¼ å¹³åéåº¦ç»è®¡<br>- ä¸ä¼ å¤±è´¥çç»è®¡</p>
-<p>å­ãæ»ç»</p>
-<p>è¿ä¸¤ä¸ªå°å·¥å·æ¬è´¨ä¸é½æ¯å´ç»âæ¥å¿ç»æååæâæ¥å®ç°çã</p>
-<p>ä¸ä¸ªä¸»è¦è§£å³å¤æä¸å¡é¾è·¯çç»è®¡é®é¢ï¼<br>å¦ä¸ä¸ªä¸»è¦è§£å³åºå®æ ¼å¼æ é¢åçè®¡æ°é®é¢ã</p>
-<p>è½ç¶å®ç°ä¸æ²¡æå¼å¥å¤ææ¡æ¶ï¼ä½å¯¹äºåµå¥å¼è®¾å¤æ¥å¿ãè¾¹ç¼è®¾å¤æ¥å¿ä»¥åç¦»çº¿æ¥å¿ææ¥æ¥è¯´ï¼è¿ç§âéè¡æ«æ + å³é®å­å¹é + ç¶ææºâçå®ç°æ¹å¼éå¸¸å·²ç»è¶³å¤é«æï¼ä¹è¶³å¤å®ç¨ã</p>
-<p>åç»­å¦æéè¦ï¼è¿å¯ä»¥ç»§ç»­æ©å±ï¼</p>
-<p>- æ¯æ gzip æ¥å¿ç´æ¥è¯»å<br>- æ¯ææ­£åè¡¨è¾¾å¼å¹é<br>- æ¯æå¤æä»¶æ¹éå¤ç<br>- æ¯æè¾åºæ´å¤æ¥è¡¨æ ¼å¼<br>- æ¯ææ¥å¥æ°æ®åºæå¯è§åå¹³å°</p>
-<div class="cnblogs_code">
-<pre><span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)">*
-**ç»è®¡æ¥å¿æä»¶åºç°çæ¬¡æ° ç±»ä¼¼äº
-**   ----------------------------------
-**     |  nv_xxx_main.log.gz  |
-**     |    YYYY-MM-DD HH:MM:SS UTC     |
-** ----------------------------------
-**  å¸¦å¥å¹´ææ¥ç­é  æ¯å¦ç»è®¡æ¶é´ç»´åº¦ 20260711 å° 20260729 çæ»æ¬¡æ°
-*</span><span style="color: rgba(0, 128, 0, 1)">*/</span><span style="color: rgba(0, 0, 0, 1)">
-#include </span>&lt;stdio.h&gt;<span style="color: rgba(0, 0, 0, 1)">
-#include </span>&lt;stdlib.h&gt;<span style="color: rgba(0, 0, 0, 1)">
-#include </span>&lt;<span style="color: rgba(0, 0, 255, 1)">string</span>.h&gt;
-
-<span style="color: rgba(0, 0, 255, 1)">#define</span> MAX_LINE 4096
-<span style="color: rgba(0, 0, 255, 1)">#define</span> MAX_PATH 1024
-
-<span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> å¤æ­ YYYYMMDD æ¯å¦å¨èå´å </span><span style="color: rgba(0, 128, 0, 1)">*/</span>
-<span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">int</span> in_range(<span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *date8, <span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *start, <span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *<span style="color: rgba(0, 0, 0, 1)">end) {
-    </span><span style="color: rgba(0, 0, 255, 1)">return</span> strcmp(date8, start) &gt;= <span style="color: rgba(128, 0, 128, 1)">0</span> &amp;&amp; strcmp(date8, end) &lt;= <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">;
-}
-
-</span><span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)">
- * ä»è¿ä¸è¡æå YYYYMMDD
- * ä¾å¦ï¼
- * |    2026-07-11 14:12:13 UTC     |
- * æåæï¼
- * 20260711
- </span><span style="color: rgba(0, 128, 0, 1)">*/</span>
-<span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">int</span> extract_date8_from_title_time(<span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *line, <span style="color: rgba(0, 0, 255, 1)">char</span> *<span style="color: rgba(0, 0, 0, 1)">date8, size_t size) {
-    </span><span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> y, m, d;
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (sscanf(line, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">| %d-%d-%d</span><span style="color: rgba(128, 0, 0, 1)">"</span>, &amp;y, &amp;m, &amp;d) == <span style="color: rgba(128, 0, 128, 1)">3</span><span style="color: rgba(0, 0, 0, 1)">) {
-        snprintf(date8, size, </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">%04d%02d%02d</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">, y, m, d);
-        </span><span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">;
-    }
-    </span><span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">;
-}
-
-</span><span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> çæè¾åºæä»¶è·¯å¾ï¼xxx_title_count.txt </span><span style="color: rgba(0, 128, 0, 1)">*/</span>
-<span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">void</span> build_output_path(<span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *log_path, <span style="color: rgba(0, 0, 255, 1)">char</span> *<span style="color: rgba(0, 0, 0, 1)">out_path, size_t out_size) {
-    </span><span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *slash1 = strrchr(log_path, <span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">/</span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(0, 0, 0, 1)">);
-    </span><span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *slash2 = strrchr(log_path, <span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">\\</span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(0, 0, 0, 1)">);
-    </span><span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *slash = slash1 &gt; slash2 ?<span style="color: rgba(0, 0, 0, 1)"> slash1 : slash2;
-
-    </span><span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *filename = slash ? slash + <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)"> : log_path;
-    </span><span style="color: rgba(0, 0, 255, 1)">char</span> dir[MAX_PATH] = {<span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">};
-    </span><span style="color: rgba(0, 0, 255, 1)">char</span> <span style="color: rgba(0, 0, 255, 1)">base</span>[MAX_PATH] = {<span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">};
-    </span><span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *dot = strrchr(filename, <span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">.</span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(0, 0, 0, 1)">);
-
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)"> (slash) {
-        size_t dir_len </span>= slash - log_path + <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">;
-        </span><span style="color: rgba(0, 0, 255, 1)">if</span> (dir_len &gt;= <span style="color: rgba(0, 0, 255, 1)">sizeof</span>(dir)) dir_len = <span style="color: rgba(0, 0, 255, 1)">sizeof</span>(dir) - <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">;
-        memcpy(dir, log_path, dir_len);
-        dir[dir_len] </span>= <span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">\0</span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(0, 0, 0, 1)">;
-    }
-
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (dot &amp;&amp; dot !=<span style="color: rgba(0, 0, 0, 1)"> filename) {
-        size_t base_len </span>= dot -<span style="color: rgba(0, 0, 0, 1)"> filename;
-        </span><span style="color: rgba(0, 0, 255, 1)">if</span> (base_len &gt;= <span style="color: rgba(0, 0, 255, 1)">sizeof</span>(<span style="color: rgba(0, 0, 255, 1)">base</span>)) base_len = <span style="color: rgba(0, 0, 255, 1)">sizeof</span>(<span style="color: rgba(0, 0, 255, 1)">base</span>) - <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">;
-        memcpy(</span><span style="color: rgba(0, 0, 255, 1)">base</span><span style="color: rgba(0, 0, 0, 1)">, filename, base_len);
-        </span><span style="color: rgba(0, 0, 255, 1)">base</span>[base_len] = <span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">\0</span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(0, 0, 0, 1)">;
-    } </span><span style="color: rgba(0, 0, 255, 1)">else</span><span style="color: rgba(0, 0, 0, 1)"> {
-        snprintf(</span><span style="color: rgba(0, 0, 255, 1)">base</span>, <span style="color: rgba(0, 0, 255, 1)">sizeof</span>(<span style="color: rgba(0, 0, 255, 1)">base</span>), <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">%s</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">, filename);
-    }
-
-    snprintf(out_path, out_size, </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">%s%s_title_count.txt</span><span style="color: rgba(128, 0, 0, 1)">"</span>, dir, <span style="color: rgba(0, 0, 255, 1)">base</span><span style="color: rgba(0, 0, 0, 1)">);
-}
-
-</span><span style="color: rgba(0, 0, 255, 1)">int</span> main(<span style="color: rgba(0, 0, 255, 1)">int</span> argc, <span style="color: rgba(0, 0, 255, 1)">char</span> *<span style="color: rgba(0, 0, 0, 1)">argv[]) {
-    FILE </span>*fp =<span style="color: rgba(0, 0, 0, 1)"> NULL;
-    FILE </span>*<span style="color: rgba(0, 0, 255, 1)">out</span> =<span style="color: rgba(0, 0, 0, 1)"> NULL;
-    </span><span style="color: rgba(0, 0, 255, 1)">char</span><span style="color: rgba(0, 0, 0, 1)"> line[MAX_LINE];
-    </span><span style="color: rgba(0, 0, 255, 1)">char</span><span style="color: rgba(0, 0, 0, 1)"> next1[MAX_LINE];
-    </span><span style="color: rgba(0, 0, 255, 1)">char</span><span style="color: rgba(0, 0, 0, 1)"> next2[MAX_LINE];
-    </span><span style="color: rgba(0, 0, 255, 1)">char</span> date8[<span style="color: rgba(128, 0, 128, 1)">16</span><span style="color: rgba(0, 0, 0, 1)">];
-    </span><span style="color: rgba(0, 0, 255, 1)">char</span><span style="color: rgba(0, 0, 0, 1)"> out_path[MAX_PATH];
-
-    </span><span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *start_date = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">20260711</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">;
-    </span><span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *end_date   = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">20260729</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">;
-
-    </span><span style="color: rgba(0, 0, 255, 1)">long</span> <span style="color: rgba(0, 0, 255, 1)">long</span> total_count = <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">;
-
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (argc &lt; <span style="color: rgba(128, 0, 128, 1)">2</span><span style="color: rgba(0, 0, 0, 1)">) {
-        fprintf(stderr, </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">Usage: %s &lt;log_file&gt;\n</span><span style="color: rgba(128, 0, 0, 1)">"</span>, argv[<span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">]);
-        </span><span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">;
-    }
-
-    fp </span>= fopen(argv[<span style="color: rgba(128, 0, 128, 1)">1</span>], <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">r</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (!<span style="color: rgba(0, 0, 0, 1)">fp) {
-        perror(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">open log file failed</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-        </span><span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">;
-    }
-
-    build_output_path(argv[</span><span style="color: rgba(128, 0, 128, 1)">1</span>], out_path, <span style="color: rgba(0, 0, 255, 1)">sizeof</span><span style="color: rgba(0, 0, 0, 1)">(out_path));
-
-    </span><span style="color: rgba(0, 0, 255, 1)">out</span> = fopen(out_path, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">w</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (!<span style="color: rgba(0, 0, 255, 1)">out</span><span style="color: rgba(0, 0, 0, 1)">) {
-        perror(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">open output file failed</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-        fclose(fp);
-        </span><span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">;
-    }
-
-    </span><span style="color: rgba(0, 0, 255, 1)">while</span> (fgets(line, <span style="color: rgba(0, 0, 255, 1)">sizeof</span><span style="color: rgba(0, 0, 0, 1)">(line), fp)) {
-        </span><span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> æ¾æ é¢åç¬¬ä¸è¡ </span><span style="color: rgba(0, 128, 0, 1)">*/</span>
-        <span style="color: rgba(0, 0, 255, 1)">if</span> (strstr(line, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">----------------------------------</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">)) {
-            </span><span style="color: rgba(0, 0, 255, 1)">long</span> pos =<span style="color: rgba(0, 0, 0, 1)"> ftell(fp);
-
-            </span><span style="color: rgba(0, 0, 255, 1)">if</span> (fgets(next1, <span style="color: rgba(0, 0, 255, 1)">sizeof</span>(next1), fp) &amp;&amp; fgets(next2, <span style="color: rgba(0, 0, 255, 1)">sizeof</span><span style="color: rgba(0, 0, 0, 1)">(next2), fp)) {
-                </span><span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> next1: |  nv_xxx_main.log.gz  | </span><span style="color: rgba(0, 128, 0, 1)">*/</span>
-                <span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> next2: |    2026-07-11 14:12:13 UTC     | </span><span style="color: rgba(0, 128, 0, 1)">*/</span>
-
-                <span style="color: rgba(0, 0, 255, 1)">if</span> (strstr(next1, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">nv_</span><span style="color: rgba(128, 0, 0, 1)">"</span>) &amp;&amp; strstr(next1, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">_main.log.gz</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">)) {
-                    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (extract_date8_from_title_time(next2, date8, <span style="color: rgba(0, 0, 255, 1)">sizeof</span><span style="color: rgba(0, 0, 0, 1)">(date8))) {
-                        </span><span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)"> (in_range(date8, start_date, end_date)) {
-                            total_count</span>++<span style="color: rgba(0, 0, 0, 1)">;
-                            fprintf(</span><span style="color: rgba(0, 0, 255, 1)">out</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">Count %lld:\n</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">, total_count);
-                            fprintf(</span><span style="color: rgba(0, 0, 255, 1)">out</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">%s</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">, line);
-                            fprintf(</span><span style="color: rgba(0, 0, 255, 1)">out</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">%s</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">, next1);
-                            fprintf(</span><span style="color: rgba(0, 0, 255, 1)">out</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">%s</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">, next2);
-
-                            </span><span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> åè¯»ç¬¬åè¡åéçº¿å¹¶è¾åº </span><span style="color: rgba(0, 128, 0, 1)">*/</span>
-                            <span style="color: rgba(0, 0, 255, 1)">if</span> (fgets(next1, <span style="color: rgba(0, 0, 255, 1)">sizeof</span><span style="color: rgba(0, 0, 0, 1)">(next1), fp)) {
-                                fprintf(</span><span style="color: rgba(0, 0, 255, 1)">out</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">%s\n</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">, next1);
-                            } </span><span style="color: rgba(0, 0, 255, 1)">else</span><span style="color: rgba(0, 0, 0, 1)"> {
-                                fprintf(</span><span style="color: rgba(0, 0, 255, 1)">out</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">\n</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-                            }
-                        } </span><span style="color: rgba(0, 0, 255, 1)">else</span><span style="color: rgba(0, 0, 0, 1)"> {
-                            fseek(fp, pos, SEEK_SET);
-                        }
-                    } </span><span style="color: rgba(0, 0, 255, 1)">else</span><span style="color: rgba(0, 0, 0, 1)"> {
-                        fseek(fp, pos, SEEK_SET);
-                    }
-                } </span><span style="color: rgba(0, 0, 255, 1)">else</span><span style="color: rgba(0, 0, 0, 1)"> {
-                    fseek(fp, pos, SEEK_SET);
-                }
-            }
-        }
-    }
-
-    fprintf(</span><span style="color: rgba(0, 0, 255, 1)">out</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">\nTotal count in range [%s ~ %s]: %lld\n</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">,
-            start_date, end_date, total_count);
-
-    fclose(</span><span style="color: rgba(0, 0, 255, 1)">out</span><span style="color: rgba(0, 0, 0, 1)">);
-    fclose(fp);
-
-    printf(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">Done.\n</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-    printf(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">Output file: %s\n</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">, out_path);
-    printf(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">Total count in range [%s ~ %s]: %lld\n</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">,
-           start_date, end_date, total_count);
-
-    </span><span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">;
-}</span></pre>
-</div>
-<p>&nbsp;</p>
-<div class="cnblogs_code">
-<pre>#include &lt;stdio.h&gt;<span style="color: rgba(0, 0, 0, 1)">
-#include </span>&lt;stdlib.h&gt;<span style="color: rgba(0, 0, 0, 1)">
-#include </span>&lt;<span style="color: rgba(0, 0, 255, 1)">string</span>.h&gt;
-
-<span style="color: rgba(0, 0, 255, 1)">#define</span> MAX_LINE 16384
-<span style="color: rgba(0, 0, 255, 1)">#define</span> MAX_TIME 128
-<span style="color: rgba(0, 0, 255, 1)">#define</span> MAX_PATH 1024
-<span style="color: rgba(0, 0, 255, 1)">#define</span> MAX_STATS 10000
-<span style="color: rgba(0, 0, 255, 1)">#define</span> MAX_ALARMID 32
-
-<span style="color: rgba(0, 0, 255, 1)">#define</span> KW_WAIT_START      "motion wait start"
-<span style="color: rgba(0, 0, 255, 1)">#define</span> KW_WAIT_TIMEOUT    "motion wait timeout"
-<span style="color: rgba(0, 0, 255, 1)">#define</span> KW_RECORD_START    "motion record start"
-<span style="color: rgba(0, 0, 255, 1)">#define</span> KW_EVR_CREATE      "evr task create"
-<span style="color: rgba(0, 0, 255, 1)">#define</span> KW_UPLOAD_START    "motion video upload start"
-<span style="color: rgba(0, 0, 255, 1)">#define</span> KW_MQTT_PAYLOAD    "mqtt payload["<span style="color: rgba(0, 0, 0, 1)">
-
-typedef </span><span style="color: rgba(0, 0, 255, 1)">enum</span><span style="color: rgba(0, 0, 0, 1)"> {
-    STATE_IDLE </span>= <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">,
-    STATE_WAIT_STARTED,
-    STATE_RECORD_STARTED,
-    STATE_EVR_CREATED,
-    STATE_UPLOAD_STARTED
-} MotionState;
-
-typedef </span><span style="color: rgba(0, 0, 255, 1)">struct</span><span style="color: rgba(0, 0, 0, 1)"> {
-    </span><span style="color: rgba(0, 0, 255, 1)">char</span><span style="color: rgba(0, 0, 0, 1)"> wait_start[MAX_TIME];
-    </span><span style="color: rgba(0, 0, 255, 1)">char</span><span style="color: rgba(0, 0, 0, 1)"> record_start[MAX_TIME];
-    </span><span style="color: rgba(0, 0, 255, 1)">char</span><span style="color: rgba(0, 0, 0, 1)"> evr_create[MAX_TIME];
-    </span><span style="color: rgba(0, 0, 255, 1)">char</span><span style="color: rgba(0, 0, 0, 1)"> upload_start[MAX_TIME];
-    </span><span style="color: rgba(0, 0, 255, 1)">char</span><span style="color: rgba(0, 0, 0, 1)"> upload_finish[MAX_TIME];
-
-    </span><span style="color: rgba(0, 0, 255, 1)">char</span><span style="color: rgba(0, 0, 0, 1)"> mqtt_payload_time[MAX_TIME];
-    </span><span style="color: rgba(0, 0, 255, 1)">char</span><span style="color: rgba(0, 0, 0, 1)"> alarm_id[MAX_ALARMID];
-
-    </span><span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> seg_index;
-    </span><span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> seg_last_flag;
-} MotionGroup;
-
-typedef </span><span style="color: rgba(0, 0, 255, 1)">struct</span><span style="color: rgba(0, 0, 0, 1)"> {
-    </span><span style="color: rgba(0, 0, 255, 1)">char</span> key[<span style="color: rgba(128, 0, 128, 1)">32</span>];   <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> YYYYMMDD æ YYYYMMDDHH</span>
-    <span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> count;
-} StatItem;
-
-typedef </span><span style="color: rgba(0, 0, 255, 1)">struct</span><span style="color: rgba(0, 0, 0, 1)"> {
-    </span><span style="color: rgba(0, 0, 255, 1)">char</span><span style="color: rgba(0, 0, 0, 1)"> utc_time[MAX_TIME];
-    </span><span style="color: rgba(0, 0, 255, 1)">char</span><span style="color: rgba(0, 0, 0, 1)"> alarm_id[MAX_ALARMID];
-    </span><span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> valid;
-} MqttPayloadInfo;
-
-</span><span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">void</span> reset_group(MotionGroup *<span style="color: rgba(0, 0, 0, 1)">g) {
-    memset(g, </span><span style="color: rgba(128, 0, 128, 1)">0</span>, <span style="color: rgba(0, 0, 255, 1)">sizeof</span><span style="color: rgba(0, 0, 0, 1)">(MotionGroup));
-    g</span>-&gt;seg_index = -<span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">;
-    g</span>-&gt;seg_last_flag = -<span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">;
-}
-
-</span><span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">int</span> extract_utc_time(<span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *line, <span style="color: rgba(0, 0, 255, 1)">char</span> *<span style="color: rgba(0, 0, 255, 1)">out</span><span style="color: rgba(0, 0, 0, 1)">, size_t out_sz) {
-    </span><span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *p1, *<span style="color: rgba(0, 0, 0, 1)">p2;
-    size_t len;
-
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (!line || !<span style="color: rgba(0, 0, 255, 1)">out</span> || out_sz == <span style="color: rgba(128, 0, 128, 1)">0</span>) <span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">;
-
-    p1 </span>= strstr(line, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)"> | </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (!p1) <span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">;
-    p1 </span>+= <span style="color: rgba(128, 0, 128, 1)">3</span><span style="color: rgba(0, 0, 0, 1)">;
-
-    p2 </span>= strstr(p1, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)"> | </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (!p2) <span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">;
-
-    len </span>= (size_t)(p2 -<span style="color: rgba(0, 0, 0, 1)"> p1);
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (len &gt;= out_sz) len = out_sz - <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">;
-
-    memcpy(</span><span style="color: rgba(0, 0, 255, 1)">out</span><span style="color: rgba(0, 0, 0, 1)">, p1, len);
-    </span><span style="color: rgba(0, 0, 255, 1)">out</span>[len] = <span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">\0</span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(0, 0, 0, 1)">;
-    </span><span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">;
-}
-
-</span><span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">int</span> extract_av_xy(<span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *line, <span style="color: rgba(0, 0, 255, 1)">int</span> *x, <span style="color: rgba(0, 0, 255, 1)">int</span> *<span style="color: rgba(0, 0, 0, 1)">y) {
-    </span><span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *<span style="color: rgba(0, 0, 0, 1)">p;
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (!line || !x || !y) <span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">;
-
-    p </span>= strstr(line, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">_av_</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (!p) <span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">;
-    p </span>+= <span style="color: rgba(128, 0, 128, 1)">4</span><span style="color: rgba(0, 0, 0, 1)">;
-
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (sscanf(p, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">%d_%d.nvt4s</span><span style="color: rgba(128, 0, 0, 1)">"</span>, x, y) == <span style="color: rgba(128, 0, 128, 1)">2</span><span style="color: rgba(0, 0, 0, 1)">) {
-        </span><span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">;
-    }
-    </span><span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">;
-}
-
-</span><span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">int</span> extract_alarm_id(<span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *line, <span style="color: rgba(0, 0, 255, 1)">char</span> *<span style="color: rgba(0, 0, 0, 1)">alarm_id, size_t sz) {
-    </span><span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *p = strstr(line, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">\"alarmId\":\"</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-    </span><span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *<span style="color: rgba(0, 0, 0, 1)">q;
-    size_t len;
-
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (!p || !alarm_id || sz == <span style="color: rgba(128, 0, 128, 1)">0</span>) <span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">;
-    p </span>+= strlen(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">\"alarmId\":\"</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-
-    q </span>= strchr(p, <span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(0, 0, 0, 1)">);
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (!q) <span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">;
-
-    len </span>= (size_t)(q -<span style="color: rgba(0, 0, 0, 1)"> p);
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (len &gt;= sz) len = sz - <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">;
-
-    memcpy(alarm_id, p, len);
-    alarm_id[len] </span>= <span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">\0</span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(0, 0, 0, 1)">;
-    </span><span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">;
-}
-
-</span><span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> ä» alarmId æå day/hour key
- * alarmId ç¤ºä¾: 20260708230350
- * day  = 20260708
- * hour = 2026070823
- </span><span style="color: rgba(0, 128, 0, 1)">*/</span>
-<span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">int</span> extract_day_hour_from_alarmid(<span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *<span style="color: rgba(0, 0, 0, 1)">alarm_id,
-                                         </span><span style="color: rgba(0, 0, 255, 1)">char</span> *<span style="color: rgba(0, 0, 0, 1)">day_key, size_t day_sz,
-                                         </span><span style="color: rgba(0, 0, 255, 1)">char</span> *<span style="color: rgba(0, 0, 0, 1)">hour_key, size_t hour_sz) {
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (!alarm_id) <span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">;
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (strlen(alarm_id) &lt; <span style="color: rgba(128, 0, 128, 1)">10</span>) <span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">;
-
-    snprintf(day_key, day_sz, </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">%.8s</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">, alarm_id);
-    snprintf(hour_key, hour_sz, </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">%.10s</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">, alarm_id);
-    </span><span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">;
-}
-
-</span><span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">void</span> add_stat(StatItem *stats, <span style="color: rgba(0, 0, 255, 1)">int</span> *stat_count, <span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *<span style="color: rgba(0, 0, 0, 1)">key) {
-    </span><span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> i;
-    </span><span style="color: rgba(0, 0, 255, 1)">for</span> (i = <span style="color: rgba(128, 0, 128, 1)">0</span>; i &lt; *stat_count; i++<span style="color: rgba(0, 0, 0, 1)">) {
-        </span><span style="color: rgba(0, 0, 255, 1)">if</span> (strcmp(stats[i].key, key) == <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">) {
-            stats[i].count</span>++<span style="color: rgba(0, 0, 0, 1)">;
-            </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)">;
-        }
-    }
-
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (*stat_count &lt;<span style="color: rgba(0, 0, 0, 1)"> MAX_STATS) {
-        strncpy(stats[</span>*stat_count].key, key, <span style="color: rgba(0, 0, 255, 1)">sizeof</span>(stats[*stat_count].key) - <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">);
-        stats[</span>*stat_count].count = <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">;
-        (</span>*stat_count)++<span style="color: rgba(0, 0, 0, 1)">;
-    }
-}
-
-</span><span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">int</span> cmp_stats(<span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">void</span> *a, <span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">void</span> *<span style="color: rgba(0, 0, 0, 1)">b) {
-    </span><span style="color: rgba(0, 0, 255, 1)">const</span> StatItem *x = (<span style="color: rgba(0, 0, 255, 1)">const</span> StatItem *<span style="color: rgba(0, 0, 0, 1)">)a;
-    </span><span style="color: rgba(0, 0, 255, 1)">const</span> StatItem *y = (<span style="color: rgba(0, 0, 255, 1)">const</span> StatItem *<span style="color: rgba(0, 0, 0, 1)">)b;
-    </span><span style="color: rgba(0, 0, 255, 1)">return</span> strcmp(x-&gt;key, y-&gt;<span style="color: rgba(0, 0, 0, 1)">key);
-}
-
-</span><span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">void</span> write_group(FILE *<span style="color: rgba(0, 0, 255, 1)">out</span>, <span style="color: rgba(0, 0, 255, 1)">const</span> MotionGroup *g, <span style="color: rgba(0, 0, 255, 1)">long</span> <span style="color: rgba(0, 0, 255, 1)">long</span><span style="color: rgba(0, 0, 0, 1)"> idx) {
-    fprintf(</span><span style="color: rgba(0, 0, 255, 1)">out</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">Group %lld\n</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">, idx);
-    fprintf(</span><span style="color: rgba(0, 0, 255, 1)">out</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">  motion wait start    : %s\n</span><span style="color: rgba(128, 0, 0, 1)">"</span>, g-&gt;wait_start[<span style="color: rgba(128, 0, 128, 1)">0</span>] ? g-&gt;wait_start : <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">-</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-    fprintf(</span><span style="color: rgba(0, 0, 255, 1)">out</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">  motion record start  : %s\n</span><span style="color: rgba(128, 0, 0, 1)">"</span>, g-&gt;record_start[<span style="color: rgba(128, 0, 128, 1)">0</span>] ? g-&gt;record_start : <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">-</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-    fprintf(</span><span style="color: rgba(0, 0, 255, 1)">out</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">  evr task create      : %s\n</span><span style="color: rgba(128, 0, 0, 1)">"</span>, g-&gt;evr_create[<span style="color: rgba(128, 0, 128, 1)">0</span>] ? g-&gt;evr_create : <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">-</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-    fprintf(</span><span style="color: rgba(0, 0, 255, 1)">out</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">  upload start         : %s\n</span><span style="color: rgba(128, 0, 0, 1)">"</span>, g-&gt;upload_start[<span style="color: rgba(128, 0, 128, 1)">0</span>] ? g-&gt;upload_start : <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">-</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-    fprintf(</span><span style="color: rgba(0, 0, 255, 1)">out</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">  upload finish        : %s\n</span><span style="color: rgba(128, 0, 0, 1)">"</span>, g-&gt;upload_finish[<span style="color: rgba(128, 0, 128, 1)">0</span>] ? g-&gt;upload_finish : <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">-</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-    fprintf(</span><span style="color: rgba(0, 0, 255, 1)">out</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">  mqtt payload time    : %s\n</span><span style="color: rgba(128, 0, 0, 1)">"</span>, g-&gt;mqtt_payload_time[<span style="color: rgba(128, 0, 128, 1)">0</span>] ? g-&gt;mqtt_payload_time : <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">-</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-    fprintf(</span><span style="color: rgba(0, 0, 255, 1)">out</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">  alarmId              : %s\n</span><span style="color: rgba(128, 0, 0, 1)">"</span>, g-&gt;alarm_id[<span style="color: rgba(128, 0, 128, 1)">0</span>] ? g-&gt;alarm_id : <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">-</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-    fprintf(</span><span style="color: rgba(0, 0, 255, 1)">out</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">  segment              : </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (g-&gt;seg_index &gt;= <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">) {
-        fprintf(</span><span style="color: rgba(0, 0, 255, 1)">out</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">%d_%d\n</span><span style="color: rgba(128, 0, 0, 1)">"</span>, g-&gt;seg_index, g-&gt;<span style="color: rgba(0, 0, 0, 1)">seg_last_flag);
-    } </span><span style="color: rgba(0, 0, 255, 1)">else</span><span style="color: rgba(0, 0, 0, 1)"> {
-        fprintf(</span><span style="color: rgba(0, 0, 255, 1)">out</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">-\n</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-    }
-    fprintf(</span><span style="color: rgba(0, 0, 255, 1)">out</span>, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">\n</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-}
-
-</span><span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">void</span> build_output_path(<span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *log_path, <span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *<span style="color: rgba(0, 0, 0, 1)">suffix,
-                              </span><span style="color: rgba(0, 0, 255, 1)">char</span> *<span style="color: rgba(0, 0, 0, 1)">out_path, size_t out_size) {
-    </span><span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *slash1 = strrchr(log_path, <span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">/</span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(0, 0, 0, 1)">);
-    </span><span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *slash2 = strrchr(log_path, <span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">\\</span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(0, 0, 0, 1)">);
-    </span><span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *slash = slash1 &gt; slash2 ?<span style="color: rgba(0, 0, 0, 1)"> slash1 : slash2;
-
-    </span><span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *filename = slash ? slash + <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)"> : log_path;
-    </span><span style="color: rgba(0, 0, 255, 1)">char</span> dir[MAX_PATH] = {<span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">};
-    </span><span style="color: rgba(0, 0, 255, 1)">char</span> <span style="color: rgba(0, 0, 255, 1)">base</span>[MAX_PATH] = {<span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">};
-    </span><span style="color: rgba(0, 0, 255, 1)">const</span> <span style="color: rgba(0, 0, 255, 1)">char</span> *dot = strrchr(filename, <span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">.</span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(0, 0, 0, 1)">);
-
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)"> (slash) {
-        size_t dir_len </span>= slash - log_path + <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">;
-        </span><span style="color: rgba(0, 0, 255, 1)">if</span> (dir_len &gt;= <span style="color: rgba(0, 0, 255, 1)">sizeof</span>(dir)) dir_len = <span style="color: rgba(0, 0, 255, 1)">sizeof</span>(dir) - <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">;
-        memcpy(dir, log_path, dir_len);
-        dir[dir_len] </span>= <span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">\0</span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(0, 0, 0, 1)">;
-    }
-
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (dot &amp;&amp; dot !=<span style="color: rgba(0, 0, 0, 1)"> filename) {
-        size_t base_len </span>= dot -<span style="color: rgba(0, 0, 0, 1)"> filename;
-        </span><span style="color: rgba(0, 0, 255, 1)">if</span> (base_len &gt;= <span style="color: rgba(0, 0, 255, 1)">sizeof</span>(<span style="color: rgba(0, 0, 255, 1)">base</span>)) base_len = <span style="color: rgba(0, 0, 255, 1)">sizeof</span>(<span style="color: rgba(0, 0, 255, 1)">base</span>) - <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">;
-        memcpy(</span><span style="color: rgba(0, 0, 255, 1)">base</span><span style="color: rgba(0, 0, 0, 1)">, filename, base_len);
-        </span><span style="color: rgba(0, 0, 255, 1)">base</span>[base_len] = <span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(128, 0, 0, 1)">\0</span><span style="color: rgba(128, 0, 0, 1)">'</span><span style="color: rgba(0, 0, 0, 1)">;
-    } </span><span style="color: rgba(0, 0, 255, 1)">else</span><span style="color: rgba(0, 0, 0, 1)"> {
-        snprintf(</span><span style="color: rgba(0, 0, 255, 1)">base</span>, <span style="color: rgba(0, 0, 255, 1)">sizeof</span>(<span style="color: rgba(0, 0, 255, 1)">base</span>), <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">%s</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">, filename);
-    }
-
-    snprintf(out_path, out_size, </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">%s%s%s</span><span style="color: rgba(128, 0, 0, 1)">"</span>, dir, <span style="color: rgba(0, 0, 255, 1)">base</span><span style="color: rgba(0, 0, 0, 1)">, suffix);
-}
-
-</span><span style="color: rgba(0, 0, 255, 1)">int</span> main(<span style="color: rgba(0, 0, 255, 1)">int</span> argc, <span style="color: rgba(0, 0, 255, 1)">char</span> *<span style="color: rgba(0, 0, 0, 1)">argv[]) {
-    FILE </span>*fp =<span style="color: rgba(0, 0, 0, 1)"> NULL;
-    FILE </span>*txt_out =<span style="color: rgba(0, 0, 0, 1)"> NULL;
-    FILE </span>*csv_out =<span style="color: rgba(0, 0, 0, 1)"> NULL;
-    </span><span style="color: rgba(0, 0, 255, 1)">char</span><span style="color: rgba(0, 0, 0, 1)"> line[MAX_LINE];
-    </span><span style="color: rgba(0, 0, 255, 1)">char</span><span style="color: rgba(0, 0, 0, 1)"> utc[MAX_TIME];
-    </span><span style="color: rgba(0, 0, 255, 1)">char</span><span style="color: rgba(0, 0, 0, 1)"> txt_path[MAX_PATH];
-    </span><span style="color: rgba(0, 0, 255, 1)">char</span><span style="color: rgba(0, 0, 0, 1)"> csv_path[MAX_PATH];
-
-    MotionState state </span>=<span style="color: rgba(0, 0, 0, 1)"> STATE_IDLE;
-    MotionGroup current;
-    MqttPayloadInfo last_mqtt;
-
-    </span><span style="color: rgba(0, 0, 255, 1)">long</span> <span style="color: rgba(0, 0, 255, 1)">long</span> total_groups = <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">;
-
-    StatItem day_stats[MAX_STATS];
-    StatItem hour_stats[MAX_STATS];
-    </span><span style="color: rgba(0, 0, 255, 1)">int</span> day_count = <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">;
-    </span><span style="color: rgba(0, 0, 255, 1)">int</span> hour_count = <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">;
-
-    memset(day_stats, </span><span style="color: rgba(128, 0, 128, 1)">0</span>, <span style="color: rgba(0, 0, 255, 1)">sizeof</span><span style="color: rgba(0, 0, 0, 1)">(day_stats));
-    memset(hour_stats, </span><span style="color: rgba(128, 0, 128, 1)">0</span>, <span style="color: rgba(0, 0, 255, 1)">sizeof</span><span style="color: rgba(0, 0, 0, 1)">(hour_stats));
-    memset(</span>&amp;last_mqtt, <span style="color: rgba(128, 0, 128, 1)">0</span>, <span style="color: rgba(0, 0, 255, 1)">sizeof</span><span style="color: rgba(0, 0, 0, 1)">(last_mqtt));
-
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (argc &lt; <span style="color: rgba(128, 0, 128, 1)">2</span><span style="color: rgba(0, 0, 0, 1)">) {
-        fprintf(stderr, </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">Usage: %s &lt;log_file&gt;\n</span><span style="color: rgba(128, 0, 0, 1)">"</span>, argv[<span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">]);
-        </span><span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">;
-    }
-
-    fp </span>= fopen(argv[<span style="color: rgba(128, 0, 128, 1)">1</span>], <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">r</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (!<span style="color: rgba(0, 0, 0, 1)">fp) {
-        perror(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">open log file failed</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-        </span><span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">;
-    }
-
-    build_output_path(argv[</span><span style="color: rgba(128, 0, 128, 1)">1</span>], <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">_result.txt</span><span style="color: rgba(128, 0, 0, 1)">"</span>, txt_path, <span style="color: rgba(0, 0, 255, 1)">sizeof</span><span style="color: rgba(0, 0, 0, 1)">(txt_path));
-    build_output_path(argv[</span><span style="color: rgba(128, 0, 128, 1)">1</span>], <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">_stat.csv</span><span style="color: rgba(128, 0, 0, 1)">"</span>, csv_path, <span style="color: rgba(0, 0, 255, 1)">sizeof</span><span style="color: rgba(0, 0, 0, 1)">(csv_path));
-
-    txt_out </span>= fopen(txt_path, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">w</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (!<span style="color: rgba(0, 0, 0, 1)">txt_out) {
-        perror(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">open txt output failed</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-        fclose(fp);
-        </span><span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">;
-    }
-
-    csv_out </span>= fopen(csv_path, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">w</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (!<span style="color: rgba(0, 0, 0, 1)">csv_out) {
-        perror(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">open csv output failed</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-        fclose(txt_out);
-        fclose(fp);
-        </span><span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">;
-    }
-
-    reset_group(</span>&amp;<span style="color: rgba(0, 0, 0, 1)">current);
-
-    </span><span style="color: rgba(0, 0, 255, 1)">while</span> (fgets(line, <span style="color: rgba(0, 0, 255, 1)">sizeof</span><span style="color: rgba(0, 0, 0, 1)">(line), fp)) {
-        </span><span style="color: rgba(0, 0, 255, 1)">if</span> (!extract_utc_time(line, utc, <span style="color: rgba(0, 0, 255, 1)">sizeof</span><span style="color: rgba(0, 0, 0, 1)">(utc))) {
-            strcpy(utc, </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">UNKNOWN UTC</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-        }
-
-        </span><span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> æ°å¢ï¼ç¼å­æè¿ä¸æ¡ mqtt payload ä¿¡æ¯ </span><span style="color: rgba(0, 128, 0, 1)">*/</span>
-        <span style="color: rgba(0, 0, 255, 1)">if</span> (strstr(line, KW_MQTT_PAYLOAD) &amp;&amp; strstr(line, <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">\"alarmId\":\"</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">)) {
-            </span><span style="color: rgba(0, 0, 255, 1)">char</span> alarm_id[MAX_ALARMID] = {<span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">};
-            </span><span style="color: rgba(0, 0, 255, 1)">if</span> (extract_alarm_id(line, alarm_id, <span style="color: rgba(0, 0, 255, 1)">sizeof</span><span style="color: rgba(0, 0, 0, 1)">(alarm_id))) {
-                strncpy(last_mqtt.utc_time, utc, </span><span style="color: rgba(0, 0, 255, 1)">sizeof</span>(last_mqtt.utc_time) - <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">);
-                strncpy(last_mqtt.alarm_id, alarm_id, </span><span style="color: rgba(0, 0, 255, 1)">sizeof</span>(last_mqtt.alarm_id) - <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">);
-                last_mqtt.valid </span>= <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">;
-            }
-        }
-
-        </span><span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)"> (strstr(line, KW_WAIT_START)) {
-            reset_group(</span>&amp;<span style="color: rgba(0, 0, 0, 1)">current);
-            strncpy(current.wait_start, utc, </span><span style="color: rgba(0, 0, 255, 1)">sizeof</span>(current.wait_start) - <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">);
-            state </span>=<span style="color: rgba(0, 0, 0, 1)"> STATE_WAIT_STARTED;
-            </span><span style="color: rgba(0, 0, 255, 1)">continue</span><span style="color: rgba(0, 0, 0, 1)">;
-        }
-
-        </span><span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)"> (strstr(line, KW_WAIT_TIMEOUT)) {
-            </span><span style="color: rgba(0, 0, 255, 1)">if</span> (state ==<span style="color: rgba(0, 0, 0, 1)"> STATE_WAIT_STARTED) {
-                reset_group(</span>&amp;<span style="color: rgba(0, 0, 0, 1)">current);
-                state </span>=<span style="color: rgba(0, 0, 0, 1)"> STATE_IDLE;
-            }
-            </span><span style="color: rgba(0, 0, 255, 1)">continue</span><span style="color: rgba(0, 0, 0, 1)">;
-        }
-
-        </span><span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)"> (strstr(line, KW_RECORD_START)) {
-            </span><span style="color: rgba(0, 0, 255, 1)">if</span> (state ==<span style="color: rgba(0, 0, 0, 1)"> STATE_WAIT_STARTED) {
-                strncpy(current.record_start, utc, </span><span style="color: rgba(0, 0, 255, 1)">sizeof</span>(current.record_start) - <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">);
-                state </span>=<span style="color: rgba(0, 0, 0, 1)"> STATE_RECORD_STARTED;
-            }
-            </span><span style="color: rgba(0, 0, 255, 1)">continue</span><span style="color: rgba(0, 0, 0, 1)">;
-        }
-
-        </span><span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)"> (strstr(line, KW_EVR_CREATE)) {
-            </span><span style="color: rgba(0, 0, 255, 1)">if</span> (state ==<span style="color: rgba(0, 0, 0, 1)"> STATE_RECORD_STARTED) {
-                strncpy(current.evr_create, utc, </span><span style="color: rgba(0, 0, 255, 1)">sizeof</span>(current.evr_create) - <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">);
-                state </span>=<span style="color: rgba(0, 0, 0, 1)"> STATE_EVR_CREATED;
-            }
-            </span><span style="color: rgba(0, 0, 255, 1)">continue</span><span style="color: rgba(0, 0, 0, 1)">;
-        }
-
-        </span><span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)"> (strstr(line, KW_UPLOAD_START)) {
-            </span><span style="color: rgba(0, 0, 255, 1)">if</span> (state ==<span style="color: rgba(0, 0, 0, 1)"> STATE_EVR_CREATED) {
-                strncpy(current.upload_start, utc, </span><span style="color: rgba(0, 0, 255, 1)">sizeof</span>(current.upload_start) - <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">);
-                state </span>=<span style="color: rgba(0, 0, 0, 1)"> STATE_UPLOAD_STARTED;
-            }
-            </span><span style="color: rgba(0, 0, 255, 1)">continue</span><span style="color: rgba(0, 0, 0, 1)">;
-        }
-
-        </span><span style="color: rgba(0, 0, 255, 1)">if</span> ((state == STATE_EVR_CREATED || state == STATE_UPLOAD_STARTED) &amp;&amp;<span style="color: rgba(0, 0, 0, 1)">
-            strstr(line, </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">[uploading]</span><span style="color: rgba(128, 0, 0, 1)">"</span>) &amp;&amp;<span style="color: rgba(0, 0, 0, 1)">
-            strstr(line, </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">put </span><span style="color: rgba(128, 0, 0, 1)">"</span>) &amp;&amp;<span style="color: rgba(0, 0, 0, 1)">
-            strstr(line, </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">.nvt4s</span><span style="color: rgba(128, 0, 0, 1)">"</span>) &amp;&amp;<span style="color: rgba(0, 0, 0, 1)">
-            strstr(line, </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">success</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">)) {
-
-            </span><span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> x, y;
-            </span><span style="color: rgba(0, 0, 255, 1)">if</span> (extract_av_xy(line, &amp;x, &amp;<span style="color: rgba(0, 0, 0, 1)">y)) {
-                current.seg_index </span>=<span style="color: rgba(0, 0, 0, 1)"> x;
-                current.seg_last_flag </span>=<span style="color: rgba(0, 0, 0, 1)"> y;
-                strncpy(current.upload_finish, utc, </span><span style="color: rgba(0, 0, 255, 1)">sizeof</span>(current.upload_finish) - <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">);
-
-                </span><span style="color: rgba(0, 0, 255, 1)">if</span> (y == <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">) {
-                    </span><span style="color: rgba(0, 0, 255, 1)">char</span> day_key[<span style="color: rgba(128, 0, 128, 1)">32</span>], hour_key[<span style="color: rgba(128, 0, 128, 1)">32</span><span style="color: rgba(0, 0, 0, 1)">];
-
-                    </span><span style="color: rgba(0, 0, 255, 1)">if</span><span style="color: rgba(0, 0, 0, 1)"> (last_mqtt.valid) {
-                        strncpy(current.mqtt_payload_time, last_mqtt.utc_time,
-                                </span><span style="color: rgba(0, 0, 255, 1)">sizeof</span>(current.mqtt_payload_time) - <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">);
-                        strncpy(current.alarm_id, last_mqtt.alarm_id,
-                                </span><span style="color: rgba(0, 0, 255, 1)">sizeof</span>(current.alarm_id) - <span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">);
-                    }
-
-                    total_groups</span>++<span style="color: rgba(0, 0, 0, 1)">;
-                    write_group(txt_out, </span>&amp;<span style="color: rgba(0, 0, 0, 1)">current, total_groups);
-
-                    </span><span style="color: rgba(0, 0, 255, 1)">if</span> (current.alarm_id[<span style="color: rgba(128, 0, 128, 1)">0</span>] &amp;&amp;<span style="color: rgba(0, 0, 0, 1)">
-                        extract_day_hour_from_alarmid(current.alarm_id,
-                                                      day_key, </span><span style="color: rgba(0, 0, 255, 1)">sizeof</span><span style="color: rgba(0, 0, 0, 1)">(day_key),
-                                                      hour_key, </span><span style="color: rgba(0, 0, 255, 1)">sizeof</span><span style="color: rgba(0, 0, 0, 1)">(hour_key))) {
-                        add_stat(day_stats, </span>&amp;<span style="color: rgba(0, 0, 0, 1)">day_count, day_key);
-                        add_stat(hour_stats, </span>&amp;<span style="color: rgba(0, 0, 0, 1)">hour_count, hour_key);
-                    }
-
-                    reset_group(</span>&amp;<span style="color: rgba(0, 0, 0, 1)">current);
-                    state </span>=<span style="color: rgba(0, 0, 0, 1)"> STATE_IDLE;
-                }
-            }
-            </span><span style="color: rgba(0, 0, 255, 1)">continue</span><span style="color: rgba(0, 0, 0, 1)">;
-        }
-    }
-
-    fprintf(txt_out, </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">Total complete groups: %lld\n</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">, total_groups);
-
-    qsort(day_stats, day_count, </span><span style="color: rgba(0, 0, 255, 1)">sizeof</span><span style="color: rgba(0, 0, 0, 1)">(StatItem), cmp_stats);
-    qsort(hour_stats, hour_count, </span><span style="color: rgba(0, 0, 255, 1)">sizeof</span><span style="color: rgba(0, 0, 0, 1)">(StatItem), cmp_stats);
-
-    fprintf(csv_out, </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">time_key,count\n</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-    </span><span style="color: rgba(0, 0, 255, 1)">for</span> (<span style="color: rgba(0, 0, 255, 1)">int</span> i = <span style="color: rgba(128, 0, 128, 1)">0</span>; i &lt; day_count; i++<span style="color: rgba(0, 0, 0, 1)">) {
-        fprintf(csv_out, </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">%s,%d\n</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">, day_stats[i].key, day_stats[i].count);
-        </span><span style="color: rgba(0, 0, 255, 1)">for</span> (<span style="color: rgba(0, 0, 255, 1)">int</span> j = <span style="color: rgba(128, 0, 128, 1)">0</span>; j &lt; hour_count; j++<span style="color: rgba(0, 0, 0, 1)">) {
-            </span><span style="color: rgba(0, 0, 255, 1)">if</span> (strncmp(hour_stats[j].key, day_stats[i].key, <span style="color: rgba(128, 0, 128, 1)">8</span>) == <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">) {
-                fprintf(csv_out, </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">%s,%d\n</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">, hour_stats[j].key, hour_stats[j].count);
-            }
-        }
-    }
-
-    fclose(csv_out);
-    fclose(txt_out);
-    fclose(fp);
-
-    printf(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">Done.\n</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-    printf(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">TXT : %s\n</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">, txt_path);
-    printf(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">CSV : %s\n</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">, csv_path);
-    printf(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">Total complete groups: %lld\n</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">, total_groups);
-
-    </span><span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">;
-}</span></pre>
-</div>
-<p>&nbsp;</p>
-
-</div>
-<div id="MySignature" role="contentinfo">
-    There is no smoke without fire.
-An ounce of prevention is worth a pound  of cure.
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-07-30 15:33">2026-07-30 15:32</span>&nbsp;
-<a href="https://www.cnblogs.com/hoganben">HoganBen</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(22073511);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fhoganben%2Fp%2F22073511&amp;targetId=22073511&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ åæ¥ä¸ç¨åçä¹å¯ä»¥åå°çæ¬æ´æ° ]]></title>
-    <link>https://www.cnblogs.com/zxlh1529/p/22069194</link>
-    <guid>ffb127505b605f83c4615de916628a26</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/zxlh1529/p/22069194" title="åå¸äº 2026-07-30 14:51">
-    
-
-    <span role="heading" aria-level="2">åæ¥ä¸ç¨åçä¹å¯ä»¥åå°çæ¬æ´æ°</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h2 id="åç«¯åçççæé£ä¹éº»ç¦å">åç«¯åçççæé£ä¹éº»ç¦åï¼</h2>
-<p>ççå¾éº»ç¦ï¼</p>
-<ol>
-<li>æ¹äºä¸ä¸ª UI æ ·å¼æä¿®å¤äºä¸ä¸ªå° Bug</li>
-<li>éæ°æåãæå®¡ãç­å®¡æ ¸</li>
-<li>å®åè¿å¥½ï¼iOS å¨è¾ç­å å¤©</li>
-<li>ç¨æ·è¿ä¸ä¸å®é©¬ä¸æ´æ°</li>
-</ol>
-<p>å¦ææ¯ä¸ä¸ªå° bug å´å½±åäºå¤§çåè½ï¼æ¹äºå è¡åç«¯ä»£ç è¿è½åéçæ¬éæ°åçï¼å´è¦å®æ´èµ°ä¸éåºç¨ååºåçæµç¨ï¼ä½ èªå·±æ³æ³...</p>
-<p>ä»¥ä¸åªéåäº uniapp çå¼åç´æ¥ä½¿ç¨å¤å¶ï¼å¶ä»æ¹åçå¨æåæåä¸äºè¯´æï¼å¯æä¾åé´ã</p>
-<blockquote>
-<p>å¶å®è¿ä¸ªè½ååºè¯¥æ¯å¾ä¹ä¹åå°±æäºï¼ä¸è¿å©ç¨èµ·æ¥ä½¿ç¨çè¿æ¯ç¸å¯¹è¾å°çï¼ä¸é¨åæ¯ç°å¨ç¨äºå¼åå°ç¨åºçæ¯è¾å¤ï¼å°ç¨åºå¾å®¡æ ¸æä»¥ç¨ä¸å°ï¼å¦ä¸é¨åè§å¾åé½åäºç´æ¥åæ´çæ¯è¾ç¨³å¦¥ï¼å¯è½åçä¹ä¸æ¯å¾ç»å¸¸ã<br>
-å¾å¤äººé½ä¸åæ¬¢ uniappï¼è§å¾è¿ä¸è¡é£ä¸è¡ï¼ä½æ¯å½åå¾å¤é½å¨ç¨ï¼éªç¬ãããæ¥ï¼è¯´åºä½ çæ³æ³ã</p>
-</blockquote>
-<hr>
-<h2 id="ä¸wgt-ç­æ´æ°æ¯ä»ä¹">ä¸ãWGT ç­æ´æ°æ¯ä»ä¹ï¼</h2>
-<p>WGTï¼Widget Packageï¼æ¯ uni-app ç <strong>App èµæºåçº§å</strong>ï¼æ¬è´¨ä¸æåçæ¯ <code>manifest.json</code>ãé¡µé¢ãJSãCSSãå¾çç­åç«¯èµæºï¼<strong>ä¸åå«åçå¼æååçæä»¶çåæ´</strong>ã</p>
-<table>
-<thead>
-<tr>
-<th>å¯¹æ¯é¡¹</th>
-<th>WGT ç­æ´æ°</th>
-<th>æ´åæ´æ°ï¼APK/IPAï¼</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>æ´æ°åå®¹</td>
-<td>åç«¯é¡µé¢ãæ ·å¼ãé»è¾</td>
-<td>åçå¼æãSDKãæä»¶</td>
-</tr>
-<tr>
-<td>æ¯å¦éè¦ä¸æ¶</td>
-<td>å¦</td>
-<td>æ¯</td>
-</tr>
-<tr>
-<td>åä½å¤§å°</td>
-<td>éå¸¸å  MB</td>
-<td>å å MB èµ·</td>
-</tr>
-<tr>
-<td>ç¨æ·æç¥</td>
-<td>ä¸è½½åéå¯å³å¯</td>
-<td>ééæ°å®è£</td>
-</tr>
-<tr>
-<td>éç¨åºæ¯</td>
-<td>Bug ä¿®å¤ãUI è°æ´ãä¸å¡é»è¾åæ´</td>
-<td>æ°å¢åçæ¨¡åãåçº§ SDK</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="äºæ´ä½æ¶æåå°å­æ°æ®å·å¯å¨åå¤æ­">äºãæ´ä½æ¶æï¼åå°å­æ°æ®ï¼å·å¯å¨åå¤æ­</h2>
-<p>æ ¸å¿æè·¯éå¸¸ç®åï¼</p>
-<pre><code>âââââââââââââââ     å·å¯å¨è¯·æ±      ââââââââââââââââ
-â   App å®¢æ·ç«¯  â âââââââââââââââââ¶ â  çæ¬æ£æ¥æ¥å£  â
-â  (uni-app)   â âââââââââââââââââ â  (åç«¯ API)   â
-âââââââââââââââ   è¿åçæ¬ä¿¡æ¯       ââââââââ¬ââââââââ
-       â                                    â
-       â ææ°çæ¬                            â è¯»å
-       â¼                                    â¼
-  ä¸è½½ .wgt å                         ââââââââââââââââ
-       â                               â æ°æ®åº / éç½®  â
-       â¼                               â version      â
-  plus.runtime.install                 â wgtUrl       â
-       â                               â pkgUrl       â
-       â¼                               â forceUpdate  â
-  plus.runtime.restart                 ââââââââââââââââ
-</code></pre>
-<p><strong>æµç¨è¯´æï¼</strong></p>
-<ol>
-<li>App <strong>å·å¯å¨</strong>ï¼<code>App.vue</code> ç <code>onLaunch</code>ï¼æ¶ï¼è¯»åå½åçæ¬å·</li>
-<li>è°ç¨åç«¯æ¥å£ï¼ä¼ å¥å½åçæ¬</li>
-<li>åç«¯æ¯å¯¹æ°æ®åºä¸­çææ°çæ¬ï¼è¿åæ¯å¦éè¦æ´æ°ãWGT ä¸è½½å°åç­</li>
-<li>å®¢æ·ç«¯ä¸è½½ WGT â å®è£ â éå¯ï¼æ°çæ¬çæ</li>
-</ol>
-<p>è¿å¥æ¹æ¡ä¸ä¾èµç¹å®åå°æ¡æ¶ï¼<strong>æ°æ®åºãRedisãJSON éç½®æä»¶ãCMS åå°</strong> é½å¯ä»¥ï¼åªè¦æ¥å£è½è¿åçº¦å®å­æ®µå³å¯ã</p>
-<hr>
-<h2 id="ä¸åå°è®¾è®¡æ°æ®åºéæ¾ä»ä¹">ä¸ãåå°è®¾è®¡ï¼æ°æ®åºéæ¾ä»ä¹ï¼</h2>
-<h3 id="31-æ¨èçæ°æ®è¡¨ç»æ">3.1 æ¨èçæ°æ®è¡¨ç»æ</h3>
-<p>ä»¥ MySQL ä¸ºä¾ï¼ä¸å¼  <code>app_version</code> è¡¨å°±å¤èµ·æ­¥ï¼</p>
-<pre><code class="language-sql">CREATE TABLE app_version (
-  id            INT PRIMARY KEY AUTO_INCREMENT,
-  app_id        VARCHAR(64)  NOT NULL COMMENT 'åºç¨æ è¯ï¼å¦ __UNI__XXXXXX',
-  platform      VARCHAR(16)  NOT NULL DEFAULT 'all' COMMENT 'android / ios / all',
-  version_name  VARCHAR(32)  NOT NULL COMMENT 'çæ¬åï¼å¦ 1.0.1',
-  version_code  INT          NOT NULL COMMENT 'çæ¬å·ï¼éå¢æ´æ°',
-  wgt_url       VARCHAR(512) DEFAULT NULL COMMENT 'WGT åä¸è½½å°å',
-  pkg_url       VARCHAR(512) DEFAULT NULL COMMENT 'æ´åä¸è½½å°åï¼å¯éï¼',
-  update_type   TINYINT      NOT NULL DEFAULT 1 COMMENT '1=ç­æ´æ° 2=æ´åæ´æ° 3=å¼ºå¶æ´å',
-  force_update  TINYINT      NOT NULL DEFAULT 0 COMMENT 'æ¯å¦å¼ºå¶æ´æ°',
-  update_log    TEXT         COMMENT 'æ´æ°è¯´æ',
-  status        TINYINT      NOT NULL DEFAULT 1 COMMENT '1=å¯ç¨ 0=ç¦ç¨',
-  created_at    DATETIME     DEFAULT CURRENT_TIMESTAMP
-);
-</code></pre>
-<p>ä¹å¯ä»¥ä¸ç¨æ°æ®åºï¼ç´æ¥å¨åå°ç®¡çç³»ç»éç»´æ¤ä¸ä¸ª JSON éç½®ï¼åçä¸æ ·ï¼</p>
-<pre><code class="language-json">{
-  "version": "1.0.2",
-  "versionCode": 102,
-  "update": true,
-  "wgtUrl": "https://cdn.example.com/app/__UNI__XXXXXX.wgt",
-  "pkgUrl": "",
-  "forceUpdate": false,
-  "description": "ä¿®å¤è¥å¹²å·²ç¥é®é¢ï¼ä¼åé¦é¡µå è½½éåº¦"
-}
-</code></pre>
-<h3 id="32-çæ¬æ£æ¥æ¥å£çº¦å®">3.2 çæ¬æ£æ¥æ¥å£çº¦å®</h3>
-<p><strong>è¯·æ±åæ°ï¼</strong></p>
-<table>
-<thead>
-<tr>
-<th>åæ°å</th>
-<th>ç±»å</th>
-<th>è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>name</td>
-<td>String</td>
-<td>åºç¨åç§°</td>
-</tr>
-<tr>
-<td>version</td>
-<td>String</td>
-<td>å®¢æ·ç«¯å½åçæ¬å·</td>
-</tr>
-<tr>
-<td>platform</td>
-<td>String</td>
-<td>å¯éï¼android / ios</td>
-</tr>
-</tbody>
-</table>
-<p><strong>ååºåæ°ï¼</strong></p>
-<table>
-<thead>
-<tr>
-<th>åæ°å</th>
-<th>ç±»å</th>
-<th>è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>update</td>
-<td>Boolean</td>
-<td>æ¯å¦ææ´æ°</td>
-</tr>
-<tr>
-<td>wgtUrl</td>
-<td>String</td>
-<td>WGT åä¸è½½å°å</td>
-</tr>
-<tr>
-<td>pkgUrl</td>
-<td>String</td>
-<td>æ´åä¸è½½å°åï¼å¤§çæ¬åçº§æ¶ä½¿ç¨ï¼</td>
-</tr>
-<tr>
-<td>forceUpdate</td>
-<td>Boolean</td>
-<td>æ¯å¦å¼ºå¶æ´æ°</td>
-</tr>
-<tr>
-<td>description</td>
-<td>String</td>
-<td>æ´æ°è¯´æ</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Node.js ç¤ºä¾ï¼Expressï¼ï¼</strong></p>
-<pre><code class="language-javascript">router.get('/api/app/check-update', async (req, res) =&gt; {
-  const { name, version, platform = 'android' } = req.query;
-
-  // ä»æ°æ®åºæ¥è¯¢ææ°å¯ç¨çæ¬
-  const latest = await db.query(
-    'SELECT * FROM app_version WHERE app_id = ? AND status = 1 ORDER BY version_code DESC LIMIT 1',
-    [name]
-  );
-
-  if (!latest) {
-    return res.json({ update: false });
-  }
-
-  const hasUpdate = compareVersion(version, latest.version_name) &lt; 0;
-
-  res.json({
-    update: hasUpdate,
-    wgtUrl: hasUpdate ? latest.wgt_url : '',
-    pkgUrl: latest.pkg_url || '',
-    forceUpdate: !!latest.force_update,
-    description: latest.update_log || ''
-  });
-});
-
-// ç®åçæ¬å·æ¯è¾ï¼1.0.1 vs 1.0.2
-function compareVersion(v1, v2) {
-  const a = v1.split('.').map(Number);
-  const b = v2.split('.').map(Number);
-  for (let i = 0; i &lt; Math.max(a.length, b.length); i++) {
-    const diff = (a[i] || 0) - (b[i] || 0);
-    if (diff !== 0) return diff;
-  }
-  return 0;
-}
-</code></pre>
-<blockquote>
-<p><strong>æç¤ºï¼</strong> çæ¬æ¯å¯¹é»è¾å¯æä¸å¡èªå®ä¹ï¼æçå¢éç¨ <code>versionCode</code> æ´æ°æ¯è¾æ´ç¨³å¦¥ã</p>
-</blockquote>
-<hr>
-<h2 id="åå¶ä½-wgt-åhbuilderx-ä¸¤æ­¥æå®">åãå¶ä½ WGT åï¼HBuilderX ä¸¤æ­¥æå®</h2>
-<h3 id="41-ä¿®æ¹çæ¬å·">4.1 ä¿®æ¹çæ¬å·</h3>
-<p>æå¼ <code>manifest.json</code>ï¼éå¢çæ¬ä¿¡æ¯ï¼</p>
-<ul>
-<li><strong>åºç¨çæ¬åç§°</strong>ï¼versionNameï¼ï¼å¦ <code>1.0.1</code> â <code>1.0.2</code></li>
-<li><strong>åºç¨çæ¬å·</strong>ï¼versionCodeï¼ï¼å¦ <code>101</code> â <code>102</code></li>
-</ul>
-<blockquote>
-<p>â ï¸ <strong>å³é®ï¼</strong> æ° WGT åççæ¬å·å¿é¡» <strong>ä¸¥æ ¼å¤§äº</strong> å½å App å·²å®è£ççæ¬ï¼å¦åå®è£ä¼æ¥éï¼<br>
-<code>WGTå®è£åä¸­manifest.jsonæä»¶çversionçæ¬ä¸å¹é</code></p>
-</blockquote>
-<h3 id="42-åè¡-wgt-å">4.2 åè¡ WGT å</h3>
-<p>HBuilderX èåï¼</p>
-<pre><code>åè¡ â App-å¶ä½åºç¨wgtå
-</code></pre>
-<p>çæå®æåï¼æ§å¶å°ä¼è¾åº <code>.wgt</code> æä»¶è·¯å¾ï¼æä»¶åéå¸¸ä¸º <code>{appid}.wgt</code>ï¼ä¾å¦ <code>__UNI__832D722.wgt</code>ã</p>
-<h3 id="43-ä¸ä¼ å°-cdn--æå¡å¨">4.3 ä¸ä¼ å° CDN / æå¡å¨</h3>
-<p>å° WGT æä»¶ä¸ä¼ å°å¯å¬ç½è®¿é®ç HTTPS å°åï¼ä¾å¦ï¼</p>
-<pre><code>https://cdn.example.com/app/__UNI__832D722.wgt
-</code></pre>
-<p>ç¶åæè¯¥ URL åå¥æ°æ®åºæåå°éç½®ï¼ä¾æ¥å£è¿åã</p>
-<hr>
-<h2 id="äºå®¢æ·ç«¯å®ç°å·å¯å¨æ£æ¥--ä¸è½½å®è£">äºãå®¢æ·ç«¯å®ç°ï¼å·å¯å¨æ£æ¥ + ä¸è½½å®è£</h2>
-<h3 id="51-ä¸ºä»ä¹å¿é¡»ç¨-plusruntimegetproperty">5.1 ä¸ºä»ä¹å¿é¡»ç¨ <code>plus.runtime.getProperty</code>ï¼</h3>
-<p>è¿æ¯æå®¹æè¸©çåä¹ä¸ï¼</p>
-<table>
-<thead>
-<tr>
-<th>API</th>
-<th>è¯»åæ¥æº</th>
-<th>WGT æ´æ°åæ¯å¦åå</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>plus.runtime.version</code></td>
-<td>åç APK/IPA çæ¬</td>
-<td>â ä¸å</td>
-</tr>
-<tr>
-<td><code>plus.runtime.getProperty()</code></td>
-<td>manifest.json èµæºçæ¬</td>
-<td>â ä¼å</td>
-</tr>
-</tbody>
-</table>
-<p><strong>ç»è®ºï¼çæ¬æ£æµå¿é¡»ç¨ <code>plus.runtime.getProperty</code>ï¼ä¸è½ç¨ <code>plus.runtime.version</code>ã</strong><br>
-å¦å WGT æ´æ°æååï¼å®¢æ·ç«¯è¯»å°çä»æ¯åçåçæ¬ï¼ä¼ <strong>æ éæç¤ºæ´æ°</strong>ã</p>
-<h3 id="52-ç¤ºä¾è¿éæ²¡ææ¾ç°åº¦ååºåéç­ä»£ç é»è¾éè¦çå¯èªè¡ä¿®æ¹æ·»å ">5.2 ç¤ºä¾ï¼è¿éæ²¡ææ¾ç°åº¦ãååºåéç­ä»£ç é»è¾ï¼éè¦çå¯èªè¡ä¿®æ¹æ·»å ï¼</h3>
-<p>å»ºè®®å°è£ä¸ºç¬ç«æ¨¡åï¼å¨ <code>App.vue</code> ç <code>onLaunch</code> ä¸­è°ç¨ï¼</p>
-<pre><code class="language-javascript">// utils/appUpdate.js
-
-const CHECK_UPDATE_URL = 'https://api.example.com/api/app/check-update';
-
-/**
- * è·åå½å App èµæºçæ¬ä¿¡æ¯
- */
-export function getCurrentVersion() {
-  return new Promise((resolve, reject) =&gt; {
-    // #ifdef APP-PLUS
-    plus.runtime.getProperty(plus.runtime.appid, (info) =&gt; {
-      resolve({
-        name: info.name,
-        version: info.version,
-        versionCode: info.versionCode
-      });
-    }, reject);
-    // #endif
-
-    // #ifndef APP-PLUS
-    reject(new Error('é App ç¯å¢'));
-    // #endif
-  });
-}
-
-/**
- * æ£æ¥å¹¶æ§è¡æ´æ°
- */
-export async function checkAppUpdate(options = {}) {
-  const { silent = false } = options;
-
-  try {
-    const current = await getCurrentVersion();
-
-    const res = await uni.request({
-      url: CHECK_UPDATE_URL,
-      method: 'GET',
-      data: {
-        name: current.name,
-        version: current.version,
-        platform: uni.getSystemInfoSync().platform
-      }
-    });
-
-    const data = res[1]?.data || res.data;
-    if (!data?.update) return;
-
-    // æ´åæ´æ°ï¼å¤§çæ¬ / åçåæ´ï¼
-    if (data.pkgUrl &amp;&amp; !data.wgtUrl) {
-      handlePkgUpdate(data);
-      return;
-    }
-
-    // WGT ç­æ´æ°
-    if (data.wgtUrl) {
-      if (data.forceUpdate) {
-        await downloadAndInstallWgt(data.wgtUrl);
-      } else {
-        const confirmed = await showUpdateDialog(data.description);
-        if (confirmed) {
-          await downloadAndInstallWgt(data.wgtUrl);
-        }
-      }
-    }
-  } catch (err) {
-    if (!silent) {
-      console.error('[AppUpdate] æ£æ¥æ´æ°å¤±è´¥', err);
-    }
-  }
-}
-
-/** å¼¹åºæ´æ°æç¤º */
-function showUpdateDialog(description) {
-  return new Promise((resolve) =&gt; {
-    uni.showModal({
-      title: 'åç°æ°çæ¬',
-      content: description || 'æ¯å¦ç«å³æ´æ°ï¼',
-      confirmText: 'ç«å³æ´æ°',
-      cancelText: 'ç¨ååè¯´',
-      success: (res) =&gt; resolve(res.confirm)
-    });
-  });
-}
-
-/** ä¸è½½å¹¶å®è£ WGT */
-function downloadAndInstallWgt(wgtUrl) {
-  return new Promise((resolve, reject) =&gt; {
-    uni.showLoading({ title: 'ä¸è½½æ´æ°ä¸­...', mask: true });
-
-    const downloadTask = uni.downloadFile({
-      url: wgtUrl,
-      success: (downloadResult) =&gt; {
-        if (downloadResult.statusCode !== 200) {
-          uni.hideLoading();
-          uni.showToast({ title: 'ä¸è½½å¤±è´¥', icon: 'none' });
-          return reject(new Error('ä¸è½½å¤±è´¥'));
-        }
-
-        uni.showLoading({ title: 'å®è£ä¸­...', mask: true });
-
-        plus.runtime.install(
-          downloadResult.tempFilePath,
-          { force: true },
-          () =&gt; {
-            uni.hideLoading();
-            uni.showModal({
-              title: 'æ´æ°å®æ',
-              content: 'åºç¨å°éå¯ä»¥çæ',
-              showCancel: false,
-              success: () =&gt; {
-                plus.runtime.restart();
-                resolve();
-              }
-            });
-          },
-          (err) =&gt; {
-            uni.hideLoading();
-            uni.showToast({
-              title: 'å®è£å¤±è´¥: ' + (err.message || 'æªç¥éè¯¯'),
-              icon: 'none'
-            });
-            reject(err);
-          }
-        );
-      },
-      fail: (err) =&gt; {
-        uni.hideLoading();
-        uni.showToast({ title: 'ä¸è½½å¤±è´¥', icon: 'none' });
-        reject(err);
-      }
-    });
-
-    // çå¬ä¸è½½è¿åº¦ï¼å¯éï¼
-    downloadTask.onProgressUpdate((res) =&gt; {
-      uni.showLoading({
-        title: `ä¸è½½ä¸­ ${res.progress}%`,
-        mask: true
-      });
-    });
-  });
-}
-
-/** æ´åæ´æ°ï¼è·³è½¬æµè§å¨æåºç¨å¸åº */
-function handlePkgUpdate(data) {
-  uni.showModal({
-    title: 'åç°æ°çæ¬',
-    content: data.description || 'è¯·ä¸è½½å®è£æ°çæ¬',
-    showCancel: !data.forceUpdate,
-    confirmText: 'å»ä¸è½½',
-    success: (res) =&gt; {
-      if (res.confirm &amp;&amp; data.pkgUrl) {
-        plus.runtime.openURL(data.pkgUrl);
-      }
-    }
-  });
-}
-</code></pre>
-<p>å¨ <code>App.vue</code> ä¸­è°ç¨ï¼</p>
-<pre><code class="language-javascript">// App.vue
-import { checkAppUpdate } from '@/utils/appUpdate.js';
-
-export default {
-  onLaunch() {
-    // å·å¯å¨æ¶éé»æ£æ¥æ´æ°
-    // #ifdef APP-PLUS
-    checkAppUpdate({ silent: true });
-    // #endif
-  }
-};
-</code></pre>
-<h3 id="53-æ ¸å¿-api-è¯´æ">5.3 æ ¸å¿ API è¯´æ</h3>
-<p>å®æ¹ææ¡£ï¼<a href="https://www.html5plus.org/doc/zh_cn/runtime.html#plus.runtime.install" target="_blank" rel="noopener nofollow">plus.runtime.install</a></p>
-<pre><code class="language-javascript">plus.runtime.install(filePath, options, successCallback, errorCallback)
-</code></pre>
-<ul>
-<li><strong>filePath</strong>ï¼WGT æ¬å°è·¯å¾ï¼éåç¨ <code>uni.downloadFile</code> ä¸è½½å°æ¬å°ï¼</li>
-<li><strong>options.force</strong>ï¼æ¯å¦å¼ºå¶å®è£ï¼çæ¬ä¸å¹éæ¶å¼ºå¶è¦çï¼</li>
-<li>å®è£æåå <strong>å¿é¡»</strong> è°ç¨ <code>plus.runtime.restart()</code>ï¼æ°èµæºæä¼çæ</li>
-</ul>
-<hr>
-<h2 id="å­åªäºæåµä¸è½åªç¨-wgt">å­ãåªäºæåµä¸è½åªç¨ WGTï¼</h2>
-<p>ä»¥ä¸åºæ¯ <strong>å¿é¡»èµ°æ´åæ´æ°</strong>ï¼</p>
-<ol>
-<li><strong>åç SDK åæ´</strong>ï¼å¦æ°å¢ Maps æ¨¡åãåçº§æ¨é SDK</li>
-<li><strong>åçæä»¶å¢æ¹</strong>ï¼æ°å¢æä¿®æ¹ uni åçæä»¶</li>
-<li><strong>App åçå¼æåçº§</strong></li>
-<li><strong>æäºå¹³å°ç¹æ®éå¶</strong>ï¼å¦ä»é nvue å·¥ç¨æ°å¢ nvue ä¸ä½¿ç¨éèªå®ä¹ç»ä»¶ç¼è¯æ¨¡å¼</li>
-</ol>
-<p>éå°è¿äºæåµï¼æ¥å£åºè¿å <code>pkgUrl</code> å¼å¯¼ç¨æ·ä¸è½½æ´åï¼èä¸æ¯ <code>wgtUrl</code>ã</p>
-<hr>
-<h2 id="ä¸æ³¨æäºé¡¹">ä¸ãæ³¨æäºé¡¹</h2>
-<h3 id="71-å¼åè°è¯">7.1 å¼åè°è¯</h3>
-<ul>
-<li>çæºè¿è¡æé´è¯»å°ç appidãçæ¬å·æ¯ HBuilder åºåº§ä¿¡æ¯ï¼<strong>å¿é¡»æèªå®ä¹åºåº§ææ­£å¼å</strong> æè½æ­£ç¡®æµè¯ç­æ´æ°</li>
-<li>ä½¿ç¨ <code>#ifdef APP-PLUS</code> æ¡ä»¶ç¼è¯ï¼é¿åå¨ H5 / å°ç¨åºç¯å¢è°ç¨ <code>plus</code> API</li>
-</ul>
-<h3 id="72-çæ¬ç®¡ç">7.2 çæ¬ç®¡ç</h3>
-<ul>
-<li>WGT åç <code>manifest.json</code> çæ¬å¿é¡»å¤§äºå®¢æ·ç«¯å½åçæ¬</li>
-<li>çæ¬æ£æµç¨ <code>plus.runtime.getProperty</code>ï¼ä¸è¦ç¨ <code>plus.runtime.version</code></li>
-<li>å»ºè®®å¨åå°ä¿çåå²çæ¬è®°å½ï¼æ¹ä¾¿åæ»</li>
-</ul>
-<h3 id="73-å®å¨ä¸åè§">7.3 å®å¨ä¸åè§</h3>
-<ul>
-<li>WGT ä¸è½½å°å <strong>å¼ºçå»ºè®®ä½¿ç¨ HTTPS</strong>ï¼é²æ­¢ä¸­é´äººç¯¡æ¹</li>
-<li>iOS ä¸æ¶å®¡æ ¸æé´ <strong>ä¸è¦å¼¹åºç­æ´æ°æç¤º</strong></li>
-<li>ç­æ´æ°åå®¹éç¬¦ååºç¨ååºæ¿ç­ï¼ä¸è¦éè¿ç­æ´æ°ç»è¿èææ¯ä»ç­è§å</li>
-<li>åèè¯´æï¼<a href="https://ask.dcloud.net.cn/article/35667" target="_blank" rel="noopener nofollow">ç­æ´æ°æ¯å¦å½±ååºç¨ä¸æ¶</a></li>
-</ul>
-<h3 id="74-å¼å®¹æ§">7.4 å¼å®¹æ§</h3>
-<ul>
-<li>WGT èµæºåä¸åçåºåº§å­å¨å¼å®¹å³ç³»ï¼å¤§è·¨åº¦åçº§å»ºè®®å¨ manifest ä¸­éç½®å¿½ç¥ä¸å¼å®¹æç¤ºï¼æåååæµè¯</li>
-<li>è¯¦è§ï¼<a href="https://ask.dcloud.net.cn/article/35627" target="_blank" rel="noopener nofollow">wgt ä¸åçåºåº§å¼å®¹æ§è¯´æ</a></li>
-</ul>
-<h3 id="75-ç¨æ·ä½éª">7.5 ç¨æ·ä½éª</h3>
-<ul>
-<li>éå¼ºå¶æ´æ°å»ºè®®å¼¹çªè®©ç¨æ·éæ©ï¼ä¸è¦æ¯æ¬¡å·å¯å¨é½éé»å¼ºå¶æ´æ°</li>
-<li>ä¸è½½è¿ç¨å±ç¤ºè¿åº¦ï¼é¿åç¨æ·ä»¥ä¸º App å¡æ­»</li>
-<li>å®è£æååå <code>uni.hideLoading()</code> å <code>plus.runtime.restart()</code>ï¼é¿å loading æ®ç</li>
-</ul>
-<hr>
-<h2 id="å«å®æ¹åçº§ä¸­å¿æ´çå¿çéæ©">å«ãå®æ¹åçº§ä¸­å¿ï¼æ´çå¿çéæ©</h2>
-<p>å¦æä½¿ç¨ uniCloudï¼å¯ä»¥ç´æ¥æ¥å¥ DCloud å®æ¹ç <strong>uni-upgrade-center</strong>ï¼å¼ç®±æ¯æï¼</p>
-<ul>
-<li>WGT ç­æ´æ° + æ´åæ´æ°</li>
-<li>åå°å¯è§åç®¡ççæ¬</li>
-<li>å¤åºç¨ãå¤å¹³å°ç»ä¸ç®¡ç</li>
-</ul>
-<p>å®æ¹ææ¡£ï¼<a href="https://uniapp.dcloud.net.cn/uniCloud/upgrade-center.html" target="_blank" rel="noopener nofollow">uni-upgrade-center</a></p>
-<p>å¯¹äºå·²æèªå»ºåç«¯çå¢éï¼æ¬æçãæ°æ®åº + æ¥å£ + å®¢æ·ç«¯ãæ¹æ¡æ´çµæ´»ï¼å¯¹äº uniCloud é¡¹ç®ï¼å®æ¹æ¹æ¡è½çä¸å°è½®å­ã</p>
-<hr>
-<h2 id="ä¹æ»ç»">ä¹ãæ»ç»</h2>
-<table>
-<thead>
-<tr>
-<th>æ­¥éª¤</th>
-<th>æä½</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td>åå° / æ°æ®åºç»´æ¤çæ¬å·ãWGT ä¸è½½å°å</td>
-</tr>
-<tr>
-<td>2</td>
-<td>æä¾çæ¬æ£æ¥æ¥å£ï¼å®¢æ·ç«¯å·å¯å¨æ¶è°ç¨</td>
-</tr>
-<tr>
-<td>3</td>
-<td>HBuilderX ä¿®æ¹çæ¬å· â å¶ä½ WGT å â ä¸ä¼  CDN</td>
-</tr>
-<tr>
-<td>4</td>
-<td>å®¢æ·ç«¯ <code>getProperty</code> è¯»çæ¬ â ä¸è½½ â <code>install</code> â <code>restart</code></td>
-</tr>
-</tbody>
-</table>
-<p><strong>åæ¥ä¸ç¨åçä¹å¯ä»¥åå°çæ¬æ´æ°</strong>ââè¿å¥è¯æç«çåææ¯ï¼æ¹çæ¯åç«¯èµæºï¼ä¸æ¯åçè½åãå¨è¿ä¸ªè¾¹çåï¼WGT ç­æ´æ°è½æ¾èç¼©ç­ä»å¼åå°ç¨æ·æä¸­çè·¯å¾ï¼ç¹å«éåé«é¢è¿­ä»£çä¸å¡å Appã</p>
-<hr>
-<blockquote>
-<p>å¦æè¿ç¯æç« å¯¹ä½ æå¸®å©ï¼æ¬¢è¿ç¹èµæ¶èãæé®é¢å¯ä»¥å¨è¯è®ºåºäº¤æµï¼ä¸èµ·è¸©åãä¸èµ·å¡«åã</p>
-</blockquote>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-07-30 14:51">2026-07-30 14:51</span>&nbsp;
-<a href="https://www.cnblogs.com/zxlh1529">å¹¼å¿å­ææ¯å®¶</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(22069194);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fzxlh1529%2Fp%2F22069194&amp;targetId=22069194&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -3209,8 +2186,8 @@ Aï¼æ­£å¸¸ï¼æ¬å°æ¨¡ååæ¾å¡ï¼å»º�
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-07-30 14:39">2026-07-30 14:38</span>&nbsp;
 <a href="https://www.cnblogs.com/sun-10387834">ä½ç¥è®©ææ¥å·¡å±±</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">87</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(21736617);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fsun-10387834%2Fp%2F21736617&amp;targetId=21736617&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
@@ -3848,6 +2825,333 @@ Harness æ ¡éªå¹¶æ§è¡å·¥å·
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(22069310);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FQiniu-developer%2Fp%2F22069310&amp;targetId=22069310&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ åæ ·çRAGç³»ç»ï¼ååç­ç¥ä¸åï¼å½ä¸­çè½å·®20% ]]></title>
+    <link>https://www.cnblogs.com/uniqueDong/p/22068760</link>
+    <guid>474c2838bf885872e432ea3562f423a1</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/uniqueDong/p/22068760" title="åå¸äº 2026-07-30 13:56">
+    
+
+    <span role="heading" aria-level="2">åæ ·çRAGç³»ç»ï¼ååç­ç¥ä¸åï¼å½ä¸­çè½å·®20%</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>æè±äºä¸ä¸ªææ­äºä¸å¥èªå»º RAG ç¥è¯åºï¼240 ç¯ææ¯æç« çè¿å»ï¼åéåºè·èµ·æ¥ä¸åæ­£å¸¸ã</p>
+<p>ç¶åæç¨"Redis Cluster æä¹æ©å®¹"æäºä¸ä¸ã</p>
+<p>è¿åçç»æåä¸ç¯åå«æ¯ï¼ãRedis ä¸ºä»ä¹å¿«ãããGo è¯­è¨çå¹¶åæ¨¡åãããæä»¬å¢éçä»£ç è§èããæ²¡ä¸ç¯åç­äºæçé®é¢ã</p>
+<p>é®é¢ä¸å¨ embedding æ¨¡åï¼ä¸å¨åéæ°æ®åºãé®é¢åºå¨ä¸ä¸ªå¤§å¤æ°æç¨ä¸ç¬å¸¦è¿ãå¾å¤å·¥ç¨å¸åæ ¹æ²¡è®¤çå¯¹å¾çç¯èââ<strong>ååç­ç¥</strong>ã</p>
+<p>åæ ·çåéæ°æ®åºãåæ ·ç embedding æ¨¡åï¼ååç­ç¥ä¸åï¼æ£ç´¢å½ä¸­çè½å·® 20% ä»¥ä¸ãè¿ä¸æ¯å¤¸å¤§ï¼æ¯æå®æå®æµåºæ¥çã</p>
+<p><img alt="ä¸ç§ååç­ç¥æ ¸å¿å·®å¼éè§" loading="lazy" data-src="https://magebyte.oss-cn-shenzhen.aliyuncs.com/myself/004-rag-chunking-strategies-compared-fig01-cmp.png" class="lazyload"></p>
+<h2 id="åç»ç­æ¡ä¸ç§ç­ç¥æä¹é">åç»ç­æ¡ï¼ä¸ç§ç­ç¥æä¹é</h2>
+<p>ä¸æ³çå®æ´åæçè¯ï¼è¿å¼ è¡¨å¤ç¨äºï¼</p>
+<table>
+<thead>
+<tr>
+<th>ä½ çåå®¹ç±»å</th>
+<th>æ¨èç­ç¥</th>
+<th>é¢æå½ä¸­ç</th>
+<th>ä¸å¥è¯çç±</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ææ¯æç¨ãä¸æ ãæ¶æææ¡£</td>
+<td>ç­ç¥ Aï¼ç»ææç¥åå</td>
+<td>~78%</td>
+<td>ä¿çæ é¢å±çº§ï¼chunk èªå¸¦ä¸ä¸æ</td>
+</tr>
+<tr>
+<td>è®¾è®¡æ¨¡å¼ãæä½³å®è·µãç²¾ç¼æ»ç»</td>
+<td>ç­ç¥ Bï¼æ¨¡æ¿/æ®µè½åå</td>
+<td>~72%</td>
+<td>è½»éå¿«éï¼éååå®¹æ¬èº«å·²ç»æå</td>
+</tr>
+<tr>
+<td>FAQãç¤¾åºé®ç­ãè¸©åç¬è®°</td>
+<td>ç­ç¥ Cï¼Q&amp;A å¯¹åå</td>
+<td>è§åä¸­</td>
+<td>ä¿è¯é®é¢åç­æ¡ä¸è¢«ææ£</td>
+</tr>
+</tbody>
+</table>
+<p>å¦æä½ ç¨çè¿æ¯åºå® 500 å­ç¬¦ç¡¬åï¼å½ä¸­çå¤§æ¦çå¨ 60% å·¦å³å¾å¾ââè¿è·æ²¡å RAG åºå«ä¸å¤§ã</p>
+<p>ä¸é¢è¿å¼ è¡¨çèµ·æ¥ç®æ´ï¼ä½èåæä¸ä¸ªå¾å¤äººä¸ç¥éçäºå®ï¼<strong>ç­ç¥ A åç­ç¥ B æ¬è´¨ä¸æ¯å¨ãåå®¹å¥åºæ¶ãå°±å·²ç»å³å®äºæ£ç´¢è´¨éçä¸ä¸é</strong>ãchunk è¾¹çä¸æ¦åå¥ç´¢å¼ï¼ä¹åææä¸æ¸¸æä½ââæ¢ embedding æ¨¡åãå  rerankerãè°æ£ç´¢åæ°ââé½åªè½å¨è¿ç»å·²åå¥½çåéä¸éæ°æåºãå¦æä½ ç chunk æ¬èº«å°±æ¯æ®ç¼ºçï¼ä¸å¥è¯è¢«è°æ©ãä»£ç åè¢«æªæ­ãQ&amp;A è¢«ææ£ï¼ï¼åé¢ååå¤ä¼åä¹æ¯ç½æ­ã</p>
+<p>æ¢å¥è¯è¯´ï¼<strong>ååå®ä¹äºãæ£ç´¢å¯¹è±¡æ¯ä»ä¹ãï¼embedding åªå³å®ãæä¹æ¾å°å®ã</strong>ãæ³éè¿ä¸å±ï¼ä½ å°±ç¥éä¸ºä»ä¹ååç­ç¥å¼å¾è±æ¶é´ç»è°ã</p>
+<p>å¦æä½ å¯¹èªå·±çåå®¹ç±»åæ¿ä¸åï¼ç´æ¥çåé¢çè¯¦ç»å¯¹æ¯ãå¦æåå®¹ç»ææ¯è¾å¤æââæ¯å¦æ¢æä¸å  Markdown æç¨åæä¸æ¹ FAQ é®ç­ââå¯ä»¥èèè¿é¶æ¹æ¡ï¼<strong>Small-to-Bigï¼ç¶å­ææ¡£ï¼</strong>ãç¨å°ååç²¾åå¬åï¼chunk_size=300-500ï¼ï¼å¬ååèªå¨æ©å±å°ç¶çº§å¤§ååç» LLMãç¤¾åº benchmark æ¾ç¤ºè¿å¥æ¹æ¡ç recall è½è¾¾å° 0.86ï¼æ¯ç®åçäº§ç¯å¢å®æµçæä¼ç­ç¥ä¹ä¸ã</p>
+<h2 id="ä¸ºä»ä¹ååç­ç¥è¢«ä½ä¼°äº">ä¸ºä»ä¹ååç­ç¥è¢«ä½ä¼°äº</h2>
+<p>å¤§é¨å RAG æç¨çæµç¨æ¯ï¼è£åéåº â é embedding æ¨¡å â è°æ£ç´¢åæ° â ä¸çº¿ãååè¿ä¸æ­¥ï¼æç¨ééå¸¸å°±ä¸è¡ <code>chunk_size=500</code>ï¼éæä¸è®¾å°±è¿äºã</p>
+<p>ä½å®éä¸ï¼<strong>ååå³å®äº embedding åéçä¿¡æ¯å¯åº¦</strong>ã</p>
+<p>ä¸ä¸ª chunk å¤ªå¤§ï¼æ¯å¦ 2000 å­ç¬¦ï¼ï¼åå«å¤ä¸ªä¸ç¸å³çææ¯æ¦å¿µï¼embedding åéå°±ä¼åæä¸ä¸ª"å¹³åè¸"ââä»ä¹é½åï¼ä»ä¹é½æ£ç´¢ä¸åãä¸ä¸ª chunk å¤ªå°ï¼æ¯å¦ 200 å­ç¬¦ï¼ï¼ä¿¡æ¯è¢«åç¢ï¼æ£ç´¢æ¶ä¼å¬åä¸å é¶æ£çæ®µï¼LLM å¾èªå·±æ¼å¾ã</p>
+<p>è¯´ç½äºï¼ååç­ç¥å¨ RAG ç³»ç»éçå°ä½ç¸å½äºæ°æ®åºçç´¢å¼è®¾è®¡ãç´¢å¼æ²¡å»ºå¯¹ï¼æ¢ä»ä¹å­å¨å¼æé½æ¯ç½æ­ã</p>
+<p>æ¢ä¸ä¸ªè§åº¦æ³ï¼ä½ åææ¯æç« çæ¶åä¼åæ­æ é¢ç»æï¼è¯»èéè¯»æ¶ä¼æ ¹æ®æ é¢æ¾èªå·±å³å¿çç« èãé£ä¸ºä»ä¹ç»åéåºçåå®¹çæ¶åï¼è¦ææ é¢ç»æææãå½æä¸å¨å¹³ææ¬åï¼</p>
+<p>è¿å°±æ¯ç»ææç¥ååçæ ¸å¿æè·¯ã</p>
+<p>è¿æä¸ä¸ªåç´è§çæ°æ®ç¹ï¼Adobe å¨ 2025 å¹´åäºä¸ä¸ªå¤§è§æ¨¡å®éªï¼å¨ä»ä»¬åé¨æ°åå·¥ç¨å¸ä½¿ç¨çææ¯æ¯æç³»ç»ä¸å¯¹æ¯äºå¤ç§ååç­ç¥ãç»æè®©å¾å¤äººæå¤ââ<strong>400-token çåºå®ååï¼å  20% overlapï¼å¨æäºåºæ¯ä¸åèå»è´¥äºè¯­ä¹ååååå±åå</strong>ï¼åç¡®çæåäº 20%ãè¿è¯´æä¸ä¸ªéçï¼ååç­ç¥æ²¡æé¶å¼¹ï¼åå®¹ç±»åå³å®ä¸åãå¦æææ¡£æ¬èº«æ ¼å¼è§æ´ãæ®µè½æ¸æ°ï¼ç®åçæ®µè½ååå¯è½æ¯å¤æçè¯­ä¹ååæ´ææã</p>
+<h2 id="ç­ç¥-aç»ææç¥ååæçä¸»åç­ç¥">ç­ç¥ Aï¼ç»ææç¥ååï¼æçä¸»åç­ç¥ï¼</h2>
+<p><strong>åç</strong>ï¼æ Markdown çæ é¢å±çº§ï¼H2 â H3 â H4ï¼éçº§ååï¼ä¿è¯æ¯ä¸ª chunk æ¯ä¸ä¸ªå®æ´ç"å°è"ï¼èä¸æ¯ä¸æ®µè¢«è°æ©çæå­ã</p>
+<p>å³é®ç¹æä¸¤æ¡ï¼</p>
+<ol>
+<li>
+<p><strong>ä¿çç¶çº§æ é¢ä½ä¸ºä¸ä¸æåç¼</strong>ãæ¯å¦ä¸ç¯è®² Redis Cluster çæç« ï¼H3 å°è"3.4.1 Redis Cluster æ¯ä»ä¹"ä¸é¢çåå®¹å¨ååæ¶ï¼chunk ç metadata ä¼å¸¦ä¸ <code>Redis Cluster éç¾¤ &gt; 3.4.1 Redis Cluster æ¯ä»ä¹</code>ãæ£ç´¢æ¶ä¸ä»è½å¹éåå®¹æ¬èº«ï¼è¿è½å©ç¨æ é¢è·¯å¾åè¯­ä¹éå®ã</p>
+</li>
+<li>
+<p><strong>max_size ä¸æ¯ä¸ååï¼èæ¯"è½¯ä¸é"</strong>ãæçè®¾ç½®æ¯ 800 å­ç¬¦ââå¤§é¨å H3 å°èæ¬èº«å°±å¨ 500-800 å­ä¹é´ï¼å°æ°è¶é¿çä¼èªå¨å¨ H4 çº§å«è¿ä¸æ­¥æåï¼ä½ç»å¯¹ä¸ä¼å¨ä¸æ®µä»£ç æä¸ä¸ªå®æ´æ¦å¿µä¸­é´æ­å¼ã</p>
+</li>
+</ol>
+<p>æ¥çä¸ä¸å®ç°ä»£ç ï¼</p>
+<pre><code class="language-python">from langchain.text_splitter import MarkdownHeaderTextSplitter
+
+headers_to_split_on = [
+    ("##", "h2"),
+    ("###", "h3"),
+    ("####", "h4"),
+]
+
+splitter = MarkdownHeaderTextSplitter(
+    headers_to_split_on=headers_to_split_on,
+    strip_headers=False,  # ä¿çæ é¢ææ¬å¨ chunk ä¸­
+)
+
+# å®éä½¿ç¨ï¼è¯»å markdown æä»¶ååå
+with open("redis-cluster-deep-dive.md", "r") as f:
+    markdown_content = f.read()
+
+chunks = splitter.split_text(markdown_content)
+
+for chunk in chunks:
+    # metadata ä¸­ä¿çäºå®æ´çæ é¢è·¯å¾
+    # ä¾å¦ï¼{'h2': 'Redis Cluster éç¾¤', 'h3': '3.4.1 Redis Cluster æ¯ä»ä¹'}
+    print(f"æ é¢è·¯å¾: {chunk.metadata}")
+    print(f"åå®¹é¿åº¦: {len(chunk.page_content)} å­ç¬¦")
+    print(f"åå®¹é¢è§: {chunk.page_content[:100]}...")
+    print("---")
+</code></pre>
+<p>ä½è¿åªæ¯ç¬¬ä¸æ­¥ãMarkdownHeaderTextSplitter ææ é¢åå®åï¼å¦ææä¸ª H3 ä¸çåå®¹æ 3000 å¤å­æä¹åï¼åä¸ª chunk ç´æ¥å¡è¿åéåºï¼embedding è´¨éä¼ä¸¥éä¸éãæä»¥éè¦å ä¸å±å¤çº§åéï¼</p>
+<pre><code class="language-python">from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+# å¤çº§åéæåå¨ï¼ä¼åæ \n\nï¼æ®µè½ï¼åï¼ä¸è¡åæ \nï¼å¥å­ï¼ï¼æåæå­ç¬¦
+fallback_splitter = RecursiveCharacterTextSplitter(
+    chunk_size=800,
+    chunk_overlap=80,
+    separators=["\n\n", "\n", "ã", ".", " ", ""],
+    length_function=len,
+)
+
+# å¯¹æ¯ä¸ª header split çç»æååå°ºå¯¸æ£æ¥
+final_chunks = []
+for chunk in header_chunks:
+    if len(chunk.page_content) &lt;= 800:
+        # åå®¹å¨éå¼åï¼ç´æ¥ä¿ç
+        final_chunks.append(chunk)
+    else:
+        # è¶è¿éå¼ï¼ç¨åéæåå¨ç»§ç»­åï¼ä½ä¿çåå§ metadata
+        sub_chunks = fallback_splitter.split_text(chunk.page_content)
+        for i, sub in enumerate(sub_chunks):
+            sub_chunk = type(chunk)(
+                page_content=sub,
+                metadata={**chunk.metadata, "sub_chunk_index": i}
+            )
+            final_chunks.append(sub_chunk)
+
+print(f"æç»çæ {len(final_chunks)} ä¸ª chunk")
+</code></pre>
+<p>è¿å¥ç­ç¥å¨æç 240 ç¯æç« ä¸å®æµä¸æ¥ï¼å½ä¸­çç¨³å®å¨ 78% å·¦å³ãèä¸æä¸ªé¢å¤çå¥½å¤ï¼æ¯ä¸ª chunk èªå¸¦æ é¢è·¯å¾ï¼LLM å¨çæåç­æ¶è½æç¡®ç¥éä¿¡æ¯æ¥èªåªç¯æç« çåªä¸ªç« èï¼å¹»è§ææ¾åå°ã</p>
+<p><strong>éç¨åå®¹</strong>ï¼ææ¯æç¨ãä¸æ æç« ãæ¶æææ¡£ââä»»ä½ææ¸æ°æ é¢å±çº§çé¿æã</p>
+<p><strong>ä¸éç¨</strong>ï¼èªç¶è¯­è¨ä¸ºä¸»çéç¬ãæ²¡ææ é¢ç»æççº¯ææ¬æµæ°´è´¦ãè¿ç§æåµå»ºè®®ç´æ¥ç¨ç­ç¥ Bã</p>
+<h2 id="ç­ç¥-bæ¨¡æ¿æ®µè½åå">ç­ç¥ Bï¼æ¨¡æ¿/æ®µè½åå</h2>
+<p><strong>åç</strong>ï¼ä¼åæ <code>##</code> æ é¢åï¼å¦æåä¸ª <code>##</code> ä¸åå®¹è¶è¿éå¼ï¼åææ®µè½è¾¹çååãæ¬è´¨ä¸æ¯ä¸ä¸ª"åå°éç»æï¼åå°éè¯­ä¹è¾¹ç"çæè·¯ã</p>
+<p>ç­ç¥ B æ¯ç­ç¥ A ç®åï¼ä½æ¯åºå®å­ç¬¦ç¡¬åèªæå¾å¤ãå®ç max_size æè®¾æäº 600 å­ç¬¦ââæ¯ç­ç¥ A ç 800 æ´å°ï¼å ä¸ºéç¨åå®¹æ¬èº«ä¿¡æ¯å¯åº¦å°±é«ï¼ä¸éè¦é£ä¹å¤§ççªå£ã</p>
+<p>å®ç°ä»£ç ï¼</p>
+<pre><code class="language-python">from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+# éå¯¹å·²ç²¾ç¼çç»æååå®¹
+splitter = RecursiveCharacterTextSplitter(
+    chunk_size=600,
+    chunk_overlap=60,
+    separators=["## ", "\n\n", "\n", "ã", " "],
+    length_function=len,
+)
+
+chunks = splitter.create_documents(
+    texts=[article_content],
+    metadatas=[{"source": "best-practices-microservices-2025.md"}]
+)
+</code></pre>
+<p>å¯¹æ¯ç­ç¥ A åç­ç¥ B çå·®å¼ï¼ææ ¸å¿çä¸ç¹æ¯ï¼<strong>ç­ç¥ B ä¸ä¼ä¸»å¨æå»ºæ é¢å±çº§è·¯å¾</strong>ãå®æ <code>##</code> å½ä½ä¸ä¸ªåéæ è®°ï¼ä½å¦æåå®¹æ¬èº«æ²¡æ <code>##</code> æ é¢ï¼æèæ é¢å±çº§å¾æµï¼ï¼å®ä¼ç´æ¥éåå°ææ®µè½ååã</p>
+<p>å®æµå½ä¸­çå¨ 72% å·¦å³ï¼æ¯ç­ç¥ A ä½çº¦ 6 ä¸ªç¾åç¹ãè¿ 6 ä¸ªç¹çå·®è·ä¸»è¦æ¥èª"ç¼ºä¹æ é¢ä¸ä¸æ"ââå½ç¨æ·æç´¢ä¸ä¸ªç¹å®çææ¯æ¦å¿µæ¶ï¼ç­ç¥ B ç chunk éå¯è½æ²¡æè¶³å¤çå±æ¬¡ä¿¡æ¯å¸®å© embedding æ¨¡åç²¾åå®ä½ã</p>
+<p>ä½ç­ç¥ B çä¼å¿å¨äº<strong>å¿«ä¸ç</strong>ãä¸éè¦è§£æ Markdown æ é¢æ ï¼ä¸éè¦æå»º metadata è·¯å¾ï¼å¯¹åå®¹æ ¼å¼çè¦æ±ä¹ä½å¾å¤ãå¦æä½ çç¥è¯åºåå®¹æ¬èº«å°±æ¯ç­å°ç²¾æçç»æåæ»ç»ï¼æ¯å¦è®¾è®¡æ¨¡å¼æ¸åãAPI æä½³å®è·µå¡çï¼ï¼ç­ç¥ B å®å¨å¤ç¨ã</p>
+<p><strong>éç¨åå®¹</strong>ï¼æ¥å¸¸æè¦ãè®¾è®¡æ¨¡å¼ææ¡£ãæä½³å®è·µåè¡¨ââåå®¹æ¬èº«å·²ç»å¾ç²¾ç¼ï¼ä¸éè¦é¢å¤çç»æè§£æã</p>
+<h2 id="ç­ç¥-cqa-å¯¹ååè§åä¸­">ç­ç¥ Cï¼Q&amp;A å¯¹ååï¼è§åä¸­ï¼</h2>
+<p>è¿é¨åæ¯æè¸©è¿çä¸ä¸ªåï¼è¿å¨å¡«ã</p>
+<p>æçç¥è¯åºéæä¸é¨ååå®¹æ¥èªç¤¾åºé®ç­ââè¯»èé®"Redis å¨åµæ¨¡å¼å Cluster æ¨¡å¼æä¹é"ï¼æåäºä¸ç¯è¯¦ç»çåå¤ãè¿ç¯åå¤éæ¢æé®é¢åæç­æ¡ï¼å¦æææ é¢ååææ®µè½ååï¼é®é¢åç­æ¡å¤§æ¦çä¼è¢«æå°ä¸åç chunk éã</p>
+<p>åæå°±æ¯ï¼ç¨æ·æ"å¨åµæ¨¡å¼å Cluster æä¹é"æ¶ï¼åéåºå¯è½åªå¬åç­æ¡çé£ä¸å chunkââè¯­ä¹ä¸å¹éï¼ä½ç¼ºå°äºé®é¢ä¸ä¸æï¼LLM ä¸ç¥éè¿æ®µè¯å¨åç­ä»ä¹ã</p>
+<p>ç­ç¥ C çæè·¯å¾ç®åï¼<strong>ä¸ä¸ªé®ç­å¯¹ = ä¸ä¸ª chunk</strong>ãä¸æå­æ°åï¼ä¸ææ é¢åï¼å°±æ Q&amp;A çè¾¹çåã</p>
+<pre><code class="language-python"># ç­ç¥ C ç¤ºæä»£ç ï¼è§åä¸­ï¼éçäº§çº§ï¼
+import re
+
+def split_qa_pairs(text: str) -&gt; list[dict]:
+    """æ Q&amp;A æ¨¡å¼ååææ¬"""
+    # å¹é Q: æ é®ï¼ å¼å¤´çæ®µè½
+    pattern = r'(?:Q[ï¼:]|é®[ï¼:]|#### Q\d+)(.*?)(?=Q[ï¼:]|é®[ï¼:]|#### Q\d+|$)'
+    matches = re.findall(pattern, text, re.DOTALL)
+    
+    qa_pairs = []
+    for match in matches:
+        parts = re.split(r'(?:A[ï¼:]|ç­[ï¼:])', match, maxsplit=1)
+        if len(parts) == 2:
+            qa_pairs.append({
+                "question": parts[0].strip(),
+                "answer": parts[1].strip(),
+            })
+    
+    return qa_pairs
+</code></pre>
+<p>è¿ä¸ªç­ç¥å¨ v3.0 éæè§åè½å°ï¼ç®ååªè¦çäºæç¥è¯åºä¸­çº¦ 5% çåå®¹ï¼é£æ¹ FAQ ç±»æç« ï¼ãä½ææå·²ç»è½çåºæ¥ââQ&amp;A ç±»åå®¹çæ£ç´¢å½ä¸­çæåéå¸¸ææ¾ï¼å ä¸ºé®é¢æ¬èº«å°±æ¯ä¸ä¸ªå¤©ç¶çæ£ç´¢ queryï¼chunk éåæ¶åå«é®é¢åç­æ¡ï¼embedding åéè½æ´å¥½å°ææè¿ç§"æé®-åç­"è¯­ä¹æ¨¡å¼ã</p>
+<p><strong>éç¨åå®¹</strong>ï¼FAQ é¡µé¢ãç¤¾åºé®ç­ãè¸©åç¬è®°ââææä»¥"é®é¢-åç­"å½¢å¼ç»ç»çåå®¹ã</p>
+<h2 id="æçè¿­ä»£è¿ç¨ä¸ä¸ªçæ¬çæè®­">æçè¿­ä»£è¿ç¨ï¼ä¸ä¸ªçæ¬çæè®­</h2>
+<p>è¯´å®è¯ï¼æå¨ååç­ç¥ä¸è¸©çåï¼æ¯å¨ embedding æ¨¡åéåä¸è¸©çè¿å¤ã</p>
+<p><strong>v1.0ï¼åºå® 500 å­ç¬¦ç¡¬å</strong></p>
+<p>è¿æ¯ç»å¤§å¤æ°æç¨æ¨èç"æä½³å®è·µ"ââè®¾ä¸ª <code>chunk_size=500</code>ï¼overlap ç»ä¸ª 50ï¼è·èµ·æ¥å°±è¡ã</p>
+<p>ç»ææ¨ä¸å¿ç¹ãä¸æ®µè®² Go å¹¶åæ¨¡åçä¸­ææ®µè½ï¼500 å­ç¬¦å¯è½åå¥½å¡å¨"goroutine çè°åº¦åºäº GMP æ¨¡åï¼G ä»£è¡¨"ââåé¢å°±æ²¡äºãG ä»£è¡¨ä»ä¹ï¼è¯»èæ³ç¥éï¼åéåºä¹ä¸ç¥éã</p>
+<p>æ´è´å½çæ¯ä»£ç åè¢«æ¦è°æªæ­ãä¸ä¸ªå®æ´çè®¾è®¡æ¨¡å¼ç¤ºä¾ï¼ååæ®µæ¯é®é¢æè¿°ï¼ååæ®µæ¯å®ç°ä»£ç ï¼è¢«åå°ä¸¤ä¸ª chunk éä¹åï¼ä¸¤ä¸ª chunk é½åæäºè¯­ä¹æ®çã</p>
+<p>å½ä¸­ç 60% åºå¤´ââè·éæºæ½å·®ä¸å¤ã</p>
+<p><strong>v2.0ï¼æ H2 æ é¢å</strong></p>
+<p>æè¯å°é®é¢ä¹åï¼ææ¹æäºæ H2 æ é¢ååââæ¯ä¸ªå¤§ç« èä¸ä¸ª chunkã</p>
+<p>ææå¥½äºä¸äºï¼ä½é©¬ä¸éå°æ°é®é¢ï¼æäº H2 ä¸é¢çåå®¹å¤è¾¾ 3000+ å­ãæ¯å¦ææä¸ç¯è®² Redis æä¹åçæç« ï¼H2"RDB å¿«ç§åç"ä¸é¢åä»£ç æ³¨éå°±æ 1500 å­ãè¿ä¹å¤§ä¸ä¸ª chunk å¡è¿åéåºï¼embedding åéçè¯­ä¹ç¦ç¹å®å¨æ£äºã</p>
+<p><strong>v3.0ï¼ç»ææç¥ + å¤çº§åé</strong></p>
+<p>v3.0 å°±æ¯ç°å¨è¿å¥æ¹æ¡ââH2 â H3 â H4 â æ®µè½ â å¥å­ï¼éçº§åéãæ¯ä¸ª chunk èªå¸¦æ é¢ä¸ä¸æï¼å°ºå¯¸æ§å¶å¨ 800 å­ç¬¦å·¦å³ã</p>
+<p>è¿å¥æ¹æ¡ä¸çº¿åï¼å½ä¸­çç¨³å®å¨ 75%+ï¼å°æ°ä¼åè¿çä¸é¢è½è¾¾å° 80% ä»¥ä¸ã</p>
+<p><img alt="ç»ææç¥ååçå¤çº§åéæµç¨" loading="lazy" data-src="https://magebyte.oss-cn-shenzhen.aliyuncs.com/myself/004-rag-chunking-strategies-compared-fig02-flow.png" class="lazyload"></p>
+<h2 id="åä¸ªæ ¸å¿ååæ¯åæ°æ´éè¦">åä¸ªæ ¸å¿ååï¼æ¯åæ°æ´éè¦ï¼</h2>
+<p>æå®ä¸ç§ç­ç¥ï¼æå¾åºçç»è®ºæ¯ï¼<strong>åæ°ï¼chunk_sizeãoverlapï¼åªæ¯è¡¨è±¡ï¼æ ¸å¿ååå³å®äºä½ çååç­ç¥è½ä¸è½ç¨</strong>ã</p>
+<p><strong>ååä¸ï¼ä¿æè¯­ä¹å®æ´æ§</strong></p>
+<p>å®å¯ chunk ç¨å¤§ï¼ä¸è¦ææ­ä¸ä¸ªå®æ´çææ¯æ¦å¿µãåå¨æ®µè½ä¸­é´ãåå¨ä»£ç åä¸­é´ãåå¨"é¦åâ¦â¦å¶æ¬¡â¦â¦"çå¹¶åç»æä¸­é´ââè¿äºé½æ¯è´å½ä¼¤ãä¸æ®µè¢«è°æ©çææ¯è§£éï¼embedding è´¨éè¿ä¸å¦ç¨é¿ä½å®æ´çæ®µè½ã</p>
+<p><strong>ååäºï¼ä¿çä¸ä¸æéç¹</strong></p>
+<p>æ¯ä¸ª chunk è¦ç¥éèªå·±å±äºåªç¯æç« ãåªä¸ªç« èãè¿ä¸æ¯ä¸ºäºå¥½çââå½ LLM åæ¶æ¿å° 5 ä¸ªç¸å³ chunk æ¶éè¦åç­"è¿ 5 æ®µæ¥èª 3 ç¯ä¸åçæç« ï¼å®ä»¬ä¹é´æ¯ä»ä¹å³ç³»"æ¶ï¼ä¸ä¸æéç¹æ¯ LLM æ¼æ¥ä¿¡æ¯çå¯ä¸çº¿ç´¢ã</p>
+<p><strong>ååä¸ï¼åå®¹ç±»åå³å®ååç­ç¥</strong></p>
+<p>ä¸è¦ä¸ååãææ¯æç¨å FAQ é®ç­å¤©ç¶éè¦ä¸åçååæ¹å¼ãæç°å¨çåæ³æ¯ï¼å¨åå®¹å¥åºæ¶å°±æä¸ç±»åæ ç­¾ï¼ååå¨æ ¹æ®æ ç­¾èªå¨éæ©ç­ç¥ã</p>
+<p><strong>åååï¼max_size ä¸æ¯è¶ç­è¶å¥½ï¼ä¹ä¸æ¯è¶é¿è¶å¥½</strong></p>
+<p>å¤ªç­ä¸¢å¤±ä¸ä¸æï¼500 å­ä»¥ä¸ç chunkï¼embedding è´¨éä¸éææ¾ï¼ï¼å¤ªé¿æ£ç´¢ç²¾åº¦ä¸éï¼è¶è¿ 1200 å­ç chunkï¼å®¹æåºç°"ä»ä¹é½æ²¾è¾¹ä½ä»ä¹é½ä¸å"çé®é¢ï¼ã800 å­ç¬¦æ¯æåå¤å®éªåæ¾å°ççç¹ââå½ç¶ï¼è¿ä¸ªæ°å­å¯¹è±æåå®¹å¯è½ä¸åï¼è±æçååçç¹éå¸¸å¨ 256-512 tokens ä¹é´ã</p>
+<h2 id="ç»¼åè¯å">ç»¼åè¯å</h2>
+<table>
+<thead>
+<tr>
+<th>è¯ä¼°ç»´åº¦</th>
+<th>ç­ç¥ Aï¼ç»ææç¥</th>
+<th>ç­ç¥ Bï¼æ¨¡æ¿æ®µè½</th>
+<th>ç­ç¥ Cï¼Q&amp;A å¯¹</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>æ£ç´¢å½ä¸­ç</td>
+<td>âââââ (78%)</td>
+<td>ââââ (72%)</td>
+<td>è§åä¸­</td>
+</tr>
+<tr>
+<td>å®ç°å¤æåº¦</td>
+<td>âââ (éè§£ææ é¢æ )</td>
+<td>â (ä»ééç½®æåå¨)</td>
+<td>ââ</td>
+</tr>
+<tr>
+<td>åå®¹æ ¼å¼è¦æ±</td>
+<td>å¿é¡»æ Markdown æ é¢</td>
+<td>ææ®µè½ç»æå³å¯</td>
+<td>å¿é¡»æ Q&amp;A æ ¼å¼</td>
+</tr>
+<tr>
+<td>é¿æå¤çè½å</td>
+<td>âââââ (å¤çº§åé)</td>
+<td>âââ (è¶å¤§æ®µè½ä¼éå)</td>
+<td>ââ (ä¸éç¨é¿æ)</td>
+</tr>
+<tr>
+<td>LLM åç­è´¨é</td>
+<td>âââââ (èªå¸¦ä¸ä¸æ)</td>
+<td>âââ (ä¸ä¸æä¾èµæ£ç´¢)</td>
+<td>ââââ (Q&amp;A è¯­ä¹å®æ´)</td>
+</tr>
+<tr>
+<td>éç¨èå´</td>
+<td>80% çå¸¸è§åå®¹</td>
+<td>15%ï¼ç²¾ç¼åå®¹ï¼</td>
+<td>5%ï¼FAQ/é®ç­ï¼</td>
+</tr>
+</tbody>
+</table>
+<p>æçå®éæ°æ®ï¼240 ç¯æç« äº§çäº 5877 ä¸ª chunkï¼å¹³åæ¯ç¯çº¦ 24 ä¸ª chunkãç­ç¥ A è¦çäºå¶ä¸­ 80% çåå®¹ï¼ç­ç¥ B è¦ç 15%ï¼ç­ç¥ C åªå äº 5%ï¼è¿å¨æ©å±ä¸­ï¼ã</p>
+<p>æä¸¤ç¹å¼å¾åç¬æåºæ¥è¯´ââ</p>
+<p><strong>ç¬¬ä¸ï¼è¯­ä¹ååä¸ºä»ä¹ä¸å¨æçç­ç¥åè¡¨éï¼</strong> è¯­ä¹ååï¼æç¸é»å¥å­ embedding ç¸ä¼¼åº¦çéª¤éç¹ååï¼å¬èµ·æ¥å¾é«çº§ï¼ä½ç¤¾åºçå® benchmark ç»åºäºä¸ä¸ªæå¿çæ°æ®ï¼å®å¨æäºæµè¯éä¸ä»¥ <strong>50 åçè®¡ç®ææ¬</strong>ï¼åªæ¢æ¥äºåéå½ååå ä¹æå¹³ç recallï¼0.72 vs 0.74ï¼ãè± 50 åææ¬æ¢ä¸å° 2 ä¸ªç¹çæåï¼è¿æ§ä»·æ¯ä¸éåå¤§å¤æ°çäº§ç¯å¢ãé¤éä½ çææ¡£æ¯çº¯èªç¶è¯­è¨é¿æï¼æ³å¾ååãç§ç è®ºæï¼ï¼è¯­ä¹ååææææ¾ä¼å¿ââå ä¸ºè¿ç±»ææ¡£æ²¡ææ é¢ç»æå¯ä¾èµã</p>
+<p><strong>ç¬¬äºï¼overlap å¯è½è¢«é«ä¼°äºã</strong> å ä¹æææç¨é½å¨æ¨èè®¾ 10-20% ç overlapï¼ä½ææè¿è¯»å°äºä¸ç¯ 2025 å¹´çç³»ç»åæè®ºæï¼arXiv:2601.14123ï¼ï¼ç»è®ºæ¯ï¼overlap å¨ Natural Questions è¿ç±»æ°æ®éä¸<strong>æ²¡ææ¾èæ¶ç</strong>ï¼åèè®©ç´¢å¼ä½ç§¯è¨èäºçº¦ 25%ãæçç»éªæ¯ 10% ç overlap æä¸ªä¿åºä½ç¨ââé²æ­¢å³é®å¥æ°å¥½è½å¨è¾¹çä¸è¢«æªæ­ââä½ä¸è¦æ èå¾ä¸å ãoverlap ä¸æ¯è¶å¤§è¶å¥½ã</p>
+<h2 id="å¸¸è§é®é¢">å¸¸è§é®é¢</h2>
+<p><strong>Qï¼chunk_overlap è®¾å¤å°åéï¼</strong></p>
+<p>åè¯´ä¸ä¸ªåå¸¸è¯çç»è®ºï¼æå­¦æ¯åæï¼arXiv 2025ï¼è¡¨æ 10-20% ç overlap å¨æäº benchmark ä¸<strong>æ²¡ææ¾èæ¶ç</strong>ï¼åèè®©ç´¢å¼ä½ç§¯è¨èäº 25%ãæçæä¸­åæ³æ¯ chunk_size ç 10%ââchunk_size=800 æ¶ overlap è®¾ 80ãè¿æ´å¤æ¯ä¸ä¸ª"ä¿åº"ç­ç¥ï¼é²æ­¢å³é®å¥æ°å¥½è½å¨è¾¹çä¸è¢«æªæ­ï¼ä½ä¸ç¨æ èå¾ä¸å ãå¦æä½ çææ¡£æ¬èº«å°±æ¯ææ é¢/æ®µè½ç»ç»çï¼overlap çè³å¯ä»¥éå° 5%ã</p>
+<p><strong>Qï¼ä»ä¹å« Context Cliffï¼å®åååç­ç¥æä»ä¹å³ç³»ï¼</strong></p>
+<p>Context Cliff æ¯ä¸ä¸ª 2025 å¹´è¢«åå¤éªè¯çç°è±¡ï¼LLM å¨ä¸ä¸æè¶è¿çº¦ 2500-3000 tokens åï¼å¯¹ä¸­é´ä½ç½®ä¿¡æ¯çæåè½åä¼<strong>æ¾èä¸é</strong>ãè¿åååç­ç¥ç´æ¥ç¸å³ââå¦æä½ ä¸ºäº"å¤ç»ä¸ä¸æ"æ chunk è®¾å¾è¿å¤§ï¼&gt;1500 tokensï¼ï¼æèä¸æ¬¡å¬åå¤ªå¤ chunk å¨å¡ç» LLMï¼åèä¼è§¦åè¿ä¸ªéåæåºãæ­£ç¡®çæè·¯æ¯ï¼<strong>å°åç²¾åå¬å + åªææç¸å³ç 3-5 ä¸ª chunk åç» LLM</strong>ãè¿ä¹æ¯ä¸ºä»ä¹ Small-to-Bigï¼ç¶å­ææ¡£ï¼æ¹æ¡å¼å¾å³æ³¨ââå®å¨æ£ç´¢é¶æ®µç¨å° chunk ä¿è¯ç²¾åº¦ï¼çæé¶æ®µææ©å±å°å¤§ chunkï¼é¿å¼äº Context Cliff çé£é©ã</p>
+<p><strong>Qï¼ä¸­æåè±æçååç­ç¥æåºå«åï¼</strong></p>
+<p>æãä¸­æå­ç¬¦æ¬èº«çä¿¡æ¯å¯åº¦æ¯è±æ token ä½ââä¸ä¸ªä¸­æå­ç¬¦éå¸¸å¯¹åº 1.5-2 ä¸ª tokenï¼ä¸ä¸ªè±æåè¯ä¹æ¯ 1-2 ä¸ª tokenãæä»¥ä¸­æç chunk_size å¯ä»¥è®¾å¤§ä¸äºï¼æç¨ç 800 å­ç¬¦ï¼ï¼è±æéå¸¸å¨ 256-512 tokens ä¹é´ãå¦å¤ï¼ä¸­æåè¯å¯¹å¥å­è¾¹çè¯å«æ´ææï¼ååå¨ä¸­ç <code>separators</code> å»ºè®®å å¥ä¸­ææ ç¹ï¼<code>ã</code>ã<code>ï¼</code>ã<code>ï¼</code>ï¼ã</p>
+<p><strong>Qï¼æçæç« å¾ç­ï¼æ¯ç¯åªæå ç¾å­ï¼è¿éè¦åååï¼</strong></p>
+<p>å¦æåç¯æç« æ¬èº«ä¸è¶è¿ chunk_size ä¸éï¼å¯ä»¥æ´ç¯ä½ä¸ºä¸ä¸ª chunk å¥åºï¼ä¸éè¦é¢å¤æåãä½å»ºè®®å¨ metadata ä¸­ä¿çæç« æ é¢ï¼æ¹ä¾¿åç»­æ£ç´¢æ¶åæ¥æºæ æ³¨ã</p>
+<p><strong>Qï¼ä¸ç§ç­ç¥è½æ··ç¨åï¼</strong></p>
+<p>è½ï¼èä¸æ¨èæ··ç¨ãæçåæ³æ¯å¨åå®¹å¥åºæ¶ï¼åå¤æ­æç« ç±»åæ ç­¾ï¼ç¶åè·¯ç±å°å¯¹åºçååç­ç¥ãæ¯å¦ä¸ç¯ Markdown ææ¯æç¨èµ°ç­ç¥ Aï¼ä¸ç¯è®¾è®¡æ¨¡å¼æ¸åèµ°ç­ç¥ Bï¼ä¸ç¯ FAQ èµ°ç­ç¥ Cãä¸è¦è¯å¾ç¨ä¸å¥åæ°è¦çææåå®¹ââè¿æ¯æå¸¸è§çéè¯¯ã</p>
+<p><strong>Qï¼æä¹å®¢è§è¯ä¼°ååç­ç¥çææï¼</strong></p>
+<p>æç¨çæ¹æ³æ¯ç¨ä¸ç»æ åæµè¯é®é¢ï¼è¦çä¸ååå®¹ç±»åï¼ï¼å¯¹æ¯ç§ç­ç¥åå«è¯ä¼° Top-3 æ£ç´¢å½ä¸­çãæ³¨æè¦ç¨çå®ç¨æ·ä¼é®çé®é¢ï¼èä¸æ¯ä½ èªå·±åçé®é¢ââåèå¾å¾åä½ ç chunk è¯­ä¹åå¸é«åº¦å¹éï¼æµåºæ¥çå½ä¸­çä¸åã</p>
+<blockquote>
+<p><strong>ð¬ ä½ ç°å¨ç¨çä»ä¹ååç­ç¥ï¼</strong></p>
+<ul>
+<li>A. åºå® size ç¡¬åï¼è®¾ä¸ª chunk_size å°±å®äº</li>
+<li>B. ææ é¢/ç« èååï¼ä¿çç»æä¿¡æ¯</li>
+<li>C. ä¸äº LangChain/LlamaIndex çé»è®¤éç½®ï¼æ²¡ç»è°</li>
+<li>D. è¿æ²¡å¨çäº§ç¯å¢çæ­£ç¨è¿ RAG</li>
+</ul>
+<p>è¯è®ºåºè¯´è¯´ï¼ç å¥çé A å C çæå¤ ð</p>
+</blockquote>
+<h2 id="æçå»ºè®®">æçå»ºè®®</h2>
+<p>ååç­ç¥æ¯ RAG ç³»ç»éæå®¹æè¢«ä½ä¼°ãåæ¶ä¹æ¯æ§ä»·æ¯æé«çä¼åç¹ãæ¢ embedding æ¨¡åå¯è½éè¦éæ°å¥åºãéæ°è°åï¼æ¹åéæ°æ®åºå¯è½éè¦æ°æ®è¿ç§»ï¼ä½ä¼åååç­ç¥åªéè¦æ¹å è¡ Python ä»£ç ââææç«ç«¿è§å½±ã</p>
+<p>å¦æä½ ç°å¨ç¨çæ¯åºå®å­ç¬¦ç¡¬åï¼å»ºè®®ä¼åè¿ç§»å°ç­ç¥ Aï¼ç»ææç¥ååï¼ãå¦æä½ çåå®¹æ¬èº«æ²¡æ Markdown æ é¢ç»æï¼ç­ç¥ Bï¼æ®µè½ååï¼æ¯æ´å¥½çèµ·ç¹ãå¦æä½ æ¯å FAQ/å®¢æç¥è¯åºçï¼ç­ç¥ C ç Q&amp;A å¯¹æè·¯å¼å¾ä¸è¯ã</p>
+<p>è¯´å°åºï¼ååç­ç¥çæ¬è´¨æ¯<strong>è®©æ¯ä¸æ®µæå­å¨è±ç¦»åæåä»ç¶è½è¢«çè§£</strong>ãææ¯æç« çæ é¢ç»ææ¯ä¸ºäººç±»éè¯»è®¾è®¡çï¼èååç­ç¥çèè´£å°±æ¯æè¿å¥ç»æç¿»è¯æåéåºè½çè§£çè¯­è¨ã</p>
+<p>è¿ç¯æç« éæå°çæ¹æ³åä»£ç ï¼æèªå·±å¨çäº§ç¯å¢çç¥è¯åºä¸è·äºå ä¸ªæãå®éæææ¯æé¢æ³çè¦å¥½ââå¨ä¸éè¦æ¢ embedding æ¨¡åãä¸éè¦å  reranker çæåµä¸ï¼åªé ä¼åååç­ç¥å°±æå½ä¸­çä» 60% æå°äº 78%ãå¦æä½ çç¥è¯åºè¿å¨ä¸ºæ£ç´¢ç²¾åº¦å¤´ç¼ï¼ä¸å¦¨åæ£æ¥ä¸ä¸ååç­ç¥ââå¤§æ¦çé®é¢å°±åºå¨è¿ã</p>
+<p>åå®è¿ç¯ï¼ç å¥èªå·±åè¿äºä¸éèªå·±çååé»è¾ï¼åç°è¿æå ç¯èæç« ç chunk æ¯ç¨ v1.0 ç­ç¥åçââè¯¥éè·äºãä¸ä¸ç¯æç®æ embedding æ¨¡åéåï¼bge-largeãtext2vecãm3e è¿äºå°åºåªä¸ªæ´éåä¸­æææ¯åå®¹ï¼å®æµæ°æ®è¯´è¯ãæå´è¶£çå³æ³¨ä¸ä¸ï¼ä¸ç¶ç®æ³ä¸ä¸å®æ¨ç»ä½ ãå¦æä¸ææ ï¼ç®æ³å°±ä¸ä¼ä¸»å¨æ¨ç»ä½ ââéè¿å ç¯æ²¡å³ç³»ï¼ä½æäºåå®¹æ­£å¥½æ¯ä½ å½æ¶éè¦çï¼é£å°±ä¸åç®äºã</p>
+<p><img alt="beeaa00ee37c5db0e2fb2c5c5efe4f29" loading="lazy" data-src="https://img2024.cnblogs.com/blog/735767/202605/735767-20260526114014236-744639895.png" class="lazyload"></p>
+<p><strong>åèèµæï¼</strong></p>
+<ul>
+<li><a href="https://python.langchain.com/docs/how_to/#text-splitters" target="_blank" rel="noopener nofollow">LangChain - Text Splitters å®æ¹ææ¡£</a></li>
+<li><a href="https://docs.llamaindex.ai/en/stable/module_guides/loading/node_parsers/" target="_blank" rel="noopener nofollow">LlamaIndex - Node Parser æ¨¡å</a></li>
+<li><a href="https://www.pinecone.io/learn/chunking-strategies/" target="_blank" rel="noopener nofollow">Chunking Strategies for RAG (Pinecone åå®¢)</a></li>
+<li><a href="https://github.com/FullStackRetrieval-com/RetrievalTutorials/blob/main/tutorials/LevelsOfTextSplitting/5_Levels_Of_Text_Splitting.ipynb" target="_blank" rel="noopener nofollow">5 Levels of Text Splitting (Greg Kamradt, 2023)</a> â ååç­ç¥åå±æ¡æ¶çåå§åºå¤</li>
+<li><a href="https://superlinked.com/vectorhub" target="_blank" rel="noopener nofollow">Superlinked VectorHub â RAG Chunking Benchmark</a> â å¤ç­ç¥å¤æ°æ®é benchmark æ°æ®</li>
+<li><a href="https://arxiv.org/abs/2409.04701" target="_blank" rel="noopener nofollow">Jina AI Late Chunking (arXiv:2409.04701)</a> â éè½¬"ååååµå¥"é¡ºåºçæ°èå¼</li>
+</ul>
+
+
+</div>
+<div id="MySignature" role="contentinfo">
+    å æå¾®ä¿¡è¿å»ä¸å±ææ¯ç¾¤ï¼æ¬¢è¿è¯»èæåºæè§ï¼åæ¬¢è¯·å³æ³¨åå®¢åä¸ªäººå¬ä¼å·ï¼ç å¥å­è
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-07-30 13:57">2026-07-30 13:56</span>&nbsp;
+<a href="https://www.cnblogs.com/uniqueDong">ç å¥å­è</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(22068760);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FuniqueDong%2Fp%2F22068760&amp;targetId=22068760&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
