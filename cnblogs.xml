@@ -3,882 +3,12 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-08-04T17:40:29.482Z</lastBuildDate>
+        <lastBuildDate>2026-08-04T21:05:21.365Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
-    <title><![CDATA[ é¢å .NET å¼åèç RocketMQ å¥é¨æåï¼ä¸ï¼ï¼æ´ä½æ¶æ ]]></title>
-    <link>https://www.cnblogs.com/eventhorizon/p/22225559</link>
-    <guid>db5529e6a3f4b52b88349035a80c0676</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/eventhorizon/p/22225559" title="åå¸äº 2026-08-04 23:27">
-    
-
-    <span role="heading" aria-level="2">é¢å .NET å¼åèç RocketMQ å¥é¨æåï¼ä¸ï¼ï¼æ´ä½æ¶æ</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p></p><div class="toc"><div class="toc-container-header">ç®å½</div><ul><li><a href="#åè¨" rel="noopener nofollow">åè¨</a></li><li><a href="#ä»-remoting-è¯´èµ·" rel="noopener nofollow">ä» Remoting è¯´èµ·</a><ul><li><a href="#remoting-é¾è·¯å¦ä½å·¥ä½" rel="noopener nofollow">Remoting é¾è·¯å¦ä½å·¥ä½</a></li></ul></li><li><a href="#remoting-æ¶æçä½¿ç¨ææ¬" rel="noopener nofollow">Remoting æ¶æçä½¿ç¨ææ¬</a><ul><li><a href="#å®¢æ·ç«¯å®ç°å¤æ" rel="noopener nofollow">å®¢æ·ç«¯å®ç°å¤æ</a></li><li><a href="#å¤è¯­è¨å®¢æ·ç«¯é¾ä»¥ä¿æä¸è´" rel="noopener nofollow">å¤è¯­è¨å®¢æ·ç«¯é¾ä»¥ä¿æä¸è´</a></li><li><a href="#åºç¨éè¦ç´æ¥è®¿é®-broker" rel="noopener nofollow">åºç¨éè¦ç´æ¥è®¿é® Broker</a></li><li><a href="#å®¢æ·ç«¯ä¸æå¡ç«¯æ¼è¿èç³»è¾ç´§" rel="noopener nofollow">å®¢æ·ç«¯ä¸æå¡ç«¯æ¼è¿èç³»è¾ç´§</a></li></ul></li><li><a href="#rocketmq-5proxy-ä¸-grpc" rel="noopener nofollow">RocketMQ 5ï¼Proxy ä¸ gRPC</a><ul><li><a href="#æ åååè®®ä¸å¤è¯­è¨-api" rel="noopener nofollow">æ åååè®®ä¸å¤è¯­è¨ API</a></li><li><a href="#å®¢æ·ç«¯å¯ä»¥æ´è½»" rel="noopener nofollow">å®¢æ·ç«¯å¯ä»¥æ´è½»</a></li><li><a href="#ç½ç»å¥å£æ´éä¸­" rel="noopener nofollow">ç½ç»å¥å£æ´éä¸­</a></li></ul></li><li><a href="#grpc-ä¹æèªå·±çè¾¹ç" rel="noopener nofollow">gRPC ä¹æèªå·±çè¾¹ç</a></li><li><a href="#ä¸¤å¥åè®®å±äº«çæ¶æ¯æ ¸å¿" rel="noopener nofollow">ä¸¤å¥åè®®å±äº«çæ¶æ¯æ ¸å¿</a><ul><li><a href="#1-è·åè·¯ç±" rel="noopener nofollow">1. è·åè·¯ç±</a></li><li><a href="#2-åéæ¶æ¯" rel="noopener nofollow">2. åéæ¶æ¯</a></li><li><a href="#3-broker-å­å¨" rel="noopener nofollow">3. Broker å­å¨</a></li><li><a href="#4-consumer-è·åå¹¶å¤çæ¶æ¯" rel="noopener nofollow">4. Consumer è·åå¹¶å¤çæ¶æ¯</a></li><li><a href="#5-æäº¤å¤çç»æ" rel="noopener nofollow">5. æäº¤å¤çç»æ</a></li></ul></li><li><a href="#æ¬ç³»åä½¿ç¨ç-net-sdk" rel="noopener nofollow">æ¬ç³»åä½¿ç¨ç .NET SDK</a></li><li><a href="#ç¨-producer-å-pushconsumer-åä¸ä¸ªç®åéªè¯" rel="noopener nofollow">ç¨ Producer å PushConsumer åä¸ä¸ªç®åéªè¯</a></li><li><a href="#å°ç»" rel="noopener nofollow">å°ç»</a></li><li><a href="#åèèµæ" rel="noopener nofollow">åèèµæ</a></li></ul></div><p></p>
-<h2 id="åè¨">åè¨</h2>
-<p>è¿ä¸ªç³»åæ¯åç»å¯¹ RocketMQ æå´è¶£ç .NET å¼åèçãæå¸æä» .NET åºç¨å¼åçè§è§åºåï¼ä»ç» RocketMQ çåºæ¬æ¦å¿µãæ´ä½æ¶æåå¸¸è§ä½¿ç¨æ¹å¼ï¼å¸®å©è¯»èå»ºç«å¯¹ RocketMQ çåæ­¥è®¤è¯ã</p>
-<p>åä¸ªäººè½ååçè§£æéï¼æä¸­é¾åå­å¨çæ¼ãå¦æææè¿°ä¸ä¸¥è°¨æéè¯¯ä¹å¤ï¼æ¬¢è¿ææ­£ã</p>
-<p>æ¬æå°ä½¿ç¨æèªå·±ç¼åç <a href="https://github.com/eventhorizon-cli/EventHorizon.RocketMQ" target="_blank" rel="noopener nofollow">eventhorizon-cli/EventHorizon.RocketMQ</a> ä½ä¸ºæ¼ç¤ºå®¢æ·ç«¯ãè¿æ¯ä¸ä¸ªéå®æ¹ç RocketMQ .NET å®¢æ·ç«¯ï¼åæ¶æ¯æ RocketMQ 5 gRPC å classic Remotingã</p>
-<p>ä»å¤©æ¥è§¦ RocketMQï¼ä¼åæ¶çå° Remoting å gRPC ä¸¤å¥å®¢æ·ç«¯ãè¦çè§£å®ä»¬ä¸ºä»ä¹å¹¶å­ï¼æå¥½ä» RocketMQ æ©æç Remoting æ¶æè¯´èµ·ï¼åç RocketMQ 5 ä¸ºä»ä¹å¢å  Proxy å gRPCãé¡ºçè¿æ¡æ¼è¿è·¯å¾ï¼NameServerãBrokerãProxy çèè´£ä»¥åæ¶æ¯å®éç»è¿çè·¯å¾ä¹ä¼æ¸æ¥å¾å¤ã</p>
-<h2 id="ä»-remoting-è¯´èµ·">ä» Remoting è¯´èµ·</h2>
-<p>Remoting æ¯ RocketMQ èªç çä¸å¥åºäº TCP ç RPC åè®®ï¼å¯ä»¥ç®åçè§£ä¸º RocketMQ åç»ä»¶ä¹é´çº¦å®çéä¿¡æ¹å¼ãå¨ç»å¸æ¶æä¸­ï¼ProducerãConsumerãNameServer å Broker é½éè¿ Remoting äº¤æ¢è¯·æ±ä¸ååºï¼å®¢æ·ç«¯åå NameServer æ¥è¯¢è·¯ç±ï¼åç´æ¥è¿æ¥ Broker æ¶åæ¶æ¯ãå®¢æ·ç«¯è¿æ¿æè·¯ç±åç°ãè´è½½åè¡¡åæéå¤çç­å·¥ä½ã</p>
-<p>ç»å¸ Remoting æ¶æä¸»è¦åå«åç±»è§è²ï¼</p>
-<ul>
-<li><strong>Producer</strong>ï¼åå»ºæ¶æ¯ï¼å¹¶å°æ¶æ¯åéå° Topicã</li>
-<li><strong>Consumer</strong>ï¼è®¢é Topicï¼ä» Broker è·åæ¶æ¯å¹¶äº¤ç»ä¸å¡ä»£ç å¤çã</li>
-<li><strong>NameServer</strong>ï¼ä¿å­ Broker æ³¨åç Topic è·¯ç±ï¼ä¾ Producer å Consumer æ¥è¯¢ã</li>
-<li><strong>Broker</strong>ï¼æ¥æ¶ãå­å¨åæéæ¶æ¯ï¼å¹¶ä¿å­æ¶è´¹è¿åº¦ç­è¿è¡æ°æ®ã</li>
-</ul>
-<p>å®ä»¬ä¹é´çå³ç³»å¦ä¸ï¼</p>
-<p><img src="https://img2024.cnblogs.com/blog/1201123/202608/1201123-20260804232541534-12211560.png" alt="ç»å¸ Remoting æ¶æ" loading="lazy"></p>
-<p>å¾ä¸­çèçº¿è¡¨ç¤ºè·¯ç±æ³¨ååæ¥è¯¢ï¼å®çº¿è¡¨ç¤ºæ¶æ¯ç¸å³çè¯·æ±ã<strong>NameServer ä¸å­å¨æ¶æ¯ï¼ä¹ä¸è½¬åæ¶æ¯</strong>ãå®¢æ·ç«¯ä» NameServer åå¾è·¯ç±åï¼ä¼ç´æ¥è¿æ¥å¯¹åºç Brokerã</p>
-<h3 id="remoting-é¾è·¯å¦ä½å·¥ä½">Remoting é¾è·¯å¦ä½å·¥ä½</h3>
-<p>Broker å¯å¨åï¼ä¼å°èªèº«å°åãTopic åéåä¿¡æ¯æ³¨åå° NameServerï¼å¹¶éè¿å¿è·³ç»´æè·¯ç±çæææ§ã</p>
-<p>Producer åéæ¶æ¯åï¼åä» NameServer æ¥è¯¢ Topic è·¯ç±ãè·¯ç±ä¸­åå«å¯åç MessageQueue åå¶æå¨ç BrokerãProducer éæ©ä¸ä¸ªéåï¼ä¸ç®æ  Broker å»ºç«è¿æ¥ï¼ç¶åç´æ¥åéæ¶æ¯ã</p>
-<p>Consumer çè¿ç¨ç±»ä¼¼ãå®åæ¥è¯¢è®¢é Topic çè·¯ç±ï¼åè¿æ¥å¯¹åºç BrokerãConsumer Group ä¸­æå¤ä¸ªå®ä¾æ¶ï¼å®¢æ·ç«¯è¿è¦å®æéååéï¼è®©åå®ä¾å±ååææ¶æ¯ãæè° PushConsumerï¼ä¹ä¸æ¯ Broker ä¸»å¨è¿æ¥åºç¨ï¼èæ¯å®¢æ·ç«¯å¨åå°æç»­æåæé¿è½®è¯¢ï¼åéè¿åè°ææ¶æ¯äº¤ç»ä¸å¡ä»£ç ã</p>
-<p>è¿å¥æ¶ææä¸ä¸ªé²æç¹ç¹ï¼<strong>å®¢æ·ç«¯ä¸åªæ¯åè®®è°ç¨æ¹ï¼è¿æ¯ RocketMQ è¿è¡æºå¶çä¸é¨å</strong>ãè·¯ç±ç¼å­ãBroker è¿æ¥ãå¿è·³ãè´è½½åè¡¡ãæ¶æ¯ç¼å­ãéè¯ãæ¶è´¹ä½ç¹åå¼å¸¸èç¹éç¦»ç­é»è¾ï¼é½æç¸å½ä¸é¨åè¿è¡å¨å®¢æ·ç«¯ä¸­ã</p>
-<h2 id="remoting-æ¶æçä½¿ç¨ææ¬">Remoting æ¶æçä½¿ç¨ææ¬</h2>
-<p>è¿ç§ç±å®¢æ·ç«¯æ¿æè¾å¤è¿è¡é»è¾çè®¾è®¡ï¼éå¸¸ç§°ä¸ºâå¯å®¢æ·ç«¯âãå®å¹¶ä¸æ¯ç¼ºç¹æ¬èº«ï¼å®¢æ·ç«¯å¯ä»¥ç´æ¥è®¿é® Brokerï¼ä¸éè¦é¢å¤çä»£çå±ï¼ç»è¿å¤å¹´æ¼è¿ï¼Remoting SDK ä¹ç§¯ç´¯äºè¾å®æ´ç ProducerãConsumer å Admin è½åãå·²æ RocketMQ 4.x éç¾¤æä¾èµç»å¸æ¶è´¹æ¨¡åçç³»ç»ï¼ç»§ç»­ä½¿ç¨ Remoting å¾å¸¸è§ã</p>
-<p>é®é¢å¨äºï¼å½æ¥å¥ç¯å¢ä» Java ä¸ºä¸»çåç½åºç¨æ©å±å°å¤è¯­è¨åäºåçåºæ¯åï¼è¿ç§è®¾è®¡ä¼å¸¦æ¥ä¸äºææ¬ã</p>
-<h3 id="å®¢æ·ç«¯å®ç°å¤æ">å®¢æ·ç«¯å®ç°å¤æ</h3>
-<p>å®¢æ·ç«¯éè¦çè§£ NameServer è·¯ç±ãBroker ææãéååéãéè¯åæ¶è´¹è¿åº¦ç­åé¨æºå¶ãå®ç°ä¸ä¸ªè½å¤æ¶åæ¶æ¯çå®¢æ·ç«¯å¹¶ä¸é¾ï¼ä½è¦å¨åç§å¼å¸¸åå¹¶ååºæ¯ä¸ä¿ææ­£ç¡®ï¼å·¥ä½éä¼ææ¾å¢å ã</p>
-<p>RocketMQ 4.x Java SDK ä¸­çé¡ºåºæ¶è´¹ãå¹¿æ­æ¶è´¹ãè´è½½åè¡¡ãæ¶æ¯ç¼å­ãéè¯ãä½ç¹ç®¡çãæµæ§åæéè½¬ç§»ç­è½åï¼é½å±äºè¿ç±»å¯å®¢æ·ç«¯é»è¾ãå®¢æ·ç«¯åè½è¶å¤ï¼åçº§åç»´æ¤çææ¬ä¹è¶é«ã</p>
-<h3 id="å¤è¯­è¨å®¢æ·ç«¯é¾ä»¥ä¿æä¸è´">å¤è¯­è¨å®¢æ·ç«¯é¾ä»¥ä¿æä¸è´</h3>
-<p>Remoting æ¯ RocketMQ èªå·±çéä¿¡åè®®ï¼ä¸å gRPC é£æ ·å¯ä»¥ä»ç»ä¸çæ¥å£å®ä¹çæä¸åè¯­è¨çåºç¡ä»£ç ãæ¯ç§è¯­è¨é½éè¦éæ°å®ç°åè®®ç¼è§£ç åå®¢æ·ç«¯è¡ä¸ºï¼ååå«å¤çå¹¶åæ¨¡åãå¼å¸¸ç±»åä¸çå½å¨æã</p>
-<p>ç»æä¸åªæ¯å¼åææ¬é«ï¼ä¸åè¯­è¨ SDK çåè½èå´åè¡ä¸ºä¹æ´é¾é¿æä¿æä¸è´ãå®æ¹ææ¡£å° Remoting SDK æè¿°ä¸ºä¸æå¡ç«¯çæ¬åæ­¥æ¼è¿çæ¹æ¡ï¼æ©æåä¸»æµå®ç°ä¸»è¦å´ç» Java ä½ç³»å±å¼ã</p>
-<h3 id="åºç¨éè¦ç´æ¥è®¿é®-broker">åºç¨éè¦ç´æ¥è®¿é® Broker</h3>
-<p>Remoting å®¢æ·ç«¯ä» NameServer è·å Broker å°ååç´æ¥è¿æ¥ Brokerãè¿æå³çåºç¨æå¨ç½ç»å¿é¡»è½å¤è®¿é® Broker æ³¨åçå°åã</p>
-<p>å¨ä¼ ç»åç½é¨ç½²ä¸­ï¼è¿éå¸¸ä¸æ¯é®é¢ï¼ä½å¨å®¹å¨ãKubernetesãè·¨ç½ç»æäºäº§åæ¥å¥åºæ¯ä¸­ï¼Broker å¯¹å¤æ³¨åå°åãç«¯å£æ å°åç½ç»è¾¹çé½ä¼å½±åå®¢æ·ç«¯è¿æ¥ãå®¢æ·ç«¯ä¹ä¼æç¥ Broker ææçååã</p>
-<h3 id="å®¢æ·ç«¯ä¸æå¡ç«¯æ¼è¿èç³»è¾ç´§">å®¢æ·ç«¯ä¸æå¡ç«¯æ¼è¿èç³»è¾ç´§</h3>
-<p>Remoting åæ¶ç¨äº RocketMQ åé¨ç»ä»¶éä¿¡åå®¢æ·ç«¯è®¿é®ï¼å®¢æ·ç«¯ SDK ä¹é¿æè·éä¸»ä»åºæ¼è¿ãæå¡ç«¯åè®®å¢å è½åæ¶ï¼åè¯­è¨ SDK éè¦åå«è·è¿ï¼å®¢æ·ç«¯åæå¡ç«¯ä¹é´ççæ¬è¾¹çä¸å®¹æå®å¨ç¬ç«ã</p>
-<p>è¿äºé®é¢å¹¶ä¸æå³ç Remoting ä¸è½ç»§ç»­ä½¿ç¨ï¼èæ¯è¯´æå®æ´éåæåçè®¾è®¡ç¯å¢ãRocketMQ 5 å¼å¥ gRPCï¼å¹¶ä¸æ¯ç®åå°æä¼ è¾åè®®æ¢æï¼èæ¯éæ°ååå®¢æ·ç«¯ãæ¥å¥å±å Broker çèè´£ã</p>
-<h2 id="rocketmq-5proxy-ä¸-grpc">RocketMQ 5ï¼Proxy ä¸ gRPC</h2>
-<p>2022 å¹´ 9 æï¼Apache RocketMQ 5.0.0 åå¸ãè¿ä¸ªçæ¬å¢å äºåºäº gRPC çå¤è¯­è¨å®¢æ·ç«¯ï¼å¹¶å¨æå¡ç«¯å¼å¥ Proxyãæ°çå®¢æ·ç«¯ä¸åç´æ¥è¿æ¥ NameServer å Brokerï¼èæ¯ä»¥ Proxy ä½ä¸ºç»ä¸å¥å£ï¼</p>
-<p><img src="https://img2024.cnblogs.com/blog/1201123/202608/1201123-20260804232540998-1550132937.png" alt="RocketMQ 5 gRPC æ¶æ" loading="lazy"></p>
-<p>Proxy ä¸å­å¨æ¶æ¯ï¼ä¹ä¸æ¿ä»£ NameServerãå®è´è´£é¢åå®¢æ·ç«¯çåè®®ééãæéåæ¶è´¹ç®¡çç­è®¡ç®é»è¾ï¼åè®¿é® NameServer å Broker å®æå®éè¯·æ±ãBroker åç»§ç»­æ¿ææ¶æ¯å­å¨ä¸æéã</p>
-<p>Proxy å¯ä»¥å Broker è¿è¡å¨åä¸è¿ç¨ï¼ä¹å°±æ¯ Local æ¨¡å¼ï¼ä¹å¯ä»¥ä½ä¸ºç¬ç«çæ ç¶æéç¾¤é¨ç½²ï¼ä¹å°±æ¯ Cluster æ¨¡å¼ãåèéåä»åææ¶æå¹³æ»å¢å  gRPC æ¥å¥ï¼åèå¯ä»¥è®©æ¥å¥å±åå­å¨å±åå«æ©å±ã</p>
-<h3 id="æ åååè®®ä¸å¤è¯­è¨-api">æ åååè®®ä¸å¤è¯­è¨ API</h3>
-<p>RocketMQ 5 ä½¿ç¨ Protocol Buffers å®ä¹æ¶æ¯æ¨¡ååæ¥å£ï¼å¹¶éè¿ HTTP/2 ä¸ç gRPC æä¾æå¡ãåè¯­è¨å®¢æ·ç«¯é½éµå¾ªåä¸ä»½ <code>rocketmq-apis</code> åè®®å®ä¹ï¼ä¸éè¦åèªéæ°è®¾è®¡ä¸å¥åºå±éä¿¡æ ¼å¼ã</p>
-<p>ç»ä¸åè®®ä¸è½èªå¨æ¶é¤ä¸åè¯­è¨ä¹é´çå·®å¼ï¼ä½å®ç»åºäºå±åçæ¶æ¯æ¨¡åãç¶æç åæå¡æ¥å£ï¼éä½äºåè¯­è¨ SDK ä¿æä¸è´çææ¬ãå®æ¹ç gRPC å®¢æ·ç«¯ä¹ä» RocketMQ ä¸»ä»åºä¸­ç¬ç«åºæ¥ï¼æç§åè®®æ¥å£ä¸æå¡ç«¯åä½ã</p>
-<h3 id="å®¢æ·ç«¯å¯ä»¥æ´è½»">å®¢æ·ç«¯å¯ä»¥æ´è½»</h3>
-<p>Proxy éç¦»äº NameServer å Broker ææï¼åºç¨åªéè¦éç½® Proxy Endpointãåè®®ééãæéç®¡çåé¨åæ¶è´¹ç®¡çé»è¾å¯ä»¥æ¾å° Proxy ææå¡ç«¯ï¼å®¢æ·ç«¯ä¸å¿å¤å»å®æ´çç»å¸å¯å®¢æ·ç«¯å®ç°ã</p>
-<p>RocketMQ 5 è¿å¼å¥äº POP æ¶è´¹æºå¶ï¼å¹¶æä¾ SimpleConsumer è¿ç±»é¢åæ¶æ¯ç APIãå®¢æ·ç«¯å¯ä»¥ææ¶æ¯è¿è¡æ¥æ¶ãç¡®è®¤ãä¿®æ¹ä¸å¯è§æ¶é´ï¼èä¸å¿ç´æ¥ç®¡çæ¯ä¸ªéåçæ¶è´¹ä½ç¹ã</p>
-<p>è¿éçâè½»éâä¸ç­äºå®¢æ·ç«¯æ²¡æç¶ææé»è¾ãè¿æ¥ç®¡çãå¿è·³ãé¿è½®è¯¢åæ¶æ¯å¤çä»ç¶éè¦å®¢æ·ç«¯åä¸ï¼åªæ¯å®¢æ·ç«¯ä¸ Broker åé¨å®ç°ä¹é´çè¦åææéä½ã</p>
-<h3 id="ç½ç»å¥å£æ´éä¸­">ç½ç»å¥å£æ´éä¸­</h3>
-<p>gRPC å®¢æ·ç«¯åªéè¦è®¿é® Proxyï¼ä¸éè¦ç´æ¥è®¿é® NameServer è¿åçæ¯ä¸ª Broker å°åãå¯¹äºè·¨ç½ç»ãå®¹å¨åäºç¯å¢ï¼è¿è½åå°å®¢æ·ç«¯å¯¹ Broker ææåæ³¨åå°åçæç¥ã</p>
-<p>gRPC ä¹æ¯äºåçç¯å¢ä¸­å¸¸è§ç RPC æ¡æ¶ï¼åºäº HTTP/2ï¼è¾å®¹ææ¥å¥æ¦æªå¨å Service Mesh ç­åºç¡è®¾æ½ãè¿éè§£å³çæ¯æ¥å¥æ¹å¼åç½ç»è¾¹çé®é¢ï¼å¹¶ä¸ä»£è¡¨å¼å¥ gRPC åå°±ä¸åéè¦å¤çè¶æ¶ãéè¯åæéè½¬ç§»ã</p>
-<h2 id="grpc-ä¹æèªå·±çè¾¹ç">gRPC ä¹æèªå·±çè¾¹ç</h2>
-<p>Remoting ä¸ gRPC ä¸æ¯âæ§åè®®å®å¨è¢«æ°åè®®æ¿ä»£âçå³ç³»ãéç¨ gRPC ä¹åï¼è¿éè¦èèå ä¸ªåæï¼</p>
-<ul>
-<li>gRPC SDK éè¦ RocketMQ 5.0 åä»¥ä¸æå¡ç«¯ï¼å¹¶å¯ç¨ Proxyã</li>
-<li>gRPC API ç»è¿éæ°è®¾è®¡ï¼ä¸ Remoting API ä¸å¼å®¹ï¼åæ¢å®¢æ·ç«¯éè¦ä¿®æ¹åºç¨ä»£ç ã</li>
-<li>ç¬ç«é¨ç½² Proxy ä¼å¢å ä¸ä¸ªæå¡ç»ä»¶åä¸æ¬¡ç½ç»è½¬åï¼ä½¿ç¨ Local æ¨¡å¼æ¶ï¼Proxy ä¸ Broker è¿è¡å¨åä¸è¿ç¨ã</li>
-<li>ä¸¤å¥ SDK ç ProducerãConsumer åç®¡çè½åå¹¶ä¸å®å¨ç¸åï¼éæ©æ¶ä»è¦æ ¸å¯¹å®ééæ±ã</li>
-</ul>
-<p>å æ­¤ï¼Remoting ä¾ç¶éåå·²æç»å¸éç¾¤ãéè¦ç´è¿ Brokerï¼æèä¾èµ PullConsumerãLitePullConsumerãAdmin ç­ç»å¸è½åçåºæ¯ãgRPC æ´éåå·²ç»å·å¤ RocketMQ 5 Proxyãå¸æä½¿ç¨æ ååè®®åå¤è¯­è¨è½»éå®¢æ·ç«¯çæ°æ¥å¥åºæ¯ã</p>
-<p>ä¸¤æ¡é¾è·¯çä¸»è¦åºå«å¯ä»¥æ¦æ¬ä¸ºï¼</p>
-<table>
-<thead>
-<tr>
-<th>å¯¹æ¯é¡¹</th>
-<th>classic Remoting</th>
-<th>RocketMQ 5 gRPC</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>å®¢æ·ç«¯è¿æ¥ç®æ </td>
-<td>NameServer å Broker</td>
-<td>Proxy</td>
-</tr>
-<tr>
-<td>æ¯å¦ç´æ¥æç¥ Broker è·¯ç±</td>
-<td>æ¯</td>
-<td>å¦</td>
-</tr>
-<tr>
-<td>æå¡ç«¯çæ¬</td>
-<td>å¯ç¨äºç»å¸ Remoting é¨ç½²</td>
-<td>éè¦ RocketMQ 5.0+ ä¸ Proxy</td>
-</tr>
-<tr>
-<td>ä¸»è¦ç¹ç¹</td>
-<td>è½åå®æ´ãç´è¿ Broker</td>
-<td>æ ååè®®ãç»ä¸å¥å£ãå¤è¯­è¨åå¥½</td>
-</tr>
-</tbody>
-</table>
-<h2 id="ä¸¤å¥åè®®å±äº«çæ¶æ¯æ ¸å¿">ä¸¤å¥åè®®å±äº«çæ¶æ¯æ ¸å¿</h2>
-<p>æ¥å¥é¾è·¯è½ç¶ä¸åï¼æ¶æ¯æç»ä»ç¶ç± Broker å­å¨åæéãåè®¤è¯ä¸ä¸ªè´¯ç©¿ä¸¤å¥åè®®çæ¦å¿µï¼</p>
-<ul>
-<li><strong>Topic</strong> æ¯æ¶æ¯çé»è¾åç±»ãProducer å Topic åéæ¶æ¯ï¼Consumer è®¢é Topicã</li>
-<li><strong>MessageQueue</strong> æ¯ Topic çååºååãä¸ä¸ª Topic å¯ä»¥åå«å¤ä¸ª MessageQueueï¼å¹¶åå¸å¨ä¸å Broker ä¸ã</li>
-<li><strong>Consumer Group</strong> è¡¨ç¤ºä¸ç»å·æç¸åæ¶è´¹ç®æ ç Consumerãå¨å¸¸è§çéç¾¤æ¶è´¹æ¨¡å¼ä¸ï¼åä¸ Group ä¸­çå®ä¾å±ååææ¶æ¯ï¼ä¸å Group å¯ä»¥åå«æ¶è´¹åä¸ä¸ª Topicã</li>
-</ul>
-<p>ä¸æ¡æ®éæ¶æ¯çä¸»æµç¨å¯ä»¥ç®åä¸ºï¼</p>
-<p><img src="https://img2024.cnblogs.com/blog/1201123/202608/1201123-20260804232540305-396537635.png" alt="RocketMQ æ¶æ¯æµè½¬" loading="lazy"></p>
-<h3 id="1-è·åè·¯ç±">1. è·åè·¯ç±</h3>
-<p>Broker å NameServer æ³¨åè·¯ç±ãRemoting å®¢æ·ç«¯ç´æ¥æ¥è¯¢ NameServerï¼gRPC å®¢æ·ç«¯å Proxy åèµ·è¯·æ±ï¼ç± Proxy æ¥è¯¢æå·æ°è·¯ç±ãè¿ä¸ªé¶æ®µä¼ éçæ¯ TopicãMessageQueue å Broker å°åç­åæ°æ®ï¼ä¸åå«æ¶æ¯æ­£æã</p>
-<h3 id="2-åéæ¶æ¯">2. åéæ¶æ¯</h3>
-<p>Producer åå»ºæ¶æ¯å¹¶æå® TopicãRemoting å®¢æ·ç«¯éæ© MessageQueue åç´æ¥åéå° Brokerï¼gRPC å®¢æ·ç«¯åææ¶æ¯åéç» Proxyï¼åç± Proxy è½¬åå° Brokerã</p>
-<h3 id="3-broker-å­å¨">3. Broker å­å¨</h3>
-<p>Broker æ¶å°æ¶æ¯åï¼å°æ¶æ¯é¡ºåºåå¥ CommitLogï¼éåæ ¹æ® Topic åéåæå»º ConsumeQueue ç­ç´¢å¼æ°æ®ãå¯ä»¥ææ¶æ CommitLog çè§£ä¸ºæ¶æ¯æ­£æçå­å¨ä½ç½®ï¼æ ConsumeQueue çè§£ä¸ºæ Topic åéåæ¥æ¾æ¶æ¯çç´¢å¼ã</p>
-<h3 id="4-consumer-è·åå¹¶å¤çæ¶æ¯">4. Consumer è·åå¹¶å¤çæ¶æ¯</h3>
-<p>Remoting Consumer ç´æ¥ä» Broker æåæ¶æ¯ï¼gRPC Consumer éè¿ Proxy è·åæ¶æ¯ãPushConsumer ä¼å¨åå°ç»´æ¤æåæé¿è½®è¯¢ï¼ç¶åè°ç¨ Handlerï¼å æ­¤å®å¯¹ä¸å¡ä»£ç è¡¨ç°ä¸ºâæ¨éâã</p>
-<h3 id="5-æäº¤å¤çç»æ">5. æäº¤å¤çç»æ</h3>
-<p>Handler å¤çæååï¼å®¢æ·ç«¯ç¡®è®¤æ¶æ¯ææäº¤æ¶è´¹è¿åº¦ãå¤çå¤±è´¥ãè¶æ¶æç¡®è®¤ç»æä¸¢å¤±æ¶ï¼æ¶æ¯å¯è½è¢«éæ°æéï¼è¶è¿æå¤§æ¬¡æ°åï¼è¿å¯è½è¿å¥æ­»ä¿¡éåã</p>
-<p>è¿æå³çæ¶æ¯è¿å¥ Handler åä»æå¯è½åæ¬¡åºç°ãæ è®ºä½¿ç¨ Remoting è¿æ¯ gRPCï¼æ¶è´¹ä¸å¡é½éè¦èèå¹ç­ã</p>
-<h2 id="æ¬ç³»åä½¿ç¨ç-net-sdk">æ¬ç³»åä½¿ç¨ç .NET SDK</h2>
-<p>æ¬ç³»åä½¿ç¨ç <code>EventHorizon.RocketMQ</code> åæ¶å®ç°äº Remoting å gRPC ä¸¤æ¡é¾è·¯ï¼å¹¶åå«åå¸ä¸ºä¸¤ä¸ª NuGet åï¼</p>
-<ul>
-<li><a href="https://www.nuget.org/packages/EventHorizon.RocketMQ.Remoting/" target="_blank" rel="noopener nofollow">EventHorizon.RocketMQ.Remoting</a></li>
-<li><a href="https://www.nuget.org/packages/EventHorizon.RocketMQ.Grpc/" target="_blank" rel="noopener nofollow">EventHorizon.RocketMQ.Grpc</a></li>
-</ul>
-<p>ä¸¤ä¸ª NuGet åå¯ä»¥åºç°å¨åä¸ä¸ª .NET åºç¨ä¸­ï¼ä½å®ä»¬çæ¶æ¯æ¨¡åãåéç»æãå¼å¸¸å Consumer ç±»åæ¯ç¸äºç¬ç«çï¼ä¸è½æ··ç¨ã</p>
-<h2 id="ç¨-producer-å-pushconsumer-åä¸ä¸ªç®åéªè¯">ç¨ Producer å PushConsumer åä¸ä¸ªç®åéªè¯</h2>
-<p>æåç¨ gRPC Producer å PushConsumer éªè¯å¶ä¸­ä¸æ¡é¾è·¯ãåºç¨éè¿ HTTP API åéæ¶æ¯ï¼Producer å°æ¶æ¯åå¾ RocketMQï¼PushConsumer æ¶å°æ¶æ¯åæå°æ­£æãè¿ééæ© gRPC åªæ¯ä¸ºäºè®©ç¤ºä¾ä¿æç®ç­ï¼Remoting å®¢æ·ç«¯ä¼å¨åç»­æç« ä¸­åç¬ä»ç»ã</p>
-<p>é¡¹ç®ä»åºæä¾äºåå« NameServerãBrokerãProxy å Dashboard çæ¬å°ç¯å¢ï¼</p>
-<pre><code class="language-shell">git clone https://github.com/eventhorizon-cli/EventHorizon.RocketMQ.git
-cd EventHorizon.RocketMQ
-docker compose -f test-environments/rocketmq/compose.yaml up -d --wait
-</code></pre>
-<p>ç¯å¢å¯å¨åï¼gRPC Proxy å°åæ¯ <code>127.0.0.1:8081</code>ï¼å¹¶ä¸å·²ç»åå»º Topic <code>eventhorizon-test-topic</code>ãè®¿é® <a href="http://localhost:8082" target="_blank" rel="noopener nofollow">RocketMQ Dashboard</a> å¯ä»¥æ¥çéç¾¤ãTopicãConsumer Group åæ¶æ¯ã</p>
-<p>æ°å»º ASP.NET Core åºç¨ï¼å¹¶å®è£ RocketMQ å®¢æ·ç«¯å Swaggerï¼</p>
-<pre><code class="language-shell">dotnet new web -n RocketMQQuickStart --framework net8.0
-cd RocketMQQuickStart
-dotnet add package EventHorizon.RocketMQ.Grpc
-dotnet add package Swashbuckle.AspNetCore
-</code></pre>
-<p>å° <code>Program.cs</code> æ¿æ¢ä¸ºä¸é¢çä»£ç ï¼</p>
-<pre><code class="language-csharp">using System.Text;
-using EventHorizon.RocketMQ.Grpc;
-using EventHorizon.RocketMQ.Grpc.Consumer;
-using EventHorizon.RocketMQ.Grpc.Consumer.Push;
-using EventHorizon.RocketMQ.Grpc.Producer;
-using Microsoft.Extensions.DependencyInjection;
-using RocketMQMessage = EventHorizon.RocketMQ.Grpc.Producer.Message;
-
-const string topic = "eventhorizon-test-topic";
-
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var rocketMQ = builder.Services.AddRocketMQGrpc(options =&gt;
-{
-    options.Endpoint = "127.0.0.1:8081";
-    options.UseTLS = false;
-});
-
-rocketMQ.AddGrpcProducer();
-rocketMQ.AddGrpcPushConsumer&lt;PrintMessageHandler&gt;(
-    ServiceLifetime.Scoped,
-    options =&gt;
-    {
-        options.GroupName = "rocketmq-quick-start";
-        options.Subscribe(topic, new FilterExpression("*"));
-    });
-
-var app = builder.Build();
-
-app.UseSwagger();
-app.UseSwaggerUI();
-
-app.MapPost("/messages", async (
-    SendMessageRequest request,
-    IGrpcProducer producer,
-    CancellationToken cancellationToken) =&gt;
-{
-    var message = new RocketMQMessage(
-        topic,
-        Encoding.UTF8.GetBytes(request.Message));
-    var receipt = await producer.SendAsync(message, cancellationToken);
-
-    return Results.Ok(new { receipt.MessageId });
-})
-.WithName("SendMessage")
-.WithSummary("åéä¸æ¡ RocketMQ æ¶æ¯");
-
-await app.RunAsync();
-
-public sealed record SendMessageRequest(string Message);
-
-public sealed class PrintMessageHandler : IGrpcPushMessageHandler
-{
-    public ValueTask&lt;ConsumeResult&gt; HandleAsync(
-        GrpcMessageView message,
-        CancellationToken cancellationToken)
-    {
-        Console.WriteLine(
-            "Received: {0}",
-            Encoding.UTF8.GetString(message.Body));
-
-        return ValueTask.FromResult(ConsumeResult.Success);
-    }
-}
-</code></pre>
-<p>è¿éç <code>UseTLS = false</code> åªéç¨äºæ¬æçæ¬å°æµè¯ç¯å¢ãçäº§ç¯å¢åºæ ¹æ®å®éé¨ç½²éç½® TLS åè®¿é®å­è¯ã</p>
-<p>å¯å¨åºç¨ï¼å¹¶å°çå¬å°ååºå®ä¸º <code>http://localhost:5000</code>ï¼</p>
-<pre><code class="language-shell">dotnet run --urls http://localhost:5000
-</code></pre>
-<p>æå¼ <a href="http://localhost:5000/swagger" target="_blank" rel="noopener nofollow">Swagger UI</a>ï¼æ¾å° <code>POST /messages</code>ï¼ä½¿ç¨ä¸é¢çè¯·æ±ä½åéæ¶æ¯ï¼</p>
-<pre><code class="language-json">{
-  "message": "Hello RocketMQ"
-}
-</code></pre>
-<p>æ¥å£ä¼è¿å RocketMQ çæç <code>messageId</code>ãåä¸åºç¨ä¸­ç PushConsumer éåä¼æ¶å°è¿æ¡æ¶æ¯ï¼å¹¶å¨æ§å¶å°è¾åºï¼</p>
-<pre><code class="language-text">Received: Hello RocketMQ
-</code></pre>
-<p>è¿æ¡æ¶æ¯ç»è¿äºå®æ´ç gRPC é¾è·¯ï¼HTTP API è°ç¨ Producerï¼Producer éè¿ Proxy å°æ¶æ¯åéå° Brokerï¼PushConsumer åéè¿ Proxy è·åæ¶æ¯å¹¶äº¤ç» <code>PrintMessageHandler</code>ãHandler è¿å <code>Success</code> åï¼å®¢æ·ç«¯åæå¡ç«¯ç¡®è®¤å¤çç»æã</p>
-<h2 id="å°ç»">å°ç»</h2>
-<p>RocketMQ æåä½¿ç¨ Remoting ä½ä¸ºç»ä»¶ä¸å®¢æ·ç«¯çéä¿¡åè®®ãç»å¸å®¢æ·ç«¯ç´æ¥æ¥è¯¢ NameServerãè¿æ¥ Brokerï¼å¹¶å¨æ¬å°æ¿æè·¯ç±ãè´è½½åè¡¡ãæ¶è´¹ä½ç¹åæéå¤çç­é»è¾ãè¿ç§å¯å®¢æ·ç«¯æ¶ææçä¸è½åå®æ´ï¼ä½ä¹æé«äºå¤è¯­è¨å®ç°ãå®¢æ·ç«¯åçº§åå¤æç½ç»æ¥å¥çææ¬ã</p>
-<p>RocketMQ 5 æ²¡æç§»é¤ Remotingï¼èæ¯å¨åæ Broker å NameServer ä¹å¤å¢å äº Proxyï¼å¹¶ä½¿ç¨ Protocol Buffers å gRPC å®ä¹æ°çå®¢æ·ç«¯åè®®ãå®éè¿ç»ä¸å¥å£ãæ ååè®®åæ´è½»ç API éä½å¤è¯­è¨æ¥å¥ææ¬ï¼åæ¶ä¹å¸¦æ¥äº Proxy é¨ç½²ãæå¡ç«¯çæ¬å API è¿ç§»ç­æ°åæã</p>
-<p>ä¸¤æ¡é¾è·¯æç»é½åå° Brokerï¼æ¶æ¯åå¥ CommitLogï¼éè¿ ConsumeQueue ç­ç´¢å¼è¢« Consumer æ¾å°ï¼å¤çæååç¡®è®¤ææäº¤è¿åº¦ï¼å¤çå¤±è´¥æ¶è¿å¥éæ°æéæµç¨ãçè§£è¿ä¸ç¹ï¼åé¢åçä¸å ProducerãConsumer åæ¶æ¯ç±»åæ¶ï¼å°±ä¸ä¼æåè®®å¥å£ä¸æ¶æ¯å­å¨æ··å¨ä¸èµ·ã</p>
-<h2 id="åèèµæ">åèèµæ</h2>
-<ul>
-<li><a href="https://rocketmq.apache.org/zh/docs/sdk/01overview/" target="_blank" rel="noopener nofollow">Apache RocketMQï¼å®¢æ·ç«¯ SDK æ¦è§</a></li>
-<li><a href="https://rocketmq.apache.org/zh/version/" target="_blank" rel="noopener nofollow">Apache RocketMQï¼RocketMQ 5.0 éè§</a></li>
-<li><a href="https://rocketmq.apache.org/zh/release-notes/2022/09/09/5.0.0/" target="_blank" rel="noopener nofollow">Apache RocketMQ 5.0.0 Release Notes</a></li>
-<li><a href="https://rocketmq.apache.org/zh/docs/deploymentOperations/01deploy/" target="_blank" rel="noopener nofollow">Apache RocketMQï¼é¨ç½²æ¹å¼</a></li>
-<li><a href="https://rocketmq.apache.org/zh/docs/4.x/introduction/02whatis/" target="_blank" rel="noopener nofollow">Apache RocketMQï¼åè¯ RocketMQ</a></li>
-<li><a href="https://github.com/apache/rocketmq-apis" target="_blank" rel="noopener nofollow">Apache RocketMQ APIs</a></li>
-<li><a href="https://github.com/eventhorizon-cli/EventHorizon.RocketMQ" target="_blank" rel="noopener nofollow">EventHorizon.RocketMQ</a></li>
-</ul>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.004861111111111111" data-date-updated="2026-08-04 23:34">2026-08-04 23:27</span>&nbsp;
-<a href="https://www.cnblogs.com/eventhorizon">é»æ´è§ç</a>&nbsp;
-éè¯»(<span id="post_view_count">10</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(22225559);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Feventhorizon%2Fp%2F22225559&amp;targetId=22225559&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ dbt+SQLServeræå»ºæ°æ®ä»åº(2)ï¼ä¸ä¼ ç»æ¹æ¡å¯¹æ¯åè¿ç§»å³ç­ ]]></title>
-    <link>https://www.cnblogs.com/aspnetx/p/22225489</link>
-    <guid>e840e0d70e694ca611574bae0c8c34e5</guid>
-    <description>
-    <![CDATA[ 
-        <h1>
-            <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/aspnetx/p/22225489" title="åå¸äº 2026-08-04 23:18">
-    
-
-    <span role="heading" aria-level="2">dbt+SQLServeræå»ºæ°æ®ä»åº(2)ï¼ä¸ä¼ ç»æ¹æ¡å¯¹æ¯åè¿ç§»å³ç­</span>
-    
-
-</a>
-
-        </h1>
-        <div class="postbody">
-                <div id="cnblogs_post_description" style="display: none">
-        
-        æ¬ææ¥ä¸ç¯ç dbt å®ä½ä¸å·¥ä½æµç¨, è®²è¿°:dbt å SQL Server ä¸ä¼ ç»æ°ä»å¼åç¸æ¯æåªäºèå¼å·®å¼ååèã
-    </div>
-<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<blockquote>
-<p>æ¬ææ¥ä¸ç¯ç dbt å®ä½ä¸å·¥ä½æµç¨, è®²è¿°:<strong>dbt å SQL Server ä¸ä¼ ç»æ°ä»å¼åç¸æ¯æåªäºèå¼å·®å¼ååè</strong>ã</p>
-</blockquote>
-<h2 id="ä¸å¼è¨">ä¸ãå¼è¨</h2>
-<p>ä¸ç¯æä»¬å¼æ¸äº dbt æ¯ä»ä¹ãä¸ä¸ª dbt é¡¹ç®æä¹è·èµ·æ¥ãä½"dbt å¥½ä¸å¥½"æ¯ä¸ªä¼ªå½é¢ââ<strong>å¥½åæ¯ç¸å¯¹ç,å¾æåç§ç³»</strong>ãè¿ä¸ªåç§ç³»å°±æ¯å¢éç°å¨ç¨ç SQL Server ä¼ ç»æ°ä»æ ã</p>
-<p>æä»¥æ¬æåæç»ä¼ ç»æ¹æ¡çå¸åå½¢æåçå®çç¹,åä»å­ä¸ªç»´åº¦ä¸ dbt ç³»ç»å¯¹æ¯,æåç»å³ç­ç©éµåè¿ç§»å»ºè®®ãæ¬æä¸ç«é,ç®æ æ¯æä¸¤ç§èå¼çå·®å¼è®²é,è®©ä½ è½æ ¹æ®å¢éæåµåå¤æ­ã</p>
-<h2 id="äºä¼ ç»-sql-server-æ°ä»é¡¹ç®é¿ä»ä¹æ ·">äºãä¼ ç» SQL Server æ°ä»é¡¹ç®é¿ä»ä¹æ ·</h2>
-<h3 id="21-å¸åææ¯æ ">2.1 å¸åææ¯æ </h3>
-<table>
-<thead>
-<tr>
-<th>å±</th>
-<th>å·¥å·</th>
-<th>ä½ç¨</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ETL</td>
-<td><strong>SSIS</strong> (SQL Server Integration Services)</td>
-<td>æ½åãå è½½ãè½¬æ¢ä¸ä½å</td>
-</tr>
-<tr>
-<td>è½¬æ¢</td>
-<td><strong>å­å¨è¿ç¨</strong> (T-SQL)</td>
-<td>å¤æä¸å¡é»è¾</td>
-</tr>
-<tr>
-<td>è°åº¦</td>
-<td><strong>SQL Server Agent</strong></td>
-<td>å®æ¶è· SSIS å / å­å¨è¿ç¨</td>
-</tr>
-<tr>
-<td>OLAP</td>
-<td><strong>SSAS</strong> (Analysis Services)</td>
-<td>å¤ç»´æ¨¡å / è®¡ç®</td>
-</tr>
-<tr>
-<td>æ¥è¡¨</td>
-<td><strong>SSRS</strong> / Power BI</td>
-<td>æ¥è¡¨ä¸å¯è§å</td>
-</tr>
-<tr>
-<td>IDE</td>
-<td><strong>SSMS</strong> (SQL Server Management Studio)</td>
-<td>ä¸»è¦å¼åç¯å¢</td>
-</tr>
-<tr>
-<td>çæ¬æ§å¶</td>
-<td>æ°æ®åºé¡¹ç® + SSDT(å¯é)</td>
-<td>è¾å¼±,å¾å¤äººä¸ç¨</td>
-</tr>
-</tbody>
-</table>
-<h3 id="22-å¸åå¼åæµç¨">2.2 å¸åå¼åæµç¨</h3>
-<p>ä¸ä¸ªæ°éæ±çä¼ ç»æµç¨:</p>
-<ol>
-<li><strong>éæ±åæ</strong> â ç¡®è®¤ææ å®ä¹ãç²åº¦ãæ¥æº</li>
-<li><strong>è®¾è®¡</strong> â ç» ER å¾ãå®è¡¨ç»æãåè®¾è®¡ææ¡£</li>
-<li><strong>å»ºè¡¨</strong> â å¨ SSMS é <code>CREATE TABLE ...</code>,DDL æ£è½åå¤</li>
-<li><strong>åå­å¨è¿ç¨</strong> â ä¸ä¸ª <code>sp_dim_customer_build</code> ä¹ç±»çè¿ç¨,å ç¾ä¸åè¡ T-SQL</li>
-<li><strong>å SSIS å</strong>(å¦æéè¦è·¨æº) â ææ½å¼è®¾è®¡å¨,çæ .dtsx XML</li>
-<li><strong>é Agent Job</strong> â è®¾ç½®è°åº¦ãåè­¦ãéè¯</li>
-<li><strong>æå·¥æµè¯</strong> â è·ä¸é,èç¼çæ°æ®å¯¹ä¸å¯¹</li>
-<li><strong>é¨ç½²</strong> â æå­å¨è¿ç¨èæ¬æ¿å» QA/Prod åºæ§è¡,SSIS åå¯¼å¥ msdb</li>
-<li><strong>ææ¡£</strong> â åç¬å Word/Confluence,å¾å¿«åä»£ç è±è</li>
-</ol>
-<h3 id="23-ä¼ ç»æ¹æ¡ççå®çç¹">2.3 ä¼ ç»æ¹æ¡ççå®çç¹</h3>
-<p>è¿äºä¸æ¯çè®ºé®é¢,æ¯é¡¹ç®éå®æå®éå°ç:</p>
-<ol>
-<li><strong>ä¾èµå³ç³»é äººè®°</strong>:å­å¨è¿ç¨ A ä¾èµ B å C,åªæè·æäºæç¥éãæ¹ B ä¹åè¦å¨å¬å¸åé®ä»¶é®"è°å¨ç¨ B"ã</li>
-<li><strong>æµè¯åºæ¬é èç¼</strong>:é¤äºå¶å°å <code>IF EXISTS</code> æ£æ¥,æ°æ®è´¨éé ä¸å¡æ¹æè¯åç°ã</li>
-<li><strong>çæ¬æ§å¶å½¢åèè®¾</strong>:å­å¨è¿ç¨æ¹å¨ SSMS éç´æ¥ <code>ALTER</code>,åå²é æ°æ®åºå¤ä»½ãSSIS ç .dtsx æ¯äºè¿å¶ XML,diff å ä¹ä¸å¯è¯»ã</li>
-<li><strong>ç¯å¢ä¸ä¸è´</strong>:Dev åºçå­å¨è¿ç¨çæ¬å Prod ä¸ä¸æ ·,è¿ç§»é "å¤å¶ç²è´´ + ç¥ç¥·"ã</li>
-<li><strong>ææ¡£ç§çº§èç</strong>:Word ææ¡£åå®å°±è¿æ¶,æ²¡äººæ¢ä¿¡ã</li>
-<li><strong>éç¨é å¤å¶</strong>:åæ ·çé»è¾å¨åä¸ªè¿ç¨éå¤å¶åé,æ¹ä¸å¤è¦æ¹åå¤ã</li>
-<li><strong>æ°äººä¸ææ¢</strong>:çè§£ä¸ä¸ªæ°ä»è¦åè¯» N ä¸ªå­å¨è¿ç¨çè°ç¨é¾,ä¸å¨æè½æ¹ä¸ä¸ªå­æ®µã</li>
-</ol>
-<h2 id="ä¸å¯¹æ¯åædbt-vs-ä¼ ç»-sql-server-æ¹æ¡">ä¸ãå¯¹æ¯åæ:dbt vs ä¼ ç» SQL Server æ¹æ¡</h2>
-<p>ä¸é¢ä»å­ä¸ªç»´åº¦ç³»ç»å¯¹æ¯ãæ¯ä¸ªç»´åº¦é½ç»åºä¸¤èçå·ä½å½¢æååèã</p>
-<h3 id="31-èå¼å·®å¼å£°æå¼-vs-å½ä»¤å¼">3.1 èå¼å·®å¼:å£°æå¼ vs å½ä»¤å¼</h3>
-<p>è¿æ¯ææ ¹æ¬çå·®å¼ã</p>
-<p><strong>ä¼ ç»å­å¨è¿ç¨(å½ä»¤å¼)</strong>:</p>
-<pre><code class="language-sql">CREATE PROCEDURE sp_build_dim_customer AS
-BEGIN
-    TRUNCATE TABLE dim_customer;
-
-    INSERT INTO dim_customer (customer_id, first_name, last_name, ltv)
-    SELECT c.id, c.first_name, c.last_name, SUM(p.amount)
-    FROM raw_customer c
-    LEFT JOIN raw_order o ON c.id = o.user_id
-    LEFT JOIN raw_payment p ON o.id = p.order_id
-    WHERE p.status = 'completed'
-    GROUP BY c.id, c.first_name, c.last_name;
-
-    -- æå¨åæ¥å¿
-    INSERT INTO etl_log (proc_name, rows_affected, run_at)
-    VALUES ('sp_build_dim_customer', @@ROWCOUNT, GETDATE());
-END
-</code></pre>
-<p>ä½ <strong>æ¾å¼æ§å¶</strong>æ¯ä¸æ­¥:æ¸è¡¨ãæå¥ãè®°æ¥å¿ãæ¥éå¤çãçµæ´»,ä½æ ·æ¿ä»£ç å¤,æ¯ä¸ªè¿ç¨é½è¦éå¤ã</p>
-<p><strong>dbt model(å£°æå¼)</strong>:</p>
-<pre><code class="language-sql">-- models/marts/dim_customers.sql
-with customers as (select * from {{ ref('stg_customers') }}),
-     payments as (
-         select customer_id, sum(amount) as ltv
-         from {{ ref('stg_payments') }}
-         where status = 'completed'
-         group by customer_id
-     )
-select c.customer_id, c.first_name, c.last_name,
-       coalesce(p.ltv, 0) as ltv
-from customers c
-left join payments p on c.customer_id = p.customer_id
-</code></pre>
-<pre><code class="language-yaml"># dbt_project.yml éå£°æç©å
-models:
-  my_project:
-    marts:
-      +materialized: table   # dbt èªå¨å¤ç truncate + insert
-</code></pre>
-<p>ä½ åª<strong>å£°æè½¬æ¢é»è¾åç©åæå¾</strong>,dbt è´è´£:æ¸è¡¨ãå»ºè¡¨ãä¾èµé¡ºåºãæ¥å¿ãéè¯¯å¤çã</p>
-<p><strong>åè</strong>:</p>
-<ul>
-<li>å£°æå¼çå¿,ä½å¤±å»å¯¹ç»èçæ§å¶(å¦èªå®ä¹äºå¡ãç¹æ®éæç¤º)</li>
-<li>å½ä»¤å¼çµæ´»,ä½æ ·æ¿ä»£ç è¨è,æåºé</li>
-<li>dbt ä»å¯å <code>pre-hook</code>/<code>post-hook</code> æ³¨å¥å½ä»¤å¼é»è¾,ä¸¤èå¹¶éæ°´ç«ä¸å®¹</li>
-</ul>
-<h3 id="32-å·¥ç¨åè½åå¯¹æ¯">3.2 å·¥ç¨åè½åå¯¹æ¯</h3>
-<table>
-<thead>
-<tr>
-<th>è½å</th>
-<th>ä¼ ç»æ¹æ¡</th>
-<th>dbt</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>çæ¬æ§å¶</strong></td>
-<td>SSDT æ°æ®åºé¡¹ç®(å¼±éç¨)æè£¸èæ¬</td>
-<td>åç git,æ¯ä¸ª .sql/.yml é½æ¯ææ¬</td>
-</tr>
-<tr>
-<td><strong>ä¾èµç®¡ç</strong></td>
-<td>äººå·¥ç»´æ¤è°ç¨é¾</td>
-<td><code>ref()</code> èªå¨è§£æ DAG</td>
-</tr>
-<tr>
-<td><strong>åå/æ°æ®æµè¯</strong></td>
-<td>æå <code>IF EXISTS</code> æ£æ¥</td>
-<td>åå»º <code>unique</code>/<code>not_null</code>/<code>relationships</code>/<code>accepted_values</code> + èªå®ä¹</td>
-</tr>
-<tr>
-<td><strong>CI/CD</strong></td>
-<td>å ä¹æ²¡æ,é æå¨é¨ç½²</td>
-<td>GitHub Actions/GitLab CI è· <code>dbt build</code>,PR èªå¨éªè¯</td>
-</tr>
-<tr>
-<td><strong>ææ¡£</strong></td>
-<td>Word/Confluence,ä¸ä»£ç è±è</td>
-<td><code>dbt docs</code> ä»ä»£ç çæ,å« DAG è¡ç¼å¾</td>
-</tr>
-<tr>
-<td><strong>ç¯å¢éç¦»</strong></td>
-<td>éè§é¾:Dev &lt; QA &lt; Prod,è¿ç§»é èæ¬</td>
-<td><code>--target dev/prod</code> + profile åæ¢,schema åç¼å¤©ç¶éç¦»</td>
-</tr>
-<tr>
-<td><strong>ä»£ç å¤ç¨</strong></td>
-<td>å¤å¶å­å¨è¿ç¨,æåæ éå½æ°(æ§è½å·®)</td>
-<td>macro å¤ç¨,ç¼è¯æåè,æ è¿è¡æ¶å¼é</td>
-</tr>
-<tr>
-<td><strong>å¯éç°æ§</strong></td>
-<td>åæ ·çèæ¬å¨ä¸ååºå¯è½è·åºä¸åç»æ</td>
-<td>åæ ·çä»£ç  + åæ ·ç seed â å®å¨ä¸è´</td>
-</tr>
-</tbody>
-</table>
-<p>è¿ä¸æ æ¯ dbt æå¤§çä¼å¿æå¨ãä¼ ç»æ¹æ¡ä¸æ¯ä¸è½åè¿äºäº,èæ¯<strong>æ¯ä»¶é½è¦èªå·±æ­</strong>:èªå·±åæµè¯æ¡æ¶ãèªå·±åææ¡£çæå¨ãèªå·±æ CI èæ¬ãdbt å¼ç®±å³ç¨ã</p>
-<h3 id="33-å¼åä½éªå¯¹æ¯">3.3 å¼åä½éªå¯¹æ¯</h3>
-<table>
-<thead>
-<tr>
-<th>ç»´åº¦</th>
-<th>ä¼ ç»æ¹æ¡ (SSMS + å­å¨è¿ç¨)</th>
-<th>dbt (CLI + ä»»æç¼è¾å¨)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ç¼è¾å¨</td>
-<td>SSMS(åªè½ Windows)</td>
-<td>VS Code / Vim / ä»»æç¼è¾å¨(è·¨å¹³å°)</td>
-</tr>
-<tr>
-<td>åé¦éåº¦</td>
-<td>æ¹å® â é¨ç½² â ç­è°åº¦ â çç»æ(åé~å°æ¶)</td>
-<td><code>dbt run --select x</code>(ç§çº§)</td>
-</tr>
-<tr>
-<td>è°è¯</td>
-<td><code>PRINT</code> è¯­å¥ + ä¸´æ¶è¡¨</td>
-<td><code>dbt compile</code> ççæç SQL + <code>dbt show --inline</code></td>
-</tr>
-<tr>
-<td>æ¹å¨èå´</td>
-<td>å¨ææç´¢å­å¨è¿ç¨åæ¾è°ç¨æ¹</td>
-<td><code>dbt ls --select x+</code> ä¸é®ååºææä¸æ¸¸</td>
-</tr>
-<tr>
-<td>å­¦ä¹ ææ</td>
-<td>MSDN ææ¡£ + å¬å¸åé¨ Wiki</td>
-<td>å®æ¹ææ¡£ + ç¤¾åº + å¤§éåå®¢/è¯¾ç¨</td>
-</tr>
-<tr>
-<td>å¢éåä½</td>
-<td>éå¯¹è±¡ãåå¹¶å²çªé¾</td>
-<td>git æ å workflow,PR review</td>
-</tr>
-</tbody>
-</table>
-<p>å¼åä½éªçå·®å¼æ¯æç´è§çãdbt è®©æ°æ®å·¥ç¨å¸è½åè½¯ä»¶å·¥ç¨å¸ä¸æ ·å·¥ä½ââè¿æ¯å®è½å¨åä¸å¬å¸åäºåçå¢éè¿éæ®åçæ ¹æ¬åå ã</p>
-<h3 id="34-æ§è½ä¸è°åº¦å¯¹æ¯">3.4 æ§è½ä¸è°åº¦å¯¹æ¯</h3>
-<table>
-<thead>
-<tr>
-<th>ç»´åº¦</th>
-<th>ä¼ ç»æ¹æ¡</th>
-<th>dbt</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>è°åº¦å¨</td>
-<td>SQL Server Agent(æçãä¼ä¸çº§ãUI å¨)</td>
-<td>ä¸åç½®,éå¤æ¥(Airflow/dbt Cloud/cron)</td>
-</tr>
-<tr>
-<td>å¹¶åæ§è¡</td>
-<td>Agent Job å¤æ­¥ä¸²è¡ä¸ºä¸»</td>
-<td><code>threads: N</code> å¹¶åè·ç¬ç«èç¹</td>
-</tr>
-<tr>
-<td>å¢éå è½½</td>
-<td>å­å¨è¿ç¨ + MERGE/IDENTITY æå</td>
-<td><code>materialized=incremental</code> + <code>unique_key</code> å£°æå¼</td>
-</tr>
-<tr>
-<td>äºå¡</td>
-<td>å®æ´ T-SQL äºå¡æ§å¶(é»è®¤)</td>
-<td>é»è®¤ auto-commit,é flag å¯ç¨ BEGIN/COMMIT</td>
-</tr>
-<tr>
-<td>æ§è½è°ä¼</td>
-<td>ç´¢å¼ãååºãåå­ãåå­ä¼åè¡¨å¨å¯æ§</td>
-<td>åæ ·å¯æ§,ä½ééè¿ <code>post-hook</code>/åç SQL æ³¨å¥</td>
-</tr>
-<tr>
-<td>èµæºéç¦»</td>
-<td>Agent Job å¯ç» CPU/åå­</td>
-<td>ä¾èµæ°æ®åºä¾§çèµæºæ± </td>
-</tr>
-</tbody>
-</table>
-<p><strong>ç»è®º</strong>:</p>
-<ul>
-<li><strong>è°åº¦æçåº¦</strong>:ä¼ ç»æ¹æ¡èãSQL Server Agent æ¯ä¼ä¸çº§è°åº¦å¨,dbt è°åº¦éå¤æ¥</li>
-<li><strong>è½¬æ¢æ§è½</strong>:ä¸¤èæ¬è´¨é½æ¯è· T-SQL,å·®å¼ä¸å¤§ãä¼ ç»æ¹æ¡å¯¹åºå±æ§å¶æ´ç»</li>
-<li><strong>å¢éå è½½</strong>:dbt å£°æå¼æ´çå¿,ä½å¤æå¢éåºæ¯(å¦å¤æº MERGE + èªå®ä¹é»è¾)ä¼ ç»æ¹æ¡æ´çµæ´»</li>
-</ul>
-<h3 id="35-sql-server-æ¹è¨éé">3.5 SQL Server æ¹è¨éé</h3>
-<p>è¿æ¯ææ¾ç»è¸©è¿çå,å¼å¾åç¬æã</p>
-<p><strong>ä¼ ç»æ¹æ¡</strong>:ç´æ¥å T-SQL,æ¹è¨å°±æ¯æ¹è¨,æ ééé®é¢ã</p>
-<p><strong>dbt-sqlserver</strong>:dbt-core æ¯æ¹è¨æ å³ç,ééå¨å±è´è´£ç¿»è¯ãä½ dbt-sqlserver æå ä¸ª <strong>legacy è¡ä¸º</strong>ä¸ dbt-core é»è®¤ä¸ä¸è´:</p>
-<table>
-<thead>
-<tr>
-<th>è¡ä¸º</th>
-<th>dbt-core é»è®¤</th>
-<th>dbt-sqlserver é»è®¤</th>
-<th>å¯ç¨æ åè¡ä¸ºç flag</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>schema æ¼æ¥</td>
-<td><code>target.schema + '_' + custom</code></td>
-<td><code>custom</code> ç´æ¥ç¨(ä¸¢åç¼)</td>
-<td><code>dbt_sqlserver_use_default_schema_concat: true</code></td>
-</tr>
-<tr>
-<td>äºå¡</td>
-<td>emit <code>BEGIN TRAN</code>/<code>COMMIT</code></td>
-<td>auto-commit,å¤±è´¥ä¸åæ»</td>
-<td><code>dbt_sqlserver_use_dbt_transactions: true</code></td>
-</tr>
-<tr>
-<td>å­ç¬¦ä¸²ç±»å</td>
-<td><code>STRING â VARCHAR(MAX)</code></td>
-<td><code>STRING â VARCHAR(8000)</code></td>
-<td><code>dbt_sqlserver_use_native_string_types: true</code></td>
-</tr>
-</tbody>
-</table>
-<p>æå¨å®éä½¿ç¨çæ¶åï¼å°±å ä¸ºç¬¬ä¸ä¸ªå(schema æ¼æ¥)ç¬¬ä¸æ¬¡ <code>dbt run</code> æ¥éãè§£å³æ¹æ¡æ¯å¨ <code>dbt_project.yml</code> å :</p>
-<pre><code class="language-yaml">flags:
-  dbt_sqlserver_use_default_schema_concat: true
-</code></pre>
-<p><strong>å¯ç¤º</strong>:è·¨ééå¨è¿ç§»æ¶,<code>generate_schema_name</code> è¿ç±» macro æ¯é«é£é©ç¹,å¡å¿å®¡é dbt è¾åºçææ WARNINGã</p>
-<h3 id="36-å­¦ä¹ æ²çº¿ä¸å¢ééé">3.6 å­¦ä¹ æ²çº¿ä¸å¢ééé</h3>
-<table>
-<thead>
-<tr>
-<th>ç»´åº¦</th>
-<th>ä¼ ç»æ¹æ¡</th>
-<th>dbt</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>åç½®ç¥è¯</td>
-<td>T-SQL + SSIS + Agent(é½æ¯å¾®è½¯çæ)</td>
-<td>SQL + Jinja + YAML + å½ä»¤è¡</td>
-</tr>
-<tr>
-<td>å­¦ä¹ æ²çº¿</td>
-<td>SSIS ææ½ä¸æå¿«,æ·±æ°´åºæ·±</td>
-<td>dbt æ¬èº«ç®å,Jinja/macros æ¯è¿é¶é¾ç¹</td>
-</tr>
-<tr>
-<td>å¢éèæ¯å¹é</td>
-<td>DBA / æ°æ®åºå¼åçæçå·¥å·é¾</td>
-<td>æ°æ®åæå¸ / è½¯ä»¶å·¥ç¨å¸çæçå·¥å·é¾</td>
-</tr>
-<tr>
-<td>æè</td>
-<td>å½å SQL Server DBA æ± å­ç¨³å®ä½ç¼©æ°´</td>
-<td>dbt äººæç¨ç¼ºä½å¢é¿å¿«</td>
-</tr>
-<tr>
-<td>å¹è®­ææ¬</td>
-<td>èå¢éé¶ææ¬</td>
-<td>èå¢éé 1-2 ä¸ªæè¿æ¸¡</td>
-</tr>
-<tr>
-<td>çææ¯æ§</td>
-<td>å·²æ SSIS å / Agent Job çåå²åè¢±</td>
-<td>æ°é¡¹ç®é¶è´æ</td>
-</tr>
-</tbody>
-</table>
-<p><strong>å³é®å¤æ­</strong>:å¦æå¢éæ¯ DBA ä¸»å¯¼ãå·²æå¤§é SSIS èµäº§,å¨é¢è¿ç§» dbt ä¸ç°å®;å¦ææ¯æ°æ®å·¥ç¨å¸/åæå¸ä¸»å¯¼ãæ°é¡¹ç®èµ·æ­¥,dbt å ä¹æ¯é»è®¤éæ©ã</p>
-<h2 id="åä½æ¶é-dbtä½æ¶éä¼ ç»æ¹æ¡">åãä½æ¶é dbt,ä½æ¶éä¼ ç»æ¹æ¡</h2>
-<p>åºäºä¸é¢çå¯¹æ¯,ç»ä¸ä¸ªå³ç­ç©éµ:</p>
-<h3 id="41-é-dbt-çåºæ¯">4.1 é dbt çåºæ¯</h3>
-<ul>
-<li>â <strong>æ°é¡¹ç®ä»é¶èµ·æ­¥</strong>,æ²¡æåå²åè¢±</li>
-<li>â å¢éä»¥<strong>æ°æ®åæå¸/å·¥ç¨å¸</strong>ä¸ºä¸»,çæ git/CLI</li>
-<li>â æ°æ®å·²è½åº(ELT æ¨¡å¼),åªéå T</li>
-<li>â éè§<strong>å·¥ç¨å</strong>(æµè¯ãCIãææ¡£ãä»£ç å®¡æ¥)</li>
-<li>â æªæ¥å¯è½<strong>è·¨äºè¿ç§»</strong>(dbt ééå¨æºå¶è®©è¿ç§»ææ¬å¯æ§)</li>
-<li>â æ°æ®æ¨¡åè¿­ä»£é¢ç¹,éè¦å¿«éè¯é</li>
-</ul>
-<h3 id="42-éä¼ ç»æ¹æ¡çåºæ¯">4.2 éä¼ ç»æ¹æ¡çåºæ¯</h3>
-<ul>
-<li>â <strong>å·²æå¤§é SSIS å / å­å¨è¿ç¨</strong>,è¿ç§»ææ¬é«äºæ¶ç</li>
-<li>â å¢éæ¯ <strong>DBA / SQL Server èåµ</strong>,dbt å­¦ä¹ ææ¬é«</li>
-<li>â éè¦<strong>éåº¦ OLAP</strong>(SSAS å¤ç»´æ¨¡å,dbt ä¸è¦ç)</li>
-<li>â è°åº¦å¤æåº¦é«(SQL Server Agent çåè­¦ãéè¯ãä½ä¸é¾æç)</li>
-<li>â å¼ºä¾èµ SQL Server ç¹æåè½(åå­ä¼åè¡¨ãåå­ç´¢å¼ãPolyBase)</li>
-<li>â åè§è¦æ±ä¸¥æ ¼,å¾®è½¯å®æ¹æ¯ææ´ç¨³å¦¥</li>
-</ul>
-<h3 id="43-å³ç­æ ">4.3 å³ç­æ </h3>
-<pre><code>æ¯æ°é¡¹ç®å?
-ââ æ¯ â å¢éèæ¯?
-â       ââ æ°æ®å·¥ç¨å¸/åæå¸ä¸ºä¸» â dbt
-â       ââ DBA ä¸ºä¸» â ä¼ ç»æ¹æ¡ æ dbt(è§å­¦ä¹ ææ¿)
-ââ å¦(å·²æèµäº§) â èµäº§è§æ¨¡?
-        ââ å°(&lt;50 ä¸ªè¿ç¨/å) â å¯èèå¨éè¿ dbt
-        ââ ä¸­ (50-500) â æ··åæ¹æ¡, æ°éæ±ç¨ dbt, èççç
-        ââ å¤§ (&gt;500) â ä¼ ç»æ¹æ¡ç»´æ, ä»æ°æ¨¡åè¯ä¼° dbt
-</code></pre>
-<h2 id="äºæ··åæ¹æ¡ç°å®ä¸­æå¸¸è§çè½å°">äºãæ··åæ¹æ¡:ç°å®ä¸­æå¸¸è§çè½å°</h2>
-<p>å®éé¡¹ç®é,çº¯ dbt æçº¯ä¼ ç»æ¹æ¡é½å°è§,<strong>æ··åæ¹æ¡æ¯ä¸»æµ</strong>:</p>
-<pre><code>âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-â  æ°æ®æº (MySQL / API / æä»¶)                         â
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-                    â
-                    â  SSIS / Airbyte å E+L (èèµäº§å¤ç¨)
-                    â¼
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-â  SQL Server åå§åº (raw schema)                     â
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-                    â
-                    â  dbt å T (è½¬æ¢å±, æ°æ¹å¼)
-                    â  dbt_project.yml + models/
-                    â¼
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-â  SQL Server æ°ä»å± (staging/marts schema)          â
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-                    â
-                    â  SQL Server Agent / Airflow è°åº¦ dbt
-                    â¼
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-â  Power BI / SSRS æ¶è´¹                               â
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-</code></pre>
-<p>è½å°ç­ç¥:</p>
-<ol>
-<li><strong>ä¿ç SSIS å E+L</strong>:å·²ç»ç¨³å®çæ½åé»è¾æ²¡å¿è¦éå</li>
-<li><strong>è½¬æ¢å±åå° dbt</strong>:æ°éæ±ä¸å¾ç¨ dbt model,æ§å­å¨è¿ç¨éæ­¥è¿</li>
-<li><strong>è°åº¦ç¨ Agent è° dbt</strong>:Agent Job éè· <code>dbt run --target prod</code>,å¤ç¨æçåè­¦</li>
-<li><strong>OLAP å±ä¿æ SSAS</strong>:dbt ä¸è¦çå¤ç»´æ¨¡å,è¯¥ç¨ SSAS è¿ç¨ SSAS</li>
-<li><strong>BI å±ä¸å</strong>:Power BI çå°çæ¯è¡¨,ä¸å³å¿æ¯å­å¨è¿ç¨è¿æ¯ dbt äº§ç</li>
-</ol>
-<p>è¿æ ·æ¢äº«å dbt çå·¥ç¨åçº¢å©,åä¸æµªè´¹å·²ææèµã</p>
-<h2 id="å­è¿ç§»å»ºè®®">å­ãè¿ç§»å»ºè®®</h2>
-<p>å¦æå¢éå³å®ä»ä¼ ç»æ¹æ¡è¿ dbt,å»ºè®®:</p>
-<h3 id="61-æ¸è¿å¼ä¸è¦å¤§çç¸">6.1 æ¸è¿å¼,ä¸è¦å¤§çç¸</h3>
-<ul>
-<li>éä¸ä¸ª<strong>ç¬ç«çå°ä¸å¡å</strong>(å¦æä¸ªé¨é¨çæ¥è¡¨)åè¯ç¹</li>
-<li>ç¨ dbt éå»ºè¯¥åçè½¬æ¢,ä¸èå­å¨è¿ç¨å¹¶è¡è¿è¡ 1-2 ä¸ªæ</li>
-<li>æ°æ®å¯¹é½ååæ¢ BI,ä¸çº¿èè¿ç¨</li>
-</ul>
-<h3 id="62-åå»ºåå±åè¿é»è¾">6.2 åå»ºåå±,åè¿é»è¾</h3>
-<p>è¿ç§»ååå¨ dbt éæ­å¥½ <code>raw / staging / marts</code> ä¸å±éª¨æ¶ãèå­å¨è¿ç¨éå¸¸æ¯"ä¸éç"ââæ¸æ´ãèåãä¸å¡é»è¾æ··å¨ä¸èµ·ãè¿ç§»æ¶<strong>è¶æºåå±</strong>,è´¨éä¼æåä¸æ¡£ã</p>
-<h3 id="63-ææµè¯å½ä¸ç­å¬æ°">6.3 ææµè¯å½ä¸ç­å¬æ°</h3>
-<p>è¿ä¸ä¸ª model å°±éä¸ä¸ª <code>schema.yml</code> æµè¯ãä¼ ç»æ¹æ¡ç¼ºæµè¯,è¿ç§»æ¯è¡¥æµè¯çæä½³æ¶æºã<strong>æ²¡ææµè¯çè¿ç§»ç­äºæ²¡è¿</strong>ââä½ æ æ³è¯ææ°é»è¾åèé»è¾ç­ä»·ã</p>
-<h3 id="64-ééå¨-flag-ä¸æ¬¡éé½">6.4 ééå¨ flag ä¸æ¬¡éé½</h3>
-<p>ä¸ºé¿åè¸© schema æ¼æ¥çåãå»ºè®® dbt-sqlserver é¡¹ç®åå§å°±æä¸ä¸ª flag éä¸:</p>
-<pre><code class="language-yaml">flags:
-  dbt_sqlserver_use_default_schema_concat: true
-  dbt_sqlserver_use_dbt_transactions: true
-  dbt_sqlserver_use_native_string_types: true
-</code></pre>
-<p>é¿ååç»­éä¸ªè¸©é·ã</p>
-<h3 id="65-è°åº¦å¹³æ»è¿æ¸¡">6.5 è°åº¦å¹³æ»è¿æ¸¡</h3>
-<p>ç¬¬ä¸é¶æ®µ:SQL Server Agent è° <code>dbt run</code>(å½ä»¤è¡åä¸å±)<br>
-ç¬¬äºé¶æ®µ:å¼å¥ Airflow / Dagster,ç»ä¸è°åº¦æ°èèµäº§<br>
-ç¬¬ä¸é¶æ®µ:èå­å¨è¿ç¨éæ­¥è¿æ dbt model,æç»ä¸çº¿ Agent Job</p>
-<h2 id="ä¸æ»ç»">ä¸ãæ»ç»</h2>
-<p>æå¨ææµç¼©æå æ¡:</p>
-<ol>
-<li><strong>dbt ä¸æ¯ SSIS çæ¿ä»£å,èæ¯"è½¬æ¢å±"çç°ä»£åæ¹æ¡</strong>ãE+L ä»å¯å¤ç¨ SSIS,åªæ T åå° dbtã</li>
-<li><strong>dbt çæ ¸å¿ä»·å¼æ¯å·¥ç¨å</strong>:git / æµè¯ / ææ¡£ / CI / DAG èªå¨è§£æ,è¿äºæ¯ä¼ ç» SQL Server æ°ä»æç¼ºçã</li>
-<li><strong>ä¼ ç»æ¹æ¡çæ ¸å¿ä¼å¿æ¯ä¼ä¸çº§è°åº¦åæ¹è¨åç</strong>:SQL Server AgentãSSASãT-SQL å¨åè½,å¨å¾®è½¯çæéä»é¾æ¿ä»£ã</li>
-<li><strong>æ··åæ¹æ¡æ¯ç°å®æä¼è§£</strong>:SSIS å E+L,dbt å T,Agent/Airflow è°åº¦,SSAS å OLAP,Power BI åå±ç¤ºã</li>
-<li><strong>dbt-sqlserver æ legacy å</strong>(schema æ¼æ¥ãäºå¡ãå­ç¬¦ä¸²ç±»å),æ°é¡¹ç®å¡å¿å¨ <code>dbt_project.yml</code> éé½ä¸ä¸ª flagã</li>
-<li><strong>è¿ç§»è¦æ¸è¿</strong>:éå°åè¯ç¹,åå±éå»º,æµè¯åè¡,è°åº¦å¹³æ»è¿æ¸¡ã</li>
-</ol>
-<hr>
-<h2 id="éæ ¸å¿æ¦å¿µå¯¹ç§éæ¥è¡¨">é:æ ¸å¿æ¦å¿µå¯¹ç§éæ¥è¡¨</h2>
-<table>
-<thead>
-<tr>
-<th>ç»´åº¦</th>
-<th>ä¼ ç» SQL Server æ¹æ¡</th>
-<th>dbt æ¹æ¡</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>è½¬æ¢åå</td>
-<td>å­å¨è¿ç¨ / è§å¾</td>
-<td>model (.sql)</td>
-</tr>
-<tr>
-<td>ä¾èµç®¡ç</td>
-<td>äººå·¥ç»´æ¤</td>
-<td><code>ref()</code> èªå¨ DAG</td>
-</tr>
-<tr>
-<td>ç©åå³ç­</td>
-<td>æå DDL</td>
-<td><code>+materialized</code> éç½®</td>
-</tr>
-<tr>
-<td>æ°æ®æµè¯</td>
-<td>æå <code>IF EXISTS</code></td>
-<td>YAML å£°æ + åå»º generic tests</td>
-</tr>
-<tr>
-<td>å¢éå è½½</td>
-<td>æå MERGE</td>
-<td><code>materialized=incremental</code></td>
-</tr>
-<tr>
-<td>åå²æé¾</td>
-<td>æå SCD2 è¡¨ + MERGE</td>
-<td>snapshot èµæº</td>
-</tr>
-<tr>
-<td>ä»£ç å¤ç¨</td>
-<td>å¤å¶ / æ éå½æ°</td>
-<td>macro (Jinja)</td>
-</tr>
-<tr>
-<td>è°åº¦</td>
-<td>SQL Server Agent</td>
-<td>å¤æ¥ (Airflow / dbt Cloud)</td>
-</tr>
-<tr>
-<td>çæ¬æ§å¶</td>
-<td>SSDT(å¼±)</td>
-<td>git åç</td>
-</tr>
-<tr>
-<td>ææ¡£</td>
-<td>Word/Confluence</td>
-<td><code>dbt docs</code> èªå¨çæ</td>
-</tr>
-<tr>
-<td>IDE</td>
-<td>SSMS (Windows only)</td>
-<td>ä»»æç¼è¾å¨ (è·¨å¹³å°)</td>
-</tr>
-<tr>
-<td>è°è¯</td>
-<td>PRINT + ä¸´æ¶è¡¨</td>
-<td><code>dbt compile</code> + <code>dbt show</code></td>
-</tr>
-<tr>
-<td>ç¯å¢éç¦»</td>
-<td>å¤åºå®ä¾</td>
-<td><code>--target</code> + schema åç¼</td>
-</tr>
-<tr>
-<td>æ¹è¨</td>
-<td>T-SQL åç</td>
-<td>ééå¨ç¿»è¯(æ legacy å·®å¼)</td>
-</tr>
-<tr>
-<td>OLAP</td>
-<td>SSAS å¤ç»´æ¨¡å</td>
-<td>ä¸è¦ç</td>
-</tr>
-<tr>
-<td>æ¥è¡¨</td>
-<td>SSRS / Power BI</td>
-<td>ä¸è¦ç(äº¤ç» BI å·¥å·)</td>
-</tr>
-</tbody>
-</table>
-<h2 id="åè">åè</h2>
-<ul>
-<li>dbt å®æ¹ææ¡£: <a href="https://docs.getdbt.com/" target="_blank" rel="noopener nofollow">https://docs.getdbt.com/</a></li>
-<li>dbt-sqlserver ééå¨: <a href="https://github.com/dbt-msft/dbt-sqlserver" target="_blank" rel="noopener nofollow">https://github.com/dbt-msft/dbt-sqlserver</a></li>
-<li>dbt å·¥ç¨åå®è·µ: <a href="https://docs.getdbt.com/best-practices" target="_blank" rel="noopener nofollow">https://docs.getdbt.com/best-practices</a></li>
-<li>SQL Server Integration Services: <a href="https://learn.microsoft.com/sql/integration-services/" target="_blank" rel="noopener nofollow">https://learn.microsoft.com/sql/integration-services/</a></li>
-</ul>
-
-
-</div>
-<div id="MySignature" role="contentinfo">
-    <p>&nbsp;</p>
-
-<p>---------------------------------------------------------------<br></p>
-<p>æ¥èª<a href="http://www.cnblogs.com/" target="_blank">åå®¢å­</a>ç<a href="http://aspnetx.cnblogs.com/" target="_blank">aspnetx</a><font color="white">å®å«ä¸</font></p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-</div>
-<div class="clear"></div>
-
-        </div>
-        <p class="postfoot">
-            posted on 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-08-04 23:18">2026-08-04 23:18</span>&nbsp;
-<a href="https://www.cnblogs.com/aspnetx">å¥æ¬åå£«å¥(aspnetx)</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(22225489);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Faspnetx%2Fp%2F22225489&amp;targetId=22225489&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-
-        </p>
-     ]]>
-    </description>
-    </item>
-<item>
     <title><![CDATA[ GitZip Pro æºç è§£æï¼ä¸ä¸ª GitHub æä»¶/æä»¶å¤¹ä¸è½½æ©å±æ¯å¦ä½å·¥ä½çï¼åï¼éå½ä¸è½½ãå¹¶åæ§å¶ä¸ ZIP æå ]]></title>
     <link>https://www.cnblogs.com/myvin/p/22225259</link>
     <guid>a0ef775b058fe997043249e2ec5b2043</guid>
@@ -2052,7 +1182,7 @@ PPPS: å¯ä»¥å¡«æçéè¯·ç  ED706E54.</p>
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0.001388888888888889" data-date-updated="2026-08-04 17:44">2026-08-04 17:42</span>&nbsp;
 <a href="https://www.cnblogs.com/losk-x">Losk</a>&nbsp;
-éè¯»(<span id="post_view_count">5</span>)&nbsp;
+éè¯»(<span id="post_view_count">35</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(22218843);return false;">æ¶è</a>&nbsp;
@@ -2104,7 +1234,7 @@ PPPS: å¯ä»¥å¡«æçéè¯·ç  ED706E54.</p>
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-08-04 17:20">2026-08-04 17:20</span>&nbsp;
 <a href="https://www.cnblogs.com/HarmonyOSSDK">HarmonyOS_SDK</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">62</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(22218544);return false;">æ¶è</a>&nbsp;
@@ -2386,7 +1516,7 @@ EventCmd *e2 = sobj_cast&lt;EventCmd&gt;(evt);
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-08-04 17:03">2026-08-04 17:02</span>&nbsp;
 <a href="https://www.cnblogs.com/setoutsoft">å¯ç¨è½¯ä»¶</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">81</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(22217554);return false;">æ¶è</a>&nbsp;
@@ -2764,13 +1894,883 @@ material.blendDst = THREE.OneFactor
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-08-04 16:58">2026-08-04 16:58</span>&nbsp;
 <a href="https://www.cnblogs.com/zhuoshengjie">å¾®å±±æ¹ä¸éææ</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">74</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(22216754);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fzhuoshengjie%2Fp%2F22216754&amp;targetId=22216754&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ é¢å .NET å¼åèç RocketMQ å¥é¨æåï¼ä¸ï¼ï¼æ´ä½æ¶æ ]]></title>
+    <link>https://www.cnblogs.com/eventhorizon/p/22225559</link>
+    <guid>db5529e6a3f4b52b88349035a80c0676</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/eventhorizon/p/22225559" title="åå¸äº 2026-08-04 23:27">
+    
+
+    <span role="heading" aria-level="2">é¢å .NET å¼åèç RocketMQ å¥é¨æåï¼ä¸ï¼ï¼æ´ä½æ¶æ</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p></p><div class="toc"><div class="toc-container-header">ç®å½</div><ul><li><a href="#åè¨" rel="noopener nofollow">åè¨</a></li><li><a href="#ä»-remoting-è¯´èµ·" rel="noopener nofollow">ä» Remoting è¯´èµ·</a><ul><li><a href="#remoting-é¾è·¯å¦ä½å·¥ä½" rel="noopener nofollow">Remoting é¾è·¯å¦ä½å·¥ä½</a></li></ul></li><li><a href="#remoting-æ¶æçä½¿ç¨ææ¬" rel="noopener nofollow">Remoting æ¶æçä½¿ç¨ææ¬</a><ul><li><a href="#å®¢æ·ç«¯å®ç°å¤æ" rel="noopener nofollow">å®¢æ·ç«¯å®ç°å¤æ</a></li><li><a href="#å¤è¯­è¨å®¢æ·ç«¯é¾ä»¥ä¿æä¸è´" rel="noopener nofollow">å¤è¯­è¨å®¢æ·ç«¯é¾ä»¥ä¿æä¸è´</a></li><li><a href="#åºç¨éè¦ç´æ¥è®¿é®-broker" rel="noopener nofollow">åºç¨éè¦ç´æ¥è®¿é® Broker</a></li><li><a href="#å®¢æ·ç«¯ä¸æå¡ç«¯æ¼è¿èç³»è¾ç´§" rel="noopener nofollow">å®¢æ·ç«¯ä¸æå¡ç«¯æ¼è¿èç³»è¾ç´§</a></li></ul></li><li><a href="#rocketmq-5proxy-ä¸-grpc" rel="noopener nofollow">RocketMQ 5ï¼Proxy ä¸ gRPC</a><ul><li><a href="#æ åååè®®ä¸å¤è¯­è¨-api" rel="noopener nofollow">æ åååè®®ä¸å¤è¯­è¨ API</a></li><li><a href="#å®¢æ·ç«¯å¯ä»¥æ´è½»" rel="noopener nofollow">å®¢æ·ç«¯å¯ä»¥æ´è½»</a></li><li><a href="#ç½ç»å¥å£æ´éä¸­" rel="noopener nofollow">ç½ç»å¥å£æ´éä¸­</a></li></ul></li><li><a href="#grpc-ä¹æèªå·±çè¾¹ç" rel="noopener nofollow">gRPC ä¹æèªå·±çè¾¹ç</a></li><li><a href="#ä¸¤å¥åè®®å±äº«çæ¶æ¯æ ¸å¿" rel="noopener nofollow">ä¸¤å¥åè®®å±äº«çæ¶æ¯æ ¸å¿</a><ul><li><a href="#1-è·åè·¯ç±" rel="noopener nofollow">1. è·åè·¯ç±</a></li><li><a href="#2-åéæ¶æ¯" rel="noopener nofollow">2. åéæ¶æ¯</a></li><li><a href="#3-broker-å­å¨" rel="noopener nofollow">3. Broker å­å¨</a></li><li><a href="#4-consumer-è·åå¹¶å¤çæ¶æ¯" rel="noopener nofollow">4. Consumer è·åå¹¶å¤çæ¶æ¯</a></li><li><a href="#5-æäº¤å¤çç»æ" rel="noopener nofollow">5. æäº¤å¤çç»æ</a></li></ul></li><li><a href="#æ¬ç³»åä½¿ç¨ç-net-sdk" rel="noopener nofollow">æ¬ç³»åä½¿ç¨ç .NET SDK</a></li><li><a href="#ç¨-producer-å-pushconsumer-åä¸ä¸ªç®åéªè¯" rel="noopener nofollow">ç¨ Producer å PushConsumer åä¸ä¸ªç®åéªè¯</a></li><li><a href="#å°ç»" rel="noopener nofollow">å°ç»</a></li><li><a href="#åèèµæ" rel="noopener nofollow">åèèµæ</a></li></ul></div><p></p>
+<h2 id="åè¨">åè¨</h2>
+<p>è¿ä¸ªç³»åæ¯åç»å¯¹ RocketMQ æå´è¶£ç .NET å¼åèçãæå¸æä» .NET åºç¨å¼åçè§è§åºåï¼ä»ç» RocketMQ çåºæ¬æ¦å¿µãæ´ä½æ¶æåå¸¸è§ä½¿ç¨æ¹å¼ï¼å¸®å©è¯»èå»ºç«å¯¹ RocketMQ çåæ­¥è®¤è¯ã</p>
+<p>åä¸ªäººè½ååçè§£æéï¼æä¸­é¾åå­å¨çæ¼ãå¦æææè¿°ä¸ä¸¥è°¨æéè¯¯ä¹å¤ï¼æ¬¢è¿ææ­£ã</p>
+<p>æ¬æå°ä½¿ç¨æèªå·±ç¼åç <a href="https://github.com/eventhorizon-cli/EventHorizon.RocketMQ" target="_blank" rel="noopener nofollow">eventhorizon-cli/EventHorizon.RocketMQ</a> ä½ä¸ºæ¼ç¤ºå®¢æ·ç«¯ãè¿æ¯ä¸ä¸ªéå®æ¹ç RocketMQ .NET å®¢æ·ç«¯ï¼åæ¶æ¯æ RocketMQ 5 gRPC å classic Remotingã</p>
+<p>ä»å¤©æ¥è§¦ RocketMQï¼ä¼åæ¶çå° Remoting å gRPC ä¸¤å¥å®¢æ·ç«¯ãè¦çè§£å®ä»¬ä¸ºä»ä¹å¹¶å­ï¼æå¥½ä» RocketMQ æ©æç Remoting æ¶æè¯´èµ·ï¼åç RocketMQ 5 ä¸ºä»ä¹å¢å  Proxy å gRPCãé¡ºçè¿æ¡æ¼è¿è·¯å¾ï¼NameServerãBrokerãProxy çèè´£ä»¥åæ¶æ¯å®éç»è¿çè·¯å¾ä¹ä¼æ¸æ¥å¾å¤ã</p>
+<h2 id="ä»-remoting-è¯´èµ·">ä» Remoting è¯´èµ·</h2>
+<p>Remoting æ¯ RocketMQ èªç çä¸å¥åºäº TCP ç RPC åè®®ï¼å¯ä»¥ç®åçè§£ä¸º RocketMQ åç»ä»¶ä¹é´çº¦å®çéä¿¡æ¹å¼ãå¨ç»å¸æ¶æä¸­ï¼ProducerãConsumerãNameServer å Broker é½éè¿ Remoting äº¤æ¢è¯·æ±ä¸ååºï¼å®¢æ·ç«¯åå NameServer æ¥è¯¢è·¯ç±ï¼åç´æ¥è¿æ¥ Broker æ¶åæ¶æ¯ãå®¢æ·ç«¯è¿æ¿æè·¯ç±åç°ãè´è½½åè¡¡åæéå¤çç­å·¥ä½ã</p>
+<p>ç»å¸ Remoting æ¶æä¸»è¦åå«åç±»è§è²ï¼</p>
+<ul>
+<li><strong>Producer</strong>ï¼åå»ºæ¶æ¯ï¼å¹¶å°æ¶æ¯åéå° Topicã</li>
+<li><strong>Consumer</strong>ï¼è®¢é Topicï¼ä» Broker è·åæ¶æ¯å¹¶äº¤ç»ä¸å¡ä»£ç å¤çã</li>
+<li><strong>NameServer</strong>ï¼ä¿å­ Broker æ³¨åç Topic è·¯ç±ï¼ä¾ Producer å Consumer æ¥è¯¢ã</li>
+<li><strong>Broker</strong>ï¼æ¥æ¶ãå­å¨åæéæ¶æ¯ï¼å¹¶ä¿å­æ¶è´¹è¿åº¦ç­è¿è¡æ°æ®ã</li>
+</ul>
+<p>å®ä»¬ä¹é´çå³ç³»å¦ä¸ï¼</p>
+<p><img src="https://img2024.cnblogs.com/blog/1201123/202608/1201123-20260804232541534-12211560.png" alt="ç»å¸ Remoting æ¶æ" loading="lazy"></p>
+<p>å¾ä¸­çèçº¿è¡¨ç¤ºè·¯ç±æ³¨ååæ¥è¯¢ï¼å®çº¿è¡¨ç¤ºæ¶æ¯ç¸å³çè¯·æ±ã<strong>NameServer ä¸å­å¨æ¶æ¯ï¼ä¹ä¸è½¬åæ¶æ¯</strong>ãå®¢æ·ç«¯ä» NameServer åå¾è·¯ç±åï¼ä¼ç´æ¥è¿æ¥å¯¹åºç Brokerã</p>
+<h3 id="remoting-é¾è·¯å¦ä½å·¥ä½">Remoting é¾è·¯å¦ä½å·¥ä½</h3>
+<p>Broker å¯å¨åï¼ä¼å°èªèº«å°åãTopic åéåä¿¡æ¯æ³¨åå° NameServerï¼å¹¶éè¿å¿è·³ç»´æè·¯ç±çæææ§ã</p>
+<p>Producer åéæ¶æ¯åï¼åä» NameServer æ¥è¯¢ Topic è·¯ç±ãè·¯ç±ä¸­åå«å¯åç MessageQueue åå¶æå¨ç BrokerãProducer éæ©ä¸ä¸ªéåï¼ä¸ç®æ  Broker å»ºç«è¿æ¥ï¼ç¶åç´æ¥åéæ¶æ¯ã</p>
+<p>Consumer çè¿ç¨ç±»ä¼¼ãå®åæ¥è¯¢è®¢é Topic çè·¯ç±ï¼åè¿æ¥å¯¹åºç BrokerãConsumer Group ä¸­æå¤ä¸ªå®ä¾æ¶ï¼å®¢æ·ç«¯è¿è¦å®æéååéï¼è®©åå®ä¾å±ååææ¶æ¯ãæè° PushConsumerï¼ä¹ä¸æ¯ Broker ä¸»å¨è¿æ¥åºç¨ï¼èæ¯å®¢æ·ç«¯å¨åå°æç»­æåæé¿è½®è¯¢ï¼åéè¿åè°ææ¶æ¯äº¤ç»ä¸å¡ä»£ç ã</p>
+<p>è¿å¥æ¶ææä¸ä¸ªé²æç¹ç¹ï¼<strong>å®¢æ·ç«¯ä¸åªæ¯åè®®è°ç¨æ¹ï¼è¿æ¯ RocketMQ è¿è¡æºå¶çä¸é¨å</strong>ãè·¯ç±ç¼å­ãBroker è¿æ¥ãå¿è·³ãè´è½½åè¡¡ãæ¶æ¯ç¼å­ãéè¯ãæ¶è´¹ä½ç¹åå¼å¸¸èç¹éç¦»ç­é»è¾ï¼é½æç¸å½ä¸é¨åè¿è¡å¨å®¢æ·ç«¯ä¸­ã</p>
+<h2 id="remoting-æ¶æçä½¿ç¨ææ¬">Remoting æ¶æçä½¿ç¨ææ¬</h2>
+<p>è¿ç§ç±å®¢æ·ç«¯æ¿æè¾å¤è¿è¡é»è¾çè®¾è®¡ï¼éå¸¸ç§°ä¸ºâå¯å®¢æ·ç«¯âãå®å¹¶ä¸æ¯ç¼ºç¹æ¬èº«ï¼å®¢æ·ç«¯å¯ä»¥ç´æ¥è®¿é® Brokerï¼ä¸éè¦é¢å¤çä»£çå±ï¼ç»è¿å¤å¹´æ¼è¿ï¼Remoting SDK ä¹ç§¯ç´¯äºè¾å®æ´ç ProducerãConsumer å Admin è½åãå·²æ RocketMQ 4.x éç¾¤æä¾èµç»å¸æ¶è´¹æ¨¡åçç³»ç»ï¼ç»§ç»­ä½¿ç¨ Remoting å¾å¸¸è§ã</p>
+<p>é®é¢å¨äºï¼å½æ¥å¥ç¯å¢ä» Java ä¸ºä¸»çåç½åºç¨æ©å±å°å¤è¯­è¨åäºåçåºæ¯åï¼è¿ç§è®¾è®¡ä¼å¸¦æ¥ä¸äºææ¬ã</p>
+<h3 id="å®¢æ·ç«¯å®ç°å¤æ">å®¢æ·ç«¯å®ç°å¤æ</h3>
+<p>å®¢æ·ç«¯éè¦çè§£ NameServer è·¯ç±ãBroker ææãéååéãéè¯åæ¶è´¹è¿åº¦ç­åé¨æºå¶ãå®ç°ä¸ä¸ªè½å¤æ¶åæ¶æ¯çå®¢æ·ç«¯å¹¶ä¸é¾ï¼ä½è¦å¨åç§å¼å¸¸åå¹¶ååºæ¯ä¸ä¿ææ­£ç¡®ï¼å·¥ä½éä¼ææ¾å¢å ã</p>
+<p>RocketMQ 4.x Java SDK ä¸­çé¡ºåºæ¶è´¹ãå¹¿æ­æ¶è´¹ãè´è½½åè¡¡ãæ¶æ¯ç¼å­ãéè¯ãä½ç¹ç®¡çãæµæ§åæéè½¬ç§»ç­è½åï¼é½å±äºè¿ç±»å¯å®¢æ·ç«¯é»è¾ãå®¢æ·ç«¯åè½è¶å¤ï¼åçº§åç»´æ¤çææ¬ä¹è¶é«ã</p>
+<h3 id="å¤è¯­è¨å®¢æ·ç«¯é¾ä»¥ä¿æä¸è´">å¤è¯­è¨å®¢æ·ç«¯é¾ä»¥ä¿æä¸è´</h3>
+<p>Remoting æ¯ RocketMQ èªå·±çéä¿¡åè®®ï¼ä¸å gRPC é£æ ·å¯ä»¥ä»ç»ä¸çæ¥å£å®ä¹çæä¸åè¯­è¨çåºç¡ä»£ç ãæ¯ç§è¯­è¨é½éè¦éæ°å®ç°åè®®ç¼è§£ç åå®¢æ·ç«¯è¡ä¸ºï¼ååå«å¤çå¹¶åæ¨¡åãå¼å¸¸ç±»åä¸çå½å¨æã</p>
+<p>ç»æä¸åªæ¯å¼åææ¬é«ï¼ä¸åè¯­è¨ SDK çåè½èå´åè¡ä¸ºä¹æ´é¾é¿æä¿æä¸è´ãå®æ¹ææ¡£å° Remoting SDK æè¿°ä¸ºä¸æå¡ç«¯çæ¬åæ­¥æ¼è¿çæ¹æ¡ï¼æ©æåä¸»æµå®ç°ä¸»è¦å´ç» Java ä½ç³»å±å¼ã</p>
+<h3 id="åºç¨éè¦ç´æ¥è®¿é®-broker">åºç¨éè¦ç´æ¥è®¿é® Broker</h3>
+<p>Remoting å®¢æ·ç«¯ä» NameServer è·å Broker å°ååç´æ¥è¿æ¥ Brokerãè¿æå³çåºç¨æå¨ç½ç»å¿é¡»è½å¤è®¿é® Broker æ³¨åçå°åã</p>
+<p>å¨ä¼ ç»åç½é¨ç½²ä¸­ï¼è¿éå¸¸ä¸æ¯é®é¢ï¼ä½å¨å®¹å¨ãKubernetesãè·¨ç½ç»æäºäº§åæ¥å¥åºæ¯ä¸­ï¼Broker å¯¹å¤æ³¨åå°åãç«¯å£æ å°åç½ç»è¾¹çé½ä¼å½±åå®¢æ·ç«¯è¿æ¥ãå®¢æ·ç«¯ä¹ä¼æç¥ Broker ææçååã</p>
+<h3 id="å®¢æ·ç«¯ä¸æå¡ç«¯æ¼è¿èç³»è¾ç´§">å®¢æ·ç«¯ä¸æå¡ç«¯æ¼è¿èç³»è¾ç´§</h3>
+<p>Remoting åæ¶ç¨äº RocketMQ åé¨ç»ä»¶éä¿¡åå®¢æ·ç«¯è®¿é®ï¼å®¢æ·ç«¯ SDK ä¹é¿æè·éä¸»ä»åºæ¼è¿ãæå¡ç«¯åè®®å¢å è½åæ¶ï¼åè¯­è¨ SDK éè¦åå«è·è¿ï¼å®¢æ·ç«¯åæå¡ç«¯ä¹é´ççæ¬è¾¹çä¸å®¹æå®å¨ç¬ç«ã</p>
+<p>è¿äºé®é¢å¹¶ä¸æå³ç Remoting ä¸è½ç»§ç»­ä½¿ç¨ï¼èæ¯è¯´æå®æ´éåæåçè®¾è®¡ç¯å¢ãRocketMQ 5 å¼å¥ gRPCï¼å¹¶ä¸æ¯ç®åå°æä¼ è¾åè®®æ¢æï¼èæ¯éæ°ååå®¢æ·ç«¯ãæ¥å¥å±å Broker çèè´£ã</p>
+<h2 id="rocketmq-5proxy-ä¸-grpc">RocketMQ 5ï¼Proxy ä¸ gRPC</h2>
+<p>2022 å¹´ 9 æï¼Apache RocketMQ 5.0.0 åå¸ãè¿ä¸ªçæ¬å¢å äºåºäº gRPC çå¤è¯­è¨å®¢æ·ç«¯ï¼å¹¶å¨æå¡ç«¯å¼å¥ Proxyãæ°çå®¢æ·ç«¯ä¸åç´æ¥è¿æ¥ NameServer å Brokerï¼èæ¯ä»¥ Proxy ä½ä¸ºç»ä¸å¥å£ï¼</p>
+<p><img src="https://img2024.cnblogs.com/blog/1201123/202608/1201123-20260804232540998-1550132937.png" alt="RocketMQ 5 gRPC æ¶æ" loading="lazy"></p>
+<p>Proxy ä¸å­å¨æ¶æ¯ï¼ä¹ä¸æ¿ä»£ NameServerãå®è´è´£é¢åå®¢æ·ç«¯çåè®®ééãæéåæ¶è´¹ç®¡çç­è®¡ç®é»è¾ï¼åè®¿é® NameServer å Broker å®æå®éè¯·æ±ãBroker åç»§ç»­æ¿ææ¶æ¯å­å¨ä¸æéã</p>
+<p>Proxy å¯ä»¥å Broker è¿è¡å¨åä¸è¿ç¨ï¼ä¹å°±æ¯ Local æ¨¡å¼ï¼ä¹å¯ä»¥ä½ä¸ºç¬ç«çæ ç¶æéç¾¤é¨ç½²ï¼ä¹å°±æ¯ Cluster æ¨¡å¼ãåèéåä»åææ¶æå¹³æ»å¢å  gRPC æ¥å¥ï¼åèå¯ä»¥è®©æ¥å¥å±åå­å¨å±åå«æ©å±ã</p>
+<h3 id="æ åååè®®ä¸å¤è¯­è¨-api">æ åååè®®ä¸å¤è¯­è¨ API</h3>
+<p>RocketMQ 5 ä½¿ç¨ Protocol Buffers å®ä¹æ¶æ¯æ¨¡ååæ¥å£ï¼å¹¶éè¿ HTTP/2 ä¸ç gRPC æä¾æå¡ãåè¯­è¨å®¢æ·ç«¯é½éµå¾ªåä¸ä»½ <code>rocketmq-apis</code> åè®®å®ä¹ï¼ä¸éè¦åèªéæ°è®¾è®¡ä¸å¥åºå±éä¿¡æ ¼å¼ã</p>
+<p>ç»ä¸åè®®ä¸è½èªå¨æ¶é¤ä¸åè¯­è¨ä¹é´çå·®å¼ï¼ä½å®ç»åºäºå±åçæ¶æ¯æ¨¡åãç¶æç åæå¡æ¥å£ï¼éä½äºåè¯­è¨ SDK ä¿æä¸è´çææ¬ãå®æ¹ç gRPC å®¢æ·ç«¯ä¹ä» RocketMQ ä¸»ä»åºä¸­ç¬ç«åºæ¥ï¼æç§åè®®æ¥å£ä¸æå¡ç«¯åä½ã</p>
+<h3 id="å®¢æ·ç«¯å¯ä»¥æ´è½»">å®¢æ·ç«¯å¯ä»¥æ´è½»</h3>
+<p>Proxy éç¦»äº NameServer å Broker ææï¼åºç¨åªéè¦éç½® Proxy Endpointãåè®®ééãæéç®¡çåé¨åæ¶è´¹ç®¡çé»è¾å¯ä»¥æ¾å° Proxy ææå¡ç«¯ï¼å®¢æ·ç«¯ä¸å¿å¤å»å®æ´çç»å¸å¯å®¢æ·ç«¯å®ç°ã</p>
+<p>RocketMQ 5 è¿å¼å¥äº POP æ¶è´¹æºå¶ï¼å¹¶æä¾ SimpleConsumer è¿ç±»é¢åæ¶æ¯ç APIãå®¢æ·ç«¯å¯ä»¥ææ¶æ¯è¿è¡æ¥æ¶ãç¡®è®¤ãä¿®æ¹ä¸å¯è§æ¶é´ï¼èä¸å¿ç´æ¥ç®¡çæ¯ä¸ªéåçæ¶è´¹ä½ç¹ã</p>
+<p>è¿éçâè½»éâä¸ç­äºå®¢æ·ç«¯æ²¡æç¶ææé»è¾ãè¿æ¥ç®¡çãå¿è·³ãé¿è½®è¯¢åæ¶æ¯å¤çä»ç¶éè¦å®¢æ·ç«¯åä¸ï¼åªæ¯å®¢æ·ç«¯ä¸ Broker åé¨å®ç°ä¹é´çè¦åææéä½ã</p>
+<h3 id="ç½ç»å¥å£æ´éä¸­">ç½ç»å¥å£æ´éä¸­</h3>
+<p>gRPC å®¢æ·ç«¯åªéè¦è®¿é® Proxyï¼ä¸éè¦ç´æ¥è®¿é® NameServer è¿åçæ¯ä¸ª Broker å°åãå¯¹äºè·¨ç½ç»ãå®¹å¨åäºç¯å¢ï¼è¿è½åå°å®¢æ·ç«¯å¯¹ Broker ææåæ³¨åå°åçæç¥ã</p>
+<p>gRPC ä¹æ¯äºåçç¯å¢ä¸­å¸¸è§ç RPC æ¡æ¶ï¼åºäº HTTP/2ï¼è¾å®¹ææ¥å¥æ¦æªå¨å Service Mesh ç­åºç¡è®¾æ½ãè¿éè§£å³çæ¯æ¥å¥æ¹å¼åç½ç»è¾¹çé®é¢ï¼å¹¶ä¸ä»£è¡¨å¼å¥ gRPC åå°±ä¸åéè¦å¤çè¶æ¶ãéè¯åæéè½¬ç§»ã</p>
+<h2 id="grpc-ä¹æèªå·±çè¾¹ç">gRPC ä¹æèªå·±çè¾¹ç</h2>
+<p>Remoting ä¸ gRPC ä¸æ¯âæ§åè®®å®å¨è¢«æ°åè®®æ¿ä»£âçå³ç³»ãéç¨ gRPC ä¹åï¼è¿éè¦èèå ä¸ªåæï¼</p>
+<ul>
+<li>gRPC SDK éè¦ RocketMQ 5.0 åä»¥ä¸æå¡ç«¯ï¼å¹¶å¯ç¨ Proxyã</li>
+<li>gRPC API ç»è¿éæ°è®¾è®¡ï¼ä¸ Remoting API ä¸å¼å®¹ï¼åæ¢å®¢æ·ç«¯éè¦ä¿®æ¹åºç¨ä»£ç ã</li>
+<li>ç¬ç«é¨ç½² Proxy ä¼å¢å ä¸ä¸ªæå¡ç»ä»¶åä¸æ¬¡ç½ç»è½¬åï¼ä½¿ç¨ Local æ¨¡å¼æ¶ï¼Proxy ä¸ Broker è¿è¡å¨åä¸è¿ç¨ã</li>
+<li>ä¸¤å¥ SDK ç ProducerãConsumer åç®¡çè½åå¹¶ä¸å®å¨ç¸åï¼éæ©æ¶ä»è¦æ ¸å¯¹å®ééæ±ã</li>
+</ul>
+<p>å æ­¤ï¼Remoting ä¾ç¶éåå·²æç»å¸éç¾¤ãéè¦ç´è¿ Brokerï¼æèä¾èµ PullConsumerãLitePullConsumerãAdmin ç­ç»å¸è½åçåºæ¯ãgRPC æ´éåå·²ç»å·å¤ RocketMQ 5 Proxyãå¸æä½¿ç¨æ ååè®®åå¤è¯­è¨è½»éå®¢æ·ç«¯çæ°æ¥å¥åºæ¯ã</p>
+<p>ä¸¤æ¡é¾è·¯çä¸»è¦åºå«å¯ä»¥æ¦æ¬ä¸ºï¼</p>
+<table>
+<thead>
+<tr>
+<th>å¯¹æ¯é¡¹</th>
+<th>classic Remoting</th>
+<th>RocketMQ 5 gRPC</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>å®¢æ·ç«¯è¿æ¥ç®æ </td>
+<td>NameServer å Broker</td>
+<td>Proxy</td>
+</tr>
+<tr>
+<td>æ¯å¦ç´æ¥æç¥ Broker è·¯ç±</td>
+<td>æ¯</td>
+<td>å¦</td>
+</tr>
+<tr>
+<td>æå¡ç«¯çæ¬</td>
+<td>å¯ç¨äºç»å¸ Remoting é¨ç½²</td>
+<td>éè¦ RocketMQ 5.0+ ä¸ Proxy</td>
+</tr>
+<tr>
+<td>ä¸»è¦ç¹ç¹</td>
+<td>è½åå®æ´ãç´è¿ Broker</td>
+<td>æ ååè®®ãç»ä¸å¥å£ãå¤è¯­è¨åå¥½</td>
+</tr>
+</tbody>
+</table>
+<h2 id="ä¸¤å¥åè®®å±äº«çæ¶æ¯æ ¸å¿">ä¸¤å¥åè®®å±äº«çæ¶æ¯æ ¸å¿</h2>
+<p>æ¥å¥é¾è·¯è½ç¶ä¸åï¼æ¶æ¯æç»ä»ç¶ç± Broker å­å¨åæéãåè®¤è¯ä¸ä¸ªè´¯ç©¿ä¸¤å¥åè®®çæ¦å¿µï¼</p>
+<ul>
+<li><strong>Topic</strong> æ¯æ¶æ¯çé»è¾åç±»ãProducer å Topic åéæ¶æ¯ï¼Consumer è®¢é Topicã</li>
+<li><strong>MessageQueue</strong> æ¯ Topic çååºååãä¸ä¸ª Topic å¯ä»¥åå«å¤ä¸ª MessageQueueï¼å¹¶åå¸å¨ä¸å Broker ä¸ã</li>
+<li><strong>Consumer Group</strong> è¡¨ç¤ºä¸ç»å·æç¸åæ¶è´¹ç®æ ç Consumerãå¨å¸¸è§çéç¾¤æ¶è´¹æ¨¡å¼ä¸ï¼åä¸ Group ä¸­çå®ä¾å±ååææ¶æ¯ï¼ä¸å Group å¯ä»¥åå«æ¶è´¹åä¸ä¸ª Topicã</li>
+</ul>
+<p>ä¸æ¡æ®éæ¶æ¯çä¸»æµç¨å¯ä»¥ç®åä¸ºï¼</p>
+<p><img src="https://img2024.cnblogs.com/blog/1201123/202608/1201123-20260804232540305-396537635.png" alt="RocketMQ æ¶æ¯æµè½¬" loading="lazy"></p>
+<h3 id="1-è·åè·¯ç±">1. è·åè·¯ç±</h3>
+<p>Broker å NameServer æ³¨åè·¯ç±ãRemoting å®¢æ·ç«¯ç´æ¥æ¥è¯¢ NameServerï¼gRPC å®¢æ·ç«¯å Proxy åèµ·è¯·æ±ï¼ç± Proxy æ¥è¯¢æå·æ°è·¯ç±ãè¿ä¸ªé¶æ®µä¼ éçæ¯ TopicãMessageQueue å Broker å°åç­åæ°æ®ï¼ä¸åå«æ¶æ¯æ­£æã</p>
+<h3 id="2-åéæ¶æ¯">2. åéæ¶æ¯</h3>
+<p>Producer åå»ºæ¶æ¯å¹¶æå® TopicãRemoting å®¢æ·ç«¯éæ© MessageQueue åç´æ¥åéå° Brokerï¼gRPC å®¢æ·ç«¯åææ¶æ¯åéç» Proxyï¼åç± Proxy è½¬åå° Brokerã</p>
+<h3 id="3-broker-å­å¨">3. Broker å­å¨</h3>
+<p>Broker æ¶å°æ¶æ¯åï¼å°æ¶æ¯é¡ºåºåå¥ CommitLogï¼éåæ ¹æ® Topic åéåæå»º ConsumeQueue ç­ç´¢å¼æ°æ®ãå¯ä»¥ææ¶æ CommitLog çè§£ä¸ºæ¶æ¯æ­£æçå­å¨ä½ç½®ï¼æ ConsumeQueue çè§£ä¸ºæ Topic åéåæ¥æ¾æ¶æ¯çç´¢å¼ã</p>
+<h3 id="4-consumer-è·åå¹¶å¤çæ¶æ¯">4. Consumer è·åå¹¶å¤çæ¶æ¯</h3>
+<p>Remoting Consumer ç´æ¥ä» Broker æåæ¶æ¯ï¼gRPC Consumer éè¿ Proxy è·åæ¶æ¯ãPushConsumer ä¼å¨åå°ç»´æ¤æåæé¿è½®è¯¢ï¼ç¶åè°ç¨ Handlerï¼å æ­¤å®å¯¹ä¸å¡ä»£ç è¡¨ç°ä¸ºâæ¨éâã</p>
+<h3 id="5-æäº¤å¤çç»æ">5. æäº¤å¤çç»æ</h3>
+<p>Handler å¤çæååï¼å®¢æ·ç«¯ç¡®è®¤æ¶æ¯ææäº¤æ¶è´¹è¿åº¦ãå¤çå¤±è´¥ãè¶æ¶æç¡®è®¤ç»æä¸¢å¤±æ¶ï¼æ¶æ¯å¯è½è¢«éæ°æéï¼è¶è¿æå¤§æ¬¡æ°åï¼è¿å¯è½è¿å¥æ­»ä¿¡éåã</p>
+<p>è¿æå³çæ¶æ¯è¿å¥ Handler åä»æå¯è½åæ¬¡åºç°ãæ è®ºä½¿ç¨ Remoting è¿æ¯ gRPCï¼æ¶è´¹ä¸å¡é½éè¦èèå¹ç­ã</p>
+<h2 id="æ¬ç³»åä½¿ç¨ç-net-sdk">æ¬ç³»åä½¿ç¨ç .NET SDK</h2>
+<p>æ¬ç³»åä½¿ç¨ç <code>EventHorizon.RocketMQ</code> åæ¶å®ç°äº Remoting å gRPC ä¸¤æ¡é¾è·¯ï¼å¹¶åå«åå¸ä¸ºä¸¤ä¸ª NuGet åï¼</p>
+<ul>
+<li><a href="https://www.nuget.org/packages/EventHorizon.RocketMQ.Remoting/" target="_blank" rel="noopener nofollow">EventHorizon.RocketMQ.Remoting</a></li>
+<li><a href="https://www.nuget.org/packages/EventHorizon.RocketMQ.Grpc/" target="_blank" rel="noopener nofollow">EventHorizon.RocketMQ.Grpc</a></li>
+</ul>
+<p>ä¸¤ä¸ª NuGet åå¯ä»¥åºç°å¨åä¸ä¸ª .NET åºç¨ä¸­ï¼ä½å®ä»¬çæ¶æ¯æ¨¡åãåéç»æãå¼å¸¸å Consumer ç±»åæ¯ç¸äºç¬ç«çï¼ä¸è½æ··ç¨ã</p>
+<h2 id="ç¨-producer-å-pushconsumer-åä¸ä¸ªç®åéªè¯">ç¨ Producer å PushConsumer åä¸ä¸ªç®åéªè¯</h2>
+<p>æåç¨ gRPC Producer å PushConsumer éªè¯å¶ä¸­ä¸æ¡é¾è·¯ãåºç¨éè¿ HTTP API åéæ¶æ¯ï¼Producer å°æ¶æ¯åå¾ RocketMQï¼PushConsumer æ¶å°æ¶æ¯åæå°æ­£æãè¿ééæ© gRPC åªæ¯ä¸ºäºè®©ç¤ºä¾ä¿æç®ç­ï¼Remoting å®¢æ·ç«¯ä¼å¨åç»­æç« ä¸­åç¬ä»ç»ã</p>
+<p>é¡¹ç®ä»åºæä¾äºåå« NameServerãBrokerãProxy å Dashboard çæ¬å°ç¯å¢ï¼</p>
+<pre><code class="language-shell">git clone https://github.com/eventhorizon-cli/EventHorizon.RocketMQ.git
+cd EventHorizon.RocketMQ
+docker compose -f test-environments/rocketmq/compose.yaml up -d --wait
+</code></pre>
+<p>ç¯å¢å¯å¨åï¼gRPC Proxy å°åæ¯ <code>127.0.0.1:8081</code>ï¼å¹¶ä¸å·²ç»åå»º Topic <code>eventhorizon-test-topic</code>ãè®¿é® <a href="http://localhost:8082" target="_blank" rel="noopener nofollow">RocketMQ Dashboard</a> å¯ä»¥æ¥çéç¾¤ãTopicãConsumer Group åæ¶æ¯ã</p>
+<p>æ°å»º ASP.NET Core åºç¨ï¼å¹¶å®è£ RocketMQ å®¢æ·ç«¯å Swaggerï¼</p>
+<pre><code class="language-shell">dotnet new web -n RocketMQQuickStart --framework net8.0
+cd RocketMQQuickStart
+dotnet add package EventHorizon.RocketMQ.Grpc
+dotnet add package Swashbuckle.AspNetCore
+</code></pre>
+<p>å° <code>Program.cs</code> æ¿æ¢ä¸ºä¸é¢çä»£ç ï¼</p>
+<pre><code class="language-csharp">using System.Text;
+using EventHorizon.RocketMQ.Grpc;
+using EventHorizon.RocketMQ.Grpc.Consumer;
+using EventHorizon.RocketMQ.Grpc.Consumer.Push;
+using EventHorizon.RocketMQ.Grpc.Producer;
+using Microsoft.Extensions.DependencyInjection;
+using RocketMQMessage = EventHorizon.RocketMQ.Grpc.Producer.Message;
+
+const string topic = "eventhorizon-test-topic";
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+var rocketMQ = builder.Services.AddRocketMQGrpc(options =&gt;
+{
+    options.Endpoint = "127.0.0.1:8081";
+    options.UseTLS = false;
+});
+
+rocketMQ.AddGrpcProducer();
+rocketMQ.AddGrpcPushConsumer&lt;PrintMessageHandler&gt;(
+    ServiceLifetime.Scoped,
+    options =&gt;
+    {
+        options.GroupName = "rocketmq-quick-start";
+        options.Subscribe(topic, new FilterExpression("*"));
+    });
+
+var app = builder.Build();
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
+app.MapPost("/messages", async (
+    SendMessageRequest request,
+    IGrpcProducer producer,
+    CancellationToken cancellationToken) =&gt;
+{
+    var message = new RocketMQMessage(
+        topic,
+        Encoding.UTF8.GetBytes(request.Message));
+    var receipt = await producer.SendAsync(message, cancellationToken);
+
+    return Results.Ok(new { receipt.MessageId });
+})
+.WithName("SendMessage")
+.WithSummary("åéä¸æ¡ RocketMQ æ¶æ¯");
+
+await app.RunAsync();
+
+public sealed record SendMessageRequest(string Message);
+
+public sealed class PrintMessageHandler : IGrpcPushMessageHandler
+{
+    public ValueTask&lt;ConsumeResult&gt; HandleAsync(
+        GrpcMessageView message,
+        CancellationToken cancellationToken)
+    {
+        Console.WriteLine(
+            "Received: {0}",
+            Encoding.UTF8.GetString(message.Body));
+
+        return ValueTask.FromResult(ConsumeResult.Success);
+    }
+}
+</code></pre>
+<p>è¿éç <code>UseTLS = false</code> åªéç¨äºæ¬æçæ¬å°æµè¯ç¯å¢ãçäº§ç¯å¢åºæ ¹æ®å®éé¨ç½²éç½® TLS åè®¿é®å­è¯ã</p>
+<p>å¯å¨åºç¨ï¼å¹¶å°çå¬å°ååºå®ä¸º <code>http://localhost:5000</code>ï¼</p>
+<pre><code class="language-shell">dotnet run --urls http://localhost:5000
+</code></pre>
+<p>æå¼ <a href="http://localhost:5000/swagger" target="_blank" rel="noopener nofollow">Swagger UI</a>ï¼æ¾å° <code>POST /messages</code>ï¼ä½¿ç¨ä¸é¢çè¯·æ±ä½åéæ¶æ¯ï¼</p>
+<pre><code class="language-json">{
+  "message": "Hello RocketMQ"
+}
+</code></pre>
+<p>æ¥å£ä¼è¿å RocketMQ çæç <code>messageId</code>ãåä¸åºç¨ä¸­ç PushConsumer éåä¼æ¶å°è¿æ¡æ¶æ¯ï¼å¹¶å¨æ§å¶å°è¾åºï¼</p>
+<pre><code class="language-text">Received: Hello RocketMQ
+</code></pre>
+<p>è¿æ¡æ¶æ¯ç»è¿äºå®æ´ç gRPC é¾è·¯ï¼HTTP API è°ç¨ Producerï¼Producer éè¿ Proxy å°æ¶æ¯åéå° Brokerï¼PushConsumer åéè¿ Proxy è·åæ¶æ¯å¹¶äº¤ç» <code>PrintMessageHandler</code>ãHandler è¿å <code>Success</code> åï¼å®¢æ·ç«¯åæå¡ç«¯ç¡®è®¤å¤çç»æã</p>
+<h2 id="å°ç»">å°ç»</h2>
+<p>RocketMQ æåä½¿ç¨ Remoting ä½ä¸ºç»ä»¶ä¸å®¢æ·ç«¯çéä¿¡åè®®ãç»å¸å®¢æ·ç«¯ç´æ¥æ¥è¯¢ NameServerãè¿æ¥ Brokerï¼å¹¶å¨æ¬å°æ¿æè·¯ç±ãè´è½½åè¡¡ãæ¶è´¹ä½ç¹åæéå¤çç­é»è¾ãè¿ç§å¯å®¢æ·ç«¯æ¶ææçä¸è½åå®æ´ï¼ä½ä¹æé«äºå¤è¯­è¨å®ç°ãå®¢æ·ç«¯åçº§åå¤æç½ç»æ¥å¥çææ¬ã</p>
+<p>RocketMQ 5 æ²¡æç§»é¤ Remotingï¼èæ¯å¨åæ Broker å NameServer ä¹å¤å¢å äº Proxyï¼å¹¶ä½¿ç¨ Protocol Buffers å gRPC å®ä¹æ°çå®¢æ·ç«¯åè®®ãå®éè¿ç»ä¸å¥å£ãæ ååè®®åæ´è½»ç API éä½å¤è¯­è¨æ¥å¥ææ¬ï¼åæ¶ä¹å¸¦æ¥äº Proxy é¨ç½²ãæå¡ç«¯çæ¬å API è¿ç§»ç­æ°åæã</p>
+<p>ä¸¤æ¡é¾è·¯æç»é½åå° Brokerï¼æ¶æ¯åå¥ CommitLogï¼éè¿ ConsumeQueue ç­ç´¢å¼è¢« Consumer æ¾å°ï¼å¤çæååç¡®è®¤ææäº¤è¿åº¦ï¼å¤çå¤±è´¥æ¶è¿å¥éæ°æéæµç¨ãçè§£è¿ä¸ç¹ï¼åé¢åçä¸å ProducerãConsumer åæ¶æ¯ç±»åæ¶ï¼å°±ä¸ä¼æåè®®å¥å£ä¸æ¶æ¯å­å¨æ··å¨ä¸èµ·ã</p>
+<h2 id="åèèµæ">åèèµæ</h2>
+<ul>
+<li><a href="https://rocketmq.apache.org/zh/docs/sdk/01overview/" target="_blank" rel="noopener nofollow">Apache RocketMQï¼å®¢æ·ç«¯ SDK æ¦è§</a></li>
+<li><a href="https://rocketmq.apache.org/zh/version/" target="_blank" rel="noopener nofollow">Apache RocketMQï¼RocketMQ 5.0 éè§</a></li>
+<li><a href="https://rocketmq.apache.org/zh/release-notes/2022/09/09/5.0.0/" target="_blank" rel="noopener nofollow">Apache RocketMQ 5.0.0 Release Notes</a></li>
+<li><a href="https://rocketmq.apache.org/zh/docs/deploymentOperations/01deploy/" target="_blank" rel="noopener nofollow">Apache RocketMQï¼é¨ç½²æ¹å¼</a></li>
+<li><a href="https://rocketmq.apache.org/zh/docs/4.x/introduction/02whatis/" target="_blank" rel="noopener nofollow">Apache RocketMQï¼åè¯ RocketMQ</a></li>
+<li><a href="https://github.com/apache/rocketmq-apis" target="_blank" rel="noopener nofollow">Apache RocketMQ APIs</a></li>
+<li><a href="https://github.com/eventhorizon-cli/EventHorizon.RocketMQ" target="_blank" rel="noopener nofollow">EventHorizon.RocketMQ</a></li>
+</ul>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0.004861111111111111" data-date-updated="2026-08-04 23:34">2026-08-04 23:27</span>&nbsp;
+<a href="https://www.cnblogs.com/eventhorizon">é»æ´è§ç</a>&nbsp;
+éè¯»(<span id="post_view_count">10</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(22225559);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Feventhorizon%2Fp%2F22225559&amp;targetId=22225559&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ dbt+SQLServeræå»ºæ°æ®ä»åº(2)ï¼ä¸ä¼ ç»æ¹æ¡å¯¹æ¯åè¿ç§»å³ç­ ]]></title>
+    <link>https://www.cnblogs.com/aspnetx/p/22225489</link>
+    <guid>e840e0d70e694ca611574bae0c8c34e5</guid>
+    <description>
+    <![CDATA[ 
+        <h1>
+            <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/aspnetx/p/22225489" title="åå¸äº 2026-08-04 23:18">
+    
+
+    <span role="heading" aria-level="2">dbt+SQLServeræå»ºæ°æ®ä»åº(2)ï¼ä¸ä¼ ç»æ¹æ¡å¯¹æ¯åè¿ç§»å³ç­</span>
+    
+
+</a>
+
+        </h1>
+        <div class="postbody">
+                <div id="cnblogs_post_description" style="display: none">
+        
+        æ¬ææ¥ä¸ç¯ç dbt å®ä½ä¸å·¥ä½æµç¨, è®²è¿°:dbt å SQL Server ä¸ä¼ ç»æ°ä»å¼åç¸æ¯æåªäºèå¼å·®å¼ååèã
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<blockquote>
+<p>æ¬ææ¥ä¸ç¯ç dbt å®ä½ä¸å·¥ä½æµç¨, è®²è¿°:<strong>dbt å SQL Server ä¸ä¼ ç»æ°ä»å¼åç¸æ¯æåªäºèå¼å·®å¼ååè</strong>ã</p>
+</blockquote>
+<h2 id="ä¸å¼è¨">ä¸ãå¼è¨</h2>
+<p>ä¸ç¯æä»¬å¼æ¸äº dbt æ¯ä»ä¹ãä¸ä¸ª dbt é¡¹ç®æä¹è·èµ·æ¥ãä½"dbt å¥½ä¸å¥½"æ¯ä¸ªä¼ªå½é¢ââ<strong>å¥½åæ¯ç¸å¯¹ç,å¾æåç§ç³»</strong>ãè¿ä¸ªåç§ç³»å°±æ¯å¢éç°å¨ç¨ç SQL Server ä¼ ç»æ°ä»æ ã</p>
+<p>æä»¥æ¬æåæç»ä¼ ç»æ¹æ¡çå¸åå½¢æåçå®çç¹,åä»å­ä¸ªç»´åº¦ä¸ dbt ç³»ç»å¯¹æ¯,æåç»å³ç­ç©éµåè¿ç§»å»ºè®®ãæ¬æä¸ç«é,ç®æ æ¯æä¸¤ç§èå¼çå·®å¼è®²é,è®©ä½ è½æ ¹æ®å¢éæåµåå¤æ­ã</p>
+<h2 id="äºä¼ ç»-sql-server-æ°ä»é¡¹ç®é¿ä»ä¹æ ·">äºãä¼ ç» SQL Server æ°ä»é¡¹ç®é¿ä»ä¹æ ·</h2>
+<h3 id="21-å¸åææ¯æ ">2.1 å¸åææ¯æ </h3>
+<table>
+<thead>
+<tr>
+<th>å±</th>
+<th>å·¥å·</th>
+<th>ä½ç¨</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ETL</td>
+<td><strong>SSIS</strong> (SQL Server Integration Services)</td>
+<td>æ½åãå è½½ãè½¬æ¢ä¸ä½å</td>
+</tr>
+<tr>
+<td>è½¬æ¢</td>
+<td><strong>å­å¨è¿ç¨</strong> (T-SQL)</td>
+<td>å¤æä¸å¡é»è¾</td>
+</tr>
+<tr>
+<td>è°åº¦</td>
+<td><strong>SQL Server Agent</strong></td>
+<td>å®æ¶è· SSIS å / å­å¨è¿ç¨</td>
+</tr>
+<tr>
+<td>OLAP</td>
+<td><strong>SSAS</strong> (Analysis Services)</td>
+<td>å¤ç»´æ¨¡å / è®¡ç®</td>
+</tr>
+<tr>
+<td>æ¥è¡¨</td>
+<td><strong>SSRS</strong> / Power BI</td>
+<td>æ¥è¡¨ä¸å¯è§å</td>
+</tr>
+<tr>
+<td>IDE</td>
+<td><strong>SSMS</strong> (SQL Server Management Studio)</td>
+<td>ä¸»è¦å¼åç¯å¢</td>
+</tr>
+<tr>
+<td>çæ¬æ§å¶</td>
+<td>æ°æ®åºé¡¹ç® + SSDT(å¯é)</td>
+<td>è¾å¼±,å¾å¤äººä¸ç¨</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22-å¸åå¼åæµç¨">2.2 å¸åå¼åæµç¨</h3>
+<p>ä¸ä¸ªæ°éæ±çä¼ ç»æµç¨:</p>
+<ol>
+<li><strong>éæ±åæ</strong> â ç¡®è®¤ææ å®ä¹ãç²åº¦ãæ¥æº</li>
+<li><strong>è®¾è®¡</strong> â ç» ER å¾ãå®è¡¨ç»æãåè®¾è®¡ææ¡£</li>
+<li><strong>å»ºè¡¨</strong> â å¨ SSMS é <code>CREATE TABLE ...</code>,DDL æ£è½åå¤</li>
+<li><strong>åå­å¨è¿ç¨</strong> â ä¸ä¸ª <code>sp_dim_customer_build</code> ä¹ç±»çè¿ç¨,å ç¾ä¸åè¡ T-SQL</li>
+<li><strong>å SSIS å</strong>(å¦æéè¦è·¨æº) â ææ½å¼è®¾è®¡å¨,çæ .dtsx XML</li>
+<li><strong>é Agent Job</strong> â è®¾ç½®è°åº¦ãåè­¦ãéè¯</li>
+<li><strong>æå·¥æµè¯</strong> â è·ä¸é,èç¼çæ°æ®å¯¹ä¸å¯¹</li>
+<li><strong>é¨ç½²</strong> â æå­å¨è¿ç¨èæ¬æ¿å» QA/Prod åºæ§è¡,SSIS åå¯¼å¥ msdb</li>
+<li><strong>ææ¡£</strong> â åç¬å Word/Confluence,å¾å¿«åä»£ç è±è</li>
+</ol>
+<h3 id="23-ä¼ ç»æ¹æ¡ççå®çç¹">2.3 ä¼ ç»æ¹æ¡ççå®çç¹</h3>
+<p>è¿äºä¸æ¯çè®ºé®é¢,æ¯é¡¹ç®éå®æå®éå°ç:</p>
+<ol>
+<li><strong>ä¾èµå³ç³»é äººè®°</strong>:å­å¨è¿ç¨ A ä¾èµ B å C,åªæè·æäºæç¥éãæ¹ B ä¹åè¦å¨å¬å¸åé®ä»¶é®"è°å¨ç¨ B"ã</li>
+<li><strong>æµè¯åºæ¬é èç¼</strong>:é¤äºå¶å°å <code>IF EXISTS</code> æ£æ¥,æ°æ®è´¨éé ä¸å¡æ¹æè¯åç°ã</li>
+<li><strong>çæ¬æ§å¶å½¢åèè®¾</strong>:å­å¨è¿ç¨æ¹å¨ SSMS éç´æ¥ <code>ALTER</code>,åå²é æ°æ®åºå¤ä»½ãSSIS ç .dtsx æ¯äºè¿å¶ XML,diff å ä¹ä¸å¯è¯»ã</li>
+<li><strong>ç¯å¢ä¸ä¸è´</strong>:Dev åºçå­å¨è¿ç¨çæ¬å Prod ä¸ä¸æ ·,è¿ç§»é "å¤å¶ç²è´´ + ç¥ç¥·"ã</li>
+<li><strong>ææ¡£ç§çº§èç</strong>:Word ææ¡£åå®å°±è¿æ¶,æ²¡äººæ¢ä¿¡ã</li>
+<li><strong>éç¨é å¤å¶</strong>:åæ ·çé»è¾å¨åä¸ªè¿ç¨éå¤å¶åé,æ¹ä¸å¤è¦æ¹åå¤ã</li>
+<li><strong>æ°äººä¸ææ¢</strong>:çè§£ä¸ä¸ªæ°ä»è¦åè¯» N ä¸ªå­å¨è¿ç¨çè°ç¨é¾,ä¸å¨æè½æ¹ä¸ä¸ªå­æ®µã</li>
+</ol>
+<h2 id="ä¸å¯¹æ¯åædbt-vs-ä¼ ç»-sql-server-æ¹æ¡">ä¸ãå¯¹æ¯åæ:dbt vs ä¼ ç» SQL Server æ¹æ¡</h2>
+<p>ä¸é¢ä»å­ä¸ªç»´åº¦ç³»ç»å¯¹æ¯ãæ¯ä¸ªç»´åº¦é½ç»åºä¸¤èçå·ä½å½¢æååèã</p>
+<h3 id="31-èå¼å·®å¼å£°æå¼-vs-å½ä»¤å¼">3.1 èå¼å·®å¼:å£°æå¼ vs å½ä»¤å¼</h3>
+<p>è¿æ¯ææ ¹æ¬çå·®å¼ã</p>
+<p><strong>ä¼ ç»å­å¨è¿ç¨(å½ä»¤å¼)</strong>:</p>
+<pre><code class="language-sql">CREATE PROCEDURE sp_build_dim_customer AS
+BEGIN
+    TRUNCATE TABLE dim_customer;
+
+    INSERT INTO dim_customer (customer_id, first_name, last_name, ltv)
+    SELECT c.id, c.first_name, c.last_name, SUM(p.amount)
+    FROM raw_customer c
+    LEFT JOIN raw_order o ON c.id = o.user_id
+    LEFT JOIN raw_payment p ON o.id = p.order_id
+    WHERE p.status = 'completed'
+    GROUP BY c.id, c.first_name, c.last_name;
+
+    -- æå¨åæ¥å¿
+    INSERT INTO etl_log (proc_name, rows_affected, run_at)
+    VALUES ('sp_build_dim_customer', @@ROWCOUNT, GETDATE());
+END
+</code></pre>
+<p>ä½ <strong>æ¾å¼æ§å¶</strong>æ¯ä¸æ­¥:æ¸è¡¨ãæå¥ãè®°æ¥å¿ãæ¥éå¤çãçµæ´»,ä½æ ·æ¿ä»£ç å¤,æ¯ä¸ªè¿ç¨é½è¦éå¤ã</p>
+<p><strong>dbt model(å£°æå¼)</strong>:</p>
+<pre><code class="language-sql">-- models/marts/dim_customers.sql
+with customers as (select * from {{ ref('stg_customers') }}),
+     payments as (
+         select customer_id, sum(amount) as ltv
+         from {{ ref('stg_payments') }}
+         where status = 'completed'
+         group by customer_id
+     )
+select c.customer_id, c.first_name, c.last_name,
+       coalesce(p.ltv, 0) as ltv
+from customers c
+left join payments p on c.customer_id = p.customer_id
+</code></pre>
+<pre><code class="language-yaml"># dbt_project.yml éå£°æç©å
+models:
+  my_project:
+    marts:
+      +materialized: table   # dbt èªå¨å¤ç truncate + insert
+</code></pre>
+<p>ä½ åª<strong>å£°æè½¬æ¢é»è¾åç©åæå¾</strong>,dbt è´è´£:æ¸è¡¨ãå»ºè¡¨ãä¾èµé¡ºåºãæ¥å¿ãéè¯¯å¤çã</p>
+<p><strong>åè</strong>:</p>
+<ul>
+<li>å£°æå¼çå¿,ä½å¤±å»å¯¹ç»èçæ§å¶(å¦èªå®ä¹äºå¡ãç¹æ®éæç¤º)</li>
+<li>å½ä»¤å¼çµæ´»,ä½æ ·æ¿ä»£ç è¨è,æåºé</li>
+<li>dbt ä»å¯å <code>pre-hook</code>/<code>post-hook</code> æ³¨å¥å½ä»¤å¼é»è¾,ä¸¤èå¹¶éæ°´ç«ä¸å®¹</li>
+</ul>
+<h3 id="32-å·¥ç¨åè½åå¯¹æ¯">3.2 å·¥ç¨åè½åå¯¹æ¯</h3>
+<table>
+<thead>
+<tr>
+<th>è½å</th>
+<th>ä¼ ç»æ¹æ¡</th>
+<th>dbt</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>çæ¬æ§å¶</strong></td>
+<td>SSDT æ°æ®åºé¡¹ç®(å¼±éç¨)æè£¸èæ¬</td>
+<td>åç git,æ¯ä¸ª .sql/.yml é½æ¯ææ¬</td>
+</tr>
+<tr>
+<td><strong>ä¾èµç®¡ç</strong></td>
+<td>äººå·¥ç»´æ¤è°ç¨é¾</td>
+<td><code>ref()</code> èªå¨è§£æ DAG</td>
+</tr>
+<tr>
+<td><strong>åå/æ°æ®æµè¯</strong></td>
+<td>æå <code>IF EXISTS</code> æ£æ¥</td>
+<td>åå»º <code>unique</code>/<code>not_null</code>/<code>relationships</code>/<code>accepted_values</code> + èªå®ä¹</td>
+</tr>
+<tr>
+<td><strong>CI/CD</strong></td>
+<td>å ä¹æ²¡æ,é æå¨é¨ç½²</td>
+<td>GitHub Actions/GitLab CI è· <code>dbt build</code>,PR èªå¨éªè¯</td>
+</tr>
+<tr>
+<td><strong>ææ¡£</strong></td>
+<td>Word/Confluence,ä¸ä»£ç è±è</td>
+<td><code>dbt docs</code> ä»ä»£ç çæ,å« DAG è¡ç¼å¾</td>
+</tr>
+<tr>
+<td><strong>ç¯å¢éç¦»</strong></td>
+<td>éè§é¾:Dev &lt; QA &lt; Prod,è¿ç§»é èæ¬</td>
+<td><code>--target dev/prod</code> + profile åæ¢,schema åç¼å¤©ç¶éç¦»</td>
+</tr>
+<tr>
+<td><strong>ä»£ç å¤ç¨</strong></td>
+<td>å¤å¶å­å¨è¿ç¨,æåæ éå½æ°(æ§è½å·®)</td>
+<td>macro å¤ç¨,ç¼è¯æåè,æ è¿è¡æ¶å¼é</td>
+</tr>
+<tr>
+<td><strong>å¯éç°æ§</strong></td>
+<td>åæ ·çèæ¬å¨ä¸ååºå¯è½è·åºä¸åç»æ</td>
+<td>åæ ·çä»£ç  + åæ ·ç seed â å®å¨ä¸è´</td>
+</tr>
+</tbody>
+</table>
+<p>è¿ä¸æ æ¯ dbt æå¤§çä¼å¿æå¨ãä¼ ç»æ¹æ¡ä¸æ¯ä¸è½åè¿äºäº,èæ¯<strong>æ¯ä»¶é½è¦èªå·±æ­</strong>:èªå·±åæµè¯æ¡æ¶ãèªå·±åææ¡£çæå¨ãèªå·±æ CI èæ¬ãdbt å¼ç®±å³ç¨ã</p>
+<h3 id="33-å¼åä½éªå¯¹æ¯">3.3 å¼åä½éªå¯¹æ¯</h3>
+<table>
+<thead>
+<tr>
+<th>ç»´åº¦</th>
+<th>ä¼ ç»æ¹æ¡ (SSMS + å­å¨è¿ç¨)</th>
+<th>dbt (CLI + ä»»æç¼è¾å¨)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ç¼è¾å¨</td>
+<td>SSMS(åªè½ Windows)</td>
+<td>VS Code / Vim / ä»»æç¼è¾å¨(è·¨å¹³å°)</td>
+</tr>
+<tr>
+<td>åé¦éåº¦</td>
+<td>æ¹å® â é¨ç½² â ç­è°åº¦ â çç»æ(åé~å°æ¶)</td>
+<td><code>dbt run --select x</code>(ç§çº§)</td>
+</tr>
+<tr>
+<td>è°è¯</td>
+<td><code>PRINT</code> è¯­å¥ + ä¸´æ¶è¡¨</td>
+<td><code>dbt compile</code> ççæç SQL + <code>dbt show --inline</code></td>
+</tr>
+<tr>
+<td>æ¹å¨èå´</td>
+<td>å¨ææç´¢å­å¨è¿ç¨åæ¾è°ç¨æ¹</td>
+<td><code>dbt ls --select x+</code> ä¸é®ååºææä¸æ¸¸</td>
+</tr>
+<tr>
+<td>å­¦ä¹ ææ</td>
+<td>MSDN ææ¡£ + å¬å¸åé¨ Wiki</td>
+<td>å®æ¹ææ¡£ + ç¤¾åº + å¤§éåå®¢/è¯¾ç¨</td>
+</tr>
+<tr>
+<td>å¢éåä½</td>
+<td>éå¯¹è±¡ãåå¹¶å²çªé¾</td>
+<td>git æ å workflow,PR review</td>
+</tr>
+</tbody>
+</table>
+<p>å¼åä½éªçå·®å¼æ¯æç´è§çãdbt è®©æ°æ®å·¥ç¨å¸è½åè½¯ä»¶å·¥ç¨å¸ä¸æ ·å·¥ä½ââè¿æ¯å®è½å¨åä¸å¬å¸åäºåçå¢éè¿éæ®åçæ ¹æ¬åå ã</p>
+<h3 id="34-æ§è½ä¸è°åº¦å¯¹æ¯">3.4 æ§è½ä¸è°åº¦å¯¹æ¯</h3>
+<table>
+<thead>
+<tr>
+<th>ç»´åº¦</th>
+<th>ä¼ ç»æ¹æ¡</th>
+<th>dbt</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>è°åº¦å¨</td>
+<td>SQL Server Agent(æçãä¼ä¸çº§ãUI å¨)</td>
+<td>ä¸åç½®,éå¤æ¥(Airflow/dbt Cloud/cron)</td>
+</tr>
+<tr>
+<td>å¹¶åæ§è¡</td>
+<td>Agent Job å¤æ­¥ä¸²è¡ä¸ºä¸»</td>
+<td><code>threads: N</code> å¹¶åè·ç¬ç«èç¹</td>
+</tr>
+<tr>
+<td>å¢éå è½½</td>
+<td>å­å¨è¿ç¨ + MERGE/IDENTITY æå</td>
+<td><code>materialized=incremental</code> + <code>unique_key</code> å£°æå¼</td>
+</tr>
+<tr>
+<td>äºå¡</td>
+<td>å®æ´ T-SQL äºå¡æ§å¶(é»è®¤)</td>
+<td>é»è®¤ auto-commit,é flag å¯ç¨ BEGIN/COMMIT</td>
+</tr>
+<tr>
+<td>æ§è½è°ä¼</td>
+<td>ç´¢å¼ãååºãåå­ãåå­ä¼åè¡¨å¨å¯æ§</td>
+<td>åæ ·å¯æ§,ä½ééè¿ <code>post-hook</code>/åç SQL æ³¨å¥</td>
+</tr>
+<tr>
+<td>èµæºéç¦»</td>
+<td>Agent Job å¯ç» CPU/åå­</td>
+<td>ä¾èµæ°æ®åºä¾§çèµæºæ± </td>
+</tr>
+</tbody>
+</table>
+<p><strong>ç»è®º</strong>:</p>
+<ul>
+<li><strong>è°åº¦æçåº¦</strong>:ä¼ ç»æ¹æ¡èãSQL Server Agent æ¯ä¼ä¸çº§è°åº¦å¨,dbt è°åº¦éå¤æ¥</li>
+<li><strong>è½¬æ¢æ§è½</strong>:ä¸¤èæ¬è´¨é½æ¯è· T-SQL,å·®å¼ä¸å¤§ãä¼ ç»æ¹æ¡å¯¹åºå±æ§å¶æ´ç»</li>
+<li><strong>å¢éå è½½</strong>:dbt å£°æå¼æ´çå¿,ä½å¤æå¢éåºæ¯(å¦å¤æº MERGE + èªå®ä¹é»è¾)ä¼ ç»æ¹æ¡æ´çµæ´»</li>
+</ul>
+<h3 id="35-sql-server-æ¹è¨éé">3.5 SQL Server æ¹è¨éé</h3>
+<p>è¿æ¯ææ¾ç»è¸©è¿çå,å¼å¾åç¬æã</p>
+<p><strong>ä¼ ç»æ¹æ¡</strong>:ç´æ¥å T-SQL,æ¹è¨å°±æ¯æ¹è¨,æ ééé®é¢ã</p>
+<p><strong>dbt-sqlserver</strong>:dbt-core æ¯æ¹è¨æ å³ç,ééå¨å±è´è´£ç¿»è¯ãä½ dbt-sqlserver æå ä¸ª <strong>legacy è¡ä¸º</strong>ä¸ dbt-core é»è®¤ä¸ä¸è´:</p>
+<table>
+<thead>
+<tr>
+<th>è¡ä¸º</th>
+<th>dbt-core é»è®¤</th>
+<th>dbt-sqlserver é»è®¤</th>
+<th>å¯ç¨æ åè¡ä¸ºç flag</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>schema æ¼æ¥</td>
+<td><code>target.schema + '_' + custom</code></td>
+<td><code>custom</code> ç´æ¥ç¨(ä¸¢åç¼)</td>
+<td><code>dbt_sqlserver_use_default_schema_concat: true</code></td>
+</tr>
+<tr>
+<td>äºå¡</td>
+<td>emit <code>BEGIN TRAN</code>/<code>COMMIT</code></td>
+<td>auto-commit,å¤±è´¥ä¸åæ»</td>
+<td><code>dbt_sqlserver_use_dbt_transactions: true</code></td>
+</tr>
+<tr>
+<td>å­ç¬¦ä¸²ç±»å</td>
+<td><code>STRING â VARCHAR(MAX)</code></td>
+<td><code>STRING â VARCHAR(8000)</code></td>
+<td><code>dbt_sqlserver_use_native_string_types: true</code></td>
+</tr>
+</tbody>
+</table>
+<p>æå¨å®éä½¿ç¨çæ¶åï¼å°±å ä¸ºç¬¬ä¸ä¸ªå(schema æ¼æ¥)ç¬¬ä¸æ¬¡ <code>dbt run</code> æ¥éãè§£å³æ¹æ¡æ¯å¨ <code>dbt_project.yml</code> å :</p>
+<pre><code class="language-yaml">flags:
+  dbt_sqlserver_use_default_schema_concat: true
+</code></pre>
+<p><strong>å¯ç¤º</strong>:è·¨ééå¨è¿ç§»æ¶,<code>generate_schema_name</code> è¿ç±» macro æ¯é«é£é©ç¹,å¡å¿å®¡é dbt è¾åºçææ WARNINGã</p>
+<h3 id="36-å­¦ä¹ æ²çº¿ä¸å¢ééé">3.6 å­¦ä¹ æ²çº¿ä¸å¢ééé</h3>
+<table>
+<thead>
+<tr>
+<th>ç»´åº¦</th>
+<th>ä¼ ç»æ¹æ¡</th>
+<th>dbt</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>åç½®ç¥è¯</td>
+<td>T-SQL + SSIS + Agent(é½æ¯å¾®è½¯çæ)</td>
+<td>SQL + Jinja + YAML + å½ä»¤è¡</td>
+</tr>
+<tr>
+<td>å­¦ä¹ æ²çº¿</td>
+<td>SSIS ææ½ä¸æå¿«,æ·±æ°´åºæ·±</td>
+<td>dbt æ¬èº«ç®å,Jinja/macros æ¯è¿é¶é¾ç¹</td>
+</tr>
+<tr>
+<td>å¢éèæ¯å¹é</td>
+<td>DBA / æ°æ®åºå¼åçæçå·¥å·é¾</td>
+<td>æ°æ®åæå¸ / è½¯ä»¶å·¥ç¨å¸çæçå·¥å·é¾</td>
+</tr>
+<tr>
+<td>æè</td>
+<td>å½å SQL Server DBA æ± å­ç¨³å®ä½ç¼©æ°´</td>
+<td>dbt äººæç¨ç¼ºä½å¢é¿å¿«</td>
+</tr>
+<tr>
+<td>å¹è®­ææ¬</td>
+<td>èå¢éé¶ææ¬</td>
+<td>èå¢éé 1-2 ä¸ªæè¿æ¸¡</td>
+</tr>
+<tr>
+<td>çææ¯æ§</td>
+<td>å·²æ SSIS å / Agent Job çåå²åè¢±</td>
+<td>æ°é¡¹ç®é¶è´æ</td>
+</tr>
+</tbody>
+</table>
+<p><strong>å³é®å¤æ­</strong>:å¦æå¢éæ¯ DBA ä¸»å¯¼ãå·²æå¤§é SSIS èµäº§,å¨é¢è¿ç§» dbt ä¸ç°å®;å¦ææ¯æ°æ®å·¥ç¨å¸/åæå¸ä¸»å¯¼ãæ°é¡¹ç®èµ·æ­¥,dbt å ä¹æ¯é»è®¤éæ©ã</p>
+<h2 id="åä½æ¶é-dbtä½æ¶éä¼ ç»æ¹æ¡">åãä½æ¶é dbt,ä½æ¶éä¼ ç»æ¹æ¡</h2>
+<p>åºäºä¸é¢çå¯¹æ¯,ç»ä¸ä¸ªå³ç­ç©éµ:</p>
+<h3 id="41-é-dbt-çåºæ¯">4.1 é dbt çåºæ¯</h3>
+<ul>
+<li>â <strong>æ°é¡¹ç®ä»é¶èµ·æ­¥</strong>,æ²¡æåå²åè¢±</li>
+<li>â å¢éä»¥<strong>æ°æ®åæå¸/å·¥ç¨å¸</strong>ä¸ºä¸»,çæ git/CLI</li>
+<li>â æ°æ®å·²è½åº(ELT æ¨¡å¼),åªéå T</li>
+<li>â éè§<strong>å·¥ç¨å</strong>(æµè¯ãCIãææ¡£ãä»£ç å®¡æ¥)</li>
+<li>â æªæ¥å¯è½<strong>è·¨äºè¿ç§»</strong>(dbt ééå¨æºå¶è®©è¿ç§»ææ¬å¯æ§)</li>
+<li>â æ°æ®æ¨¡åè¿­ä»£é¢ç¹,éè¦å¿«éè¯é</li>
+</ul>
+<h3 id="42-éä¼ ç»æ¹æ¡çåºæ¯">4.2 éä¼ ç»æ¹æ¡çåºæ¯</h3>
+<ul>
+<li>â <strong>å·²æå¤§é SSIS å / å­å¨è¿ç¨</strong>,è¿ç§»ææ¬é«äºæ¶ç</li>
+<li>â å¢éæ¯ <strong>DBA / SQL Server èåµ</strong>,dbt å­¦ä¹ ææ¬é«</li>
+<li>â éè¦<strong>éåº¦ OLAP</strong>(SSAS å¤ç»´æ¨¡å,dbt ä¸è¦ç)</li>
+<li>â è°åº¦å¤æåº¦é«(SQL Server Agent çåè­¦ãéè¯ãä½ä¸é¾æç)</li>
+<li>â å¼ºä¾èµ SQL Server ç¹æåè½(åå­ä¼åè¡¨ãåå­ç´¢å¼ãPolyBase)</li>
+<li>â åè§è¦æ±ä¸¥æ ¼,å¾®è½¯å®æ¹æ¯ææ´ç¨³å¦¥</li>
+</ul>
+<h3 id="43-å³ç­æ ">4.3 å³ç­æ </h3>
+<pre><code>æ¯æ°é¡¹ç®å?
+ââ æ¯ â å¢éèæ¯?
+â       ââ æ°æ®å·¥ç¨å¸/åæå¸ä¸ºä¸» â dbt
+â       ââ DBA ä¸ºä¸» â ä¼ ç»æ¹æ¡ æ dbt(è§å­¦ä¹ ææ¿)
+ââ å¦(å·²æèµäº§) â èµäº§è§æ¨¡?
+        ââ å°(&lt;50 ä¸ªè¿ç¨/å) â å¯èèå¨éè¿ dbt
+        ââ ä¸­ (50-500) â æ··åæ¹æ¡, æ°éæ±ç¨ dbt, èççç
+        ââ å¤§ (&gt;500) â ä¼ ç»æ¹æ¡ç»´æ, ä»æ°æ¨¡åè¯ä¼° dbt
+</code></pre>
+<h2 id="äºæ··åæ¹æ¡ç°å®ä¸­æå¸¸è§çè½å°">äºãæ··åæ¹æ¡:ç°å®ä¸­æå¸¸è§çè½å°</h2>
+<p>å®éé¡¹ç®é,çº¯ dbt æçº¯ä¼ ç»æ¹æ¡é½å°è§,<strong>æ··åæ¹æ¡æ¯ä¸»æµ</strong>:</p>
+<pre><code>âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+â  æ°æ®æº (MySQL / API / æä»¶)                         â
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+                    â
+                    â  SSIS / Airbyte å E+L (èèµäº§å¤ç¨)
+                    â¼
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+â  SQL Server åå§åº (raw schema)                     â
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+                    â
+                    â  dbt å T (è½¬æ¢å±, æ°æ¹å¼)
+                    â  dbt_project.yml + models/
+                    â¼
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+â  SQL Server æ°ä»å± (staging/marts schema)          â
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+                    â
+                    â  SQL Server Agent / Airflow è°åº¦ dbt
+                    â¼
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+â  Power BI / SSRS æ¶è´¹                               â
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+</code></pre>
+<p>è½å°ç­ç¥:</p>
+<ol>
+<li><strong>ä¿ç SSIS å E+L</strong>:å·²ç»ç¨³å®çæ½åé»è¾æ²¡å¿è¦éå</li>
+<li><strong>è½¬æ¢å±åå° dbt</strong>:æ°éæ±ä¸å¾ç¨ dbt model,æ§å­å¨è¿ç¨éæ­¥è¿</li>
+<li><strong>è°åº¦ç¨ Agent è° dbt</strong>:Agent Job éè· <code>dbt run --target prod</code>,å¤ç¨æçåè­¦</li>
+<li><strong>OLAP å±ä¿æ SSAS</strong>:dbt ä¸è¦çå¤ç»´æ¨¡å,è¯¥ç¨ SSAS è¿ç¨ SSAS</li>
+<li><strong>BI å±ä¸å</strong>:Power BI çå°çæ¯è¡¨,ä¸å³å¿æ¯å­å¨è¿ç¨è¿æ¯ dbt äº§ç</li>
+</ol>
+<p>è¿æ ·æ¢äº«å dbt çå·¥ç¨åçº¢å©,åä¸æµªè´¹å·²ææèµã</p>
+<h2 id="å­è¿ç§»å»ºè®®">å­ãè¿ç§»å»ºè®®</h2>
+<p>å¦æå¢éå³å®ä»ä¼ ç»æ¹æ¡è¿ dbt,å»ºè®®:</p>
+<h3 id="61-æ¸è¿å¼ä¸è¦å¤§çç¸">6.1 æ¸è¿å¼,ä¸è¦å¤§çç¸</h3>
+<ul>
+<li>éä¸ä¸ª<strong>ç¬ç«çå°ä¸å¡å</strong>(å¦æä¸ªé¨é¨çæ¥è¡¨)åè¯ç¹</li>
+<li>ç¨ dbt éå»ºè¯¥åçè½¬æ¢,ä¸èå­å¨è¿ç¨å¹¶è¡è¿è¡ 1-2 ä¸ªæ</li>
+<li>æ°æ®å¯¹é½ååæ¢ BI,ä¸çº¿èè¿ç¨</li>
+</ul>
+<h3 id="62-åå»ºåå±åè¿é»è¾">6.2 åå»ºåå±,åè¿é»è¾</h3>
+<p>è¿ç§»ååå¨ dbt éæ­å¥½ <code>raw / staging / marts</code> ä¸å±éª¨æ¶ãèå­å¨è¿ç¨éå¸¸æ¯"ä¸éç"ââæ¸æ´ãèåãä¸å¡é»è¾æ··å¨ä¸èµ·ãè¿ç§»æ¶<strong>è¶æºåå±</strong>,è´¨éä¼æåä¸æ¡£ã</p>
+<h3 id="63-ææµè¯å½ä¸ç­å¬æ°">6.3 ææµè¯å½ä¸ç­å¬æ°</h3>
+<p>è¿ä¸ä¸ª model å°±éä¸ä¸ª <code>schema.yml</code> æµè¯ãä¼ ç»æ¹æ¡ç¼ºæµè¯,è¿ç§»æ¯è¡¥æµè¯çæä½³æ¶æºã<strong>æ²¡ææµè¯çè¿ç§»ç­äºæ²¡è¿</strong>ââä½ æ æ³è¯ææ°é»è¾åèé»è¾ç­ä»·ã</p>
+<h3 id="64-ééå¨-flag-ä¸æ¬¡éé½">6.4 ééå¨ flag ä¸æ¬¡éé½</h3>
+<p>ä¸ºé¿åè¸© schema æ¼æ¥çåãå»ºè®® dbt-sqlserver é¡¹ç®åå§å°±æä¸ä¸ª flag éä¸:</p>
+<pre><code class="language-yaml">flags:
+  dbt_sqlserver_use_default_schema_concat: true
+  dbt_sqlserver_use_dbt_transactions: true
+  dbt_sqlserver_use_native_string_types: true
+</code></pre>
+<p>é¿ååç»­éä¸ªè¸©é·ã</p>
+<h3 id="65-è°åº¦å¹³æ»è¿æ¸¡">6.5 è°åº¦å¹³æ»è¿æ¸¡</h3>
+<p>ç¬¬ä¸é¶æ®µ:SQL Server Agent è° <code>dbt run</code>(å½ä»¤è¡åä¸å±)<br>
+ç¬¬äºé¶æ®µ:å¼å¥ Airflow / Dagster,ç»ä¸è°åº¦æ°èèµäº§<br>
+ç¬¬ä¸é¶æ®µ:èå­å¨è¿ç¨éæ­¥è¿æ dbt model,æç»ä¸çº¿ Agent Job</p>
+<h2 id="ä¸æ»ç»">ä¸ãæ»ç»</h2>
+<p>æå¨ææµç¼©æå æ¡:</p>
+<ol>
+<li><strong>dbt ä¸æ¯ SSIS çæ¿ä»£å,èæ¯"è½¬æ¢å±"çç°ä»£åæ¹æ¡</strong>ãE+L ä»å¯å¤ç¨ SSIS,åªæ T åå° dbtã</li>
+<li><strong>dbt çæ ¸å¿ä»·å¼æ¯å·¥ç¨å</strong>:git / æµè¯ / ææ¡£ / CI / DAG èªå¨è§£æ,è¿äºæ¯ä¼ ç» SQL Server æ°ä»æç¼ºçã</li>
+<li><strong>ä¼ ç»æ¹æ¡çæ ¸å¿ä¼å¿æ¯ä¼ä¸çº§è°åº¦åæ¹è¨åç</strong>:SQL Server AgentãSSASãT-SQL å¨åè½,å¨å¾®è½¯çæéä»é¾æ¿ä»£ã</li>
+<li><strong>æ··åæ¹æ¡æ¯ç°å®æä¼è§£</strong>:SSIS å E+L,dbt å T,Agent/Airflow è°åº¦,SSAS å OLAP,Power BI åå±ç¤ºã</li>
+<li><strong>dbt-sqlserver æ legacy å</strong>(schema æ¼æ¥ãäºå¡ãå­ç¬¦ä¸²ç±»å),æ°é¡¹ç®å¡å¿å¨ <code>dbt_project.yml</code> éé½ä¸ä¸ª flagã</li>
+<li><strong>è¿ç§»è¦æ¸è¿</strong>:éå°åè¯ç¹,åå±éå»º,æµè¯åè¡,è°åº¦å¹³æ»è¿æ¸¡ã</li>
+</ol>
+<hr>
+<h2 id="éæ ¸å¿æ¦å¿µå¯¹ç§éæ¥è¡¨">é:æ ¸å¿æ¦å¿µå¯¹ç§éæ¥è¡¨</h2>
+<table>
+<thead>
+<tr>
+<th>ç»´åº¦</th>
+<th>ä¼ ç» SQL Server æ¹æ¡</th>
+<th>dbt æ¹æ¡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>è½¬æ¢åå</td>
+<td>å­å¨è¿ç¨ / è§å¾</td>
+<td>model (.sql)</td>
+</tr>
+<tr>
+<td>ä¾èµç®¡ç</td>
+<td>äººå·¥ç»´æ¤</td>
+<td><code>ref()</code> èªå¨ DAG</td>
+</tr>
+<tr>
+<td>ç©åå³ç­</td>
+<td>æå DDL</td>
+<td><code>+materialized</code> éç½®</td>
+</tr>
+<tr>
+<td>æ°æ®æµè¯</td>
+<td>æå <code>IF EXISTS</code></td>
+<td>YAML å£°æ + åå»º generic tests</td>
+</tr>
+<tr>
+<td>å¢éå è½½</td>
+<td>æå MERGE</td>
+<td><code>materialized=incremental</code></td>
+</tr>
+<tr>
+<td>åå²æé¾</td>
+<td>æå SCD2 è¡¨ + MERGE</td>
+<td>snapshot èµæº</td>
+</tr>
+<tr>
+<td>ä»£ç å¤ç¨</td>
+<td>å¤å¶ / æ éå½æ°</td>
+<td>macro (Jinja)</td>
+</tr>
+<tr>
+<td>è°åº¦</td>
+<td>SQL Server Agent</td>
+<td>å¤æ¥ (Airflow / dbt Cloud)</td>
+</tr>
+<tr>
+<td>çæ¬æ§å¶</td>
+<td>SSDT(å¼±)</td>
+<td>git åç</td>
+</tr>
+<tr>
+<td>ææ¡£</td>
+<td>Word/Confluence</td>
+<td><code>dbt docs</code> èªå¨çæ</td>
+</tr>
+<tr>
+<td>IDE</td>
+<td>SSMS (Windows only)</td>
+<td>ä»»æç¼è¾å¨ (è·¨å¹³å°)</td>
+</tr>
+<tr>
+<td>è°è¯</td>
+<td>PRINT + ä¸´æ¶è¡¨</td>
+<td><code>dbt compile</code> + <code>dbt show</code></td>
+</tr>
+<tr>
+<td>ç¯å¢éç¦»</td>
+<td>å¤åºå®ä¾</td>
+<td><code>--target</code> + schema åç¼</td>
+</tr>
+<tr>
+<td>æ¹è¨</td>
+<td>T-SQL åç</td>
+<td>ééå¨ç¿»è¯(æ legacy å·®å¼)</td>
+</tr>
+<tr>
+<td>OLAP</td>
+<td>SSAS å¤ç»´æ¨¡å</td>
+<td>ä¸è¦ç</td>
+</tr>
+<tr>
+<td>æ¥è¡¨</td>
+<td>SSRS / Power BI</td>
+<td>ä¸è¦ç(äº¤ç» BI å·¥å·)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="åè">åè</h2>
+<ul>
+<li>dbt å®æ¹ææ¡£: <a href="https://docs.getdbt.com/" target="_blank" rel="noopener nofollow">https://docs.getdbt.com/</a></li>
+<li>dbt-sqlserver ééå¨: <a href="https://github.com/dbt-msft/dbt-sqlserver" target="_blank" rel="noopener nofollow">https://github.com/dbt-msft/dbt-sqlserver</a></li>
+<li>dbt å·¥ç¨åå®è·µ: <a href="https://docs.getdbt.com/best-practices" target="_blank" rel="noopener nofollow">https://docs.getdbt.com/best-practices</a></li>
+<li>SQL Server Integration Services: <a href="https://learn.microsoft.com/sql/integration-services/" target="_blank" rel="noopener nofollow">https://learn.microsoft.com/sql/integration-services/</a></li>
+</ul>
+
+
+</div>
+<div id="MySignature" role="contentinfo">
+    <p>&nbsp;</p>
+
+<p>---------------------------------------------------------------<br></p>
+<p>æ¥èª<a href="http://www.cnblogs.com/" target="_blank">åå®¢å­</a>ç<a href="http://aspnetx.cnblogs.com/" target="_blank">aspnetx</a><font color="white">å®å«ä¸</font></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+</div>
+<div class="clear"></div>
+
+        </div>
+        <p class="postfoot">
+            posted on 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-08-04 23:18">2026-08-04 23:18</span>&nbsp;
+<a href="https://www.cnblogs.com/aspnetx">å¥æ¬åå£«å¥(aspnetx)</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(22225489);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Faspnetx%2Fp%2F22225489&amp;targetId=22225489&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+
+        </p>
+     ]]>
     </description>
     </item>
         </channel>
