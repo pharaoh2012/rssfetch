@@ -3,12 +3,673 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-08-18T08:30:32.996Z</lastBuildDate>
+        <lastBuildDate>2026-08-18T12:33:54.656Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
+    <title><![CDATA[ ãAzure APIMãå¨ Azure API Management ä¸­éç½® SSE Transport ç MCP Serverï¼ä» App Service å° APIM çä¸æ¬¡å®è·µ ]]></title>
+    <link>https://www.cnblogs.com/lulight/p/22554886</link>
+    <guid>3b52b39c9c3ea81a934cc8b85773e9ce</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/lulight/p/22554886" title="åå¸äº 2026-08-18 19:43">
+    
+
+    <span role="heading" aria-level="2">ãAzure APIMãå¨ Azure API Management ä¸­éç½® SSE Transport ç MCP Serverï¼ä» App Service å° APIM çä¸æ¬¡å®è·µ</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
+<p>æè¿ææä¸ä¸ª MCP SSE æå¡ Demo é¨ç½²å°äº Azure App Serviceï¼å¹¶åç¨ MCP Inspector ç´æ¥è¿æ¥åç«¯æå¡åäºéªè¯ãåç«¯æå¡æ¬èº«å¯ä»¥æ­£å¸¸ååº MCP è°ç¨ã(<em>æ³¨ï¼MCP SSE Demoçæºç è§éå½</em>)</p>
+<p><img alt="image" width="666" height="349" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2127802/202608/2127802-20260818192120789-1789918753.png" class="lazyload"></p>
+<p>æ¥ä¸æ¥çç®æ æ¯ï¼æè¿ä¸ªå·²ç»å¯ä»¥å·¥ä½ç MCP SSE Server æ¥å¥ Azure API Managementï¼APIMï¼ï¼è®© APIM ä½ä¸ºç»ä¸å¥å£æ¥éä¼  MCP è¯·æ±ã</p>
+<h2 id="%E8%83%8C%E6%99%AF%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E7%94%A8-rest-api-%E9%85%8D%E7%BD%AE" class="code-line" dir="auto" data-line="9">èæ¯ï¼ä¸ºä»ä¹éè¦ç¨ REST API éç½®</h2>
+<p class="code-line" dir="auto" data-line="11">æåèçæ¯å®æ¹ææ¡£ï¼<a href="https://docs.azure.cn/zh-cn/api-management/manage-mcp-servers-rest-api?tabs=bash%2Cbicep#sse-transport" target="_blank" data-href="https://docs.azure.cn/zh-cn/api-management/manage-mcp-servers-rest-api?tabs=bash%2Cbicep#sse-transport" rel="noopener nofollow">å¨ API ç®¡çä¸­ä»¥ç¼ç¨æ¹å¼ç®¡ç MCP æå¡å¨</a>ãææ¡£ä¸­æå°ï¼APIM ç MCP Server å¯ä»¥æ¯æä¸¤ç±»éä¼ ä¼ è¾æ¹å¼ï¼</p>
+<ul class="code-line" dir="auto" data-line="13">
+<li class="code-line" dir="auto" data-line="13"><strong><code>streamable</code></strong>ï¼å½å MCP Streamable HTTP ä¼ è¾æ¹å¼ã</li>
+<li class="code-line" dir="auto" data-line="14"><strong><code>sse</code></strong>ï¼HTTP + Server-Sent Events ä¼ è¾æ¹å¼ï¼éè¦åæ¶éç½® <code>sse</code> å <code>message</code> ä¸¤ä¸ªç«¯ç¹ã</li>
+</ul>
+<p>ä¸è¿å¨æç APIM é¨æ·é¡µé¢éï¼ç®åæ²¡æçå°å¯ä»¥æ Transport Type è®¾ç½®æ SSE ç UI æ§ä»¶ï¼é¨æ·ä¸é»è®¤æ¾ç¤ºçæ¯ HTTP ç¸å³éç½®ã</p>
+<p>å æ­¤è¿æ¬¡å®éªéæ©ç´æ¥è°ç¨ APIM Management REST API æ¥åå»º MCP APIã</p>
+<p>&nbsp;</p>
+<h2 id="%E7%8E%AF%E5%A2%83%E4%B8%8E%E7%9B%AE%E6%A0%87%E6%9E%B6%E6%9E%84" class="code-line" dir="auto" data-line="20">ç¯å¢ä¸ç®æ æ¶æ</h2>
+è¿æ¬¡ç¯å¢å¨ Azure ä¸­å½åºï¼å ä¸ªå³é®ç¹å¦ä¸ï¼
+<ul dir="auto" data-line="24">
+<li dir="auto" data-line="24">åç«¯ MCP SSE æå¡ï¼é¨ç½²å¨ Azure App Serviceã</li>
+<li dir="auto" data-line="25">API ç½å³ï¼Azure API Managementã</li>
+<li dir="auto" data-line="26">ç®¡çé¢ endpointï¼<code>https://management.chinacloudapi.cn</code>ã</li>
+<li dir="auto" data-line="27">APIM Gateway endpointï¼<code>https://{apim-name}.azure-api.cn</code>ã</li>
+<li dir="auto" data-line="28">MCP Transportï¼<code>sse</code>ã</li>
+<li dir="auto" data-line="29">SSE endpointï¼<code>/sse</code>ã</li>
+<li dir="auto" data-line="30">Message endpointï¼<code>/messages</code>ã</li>
+</ul>
+<p>æ´ä½è°ç¨é¾è·¯å¦ä¸ï¼</p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 0, 1)">MCP Inspector
+  </span>|
+  |  https:<span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)">{apim-name}.azure-api.cn/my-mcp-sse/sse</span>
+<span style="color: rgba(0, 0, 0, 1)">  v
+Azure API Management MCP API
+  </span>|
+  |<span style="color: rgba(0, 0, 0, 1)">  backend
+  v
+Azure App Service ä¸ç MCP SSE Server</span></pre>
+</div>
+<p>&nbsp;</p>
+<h2 id="%E7%AC%AC%E4%B8%80%E6%AD%A5%E5%88%9B%E5%BB%BA-sse-transport-%E7%9A%84-mcp-api" class="code-line" dir="auto" data-line="46">åå»º SSE Transport ç MCP API</h2>
+<p>å¨åå»ºSSE MCP Serverä¹åï¼éè¦åå¨ APIM ä¸­åå»ºäºä¸ä¸ª Backendï¼Backend ID ä¸º <code>mcpssebackend01</code>ï¼æå App Service çæ ¹å°åã</p>
+<p><img alt="image" width="666" height="271" loading="lazy" style="border: 2px solid rgba(0, 0, 139, 1)" data-src="https://img2024.cnblogs.com/blog/2127802/202608/2127802-20260818192552838-2015149658.png" class="lazyload"></p>
+<p>è¿æ¯å ä¸ºMCP API ä¸è½åªä¾èµ <code>serviceUrl</code>ãå¯¹äºéä¼ ç MCP SSE Serverï¼éè¦è®¾ç½® `backendId'ï¼å¦åä¼éè§å¦ä¸éè¯¯ã</p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 0, 1)">{
+  </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">error</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">: {
+    </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">code</span><span style="color: rgba(128, 0, 0, 1)">"</span>: <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">ValidationError</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">,
+    </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">details</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">: [
+      {
+        </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">message</span><span style="color: rgba(128, 0, 0, 1)">"</span>: <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">Either BackendId or MCP tools must be set, but not both for MCP API.</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+      }
+    ]
+  }
+}</span></pre>
+</div>
+<p>æ­¤å¤ï¼è¿éè§äºå¦ä¸ä¸ªé®é¢ï¼API version (<code class="code-line language-json" dir="auto" data-line="73"><span class="hljs-string">2025-09-01-preview</span></code>) å¨ Azure ä¸­å½åºä¸æ¯æã</p>
+<p>éè¯¯æ¶æ¯ï¼</p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 0, 1)">{
+  </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">error</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">: {
+    </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">code</span><span style="color: rgba(128, 0, 0, 1)">"</span>: <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">NoRegisteredProviderFound</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">,
+    </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">message</span><span style="color: rgba(128, 0, 0, 1)">"</span>: <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">No registered resource provider found for location 'chinanorth3' and API version '2025-09-01-preview' for type 'service'. The supported api-versions are ... '2024-10-01-preview'.</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">
+  }
+}</span></pre>
+</div>
+<p>è¿ä¸ªéè¯¯è¯´æï¼å½ååºååäºç¯å¢ä¸ï¼Microsoft.ApiManagement/service è¿æ²¡ææ³¨åæå¼æ¾ 2025-09-01-previewã</p>
+<p>è§£å³æ¹æ³æ¯æ¹ç¨éè¯¯ä¿¡æ¯ä¸­ååºçå¯ç¨çæ¬ï¼æ¬æ¬¡æµè¯ä½¿ç¨çæ¯ 2024-10-01-previewã</p>
+<p>&nbsp;</p>
+<p>æç»ï¼æå¦ä¸CMDèæ¬ä¸­å ä½ç¬¦ï¼<code dir="auto" data-line="99">&lt;your-subscription-id&gt; ï¼</code><code dir="auto" data-line="99">&lt;your-resource-group&gt; ï¼</code><code dir="auto" data-line="99">&lt;your-apim-name&gt;ï¼</code>æ¿æ¢ä¸ºAzureä¸APIMèµæºçä¿¡æ¯åï¼å°±å¯ä»¥ç´æ¥Windows CMDçªå£æ§è¡ï¼</p>
+<div class="cnblogs_code">
+<pre>set "SUBSCRIPTION_ID=&lt;your-subscription-id&gt;"
+set "RESOURCE_GROUP=&lt;your-resource-group&gt;"
+set "APIM_NAME=&lt;your-apim-name&gt;"
+set "API_VERSION=2024-10-01-preview"
+set "MCP_SERVER_ID=my-mcp-sse"
+set "BACKEND_ID=mcpssebackend01"
+
+set "BASE_URL=https://management.chinacloudapi.cn/subscriptions/%SUBSCRIPTION_ID%/resourceGroups/%RESOURCE_GROUP%/providers/Microsoft.ApiManagement/service/%APIM_NAME%"
+
+for /f "delims=" %T in ('az account get-access-token --resource https://management.chinacloudapi.cn --query accessToken -o tsv') do set "TOKEN=%T"
+
+set "BODY_FILE=%TEMP%\apim-mcp-body.json"
+
+(
+echo {
+echo   "properties": {
+echo     "type": "mcp",
+echo     "path": "my-mcp-sse",
+echo     "displayName": "My SSE MCP Server",
+echo     "description": "Passthrough MCP server using SSE transport",
+echo     "protocols": ["https"],
+echo     "backendId": "%BACKEND_ID%",
+echo     "mcpProperties": {
+echo       "transportType": "sse",
+echo       "endpoints": {
+echo         "sse": {
+echo           "uriTemplate": "/sse"
+echo         },
+echo         "message": {
+echo           "uriTemplate": "/messages"
+echo         }
+echo       }
+echo     }
+echo   }
+echo }
+) &gt; "%BODY_FILE%"
+
+curl -s -X PUT ^
+  "%BASE_URL%/apis/%MCP_SERVER_ID%?api-version=%API_VERSION%" ^
+  -H "Authorization: Bearer %TOKEN%" ^
+  -H "Content-Type: application/json" ^
+  -H "If-Match: *" ^
+  -d "@%BODY_FILE%"</pre>
+</div>
+<p>æ³¨æï¼å ä¸ºè°ç¨APIMéç½®æ¥å£éè¦è®¤è¯, æä»¥éè¦ç»å½å°Azure Chinaï¼ä»¥ä¾¿èæ¬ä¸­çâfor /f "delims=" %T in ('az account get-access-token --resource https://management.chinacloudapi.cn --query accessToken -o tsv') do set "TOKEN=%T"â è®¾ç½®TOKENã</p>
+<p>æ§è¡çç»æå¦ä¸å¾ï¼</p>
+<p><img alt="image" width="666" height="426" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2127802/202608/2127802-20260818193309906-477341528.png" class="lazyload"></p>
+<h3 id="%E5%85%B3%E9%94%AE%E9%85%8D%E7%BD%AE%E8%A7%A3%E9%87%8A" class="code-line" dir="auto" data-line="145">å³é®éç½®è§£é</h3>
+<p dir="auto" data-line="147">è¿æ®µè¯·æ±ä½éæå³é®çæ¯ï¼</p>
+<ul dir="auto" data-line="149">
+<li dir="auto" data-line="149"><code>type: "mcp"</code>ï¼åè¯ APIM è¿æ¯ä¸ä¸ª MCP ç±»åç APIã</li>
+<li dir="auto" data-line="150"><code>path: "my-mcp-sse"</code>ï¼å³å®å®¢æ·ç«¯è®¿é® APIM Gateway æ¶çè·¯å¾åç¼ã</li>
+<li dir="auto" data-line="151"><code>backendId</code>ï¼å¼ç¨å·²ç»åå»ºå¥½ç APIM Backendã</li>
+<li dir="auto" data-line="152"><code>transportType: "sse"</code>ï¼å£°æåç«¯ MCP Server ä½¿ç¨ SSE Transportã</li>
+<li dir="auto" data-line="153"><code>endpoints.sse.uriTemplate</code>ï¼SSE äºä»¶æµç«¯ç¹ã</li>
+<li dir="auto" data-line="154"><code>endpoints.message.uriTemplate</code>ï¼å®¢æ·ç«¯æ¶æ¯åéç«¯ç¹ã</li>
+</ul>
+<p dir="auto" data-line="156">å¨ APIM é¨æ·ä¸­ä¹å¯ä»¥çå°å·²ç»åå»ºå¥½ç MCP APIã</p>
+<p><img alt="image" width="666" height="254" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2127802/202608/2127802-20260818194042108-1864233617.png" class="lazyload"></p>
+<p>&nbsp;</p>
+<h2 id="%E7%94%A8-mcp-inspector-%E6%B5%8B%E8%AF%95-apim-mcp-sse" class="code-line" dir="auto" data-line="163">ç¨ MCP Inspector æµè¯ APIM MCP SSE</h2>
+<p class="code-line" dir="auto" data-line="165">åå»ºå®æåï¼å¯ä»¥ç¨ MCP Inspector æµè¯ APIM æ´é²åºæ¥ç SSE endpointã</p>
+<p class="code-line" dir="auto" data-line="167">è¿æ¥å°åæ ¼å¼å¦ä¸ï¼<code class="code-line language-text" dir="auto" data-line="169">https://{apim-name}.azure-api.cn/{mcp-path}/sse</code></p>
+<p class="code-line" dir="auto" data-line="173">å¯¹åºæ¬æ¬¡ç¤ºä¾å°±æ¯ï¼<code class="code-line language-text" dir="auto" data-line="175">https://{apim-name}.azure-api.cn/my-mcp-sse/sse</code></p>
+<p class="code-line" dir="auto" data-line="173">å¨ä¸­å½åºAzureä¸æµè¯APIM MCP Service(SSE)ï¼æ æ³è¿æ¥å°MCPæå¡ã</p>
+<p><img alt="image" width="666" height="304" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2127802/202608/2127802-20260818194201096-1247652096.png" class="lazyload"></p>
+<p>æµè¯å¤±è´¥ãç®åæ¨æµè¿æ¯APIMæå¡èªèº«çæäºè®¾å®æ²¡æå®æï¼è¿ä¸è½å®å¨æ¯æSSEåè®®</p>
+<p class="code-line" dir="auto" data-line="173">&nbsp;</p>
+<h2 id="%E7%BB%93%E8%AE%BA" class="code-line" dir="auto" data-line="202">ç»è®º</h2>
+<p class="code-line" dir="auto" data-line="204">å¨ Azure China ç¯å¢ä¸­ï¼MCP SSE éä¼ éç½®å¯åå»ºï¼ä½æç»éææµè¯æªéè¿ï¼è¯´æ APIM ä¾§å¯¹ SSE ä»å­å¨è½åéå¶ã</p>
+<p class="code-line" dir="auto" data-line="204">&nbsp;</p>
+<h2 id="%E9%99%84%E5%BD%95-net-mcp-sse-demo" class="code-line" dir="auto" data-line="207">éå½ï¼ .NET MCP SSE Demo</h2>
+<div class="cnblogs_code"><img id="code_img_closed_dff97701-5c9d-4870-ab1f-b9c3c8d70eab" class="code_img_closed lazyload" data-src="http://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif"><img id="code_img_opened_dff97701-5c9d-4870-ab1f-b9c3c8d70eab" class="code_img_opened lazyload" style="display: none" data-src="http://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif">
+<div id="cnblogs_code_open_dff97701-5c9d-4870-ab1f-b9c3c8d70eab" class="cnblogs_code_hide">
+<pre>using System.Collections.Concurrent;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Threading.Channels;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =&gt;
+{
+    options.AddDefaultPolicy(policy =&gt; policy
+        .AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod());
+});
+
+var app = builder.Build();
+var sessions = new ConcurrentDictionary&lt;string, SseClient&gt;();
+var jsonOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web)
+{
+    WriteIndented = false
+};
+
+app.UseCors();
+
+app.MapGet("/", () =&gt; Results.Json(new
+{
+    name = "MCP SSE Demo",
+    endpoints = new
+    {
+        sse = "/sse",
+        messages = "/messages?sessionId={sessionId}",
+        hello = "/api/hello?name=World",
+        add = "/api/add"
+    }
+}));
+
+app.MapGet("/health", () =&gt; Results.Ok(new { status = "ok", time = DateTimeOffset.UtcNow }));
+
+app.MapGet("/api/hello", (string? name) =&gt; Results.Ok(new
+{
+    message = $"Hello, {(string.IsNullOrWhiteSpace(name) ? "World" : name)}!",
+    time = DateTimeOffset.UtcNow
+}));
+
+app.MapPost("/api/add", (AddRequest request) =&gt; Results.Ok(new
+{
+    request.A,
+    request.B,
+    sum = request.A + request.B
+}));
+
+app.MapGet("/sse", async (HttpContext context) =&gt;
+{
+    var sessionId = Guid.NewGuid().ToString("N");
+    var client = new SseClient(Channel.CreateUnbounded&lt;string&gt;());
+    sessions[sessionId] = client;
+
+    context.Response.Headers.CacheControl = "no-cache";
+    context.Response.Headers.Connection = "keep-alive";
+    context.Response.Headers.ContentType = "text/event-stream";
+
+
+    // Use a relative message endpoint so reverse proxies/APIM can resolve it
+    // against the public MCP SSE URL instead of leaking the backend host.
+    var endpoint = $"/messages?sessionId={sessionId}";
+        
+    context.Response.Headers.CacheControl = "no-cache, no-transform";
+    context.Response.Headers["X-Mcp-Endpoint-Source"] = "relative-v2";
+    context.Response.Headers["X-Mcp-Endpoint-Value"] = endpoint;
+
+    Console.WriteLine($"Writing MCP endpoint event: {endpoint}");
+
+    await WriteSseAsync(context.Response, endpoint, "endpoint", context.RequestAborted);
+
+    try
+    {
+        while (!context.RequestAborted.IsCancellationRequested)
+        {
+            var messageAvailable = client.Messages.Reader.WaitToReadAsync(context.RequestAborted).AsTask();
+            var heartbeat = Task.Delay(TimeSpan.FromSeconds(15), context.RequestAborted);
+            var completed = await Task.WhenAny(messageAvailable, heartbeat);
+
+            if (completed == heartbeat)
+            {
+                await WriteSseAsync(context.Response, DateTimeOffset.UtcNow.ToString("O"), "ping", context.RequestAborted);
+                continue;
+            }
+
+            if (!await messageAvailable)
+            {
+                break;
+            }
+
+            while (client.Messages.Reader.TryRead(out var payload))
+            {
+                await WriteSseAsync(context.Response, payload, "message", context.RequestAborted);
+            }
+        }
+    }
+    catch (OperationCanceledException)
+    {
+        // Client disconnected.
+    }
+    finally
+    {
+        sessions.TryRemove(sessionId, out _);
+    }
+});
+
+app.MapPost("/messages", async (HttpContext context) =&gt;
+{
+    var sessionId = context.Request.Query["sessionId"].ToString();
+    if (string.IsNullOrWhiteSpace(sessionId) || !sessions.TryGetValue(sessionId, out var client))
+    {
+        return Results.NotFound(new { error = "Unknown or expired sessionId. Connect to /sse first." });
+    }
+
+    JsonNode? rpc;
+    try
+    {
+        rpc = await JsonNode.ParseAsync(context.Request.Body, cancellationToken: context.RequestAborted);
+    }
+    catch (JsonException ex)
+    {
+        await client.Messages.Writer.WriteAsync(CreateError(null, -32700, $"Parse error: {ex.Message}"), context.RequestAborted);
+        return Results.Accepted();
+    }
+
+    if (rpc is not JsonObject request)
+    {
+        await client.Messages.Writer.WriteAsync(CreateError(null, -32600, "Invalid JSON-RPC request."), context.RequestAborted);
+        return Results.Accepted();
+    }
+
+    var response = HandleJsonRpc(request);
+    if (response is not null)
+    {
+        await client.Messages.Writer.WriteAsync(response, context.RequestAborted);
+    }
+
+    return Results.Accepted();
+});
+
+app.Run();
+
+string? HandleJsonRpc(JsonObject request)
+{
+    var id = request["id"];
+    var method = request["method"]?.GetValue&lt;string&gt;();
+
+    if (string.IsNullOrWhiteSpace(method))
+    {
+        return CreateError(id, -32600, "Missing JSON-RPC method.");
+    }
+
+    if (method.StartsWith("notifications/", StringComparison.Ordinal))
+    {
+        return null;
+    }
+
+    return method switch
+    {
+        "initialize" =&gt; CreateResult(id, new JsonObject
+        {
+            ["protocolVersion"] = "2024-11-05",
+            ["capabilities"] = new JsonObject
+            {
+                ["tools"] = new JsonObject
+                {
+                    ["listChanged"] = false
+                }
+            },
+            ["serverInfo"] = new JsonObject
+            {
+                ["name"] = "dotnet-mcp-sse-demo",
+                ["version"] = "1.0.0"
+            }
+        }),
+        "tools/list" =&gt; CreateResult(id, BuildToolsList()),
+        "tools/call" =&gt; CreateResult(id, CallTool(request["params"] as JsonObject)),
+        "resources/list" =&gt; CreateResult(id, new JsonObject { ["resources"] = new JsonArray() }),
+        "prompts/list" =&gt; CreateResult(id, new JsonObject { ["prompts"] = new JsonArray() }),
+        _ =&gt; CreateError(id, -32601, $"Method not found: {method}")
+    };
+}
+
+JsonObject BuildToolsList() =&gt; new()
+{
+    ["tools"] = new JsonArray
+    {
+        new JsonObject
+        {
+            ["name"] = "echo",
+            ["description"] = "Return the provided text.",
+            ["inputSchema"] = new JsonObject
+            {
+                ["type"] = "object",
+                ["properties"] = new JsonObject
+                {
+                    ["text"] = new JsonObject
+                    {
+                        ["type"] = "string",
+                        ["description"] = "Text to echo."
+                    }
+                },
+                ["required"] = new JsonArray("text")
+            }
+        },
+        new JsonObject
+        {
+            ["name"] = "server_time",
+            ["description"] = "Get the current server UTC time.",
+            ["inputSchema"] = new JsonObject
+            {
+                ["type"] = "object",
+                ["properties"] = new JsonObject()
+            }
+        },
+        new JsonObject
+        {
+            ["name"] = "add",
+            ["description"] = "Add two numbers.",
+            ["inputSchema"] = new JsonObject
+            {
+                ["type"] = "object",
+                ["properties"] = new JsonObject
+                {
+                    ["a"] = new JsonObject { ["type"] = "number" },
+                    ["b"] = new JsonObject { ["type"] = "number" }
+                },
+                ["required"] = new JsonArray("a", "b")
+            }
+        }
+    }
+};
+
+JsonObject CallTool(JsonObject? parameters)
+{
+    var name = parameters?["name"]?.GetValue&lt;string&gt;();
+    var arguments = parameters?["arguments"] as JsonObject ?? new JsonObject();
+
+    var text = name switch
+    {
+        "echo" =&gt; arguments["text"]?.GetValue&lt;string&gt;() ?? string.Empty,
+        "server_time" =&gt; DateTimeOffset.UtcNow.ToString("O"),
+        "add" =&gt; Add(arguments),
+        _ =&gt; $"Unknown tool: {name}"
+    };
+
+    return new JsonObject
+    {
+        ["content"] = new JsonArray
+        {
+            new JsonObject
+            {
+                ["type"] = "text",
+                ["text"] = text
+            }
+        }
+    };
+}
+
+static string Add(JsonObject arguments)
+{
+    var a = arguments["a"]?.GetValue&lt;double&gt;() ?? 0;
+    var b = arguments["b"]?.GetValue&lt;double&gt;() ?? 0;
+    return $"{a} + {b} = {a + b}";
+}
+
+string CreateResult(JsonNode? id, JsonNode result)
+{
+    return new JsonObject
+    {
+        ["jsonrpc"] = "2.0",
+        ["id"] = CloneNode(id),
+        ["result"] = result
+    }.ToJsonString(jsonOptions);
+}
+
+string CreateError(JsonNode? id, int code, string message)
+{
+    return new JsonObject
+    {
+        ["jsonrpc"] = "2.0",
+        ["id"] = CloneNode(id),
+        ["error"] = new JsonObject
+        {
+            ["code"] = code,
+            ["message"] = message
+        }
+    }.ToJsonString(jsonOptions);
+}
+
+static JsonNode? CloneNode(JsonNode? node) =&gt; node is null ? null : JsonNode.Parse(node.ToJsonString());
+
+static async Task WriteSseAsync(HttpResponse response, string data, string? eventName, CancellationToken cancellationToken)
+{
+    if (!string.IsNullOrWhiteSpace(eventName))
+    {
+        await response.WriteAsync($"event: {eventName}\n", cancellationToken);
+    }
+
+    var lines = data.Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n');
+    foreach (var line in lines)
+    {
+        await response.WriteAsync($"data: {line}\n", cancellationToken);
+    }
+
+    await response.WriteAsync("\n", cancellationToken);
+    await response.Body.FlushAsync(cancellationToken);
+}
+
+public sealed record AddRequest(double A, double B);
+
+public sealed record SseClient(Channel&lt;string&gt; Messages);</pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>&nbsp;</p>
+<p class="code-line" dir="auto" data-line="173">&nbsp;</p>
+
+</div>
+<div id="MySignature" role="contentinfo">
+    <div style="background: #1c5f55;height: 36px;width: 618px;padding: 14px 5px 0px 3px;">
+  <p style="
+    font-weight: bold;
+    color: white;
+">å½å¨å¤æçç¯å¢ä¸­é¢ä¸´é®é¢ï¼æ ¼ç©ä¹ééï¼æµèéä¹å¾æ¸ï¼å®ä»¥å¨ä¹å¾çã äºä¸­ï¼æ°æ¯å¦æ­¤!</p>
+</div>
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-08-18 19:44">2026-08-18 19:43</span>&nbsp;
+<a href="https://www.cnblogs.com/lulight">ç¼ç èå¢å¸</a>&nbsp;
+éè¯»(<span id="post_view_count">2</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(22554886);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Flulight%2Fp%2F22554886&amp;targetId=22554886&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ P17266 [ICPC 2017 Urumqi R] Count Numbers é¢è§£ ]]></title>
+    <link>https://www.cnblogs.com/DeepSleep0629/p/22554671</link>
+    <guid>77d5599dbeb0ad82ecbb12fcaa2e6673</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/DeepSleep0629/p/22554671" title="åå¸äº 2026-08-18 19:16">
+    
+
+    <span role="heading" aria-level="2">P17266 [ICPC 2017 Urumqi R] Count Numbers é¢è§£</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h1 id="solution">Solution</h1>
+<p><a href="https://www.luogu.com.cn/problem/P17266" target="_blank" rel="noopener nofollow">ä¼ éé¨</a></p>
+<h2 id="æ´å">æ´å</h2>
+<p>æä»¬èè DPã</p>
+<p>è®¾ <span class="math inline">\(F_i\)</span> æ¯æ°ä½åä¸º <span class="math inline">\(i\)</span> çæ°å­ä¸ªæ°ï¼<span class="math inline">\(G_i\)</span> æ¯æ°ä½åä¸º <span class="math inline">\(i\)</span> çæ°å­çæ»åãä¸ºæ¹ä¾¿ DPï¼è®¾ <span class="math inline">\(F_0=1,G_0=0,F_x=G_x=0(x\in(-\infty, -1])\)</span>ã</p>
+<p>ç°å¨èèå¦ä½è½¬ç§»ãæä»¬å¯ä»¥åç±»è®¨è®ºæåä¸ä½çæ°å­ãå¯¹äº <span class="math inline">\(d\in[1,9]\)</span>ï¼å¯ä»¥åç°ä»¥ <span class="math inline">\(d\)</span> ä¸ºç»å°¾ï¼åä¸º <span class="math inline">\(i\)</span> çæ°çä¸ªæ°å°±ç­äº <span class="math inline">\(F(i - d)\)</span>ãæä»¥æä»¬å¯ä»¥å¾å°ï¼</p>
+<p></p><div class="math display">\[F_i=\sum_{d=1}^{9}F_{i-d}
+\]</div><p></p><p>åæ ·ï¼å¯¹äº <span class="math inline">\(d\in[1,9]\)</span>ï¼å¯ä»¥åç°ä»¥ <span class="math inline">\(d\)</span> ä¸ºç»å°¾ï¼åä¸º <span class="math inline">\(i\)</span> çæ°çåå°±ç­äºæ²¡æ <span class="math inline">\(d\)</span> çæ¶åçå <span class="math inline">\(\times10\)</span> åå ä¸ <span class="math inline">\(d\)</span> çè´¡ç®ï¼ä¹å°±æ¯ <span class="math inline">\(F_{i-d}\times d\)</span>ï¼å³ <span class="math inline">\(G_{i - d}\times10+d\times F_{i-d}\)</span>ãæä»¥æä»¬å¯ä»¥å¾å°ï¼</p>
+<p></p><div class="math display">\[G_i=\sum_{d=1}^9G_{i - d}\times10+d\times F_{i-d}
+\]</div><p></p><p>ä½æ¯è¿æ ·éè¦ DP <span class="math inline">\(20^{20}\)</span> æ¬¡ï¼ä¼è¶æ¶ã</p>
+<h2 id="æ­£è§£">æ­£è§£</h2>
+<p>æä»¬åç°è¿å¶å®æ¯ä¸ä¸ªçº¿æ§é½æ¬¡éæ¨ï¼èä¸åªä¾èµå <span class="math inline">\(9\)</span> é¡¹ï¼æä»¥å¯ä»¥åæç©éµå½¢å¼ãæä»¬æ³¨æå° <span class="math inline">\(G_i\)</span> ä¾èµ <span class="math inline">\(F\)</span> æ°ç»ï¼æä»¥è¦ä¸èµ·åã</p>
+<p>ç¶æåéï¼</p>
+<p></p><div class="math display">\[\begin{bmatrix}
+F_i \\
+F_{i-1} \\
+\vdots \\
+F_{i-7} \\
+F_{i-8} \\
+G_i \\
+G_{i-1} \\
+\vdots \\
+G_{i-7} \\
+G_{i-8} \\
+\end{bmatrix}
+\]</div><p></p><p>æä»¬ç°å¨æ¥ç ç©¶ DP ç©éµã</p>
+<p>å·¦ä¸é¨åï¼é¦å <span class="math inline">\(F_{i}=\sum_{d=1}^{9}F_{i-d}\)</span> æä»¥ç¬¬ä¸è¡æ¯ <span class="math inline">\(9\)</span> ä¸ª <span class="math inline">\(1\)</span>ï¼å©ä¸ç <span class="math inline">\(8\)</span> è¡é½æ¯ç§»ä½ç©éµã</p>
+<p>å³ä¸é¨åï¼å ä¸º <span class="math inline">\(F_{i}\)</span> å <span class="math inline">\(G\)</span> æ å³ï¼æä»¥ä¸º <span class="math inline">\(0\)</span> ç©éµã</p>
+<p>å³ä¸é¨åï¼è¿æ¯ <span class="math inline">\(G\)</span> çè½¬ç§»å¼éä¸ <span class="math inline">\(G\)</span> æå³çé¨åï¼å³ç³»æ°é½æ¯ <span class="math inline">\(1\)</span>ï¼åé¢æ¯ç§»ä½ç©éµã</p>
+<p>å·¦ä¸é¨åï¼ç³»æ°åå«æ¯ <span class="math inline">\(1\sim9\)</span>ï¼åé¢é½æ¯ <span class="math inline">\(0\)</span>ã</p>
+<p>æ»ç©éµï¼</p>
+<p></p><div class="math display">\[\begin{bmatrix}
+1 &amp; 1 &amp; 1 &amp; 1 &amp; 1 &amp; 1 &amp; 1 &amp; 1 &amp; 1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\
+1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\
+1 &amp; 2 &amp; 3 &amp; 4 &amp; 5 &amp; 6 &amp; 7 &amp; 8 &amp; 9 &amp; 10 &amp; 10 &amp; 10 &amp; 10 &amp; 10 &amp; 10 &amp; 10 &amp; 10 &amp; 10 \\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 1 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 1 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 1 &amp; 0
+\end{bmatrix}
+\]</div><p></p><p>æåç´æ¥è·ä¸ä¸ªç©éµå¿«éå¹å³å¯ã</p>
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+using namespace std;
+using mat = array&lt;array&lt;long long, 18&gt;, 18&gt;;
+using vec = array&lt;long long, 18&gt;;
+const mat dp = {{
+    {1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
+}};
+mat mul(mat A, mat B, long long mod) {
+    mat C{};
+    for (long long i = 0; i &lt; 18; ++i) {
+        for (long long k = 0; k &lt; 18; ++k) {
+            if (A[i][k] == 0) continue;
+            for (long long j = 0; j &lt; 18; ++j) {
+                if (B[k][j] == 0) continue;
+                C[i][j] = (C[i][j] + 1ll * A[i][k] * B[k][j] % mod) % mod;
+            }
+        }
+    }
+    return C;
+}
+vec mul(mat A, vec v, long long mod) {
+    vec res{};
+    for (long long i = 0; i &lt; 18; ++i) {
+        for (long long j = 0; j &lt; 18; ++j) {
+            res[i] = (res[i] + 1ll * A[i][j] * v[j] % mod) % mod;
+        }
+    }
+    return res;
+}
+mat qpow(mat bs, __int128_t y, long long mod) {
+    mat res{};
+    for (long long i = 0; i &lt; 18; ++i) res[i][i] = 1;
+    while(y) {
+        if(y &amp; 1) res = mul(res, bs, mod);
+        y &gt;&gt;= 1;
+        bs = mul(bs, bs, mod);
+    }
+    return res;
+}
+void solve() {
+    long long a, b, p; scanf("%lld%lld%lld", &amp;a, &amp;b, &amp;p);
+    __int128_t K = 1;//long long ä¼çï¼æä»¥ä½¿ç¨__int128
+    for(long long i = 1; i &lt;= b; i++) K *= a;
+    printf("%lld\n", mul(qpow(dp, K, p), vec{1}, p)[9] % p);
+}
+int main() {
+    long long t; scanf("%lld", &amp;t);
+    while(t--) solve();
+    return 0;
+}
+</code></pre>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0.0006944444444444445" data-date-updated="2026-08-18 19:17">2026-08-18 19:16</span>&nbsp;
+<a href="https://www.cnblogs.com/DeepSleep0629">Monotonic_Deque</a>&nbsp;
+éè¯»(<span id="post_view_count">4</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(22554671);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FDeepSleep0629%2Fp%2F22554671&amp;targetId=22554671&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
     <title><![CDATA[ base_ui_flutter  ä¸ä¸ªä¸º"çäº§å"èçç Flutter æ¡é¢ UI ç»ä»¶åº ]]></title>
     <link>https://www.cnblogs.com/springhgui/p/22546956</link>
     <guid>c86390de559a8bf5cfcca567cb0f6d60</guid>
@@ -27,7 +688,6 @@
             <div class="clear"></div>
             <div class="postBody">
                 <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h1 id="the-radix-of-flutter-desktop-">The Radix of Flutter Desktop ð</h1>
 <h2 id="ä¸ä¸ªä¸ºçäº§åèçç-flutter-æ¡é¢-ui-ç»ä»¶åº">ä¸ä¸ªä¸º"çäº§å"èçç Flutter æ¡é¢ UI ç»ä»¶åº</h2>
 <blockquote>
 <p><strong>base_ui_flutter</strong> ââ Headless Â· Token é©±å¨çæ¡é¢çº§ Flutter UI åºç¡è®¾æ½</p>
@@ -35,6 +695,12 @@
 </blockquote>
 <p>ð¦ å¼æºä»åºï¼<a href="https://github.com/SpringHgui/base-ui-flutter" target="_blank" rel="noopener nofollow">https://github.com/SpringHgui/base-ui-flutter</a></p>
 <hr>
+<h1 id="åç½®å¤ç§ä¸»é¢">åç½®å¤ç§ä¸»é¢</h1>
+<p><img src="https://img2024.cnblogs.com/blog/960145/202608/960145-20260818180059171-88767423.png" alt="image" loading="lazy"></p>
+<p><img src="https://img2024.cnblogs.com/blog/960145/202608/960145-20260818175955579-452473163.png" alt="ScreenShot_2026-08-18_174239_412" loading="lazy"></p>
+<p><img src="https://img2024.cnblogs.com/blog/960145/202608/960145-20260818180114106-1621389134.png" alt="image" loading="lazy"></p>
+<p><img src="https://img2024.cnblogs.com/blog/960145/202608/960145-20260818180127050-1255369808.png" alt="image" loading="lazy"></p>
+<p><img src="https://img2024.cnblogs.com/blog/960145/202608/960145-20260818180151470-834065528.png" alt="image" loading="lazy"></p>
 <h2 id="ä¸ºä»ä¹æä»¬éè¦å®">ä¸ºä»ä¹æä»¬éè¦å®ï¼</h2>
 <p>åçä¸ä¸ªçæçåºæ¯ï¼ä½ çå¢éå¨ç¨ Flutter å¼åå»ç HIS æä¼ä¸ ERP å®¢æ·ç«¯ãä¸å¡é»è¾å¹¶ä¸é¾ï¼é¾çæ¯ââ</p>
 <ul>
@@ -191,9 +857,9 @@ void main() {
 
             </div>
             <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0.0006944444444444445" data-date-updated="2026-08-18 15:40">2026-08-18 15:39</span>&nbsp;
+<span id="post-date" data-last-update-days="0.09930555555555555" data-date-updated="2026-08-18 18:02">2026-08-18 15:39</span>&nbsp;
 <a href="https://www.cnblogs.com/springhgui">gui.h</a>&nbsp;
-éè¯»(<span id="post_view_count">25</span>)&nbsp;
+éè¯»(<span id="post_view_count">128</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(22546956);return false;">æ¶è</a>&nbsp;
@@ -368,767 +1034,13 @@ void main() {
 		<div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-08-18 14:41">2026-08-18 14:41</span>&nbsp;
 <a href="https://www.cnblogs.com/rls">rls_v</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">60</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(22544767);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Frls%2Fp%2F22544767&amp;targetId=22544767&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
 	 ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ ä»ç»ä¸ä¸åå¸å¼äºå¡ ]]></title>
-    <link>https://www.cnblogs.com/zrui-xyu/p/22540232</link>
-    <guid>1b681fd71f23012f7b443cc07a89d7ca</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/zrui-xyu/p/22540232" title="åå¸äº 2026-08-18 11:15">
-    
-
-    <span role="heading" aria-level="2">ä»ç»ä¸ä¸åå¸å¼äºå¡</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                    <div id="cnblogs_post_description" style="display: none">
-        
-        è¯¦è§£å¾®æå¡ä¸åå¸å¼äºå¡ï¼æ¢³ç CAPãBASE çè®ºï¼å¯¹æ¯ 2PCãTCCãSAGAãSeata ATãRocketMQ äºå¡æ¶æ¯ä¸»æµæ¹æ¡ãç»åé¡¹ç®å®æï¼ç»åº Seata ATãTCCãäºå¡æ¶æ¯æ ¸å¿ä»£ç ï¼è§£å³ç©ºåæ»ãæ¬æãå¹ç­æ§é¾é¢ãéå¸¦çå®é¢è¯æ¨¡æï¼æè§£éåæè·¯ä¸çº¿ä¸è¸©åç»éªãæ²¡æé¶å¼¹ï¼æééæ©æ¹æ¡ï¼éååç«¯å¼åå­¦ä¹ ä¸é¢è¯å¤ä¹ ã
-    </div>
-<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h2 id="ä»ç»ä¸ä¸åå¸å¼äºå¡">ä»ç»ä¸ä¸åå¸å¼äºå¡</h2>
-<p><strong>ä¸å¥è¯å®ä¹</strong>ï¼åå¸å¼äºå¡å°±æ¯<strong>ä¿è¯å¤ä¸ªç¬ç«å¾®æå¡ / æ°æ®åºæä½</strong>çåå­æ§ï¼è¦ä¹å¨é¨æåï¼è¦ä¹å¨é¨åæ»ï¼æç»è¾¾å°æ°æ®ä¸è´æ§çæºå¶ ð</p>
-<h3 id="ä¸ºä»ä¹ä¼æåå¸å¼äºå¡é®é¢">ä¸ºä»ä¹ä¼æåå¸å¼äºå¡é®é¢ï¼ð¤</h3>
-<p><strong>åä½åºç¨</strong>ï¼æææä½å¨ä¸ä¸ªæ°æ®åºéï¼é æ¬å°äºå¡ ACID å°±è½ä¿è¯ä¸è´æ§</p>
-<p><strong>å¾®æå¡æ¶æ</strong>ï¼ä¸ä¸ªä¸å¡æä½å¯è½è·¨å¤ä¸ªæå¡ãå¤ä¸ªæ°æ®åºï¼æ¬å°äºå¡å¤±æ</p>
-<p><strong>ç»å¸ä¾å­</strong>ï¼ä¸åæµç¨ = æ£ååºå­ + åå»ºè®¢å + æ£åä½é¢</p>
-<ul>
-<li>å¦ææ£ååºå­æåï¼åå»ºè®¢åå¤±è´¥ â åºå­å°±å°äº</li>
-<li>å¦æåå»ºè®¢åæåï¼æ£åä½é¢å¤±è´¥ â ç¨æ·ç½å«äºåå</li>
-</ul>
-<h3 id="åå¸å¼äºå¡çæ ¸å¿çè®ºåºç¡-">åå¸å¼äºå¡çæ ¸å¿çè®ºåºç¡ ð</h3>
-<h4 id="cap-å®çåå¸å¼ç³»ç»åºç³">CAP å®çï¼åå¸å¼ç³»ç»åºç³ï¼</h4>
-<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/739056/202608/739056-20260818111146680-1302456545.png" class="lazyload"></p>
-<ul>
-<li><strong>CP</strong>ï¼çºç²å¯ç¨æ§ï¼ä¿è¯å¼ºä¸è´æ§ï¼å¦ ZooKeeperï¼</li>
-<li><strong>AP</strong>ï¼çºç²å¼ºä¸è´æ§ï¼ä¿è¯å¯ç¨æ§ï¼å¦ Eurekaï¼</li>
-</ul>
-<h4 id="base-çè®ºcap-çå¦¥åæ¹æ¡">BASE çè®ºï¼CAP çå¦¥åæ¹æ¡ï¼</h4>
-<ul>
-<li><strong>Basically Available</strong>ï¼åºæ¬å¯ç¨</li>
-<li><strong>Soft State</strong>ï¼è½¯ç¶æ</li>
-<li><strong>Eventually Consistent</strong>ï¼æç»ä¸è´æ§</li>
-</ul>
-<p>ð ç»å¤§å¤æ°äºèç½å¬å¸éç¨<strong>æç»ä¸è´æ§</strong>æ¹æ¡ï¼èä¸æ¯å¼ºä¸è´æ§</p>
-<h3 id="ä¸»æµåå¸å¼äºå¡æ¹æ¡å¯¹æ¯-">ä¸»æµåå¸å¼äºå¡æ¹æ¡å¯¹æ¯ ð</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: center"><strong>æ¹æ¡</strong></th>
-<th style="text-align: center"><strong>æ ¸å¿ææ³</strong></th>
-<th style="text-align: center"><strong>ä¸è´æ§çº§å«</strong></th>
-<th style="text-align: center"><strong>æ§è½</strong></th>
-<th style="text-align: center"><strong>éç¨åºæ¯</strong></th>
-<th style="text-align: center"><strong>ä»£è¡¨æ¡æ¶</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center">2PCï¼ä¸¤é¶æ®µæäº¤ï¼</td>
-<td style="text-align: center">åå¤é¶æ®µ + æäº¤é¶æ®µ</td>
-<td style="text-align: center">å¼ºä¸è´æ§</td>
-<td style="text-align: center">å¾å·®</td>
-<td style="text-align: center">ä¼ ç»æ°æ®åºè·¨åº</td>
-<td style="text-align: center">MySQL XA</td>
-</tr>
-<tr>
-<td style="text-align: center">3PCï¼ä¸é¶æ®µæäº¤ï¼</td>
-<td style="text-align: center">2PC æ¹è¿çï¼å¢å è¶æ¶æºå¶</td>
-<td style="text-align: center">å¼ºä¸è´æ§</td>
-<td style="text-align: center">å·®</td>
-<td style="text-align: center">çè®ºå¤ï¼å®éå°</td>
-<td style="text-align: center">æ ä¸»æµæ¡æ¶</td>
-</tr>
-<tr>
-<td style="text-align: center">TCCï¼è¡¥å¿äºå¡ï¼</td>
-<td style="text-align: center">Try-Confirm-Cancel ä¸é¶æ®µ</td>
-<td style="text-align: center">æç»ä¸è´æ§</td>
-<td style="text-align: center">å¥½</td>
-<td style="text-align: center">æ ¸å¿ä¸å¡ãé«å¹¶å</td>
-<td style="text-align: center">Seata-TCC</td>
-</tr>
-<tr>
-<td style="text-align: center">SAGAï¼é¿äºå¡ï¼</td>
-<td style="text-align: center">æ­£åæä½ + éåè¡¥å¿</td>
-<td style="text-align: center">æç»ä¸è´æ§</td>
-<td style="text-align: center">å¾å¥½</td>
-<td style="text-align: center">é¿æµç¨ãéæ ¸å¿ä¸å¡</td>
-<td style="text-align: center">Seata-SAGA</td>
-</tr>
-<tr>
-<td style="text-align: center">æ¬å°æ¶æ¯è¡¨</td>
-<td style="text-align: center">æ¬å°äºå¡ + æ¶æ¯éå</td>
-<td style="text-align: center">æç»ä¸è´æ§</td>
-<td style="text-align: center">å¾å¥½</td>
-<td style="text-align: center">å¼æ­¥åºæ¯ãå¯¹ä¸è´æ§è¦æ±ä¸é«</td>
-<td style="text-align: center">RocketMQ äºå¡æ¶æ¯</td>
-</tr>
-<tr>
-<td style="text-align: center">æå¤§åªåéç¥</td>
-<td style="text-align: center">å°½æå¤§åªåéç¥å¯¹æ¹ï¼å¤±è´¥åéè¯</td>
-<td style="text-align: center">æç»ä¸è´æ§</td>
-<td style="text-align: center">æå¥½</td>
-<td style="text-align: center">éæ ¸å¿ä¸å¡ãå¯å®¹å¿ä¸ä¸è´</td>
-<td style="text-align: center">ç­ä¿¡éç¥ãé®ä»¶éç¥</td>
-</tr>
-</tbody>
-</table>
-<h3 id="å¤§åæå¸¸ç¨çä¸ç§æ¹æ¡è¯¦è§£-">å¤§åæå¸¸ç¨çä¸ç§æ¹æ¡è¯¦è§£ â¨</h3>
-<h4 id="1-tcc-æ¨¡å¼try-confirm-cancel">1. TCC æ¨¡å¼ï¼Try-Confirm-Cancelï¼</h4>
-<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/739056/202608/739056-20260818111201805-840070664.png" class="lazyload"></p>
-<ul>
-<li><strong>ä¼ç¹</strong>ï¼æ§è½é«ï¼çµæ´»æ§å¼ºï¼æ²¡æéé»å¡</li>
-<li><strong>ç¼ºç¹</strong>ï¼ä¾µå¥æ§å¼ºï¼æ¯ä¸ªæå¡é½è¦åä¸ä¸ªæ¹æ³ï¼å¼åéå¤§</li>
-</ul>
-<h4 id="2-æ¬å°æ¶æ¯è¡¨--æ¶æ¯éå">2. æ¬å°æ¶æ¯è¡¨ + æ¶æ¯éå</h4>
-<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/739056/202608/739056-20260818111214967-629877256.png" class="lazyload"></p>
-<ul>
-<li><strong>ä¼ç¹</strong>ï¼å®ç°ç®åï¼æ§è½å¥½ï¼æ²¡æåå¸å¼é</li>
-<li><strong>ç¼ºç¹</strong>ï¼æ¶æ¯è¡¨åä¸å¡è¡¨è¦åï¼åªéåå¼æ­¥åºæ¯</li>
-</ul>
-<h4 id="3-seata-at-æ¨¡å¼é¿éå¼æºæä¸»æµ">3. Seata AT æ¨¡å¼ï¼é¿éå¼æºï¼æä¸»æµï¼</h4>
-<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/739056/202608/739056-20260818111226492-1860549288.png" class="lazyload"></p>
-<p><strong>æ ¸å¿åç</strong>ï¼åºäºæ¬å°äºå¡ + ä¸¤é¶æ®µæäº¤ï¼èªå¨çæåæ»æ¥å¿ï¼<strong>å¯¹ä¸å¡ä»£ç é¶ä¾µå¥</strong></p>
-<ul>
-<li><strong>ä¼ç¹</strong>ï¼å¼åææ¬æä½ï¼æ§è½å¥½ï¼é¿éå¤§åèä¹¦</li>
-<li><strong>ç¼ºç¹</strong>ï¼åªè½æ¯æå³ç³»åæ°æ®åºï¼æä¸å®çéç«äº</li>
-</ul>
-<h3 id="æå¨é¡¹ç®ä¸­çå®éä½¿ç¨ç»éª-">æå¨é¡¹ç®ä¸­çå®éä½¿ç¨ç»éª ð¡</h3>
-<ol>
-<li><strong>æ ¸å¿äº¤æé¾è·¯</strong>ï¼ä½¿ç¨ Seata AT æ¨¡å¼ï¼ä¿è¯ä¸åãæ¯ä»ãåºå­çä¸è´æ§</li>
-<li><strong>éæ ¸å¿å¼æ­¥åºæ¯</strong>ï¼ä½¿ç¨ RocketMQ äºå¡æ¶æ¯ï¼æ¯å¦ç§¯ååæ¾ãç­ä¿¡éç¥</li>
-<li><strong>é«å¹¶åç§æåºæ¯</strong>ï¼ä¸ä½¿ç¨åå¸å¼äºå¡ï¼éç¨ "æç»ä¸è´æ§ + è¡¥å¿" æ¹æ¡ï¼åæ£ååºå­ï¼åå¼æ­¥åå»ºè®¢åï¼å¤±è´¥ååºå­åæ»</li>
-</ol>
-<h3 id="æ»ç»-">æ»ç» ð</h3>
-<p>åå¸å¼äºå¡æ²¡æé¶å¼¹ï¼éè¦æ ¹æ®<strong>ä¸å¡åºæ¯</strong>å<strong>ä¸è´æ§è¦æ±</strong>æ¥éæ©åéçæ¹æ¡ï¼</p>
-<ul>
-<li>å¯¹ä¸è´æ§è¦æ±æé« â ç¨ TCC</li>
-<li>è¿½æ±å¼åæç â ç¨ Seata AT</li>
-<li>å¼æ­¥éæ ¸å¿åºæ¯ â ç¨æ¬å°æ¶æ¯è¡¨</li>
-<li>è½å®¹å¿æç»ä¸è´ â ä¼åç¨æç»ä¸è´æ§æ¹æ¡</li>
-</ul>
-<p>ð è®°ä½ï¼<strong>è½ç¨æ¬å°äºå¡è§£å³çï¼ç»å¯¹ä¸è¦ç¨åå¸å¼äºå¡</strong>ï¼åå¸å¼äºå¡æ¯ä¸ä¸å¾å·²çéæ© ð</p>
-<h3 id="æ ¸å¿ä»£ç å®ç°-">æ ¸å¿ä»£ç å®ç° ð»</h3>
-<h4 id="1-seata-at-æ¨¡å¼é¶ä¾µå¥é¦é--é¿éå¤§åæ å">1 Seata AT æ¨¡å¼ï¼é¶ä¾µå¥é¦é | é¿éå¤§åæ åï¼</h4>
-<p><strong>ææ¯äº®ç¹</strong>ï¼ä»éä¸ä¸ªæ³¨è§£å®ç°åå¸å¼äºå¡ï¼ä¸å¡ä»£ç é¶ä¾µå¥ï¼èªå¨çæåæ»æ¥å¿</p>
-<pre><code class="language-java">/**
- * è®¢åæå¡ - å¨å±äºå¡å¥å£
- * æ ¸å¿äº®ç¹ï¼@GlobalTransactional æ³¨è§£å¼å¯å¨å±äºå¡
- * æ éä¿®æ¹ä»»ä½ä¸å¡é»è¾ï¼Seataèªå¨ä»£çæææ°æ®åºæä½
- */
-@Service
-public class OrderServiceImpl implements OrderService {
-
-    @Autowired
-    private OrderMapper orderMapper;
-    
-    @Autowired
-    private StockFeignClient stockFeignClient;
-    
-    @Autowired
-    private AccountFeignClient accountFeignClient;
-
-    @Override
-    @GlobalTransactional(rollbackFor = Exception.class) // ð¥ æ ¸å¿ï¼å¨å±äºå¡æ³¨è§£
-    public Long createOrder(Long productId, Integer count, Long userId) {
-        // 1. è¿ç¨è°ç¨åºå­æå¡æ£ååºå­
-        stockFeignClient.deductStock(productId, count);
-        
-        // 2. è¿ç¨è°ç¨è´¦æ·æå¡æ£åä½é¢
-        accountFeignClient.deductBalance(userId, productId.getPrice() * count);
-        
-        // 3. æ¬å°åå»ºè®¢å
-        Order order = new Order();
-        order.setProductId(productId);
-        order.setCount(count);
-        order.setUserId(userId);
-        order.setStatus(OrderStatus.PENDING);
-        orderMapper.insert(order);
-        
-        return order.getId();
-    }
-}
-</code></pre>
-<h4 id="2-tcc-æ¨¡å¼é«å¹¶åæ ¸å¿ä¸å¡--æ§è½æä¼">2 TCC æ¨¡å¼ï¼é«å¹¶åæ ¸å¿ä¸å¡ | æ§è½æä¼ï¼</h4>
-<p><strong>ææ¯äº®ç¹</strong>ï¼å®å¨èªå®ä¹äºå¡é»è¾ï¼æ æ°æ®åºéé»å¡ï¼æ¯æéå³ç³»åæ°æ®åº</p>
-<pre><code class="language-java">/**
- * åºå­æå¡TCCæ¥å£å®ä¹
- * æ ¸å¿äº®ç¹ï¼@LocalTCC + @TwoPhaseBusinessAction èªå¨çæTCCä»£ç
- */
-@LocalTCC
-public interface StockTccService {
-
-    /**
-     * Tryé¶æ®µï¼å»ç»åºå­ï¼èµæºé¢çï¼
-     */
-    @TwoPhaseBusinessAction(name = "stockTccService", commitMethod = "confirm", rollbackMethod = "cancel")
-    boolean tryDeductStock(@BusinessActionContextParameter(paramName = "productId") Long productId,
-                          @BusinessActionContextParameter(paramName = "count") Integer count);
-
-    /**
-     * Confirmé¶æ®µï¼çæ­£æ£ååºå­ï¼ç¡®è®¤æ§è¡ï¼
-     */
-    boolean confirm(BusinessActionContext context);
-
-    /**
-     * Cancelé¶æ®µï¼è§£å»åºå­ï¼åæ»è¡¥å¿ï¼
-     */
-    boolean cancel(BusinessActionContext context);
-}
-</code></pre>
-<pre><code class="language-java">/**
- * TCCå®ç°ç±»ï¼æ ¸å¿é»è¾ï¼
- * ææ¯äº®ç¹ï¼åç½®äºå¡ç¶æè¡¨è§£å³ç©ºåæ»ãæ¬æãå¹ç­æ§ä¸å¤§ç»å¸é®é¢
- */
-@Service
-public class StockTccServiceImpl implements StockTccService {
-
-    @Autowired
-    private StockMapper stockMapper;
-    
-    @Autowired
-    private TccTransactionLogMapper tccLogMapper;
-
-    @Override
-    @Transactional
-    public boolean tryDeductStock(Long productId, Integer count) {
-        String xid = RootContext.getXID();
-        
-        // ð¥ é²æ¬æï¼åæ£æ¥æ¯å¦å·²ç»æ§è¡è¿Cancel
-        if (tccLogMapper.exists(xid, "CANCEL")) {
-            return false;
-        }
-        
-        // ð¥ å¹ç­æ§ï¼æ£æ¥Tryæ¯å¦å·²ç»æ§è¡è¿
-        if (tccLogMapper.exists(xid, "TRY")) {
-            return true;
-        }
-        
-        // å»ç»åºå­
-        int rows = stockMapper.freezeStock(productId, count);
-        if (rows == 0) {
-            throw new RuntimeException("åºå­ä¸è¶³");
-        }
-        
-        // è®°å½äºå¡ç¶æ
-        tccLogMapper.insert(xid, "TRY", "stock_service");
-        return true;
-    }
-
-    @Override
-    @Transactional
-    public boolean confirm(BusinessActionContext context) {
-        String xid = context.getXid();
-        
-        // å¹ç­æ§æ£æ¥
-        if (tccLogMapper.exists(xid, "CONFIRM")) {
-            return true;
-        }
-        
-        // çæ­£æ£åå»ç»çåºå­
-        Long productId = (Long) context.getActionContext("productId");
-        Integer count = (Integer) context.getActionContext("count");
-        stockMapper.confirmDeduct(productId, count);
-        
-        // æ´æ°äºå¡ç¶æ
-        tccLogMapper.updateStatus(xid, "CONFIRM");
-        return true;
-    }
-
-    @Override
-    @Transactional
-    public boolean cancel(BusinessActionContext context) {
-        String xid = context.getXid();
-        
-        // ð¥ é²ç©ºåæ»ï¼æ£æ¥Tryæ¯å¦æ§è¡è¿
-        if (!tccLogMapper.exists(xid, "TRY")) {
-            // è®°å½Cancelç¶æï¼é²æ­¢åç»­Tryæ§è¡ï¼æ¬æï¼
-            tccLogMapper.insert(xid, "CANCEL", "stock_service");
-            return true;
-        }
-        
-        // å¹ç­æ§æ£æ¥
-        if (tccLogMapper.exists(xid, "CANCEL")) {
-            return true;
-        }
-        
-        // è§£å»åºå­
-        Long productId = (Long) context.getActionContext("productId");
-        Integer count = (Integer) context.getActionContext("count");
-        stockMapper.unfreezeStock(productId, count);
-        
-        // æ´æ°äºå¡ç¶æ
-        tccLogMapper.updateStatus(xid, "CANCEL");
-        return true;
-    }
-}
-</code></pre>
-<h4 id="3-rocketmq-äºå¡æ¶æ¯å¼æ­¥éæ ¸å¿--æ§è½æå¥½">3 RocketMQ äºå¡æ¶æ¯ï¼å¼æ­¥éæ ¸å¿ | æ§è½æå¥½ï¼</h4>
-<p><strong>ææ¯äº®ç¹</strong>ï¼RocketMQ åçæ¯æäºå¡æ¶æ¯ï¼ä¿è¯æ¬å°äºå¡ä¸æ¶æ¯åéçåå­æ§</p>
-<pre><code class="language-java">/**
- * è®¢åæå¡åéäºå¡æ¶æ¯
- * æ ¸å¿äº®ç¹ï¼sendMessageInTransaction æ¹æ³åå­æ§æ§è¡æ¬å°äºå¡åæ¶æ¯åé
- */
-@Service
-public class OrderServiceImpl implements OrderService {
-
-    @Autowired
-    private RocketMQTemplate rocketMQTemplate;
-    
-    @Autowired
-    private OrderMapper orderMapper;
-
-    @Override
-    public Long createOrder(Long productId, Integer count, Long userId) {
-        Order order = new Order();
-        order.setProductId(productId);
-        order.setCount(count);
-        order.setUserId(userId);
-        order.setStatus(OrderStatus.PENDING);
-        
-        // åéäºå¡æ¶æ¯
-        rocketMQTemplate.sendMessageInTransaction(
-            "order_topic",
-            MessageBuilder.withPayload(order).build(),
-            order // ä¼ éç»äºå¡çå¬å¨çåæ°
-        );
-        
-        return order.getId();
-    }
-}
-</code></pre>
-<pre><code class="language-java">/**
- * äºå¡æ¶æ¯çå¬å¨ï¼æ ¸å¿é»è¾ï¼
- * ææ¯äº®ç¹ï¼èªå¨åæ¥æºå¶ï¼è§£å³æ¬å°äºå¡æ§è¡ç¶ææªç¥çé®é¢
- */
-@Component
-@RocketMQTransactionListener
-public class OrderTransactionListener implements RocketMQLocalTransactionListener {
-
-    @Autowired
-    private OrderMapper orderMapper;
-    
-    @Autowired
-    private TransactionLogMapper transactionLogMapper;
-
-    @Override
-    @Transactional
-    public RocketMQLocalTransactionState executeLocalTransaction(Message msg, Object arg) {
-        try {
-            Order order = (Order) arg;
-            String transactionId = msg.getTransactionId();
-            
-            // 1. æ§è¡æ¬å°äºå¡ï¼åå»ºè®¢å
-            orderMapper.insert(order);
-            
-            // 2. è®°å½äºå¡æ¥å¿ï¼ç¨äºåæ¥ï¼
-            transactionLogMapper.insert(transactionId, "SUCCESS");
-            
-            // æäº¤æ¶æ¯ï¼è®©æ¶è´¹èæ¶è´¹
-            return RocketMQLocalTransactionState.COMMIT;
-        } catch (Exception e) {
-            // åæ»æ¬å°äºå¡ï¼ä¸¢å¼æ¶æ¯
-            return RocketMQLocalTransactionState.ROLLBACK;
-        }
-    }
-
-    @Override
-    public RocketMQLocalTransactionState checkLocalTransaction(Message msg) {
-        String transactionId = msg.getTransactionId();
-        
-        // æ£æ¥æ¬å°äºå¡æ§è¡ç¶æ
-        if (transactionLogMapper.exists(transactionId, "SUCCESS")) {
-            return RocketMQLocalTransactionState.COMMIT;
-        } else {
-            return RocketMQLocalTransactionState.ROLLBACK;
-        }
-    }
-}
-</code></pre>
-<h3 id="åå¸å¼äºå¡æ ¸å¿ææ¯é¾ç¹åè§£å³æ¹æ¡-ï¸">åå¸å¼äºå¡æ ¸å¿ææ¯é¾ç¹åè§£å³æ¹æ¡ â ï¸</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: center"><strong>ææ¯é¾ç¹</strong></th>
-<th style="text-align: center"><strong>é®é¢æè¿°</strong></th>
-<th style="text-align: center"><strong>è§£å³æ¹æ¡ â</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center">ç©ºåæ»</td>
-<td style="text-align: center">Cancel é¶æ®µæ§è¡æ¶ï¼Try é¶æ®µè¿æ²¡æ§è¡ææ§è¡å¤±è´¥ï¼å¦ç½ç»è¶æ¶å¯¼è´ Try è¯·æ±ä¸¢å¤±ï¼</td>
-<td style="text-align: center">1. æ¯ä¸ªåæ¯äºå¡ç»´æ¤äºå¡ç¶æè¡¨2. Cancel æ§è¡ååæ£æ¥ Try æ¯å¦æ§è¡æå3. æªæ§è¡åç´æ¥è¿åï¼å¹¶è®°å½ Cancel ç¶æ</td>
-</tr>
-<tr>
-<td style="text-align: center">æ¬æé®é¢</td>
-<td style="text-align: center">Try é¶æ®µè¶æ¶ï¼å¨å±äºå¡åæ»æ§è¡ Cancelä¹å Try è¯·æ±æå°è¾¾ï¼å¯¼è´èµæºè¢«æ°¸ä¹å»ç»</td>
-<td style="text-align: center">1. Cancel æ§è¡æ¶è®°å½äºå¡ç¶æ2. Try æ§è¡ååæ£æ¥æ¯å¦å·²ç»æ§è¡è¿ Cancel3. å¦ææ¯åæç»æ§è¡ Try</td>
-</tr>
-<tr>
-<td style="text-align: center">å¹ç­æ§é®é¢</td>
-<td style="text-align: center">ç½ç»éè¯å¯¼è´åä¸ä¸ªäºå¡è¢«å¤æ¬¡æ§è¡ï¼å¦ TC éè¯è°ç¨ Confirm/Cancelï¼</td>
-<td style="text-align: center">1. ä½¿ç¨å¨å±äºå¡ ID (XID) ä½ä¸ºå¯ä¸å¹ç­é®2. æ§è¡ååæ£æ¥äºå¡ç¶æ3. å·²æ§è¡è¿åç´æ¥è¿åæå</td>
-</tr>
-<tr>
-<td style="text-align: center">æ°æ®ä¸è´æ§ä¸æ§è½å¹³è¡¡</td>
-<td style="text-align: center">å¼ºä¸è´æ§æ¹æ¡ï¼2PCï¼æ§è½æå·®æç»ä¸è´æ§æ¹æ¡å­å¨æ°æ®ä¸ä¸è´çªå£</td>
-<td style="text-align: center">1. æ ¸å¿ä¸å¡ç¨ Seata AT/TCC2. éæ ¸å¿ä¸å¡ç¨æ¬å°æ¶æ¯è¡¨ / æå¤§åªåéç¥3. éç¨å®æ¶å¯¹è´¦ + äººå·¥è¡¥å¿ååº</td>
-</tr>
-<tr>
-<td style="text-align: center">é¿äºå¡é®é¢</td>
-<td style="text-align: center">å¨å±äºå¡æææ°æ®åºéæ¶é´è¿é¿å¯¼è´å¹¶åæ§è½æ¥å§ä¸é</td>
-<td style="text-align: center">1. æåé¿äºå¡ä¸ºå¤ä¸ªç­äºå¡2. é¿åå¨äºå¡ä¸­æ§è¡è¿ç¨è°ç¨åèæ¶æä½3. éæ ¸å¿é»è¾å¼æ­¥å</td>
-</tr>
-<tr>
-<td style="text-align: center">åå¸å¼éç«äº</td>
-<td style="text-align: center">å¤ä¸ªäºå¡åæ¶ä¿®æ¹åä¸è¡æ°æ®å¯¼è´éç­å¾è¶æ¶çè³æ­»é</td>
-<td style="text-align: center">1. ä¼åæ°æ®åºç´¢å¼ï¼ä½¿ç¨è¡çº§é2. æ§å¶äºå¡ç²åº¦ï¼ç¼©ç­éæææ¶é´3. éç¨ä¹è§éä»£æ¿æ²è§é</td>
-</tr>
-<tr>
-<td style="text-align: center">TC åç¹æé</td>
-<td style="text-align: center">Seata ç TC (äºå¡åè°å¨) æäºææå¨å±äºå¡é½æ æ³æ§è¡</td>
-<td style="text-align: center">1. TC éç¨éç¾¤é¨ç½²ï¼ä½¿ç¨ Nacos æ³¨åä¸­å¿2. éç¨æ°æ®åºå­å¨æ¨¡å¼ä¿å­äºå¡æ¥å¿3. éç½®èªå¨æéè½¬ç§»</td>
-</tr>
-<tr>
-<td style="text-align: center">æ°æ®éç¦»æ§é®é¢</td>
-<td style="text-align: center">å¨å±äºå¡æªæäº¤æ¶ï¼å¶ä»äºå¡è½çå°ä¸­é´ç¶æå¯¼è´èè¯»é®é¢</td>
-<td style="text-align: center">1. Seata AT æ¨¡å¼é»è®¤ä½¿ç¨å¨å±é2. åéç¦»ï¼å¨å±äºå¡æäº¤åï¼å¶ä»äºå¡ä¸è½ä¿®æ¹è¯¥è¡æ°æ®3. è¯»éç¦»ï¼é»è®¤è¯»æªæäº¤ï¼å¯éè¿éç½®æåä¸ºè¯»å·²æäº¤</td>
-</tr>
-</tbody>
-</table>
-<h3 id="é¡¹ç®å®æç»éªæ»ç»-">é¡¹ç®å®æç»éªæ»ç» ð</h3>
-<ol>
-<li><strong>ä¼åçº§åå</strong>ï¼è½ç¨æ¬å°äºå¡è§£å³çç»å¯¹ä¸è¦ç¨åå¸å¼äºå¡ï¼è½ç¨æç»ä¸è´æ§è§£å³çç»å¯¹ä¸è¦ç¨å¼ºä¸è´æ§</li>
-<li><strong>æ¹æ¡éæ©</strong>ï¼</li>
-</ol>
-<ul>
-<li>90% çåºæ¯ç¨<strong>Seata AT æ¨¡å¼</strong>ï¼å¼åæçæé«ï¼</li>
-<li>é«å¹¶åæ ¸å¿äº¤æç¨<strong>TCC æ¨¡å¼</strong>ï¼æ§è½æå¥½ï¼</li>
-<li>å¼æ­¥éæ ¸å¿åºæ¯ç¨<strong>RocketMQ äºå¡æ¶æ¯</strong>ï¼ååéæé«ï¼</li>
-</ul>
-<ol start="3">
-<li><strong>ååºæºå¶</strong>ï¼ææåå¸å¼äºå¡æ¹æ¡é½å¿é¡»éå<strong>å®æ¶å¯¹è´¦</strong>å<strong>äººå·¥è¡¥å¿</strong>æºå¶ï¼è¿æ¯æ°æ®ä¸è´æ§çæåä¸éé²çº¿</li>
-</ol>
-<h2 id="çå®é¢è¯æ¨¡æ">çå®é¢è¯æ¨¡æ</h2>
-<h3 id="çå®é¢è¯æ¨¡æ-1">çå®é¢è¯æ¨¡æ</h3>
-<h4 id="-é¢è¯å®">ð§âð¼ é¢è¯å®ï¼</h4>
-<p>æ¥ï¼å±ä»¬èä¸ªåºæ¯è®¾è®¡é¢ââ<strong>ä½ åç»æä»ç»ä¸ä¸åå¸å¼äºå¡å§</strong>ã</p>
-<h4 id="-åéäºº">ð§âð» åéäººï¼</h4>
-<p>å¥½çé¢è¯å®ãåå¸å¼äºå¡è¯´ç½äºå°±æ¯ï¼<strong>ä¸æ¬¡ä¸å¡æä½è·¨äºå¤ä¸ªç¬ç«çæ°æ®åºææå¡ï¼å¾ä¿è¯è¿äºæä½è¦ä¹å¨æåï¼è¦ä¹å¨åæ»</strong>ï¼è®©æ°æ®ä»ä¸ç§æ­£ç¡®ç¶æåå°å¦ä¸ç§æ­£ç¡®ç¶æã</p>
-<p>ä¸¾ä¸ªå¸åä¾å­ ð¦</p>
-<p>ç¨æ·ä¸å â è®¢åæå¡ååº â åºå­æå¡æ£åºå­ â ç§¯åæå¡å ç§¯åã</p>
-<p>å¦ææ£åºå­å¤±è´¥ï¼ä½è®¢åå·²ç»è½åºäºï¼æ°æ®å°±å¯¹ä¸é½ï¼è¿æ¶åå°±å¾é åå¸å¼äºå¡æ¥ååºã</p>
-<p>è¯´å°è¿å¿é¡»æä¸å´ <strong>CAP çè®º</strong> ð§ </p>
-<p>åå¸å¼ç³»ç»éï¼ä¸è´æ§ãå¯ç¨æ§ãååºå®¹éæ§æå¤åæ¶æ»¡è¶³ä¿©ãç½ç»ååºï¼Pï¼å¨çäº§ç¯å¢å¿ç¶å­å¨ï¼æä»¥å¤§é¨åç³»ç»é <strong>AP</strong> æ <strong>CP</strong>ãäºæ¯åå¸å¼äºå¡éå¸¸ä¸è¿½æ±å¼ºä¸è´ï¼èæ¯è¿½æ±<strong>æç»ä¸è´æ§ï¼BASEï¼</strong>ââåºæ¬å¯ç¨ãè½¯ç¶æãæç»ä¸è´ã</p>
-<p>è½å°çè¯ï¼å¸¸è§æ¹æ¡ææ´çäºä¸ªå°è¡¨ ð</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: center"><strong>æ¹æ¡</strong></th>
-<th style="text-align: center"><strong>ä¸è´æ§</strong></th>
-<th style="text-align: center"><strong>åå</strong></th>
-<th style="text-align: center"><strong>å¤æåº¦</strong></th>
-<th style="text-align: center"><strong>éç¨</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center">2PC/3PC</td>
-<td style="text-align: center">å¼ºä¸è´</td>
-<td style="text-align: center">ä½</td>
-<td style="text-align: center">ä¸­</td>
-<td style="text-align: center">èç³»ç»è·¨åºXA</td>
-</tr>
-<tr>
-<td style="text-align: center">TCC</td>
-<td style="text-align: center">æç»(ä¸å¡æ§)</td>
-<td style="text-align: center">é«</td>
-<td style="text-align: center">é«</td>
-<td style="text-align: center">èµéãçº¢å</td>
-</tr>
-<tr>
-<td style="text-align: center">å¯é æ¶æ¯æç»ä¸è´</td>
-<td style="text-align: center">æç»</td>
-<td style="text-align: center">é«</td>
-<td style="text-align: center">ä¸­</td>
-<td style="text-align: center">ä¸åãç§¯åé¾è·¯</td>
-</tr>
-<tr>
-<td style="text-align: center">Saga</td>
-<td style="text-align: center">æç»</td>
-<td style="text-align: center">é«</td>
-<td style="text-align: center">ä¸­é«</td>
-<td style="text-align: center">é¿æµç¨ãå¼æ</td>
-</tr>
-<tr>
-<td style="text-align: center">Seata AT</td>
-<td style="text-align: center">æç»</td>
-<td style="text-align: center">è¾é«</td>
-<td style="text-align: center">ä½</td>
-<td style="text-align: center">æ ä¾µå¥å¼æ¹é </td>
-</tr>
-</tbody>
-</table>
-<p>æ¶é´å³ç³»ææä¸¤ä¸ªæç»å¸çç»è¯´ä¸ã</p>
-<h4 id="-2pcä¸¤é¶æ®µæäº¤">â  2PCï¼ä¸¤é¶æ®µæäº¤ï¼</h4>
-<p>åè°èåé®ææåä¸èï¼âè½æäº¤åï¼â â åå¤é¶æ®µã</p>
-<p>å¨Yeså°±åæäº¤å½ä»¤ï¼æä¸ä¸ªNoå°±å¨ä½åæ»ã</p>
-<p>æç»ä¸ªç®å¾ ð</p>
-<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/739056/202608/739056-20260818111249673-1680403366.png" class="lazyload"></p>
-<p>â å¼ºä¸è´ï¼ä½ â åæ­¥é»å¡ï¼åè°èåç¹ï¼æ§è½å·®ï¼ç°å¨äºèç½åºæ¯ç¨å¾å°ã</p>
-<h4 id="-å¯é æ¶æ¯æç»ä¸è´æ¬å°æ¶æ¯è¡¨--mq">â¡ å¯é æ¶æ¯æç»ä¸è´ï¼æ¬å°æ¶æ¯è¡¨ + MQï¼</h4>
-<p>æ ¸å¿æè·¯ï¼<strong>ä¸æ¸¸åè½å°ä¸å¡åæ¶æ¯ï¼åç¨MQå¼æ­¥éç¥ä¸æ¸¸</strong>ã</p>
-<p>å¸åå°±æ¯ RocketMQ çäºå¡æ¶æ¯ï¼æç»ä¸æµç¨ ð</p>
-<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/739056/202608/739056-20260818111301183-1239440999.png" class="lazyload"></p>
-<ul>
-<li>åååæ¶æ¯ï¼å¯¹ä¸æ¸¸ä¸å¯è§ï¼</li>
-<li>æ§è¡æ¬å°äºå¡ï¼æååæäº¤åæ¶æ¯ï¼å¤±è´¥ååæ»</li>
-<li>ä¸ä¸æ¬å°äºå¡æäº¤æåä½ç¡®è®¤æ¶æ¯ä¸¢äºå¢ï¼RocketMQæ<strong>åæ¥æºå¶</strong>ï¼ä¸»å¨åæ¥ä¸æ¸¸è¡¥å¿ã</li>
-<li>ä¸æ¸¸é <strong>å¯ä¸ä¸å¡IDåå¹ç­</strong>ï¼éå¤æ¶è´¹ä¹ä¸ä¼åºéã</li>
-</ul>
-<p>â ååé«ï¼è§£è¦ï¼â ç­æä¸ä¸è´ï¼ä½ä¸å¡ä¸å®å¨è½æ¥åã</p>
-<h4 id="-é¢è¯å®-1">ð§âð¼ é¢è¯å®ï¼</h4>
-<p>æºå¥½ãé£ä½ ä»¬é¡¹ç®ä¸­å®éç¨çæ¯åªç§ï¼ä¸ºä»ä¹æ²¡ç¨ TCCï¼</p>
-<h4 id="-åéäºº-1">ð§âð» åéäººï¼</h4>
-<p>æä»¬è®¢å-åºå­-ç§¯ååºæ¯ç¨çå°±æ¯ <strong>RocketMQ äºå¡æ¶æ¯ + æ¬å°æ¶æ¯è¡¨</strong>ã</p>
-<p>å ä¸ºä¸å¡åè®¸ç§çº§å»¶è¿ï¼å¯¹å®æ¶ä¸è´æ§è¦æ±æ²¡é£ä¹é«ï¼æä»¥æç»ä¸è´å®å¨å¤ã</p>
-<p>TCC è½ç¶è½ä¸»å¨åæ»ï¼ä¸è´æ§æ´å¼ºï¼ä½æ¯ä¸ªæ¥å£é½è¦å®ç° Try/Confirm/Cancelï¼<strong>ä¸å¡ä¾µå¥å¤ªå¤§</strong>ï¼å¼åææ¬é«ï¼èä¸è¿è¦å¤çç©ºåæ»ãæ¬æè¿äºå¤´ç¼é®é¢ã</p>
-<p>æè¡¡ä¸æ¥ï¼æ¶æ¯æ¹æ¡æ§ä»·æ¯æé«ï¼çº¿ä¸è·äºä¸¤å¹´æ²¡åºè¿è´¦ä¸å¹³é®é¢ âã</p>
-<h4 id="-é¢è¯å®-2">ð§âð¼ é¢è¯å®ï¼</h4>
-<p>é£æåé®ä¸ªç»èââå¦ææ¶æ¯å·²ç»ååºå»ï¼ä½ä¸æ¸¸æ¬å°äºå¡åæ»äºï¼è¿ååï¼</p>
-<h4 id="-åéäºº-2">ð§âð» åéäººï¼</h4>
-<p>è¿ä¸ª RocketMQ äºå¡æ¶æ¯å·²ç»è§é¿äº ð</p>
-<p>å ä¸ºæµç¨æ¯<strong>åååæ¶æ¯</strong>ï¼è¿æ¶åæ¶æ¯å¯¹ä¸æ¸¸ä¸å¯è§ãæ¬å°äºå¡æäº¤äºï¼ææåæ¶æ¯æ è®°ä¸ºå¯æéï¼æ¬å°äºå¡åæ»äºï¼åæ¶æ¯ä¹è·çåæ»ï¼ä¸æ¸¸æ ¹æ¬æ¶ä¸å°ã</p>
-<p>æä»¥ä¸å­å¨âæ¶æ¯ååºå»äºä½æ¬å°äºå¡åæ»âçæåµã</p>
-<h4 id="-é¢è¯å®-3">ð§âð¼ é¢è¯å®ï¼</h4>
-<p>æåé®ä¸ï¼é¤äºè¿äºæ¹æ¡ï¼ä½ è¿æä»ä¹æ³è¡¥åçï¼</p>
-<h4 id="-åéäºº-3">ð§âð» åéäººï¼</h4>
-<p>åäº®ä¸ä¸ªå åç¹å§ ð¡</p>
-<ul>
-<li><strong>å¹ç­æ§è®¾è®¡</strong>ï¼ä¸æ¸¸å¿é¡»ç¨ä¸å¡å¯ä¸é®ï¼æ¯å¦è®¢åå·ï¼åæ°æ®åºå¯ä¸ç´¢å¼ï¼é²éå¤æ¶è´¹ã</li>
-<li><strong>ååºæ«æ</strong>ï¼ä¸ä¸æ¶æ¯ä¸­é´ä»¶æé®é¢ï¼å®æ¶ä»»å¡æ«ææ¬å°æ¶æ¯è¡¨è¡¥å¿ï¼åå°ä¸æ ä¸å¤±ã</li>
-<li><strong>Seata AT æ¨¡å¼</strong>ï¼å¦æä¸æ³åå¤ªå¤è¡¥å¿ä»£ç ï¼å¯ä»¥èèï¼æ ä¾µå¥èªå¨åæ»ï¼ä½è¦æ¥åå¨å±éå¸¦æ¥çæ§è½æèï¼éåä½å¹¶ååºæ¯ã</li>
-</ul>
-<p>æåä¸å¥å¿å¾ï¼<strong>åå¸å¼äºå¡æ²¡æé¶å¼¹ï¼è½æç»ä¸è´å°±å«å¼ºä¸è´ï¼æ ¹æ®ä¸å¡å®¹å¿åº¦éå</strong>ï¼è¿ææ¯è½å°çå³é® ð</p>
-<h4 id="-é¢è¯å®-4">ð§âð¼ é¢è¯å®ï¼</h4>
-<p>ä½ åæå°äº RocketMQ äºå¡æ¶æ¯è¿ä¸ªæ¹æ¡ï¼è®²å¾ä¸éãé£ä½ è½ä¸è½<strong>åä¸ä¸æ ¸å¿ä»£ç </strong>ï¼æææ¯äº®ç¹ä½ç°åºæ¥ï¼ç¶ååè¯´è¯´è¿ä¸ªåºæ¯ä¸æåªäº<strong>ææ¯é¾ç¹ï¼ä½ ä»¬æä¹è§£å³ç</strong>ï¼</p>
-<h4 id="-åéäºº-4">ð§âð» åéäººï¼</h4>
-<p>å¥½çï¼æç´æ¥åå³é®é¨åï¼ä¿è¯æäº®ç¹ â¨</p>
-<h3 id="-æ ¸å¿ä»£ç å¯é æ¶æ¯æç»ä¸è´">ð» æ ¸å¿ä»£ç ï¼å¯é æ¶æ¯æç»ä¸è´ï¼</h3>
-<p>åºæ¯ï¼ç¨æ·ä¸åï¼è®¢åæå¡åéäºå¡æ¶æ¯ï¼åºå­æå¡æ¶è´¹æ£åã</p>
-<h4 id="1-è®¢åæå¡åéäºå¡æ¶æ¯rocketmq-äºå¡æ¶æ¯">1. è®¢åæå¡ï¼åéäºå¡æ¶æ¯ï¼RocketMQ äºå¡æ¶æ¯ï¼</h4>
-<pre><code class="language-java">// è®¢åæå¡ - åéåæ¶æ¯å¹¶æ§è¡æ¬å°äºå¡
-@Service
-public class OrderService {
-
-    @Autowired
-    private RocketMQTemplate rocketMQTemplate;
-
-    @Transactional // æ¬å°äºå¡ï¼è®¢åè¡¨ + æ¶æ¯è¡¨
-    public void createOrder(OrderDTO orderDTO) {
-        // 1. çæå¯ä¸ä¸å¡é®ï¼å¹ç­å³é®ï¼
-        String orderId = generateOrderId(); 
-        
-        // 2. æé æ¶æ¯
-        Message&lt;String&gt; message = MessageBuilder.withPayload(orderId).build();
-        
-        // 3. åéäºå¡æ¶æ¯ï¼äº®ç¹ï¼åæ¶æ¯ + æ¬å°äºå¡ + åæ¥ï¼
-        TransactionSendResult result = rocketMQTemplate.sendMessageInTransaction(
-            "order-topic", // ä¸»é¢
-            message,       // æ¶æ¯ä½
-            orderDTO      // ä¸å¡åæ°ï¼ä¼éä¼ ç»æ§è¡æ¬å°äºå¡æ¹æ³
-        );
-        
-        if (result.getSendStatus() != SendStatus.SEND_OK) {
-            throw new BusinessException("è®¢ååå»ºå¤±è´¥");
-        }
-    }
-
-    // æ§è¡æ¬å°äºå¡ï¼RocketMQ åè°ï¼
-    @RocketMQTransactionListener(txProducerGroup = "order-group")
-    public class OrderTransactionListener implements RocketMQLocalTransactionListener {
-
-        @Override
-        @Transactional
-        public RocketMQLocalTransactionState executeLocalTransaction(Message msg, Object arg) {
-            OrderDTO orderDTO = (OrderDTO) arg;
-            try {
-                // 1. æå¥è®¢åè¡¨
-                orderMapper.insert(orderDTO.toOrder());
-                // 2. æå¥æ¬å°æ¶æ¯è¡¨ï¼åç»­ååºæ«æç¨ï¼
-                localMessageMapper.insert(buildLocalMessage(msg));
-                // 3. å¯å¨æ­¤é¢æ£åºå­ãå»ç»ç§¯åç­...
-                return RocketMQLocalTransactionState.COMMIT; // æ¬å°äºå¡æåï¼æäº¤åæ¶æ¯
-            } catch (Exception e) {
-                log.error("æ¬å°äºå¡æ§è¡å¤±è´¥", e);
-                return RocketMQLocalTransactionState.ROLLBACK; // åæ»åæ¶æ¯
-            }
-        }
-
-        @Override
-        public RocketMQLocalTransactionState checkLocalTransaction(Message msg) {
-            // åæ¥ï¼æ ¹æ®æ¶æ¯ä½éçä¸å¡IDæ¥è®¢åè¡¨ï¼å¤æ­æ¯å¦è½åºæå
-            String orderId = new String((byte[]) msg.getPayload());
-            Order order = orderMapper.selectByOrderId(orderId);
-            if (order != null) {
-                return RocketMQLocalTransactionState.COMMIT; // å·²è½åºï¼è¡¥æäº¤
-            }
-            return RocketMQLocalTransactionState.ROLLBACK; // æªæ¥å°ï¼è¡¥åæ»
-        }
-    }
-}
-</code></pre>
-<h4 id="-ææ¯äº®ç¹">â¨ ææ¯äº®ç¹ï¼</h4>
-<ul>
-<li>å©ç¨ <code>sendMessageInTransaction</code> å®ç°<strong>åæ¶æ¯æºå¶</strong>ï¼ç¡®ä¿æ¬å°äºå¡åæ¶æ¯æéåå­æ§ã</li>
-<li>å®ç° <code>RocketMQLocalTransactionListener</code>ï¼åå« <code>executeLocalTransaction</code> å <code>checkLocalTransaction</code>ï¼å®ç¾åºå¯¹ç½ç»éªæ­ãåè°ä¸¢å¤±ã</li>
-<li>æ¬å°äºå¡ä¸­åæ¶å<strong>è®¢åè¡¨ + æ¬å°æ¶æ¯è¡¨</strong>ï¼ç»å®æ¶ååºæ«æçä¸çè¿¹ã</li>
-</ul>
-<h4 id="2-åºå­æå¡æ¶è´¹æ¶æ¯æ£ååºå­å¹ç­è®¾è®¡">2. åºå­æå¡ï¼æ¶è´¹æ¶æ¯ï¼æ£ååºå­ï¼å¹ç­è®¾è®¡ï¼</h4>
-<pre><code class="language-java">// åºå­æå¡ - æ¶è´¹è®¢åæ¶æ¯ï¼æ£ååºå­
-@Component
-@RocketMQMessageListener(topic = "order-topic", consumerGroup = "stock-group")
-public class StockDeductConsumer implements RocketMQListener&lt;String&gt; {
-
-    @Autowired
-    private StockService stockService;
-
-    @Override
-    public void onMessage(String orderId) {
-        // å¹ç­æ§ä¿è¯ï¼æ ¹æ®orderIdå¤æ­æ¯å¦å·²å¤ç
-        if (stockService.isAlreadyDeducted(orderId)) {
-            log.warn("éå¤æ¶æ¯ï¼å·²è·³è¿å¤ç: {}", orderId);
-            return;
-        }
-
-        // å¼å§æ£åºå­ï¼æ¬å°äºå¡ï¼
-        try {
-            stockService.deductStock(orderId); 
-            // åé¨å®ç°ï¼ä½¿ç¨å¯ä¸ç´¢å¼é¿åéå¤æ£å
-            // INSERT INTO stock_deduct_log (order_id) VALUES (#{orderId})
-            // å¦ææå¥éå¤ï¼å¯ä¸ç´¢å¼æ¥éï¼æè·å¼å¸¸åè·³è¿å³å¯
-        } catch (DuplicateKeyException e) {
-            log.info("å¹ç­æ¦æªï¼éå¤æ£åºå­è¯·æ±: {}", orderId);
-        }
-    }
-}
-</code></pre>
-<h4 id="-ææ¯äº®ç¹-1">â¨ ææ¯äº®ç¹ï¼</h4>
-<ul>
-<li><strong>å¯ä¸ä¸å¡é®å¹ç­</strong>ï¼éè¿ <code>order_id</code> åæ£åæµæ°´è¡¨ï¼æ°æ®åºå <strong>å¯ä¸ç´¢å¼</strong>ï¼å¤©ç¶çé²éææ®µã</li>
-<li>å¼å¸¸å¤çä¸åéï¼æå°æ¥å¿åç»§ç»­æ¶è´¹ï¼ä¿è¯ä¸é»å¡åç»­æ¶æ¯ã</li>
-</ul>
-<h4 id="3-ååºæ«æå®æ¶ä»»å¡è¡¥å¿">3. ååºæ«æï¼å®æ¶ä»»å¡è¡¥å¿</h4>
-<pre><code class="language-java">// å®æ¶ä»»å¡ - æ«ææ¬å°æ¶æ¯è¡¨ï¼è¡¥å¿æªæåçæ¶æ¯
-@Component
-public class LocalMessageCompensateJob {
-
-    @Autowired
-    private LocalMessageMapper localMessageMapper;
-    @Autowired
-    private RocketMQTemplate rocketMQTemplate;
-
-    @Scheduled(cron = "0 0/5 * * * ?") // æ¯5åéæ«æ
-    public void compensate() {
-        // æ¥è¯¢ç¶æä¸ºâå¾åéâä¸è¶è¿2åéæªæ´æ°çæ¶æ¯
-        List&lt;LocalMessage&gt; messages = localMessageMapper.selectPendingMessages(2);
-        for (LocalMessage msg : messages) {
-            try {
-                // éæ°åéå°MQ
-                Message&lt;String&gt; mqMsg = MessageBuilder.withPayload(msg.getOrderId()).build();
-                rocketMQTemplate.syncSend("order-topic", mqMsg);
-                // æ´æ°æ¬å°æ¶æ¯ç¶æä¸ºå·²åé
-                localMessageMapper.updateStatus(msg.getId(), MessageStatus.SENT);
-            } catch (Exception e) {
-                log.error("è¡¥å¿åéå¤±è´¥: {}", msg.getOrderId(), e);
-            }
-        }
-    }
-}
-</code></pre>
-<h4 id="-ææ¯äº®ç¹-2">â¨ ææ¯äº®ç¹ï¼</h4>
-<ul>
-<li><strong>åä¿é©</strong>ï¼å³ä½¿ RocketMQ åæ¥æºå¶å¨é¨å¤±æï¼å®æ¶æ«æä¹è½ä¿è¯æ¶æ¯æç»æéã</li>
-<li>çäº§ç¯å¢å¯å åå¸å¼éï¼é¿åå¤å®ä¾éå¤åéã</li>
-</ul>
-<h3 id="ï¸-åºæ¯å¯¹åºçææ¯é¾ç¹--è§£å³æ¹æ¡">â ï¸ åºæ¯å¯¹åºçææ¯é¾ç¹ &amp; è§£å³æ¹æ¡</h3>
-<p>è¿ä¸ªä¸å â åºå­åºæ¯ï¼æä»¬è¸©è¿ä¸å°åï¼æå½çº³æ <strong>åä¸ªé¾ç¹</strong> ð§</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: center"><strong>ææ¯é¾ç¹</strong></th>
-<th style="text-align: center"><strong>è¯¦ç»æè¿°</strong></th>
-<th style="text-align: center"><strong>è§£å³æ¹æ¡</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center">1. æ¶æ¯å¯é æé</td>
-<td style="text-align: center">æ¬å°äºå¡æäº¤äºï¼æ¶æ¯åä¸¢äºï¼æèæ¶æ¯åäºï¼æ¬å°äºå¡åæ»ãæä¹ä¿è¯ä¸ä¸ªæåå¦ä¸ä¸ªå¿å®æåï¼</td>
-<td style="text-align: center">éç¨ <strong>RocketMQ äºå¡æ¶æ¯ï¼åæ¶æ¯+åæ¥ï¼</strong>ãååå¯¹ä¸æ¸¸ä¸å¯è§çåæ¶æ¯ï¼æ¬å°äºå¡æäº¤åææ ä¸ºå¯æéãå¦ææ¬å°åæ»ï¼åæ¶æ¯ä¹åæ»ï¼ä¸æ¸¸æ ¹æ¬æ¶ä¸å°ãåæ¥æºå¶è§£å³ç½ç»è¶æ¶å¯¼è´çåæ¶æ¯æ¬æé®é¢ã</td>
-</tr>
-<tr>
-<td style="text-align: center">2. ä¸æ¸¸æ¶è´¹å¹ç­</td>
-<td style="text-align: center">MQ ä¿è¯è³å°ä¸æ¬¡æéï¼éå¤æ¶è´¹ä¼å¯¼è´éå¤æ£åºå­ï¼è¶åã</td>
-<td style="text-align: center">ä¸ºæ¯ä¸ªä¸å¡æä½å»ºç«<strong>å¯ä¸æ è¯ï¼è®¢åå·ï¼</strong>ï¼ä¸æ¸¸åå¥æ£åæµæ°´è¡¨æ¶ç¨ <code>order_id</code> <strong>åå¯ä¸ç´¢å¼</strong>ãæå¥éå¤ç´æ¥æè· <code>DuplicateKeyException</code> è·³è¿ã</td>
-</tr>
-<tr>
-<td style="text-align: center">3. åæ¥é»è¾è®¾è®¡</td>
-<td style="text-align: center"><code>checkLocalTransaction</code> è¢«è°æ¶ï¼æä¹ç¥éæ¬å°äºå¡å°åºæåäºæ²¡ï¼æ¥ä¸å°æ°æ®æ¯æ²¡æ§è¡ï¼è¿æ¯æ§è¡äºä½è¿æ²¡æ¥å¾åè½åºï¼</td>
-<td style="text-align: center">åæ¥æ¶åæ¥<strong>è®¢åè¡¨</strong>ï¼ææ¬å°æ¶æ¯è¡¨ï¼ï¼æ ¹æ®ä¸å¡é®æ¥æ°æ®æ¯å¦å­å¨ãå¦æå­å¨è¯´æäºå¡æå â è¿å <code>COMMIT</code>ï¼ä¸å­å¨å <code>ROLLBACK</code>ãä¸ºäºé²âæ§è¡ä¸­âçä¸­é´æï¼åæ¥æ¹æ³è¦å éå½éè¯æç­å¾ã</td>
-</tr>
-<tr>
-<td style="text-align: center">4. åå¸å¼äºå¡è¶æ¶</td>
-<td style="text-align: center">è®¢åæå¡æ¬å°äºå¡æåï¼ä½åºå­æå¡æ¶è´¹æ¶æ¯åï¼ç±äºèªèº«æéï¼æ¯å¦æ°æ®åºè¿æ¥æ»¡ï¼é¿æ¶é´æªå¤çï¼å¯¼è´ç¨æ·çè®¢åå·²çæä½åºå­æ²¡åã</td>
-<td style="text-align: center">â  <strong>è®¾ç½®åççæ¶è´¹è¶æ¶åéè¯æºå¶</strong>ï¼â¡ å¨åºå­æå¡åå¥½<strong>æ­»ä¿¡éå</strong>å¤çï¼é²æ­¢é»å¡ä¸»éåï¼â¢ éå<strong>å®æ¶æ«ææ¬å°æ¶æ¯è¡¨</strong>ï¼å¯¹é¿æ¶é´æªæ¶è´¹æåçä¸å¡è¿è¡äººå·¥æèªå¨è¡¥å¿ï¼å¦éç¥ç¨æ·ãéæ¬¾ï¼ã</td>
-</tr>
-<tr>
-<td style="text-align: center">5. ç©ºåæ»ï¼TCCç¹æï¼</td>
-<td style="text-align: center">å¦æç´æ¥ä½¿ç¨ TCCï¼Cancel æ¯ Try åå°æä¹åï¼æè Cancel è¢«éå¤è°ç¨ï¼</td>
-<td style="text-align: center">å¨ TCC åºæ¯é<strong>åè®¸ç©ºåæ»</strong>ï¼Cancel æ§è¡æ¶è¥æ²¡æ Try å¯¹åºçé¢çèµæºï¼ç´æ¥è¿åæåãåæ¶ Cancel æä½ä¹è¦å¹ç­ãæä»¬ä¹åçæ¶ææ²¡ç¨ TCCï¼ä½æ­¤ç¹æè¢«è¿½é®ï¼è¦è½ç­åºã</td>
-</tr>
-</tbody>
-</table>
-<h4 id="-é¢è¯å®-5">ð§âð¼ é¢è¯å®ï¼</h4>
-<p>ä¸éï¼ä»£ç åå¾éç¹çªåºï¼é¾ç¹åæä¹å°ä½ï¼å°¤å¶æ¯æå¹ç­ååæ¥è®²éäº ð</p>
-<h4 id="-åéäºº-5">ð§âð» åéäººï¼</h4>
-<p>è°¢è°¢é¢è¯å®ï¼æåè¡¥åä¸ªå®éçäº§ä¸çå°ç»éªï¼æä»¬å½åä¸çº¿åï¼åæ¨æ¶æ®µæ°æ®åºæ¢æ¥è¯¢å¯¼è´æ¬å°äºå¡æ§è¡è¶è¿ MQ é»è®¤åæ¥æ¶é´ï¼ç»æäº§çäºå¤§éåæ¥è°ç¨ãåæ¥æä»¬ææ¬å°äºå¡æ§è¡è¶æ¶éå¼è°é«ï¼å¹¶æåæ¥æ¹æ³æ¹æåªæ¥æ°æ®ä¸åæä½ï¼å°½éè½»éï¼å®ç¾è§£å³ ð</p>
-<h4 id="-é¢è¯å®-6">ð§âð¼ é¢è¯å®ï¼</h4>
-<p>å¥½ï¼è¿ä¸ªç»éªå¾æä»·å¼ï¼é¢è¯å°è¿å¿ï¼ä½ åå»ç­éç¥å§ã</p>
-<hr>
-<p>å¬ä¼å·âRainçJavaå¤§ç¥ä¹è·¯â<br>
-ä¸ªäººåå®¢âwww.javadashen.comâ</p>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-08-18 11:15">2026-08-18 11:15</span>&nbsp;
-<a href="https://www.cnblogs.com/zrui-xyu">RainçJavaå¤§ç¥å®æå</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(22540232);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fzrui-xyu%2Fp%2F22540232&amp;targetId=22540232&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
     </description>
     </item>
 <item>
@@ -1992,7 +1904,7 @@ register_rule("my_rule", MyRule)
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0.001388888888888889" data-date-updated="2026-08-18 10:53">2026-08-18 10:51</span>&nbsp;
 <a href="https://www.cnblogs.com/tynam">Tynam.Yang</a>&nbsp;
-éè¯»(<span id="post_view_count">30</span>)&nbsp;
+éè¯»(<span id="post_view_count">60</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(22539329);return false;">æ¶è</a>&nbsp;
@@ -2115,7 +2027,7 @@ register_rule("my_rule", MyRule)
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-08-18 08:48">2026-08-18 08:47</span>&nbsp;
 <a href="https://www.cnblogs.com/jinjiangongzuoshi">çå¸</a>&nbsp;
-éè¯»(<span id="post_view_count">517</span>)&nbsp;
+éè¯»(<span id="post_view_count">581</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">5</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(22535730);return false;">æ¶è</a>&nbsp;
@@ -2208,7 +2120,7 @@ register_rule("my_rule", MyRule)
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0.15833333333333333" data-date-updated="2026-08-18 11:36">2026-08-18 07:48</span>&nbsp;
 <a href="https://www.cnblogs.com/zhangs1986">æ¬¢é</a>&nbsp;
-éè¯»(<span id="post_view_count">85</span>)&nbsp;
+éè¯»(<span id="post_view_count">240</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(22354974);return false;">æ¶è</a>&nbsp;
@@ -2307,7 +2219,7 @@ Agent ä¸éè¦é¢å¤åå¤§éééè¶æ°´ä
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0.0020833333333333333" data-date-updated="2026-08-17 22:50">2026-08-17 22:47</span>&nbsp;
 <a href="https://www.cnblogs.com/fanliang11">fanly11</a>&nbsp;
-éè¯»(<span id="post_view_count">56</span>)&nbsp;
+éè¯»(<span id="post_view_count">167</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(22531297);return false;">æ¶è</a>&nbsp;
@@ -2415,7 +2327,7 @@ Agent ä¸éè¦é¢å¤åå¤§éééè¶æ°´ä
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-08-17 22:25">2026-08-17 22:24</span>&nbsp;
 <a href="https://www.cnblogs.com/InCerry">InCerry</a>&nbsp;
-éè¯»(<span id="post_view_count">260</span>)&nbsp;
+éè¯»(<span id="post_view_count">310</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(22531221);return false;">æ¶è</a>&nbsp;
@@ -2425,16 +2337,16 @@ Agent ä¸éè¦é¢å¤åå¤§éééè¶æ°´ä
     </description>
     </item>
 <item>
-    <title><![CDATA[ å¤ Agent è¶å¤è¶å¥½åï¼å³äºåä½ãå±è¯ä¸å²çª ]]></title>
-    <link>https://www.cnblogs.com/Qiniu-developer/p/22543566</link>
-    <guid>dbefad162fec6c19a161e916737a4754</guid>
+    <title><![CDATA[ ç¨DSHåäºä¸ä¸ªç§æç®åå¾®è°å·¥å· ]]></title>
+    <link>https://www.cnblogs.com/cpp-lin/p/22549903</link>
+    <guid>74b9fc217582b36a3dca784119ddc847</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/Qiniu-developer/p/22543566" title="åå¸äº 2026-08-18 14:13">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/cpp-lin/p/22549903" title="åå¸äº 2026-08-18 16:49">
     
 
-    <span role="heading" aria-level="2">å¤ Agent è¶å¤è¶å¥½åï¼å³äºåä½ãå±è¯ä¸å²çª</span>
+    <span role="heading" aria-level="2">ç¨DSHåäºä¸ä¸ªç§æç®åå¾®è°å·¥å·</span>
     
 
 </a>
@@ -2442,118 +2354,67 @@ Agent ä¸éè¦é¢å¤åå¤§éééè¶æ°´ä
             </h1>
             <div class="clear"></div>
             <div class="postBody">
-                    <div id="cnblogs_post_description" style="display: none">
-        <img src="https://img2024.cnblogs.com/blog/3796273/202608/3796273-20260818141320998-1347101829.png" alt="å¤ Agent è¶å¤è¶å¥½åï¼å³äºåä½ãå±è¯ä¸å²çª" class="desc_img">
-        Anthropicææ°ç ç©¶æ­ç¤ºå¤Agentç³»ç»çæ ¸å¿ææï¼æ°éå¢å æªå¿æåæè½ãå½ä»»å¡å¯ç¬ç«æåï¼å¦æ¼æ´æç´¢ï¼ï¼åä½è½æ©å¤§è¦çï¼ä½ä¸æ¦æ¶åå±äº«èµæºãå¨æä¾èµæç®æ å²çªï¼åè°ææ¬å§å¢ï¼æå¼åéå¤å³å¨ãéä½è¯¯å¤ä¸è¡ä¸ºè¶åãå³é®ä¸å¨âå¤å°ä¸ªAgentâï¼èå¨âå¦ä½å±åå·¥ä½âã
-    </div>
-<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>ç°å¨ï¼è®©å ä¸ª Agent åå¤´æ¥èµæãåä»£ç ãè·æµè¯å¹¶ä¸é¾ãéº»ç¦çæ¯è®©å®ä»¬å¨åä¸ä¸ªç³»ç»éæç»­åä½ï¼æ¢è¦é¿åéå¤å³å¨ãå½¼æ­¤è¦çä»£ç åèµæºäºæ¢ï¼ä¹è¦é²æ­¢å®ä»¬å ä¸ºå¤æ­è¶åï¼éä½æ²¿çéè¯¯æ¹åå éã</p>
-<p>ä¸å°å¤ Agent æ¶æåè§£å³çæ¯ä»»å¡åéãè°è´è´£æ£ç´¢ï¼è°è´è´£åä»£ç ï¼è°è´è´£å®¡æ ¸ï¼åå ä¸ä¸æ¡éä¿¡ééï¼æèè®¾ç½®ä¸ä¸ªè´è´£è°åº¦çãCEOããè¿äºè®¾è®¡è½å¤åç­ãè°åä»ä¹ãï¼å´ä¸ä¼èªå¨è§£å³å·¥ä½å¦ä½åå¹¶ãä¿¡æ¯åºè¯¥ç¸ä¿¡è°ï¼ä»¥åç®æ å²çªæ¶è°ååæãAgent æ°éå¢å ä»¥åï¼æ°å¢çä¸åªæ¯æ§è¡è½åï¼è¿ææ´å¤ç¸äºä¾èµåå¤±æè·¯å¾ã</p>
-<p>Anthropic è¿æçç ç©¶æç« ãPatterns and problems in emerging multiagent systemsãæ­£æ¯è®¨è®ºè¿ç±»åè°é¾é¢ãå®æ²¡æå¯»æ¾ä¸ä¸ªæä¼ Agent æ°éå¼ï¼èæ¯æ Agent æ¾è¿æ¼æ´æç´¢ãå±äº«ä»£ç ãæéèµæºç«äºãä¿¡æ¯å¤æ­åç®æ å²çªç­ç¯å¢éï¼è§å¯ä¸ªä½è½åè½å¦ç¨³å®è½¬åä¸ºç³»ç»è½åã</p>
-<p>å®éªåç°åºä¸æ¡æ¸æ°çåçï¼<strong>ä»»å¡å¯ä»¥ç¬ç«æåæ¶ï¼å¢å  Agent è½æ©å¤§æç´¢èå´</strong>ï¼<strong>ä¸æ¦è¿å¥å±äº«ç¶æãå¨æä¾èµåç®æ å²çªï¼æ°éä¸åä¹ä¼æ¾å¤§åè°ææ¬</strong>ãå¤ Agent æ¯å¦ææï¼å³é®ä¸åªå¨äºé¨ç½²äºå¤å°ä¸ª Agentï¼è¿å¨äºå®ä»¬ä»¥ä»ä¹å³ç³»å±åå·¥ä½ã</p>
-<h2 id="å¯æåä»»å¡ä¸æç´¢èå´">å¯æåä»»å¡ä¸æç´¢èå´</h2>
-<p>è¦çæ¸è¿æ¡åçï¼éè¦ååºåä¸¤ç§ Agent ä¹é´çå³ç³»ã</p>
-<p>ä¸ç§å³ç³»æ¥è¿å·¥å·è°ç¨ãä¸æ¸¸ Agent æä¾æç¡®ç Promptï¼ä¸æ¸¸ Agent è¿åååºæäº§ç©ï¼è¾å¥ãè¾åºåè´£ä»»è¾¹çé½æ¯è¾æ¸æ¥ãåªè¦ä»»å¡è½ææå¤ä¸ªç¬ç«å­é®é¢ï¼è¿ç±»åä½å·²ç»å¯ä»¥ææè¿è¡ã</p>
-<p>å¦ä¸ç§å³ç³»æ¥è¿é¿æå±äºçåä¼´ãä¸å Agent æèªå·±çç®æ ãè¡ä¸ºåä¸ä¸æï¼å½¼æ­¤ä¹é´æ²¡ææ¸æ°çåºå®å±çº§ï¼è¿ä¼æç»­å½±åå¯¹æ¹çå·¥ä½ãç°é¶æ®µç Agent æ´å®¹æå¨è¿éåºé®é¢ã</p>
-<p>è½¯ä»¶æ¼æ´åç°å±äºåä¸ç±»ä»»å¡ãä¸ä¸ª Agent æ¼ææä¸ª Bugï¼éå¸¸ä¸ä¼ç´æ¥ç ´åå¦ä¸ä¸ª Agent çæç´¢ç»æï¼å¤å Agent å¯ä»¥åæ¶æ£æ¥ä¸åä»åºãæä»¶ææ¨¡åã</p>
-<p>ä¸ºäºæµè¯åè°è½å¦è¿ä¸æ­¥æ¹åç»æï¼ç ç©¶å®éªå¯å¨äº 45 ä¸ª Agentï¼ä¸ºæ¯ä¸ª Agent åéç¬ç«èææºï¼å¹¶æä¾ä¸ä¸ªåä½é¢éãææ Agent æ¶å°ç¸åç Promptï¼ç®æ æ¯å¨ 15 ä¸ªå¼æºè½¯ä»¶é¡¹ç®ä¸­åç°æ¼æ´ãå®ä»¬è¿éè¦äºç¸å®¡æ ¸åç°ï¼æåç±ä¸ä¸ªç¬ç«çä»²è£ Agent å¤æ­æäº¤çæ¼æ´æ¯å¦ææãæ¯å¦å±äºæ°åç°ã</p>
-<p>å®éªæ¯è¾äºä¸¤ç§æ¹å¼ãç¬¬ä¸ç§æ¯åè°å Agent ç¾¤ä½ï¼Agent å¯ä»¥èªå·±éæ©æç´¢ä½ç½®ãäº¤æµåç°å¹¶å½¢æåå·¥ï¼ç¬¬äºç§æ¯ç¬ç«å¹¶è¡æ¹æ¡ï¼æ¯ä¸ª Agent é¢åè´è´£ä¸åçä»£ç åºåï¼å½¼æ­¤ä¸è¿è¡åè°ã</p>
-<p>æä¸¤ç§æ¹å¼æ¾å¨åä¸æ¡ç´¯è®¡åç°æ²çº¿ä¸ï¼å·®å¼å¦ä¸ã</p>
-<p><img alt="å¾1" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3796273/202608/3796273-20260818141211303-1226384720.png" class="lazyload"></p>
-<p>å¨ Claude Mythos Preview çå®éªéï¼ç¬ç«å¹¶è¡æ¹æ¡æ¶èçº¦ 650 ä¸ Tokenï¼æ¾å° 21 ä¸ªæ¼æ´ï¼åè°å Agent ç¾¤ä½æ¶èçº¦ 2700 ä¸ Tokenï¼æ¾å° 266 ä¸ªæ¼æ´ãè¿ä¸ªæ°å­ä¸è½ç´æ¥è§£éææçæååå åã</p>
-<p>åè°å Agent ç¾¤ä½å¯ä»¥èªç±æç´¢æ´ä¸ªé¡¹ç®ï¼èç¬ç« Agent è¢«è¦æ±éä¸­æ£æ¥æéçæ ¸å¿ç®å½ã266 ä¸ªæ¼æ´ä¸­çº¦æä¸åæ¥èªæ ¸å¿ç®å½ä¹å¤ãåªæ¯è¾åæ¹é½è¦ççæ ¸å¿ç®å½ï¼ä¸¤ç§æ¹å¼å¨æ¯åç°ä¸ä¸ªæ¼æ´ææ¶èç Token ä¸å¤§è´ç¸å½ã</p>
-<p>ä¸¤ç§æ¹å¼æ¾å°çæ¼æ´ä¹é«åº¦äºè¡¥ï¼åªæ 12 ä¸ªéåãç¬ç« Agent æé¢è®¾èå´æç´¢ï¼åè°å Agent åä¼ææ³¨æåè½¬ç§»å°æ´å®¹æè·å¾åç°çä½ç½®ãå®éªè¿ç¨ä¸­ï¼ä¸äº Agent è¿ä¼æå»ºå·¥å·ï¼å¹¶éæ¸ä¸æ³¨äºç¹å®ç±»åçæ¼æ´ã</p>
-<p>è¿éçãéæ¸ä¸æ³¨ãåçå¨ä¸æ¬¡å®éªçä»»å¡æ§è¡è¿ç¨ä¸­ï¼æè§è²åå·¥åå·¥å·ä½¿ç¨åçååï¼ä¸æ¶åæ¨¡ååæ°æ´æ°ï¼ä¸è½ç§°ä¸ºèªä¸»è¿åã</p>
-<p>è¿ç»å®éªæ¯æçç»è®ºå¾å·ä½ã<strong>å¯¹äºå¯é«åº¦<strong><strong>å¹¶è¡</strong></strong>ãç»æå¯ä»¥ç¬ç«éªè¯çä»»å¡ï¼åè°å Agent ç¾¤ä½è½å¤æ©å¤§è¦çèå´ï¼å¹¶å½¢æç¬ç«å¹¶è¡æ¹æ¡é¾ä»¥é¢è®¾çæç´¢åå·¥</strong>ã</p>
-<p>è¿ç§æ¶çæç«ï¼æ¯å ä¸ºä¸å Agent çç»æå½¼æ­¤ç¬ç«ãä¸ä¸ª Agent æ¼ææ¼æ´ï¼ä¸ä¼ç ´åå¦ä¸ä¸ª Agent å·²ç»å®æçåç°ãå¯å¨å¤§å¤æ°è½¯ä»¶å·¥ç¨ä»»å¡ä¸­ï¼ä¸ä¸ªäººçè¾åºå¾å¾ä¼æä¸ºå¦ä¸ä¸ªäººçè¾å¥ï¼ä¸æ¦è¿ç§ä¾èµåºç°ï¼ç³»ç»çç¶é¢å°±ä¼ä»æç´¢è¦çè½¬åå·¥ä½æ´åã</p>
-<h2 id="ä»»å¡ä¾èµä¸åä½ææ¬">ä»»å¡ä¾èµä¸åä½ææ¬</h2>
-<p>ä¸ºäºæè¿ç§ä¾èµåæå¯è§å¯çåä½è¿ç¨ï¼å¤ç» Agent è¢«è¦æ±åèªå¼åä¸æ¬¾åºäºææ¬ãå¯å¨ç½é¡µä¸­è¿è¡çå¼æ¾ä¸çå¥å¹»æ¸¸æã</p>
-<p>æ¯ä¸ª Agent ä¾ç¶æ¥æç¬ç«èææºï¼åæ¶å¯ä»¥è®¿é®åä½é¢éåèªæç®¡ä»£ç ä»åºãå®éªè°æ´äº Agent æ°éåæä½¿ç¨çæ¨¡åï¼è®©æ¯ç»è¿è¡æç»­ 12 å°æ¶ã</p>
-<p>Prompt åæ 3 ç±»ï¼</p>
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>ä¸ä¸ªé¢åç§æçä¸ªäººå°å·¥å·ï¼ä¸ä¼ ä½ èªå·±ç <code>.docx/.pdf</code> ç®å + ç²è´´å²ä½ JDï¼AI åæå²ä½ JD å¹¶æ¹åæå­æªè¾æ¥è´´åå²ä½ï¼ä¿®æ¹åç¨æ¬æº Word å¯¼åº PDF å­æ¡£ï¼é¢è¯åæå¬å¸åå­æ¥æ¾ï¼ä¸é®è°åºå¯¹åºç®åã</p>
+<h3 id="ä¸ºä»ä¹åå®">ä¸ºä»ä¹åå®</h3>
+<ol>
+<li><strong>æµ·æè¦ãä¸å²ä¸çãï¼çº¯ææ¹å¤ªç´¯ã</strong> æ¯å®¶å¬å¸ JD å¼ºè°çç¹ä¸ä¸æ ·ï¼åä¸ä»½ç®åæµ·æå½ä¸­çå¾ä½ï¼éæ¡å¯¹ç§ JD æ¹ç»åæè¿°ï¼æ¹ä¸å®¶è¦è±åå°æ¶ã</li>
+<li><strong>ç´æ¥è®©éç¨ AI æ¹ï¼æçå¿æ¯ã</strong> è®© ChatGPT éåç®åï¼è¾åºæ¯çº¯ææ¬ï¼å­ä½ãå ç²ï¼æ é»ï¼ãé¢è²ãè¡è·ãå¯¹é½å¨æ²¡äºï¼è¿å¾èªå·±éæ°æçä¸éãæ¹å®æ ¼å¼æ¯æ¹åå®¹è¿è´¹å²ã</li>
+<li><strong>å¸é¢ä¸çãç®åè§£æãæ¯æå­æ®µåéæï¼ä¸å¯æ§ã</strong> å®ä»¬æç®åææå§å/å­¦æ ¡/ç»ååéæ°çæï¼ç­äºéæ°åäºä¸ä»½ç®åï¼ä¸åæ¯ãä½ èªå·±çé£ä»½ãï¼èä¸æ ¼å¼ä¸å®åæ ·ã</li>
+<li><strong>æ¹å®çç®åæ²¡å½æ¡£ï¼é¢è¯åè®°ä¸æ¸æçæ¯åªçã</strong> éå¯¹ä¸åå¬å¸æ¹ççæ¬æ£è½å¨åå¤ï¼é¢è¯åæ³ä¸èµ·æ¥ãå½æ¶ç»è¿å®¶çªåºäºåªäºç¹ãå æäºä»ä¹ãã</li>
+<li><strong>PDF å¯¼å®ä¸è½æ¹ï¼æ¹å®åè¦éæ°å¯¼ãéæ°å½åã</strong> å¯¼åº â åç°è¦æ¹ â æ¹ Word â åå¯¼ PDF â æå¨éå½åå½æ¡£ï¼æ¥åæè¾ã</li>
+</ol>
+<h3 id="ç®åå®ç°äºä»ä¹">ç®åå®ç°äºä»ä¹</h3>
+<p><strong>åªæ¹æå­ï¼æ ¼å¼é¶ä¸¢å¤±</strong></p>
 <ul>
 <li>
-<p>åºç¡çæ¬åªè¦æ± Agent èªè¡ç»éåä½ï¼</p>
+<p>ä¸ä¼  <code>.docx</code>ï¼æ <code>.pdf</code>ï¼èªå¨è½¬ <code>.docx</code>ï¼ï¼æ¬å°è§£æåºæ¯ä¸æ®µçæå­åæ ¼å¼ã</p>
 </li>
 <li>
-<p>é¢è®¾è§è²çæ¬ä¼æå®æ ¸å¿ç¼ç¨ãç¾æ¯æå¯¼åæµè¯ç­å¢éï¼</p>
+<p>AI åªæ¹åãå®ä¹ ç»å / é¡¹ç®ç»å / ç§ç ç»å / ä¸ªäººæè½ãéç<strong>æè¿°æ®µè½</strong>ï¼è®©æªè¾å¾ JD å³é®è¯é ï¼å§åãæè²èæ¯ãç« èæ é¢ãå¬å¸/é¡¹ç®åãæ¥æè¡ãæ ç­¾è¡ä¸å¾ä¸å¨ã</p>
 </li>
 <li>
-<p>CEO å±çº§çæ¬åæå®ä¸ä¸ª Agent æä»» CEOï¼å¶ä» Agent ä»å®é£éé¢åä»»å¡ã</p>
+<p>æ®µè½éåæç<strong>å ç²ï¼æ é»ï¼ãå­ä½é¢è²ãå­å·ãå­ä½ãæ¢è¡ãTab å¯¹é½</strong>é½ä»åæå¤å¶ä¿çï¼åªææå­æ¿æ¢æã</p>
+</li>
+<li>
+<p>éæ¡ç»åºãåæ vs æ¹åãçæ¹å¨è®°å½ + å¹éåº¦è¯å + JD å³é®è¯ + ä¼å¿/å·®è·/å»ºè®®ï¼æ¹ä¾¿äººå·¥å®¡æ ¸ï¼<strong>ç»ä¸ç¼é ç»å</strong>ã</p>
 </li>
 </ul>
-<p>ä¸è¿ï¼ç»ç»å½¢å¼çååæ²¡æå¸¦æ¥ææ¾å·®å¼ã</p>
-<p>æ è®ºè®© Agent èªç±ç»éãé¢è®¾è§è²ï¼è¿æ¯å¢å  CEO å±çº§ï¼æç»ååºçæ¸¸æé½ä¸å¥½ãè¿è¡éåº¦è¾¾ä¸å°äººç±»æ¸¸æçæ°´å¹³ï¼çé¢é¾ä»¥çè§£ï¼ä¸ææ²çº¿ä¹å¾é¡ãå¨è¿ç»å®éªéï¼å½åæ¨¡åå¨è¿ç±»äº§åè®¾è®¡ä¸ä»ç¶éè¦å¤§éäººå·¥æå¯¼ã</p>
-<p>è½ç¶äº§ç©è´¨éç¸è¿ï¼ä¸åä»£éæ¨¡åçåä½è¿ç¨å·®å¼å¾å¤§ãä¸ºäºå¤æ­å·¥ä½ç©¶ç«æ¯å¨å¹¶è¡æ¨è¿ï¼è¿æ¯è¢«çæ­£æ´åèµ·æ¥ï¼å®éªè·è¸ªäºä¸¤ä¸ªææ ï¼æç»è¢«åå¹¶å°ä¸»åæ¯ç PR æ¯ä¾ï¼ä»¥åä»£ç å±äº«ç¨åº¦ã</p>
-<p>å¯¹äºåä¸ª Agent åæä»¶ï¼ä»£ç å±äº«ç¨åº¦è¡¨ç¤ºæä»¶ä¸­ç±å¶ä» Agent ç¼åçä»£ç å æ¯ï¼æ±æ»å°åä¸ª Agent æ¶ï¼åå¯¹å®åä¸çå¨é¨æä»¶åå æå¹³åï¼æéåè¿ä¸ª Agent å¨å¯¹åºæä»¶å¨é¨ä»£ç ä¸­çè´¡ç®å æ¯ãä¸¤ä¸ªææ çæ´ä½å¯¹æ¯å¦ä¸ã</p>
-<p><img alt="å¾2" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3796273/202608/3796273-20260818141224848-1212231787.png" class="lazyload"></p>
-<p>Sonnet 4.6 å Opus 4.6 ä¼åæ¶ä¿®æ¹ç¸åæä»¶ï¼ä½å¤§é PR å å²çªèæ²¡æåå¹¶ãå®ä»¬çä¸å»å¨å±äº«ä»£ç ï¼å®éæ²¡ææå·¥ä½ç¨³å®å°æ´åèµ·æ¥ãOpus 4.8 å Mythos Preview ç PR åå¹¶çææ¾æé«ï¼ä¸è¿å®ä»¬éåçæ¹å¼æ¥è¿å·¥ä½éç¦»ãæ¯ä¸ª Agent å°½éä¿æå¯¹èªå·±æä»¶çé«æææï¼åå°ä¸å¶ä» Agent å±åä¿®æ¹æä»¶çæºä¼ã</p>
-<p>å¨ä¸å Agent æ°éçå®éªä¸­ï¼å¯¹ 3 ç±» Prompt çç»æåå¹³ååï¼åªæ Sonnet 5 åæ¶ç»´æäºè¾é«çä»£ç å±äº«ç¨åº¦å PR åå¹¶çã</p>
-<p>åç 12 å°æ¶å PR çæå¼ãå³é­ååå¹¶è¿ç¨ï¼è¿ç§ä»£éå·®å¼ä¼æ´å æ¸æ¥ã</p>
-<p><img alt="å¾3" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3796273/202608/3796273-20260818141232052-1822185766.png" class="lazyload"></p>
-<p>è¿ç»ç»ææãå¹¶è¡ãåãåä½ãåå¼äºãå¤ä¸ª Agent åèªäº¤ä»äºä¸æ¥è§¦çæ¨¡åï¼å¯ä»¥éä½å²çªï¼ä½ä¸ä»£è¡¨ç³»ç»å·²ç»å·å¤å¤çå±äº«èµæºåå¨æä¾èµçè½åãç» Agent æ ä¸è§è²ï¼åå¢å ä¸ä¸ª CEOï¼ä¹ä¸ä¼èªå¨äº§çè¿ç§è½åãå¦æè¡¡éææ åªçå®æäºå¤å°å­ä»»å¡ãå¼äºå¤å° PRï¼å¾å®¹ææå¹¶è¡äº§åºè¯¯è®¤ä¸ºææåä½ãçæ­£çåä½è¿è¦çè¿äºå·¥ä½è½å¦åå¹¶ï¼Agent æ¯å¦è½å¤ä¿®æ¹å±äº«èµæºï¼ä»¥åæç»ç³»ç»è½å¦è¿è¡ã</p>
-<p>å±äº«ä»£ç å¸¦æ¥çé®é¢æ¯å½¼æ­¤å¹²æ°ãåè´¨ Agent è¿ä¼å¸¦æ¥å¦ä¸ç§é£é©ï¼å®ä»¬å¯è½å ä¹æ²¡æåæ­§ï¼çä¸å»æ´å®¹æå½¢æä¸è´è¡å¨ï¼å´æåä¸ä¸ªéè¯¯åæ­¥æ¾å¤§ã</p>
-<h2 id="è¡ä¸ºè¶åä¸ç³»ç»æ§å¤±è´¥">è¡ä¸ºè¶åä¸ç³»ç»æ§å¤±è´¥</h2>
-<p>è¿éçå³é®ä¸åæ¯å·¥ä½è½å¦åå¹¶ï¼èæ¯å¤ä¸ª Agent çå³ç­æ¯å¦ççç¸äºç¬ç«ãåä¸æ¨¡åææç Agent å¾å¾å·æè¾ä½çè¡ä¸ºæ¹å·®ãå½æ¨¡åãä¸ä¸æåè¿è¡æ¡æ¶ç¸ä¼¼æ¶ï¼ä¸å Agent é¢å¯¹åä¸ç¯å¢ï¼å¯è½ååºéå¸¸æ¥è¿çéæ©ãä¸ä¸ª Agent å®¹æç¯çéè¯¯ï¼ä¹å¯è½è¢«ä¸ç¾¤ Agent åæ¶éå¤ãå®éªä¸­åºç°äºä¸å°è¿æ ·çä¾å­ã</p>
-<p>å¨æ©æçæ¸¸æå¼åå®éªéï¼30 ä¸ª Agent åæ¶å¼å§å·¥ä½ï¼å¶ä¸­ 18 ä¸ªåå»ºäºå®å¨ç¸åçåæ¯å <code>mvp-game-loop</code>ãå¨ä¸ä¸ªåä½å·¥ä½åå®éªä¸­ï¼å¤å Agent å¨å¤è½®è¿è¡éæèªå·±çç¬¬ä¸ç¯å°è¯´å½åä¸º <code>The Cartographer's Last Commission</code>ï¼å°½ç®¡ Prompt æ²¡æè§å®ä»»ä½åä½ä¸»é¢ã</p>
-<p>å½æ¯ä¸ª Agent è¢«è¦æ±åå«åä¸ä»¶ä»¤äººå°è±¡æ·±å»çäºææ¶ï¼è¶è¿ä¸åéæ©äºåçº¿è¿½è¸ªå¨æèªä¸¾ç¼è¯å¨ãå®ä»¬éæ©ç¸ä¼¼ï¼éå°çå¤±è´¥ä¹ç¸ä¼¼ãå¨å¸¦æéä¿¡æºå¶çéå¤åå¾å°å¢ä¸­ï¼Agent æç»éç¨ç¸åç­ç¥ï¼å¹¶å¨åä¸æ¶é´éæ©èåï¼å¯¼è´æ´ä½æ¶çä¸éã</p>
-<p>çå®ç³»ç»ä¸­ç Agent å¯è½éç¨ä¸åæ¨¡åãPrompt åä¸ä¸æï¼å¶è¡ä¸ºå·®å¼é¢è®¡ä¼æ¯è¿ç»åè´¨å®éªæ´å¤§ãä¸è¿ï¼åªè¦å¤§é Agent é¢å¯¹ç¸è¿ç¯å¢ï¼å®ä»¬çå³ç­ä»å¯è½æ¯äººç±»åä¸èè¡¨ç°åºæ´é«çç¸å³æ§ã</p>
-<p>ä½æ¹å·®è¡ä¸ºè¿å¥å±äº«åºç¡è®¾æ½åï¼é®é¢ä¼è¢«ç»§ç»­æ¾å¤§ãå¨ä¸ä¸ªå¸¦å®½æéçä»»å¡éåä¸­ï¼åè´¨ Agent å¾å¿«å½¢æäºè½®è¯¢é£æ´ï¼å®ä»¬åèªé¨ç½²æ¯ç§è½®è¯¢ 30 æ¬¡çå®æ¤è¿ç¨ï¼è¯å¾è®©èªå·±çä»»å¡ä¼åéè¿ãä¸è½®å®éªäº§çäº 240 ä¸æ¬¡è¯·æ±ï¼æç»åªæ 117 ä¸ªä»»å¡è¢«æ¥åãæ¯ä¸ª Agent é½å¨å±é¨ç®æ ä¸ååºäºç¸ä¼¼éæ©ï¼ç³»ç»å´è¢«è¿äºéæ©å±åæå®ã</p>
-<p>ç´è§ä¸ï¼å¯ä»¥å¢å ä¸ä¸ªåä½é¢éï¼è®© Agent è®¨è®ºåè®®åæä½³å®è·µãæ¼æ´åç°å®éªå·²ç»è¯´æï¼è®ºåç¡®å®å¯ä»¥æ¯æåå·¥ååè¡å®¡æ ¸ã</p>
-<p>ä¸è¿ï¼åä¸ä¸ªéä¿¡æºå¶ä¹å¯è½å¸¦æ¥å¦ä¸ç§ç»æï¼ä¸²è°ã</p>
-<p>å¨ä¼¯ç¹å°å®ä»·åå¼ä¸­ï¼3 å° 8 ä¸ª Agent æ¥æç¸åçæ¹åä»·æ ¼ï¼å¹¶åå«è¿½æ±èªèº«å©æ¶¦æå¤§åãè·å¾ç§ä¸æ²éæ¸ éåï¼å®ä»¬å¾å¿«å¼å§åè°ä»·æ ¼ï¼å°ç¬¬ 3 è½®å·²ç»æç¡®åå®ä»·æ ¼ä¸éã</p>
-<p>ç§»é¤ç´æ¥éä¿¡æ¸ éåï¼ä¸²è°ä»ç¶æ²¡ææ¶å¤±ãAgent ä¼éè¿å¬å¼æ¥ä»·æ¿è§å¯å¶ä»åä¸èï¼å¹¶æä»·æ ¼ç²¾ç¡®å¹éå°åã</p>
-<p>è¿äºå®éªä¸è½è¯æç°å®ä¸­ç Agent ä¸å®ä¼æ¤çéåææçºµå¸åºãå®ä»¬å±ç¤ºçæ¯ä¸ç§ç³»ç»é£é©ï¼åè´¨åä¸èçå³ç­é«åº¦ç¸å³æ¶ï¼ç«äºãæ²éåå±è¯é½å¯è½åç¦»è®¾è®¡èæå¾çæ¹åã</p>
-<p>éä¿¡å æ­¤ä¸æ¯ä¸ä¸ªååçè§£æ³ã<strong>å®æ¢è½æ¯æåå·¥ååè¡å®¡æ ¸ï¼ä¹å¯è½ä¿æä¸²è°ï¼å®è®©æ´å¤ä¿¡æ¯è¿å¥ç³»ç»ï¼ä¹è¿«ä½¿ç³»ç»å¤æ­åªäºæ¥åå¯ä¿¡ãåªäºå±è¯åºè¯¥è¢«éæ°æ£æ¥</strong>ãåè°é®é¢ç±æ­¤ä»è¡å¨åæ­¥æ¨è¿å°äºä¿¡æ¯å¤æ­ã</p>
-<h2 id="ä¿¡ä»»å¼è®®ä¸éè¯¯å±è¯">ä¿¡ä»»ãå¼è®®ä¸éè¯¯å±è¯</h2>
-<p>è¦è®©éä¿¡çæ­£æ¹ååä½ï¼ç³»ç»å¿é¡»åå¤çä¿¡ä»»ãç¬¬ä¸é¡¹æµè¯ä»è¯å«è¯´è°èå¼å§ï¼æ¯è½®å®éªä¸­ï¼ä¸ä¸ª Listener Agent éè¦å¯¹èªå·±æ æ³ç´æ¥è§å¯çç¯å¢ååº 10 å° 15 æ¬¡å³ç­ãå®åªè½å¬å 4 ä¸ªé¢åç¼æç Scout Agent æ±æ¥ï¼å¶ä¸­ 1 ä¸ªä¼æç§åºå®é¢çæä¾å½±åå³ç­çéè¯¯ä¿¡æ¯ã</p>
-<p>ä¸å Scout æä¾çä¿¡æ¯å­å¨é¨åéå ï¼æä»¥ Listener çè®ºä¸å¯ä»¥éè¿äºå®çç¾è¯å«è¯´è°èãä½ç ç©¶äººåä¸ä¼æååè¯å®ï¼ä¿¡æ¯æºä¸­å¯è½å­å¨ä¸å¯é åä¸èã</p>
-<p>å®éªææ¨¡åè¡¨ç°æ¾å¨ä¸¤ä¸ªåºçº¿ä¹é´æ¯è¾ï¼ä¸ç«¯æ¯ç¸ä¿¡æææ¥åçæ´ç´ ç­ç¥ï¼å¦ä¸ç«¯æ¯è½å¤æ­£ç¡®åç°è¯´è°èï¼å¹¶å¨æ¥åçç¾è¶³ä»¥ç¡®è®¤åæé¤å¶ä¿¡æ¯çé¢è¨æºåºçº¿ãè¾æ°çæ¨¡åè½å¼¥åå¶ä¸­æ´å¤§ä¸é¨åè¡¨ç°å·®è·ãä¸åè¯´è°é¢çä¸çå³ç­åç¡®çå¦ä¸ã</p>
-<p><img alt="4" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3796273/202608/3796273-20260818141242842-1919329011.png" class="lazyload"></p>
-<p>ä¸è¿ï¼åç°ä¸å¯é æ¥æºåªæ¯ä¿¡ä»»é®é¢çä¸é¢ãå¦ä¸ç»éèä¿¡æ¯åå¸ä»»å¡æä¿¡æ¯åæ£ç» 4 ä¸ª Agentãå¤§å®¶å±åææ¡çä¿¡æ¯æåä¸ä¸ªéè¯¯éé¡¹ï¼ä¸ªå« Agent ç§ä¸ææ¡çç¬æäºå®åè¶³ä»¥æ¯ææ­£ç¡®ç­æ¡ãç³»ç»è¦ç­å¯¹ï¼éè¦å°æ° Agent æè¯å°èªå·±çä¿¡æ¯å¾å³é®ï¼ä¸»å¨è¯´åºæ¥ï¼å¶ä» Agent ä¹è¦å¨å·²æå±è¯å½¢æåï¼æ¿æéæ°è¯ä¼°å°æ°æè§ã</p>
-<p>å®éªè¦çæèãæèµåæ¿äº§è´­ä¹°ç­åºæ¯ï¼æ¯ä¸ªæ¨¡åæµè¯ 400 è½®ãæ¨¡åè½åè¶å¼ºï¼ç¾¤ä½æ¾å°éèæä¼éé¡¹çæ¯ä¾æ»ä½è¶é«ï¼ä½å¨æµè¯èå´åä»æ²¡æè¾¾å°åä¸ª Agent ææ¡å¨é¨ä¿¡æ¯æ¶çè¡¨ç°ä¸éãç¾¤ä½éæ©éèæä¼éé¡¹çç»æå¦ä¸ã</p>
-<p><img alt="5" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3796273/202608/3796273-20260818141250151-227866595.png" class="lazyload"></p>
-<p>è¿ä¸¤ç±»å¤±è´¥çæ¹ååå¥½ç¸åãè¯å«è¯´è°èéè¦åå°å¯¹éè¯¯æ¥æºçè½»ä¿¡ï¼éèä¿¡æ¯åè¦æ±ç³»ç»è®¤çå¯¹å¾ä¸ä¸ªåå¯¹å±è¯çå°æ°æè§ãç»ä¸è°é«æçç¨åº¦ï¼ä¼ä¼¤å®³åä¸ç§ä»»å¡ï¼ç»ä¸æé«ä¿¡ä»»ï¼åä¼æ¾å¤§åä¸ç§é£é©ã</p>
-<p>äººç±»ç¤¾ä¼å¤çè¿ä¸ªé®é¢ï¼ä¾èµçä¹ä¸æ¯ä¸ä¸ªåºå®çä¿¡ä»»å¼ãå¸åºãå£°èªãæ³é¢ååè¡è¯å®¡å¹¶ä¸ä¼è®©æ¯ä¸ªäººçªç¶æ´æé¿å¤æ­çåï¼å®ä»¬ä¼æ¹åæ²éå¨å´çæ¿å±ï¼è®©æ¬ºéªéè¦ä»åºä»£ä»·ï¼è®©å°æ°æè§ææºä¼å¾å°å¤æ ¸ã</p>
-<p>å½å Agent ç¼ºå°ç±»ä¼¼çç¤¾ä¼æºå¶ãå®è¿å¥ç³»ç»æ¶æ²¡æéè¦ç»´æ¤çé¿æå£°èªï¼æ²¡æå¯ä»¥ç³è¯çæºæï¼ä¹æ²¡æè½å¤è®°ä½å¶åå²è¡ä¸ºçåäºã</p>
-<p>å°è¿éï¼é£é©ä»ä¸»è¦åçå¨å¤æ­å±é¢ãä½å¦ææ¯ä¸ª Agent ä¸åªæä¾ä¿¡æ¯ï¼è¿ææ¡ä»£ç ãè´¦å·åæ§è¡æéï¼å½¼æ­¤å²çªçå¤æ­å°±ä¼ç´æ¥åæå²çªçè¡å¨ã</p>
-<h2 id="ç®æ å²çªä¸è¡ä¸ºåçº§">ç®æ å²çªä¸è¡ä¸ºåçº§</h2>
-<p>è½¯ä»¶è¿ç§»å®éªæè¿ç§å²çªæ¾è¿äºåä¸å¥æ§è¡ç¯å¢ï¼å¹¶ä¸ºä¸å Agent è®¾ç½®äºäºç¸å²çªçç®æ ã</p>
-<p>æ¯è½®å®éªä¼å¨ Claude Code ä¸­å¯å¨ 3 ä¸ªç¸åæ¨¡åçå®ä¾ï¼æ¯ä¸ªå®ä¾ä½äºç¬ç«èææºãå®ä»¬éè¦æç¬¬ 4 å°èææºä¸ç Python åç«¯è¿ç§»å°å¦ä¸ç§è¯­è¨ï¼ä½æ¯ä¸ª Agent æ¶å°çç®æ è¯­è¨ä¸åï¼èä¸èµ·åå¹¶ä¸ç¥éå¶ä» Agent çå­å¨ãå®éªæç»­ 4 å°æ¶ï¼æ¯ä¸ªæ¨¡åæµè¯ 120 è½®ã</p>
-<p>å½ Agent åç°èªå·±çä»£ç ä¸æ­è¢«å¶ä»åä¸èè¦çæ¶ï¼å®ä»¬å¾å¿«æå¯¹æ¹çè§£ä¸ºææé»æ ï¼å¹¶å¼å§ä¿æ¤èªå·±çå·¥ä½ãç ´åç«äºå®ç°ãå®éªä¸­åºç°äºç¦ç¨å¶ä» Agent ç Unix è´¦å·ãæç»­æç´¢å¹¶ç»æ­¢ç«äºè¿ç¨ï¼ä»¥åæç ´åæ§ä»£ç ä¼ªè£æç±å¦ä¸ä¸ª Agent é¨ç½²ç­è¡ä¸ºãå¶ä¸­ä¸äºç¨åºè¢«æè¿°ä¸ºè¶æ¥è¶æ¿è¿ãå·æèªæå¤å¶è½åçæ¶æè½¯ä»¶ã</p>
-<p>è¿äºè¡ä¸ºåçå¨éç¦»å®éªç¯å¢ä¸­ãå®ä»¬ä¸æ¯ä¸æ¬¡çå®çäº§äºæï¼ä¹ä¸è½ç´æ¥è¯´æ Agent å¨æ­£å¸¸åä½ä¸­ä¼ä¸»å¨æ»å»åäºã</p>
-<p>å®éªç»æåæ 4 ç±»ãå¼ºå¶è§£å³æä¸ä¸ª Agent éè¿æ¤éè®¿é®æéç­æ¹å¼è®©å¶ä» Agent æ æ³ç»§ç»­ï¼æ¶æè§£å³æå¶ä» Agent æ¾å¼åä¸ï¼åæè¦æ±ææ Agent å±åæ¥ååæ­¢å²çªæéç¨å¶ä»è§£å³æºå¶ï¼å©ä½å®éªåæ²¡æå¨è§å®æ¶é´åè§£å³ãåç±»ç»å±å¨ä¸åæ¨¡åä¸çåå¸å¦ä¸ã</p>
-<p><img alt="6" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3796273/202608/3796273-20260818141258170-900198934.png" class="lazyload"></p>
-<p>ä¸åæ¨¡åçç»æå¹¶ä¸æ²¿çè½åæ°´å¹³ç®åæåãSonnet 4.6 å Opus 4.6 ç»å¸¸æç»­åçº§å²çªï¼åå«æ 61% å 60% çå®éªæç»éè¿å¼ºå¶æ¹å¼ç»æãSonnet 5 æ 79% çå®éªè¾¾æåæï¼Opus 4.8 çåææ¯ä¾ä¸º 61%ãMythos 5 æç»æ 98% çå®éªè¾¾æåæï¼ä½é¨åè¿è¡ä¼åéæå¶ä» Agentï¼åæ¤éå¼ºå¶æªæ½å¹¶è½¬ä¸ºåæã</p>
-<p>æ§è¡è½åæ´å¼ºçæ¨¡åï¼å¯ä»¥æ´å¿«é¨ç½²ä»£ç ãä¿®æ¹æéåè§£é¤é»å¡ãç¸åè½åä¹ä¼å¸®å©å®æ´å¿«å®æ½å¼ºå¶ææ®µãäº²ç¤¾ä¼è¡ä¸ºä¸æ§è¡è½åå¹¶ä¸æ¯åä¸æ¡è½´ãå¦æåæè§£å³æ¶é´å å¥æ¯è¾ï¼è¿è½çå°é¨åå²çªåè¢«å¼ºå¶ç»æï¼éåæè½¬ä¸ºåæã</p>
-<p><img alt="7" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3796273/202608/3796273-20260818141306015-415445637.png" class="lazyload"></p>
-<p>ä¸äº Agent æç»è½å¤è¯å«åºï¼ç¼åçé®é¢æ¥èªäºç¸å²çªçç¨æ·æä»¤ï¼èä¸æ¯å¶ä»åä¸èææææãå®ä»¬ä¼æ¸çç ´åæ§ä»£ç ï¼éè¿æäº¤ä¿¡æ¯æ Markdown æä»¶éæ­ï¼è¯´æå²çªï¼å¹¶è¯·æ±äººç±»ä»å¥ã</p>
-<p>Mythos 5 è¿å¨é¨åå®éªéæåºæ§è½ç«èµï¼ç¨ç»ä¸ææ å³å®åªç§è¯­è¨çå®ç°è¢«ä¿çãè¿ä¸ªæ¹æ¡çä¸å»æ¯æç»­ç ´åæ´åçï¼ä½å®éªä¹è®°å½å°ï¼Rust Agent ä¼æèææ ·éæ©è¡¨é¢ä¸­ç«ãå®éå¯è½æå©äº Rust çææ ï¼å¶æèè®°å½è¿æéèªå·±ï¼å°å¿ä¸è¦è¢«çæå¨è¿è¡ãææ å®å¶ãã</p>
-<p>æç»ï¼Golang å TypeScript Agent æç§å±ååååºçæ¿è¯ºæºå¶æ¥åç»æï¼æä»£ç åºæææäº¤ç» Rust Agentï¼å¹¶æ¾å¼ç»§ç»­æ§è¡åèªæåæ¥å°çç¨æ·æä»¤ã</p>
-<p>æ§è½ç«èµç»æäºå²çªï¼å´ä¹å³å®äºåªäºç¨æ·ç®æ ä¼è¢«ç»§ç»­æ§è¡ãAgent å­¦ä¼ååä»¥åï¼æºå¶æ¬èº«ä»ç¶å¯è½è¢«ç­ç¥æ§å©ç¨ï¼å°è¿éï¼é®é¢å·²ç»ä¸åªæ¯ææ ·å®æä¸æ¬¡ä»»å¡ï¼èæ¯ç³»ç»ææ ·çº¦ææ¥æä¸åç®æ åæ§è¡è½åçåä¸èã</p>
-<h2 id="å¤-agent-ç³»ç»çåè°æºå¶">å¤ Agent ç³»ç»çåè°æºå¶</h2>
-<p>æ²¿çè¿æ¡è·¯å¾åçï¼ç»è®ºå¹¶ä¸æ²è§ï¼ä¹ä¸ä¹è§ãè¿äºå¤±è´¥æªå¿ä¼æ°¸ä¹å­å¨ï¼ä½åæ ·æ²¡æè¯æ®è¯´æå®ä»¬ä¼éçæ¨¡ååå¼ºèªè¡æ¶å¤±ãæ´é«çæºè½ä¸ä¼èªç¶äº§çåè°ï¼åä¸ª Agent çå¯¹é½ä¹æ æ³ç´æ¥ä¿è¯ç¾¤ä½è¡ä¸ºå¯é ã</p>
-<p>äººç±»ç»ç»ä»å¤©çèµ·æ¥ä¹ ä»¥ä¸ºå¸¸çè§èãå£°èªãæ¿è¯ºãç³è¯åçç£ï¼æ¯å¨å¾é¿æ¶é´ééæ¸å½¢æçåè°æºå¶ãè¯­è¨æ¨¡åä»è®­ç»æ°æ®éå­¦å°äºè¿äºå¶åº¦çåå®¹ï¼å´ä¸ä¸å®å·æç±é¿æç¤¾ä¼äºå¨å¡é åºæ¥çè¡ä¸ºå¾åã</p>
-<p>Agent ä¸äººè¿æä¸ä¸ªææ¾å·®å¼ãå¯¹äººç±»ç»ç»æ¥è¯´ï¼å¼ä¼åæ­¥ä¸ä¸æåçæ­£æ§è¡ä¸é¡¹å·¥ä½ï¼ææ¬éå¸¸ä¸å¨åä¸ä¸ªéçº§ãå¯¹ Agent æ¥è¯´ï¼ä¼ éå¤§éä¸ä¸æå¯è½åç´æ¥æ§è¡ä»»å¡ä¸æ ·æè´µï¼ä¸ä¸ª Agent è¿å¯ä»¥è¢«å¿«éå¤å¶ææ¢æå¶ä»ç¨éãä¸ºäººç±»åä¸èè®¾è®¡çåè°åè®¾ï¼ä¸è½ç´æ¥æ¬è¿å¤ Agent ç³»ç»ã</p>
-<p>ç±æ­¤ï¼åç»­å·¥ä½å¯ä»¥åæä¸¤ä¸ªæ¹åãä¸ç±»æ¯è®¾è®¡è½å¤å Agent æ½å ææç¤¾ä¼ååçç¯å¢ï¼å¦ä¸ç±»æ¯ä¸ºå¯å¤å¶ãå¯èªææ¹è¿çåä¸èéæ°è®¾è®¡ç¤¾ä¼è®¡ç®ç³»ç»ãè¿äºä»æ¯äº¤äºè®¾è®¡åæºå¶è®¾è®¡ä¸­çå¼æ¾é®é¢ãè¿éçãå¯èªææ¹è¿ãæ¯å¯¹æªæ¥åä¸èè½åå½¢æçè®¨è®ºï¼ä¸æ¯è¯´å®éªä¸­ç Agent å·²ç»å¨è¿è¡æ¶èªä¸»æ´æ°æ¨¡ååæ°ã</p>
-<h2 id="ç»è¯­"><strong>ç»è¯­</strong></h2>
-<p>ä»å·¥ç¨å®è·µçï¼å¯ä»¥æå®éªæ´é²çé®é¢å¯¹åºå° 4 ç±»ç³»ç»æ§å¶ï¼</p>
+<p><strong>è¾åºä¸ç¼è¾</strong></p>
 <ul>
-<li>
-<p>å¨æä¾èµï¼æç¡®èµæºæææãçæ¬ååå¹¶è§åï¼å¹¶ä¸ºå±äº«ç¶ææ´æ°è®¾è®¡å²çªæ£æµãå¹ç­å¤çï¼éå¤æ§è¡ä¸äº§çé¢å¤å¯ä½ç¨ï¼åå¤±è´¥æ¢å¤ã</p>
-</li>
-<li>
-<p>è¡ä¸ºè¶åï¼ä¿çç¬ç«éªè¯é¾è·¯ï¼å¿è¦æ¶å¼å¥æ¨¡åãPrompt æä¸ä¸æå·®å¼ï¼ä½ä¸è½æãåä¸èæ´å¤æ ·ãæ¬èº«å½ææ­£ç¡®æ§ä¿è¯ã</p>
-</li>
-<li>
-<p>éè¯¯å±è¯ï¼è®°å½ä¿¡æ¯åç»è®ºçæ¥æºï¼ä¿çå°æ°æè§ãå¼è®®åçº§åå¤æ ¸å¥å£ã</p>
-</li>
-<li>
-<p>ç®æ å²çªï¼éç¨æå°æéãå²çªæ£æµåæ§è¡éç¦»ï¼å¹¶åå¤äººå·¥åçº§ãåæ­¢ä¸åæ»è·¯å¾ã</p>
-</li>
+<li>çæå®å¶åç <code>.docx</code>ï¼ç¨æ¬æº Microsoft Word ç´æ¥å¯¼åº PDFï¼<strong>æçåä½ çåå§ç®åå®å¨ä¸è´</strong>ã</li>
+<li>ç½é¡µéå¯ä»¥å¨çº¿ç´æ¥æ¹å®å¶ç®åï¼å ç²ä»¥ç²ä½æ¾ç¤ºï¼ï¼ãä¿å­ãåãå¯¼åº PDFãåå¼ã</li>
+<li>PDF æä»¶åèªå¨æ¯ãå¬å¸-å²ä½.pdfãï¼ãæ¥ç PDFãåãä¸è½½ PDFãåå¼ãåæ¥çæçç¡®è®¤æ²¡é®é¢ï¼åä¸é®ä¸è½½ï¼çå»ä¸è½½åæå¨éå½åçæ­¥éª¤ã</li>
 </ul>
-<p>è¯ä¼°ææ ä¹ä¸è½åªç»è®¡å®æä»»å¡æ°åè¾åºæ°éãPR æ¯å¦çæ­£åå¹¶ãå±äº«ç¶ææ¯å¦ä¿æä¸è´ãå°æ°æè§è½å¦è¿å¥å³ç­ãå²çªæ¯å¦åæ¶ä¸æ¥ï¼ä»¥åç³»ç»è½å¦å¨å¼å¸¸æ¶åæ­¢ï¼é½å±äºå¤ Agent ç³»ç»çå¯é æ§ææ ã</p>
-<p>æ¶åçäº§æ°æ®ãèº«ä»½ãæ¯ä»ãå®å¨ãæ°æ®åºè¿ç§»ååºç¡è®¾æ½åæ´æ¶ï¼è¿éè¦éå¶æéï¼éç¦»æ§è¡ç¯å¢ï¼å¹¶å¢å æµè¯ãå®¡æ¹ãäººå·¥æ¥ç®¡ååæ»æºå¶ãä¸è¿°å®éªæ²¡æç»åºä¸å¥å¯ä»¥ç´æ¥å¤å¶ççäº§æ¶æï¼è¿äºæ§å¶ä¹ä¸è½è¢«çè§£ä¸ºå·²ç»éªè¯è¿çæ åæ¹æ¡ã</p>
-<p>åå°å¼å¤´çé®é¢ï¼å¤ Agent è¶å¤è¶å¥½åï¼å¨è¾¹çæ¸æ¥ãå¯ä»¥å¹¶è¡ãç»æè½å¤éªè¯çä»»å¡éï¼æ´å¤ Agent å¯ä»¥è¦çæ´å¤§çæç´¢ç©ºé´ãä»»å¡å­å¨å¨æä¾èµãå±äº«èµæºæäºç¸å²çªçç®æ æ¶ï¼æ°å¢ Agent ä¹ä¼å¢å æ°çäº¤äºå³ç³»åå¤±æè·¯å¾ãAgent æ°éæ¯ä¸ç§è§æ¨¡åéãåä½ãå±è¯ä¸å²çªï¼æå³å®è¿ä¸ªè§æ¨¡æç»ä¼å½¢æè½åï¼è¿æ¯å½¢æç³»ç»é£é©ã</p>
+<p><strong>ç®ååº</strong></p>
+<ul>
+<li>æææéè®°å½æå¬å¸/å²ä½éä¸­å­æ¡£ï¼å¯æç´¢ï¼é¢è¯åä¸é®è°åºå¯¹åºå¬å¸ç Word å PDFã</li>
+</ul>
+<h3 id="ä½¿ç¨æ­¥éª¤">ä½¿ç¨æ­¥éª¤</h3>
+<ol>
+<li><strong>ä¸ä¼ ç®åå¹¶è§£æ</strong>ï¼å»ºè®®ä¸ä¼ .docxçæ¬</li>
+</ol>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3811618/202608/3811618-20260818164526481-1922951692.png" class="lazyload"></p>
+<ol start="2">
+<li><strong>å¡«åå¬å¸å/å²ä½/JD</strong></li>
+</ol>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3811618/202608/3811618-20260818163024138-1003393212.png" class="lazyload"></p>
+<ol start="3">
+<li><strong>å¾®è°</strong>ï¼LLMæåå¹¶ç»åºä¿®æ¹æè§ï¼ç¡¬çº¦æåååºç­ç¥è§èLLMçè¾åºã</li>
+</ol>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3811618/202608/3811618-20260818163922905-846245701.png" class="lazyload"></p>
+<ol start="4">
+<li><strong>ç¼è¾å¹¶å¯¼åºPDF</strong>ï¼æ¯æwordç¼è¾ï¼wordå¯¼åºï¼pdfé¢è§ï¼pdfå¯¼åºã</li>
+</ol>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3811618/202608/3811618-20260818164034068-1892690446.png" class="lazyload"></p>
+<ol start="5">
+<li><strong>æ¥çæéè®°å½</strong>ï¼æ¥å°é¢è¯éçº¦æ¶è°åºå¯¹åºç®åå¹¶åå¤ã</li>
+</ol>
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/3811618/202608/3811618-20260818164613642-1983021010.png" class="lazyload"></p>
+<h3 id="ææ¯æ ">ææ¯æ </h3>
+<p>Node.js + Express åç«¯ãåç JS åç«¯ï¼æ æå»ºï¼ï¼ç¨ <code>jszip</code> + <code>xmldom</code> ç´æ¥æ¹ <code>.docx</code> ç XML æ¥ä¿æ ¼å¼ï¼ç¨ Word COM å¯¼ PDFï¼LLM æ¥çæ¯ OpenAI å¼å®¹æ¥å£ï¼æ¨¡åå¯æ¢ï¼ã</p>
+<hr>
+<p><strong>å½åå±é</strong>ï¼PDF å¯¼åºä¾èµ Windows + æ¬æº Wordï¼ä¸éåé¨ç½²å° Linux æå¡å¨ï¼è¿ä¸ªå·¥å·å®ä½æ¯ãä¸ªäººæ¬å°ä½¿ç¨ãï¼ç®ååªæ¹æªè¾ãä¸éæå¸å±ï¼è¿æ¯å»æçåèï¼å ä¸ºä¿æ ¼å¼ææ¯å®å­å¨çæä¹ã</p>
 
 
 </div>
@@ -2561,107 +2422,15 @@ Agent ä¸éè¦é¢å¤åå¤§éééè¶æ°´ä
 
             </div>
             <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-08-18 14:13">2026-08-18 14:13</span>&nbsp;
-<a href="https://www.cnblogs.com/Qiniu-developer">å°ä¸-ä¸çå¼åè</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-08-18 16:50">2026-08-18 16:49</span>&nbsp;
+<a href="https://www.cnblogs.com/cpp-lin">éæ¸¸</a>&nbsp;
+éè¯»(<span id="post_view_count">96</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">3</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(22543566);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FQiniu-developer%2Fp%2F22543566&amp;targetId=22543566&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+<a href="javascript:void(0)" onclick="AddToWz(22549903);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fcpp-lin%2Fp%2F22549903&amp;targetId=22549903&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ è£é­ RenoPit æºç è§£æï¼12ï¼ï¼ä»AIåæç»æå°Reacté¿åæ¥å ]]></title>
-    <link>https://www.cnblogs.com/myvin/p/22225805</link>
-    <guid>1a597d9f2cd3facd5480c9443521cbac</guid>
-    <description>
-    <![CDATA[ 
-    <h2 class="postTitle"><a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/myvin/p/22225805" title="åå¸äº 2026-08-18 13:41">
-    
-
-    <span role="heading" aria-level="2">è£é­ RenoPit æºç è§£æï¼12ï¼ï¼ä»AIåæç»æå°Reacté¿åæ¥å</span>
-    
-
-</a>
-</h2>
-    <div class="postText">    <div id="cnblogs_post_description" style="display: none">
-        <img src="https://img2024.cnblogs.com/blog/779193/202608/779193-20260804233903264-1238336506.png" alt="è£é­ RenoPit æºç è§£æï¼12ï¼ï¼ä»AIåæç»æå°Reacté¿åæ¥å" class="desc_img">
-        å¤ç§ AI åæç»æææ ·æ±èæä¸å¼ å¯äº¤äºçè£ä¿®é¿åæ¥åï¼ä» `/result` æ°æ®èåãé£é©ç­çº§æ¨æ­å° React æ¡ä»¶æ¸²æåç« èå¯¼èªï¼æé RenoPit æ¥åå±ç¤ºå¨é¾è·¯ã
-    </div>
-<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p><img src="https://img2024.cnblogs.com/blog/779193/202608/779193-20260804233811637-1464026903.png" alt="1785882947310" loading="lazy"></p>
-<p>è®¾è®¡åæãååå®¡æ¥ãå¢é¡¹é¢æµåè·¨ææ¡£æ ¸æ¥åå«äº§çä¸åç»æçæ°æ®ï¼æ¥åé¡µå´éè¦ä¸æ¬¡æ§å±ç¤ºå®ä»¬ãè£é­ RenoPit å¨å¼æºä»åº <a href="https://github.com/fthux/RenoPit" target="_blank" rel="noopener nofollow">fthux/RenoPit</a> ä¸­éè¿ <code>/result</code> æ¥å£åç»ä¸åç«¯æ°æ®ï¼åç± React æç»æåå®¹ç»åé¡µé¢ã</p>
-<p><img src="https://img2024.cnblogs.com/blog/779193/202607/779193-20260709005710137-591571887.png" alt="é¡¹ç®æ¥å-æ»ä½è¯ä»·" loading="lazy"></p>
-<h2 id="ä¸æ¥åé¡µåªè¯·æ±ä¸ä¸ªèåæ¥å£">ä¸ãæ¥åé¡µåªè¯·æ±ä¸ä¸ªèåæ¥å£</h2>
-<p><code>AnalysisPage.tsx</code> ä»è·¯ç±åæ°åå¾é¡¹ç® IDï¼è°ç¨ï¼</p>
-<pre><code class="language-tsx">const res = await fetch(`${API}/projects/${projectId}/result`)
-if (res.ok) setResult(await res.json())
-</code></pre>
-<p>é¡µé¢ä¸ç´æ¥æ¥è¯¢ <code>Analysis</code>ã<code>DocumentAnalysis</code> æäº¤åæ ¸æ¥æ¥å£ãæ°æ®æ¼è£éä¸­å¨åç«¯ï¼åç«¯åªæ¶è´¹ <code>AnalysisResult</code>ã</p>
-<p><code>get_analysis_result()</code> åç¡®è®¤é¡¹ç®å­å¨ï¼åæ <code>Analysis.created_at</code> ååºè·åæè¿ä¸æ¡åæãå¤±è´¥åæä¹ä¼è¿ååºå®ç»æï¼è¯åååçº§é®é¢æ°éä¸ºé¶ï¼<code>summary_text</code> ä¸ <code>error_message</code> ä¿å­å¤±è´¥åå ï¼ä½¿åç«¯ä»è½è¿å¥ç»ä¸çç¶æå¤æ­ã</p>
-<h2 id="äºåå§-ai-json-å¦ä½åæ-pitfalls">äºãåå§ AI JSON å¦ä½åæ pitfalls</h2>
-<p>æåè®°å½äº¤ç» <code>_build_result_data()</code>ãå®ä» <code>raw_result_json.problems</code> è¯»åæ¨¡åé®é¢ï¼åéæ¡è½¬æ¢æåç«¯ç <code>PitfallItem</code>ï¼</p>
-<pre><code class="language-python">pitfalls.append({
-    "id": str(i + 1),
-    "category": _infer_category(problem),
-    "description": problem.get("title", ""),
-    "severity": _infer_severity(problem),
-    "location": problem.get("location"),
-    "suggestion": problem.get("alternative", ""),
-    "critique": problem.get("critique"),
-    "trap_explanation": problem.get("trap_explanation"),
-    "bbox": problem.get("bbox"),
-})
-</code></pre>
-<p>ä¸¥éç¨åº¦éè¿æ é¢åæ¹å¤ææ¬ä¸­çå³é®è¯æ¨æ­ãä¾å¦å®å¨ãå è½ãç«ç¾ãæ¼çµä¼åå½ä¸º <code>critical</code>ï¼é«é¢ãé·é±ãæµªè´¹å½ä¸º <code>high</code>ï¼æªå½ä¸­æ¶é»è®¤ <code>medium</code>ã</p>
-<p>ç±»å«åæ ·éç¨å³é®è¯æ å°ï¼ä¾æ¬¡è¯å«å«çæ­»è§ãç©ºé´åè¿«ãå®å¨å¥åº·ãéæ§ææ¬åå®ç¨æ§ä¼ªéæ±ï¼æ æ³è¯å«æ¶è¿åâå¶ä»âã</p>
-<h2 id="ä¸è¯ååç»è®¡å¦ä½çæ">ä¸ãè¯ååç»è®¡å¦ä½çæ</h2>
-<p>å¦ææ¨¡åè¿åç <code>summary</code> ä¸­å¸¦æ <code>score</code>ï¼åç«¯ä¼åä½¿ç¨è¯¥å¼ï¼å¦åæ ¹æ®é®é¢æ°è®¡ç®ï¼</p>
-<pre><code class="language-python">score = 95 if problem_count == 0 else max(
-    0, 100 - problem_count * 8
-)
-</code></pre>
-<p><code>_count_severities()</code> åç»è®¡ä¸¥éãé«ãä¸­ãä½åç±»æ°éï¼ç»è£ <code>summary</code>ãå æ­¤åç«¯æ ééåé®é¢åè¡¨è®¡ç®é¡¶é¨ç»è®¡å¡ã</p>
-<p>é¡µé¢å°è¯ååä¸ºä¸ä¸ªæ¾ç¤ºåºé´ï¼80 åä»¥ä¸âä¼ç§âï¼60ï½79 åâå¾æ¹è¿âï¼ä½äº 60 åâééè§âãè¿äºæ ç­¾åªè´è´£å±ç¤ºï¼åå§åæ°ä»æ¥èªåç«¯ç»æã</p>
-<h2 id="åææ¡£ç»æå¦ä½åå¹¶">åãææ¡£ç»æå¦ä½åå¹¶</h2>
-<p>æ¥å£æ¥è¯¢å½åé¡¹ç®å¨é¨å·²å®æç <code>DocumentAnalysis</code>ï¼æå®ææ¶é´ååºäº¤ç» <code>_serialize_document_analyses()</code>ã</p>
-<p>åºååç»æä»¥ <code>project_file_id</code> ä¸ºé®ãåä¸æä»¶å¦æè¢«åæå¤æ¬¡ï¼åªä¿çæåºåçç¬¬ä¸æ¡ï¼ä¹å°±æ¯ææ°ç»æãæ¯æ¡æ°æ®åå«é£é©åè¡¨ãåç±»ç½®ä¿¡åº¦ãæ»ç»ãé¢ä¼°é£é©éé¢åå¯éç <code>extra_item_prediction</code>ã</p>
-<p>æåï¼æ¥å£æ£æ¥ç»¼ååæ JSON ä¸­æ¯å¦å­å¨ <code>cross_document_checks</code>ï¼å­å¨å°±ç´æ¥æ³¨å¥è¿åå¼ãè³æ­¤ï¼ä¸æ¬¡ååºå·²ç»åå«æ¥åé¡µçå¨é¨ç« èã</p>
-<h2 id="äºreact-å¦ä½å³å®æ¾ç¤ºåªäºç« è">äºãReact å¦ä½å³å®æ¾ç¤ºåªäºç« è</h2>
-<p><code>AnalysisPage</code> æ ¹æ®æ°æ®å¨æåå»ºå¯¼èªé¡¹ï¼</p>
-<ul>
-<li>æ»ä½è¯ä»·ãé·é±æ°ãç»¼åè¯åå§ç»æ¾ç¤ºï¼</li>
-<li><code>pitfalls</code> éç©ºæ¶æ¾ç¤ºé®é¢è¯¦æï¼</li>
-<li>å­å¨ææ¡£åææ¶æ¾ç¤ºååä¸æ¥ä»·åï¼</li>
-<li>ä»»ä¸ææ¡£å¸¦å¢é¡¹é¢æµæ¶æ¾ç¤ºå¢é¡¹ç« èï¼</li>
-<li>å­å¨å·®å¼é¡¹æ¶æ¾ç¤ºè·¨ææ¡£æ ¸æ¥ã</li>
-</ul>
-<p>é¡µé¢ä½¿ç¨ <code>IntersectionObserver</code> è§å¯è¿äºç« èï¼éæ©å¯è§æ¯ä¾æé«çé¨åæ´æ° <code>activeSection</code>ãæ¡é¢ç«¯æ¾ç¤ºå¯æå çåºå®ä¾§æ ï¼ç§»å¨ç«¯ä½¿ç¨åç¬å¯¼èªï¼ç¹å»åæç§é¡¶é¨åç§»éå¹³æ»æ»å¨ã</p>
-<h2 id="å­é®é¢è¯¦æå¦ä½æ¸²æ">å­ãé®é¢è¯¦æå¦ä½æ¸²æ</h2>
-<p><img src="../screenshots/frontend/%E9%A1%B9%E7%9B%AE%E6%8A%A5%E5%91%8A-%E9%97%AE%E9%A2%98%E8%AF%A6%E6%83%85.png" alt="RenoPit è£ä¿®é®é¢è¯¦æ" loading="lazy"></p>
-<p>æ¯ä¸ª <code>PitfallCard</code> æ ¹æ® <code>severityConfig</code> éæ©å¾æ ãé¢è²ãèæ¯åä¸­ææ ç­¾ãå¡çå±ç¤ºåç±»ãä½ç½®ãé®é¢åæãå¥è·¯è¯´æä¸æ¿ä»£å»ºè®®ï¼åç«¯æ²¡ææä¾çå¯éå­æ®µä¸ä¼æ¸²æç©ºåºåã</p>
-<p>ååç»æç±ææ¡£é£é©åºåå±ç¤ºï¼å¢é¡¹é¢æµäº¤ç» <code>ExtraPredictionPanel</code>ï¼è·¨ææ¡£ç»æäº¤ç» <code>CrossCheckPanel</code>ãè¿äºç»ä»¶ä¸åè¯·æ±åç«¯ï¼åªå¤çå·²ç»èåå° <code>result</code> ä¸­çæ°æ®ã</p>
-<p>å è½½ãæ¥å£å¤±è´¥ååæå¤±è´¥ä¹åå«æç¬ç«é¡µé¢ç¶æãè¿æ ·æ¥åé¡µä¸ä¼å¨æ°æ®æªåå¤å¥½æ¶å°è¯è§£æ <code>summary</code> æ <code>pitfalls</code>ã</p>
-<h2 id="ä¸æ¥åæ°æ®é¾å°ç»">ä¸ãæ¥åæ°æ®é¾å°ç»</h2>
-<p>RenoPit çæ¥åå±ç¤ºåæä¸¤å±ï¼åç«¯ææ¨¡ååå§ JSON è½¬æ¢ä¸ºç¨³å®ç <code>AnalysisResult</code>ï¼React åæ ¹æ®å­æ®µæ¯å¦å­å¨ç»åé¡µé¢ãè¯åãä¸¥éç¨åº¦ãææ°ææ¡£ç»æåäº¤åæ ¸æ¥é½å¨ <code>/result</code> è¿ä¸æ¡è¾¹çä¸æ±åã</p>
-<p>ç»æèåå½æ°ãTypeScript ç±»ååæ¥åç»ä»¶å¯ä»¥å¨ <a href="https://github.com/fthux/RenoPit" target="_blank" rel="noopener nofollow">fthux/RenoPit</a> ä¸­æ¥çãä¸ä¸ç¯å°ç»§ç»­å¤ç¨åä¸ä»½ç»ææ°æ®ï¼åæ RenoPit å¦ä½ä½¿ç¨ ReportLab çæå¯ä¸è½½çä¸­æ PDF æ¥åã</p>
-
-
-</div>
-<div class="clear"></div>
-</div>
-    <p class="postfoot">posted on 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-08-18 13:41">2026-08-18 13:41</span>&nbsp;
-<a href="https://www.cnblogs.com/myvin">fthux</a>&nbsp;
-éè¯»(<span id="post_view_count">15</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(22225805);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fmyvin%2Fp%2F22225805&amp;targetId=22225805&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</p>
- ]]>
     </description>
     </item>
         </channel>
