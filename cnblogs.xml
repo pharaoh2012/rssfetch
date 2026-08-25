@@ -3,12 +3,553 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-08-25T08:34:59.470Z</lastBuildDate>
+        <lastBuildDate>2026-08-25T12:35:31.809Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
+    <title><![CDATA[ OceanBase å¸¸ç¨ SQL è¯­å¥åååºååçä»ç» ]]></title>
+    <link>https://www.cnblogs.com/curtain-haha/p/22684136</link>
+    <guid>9146876598b21a9e06a3b89966d06544</guid>
+    <description>
+    <![CDATA[ 
+    <a name="top"></a>
+    <h2><a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/curtain-haha/p/22684136" title="åå¸äº 2026-08-25 19:20">
+    
+
+    <span role="heading" aria-level="2">OceanBase å¸¸ç¨ SQL è¯­å¥åååºååçä»ç»</span>
+    
+
+</a>
+</h2>
+    <small>
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-08-25 19:20">2026-08-25 19:20</span>&nbsp;
+<a href="https://www.cnblogs.com/curtain-haha">å£å½¼å¾å ¡çæé¿</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(22684136);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fcurtain-haha%2Fp%2F22684136&amp;targetId=22684136&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</small>
+    <div class="entry">
+        <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h1 id="oceanbase-å¸¸ç¨-sql-è¯­å¥åååºååçä»ç»">OceanBase å¸¸ç¨ SQL è¯­å¥åååºååçä»ç»</h1>
+<p>æä¸æ®µæ¶é´æ²¡ææ´æ° <code>OceanBase</code> ç¸å³æç« äºãåæ®µæ¶é´ä¸æ¹é¢å¿çå¶ä»äºæï¼å¦ä¸æ¹é¢å´è´æ¥äºï¼åè¿ç»­åäºä¸å¨ç <code>GaussDB</code> åå®¢ãä»ä»å¤©å¼å§ï¼éæ°åå° <code>OceanBase</code>ï¼è¿ç¯æç« åæä¹åå­¦ä¹ åå®è·µè¿ç¨ä¸­å¸¸ç¨å°ç <code>SQL</code> è¯­å¥åä¸æ¬¡æ±æ»ï¼ä¹ç®æ¯å¯¹åé¢åå®¹çä¸æ¬¡å¤ä¹ åæ´çã</p>
+<h2 id="1-observer-åæ°ç®¡ç">1. OBServer åæ°ç®¡ç</h2>
+<pre><code class="language-sql">1ãæ¥ç OBServer çèµæºåé
+SELECT SVR_IP, ZONE,CPU_CAPACITY, CPU_ASSIGNED, ROUND(MEMORY_LIMIT/1024/1024/1024,1) AS MEM_LIMIT_GB, ROUND(MEM_CAPACITY/1024/1024/1024,1) AS MEM_CAPACITY_GB, ROUND(MEM_ASSIGNED/1024/1024/1024,1) AS MEM_ASSIGNED_GB, ROUND(DATA_DISK_ALLOCATED/1024/1024/1024,1) AS DATA_ALLOCATED_GB, ROUND(DATA_DISK_IN_USE/1024/1024/1024,1) AS DATA_USED_GB, ROUND(LOG_DISK_CAPACITY/1024/1024/1024,1) AS LOG_DISK_GB, ROUND(LOG_DISK_ASSIGNED/1024/1024/1024,1) AS LOG_ALLOCATED_GB, ROUND(LOG_DISK_IN_USE/1024/1024/1024,1) AS LOG_USED_GB 
+FROM oceanbase.GV$OB_SERVERS;
+
+2ãæ¥çéç¾¤éç½®é¡¹(PARAMETER)
+-- (1) GV$OB_PARAMETERS è§å¾ï¼å¯ä»¥æ¥çéèåæ°
+SELECT zone, svr_ip, name, value, info FROM oceanbase.GV$OB_PARAMETERS WHERE name like 'MEMORY_LIMIT' OR name like 'SYSTEM_MEMORY' order by name;
+-- (2) show parameters æ¹æ³;
+show parameters like 'memory_limit';
+
+3ãæ¥çç³»ç»åé(VARIABLES)
+-- (1) SYS ç§æ·å¯ä»¥æ¥è¯¢ææç§æ·çç³»ç»åé
+ SELECT * FROM oceanbase.CDB_OB_SYS_VARIABLES WHERE TENANT_ID=1002 AND NAME='ob_query_timeout';
+-- (2) MySQL ç§æ·æ¥çæ¬ç§æ·ç SESSION_VARIABLES å GLOBAL_VARIABLES 
+SELECT * FROM INFORMATION_SCHEMA.SESSION_VARIABLES WHERE VARIABLE_NAME = 'ob_query_timeout';
+SELECT * FROM INFORMATION_SCHEMA.GLOBAL_VARIABLES  WHERE VARIABLE_NAME = 'ob_query_timeout';
+-- (3) Oracle ç§æ·æ¥çæ¬ç§æ·ç SESSION_VARIABLES å GLOBAL_VARIABLES 
+SELECT * FROM SYS.TENANT_VIRTUAL_GLOBAL_VARIABLE;
+SELECT * FROM SYS.TENANT_VIRTUAL_SESSION_VARIABLE;
+
+4ãä¿®æ¹éç¾¤çº§éç½®é¡¹ï¼å¨æç´æ¥çæï¼å°æ° STATIC_EFFECTIVE éæåæ°éè¦éå¯çæ
+-- (1) é»è®¤ææèç¹ä¿®æ¹
+ALTER SYSTEM SET memory_limit = '16G';
+-- (2) é¨åèç¹ä¿®æ¹
+ALTER SYSTEM SET memory_limit = '20G' SERVER = '192.168.182.21:2882';
+ALTER SYSTEM SET memory_limit = '10G' ZONE = 'zone2';
+-- (3) å¯å¨ OBServer æ¶æå®åæ°ï¼ä¸ä¼ä¿®æ¹ `observer.config.bin` æä»¶ï¼å¨åå­çº§ä¸´æ¶è¦ç
+/home/admin/oceanbase/bin/observer -I 192.168.182.21 -P 2882 ... -o "cpu_count=8,system_memory=2G"
+
+5ãä¿®æ¹ç§æ·éç½®é¡¹åç³»ç»åé
+5.1ãä¿®æ¹ç§æ·éç½®é¡¹(PARAMETER)
+-- (1) ç»å½ä¸å¡ç§æ·ä¿®æ¹
+obclient -h192.168.182.23 -P2883 -uroot@ob_t1#obcluster -Doceanbase -A -padmin@123
+SQL &gt; alter system set freeze_trigger_percentage = 21;
+-- (2) å¨ sys ç§æ·ä¸­ä¿®æ¹
+ALTER SYSTEM SET freeze_trigger_percentage = 20 TENANT = 'ob_t1';
+show parameters like 'freeze%' tenant = 'ob_t1';
+
+5.2ãä¿®æ¹ç§æ·ç³»ç»åé(VARIABLES)
+-- (1) ç»å½ä¸å¡ç§æ·ä¿®æ¹
+obclient -h192.168.182.23 -P2883 -uroot@ob_t1#obcluster -Doceanbase -A -p
+SQL &gt; set ob_query_timeout = 60000000 ;
+SQL &gt; set GLOBAL ob_query_timeout = 60000000 ;
+
+-- (2) å¨ sys ç§æ·ä¸­ä¿®æ¹ä¸å¡ç§æ·ç³»ç»åéï¼ç»è¿æµè¯ä¿®æ¹çæ¯ Global çº§å«çç³»ç»åé
+ALTER TENANT ob_t1 SET VARIABLES ob_query_timeout = 60000000 ;
+
+-- (3) å¼åé¨ï¼ sys ç§æ·ååæ¢ç§æ·åè®¾ç½®
+ALTER SYSTEM CHANGE TENANT ob_t1; --åæ¢å° ob_t1 ç§æ·
+show tenant; --æ¾ç¤ºå½åç§æ·
+SET GLOBAL ob_query_timeout = 20000000;
+</code></pre>
+<h2 id="2-ç§æ·ç®¡ç">2. ç§æ·ç®¡ç</h2>
+<p>ç§æ·ï¼<code>Tenant</code>ï¼å¯ä»¥ç±»æ¯ä¼ ç»æ°æ®åºçå®ä¾ï¼æ¯ <code>OceanBase</code> æä¾æ°æ®åºæå¡åèµæºéç¦»çåºæ¬åä½ãå¤ä¸ªç§æ·å±äº«åä¸å¥ OceanBase éç¾¤ï¼ä½åç§æ·çæ°æ®ãç¨æ·ãæéåèµæºç¸äºéç¦»ã<br>
+ç§æ·åå« <code>sys</code> ç§æ· å ç¨æ·ç§æ·ï¼ç¨æ·ç§æ·æ <code>Oracle</code> å¼å®¹æ¨¡å¼ã<code>MySQL</code> å¼å®¹æ¨¡å¼ãå¶ä¸­ ï¼</p>
+<ul>
+<li>â<strong>sys ç§æ·</strong>âï¼ç³»ç»ç§æ·ï¼è´è´£éç¾¤çº§ç®¡çï¼ä¸å­å¨å¯¹åºç <code>Meta</code> ç§æ·ã</li>
+<li>â<strong>ç¨æ·ç§æ·</strong>âï¼çæ­£ä¸ºç¨æ·æä¾æ°æ®åºæå¡çç§æ·ã</li>
+<li>â<strong><code>Meta</code> ç§æ·</strong>âï¼æ¯ä¸ªç¨æ·ç§æ·é½æä¸ä¸ªå¯¹åºç <code>Meta</code> ç§æ·ï¼ä¸»è¦ç¨äºç®¡çè¯¥ç¨æ·ç§æ·çåé¨åæ°æ®ç­ä¿¡æ¯ã</li>
+</ul>
+<pre><code class="language-sql">1ãåå»ºç§æ·
+-- åå»ºç§æ·ä¸é¨æ²ï¼
+-- 1. åå»ºèµæºè§æ ¼  CREATE RESOURCE unit unit_mini max_cpu=1, memory_size='2G';  
+-- 2. åå»ºèµæºæ±     CREATE RESOURCE POOL mini_pool UNIT='unit_mini', UNIT_NUM=1, ZONE_LIST=('zone1','zone2','zone3');
+-- 3. åå»ºç§æ·     CREATE TENANT ob_t1, PRIMARY_ZONE = 'zone1,zone2,zone3', RESOURCE_POOL_LIST=('mini_pool') SET ob_tcp_invited_nodes='%';
+
+2ã æ¥çèµæºä¿¡æ¯
+-- æ¥çèµæºè§æ ¼
+SELECT unit_config_id, name AS unit_config_name, max_cpu, min_cpu, ROUND(memory_size/1024/1024/1024,2) AS mem_size_gb, ROUND(log_disk_size/1024/1024/1024,2) AS log_disk_size_gb,MAX_IOPS,min_iops FROM oceanbase.dba_ob_unit_configs ORDER BY unit_config_id;
+
+-- æ¥çèµæºæ± 
+SELECT resource_pool_id, name, tenant_id, unit_count, unit_config_id, zone_list FROM oceanbase.dba_ob_resource_pools ORDER BY tenant_id;
+
+-- æ¥çèµæºååå®ä½
+SELECT unit_id, tenant_id, resource_pool_id, unit_group_id,zone, svr_ip, svr_port, max_cpu, min_cpu, ROUND(memory_size/1024/1024/1024,2) AS mem_size_gb, ROUND(log_disk_size/1024/1024/1024,2) AS log_disk_gb FROM oceanbase.dba_ob_units ORDER BY tenant_id, unit_id;
+
+3ãæ¥çç§æ·
+-- ç§æ·ä¿¡æ¯ï¼åæ¬ç§æ·åç§°ãç§æ·ç±»åãç§æ·å¼å®¹æ¨¡å¼ãPRIMARY_ZONEãå¯æ¬åç¶æ
+SELECT TENANT_ID, TENANT_NAME, TENANT_TYPE, COMPATIBILITY_MODE, PRIMARY_ZONE, LOCALITY, STATUS FROM oceanbase.DBA_OB_TENANTS;
+
+-- æ¥è¯¢å·²åå»ºç§æ·åå«çèç¹ IP
+SELECT a.TENANT_NAME,a.TENANT_ID,b.SVR_IP FROM oceanbase.DBA_OB_TENANTS a,oceanbase.GV$OB_UNITS b WHERE a.TENANT_ID=b.TENANT_ID ORDER BY 2,3;
+
+-- æ¥çç§æ·å¯¹åºçèµæºæ± 
+SELECT t.TENANT_NAME, rp.NAME AS resource_pool, u.UNIT_CONFIG_ID, s.SVR_IP
+FROM oceanbase.DBA_OB_TENANTS t
+JOIN oceanbase.DBA_OB_RESOURCE_POOLS rp ON t.TENANT_ID = rp.TENANT_ID
+JOIN oceanbase.DBA_OB_UNITS u ON rp.RESOURCE_POOL_ID = u.RESOURCE_POOL_ID
+JOIN oceanbase.DBA_OB_SERVERS s ON u.SVR_IP = s.SVR_IP
+WHERE t.TENANT_TYPE = 'USER';
+
+-- æ¥çç§æ· â¡ï¸ èµæºæ±  â¡ï¸ èµæºååï¼Unitï¼ â¡ï¸ ç©çèç¹ï¼Observerï¼ â¡ï¸ èµæºè§æ ¼ å®æ´é¾è·¯åè§æ ¼
+select  t4.tenant_id, t4.tenant_name, t1.name resource_pool_name, t3.unit_id, t2.name unit_config_name,  t3.zone, concat(t3.svr_ip,':',t3.svr_port) observer,
+t2.max_cpu, t2.min_cpu, 
+round(t2.memory_size/1024/1024/1024,2) mem_size_gb,
+round(t2.log_disk_size/1024/1024/1024,2) log_disk_size_gb
+from __all_resource_pool t1
+join __all_unit_config t2 on (t1.unit_config_id=t2.unit_config_id)
+join __all_unit t3 on (t1.resource_pool_id = t3.resource_pool_id)
+left join __all_tenant t4 on (t1.tenant_id=t4.tenant_id)
+order by t1.resource_pool_id, t2.unit_config_id, t3.unit_id;
+
+4ãä¿®æ¹ç§æ·
+-- 1. ä¿®æ¹ Locality, Locality æè¿°äºæ°æ®çå¤ä¸ªå¯æ¬çç±»åååå¸ç­ç¥, Localityï¼ replicas{éè¯}@location 
+ALTER TENANT mysql LOCALITY=" F@zone1 , F@zone2 , F@zone3 "; 
+-- replicas ï¼å¯æ¬ç±»åï¼å³ FULL æ READONLYï¼ä¹å¯ç¨ F æ R ä»£æ¿ã 
+-- éè¯      ï¼å¯æ¬å¨æå®å¯ç¨åºåçæ°éï¼åºå®ä¸º 1ã 
+-- location ï¼å¯ç¨åºçåå­ã
+
+-- 2. ä¿®æ¹ Primary zoneï¼éå·ä¸¤ä¾§ä¼åçº§ç¸åï¼åå·å·¦ä¾§ä¼åçº§é«äºå³ä¾§ã
+-- Primary Zone å³å®äº OceanBase æ°æ®åºçæµéåå¸ãéè¿ä¿®æ¹ Primary Zone å±æ§å¯ä»¥åæ¢ä¸å¡æµéï¼éç¨äºå®¹ç¾åºæ¯ãæ©ç¼©å®¹ç­åºæ¯ã
+
+ALTER TENANT mysql PRIMARY_ZONE='zone1;zone2;zone3';
+ALTER TENANT mysql PRIMARY_ZONE='zone1,zone2,zone3'; 
+ALTER TENANT mysql PRIMARY_ZONE='RANDOM';
+
+5ãåæ¢ç§æ·
+ALTER SYSTEM CHANGE TENANT ob_t1; --åæ¢å° ob_t1 ç§æ·
+
+6ãç»å½ç§æ·ï¼æ°åå»ºçç§æ·é»è®¤æ²¡æå¯ç 
+-- 1. ç´è¿ç»å½
+obclient -h192.168.182.21 -P2881 -uroot@ob_t1 -Doceanbase -A
+- root â ç¨æ·åï¼sys ç§æ·è¶çº§ç®¡çåï¼
+- @sys â ç®æ ç§æ·æ¯ sys ç§æ·
+- #MyOceanBase â éç¾¤åï¼cluster nameï¼å»ºéç¾¤æ¶å®ç cluster_id/cluster_nameï¼
+
+-pï¼æç¤ºè¾å¥å¯ç 
+-cï¼ä¿çæ³¨éï¼å®¢æ·ç«¯ä¸å¥ç¦» SQL éç /* comment */ï¼ä¸å  -cï¼obclient ä¼å mysql ä¸æ ·ææ³¨éå æï¼hint å¤±æã
+-Aï¼--no-auto-rehashï¼ç¦ç¨åºå/è¡¨åèªå¨è¡¥å¨ç hash æå»ºï¼è¿æ¥åºç¹å«å¤ãå¯å¨å¾æ¢æ¶å  -A è½æ¾èå å¿«ç»å½éåº¦ï¼ä»£ä»·ï¼ä¸è½ Tab è¡¥å¨è¡¨å
+#MyOceanBase: èµ° OBProxy æ¶å¿é¡»å¸¦ #éç¾¤åï¼å¦å Proxy ä¸ç¥éè·¯ç±å°åªä¸ªéç¾¤ï¼ç´è¿ OBServer å¯çç¥ #éç¾¤åã
+-Dï¼è¿æ¥åé»è®¤è¿å¥ç database 
+
+-- 2. éè¿ OBProxy ç»å½
+obclient -h192.168.182.23 -P2883 -uroot@ob_t1#obcluster -Doceanbase -A
+
+7ãç§æ·éå½å
+ALTER TENANT old_tenant_name RENAME GLOBAL_NAME TO new_tenant_name;
+
+8ãéå®ç§æ·
+ALTER TENANT tenant_name LOCK | UNLOCK;
+
+9ãç§æ·æ©ç¼©å®¹
+-- æ¹æ³1ï¼ä¿®æ¹èµæºéç½®ï¼åç´æ©ç¼©å®¹ï¼
+-- (1) è°æ´èµæºéç½®ï¼ç´æ¥æ¹è§æ ¼å¤§å°ï¼éåç§æ·ä½¿ç¨ç¬ç«çèµæºéç½®çåºæ¯ï¼è§æ ¼åªè¢«å½åä¸ä¸ªç§æ·ä½¿ç¨ï¼ 
+ ALTER RESOURCE UNIT uc1 MAX_CPU 6, MEMORY_SIZE '36G';
+
+-- (2) åæ¢èµæºéç½®ï¼åæ¢å°å¤§çè§æ ¼
+ALTER RESOURCE POOL pool1 UNIT 'uc2'; 
+
+-- æ¹æ³2ï¼è°æ´èµæºååä¸ªæ°ï¼æ°´å¹³æ©ç¼©å®¹ï¼ï¼åææ¯ zone æè¶³å¤ç OBServer æ°é
+ALTER RESOURCE TENANT tt UNIT_NUM 2';
+</code></pre>
+<h2 id="3-æ¥å¿æµç®¡ç">3. æ¥å¿æµç®¡ç</h2>
+<p><code>OB V4 </code> çæ¬æ¥å¿æµï¼<code>Log Stream</code>)æ¯ä¸ä¸ªç§æ·å¨åä¸ä¸ª <code>OBServer</code> ä¸çææ <code>leader</code> ååºçèåï¼ç±äºæ¥å¿æµæ¯ä¸ç¹å® <code>OBServer</code> ç»å®çï¼å æ­¤ï¼ä¸ä¸ªæ¥å¿æµéå¸¸å¯¹åºäºåä¸ä¸ª OBServer ä¸çææ Leader ååºï¼<br>
+å³â<strong>åä¸ä¸ªæ¥å¿æµä¸­çä¸åååºç <code>Leader</code> å¯æ¬åºåå¸å¨åä¸å° <code>OBServer</code> ä¸</strong>âï¼èä¸æ¯åæ£å¨ä¸åç <code>OBServer</code> ä¸ã<br>
+ä¸ªäººè®¤ä¸ºï¼ä»ä¸è´æ§å¤å¶ç»è§åº¦çï¼æ¥å¿æµçæ¦å¿µæ¯è¾æ¥è¿ <code>TiDB</code> ä¸­ç  <code>Raft Group</code> ï¼<code>OceanBase</code> çæ¥å¿æµæ¯åºäº <code>Paxos</code> çæ¥å¿å¤å¶åäºå¡ç®¡çååï¼ä¸ä¸ªæ¥å¿æµå¯ä»¥æ¿è½½å¤ä¸ª <code>Tablet</code>ï¼<code>TiKV</code> åä»¥ <code>Region</code> ä¸ºæ°æ®åçï¼ä¸ä¸ª <code>Region</code> å¯¹åºä¸ä¸ª <code>Raft Group</code>ã</p>
+<p>æ¥å¿æµæ»æ° = unit_num Ã ï¼ç¬¬ä¸ä¼åçº§ç Zone æ°éï¼<br>
+ä¾å¦ï¼</p>
+<ul>
+<li>1-1-1 çéç¾¤ä¸­ unit_num=1 ï¼PRIMARY_ZONE='zone1'ï¼é£ä¹æ¥å¿æµå°±æ¯ 1ã</li>
+<li>2-2-2 çéç¾¤ä¸­ unit_num=1 ï¼PRIMARY_ZONE='zone1'ï¼é£ä¹æ¥å¿æµè¿æ¯ 1ã</li>
+<li>2-2-2 çéç¾¤ä¸­ unit_num=2 ï¼PRIMARY_ZONE='RANDOM'ï¼å³æ¯åº 2 ä¸ª Unit Ã 3 ä¸ªåºåç­ä¼åçº§ï¼å°±ä¼æ 2 X 3=6 ä¸ªæ¥å¿æµã</li>
+</ul>
+<pre><code class="language-sql">-- 1. æ¥ç 1002 ç§æ·æ¯ä¸ª LS ç Leader å¨åªå°æºå¨
+obclient(root@sys)[oceanbase]&gt; SELECT TENANT_ID, LS_ID, SVR_IP, SVR_PORT, ROLE FROM oceanbase.GV$OB_LOG_STAT WHERE TENANT_ID = 1002 AND ROLE = 'LEADER' ORDER BY LS_ID;
++-----------+-------+----------------+----------+--------+
+| TENANT_ID | LS_ID | SVR_IP         | SVR_PORT | ROLE   |
++-----------+-------+----------------+----------+--------+
+|      1002 |     1 | 192.168.182.21 |     2882 | LEADER |
+|      1002 |  1001 | 192.168.182.21 |     2882 | LEADER |
+|      1002 |  1002 | 192.168.182.22 |     2882 | LEADER |
+|      1002 |  1003 | 192.168.182.23 |     2882 | LEADER |
++-----------+-------+----------------+----------+--------+
+4 rows in set (0.007 sec)
+ç§æ· 1002 æ 4 ä¸ªæ¥å¿æµï¼LSï¼ï¼æ¯ä¸ª LS ç Leader é½åå¸å¨ä¸åç OBServer ä¸ï¼å®ç°äº Leader ææ£ï¼æ²¡æåèç¹ç­ç¹ã
+
+-- 2. ç Follower å¯æ¬æ¯å¦é½å¨ï¼éªè¯ 3 å¯æ¬ï¼
+obclient(root@sys)[oceanbase]&gt; SELECT LS_ID, SVR_IP, ROLE, IN_SYNC FROM oceanbase.GV$OB_LOG_STAT WHERE TENANT_ID=1002 ORDER BY LS_ID, ROLE DESC;
++-------+----------------+----------+---------+
+| LS_ID | SVR_IP         | ROLE     | IN_SYNC |
++-------+----------------+----------+---------+
+|     1 | 192.168.182.21 | LEADER   | YES     |
+|     1 | 192.168.182.22 | FOLLOWER | YES     |
+|     1 | 192.168.182.23 | FOLLOWER | YES     |
+|  1001 | 192.168.182.21 | LEADER   | YES     |
+|  1001 | 192.168.182.22 | FOLLOWER | YES     |
+|  1001 | 192.168.182.23 | FOLLOWER | YES     |
+|  1002 | 192.168.182.22 | LEADER   | YES     |
+|  1002 | 192.168.182.21 | FOLLOWER | YES     |
+|  1002 | 192.168.182.23 | FOLLOWER | YES     |
+|  1003 | 192.168.182.23 | LEADER   | YES     |
+|  1003 | 192.168.182.21 | FOLLOWER | YES     |
+|  1003 | 192.168.182.22 | FOLLOWER | YES     |
++-------+----------------+----------+---------+
+12 rows in set (0.007 sec)
+
+-- 3. æ¥å¯æ¬æ¯å¦æéï¼Leader ä¸ Follower ç END_SCN å·®ï¼
+obclient(root@sys)[oceanbase]&gt; SELECT LS_ID, SVR_IP, ROLE, END_SCN, IN_SYNC FROM oceanbase.GV$OB_LOG_STAT WHERE TENANT_ID = 1002 AND LS_ID = 1001 ORDER BY ROLE;
++-------+----------------+----------+---------------------+---------+
+| LS_ID | SVR_IP         | ROLE     | END_SCN             | IN_SYNC |
++-------+----------------+----------+---------------------+---------+
+|  1001 | 192.168.182.22 | FOLLOWER | 1787653265688222000 | YES     |
+|  1001 | 192.168.182.23 | FOLLOWER | 1787653265688222000 | YES     |
+|  1001 | 192.168.182.21 | LEADER   | 1787653265688222000 | YES     |
++-------+----------------+----------+---------------------+---------+
+3 rows in set (0.006 sec)
+
+-- 4. ç Paxos æåæ¯å¦å®æ´ï¼é²èè£ï¼
+obclient(root@sys)[oceanbase]&gt; SELECT LS_ID, ROLE, PAXOS_MEMBER_LIST, PAXOS_REPLICA_NUM FROM oceanbase.GV$OB_LOG_STAT WHERE TENANT_ID=1002;
++-------+----------+-------------------------------------------------------------------+-------------------+
+| LS_ID | ROLE     | PAXOS_MEMBER_LIST                                                 | PAXOS_REPLICA_NUM |
++-------+----------+-------------------------------------------------------------------+-------------------+
+|     1 | LEADER   | 192.168.182.21:2882:1,192.168.182.22:2882:1,192.168.182.23:2882:1 |                 3 |
+|  1001 | LEADER   | 192.168.182.21:2882:1,192.168.182.22:2882:1,192.168.182.23:2882:1 |                 3 |
+|  1002 | FOLLOWER | 192.168.182.21:2882:1,192.168.182.22:2882:1,192.168.182.23:2882:1 |                 3 |
+|  1003 | FOLLOWER | 192.168.182.21:2882:1,192.168.182.22:2882:1,192.168.182.23:2882:1 |                 3 |
+|     1 | FOLLOWER | 192.168.182.21:2882:1,192.168.182.22:2882:1,192.168.182.23:2882:1 |                 3 |
+|  1001 | FOLLOWER | 192.168.182.21:2882:1,192.168.182.22:2882:1,192.168.182.23:2882:1 |                 3 |
+|  1002 | FOLLOWER | 192.168.182.21:2882:1,192.168.182.22:2882:1,192.168.182.23:2882:1 |                 3 |
+|  1003 | LEADER   | 192.168.182.21:2882:1,192.168.182.22:2882:1,192.168.182.23:2882:1 |                 3 |
+|     1 | FOLLOWER | 192.168.182.21:2882:1,192.168.182.22:2882:1,192.168.182.23:2882:1 |                 3 |
+|  1001 | FOLLOWER | 192.168.182.21:2882:1,192.168.182.22:2882:1,192.168.182.23:2882:1 |                 3 |
+|  1002 | LEADER   | 192.168.182.21:2882:1,192.168.182.22:2882:1,192.168.182.23:2882:1 |                 3 |
+|  1003 | FOLLOWER | 192.168.182.21:2882:1,192.168.182.22:2882:1,192.168.182.23:2882:1 |                 3 |
++-------+----------+-------------------------------------------------------------------+-------------------+
+12 rows in set (0.007 sec)
+
+-- 5. ç LS æ´ä½ç¶æï¼ææ  CREATING/OFFLINEï¼
+obclient(root@sys)[oceanbase]&gt; SELECT LS_ID, STATUS, PRIMARY_ZONE FROM oceanbase.CDB_OB_LS WHERE TENANT_ID=1002;
++-------+--------+-------------------+
+| LS_ID | STATUS | PRIMARY_ZONE      |
++-------+--------+-------------------+
+|     1 | NORMAL | zone1;zone2,zone3 |
+|  1001 | NORMAL | zone1;zone2,zone3 |
+|  1002 | NORMAL | zone2;zone1,zone3 |
+|  1003 | NORMAL | zone3;zone1,zone2 |
++-------+--------+-------------------+
+4 rows in set (0.015 sec)
+
+-- 6. æ¥ç Clog åæ¶ä½ç¹ï¼å¤æ­æ¯å¦è¿è½å»ºå¤ç§æ·ï¼ï¼BEGIN_LSN=0 è¡¨ç¤ºè¯¥ LS ä»åå»ºå°ç°å¨æ¥å¿æ²¡è¢«åæ¶è¿ï¼æ¥å¿é¾å®æ´ã
+obclient(root@sys)[oceanbase]&gt; SELECT LS_ID, BEGIN_LSN, BEGIN_SCN, END_SCN FROM oceanbase.GV$OB_LOG_STAT WHERE TENANT_ID = 1002 AND ROLE='LEADER';
++-------+-----------+---------------------+---------------------+
+| LS_ID | BEGIN_LSN | BEGIN_SCN           | END_SCN             |
++-------+-----------+---------------------+---------------------+
+|     1 |         0 |                   2 | 1787653423143022000 |
+|  1001 |         0 | 1787647220628040001 | 1787653423143022000 |
+|  1003 |         0 | 1787647220654945001 | 1787653423134993000 |
+|  1002 |         0 | 1787647220643514001 | 1787653423137764000 |
++-------+-----------+---------------------+---------------------+
+4 rows in set (0.006 sec)
+
+
+-- 7. çæ¯ä¸ª LS æ¿è½½äºåªäº tablet
+-- (1) sys ç§æ·ä¸ç¨ CDB_OB_TABLE_LOCATIONS
+SELECT a.LS_ID, a.TABLE_NAME, a.PARTITION_NAME, a.TABLET_ID, a.ROLE FROM oceanbase.CDB_OB_TABLE_LOCATIONS a WHERE a.TENANT_ID=1002 AND a.ROLE='LEADER' ORDER BY a.LS_ID, a.TABLE_NAME;
+-- (2) ä¸å¡ç§æ·ä½¿ç¨ DBA_OB_TABLE_LOCATIONS
+SELECT a.LS_ID, a.TABLE_NAME, a.PARTITION_NAME, a.TABLET_ID, a.ROLE FROM oceanbase.DBA_OB_TABLE_LOCATIONS a WHERE a.ROLE='LEADER' ORDER BY a.LS_ID, a.TABLE_NAME;
+</code></pre>
+<h2 id="4-æ°æ®ååºä¸åç">4. æ°æ®ååºä¸åç</h2>
+<p><code>OceanBase</code> æ°æ®åºåèä¼ ç»æ°æ®åº<strong>ååºè¡¨ï¼Partition)</strong> çæ¦å¿µï¼å°ä¸å¼ è¡¨çæ°æ®ååå°ä¸åçååºä¸­ã<br>
+ååºçæ°æ®å­å¨å¨å¯¹åºç <strong>åçï¼Tabletï¼</strong> ä¸ï¼OceanBase åå°è¿äºåçåè¡¡å°åå¸å°å¤ä¸ª <code>OBServer</code> ä¸ï¼ä»èå®ç°æ°æ®çâ<strong>åå¸å¼å­å¨</strong>âã</p>
+<h3 id="41-ååºpartition">4.1 ååºï¼Partitionï¼</h3>
+<p><strong>ååºæ¯ç¨æ·åå»ºçé»è¾å¯¹è±¡ï¼æ¯ OceanBase è¿è¡æ°æ®åççä¸ç§æ¹å¼ã</strong></p>
+<p>ä¸»è¦ç¹ç¹ï¼</p>
+<ul>
+<li>OceanBase å¯ä»¥å°åä¸å¼ è¡¨çå¤ä¸ªååºåå¸å°å¤ä¸ª <strong>OBServer</strong> èç¹ä¸ã</li>
+<li>å¤ä¸ªèç¹å±åç»æä¸ä¸ªå®æ´çè¡¨æ°æ®ï¼å®ç°æ°æ®çåå¸å¼å­å¨ã</li>
+<li>æªè¿è¡ååºçè¡¨ï¼ä»¥<strong>åååºè¡¨</strong>çå½¢å¼å­å¨ã</li>
+</ul>
+<p>ä¾å¦åå»ºä¸å¼ åå« <strong>6 ä¸ª Hash ååº</strong>çè¡¨ï¼</p>
+<pre><code class="language-SQL">CREATE TABLE T1
+(
+    C1 INT,
+    C2 VARCHAR(100),
+    C3 VARCHAR(1000)
+)
+PARTITION BY HASH(C1) PARTITIONS 6;
+
+-- æ¥çååºå­è¡¨
+SELECT TABLE_NAME, PARTITION_NAME FROM information_schema.PARTITIONS WHERE TABLE_SCHEMA ='test' and table_name = 't1';
++------------+----------------+
+| TABLE_NAME | PARTITION_NAME |
++------------+----------------+
+| T1         | p0             |
+| T1         | p1             |
+| T1         | p2             |
+| T1         | p3             |
+| T1         | p4             |
+| T1         | p5             |
++------------+----------------+
+
+-- æ¥çååºæ°é
+SELECT TENANT_ID, TABLE_NAME, COUNT(DISTINCT tablet_id) AS tablet_cnt FROM oceanbase.CDB_OB_TABLE_LOCATIONS WHERE TABLE_NAME = 't1' AND ROLE = 'LEADER' GROUP BY TENANT_ID, TABLE_NAME;
++-----------+------------+------------+
+| TENANT_ID | TABLE_NAME | tablet_cnt |
++-----------+------------+------------+
+|         1 | T1         |          6 |
++-----------+------------+------------+
+</code></pre>
+<h3 id="22-åçtablet">2.2 åçï¼Tabletï¼</h3>
+<p><strong>Tablet æ¯ååºæ°æ®çå­å¨å¯¹è±¡ï¼ä¹æ¯ OceanBase æ°æ®åè¡¡çæå°åä½ã</strong>  <code>Partition</code> ä¸ <code>Tablet</code> çå³ç³»</p>
+<ol>
+<li>æ®éè¡¨ï¼</li>
+</ol>
+<blockquote>
+<p><strong>ä¸ä¸ª Partition å¯¹åºä¸ä¸ª Tabletã</strong></p>
+</blockquote>
+<ol start="2">
+<li>ç´¢å¼ç Tablet</li>
+</ol>
+<blockquote>
+<p>ç´¢å¼çæ¯ä¸ªååºåæ ·ä¼å¯¹åºä¸ä¸ª Tabletã</p>
+</blockquote>
+<pre><code class="language-sql">-- 1. åå»º LOCAL ç´¢å¼
+CREATE INDEX I1 ON T1(C2) LOCAL;
+
+-- 2. åå»º Global ç´¢å¼ï¼varchar ä¸æ¯æ HASHï¼ä½æ¯å¯éè¿ KEY åºååè½¬æ¢æ HASH
+CREATE INDEX I2 ON T1(c3) GLOBAL PARTITION BY KEY (c3) PARTITIONS 8;
+
+-- 3. æ¥çæå®è¡¨çç´¢å¼åç±»å
+SELECT DISTINCT
+       T1.INDEX_NAME,
+       T1.TABLE_NAME   AS INDEX_TABLE_NAME,   
+       T1.TABLE_ID     AS INDEX_TABLE_ID,
+       T1.DATA_TABLE_ID AS PRIMARY_TABLE_ID,
+       T1.INDEX_TYPE    
+FROM oceanbase.DBA_OB_TABLE_LOCATIONS T1
+JOIN oceanbase.DBA_OB_TABLE_LOCATIONS T2
+  ON T1.DATA_TABLE_ID = T2.TABLE_ID
+WHERE T2.DATABASE_NAME = 'test'
+  AND T2.TABLE_NAME = 't1';
++------------+------------------+----------------+------------------+------------+
+| INDEX_NAME | INDEX_TABLE_NAME | INDEX_TABLE_ID | PRIMARY_TABLE_ID | INDEX_TYPE |
++------------+------------------+----------------+------------------+------------+
+| I1         | __idx_500049_I1  |         500062 |           500049 | LOCAL      |
+| I2         | __idx_500049_I2  |         500071 |           500049 | GLOBAL     |
++------------+------------------+----------------+------------------+------------+
+
+-- 4. æ¥çç´¢å¼å¯æ¬/Leader åå¸
+SELECT
+    INDEX_NAME,
+    PARTITION_NAME,
+    SUBPARTITION_NAME,
+    TABLET_ID,
+    LS_ID,
+    ZONE,
+    SVR_IP,
+    SVR_PORT,
+    ROLE,             
+    REPLICA_TYPE      
+FROM oceanbase.DBA_OB_TABLE_LOCATIONS
+WHERE TABLE_TYPE = 'INDEX'
+  AND DATA_TABLE_ID = (SELECT DISTINCT TABLE_ID
+                       FROM oceanbase.DBA_OB_TABLE_LOCATIONS
+                       WHERE DATABASE_NAME='test'
+                         AND TABLE_NAME='t1'
+                         AND TABLE_TYPE='USER TABLE')
+ORDER BY INDEX_NAME, PARTITION_NAME, ROLE DESC;
+
++------------+----------------+-------------------+---------------------+-------+-------+----------------+----------+----------+--------------+
+| INDEX_NAME | PARTITION_NAME | SUBPARTITION_NAME | TABLET_ID           | LS_ID | ZONE  | SVR_IP         | SVR_PORT | ROLE     | REPLICA_TYPE |
++------------+----------------+-------------------+---------------------+-------+-------+----------------+----------+----------+--------------+
+| I1         | p0             | NULL              | 1152921504606846999 |     1 | zone1 | 192.168.182.21 |     2882 | LEADER   | FULL         |
+| I1         | p0             | NULL              | 1152921504606846999 |     1 | zone3 | 192.168.182.23 |     2882 | FOLLOWER | FULL         |
+| I1         | p0             | NULL              | 1152921504606846999 |     1 | zone2 | 192.168.182.22 |     2882 | FOLLOWER | FULL         |
+| I1         | p1             | NULL              | 1152921504606847000 |     1 | zone1 | 192.168.182.21 |     2882 | LEADER   | FULL         |
+| I1         | p1             | NULL              | 1152921504606847000 |     1 | zone3 | 192.168.182.23 |     2882 | FOLLOWER | FULL         |
+| I1         | p1             | NULL              | 1152921504606847000 |     1 | zone2 | 192.168.182.22 |     2882 | FOLLOWER | FULL         |
+| I1         | p2             | NULL              | 1152921504606847001 |     1 | zone1 | 192.168.182.21 |     2882 | LEADER   | FULL         |
+| I1         | p2             | NULL              | 1152921504606847001 |     1 | zone3 | 192.168.182.23 |     2882 | FOLLOWER | FULL         |
+| I1         | p2             | NULL              | 1152921504606847001 |     1 | zone2 | 192.168.182.22 |     2882 | FOLLOWER | FULL         |
+| I1         | p3             | NULL              | 1152921504606847002 |     1 | zone1 | 192.168.182.21 |     2882 | LEADER   | FULL         |
+| I1         | p3             | NULL              | 1152921504606847002 |     1 | zone3 | 192.168.182.23 |     2882 | FOLLOWER | FULL         |
+| I1         | p3             | NULL              | 1152921504606847002 |     1 | zone2 | 192.168.182.22 |     2882 | FOLLOWER | FULL         |
+| I1         | p4             | NULL              | 1152921504606847003 |     1 | zone1 | 192.168.182.21 |     2882 | LEADER   | FULL         |
+| I1         | p4             | NULL              | 1152921504606847003 |     1 | zone3 | 192.168.182.23 |     2882 | FOLLOWER | FULL         |
+| I1         | p4             | NULL              | 1152921504606847003 |     1 | zone2 | 192.168.182.22 |     2882 | FOLLOWER | FULL         |
+| I1         | p5             | NULL              | 1152921504606847004 |     1 | zone1 | 192.168.182.21 |     2882 | LEADER   | FULL         |
+| I1         | p5             | NULL              | 1152921504606847004 |     1 | zone3 | 192.168.182.23 |     2882 | FOLLOWER | FULL         |
+| I1         | p5             | NULL              | 1152921504606847004 |     1 | zone2 | 192.168.182.22 |     2882 | FOLLOWER | FULL         |
+| I2         | p0             | NULL              | 1152921504606847005 |     1 | zone1 | 192.168.182.21 |     2882 | LEADER   | FULL         |
+| I2         | p0             | NULL              | 1152921504606847005 |     1 | zone2 | 192.168.182.22 |     2882 | FOLLOWER | FULL         |
+| I2         | p0             | NULL              | 1152921504606847005 |     1 | zone3 | 192.168.182.23 |     2882 | FOLLOWER | FULL         |
+| I2         | p1             | NULL              | 1152921504606847006 |     1 | zone1 | 192.168.182.21 |     2882 | LEADER   | FULL         |
+| I2         | p1             | NULL              | 1152921504606847006 |     1 | zone3 | 192.168.182.23 |     2882 | FOLLOWER | FULL         |
+| I2         | p1             | NULL              | 1152921504606847006 |     1 | zone2 | 192.168.182.22 |     2882 | FOLLOWER | FULL         |
+| I2         | p2             | NULL              | 1152921504606847007 |     1 | zone1 | 192.168.182.21 |     2882 | LEADER   | FULL         |
+| I2         | p2             | NULL              | 1152921504606847007 |     1 | zone3 | 192.168.182.23 |     2882 | FOLLOWER | FULL         |
+| I2         | p2             | NULL              | 1152921504606847007 |     1 | zone2 | 192.168.182.22 |     2882 | FOLLOWER | FULL         |
+| I2         | p3             | NULL              | 1152921504606847008 |     1 | zone1 | 192.168.182.21 |     2882 | LEADER   | FULL         |
+| I2         | p3             | NULL              | 1152921504606847008 |     1 | zone3 | 192.168.182.23 |     2882 | FOLLOWER | FULL         |
+| I2         | p3             | NULL              | 1152921504606847008 |     1 | zone2 | 192.168.182.22 |     2882 | FOLLOWER | FULL         |
+| I2         | p4             | NULL              | 1152921504606847009 |     1 | zone1 | 192.168.182.21 |     2882 | LEADER   | FULL         |
+| I2         | p4             | NULL              | 1152921504606847009 |     1 | zone3 | 192.168.182.23 |     2882 | FOLLOWER | FULL         |
+| I2         | p4             | NULL              | 1152921504606847009 |     1 | zone2 | 192.168.182.22 |     2882 | FOLLOWER | FULL         |
+| I2         | p5             | NULL              | 1152921504606847010 |     1 | zone1 | 192.168.182.21 |     2882 | LEADER   | FULL         |
+| I2         | p5             | NULL              | 1152921504606847010 |     1 | zone3 | 192.168.182.23 |     2882 | FOLLOWER | FULL         |
+...
+42 rows in set (0.052 sec)
+</code></pre>
+<p>æ»å± 42 è¡:</p>
+<ul>
+<li>å¶ä¸­ I1 ç´¢å¼ä¸º <code>LOCAL</code> ç´¢å¼ï¼åè¡¨ååºæ°éç¸åï¼å æ­¤ä¹æ¯ 6 ä¸ªååºï¼æ¯ä¸ªç´¢å¼ 1 <code>Leader</code> + 2 <code>Follower</code>ï¼æ»å±æ¯ 18 æ¡æ°æ®ï¼</li>
+<li>I2 ç´¢å¼ä¸º <code>Global</code> ç´¢å¼ï¼ååºæ°éå¯ä»¥åè¡¨ä¸åï¼åå»ºæ¶æå®äº 8 ä¸ªååºï¼å æ­¤æ¯ 24 æ¡æ°æ®ã</li>
+</ul>
+<p>ââååºä¸åçåå®¹ä¸å¤ï¼ä»å¤©çä¸»è¦æ¶é´è±å¨æ»ç»ä¸ï¼æå¤©éç¹ä»ç» <code>OceanBase</code> çæ°æ®å¯æ¬åæ¥å¿æµï¼è¿æ¢æ¯éç¹ï¼ä¹æ¯æ¯ <code>OBCP</code> çå¸¸èç¹ã</p>
+<p>ââ<strong>å¦ææ¬æå¯¹ä½ ææå¸®å©ï¼æ¬¢è¿ç¹èµãæ¨èåè½¬åï¼ä¹æ¬¢è¿å³æ³¨åç»­æç« ï¼ä¸èµ·å­¦ä¹  <code>OceanBase</code> åå¸å¼æ°æ®åºã</strong></p>
+
+
+</div>
+<div class="clear"></div>
+
+        <div class="clear"></div>
+        
+</div>
+    <ul class="postmetadata">
+        <vc:categories-tags blog-app="curtain-haha" blog-id="222882" post-id="22684136"></vc:categories-tags>
+    </ul>
+ ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ åºäºdeepseek-v4-flash-vision-expå®ç°é¶è¡å¯¹è´¦åé«æè½¬Excelè¡¨æ ¼æ¹æ¡ ]]></title>
+    <link>https://www.cnblogs.com/zgzf/p/22683583/pdf-bank-statement-converter</link>
+    <guid>9d08d44ca4030230ba6e8779e6b1ac52</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/zgzf/p/22683583/pdf-bank-statement-converter" title="åå¸äº 2026-08-25 18:27">
+    
+
+    <span role="heading" aria-level="2">åºäºdeepseek-v4-flash-vision-expå®ç°é¶è¡å¯¹è´¦åé«æè½¬Excelè¡¨æ ¼æ¹æ¡</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h2 id="ä¸åè¨pdfè¡¨æ ¼è½¬æ¢çè¡ä¸çç¹">ä¸ãåè¨ï¼PDFè¡¨æ ¼è½¬æ¢çè¡ä¸çç¹</h2>
+<p>å¨ä¼ä¸åå¬ãè´¢å¡ç»è®¡ãæ°æ®åæãç§ç è°ç ç­åºæ¯ä¸­ï¼PDFæ¯æä¸»æµçæä»¶å½æ¡£æ ¼å¼ï¼ä½<strong>PDFè¡¨æ ¼æ æ³ç´æ¥ç¼è¾ãç»æåæåå°é¾</strong>çé®é¢ï¼é¿æå°æ°çæ°æ®å¤çäººåãä¼ ç»PDFè½¬Excelæ¹æ¡å­å¨è¯¸å¤ç­æ¿ï¼å¸¸è§å¨çº¿è½¬æ¢å·¥å·å¯¹æ«æçPDFãéä¹±æçè¡¨æ ¼ãåå¹¶ååæ ¼è¡¨æ ¼è¯å«çæä½ï¼å¼æºOCRå·¥å·ééæ§å·®ãéè¦å¤æè°åãæåºç°å­æ®µéä½ãæ°æ®éæ¼ï¼åä¸ä»è´¹è½¯ä»¶ææ¬é«æï¼ä¸æ¹éå¤çæçä½ä¸ï¼é¾ä»¥ééä¼ä¸èªå¨åä¸å¡æµç¨ã</p>
+<p>éçå¤æ¨¡æå¤§æ¨¡åææ¯è¿­ä»£ï¼è§è§çè§£è½åå½»åºéæäºææ¡£æ°å­åå¤çé»è¾ã2026å¹´8æ21æ¥ï¼DeepSeekæ­£å¼å¼æ¾<strong>deepseek-v4-flash-vision-exp</strong>å¤æ¨¡æè§è§æ¨¡åAPIè°ç¨æéï¼ä½ä¸ºDeepSeek V4ç³»åé¦ä¸ªå¬å¼çè§è§çè§£æ¨¡åï¼å¶å¼å·è¶å¼ºè§è§è§£æè½åãæè´æ¨çéåº¦ä¸é«æ§ä»·æ¯ï¼å®ç¾è§£å³PDFè¡¨æ ¼ç»æåè½¬æ¢é¾é¢ï¼ä¸ºPDFè½¬Excelåºæ¯æä¾äºè½»éåãé«ç²¾åº¦ãå¯æ¹éé¨ç½²çå¨æ°è§£å³æ¹æ¡ã</p>
+<h2 id="äºdeepseek-v4-flash-vision-expæ¨¡åæ ¸å¿è½åä¼å¿">äºãdeepseek-v4-flash-vision-expæ¨¡åæ ¸å¿è½åä¼å¿</h2>
+<p>deepseek-v4-flash-vision-expæ¯åºäºV4-Flashåºåº§è¿­ä»£çå®éªæ§å¤æ¨¡ææ¨¡åï¼ä¿çäºåçæ¨¡åé¡¶çº§çææ¬æ¨çãAgentè°åº¦è½åï¼åæ¶æ°å¢é«ç²¾åº¦è§è§çè§£è½åï¼ä¸ä¸ºå¾åãææ¡£ãå¾è¡¨è§£æåºæ¯ä¼åï¼ééPDFè¡¨æ ¼è½¬æ¢æ ¸å¿éæ±ï¼æ ¸å¿ä¼å¿å¦ä¸ï¼</p>
+<h3 id="1-å¾æåå¼ºæ è½åç¼©æ°´">1. å¾æåå¼ºï¼æ è½åç¼©æ°´</h3>
+<p>è¯¥æ¨¡åçº¯ææ¬æ¨çãé»è¾åæãç¥è¯åºè½åä¸DeepSeek-V4-Flashæ­£å¼çå®å¨æå¹³ï¼ä¸ä¼å æ°å¢è§è§æ¨¡ååºç°æ§è½è¡°åãåæ¶è§è§çè§£è½åå¤§å¹è·åï¼å¤æ¨¡æAgentç»¼åè½åæ¥è¿è¡ä¸é¡¶çº§çOpus-4.8æ°´å¹³ï¼å¯ç²¾åè¯å«å¤æææ¡£è§è§ç¹å¾ã</p>
+<h3 id="2-è¶å¤§ååééæ¹épdfå¤ç">2. è¶å¤§ååï¼ééæ¹éPDFå¤ç</h3>
+<p>æ¨¡åæ¥æ<strong>100ä¸ä¸ä¸æçªå£</strong>ãæå¤§384Kè¾åºé¿åº¦ï¼æ¯æåæ¬¡è¾å¥æå¤600å¼ å¾åï¼å¼å®¹æé¿è¾¹8192åç´ ãåå¼ æå¤§64MiBçå¾åæä»¶ãå¯ä¸æ¬¡æ§è§£æå¤é¡µPDFæåå¾åï¼æ éåé¡µéå¤è¯·æ±ï¼å®ç¾æ¯ææ¹éPDFè¡¨æ ¼è½¬æ¢åºæ¯ã</p>
+<h3 id="3-å¨åºæ¯è¡¨æ ¼å¼å®¹è¯å«ç²¾åº¦ææ»¡">3. å¨åºæ¯è¡¨æ ¼å¼å®¹ï¼è¯å«ç²¾åº¦ææ»¡</h3>
+<p>åºå«äºä¼ ç»OCRä»è½è¯å«æ¸æ°è§æ´è¡¨æ ¼ï¼è¯¥æ¨¡åå¯ç²¾åè§£æ<strong>æ«æçPDFãå¾çåPDFãéä¹±æçè¡¨æ ¼ãåå¹¶ååæ ¼ãè·¨é¡µè¡¨æ ¼ãå¸¦å¤æ³¨è¡¨å¤´ãå¼å½¢ç»è®¡è¡¨æ ¼</strong>ï¼èªå¨ç«æ­£è¡¨æ ¼éä½ãè¯å«ç©ºå¼ãåºåè¡¨å¤´ä¸æ°æ®è¡ï¼è§£å³ä¼ ç»å·¥å·æ ¸å¿çç¹ã</p>
+<h3 id="4-ä½ææ¬é«æçè½»éåé¨ç½²">4. ä½ææ¬é«æçï¼è½»éåé¨ç½²</h3>
+<p>æ¨¡åéç¨æç®è®¡è´¹è§åï¼å¾çæå°ºå¯¸æç®Tokenï¼åå¼ å¾çTokenå°é¡¶384ï¼è®¡è´¹æ åä¸V4-Flashææ¬æ¨¡åä¸è´ï¼æ§ä»·æ¯è¿è¶åç±»å¤æ¨¡ææ¨¡åãåæ¶æ¯æBase64ãå¬å¼URLãFiles APIä¸ç§å¾åä¼ å¥æ¹å¼ï¼æ¯ææä»¶ç¼å­å¤ç¨ï¼æ ééå¤ä¸ä¼ ï¼å¤§å¹éä½æ¥å£è¯·æ±å¸¦å®½ä¸èæ¶ã</p>
+<h3 id="5-ç»æåè¾åºæ ç¼å¯¹æ¥excel">5. ç»æåè¾åºï¼æ ç¼å¯¹æ¥Excel</h3>
+<p>åçæ¯æJSONç»æåè¾åºãå·¥å·è°ç¨ãåç¼ç»­åç­è½åï¼å¯ç´æ¥å°PDFè¡¨æ ¼æ°æ®è§£æä¸ºè§èçäºç»´ç»æåæ°æ®ï¼æ éäºæ¬¡æ¸æ´ï¼å¯ç´æ¥åå¥Excelæä»¶ï¼å¤§å¹ç®åå¼åé¾è·¯ã</p>
+<h2 id="ä¸æ¨¡åå®ç°pdfè½¬excelçæ ¸å¿åç">ä¸ãæ¨¡åå®ç°PDFè½¬Excelçæ ¸å¿åç</h2>
+<p>åºäºdeepseek-v4-flash-vision-expçPDFè¡¨æ ¼è½¬æ¢ï¼æ ¸å¿æ¯<strong>PDFåé¡µå¾åå + å¤æ¨¡æè§è§è§£æ + ç»æåæ°æ®éæ + Excelæ ¼å¼åè¾åº</strong>åæ­¥é­ç¯ï¼å¨ç¨æ éå¤æOCRç®æ³è°ä¼ï¼ä¾ææ¨¡ååçè§è§çè§£è½åå®ç°é«ç²¾åº¦è½¬æ¢ï¼</p>
+<h3 id="1-pdfé¢å¤çåé¡µé«æ¸è½¬å¾å">1. PDFé¢å¤çï¼åé¡µé«æ¸è½¬å¾å</h3>
+<p>éè¿PDFè§£æå·¥å·å°å¤é¡µPDFéé¡µæ¸²æä¸ºé«æ¸å¾çï¼ç»ä¸ééæ¨¡åæ¯æçJPEGãPNGç­æ ¼å¼ï¼åé¤æ¨¡ç³ãåä½ç©ºç½é¡µé¢ï¼ä¿çå®æ´è¡¨æ ¼è§è§ä¿¡æ¯ï¼ä¸ºæ¨¡åè¯å«æä¾é«è´¨éè¾å¥ç´ æã</p>
+<h3 id="2-å¤æ¨¡æè§è§å¨å±è§£æ">2. å¤æ¨¡æè§è§å¨å±è§£æ</h3>
+<p>å°å¤çåçå¾åæ¹éä¼ å¥deepseek-v4-flash-vision-expæ¨¡åï¼éè¿å®å¶åPromptæä»¤ï¼è®©æ¨¡åç²¾ååºåè¡¨æ ¼åºåãè¡¨å¤´ãæ°æ®ååæ ¼ãå¤æ³¨ä¿¡æ¯ãç©ºè¡åï¼æºè½è¯å«åå¹¶ååæ ¼é»è¾ãè·¨é¡µæ°æ®å³èå³ç³»ï¼è§é¿ä¼ ç»è¯å«çå­æ®µéä¹±ãè¡åéä½é®é¢ã</p>
+<h3 id="3-ç»æåæ°æ®æ ååè¾åº">3. ç»æåæ°æ®æ ååè¾åº</h3>
+<p>æ¨¡ååºäºè§è§è§£æç»æï¼å°éç»æåçè¡¨æ ¼å¾åï¼è½¬åä¸ºæ ååçäºç»´æ°ç»ãJSONç»æåæ°æ®ï¼ç»ä¸è¡¨å¤´å­æ®µãæ°æ®æ ¼å¼ãç©ºå¼è§åï¼èªå¨åé¤æ æåä½æ°æ®ï¼å®ææ°æ®æ¸æ´ä¸æ ååã</p>
+<h2 id="åå¿«éæ¥å¥å®ç°pdfè½¬excelå®ææµç¨">åãå¿«éæ¥å¥å®ç°ï¼PDFè½¬Excelå®ææµç¨</h2>
+<p>æ¬ææä¾è½»éåæ¥å¥æ¹æ¡ï¼æ éå¤ææ¨¡åé¨ç½²ï¼ç´æ¥è°ç¨DeepSeekå®æ¹APIå³å¯å¿«éå®ç°åè½ï¼ééä¸ªäººå¼åãä¼ä¸è½»éåä¸å¡åºæ¯ã</p>
+<h3 id="1-åç½®åå¤">1. åç½®åå¤</h3>
+<ul>
+<li>
+<p>æ³¨åDeepSeekå¼åèè´¦å·ï¼è·åAPI Keyä¸æ¥å£è°ç¨æé</p>
+</li>
+<li>
+<p>ç¡®è®¤è°ç¨æ¨¡ååæ°ä¸º <code>deepseek-v4-flash-vision-exp</code></p>
+</li>
+<li>
+<p>å®è£ä¾èµåºï¼pdf2imageï¼PDFè½¬å¾ï¼ãopenpyxlï¼Excelåå¥ï¼ãrequestsï¼æ¥å£è¯·æ±ï¼</p>
+</li>
+</ul>
+<h3 id="2-æ ¸å¿å®ç°æ­¥éª¤">2. æ ¸å¿å®ç°æ­¥éª¤</h3>
+<p><strong>æ­¥éª¤ä¸ï¼PDFæ¹éè½¬é«æ¸å¾ç</strong>ï¼æ¹éè¯»åæ¬å°PDFæä»¶ï¼éé¡µæ¸²æä¸ºé«æ¸PNGå¾åï¼ä¿å­è³ä¸´æ¶ç®å½ï¼ä¿éå¾åæ¸æ°åº¦ééæ¨¡åè¯å«æ åã</p>
+<p><strong>æ­¥éª¤äºï¼å°è£APIè¯·æ±åæ°</strong>ï¼éè¿Base64ç¼ç è¯»åå¾çæä»¶ï¼æé å¾ææ··åè¯·æ±ï¼ä¼ å¥å®å¶åè§£æPromptï¼âç²¾åè¯å«å¾çä¸­çè¡¨æ ¼åå®¹ï¼åºåè¡¨å¤´ãæ°æ®è¡ãåå¹¶ååæ ¼ï¼è¾åºæ åJSONäºç»´æ°ç»ï¼åå«å­æ®µåãå¯¹åºæ°æ®ãç©ºå¼æ æ³¨ï¼ä»è¾åºç»æåæ°æ®ï¼æ å¤ä½åä½åå®¹âã</p>
+<p><strong>æ­¥éª¤ä¸ï¼è°ç¨æ¨¡åæ¥å£è§£æè¡¨æ ¼</strong>ï¼è¯·æ±DeepSeek APIï¼æ¨¡åè¿åæ ååè¡¨æ ¼ç»æåæ°æ®ï¼èªå¨å®ææ°æ®çº éãæ ¼å¼ç»ä¸ã</p>
+<p><strong>æ­¥éª¤åï¼ç»æåæ°æ®åå¥Excel</strong>ï¼è§£ææ¥å£è¿åçJSONæ°æ®ï¼èªå¨åå»ºExcelè¡¨æ ¼ï¼è¿åè¡¨æ ¼ç»æãåå¹¶ååæ ¼æ ·å¼ï¼æ¹éåå¥æ°æ®å¹¶ä¿å­æä»¶ã</p>
+<h3 id="3-æ ¸å¿è½åééåºæ¯">3. æ ¸å¿è½åééåºæ¯</h3>
+<p>è¯¥æ¹æ¡å¯å®ç¾ééåç±»é«é¾åº¦è½¬æ¢åºæ¯ï¼æ«æçPDFæ¥è¡¨ãè´¢å¡å¯¹è´¦è¡¨æ ¼ãç§ç è°ç æ°æ®è¡¨ãå¤åå¹¶ååæ ¼ç»è®¡è¡¨æ ¼ãè·¨é¡µè¿ç»­è¡¨æ ¼ãå¸¦æ³¨éä¸æ°´å°çå¤æPDFè¡¨æ ¼ï¼è½¬æ¢åç¡®çè¿è¶ä¼ ç»å·¥å·ã</p>
+<h2 id="åæ¨èç½ç«">åãæ¨èç½ç«</h2>
+<p><a href="https://bankstatement-wizard.net/bank-statement-converter-ai" target="_blank" rel="noopener nofollow">https://bankstatement-wizard.net/bank-statement-converter-ai</a> åºå±éç¨ deepseek-v4-flash-vision-exp ä½ä¸º ocr è¯å«ï¼è½å¤å¿«éè¯å« è¡¨æ ¼æ ¼å¼ï¼å¯¼åº excel å csv æ ¼å¼</p>
+<h2 id="äºæ¹æ¡è½å°ä»·å¼ä¸ä¼å¿å¯¹æ¯">äºãæ¹æ¡è½å°ä»·å¼ä¸ä¼å¿å¯¹æ¯</h2>
+<h3 id="1-ä¸ä¼ ç»è½¬æ¢æ¹æ¡å¯¹æ¯">1. ä¸ä¼ ç»è½¬æ¢æ¹æ¡å¯¹æ¯</h3>
+<p>ç¸è¾äºä¼ ç»OCRå·¥å·ãå¨çº¿è½¬æ¢å¹³å°ãåä¸è½¯ä»¶ï¼åºäºdeepseek-v4-flash-vision-expçæ¹æ¡ä¼å¿æå¶æ¾èï¼ä¼ ç»å·¥å·ä»æ¯æåçå¯å¤å¶PDFï¼æ«æçPDFè¯å«å¤±æï¼å¤æè¡¨æ ¼éä¹±çè¶40%ï¼æ¬æ¹æ¡<strong>å¨ç±»åPDFå¼å®¹</strong>ï¼å¤æè¡¨æ ¼è¯å«åç¡®çå¯è¾¾98%ä»¥ä¸ãåæ¶æ éæå¨æ ¡å¯¹ãæ¹éå¤çç§çº§ååºï¼APIè°ç¨ææ¬æä½ï¼å¤§å¹éä½ä¼ä¸æ°æ®å¤çäººåä¸å·¥å·éè´­ææ¬ã</p>
+<h3 id="2-ä¸å¡è½å°æ ¸å¿ä»·å¼">2. ä¸å¡è½å°æ ¸å¿ä»·å¼</h3>
+<p>å¯¹ä¼ä¸èè¨ï¼è¯¥æ¹æ¡å¯å®ç°<strong>PDFè¡¨æ ¼æ°æ®èªå¨åæ°å­å</strong>ï¼æéPDFå½æ¡£æä»¶ä¸Excelæ°æ®åæçå£åï¼ééè´¢å¡æ¥è¡¨æ¹éæ´çãä¸å¡æ°æ®ç»è®¡ãæ¡£æ¡æ°å­åãç§ç æ°æ®æ±æ»ç­åºæ¯ï¼å¤§å¹æåæ°æ®å¤çæçï¼åå°äººå·¥å½å¥å¤±è¯¯ï¼å¯¹å¼åèèè¨ï¼è½»éåAPIæ¥å¥æ éç®åé¨ç½²ï¼å¼åææ¬ä½ãè¿­ä»£çµæ´»ï¼å¯å¿«ééæè³åå¬ç³»ç»ãæ°æ®ä¸­å°ãèªå¨åèæ¬ä¸­ã</p>
+<h2 id="å­æ»ç»ä¸å±æ">å­ãæ»ç»ä¸å±æ</h2>
+<p>deepseek-v4-flash-vision-expçä¸çº¿ï¼å½»åºè§£å³äºä¼ ç»PDFè½¬Excelåºæ¯çç²¾åº¦ä½ãééå·®ãææ¬é«ãæçä½ççç¹ãä¾ææ¨¡å<strong>è¶å¼ºè§è§è§£æè½åãè¶å¤§ä¸ä¸æååãé«æ§ä»·æ¯ãç»æåç²¾åè¾åº</strong>çæ ¸å¿ç¹æ§ï¼å®ç°äºä»âç®åæå­è¯å«âå°âè¡¨æ ¼é»è¾æºè½è§£æâçåçº§ï¼è®©å¤æPDFè¡¨æ ¼æ°å­åæ éäººå·¥å¹²é¢ã</p>
+<p>æªæ¥éçæ¨¡åæç»­è¿­ä»£ä¼åï¼å¶å¨ææ¡£ç»æåè§£æãå¾ææ°æ®èå¨ãæ¹éèªå¨åå¤çç­åºæ¯çè½åå°è¿ä¸æ­¥å¼ºåï¼å¯å»¶ä¼¸å®ç°PDFç¥¨æ®è¯å«ãæ¥è¡¨æºè½æ±æ»ãæ°æ®èªå¨å¯¹è´¦ç­æ´å¤é«é¶åè½ï¼æä¸ºåå¬æ°å­åãæ°æ®èªå¨åå¤ççæ ¸å¿åºç¡è½åã</p>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-08-25 18:28">2026-08-25 18:27</span>&nbsp;
+<a href="https://www.cnblogs.com/zgzf">è¯¸èå­æ¿</a>&nbsp;
+éè¯»(<span id="post_view_count">60</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(22683583);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fzgzf%2Fp%2F22683583%2Fpdf-bank-statement-converter&amp;targetId=22683583&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
     <title><![CDATA[ uniappè¿æ¥æé©¬æå°æºZD421 èçæå°ï¼ä»è¸©åå°åºçº¸ ]]></title>
     <link>https://www.cnblogs.com/liuxuming/p/22679807</link>
     <guid>4655f878661d703b6670cca53ebbf004</guid>
@@ -113,83 +654,11 @@
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0.004166666666666667" data-date-updated="2026-08-25 16:30">2026-08-25 16:24</span>&nbsp;
 <a href="https://www.cnblogs.com/liuxuming">å°é­åå­¦a</a>&nbsp;
-éè¯»(<span id="post_view_count">8</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">55</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(22679807);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fliuxuming%2Fp%2F22679807&amp;targetId=22679807&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ åå·ä¸å¹´ï¼æåæçä¸ç¾ä¸å­åå®¢ã ]]></title>
-    <link>https://www.cnblogs.com/Goblinscholar/p/22665405</link>
-    <guid>c19f1da1ff31ec95b8b80045297b18a8</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/Goblinscholar/p/22665405" title="åå¸äº 2026-08-25 15:53">
-    
-
-    <span role="heading" aria-level="2">åå·ä¸å¹´ï¼æåæçä¸ç¾ä¸å­åå®¢ã</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>æ¶é´è¿çè¿æ¯æºå¿«çï¼æå¨ 25 å¹´ç 9 æ 26 å·å¼éè¿ä¸ªè´¦å·ï¼å°ç°å¨å·²ç»å¿«ä¸å¹´äºï¼æ»è®¡ åè¡¨äº 141 ç¯åå®¢ï¼ç´¯è®¡å­æ°å·²ç»è¶ 100 ä¸äºã<br>
-èè·ç¦»ä¸æ¬¡æ´æ°å·²ç»å¿«ä¸ä¸ªåæäºï¼å¯ä»¥è¯´æ¯åå·ä»¥æ¥æé¿çæ´æ°é´éäºï¼ä½å¶å®åªæ¯æ¯ä¸åç¯æäºï¼ä¸ä¸ªæåå»æ·±å³è¯»ç ï¼ç®åæ»ç»ä¸ä¸å³äºè´¦å·æ¬èº«åä¹åçåå®¹æ¹åã</p>
-<h1 id="1-å³äºå¼éåå®¢">1. å³äºå¼éåå®¢</h1>
-<p>åå®¢å¼éæ¶ï¼æååç»æä¿ç ï¼ä½å¶å®ææ¬äººå¹¶æ²¡æå¤ªå¤çæè§¦æèçæ¬¢çå¿æï¼å¤§äºè½¬å¥è®¡ç§åæç¨åè¿çï¼ç»©ç¹ä¸éååï¼ä¹åä¾¿è¢«æ²é»ææ¬æ¨çèµ°ï¼ç»äºå¨ä¿ç ç»æåå¦ééè´å°ç»æäºè¿ä¸ä»»å¡ã</p>
-<p>è¿å å¥å¬èµ·æ¥å¥½åå¾äºä¾¿å®ååä¹ï¼ä½å¿æè§£éèµ·æ¥å°±æ¯ä¸å¥è¯ï¼<strong>ææ³å­¦ç¹æ´å®å¨çä¸è¥¿ï¼ä½å®éä¸æ²¡åå°</strong>ã<br>
-å°±ä¸è¿å¤å±å¼å­¦æ ¡éççäºäºï¼å°±æç°å¨<strong>äºåè¯¸èäº®</strong>çè§ç¹åæ¥è§åä¸ä¸èªå·±è½¬ä¸ä¸åçä¸å¹´çè¯ï¼å¶å®åºè¯¥æ¯æä¸»è¦ç²¾åæ¾å¨æ¾åä¸ä¸ªæ¹åä¸ç²¾å°å»å¨ç½ç»ä¸å»å­¦ææ¯ä¼ é¡¹ç®ï¼ææè¯¾ä¸é½ä½åé£è¿ï¼æ¿å°ä¸¤è¯å°±å¯ä»¥äºã<br>
-èä¸æ¯ä¸ºäºæåå»æ­»è®°ç¡¬èè¯¾åé¢ï¼äºå¹³æ¶åï¼ææ°´è¯¾çå°ç»ä½ä¸ï¼åä¸ºäºå±¥åå»ä¸ä¸æ¦å¤´è¥¿ä¸é¤å­å°æåç§æ¯èµå¯¼è´æ²¡ä»ä¹çç»çææ¯æ ã</p>
-<p>å½ç¶ï¼è¿äºé½æ¯é©¬åç®ï¼åå°æ­£é¢ï¼å¼éä¸ä¸ªåå®¢è´¦å·çæ³æ³å¶å®å¨æå¤§äºæ¶å°±æäºï¼å½æ¶ä¸ºäºè¡¥ä¿®è®¡ç®æºå¤§ä¸çè¯¾ï¼æçä¸»è¦ç¥è¯æ¸ éå°±æ¯ B ç«é»é©¬ç¨åºåç­çç½è¯¾å CSDNï¼åå®¢å­ç­å½åè®ºåã<br>
-å¨æµè§è¿ç¨ä¸­æå°±æ³å°ï¼æä¹å¯ä»¥å»ºä¸ä¸ªè¿æ ·çè´¦å·ï¼æ¢å¯ä»¥æ´çåºèªå·±çç¥è¯åå®¹ï¼èä¸æ¥ç§¯æç´¯ä¸çä¸ä¸ªè´¦å·è¯´ä¸å®ä¹è½æäºæ°æ®ï¼ä½ä¸ºä¸é¡¹å±¥åã</p>
-<p>èå½æ¶æ²¡æè¿ä¹åçåå ç¬¬ä¸æ¯ææå¤§é¨åæ¶é´é½æ¾å¨ä¸é¢ç½åçé£äºäºé¡¹éã<br>
-è¿æä¸ç¹æ¯å°±æ¯ç¼ºå°å®è·µç©ºé´ï¼å¾å¤è¯¾æçä¸è¥¿ç»æçæè§å°±æ¯<strong>ç»è¯¾åå°±åä¹æ²¡åºç°è¿</strong>ï¼ä¹å°±æ²¡äºå´è¶£ã</p>
-<p>æç»ï¼è¿ä¸ªæ³æ³è¢«ææç½®å°äºå¤§åä¸ä¿ç ç»æï¼æé®äºé®å¯¼å¸ææ²¡æä»ä¹éè¦æåå­¦çåºç¡åå®¹ï¼å¨<strong>æ¶é´åè£ãåå®¹æç¡®ä¸æ²¡æèæ ¸</strong>çæ¡ä»¶ä¸ï¼å¼å§äºè¿æ¬¡å°è¯ã</p>
-<h1 id="2-å³äºåå®¢åå®¹">2. å³äºåå®¢åå®¹</h1>
-<p>å»å¹´ç 9 æ 28 æ¥æåè¡¨äºç¬¬ä¸ç¯åå®¢ï¼<a href="https://www.cnblogs.com/Goblinscholar/p/19117612" target="_blank">Markdownè¯­æ³å¥é¨ä¸ï¼æ é¢ï¼åè¡¨ï¼è¡¨æ ¼ä¸å­ä½</a>ï¼æ¯æåä¸è½½å® ob çç»æä½åï¼ä¸ç¯åç»æã<br>
-ä¹åå°±æ¯å¯¼å¸è®©æå­¦ä¹ çå´æ©è¾¾æ·±åº¦å­¦ä¹ è¯¾ç¨ï¼<a href="https://www.cnblogs.com/Goblinscholar/p/19581510" target="_blank">å´æ©è¾¾æ·±åº¦å­¦ä¹ è¯¾ç¨ï¼æ·±åº¦å­¦ä¹ å¥é¨ç¬è®°å¨éç®å½</a>ï¼è¿ä¸ªç³»åéä»åå°åä¸ç¹ç¹å½¢æäºæçåå®¢é£æ ¼ï¼è´¡ç®äºæåå®¢çå¤§åå®¹åç¸åºçæµè§ã</p>
-<p>èä»¥ä¸ä¸¤é¨åçä¸ä¸ªå±åç¹æ¯æ<strong>æç¡®çææ¹å¯¹è±¡</strong>ï¼åèæ¯ B ç«çä¸é¨éæè¯¾:<a href="https://www.bilibili.com/video/BV1JA411h7Gw/?spm_id_from=333.337.search-card.all.click&amp;vd_source=e035e9878d32f414b4354b839a4c31a4" target="_blank" rel="noopener nofollow">8åéè®©ä½ å¿«éææ¡Markdown</a>ï¼åèèªç¶å°±æ¯ <a href="https://www.bilibili.com/video/BV1FT4y1E74V/?spm_id_from=333.337.search-card.all.click&amp;vd_source=e035e9878d32f414b4354b839a4c31a4" target="_blank" rel="noopener nofollow">[åè¯­å­å¹]å´æ©è¾¾æ·±åº¦å­¦ä¹ </a>ï¼è¿å¸¦æ¥çæå¤§å¥½å¤å¶å®æ¯<strong>è®©åå®¢åå®¹æä¸ä¸ªé¢å®å¥½çï¼æ¸æ°åççç®å½</strong>ï¼å¨å´æ©è¾¾ DL å¥é¨ç¬è®°ç³»åéä½ç°çå°¤ä¸ºææ¾ã<br>
-è¿æ ·ï¼å¶å®ååå®¢å¶å®å°±æ¯<strong>åç¬è®°</strong>ï¼</p>
-<ol>
-<li>çè§£æ»ç»åéç¯å¹çåå®¹</li>
-<li>æèªå·±è®¤ä¸ºæ´å®¹æçè§£çé»è¾é¡ºåºååºæ¥</li>
-<li>AI å®¡æ¥ãè¡¥åæ´åºç¡çåå®¹è¯´æï¼PPT éå¾ï¼image2 åå¸åè¿ä¸ç¯èä¹çå»äºï¼</li>
-</ol>
-<p>æè¿å¥ç®åçå·¥ä½æµï¼æä¾¿é¡ºå©å®æäºå´æ©è¾¾ DL å¥é¨ç¬è®°ç³»åçæ»è®¡ 80 ç¯åå®¢ï¼å¨åæ¬è§é¢åå®¹çåºç¡ä¸è¡¥åäºæ´å¤åºç¡æ¦å¿µï¼å¹¶ä¸å å¥äºç¨æ¡æ¶æ¼ç¤ºçæ¯ç« ä»£ç ä½ä¸é¨åã</p>
-<p>èä¹åçä¸ä¸ªç³»åï¼<a href="https://www.cnblogs.com/Goblinscholar/p/19800737" target="_blank">æ·±åº¦å­¦ä¹ è¿é¶</a>å¶å®ä¾¿æ¯å¨è¿åºç¡ä¸çè¿ä¸æ­¥å°è¯ï¼ä»æ­¤å¼å§æå°±ä¸åä¸é¨æ¾åºå®çææ¹å¯¹è±¡ï¼èæ¯<strong>éè¿å AI å¯¹è¯æ¥ç¡®å®åéçåå®¹åé¡ºåº</strong>ï¼åæåå®¢ã<br>
-æ­¤å¤è¿æä¸ä¸ª<a href="https://www.cnblogs.com/Goblinscholar/p/19660813" target="_blank">é«åè°±æå</a>ç³»åï¼å¶åºæ¬é»è¾å DL è¿é¶ç¸åï¼æ¯å¯¼å¸ç»çä¸ä¸ªè¯¾é¢æ¹åï¼å°±ä¸åå¤è¯´äºã</p>
-<p>èè¿é¨åç»ææå¤§çæè§¦å¶å®å¨äº<strong>å®å¨è±ç¦»è¯¾æ¬ãè§é¢ä»¥ååå®¢ç­æ¸ éï¼åªéè¿å GPT ç­ AI çäº¤äºæ¥å­¦ä¹ ç¥è¯ãè§ååå®¢ã</strong> ä»éè¿è¿ä¸æ¹å¼ï¼æä¾¿å®æäºä¸¤ä¸ªç³»åè³ä» 50 å¤ç¯çåå®¹ã</p>
-<p>ååæ¡çº¿ï¼å°æ­¤ä»¥ä¸çåå®¹å æ®äºæçç»å¤§å¤æ°åå®¢ï¼æ´å¤è¿æ¯ååçè®ºï¼èå¶å®ææ´åæ¬¢çæ¯ä¸é¢å ä¸ª<strong>ä¸æç³»åçå®è·µåå®¹</strong>ï¼</p>
-<p>é¦åæ¯ä¸ºäºæåå®¢éçå¾çæ¾å° github ä¸èæ¢ç´¢çå¾åºæç¨ï¼<a href="https://www.cnblogs.com/Goblinscholar/p/19254628" target="_blank">å¾åºåå»ºï¼github+Picgo+obsidian å¸¦æåæ­¥å é¤çèªå¨ä¸ä¼ </a></p>
-<p>å¶æ¬¡å°±æ¯å ä¸ª vibecoding ä½åï¼<a href="https://www.cnblogs.com/Goblinscholar/p/20107050" target="_blank">çªèé</a>ã<a href="https://www.cnblogs.com/Goblinscholar/p/20180525" target="_blank">Where you go</a>å <a href="https://www.cnblogs.com/Goblinscholar/p/21261831" target="_blank">InboxOrganizer</a>,æè¿ ds æ¶¨ä»·è®©æåªè½å»æ¯å¤©è workbuddy çç§¯åï¼ä¹æ¯è¿æ¥å¯å¬äºã</p>
-<h1 id="3-å³äºä¹åçåå®¹åæ¹å">3. å³äºä¹åçåå®¹åæ¹å</h1>
-<p>ç°å¨åè¿å¤´çï¼ä¸ä¸é¨åéçåä½è¿ç¨å·²ç»è®©ææ¶è·é¢å¤ãä½å¨è¿ä¸å¹´éçåæï¼å¶å®ä¸ä¸ªé®é¢è¶åå¸æ¾ï¼<strong>åå®¹æäºè¿äºå±å¼èåä½ã</strong></p>
-<p>å°±åå­¦æ°å­¦ä» 1+1 å¼å§å­¦å°é«æ°çæ¼«é¿è¿ç¨ï¼è½ç¶åºç¡åå¥½ï¼ä½å¤§é¨ååå®¹å¥½åé½åªæ¯åçº¯å°å¨è®²åå²èå®éç¨ä¸ä¸ï¼è¿ç¹å¨ DL è¿é¶é£ä¸ªç³»åéååææ¾ï¼åæ¶è¿é¨åå¯¼è´çå·¥ä½éä¹æäºææ¢æä¸ªäººå¨è¯¾é¢ä¸çè¿åº¦ã</p>
-<p>æä»¥æå®ä¸ä¸æ­¥æ¯åä¸°å¯ä¸ä¸èªå·±ç githubï¼æå ä¸ªçèµ·æ¥æ´âç°ä»£âç¹çé¡¹ç®ï¼ä¹æ¹ä¾¿ä¹åå»æ¾é è°±ç¹çå®ä¹ ã</p>
-<p><strong>å¤§æ¹åæ¯ CVï¼ä¹åçåå®¢åºè¯¥ä¼ä»¥å®è·µçåå®¹ä¸ºä¸»ï¼èä¸æ¯åä¹åä¸æ ·ä¸»è¦å»è®²çè®ºã</strong></p>
-<p>å·ä½è¿è¦èµ°ä¸æ­¥çä¸æ­¥ï¼ä½æ»ä¹ï¼æè°¢å³æ³¨åæµè§ï¼å¸æè¿ä¸å¹´çäº§åºä¹è½å¯¹çå°è¿çä½ ææå¸®å©ã</p>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-08-25 15:54">2026-08-25 15:53</span>&nbsp;
-<a href="https://www.cnblogs.com/Goblinscholar">å¥å¸æå­¦è</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(22665405);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FGoblinscholar%2Fp%2F22665405&amp;targetId=22665405&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -1129,7 +1598,7 @@
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-08-25 15:37">2026-08-25 15:36</span>&nbsp;
 <a href="https://www.cnblogs.com/lsksp">æ¯ç¹åé³</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">56</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(22678265);return false;">æ¶è</a>&nbsp;
@@ -1223,7 +1692,7 @@
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-08-25 15:08">2026-08-25 15:07</span>&nbsp;
 <a href="https://www.cnblogs.com/bytehidden">å­èæé¢</a>&nbsp;
-éè¯»(<span id="post_view_count">0</span>)&nbsp;
+éè¯»(<span id="post_view_count">117</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(22677308);return false;">æ¶è</a>&nbsp;
@@ -1300,120 +1769,13 @@
     <p class="postfoot">posted on 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-08-25 11:50">2026-08-25 11:50</span>&nbsp;
 <a href="https://www.cnblogs.com/myvin">fthux</a>&nbsp;
-éè¯»(<span id="post_view_count">134</span>)&nbsp;
+éè¯»(<span id="post_view_count">206</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(22645198);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fmyvin%2Fp%2F22645198&amp;targetId=22645198&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </p>
  ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ ææ¯å¥½å°±è¯¥è½¬ç®¡çï¼å¸¦å¢é3å¹´æåä½ æ³æ¸3ä»¶äº ]]></title>
-    <link>https://www.cnblogs.com/uniqueDong/p/22673507</link>
-    <guid>b332f026193b7c4e67a3504b41d5a37d</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/uniqueDong/p/22673507" title="åå¸äº 2026-08-25 11:44">
-    
-
-    <span role="heading" aria-level="2">ææ¯å¥½å°±è¯¥è½¬ç®¡çï¼å¸¦å¢é3å¹´æåä½ æ³æ¸3ä»¶äº</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/735767/202608/735767-20260825114422134-96413977.png" class="lazyload"></p>
-<p>å»å¹´æä¸ªè¯»èç§ä¿¡æï¼è¯´ leader æ¾ä»è°äºè¯ï¼è¦ä»å¸¦ä¸ä¸ªäºäººå°ç»ãä»æç¹æµï¼è·æ¥é®æï¼ç å¥ï¼ææå·¥ä½åå¹´ï¼ææ¯è¿æ²¡æéï¼è½¬ç®¡çæ¯ä¸æ¯äºäºã</p>
-<p>è¿ä¸ªé®é¢ï¼æå½å¹´ä¹è¢«é®è¿ï¼èä¸æ¯è¢«é®å¾æå¤çä¸ä¸ªãä»å¤©å¹²èæè¯æå¼è®²ã</p>
-<p>åè¯´ä¸ä¸ªå¯è½æå¿çç»è®ºãç®¡çä¸æ¯ææ¯å¥½çäººåºå¾çå¥å±ï¼å®æ¯å¦ä¸æ¡å®å¨ä¸åçèä¸æ²çº¿ãæè½¬ç®¡çå½æåèå èª plus ççäººï¼è¿å»ä¹åå¤§æ¦çä¼æçäººçã<br>
-<img alt="fig01-value-chain" loading="lazy" data-src="https://magebyte.oss-cn-shenzhen.aliyuncs.com/redis/fig01-value-chain.png" class="lazyload"></p>
-<h2 id="ä¸åæ³¼çå·æ°´ä¸æ¯ä½ éäºç®¡çæ¯å¬å¸éäºä½ ">ä¸ãåæ³¼çå·æ°´ï¼ä¸æ¯ä½ éäºç®¡çï¼æ¯å¬å¸éäºä½ </h2>
-<p>å¾å¤äººå¯¹è½¬ç®¡çæä¸ªæµªæ¼«çæ³è±¡ï¼è§å¾é£æ¯åªååä»£ç æ¢æ¥çåç« ãæè§è¿å¤ªå¤äººæ ½å¨è¿ä¸ªå¹»è§ä¸ã</p>
-<p>å¿«çæè½¦ CTO æ²åå¨ä¸æ¬¡åäº«éè¯´å¾å¾ç´ç½ãç®¡çè¿æ¯ææ¯ï¼å¾å¤æ¶åä½ æ²¡å¾éï¼æ¯å¬å¸éæ©äºä½ ãä»èªå·±ä»ç¾åº¦ç åå·¥ç¨å¸ï¼å° 58 æ¶æå¸ï¼åå°ä¸çº¿ç®¡çèãææ¯æ»çãææ¯ VPï¼ä¸è·¯èµ°ä¸æ¥ï¼æ²¡æä¸æ­¥æ¯éäºå¿è¦å½é¢å¯¼ã</p>
-<p>è¿è¯å¬çä¸§æ°ï¼å¶å®æ¯ä¸ªå¥½æ¶æ¯ãå®æå³çä½ ä¸ç¨èè´ãæå¿é¡»ä¸»å¨è§åç®¡ççæ¶¯ãçç¦èãå¤§å¤æ°ææ¯ç®¡çèï¼é½æ¯è¢«ä¸å¡éè¦æ¨ä¸å»çã</p>
-<p>å»å¹´é¹ååç«¯ä¸å®¶é»å¸å½¤å ä¸ºåªåææ¯ä¸åç®¡çè¢«æ¯ä¸ï¼ç½ä¸åµç¿»äºå¤©ï¼ãææ¯äººçå®å®ç»ç¹æ¯ç®¡çåãå²ä¸ç­æãæå½æ¶å°±ä¸ä¸ªå¤æ­ï¼æè¿ä»¶äºå½æä¸åç®¡çå°±ä¼è¢«æ·æ±°ï¼æ¯å¸åçå æåç½®ã</p>
-<p>çç¸æ¯ï¼ç®¡çåææ¯é½æ¯ä¼ä¸éåæ³çå­å¨æ¹å¼ãææ¯ä¸å®¶çæé¿å¤©ç¶å¾ä¸ªäººæ¹åå¾æï¼ç®¡çèå¾ä¸å¡åç®æ æ¹åå¾æãä¸¤èæ²¡æé«ä½ï¼åªæééãé»å¸å½¤çäºï¼æ°æ°è¯´æä¸å®¶å¬å¸å¯ä»¥å ä¸ºæç¥è°æ´è®©ä¸å®¶ç¦»å¼ï¼ä½ä¸å®¶è·¯çº¿æ¬èº«æ²¡éã</p>
-<p>æä»¥ç¬¬ä¸ä»¶äºæ³æ¸æ¥ãä½ æ¯å ä¸ºæ³å¸¦äººãæ³å¯¹ç»æè´è´£è¢«ç¹çï¼è¿æ¯å ä¸ºä¸è½¬æè¢«è¾¹ç¼åè¢«æ¨çèµ°ãå¨æºä¸åï¼åé¢ææçè¦é½å°åºä¸åçå³éã</p>
-<p>æå¸¦è¿çäººéï¼å¡æ¯æ±çãåæ­£å¬å¸è¦æå¸¦ï¼æå°±å¸¦åãå¿æè¿å»çï¼ååå¹´é½å¨è·èªå·±è¾å²ãåè¿æ¥ï¼é£äºæç¡®æ³è¿ãæå°±æ³ççæä¹è®©ä¸ç¾¤äººæäºåæãçï¼éµçæç­å¾å¤ã</p>
-<h2 id="äºç¬¬ä¸ä¸ªåäºå¿èº¬äº²ç»¼åç">äºãç¬¬ä¸ä¸ªåï¼äºå¿èº¬äº²ç»¼åç</h2>
-<p>æå¸¦è¿çä¸ä¸ªåå¼è·æè®²è¿ä»ççäºãåè¢«ææä¸»ç®¡é£ä¼å¿ï¼ä»æä¸ä¸ªæ¨¡åä¸¢ç»ç»éåäºä¸¤å¹´çå¼åãdeadline åä¸å¤©å¯¹æ¹äº¤äºä»£ç ï¼ä»æå¼ä¸çï¼å½åä¹±ãå¼å¸¸æ²¡å¤çãæ³¨éæ·è¡ãä»ç¬¬ä¸ååºä¸æ¯æå¯¹æ¹æ¹ï¼èæ¯æä¸¤ä¸ªå°æ¶æ¹å®æ¯æ¯åå¤©å¼ºã</p>
-<p>é£ä¸¤ä¸ªå°æ¶ä»ç¡®å®æ¹å®äºãåé¢å°±å¤±æ§äºãæ´»ååºå»åæææ¥åæ¥ï¼ä»çæ¶é´è¶æ¥è¶å°ï¼ç»åè¶æ¥è¶é²ãç´å°æå¤©é¢å¯¼åå¤çå°ä»è¿å¨åä»£ç ï¼é®äºå¥ï¼ä½ æä¹è¿å¨åï¼ç®¡çå·¥ä½å¢ãä»ææéï¼èªå·±æ ¹æ¬æ²¡å¨ç®¡ï¼åªæ¯ä¸ªå¸¦äºå¤´è¡çé«çº§æå·¥äººã</p>
-<p>è¿éæä¸ªè®¤ç¥æç¹ãè¯´çç®åï¼æ¹èµ·æ¥è¦è±ä¸ä¸¤å¹´ã</p>
-<p>å·¥ç¨å¸çä»·å¼é»è¾æ¯ï¼æåçä»£ç è½è·ãåè½è½å®ç°ï¼æå°±æä»·å¼ãè¿ä¸ªé»è¾æ¸æ°ãå¯éåï¼å¥½ä¸å¥½ä¸ç¼çåºæ¥ãä½ç®¡çèçä»·å¼é»è¾æ¯ï¼ä½ ä¸ªäººçäº§åºå ä¹ä¸éè¦ï¼éè¦çæ¯å¢éäº§åºçæ»åã</p>
-<p>ä½ ä¸ä¸ªäººåå¿«ï¼ä¹å¿«ä¸è¿äºä¸ªäººãç®¡çèçæ ¸å¿ä»·å¼ï¼æ¯è®©å¢éæç»­æäºæåæï¼èä¸æ¯èªå·±æäºæåæã</p>
-<p>æ¾æä¸ç­äºææãæåæ¥ç»çæ¯åä»¶äºãç®æ è¯´æ¸æ¥ï¼è®©æ¯ä¸ªäººç¥éä¸ºä»ä¹åè¿ä»¶äºãè¾¹çåæ¸æ¥ï¼åªäºè½èªå·±ææ¿ï¼åªäºå¿é¡»åæ­¥ãè¿ç¨æåé¦ç¹ï¼å«ç­æåºæåç°é®é¢ãç»ææå¤çï¼æäºæ»ç»æ¹æ³ï¼è´¥äºå½å æ¹è¿ã</p>
-<p>é æºå¶åä¿¡ä»»è½¬ï¼èä¸æ¯é äººç¯äººè½¬ãè¿ä»¶äºä¸è½»æ¾ï¼å ä¸ºå®æ¬è´¨æ¯å¨å¯¹æèªå·±çæ¯æ§ãä½ä¸æ¦è½¬è¿æ¥ï¼å¢éç¶æä¼ææ¾ä¸ä¸æ ·ã</p>
-<h2 id="ä¸ç¬¬äºä¸ªåæææ¯æå¨å½ç®¡çæå¨">ä¸ãç¬¬äºä¸ªåï¼æææ¯æå¨å½ç®¡çæå¨</h2>
-<p>æä¸ªå¨å·¥ç¨è¡ä¸æ¸ç¬æ»æåäºå¹´çèåµï¼ååé¡¹ç®ä¸»ç®¡æ¶æ¯å¤©æ³¡å¨ç°åºãå¤§å°æ¹æ¡ä¼åï¼å°å°é¢ç­é´è·å·®ä¸¤å¬åï¼é½äº²èªä¸ãææ¬¡å½åºéªäºæ°æ¥çæ½å·¥åï¼è¿èªå·±éæ°æµãæ¬æ³ç«å¨ï¼ç»æç¬¬äºå¤©å¯¹æ¹éäºè¾èä¿¡ï¼å¶ä»äººä¹èº²çä»èµ°ã</p>
-<p>ä»åæ¥ææï¼å¤§å®¶è§å¾ä»åä¸ªçå·¥ï¼ä¸åä¸»ç®¡ã</p>
-<p>ä½ å¯è½è§å¾ï¼æææ¯æçï¼å¢éå½ç¶å¬æçãè¿ä¸ªæ³æ³å¨åä»£ç æ¶å®å¨æç«ï¼å¨ç®¡äººæ¶å¾å¾åè¿æ¥ãææ¯è½åæ¯ä½ çå¥åºå¸ï¼ä¸æ¯ä½ çç®¡çæ§ç§ã</p>
-<p>ä¸æ¯è¯´ææ¯ä¸éè¦ãæ¯å½ä½ æåéå½åä¸è§èãä»£ç é£æ ¼ä¸ç»ä¸å½ææ¯å¤©è¦ battle çæåºï¼æåä¼æä½ å½æå¹æ¯æ±çµççå·¥ï¼èä¸æ¯è½æä»æé¿ç leaderã</p>
-<p>æåå¼å§å¸¦äººä¹ç¯è¿è¿æ¯çãç¯ç code review ä¸ä¸ªç©ºæ ¼ä¸å¯¹é½è¦æåæ¥æ¹ï¼ç»åè¡¨é¢ç­åºï¼èå°éç®¡æå«å¼ºè¿«çææãåæ¥ä¸ä¸ªåè¾ç¹éæï¼ä½ æ¯å¨ç¨ææ¯æ´çæ©çç®¡çè½åçç©ºç¼ºã</p>
-<p>æ ¼å±æå¼ä¸ç¹ãææ¯ç®¡çèéè¦åå®¹ä¸å®ç¨åº¦çä¸å®ç¾ï¼ææ¶æ¾ä¸ä»£ç æ´çãåè½è´¨éåºé®é¢å¿é¡»å¹²é¢ï¼ä½ç¾è§æ§ãç®æ´æ§è¿ç§æ ä¼¤å¤§éçäºï¼åå®¹å¾ä¸ï¼äºåç»æ¹è¿æ¹æ¡ãæä¸æåµï¼ä½ä¹ä¸è½äºäºèªå·±ä¸ã</p>
-<p>è¯´å°åºï¼ç®¡çèæ¯å¢éçèµæºãåå¸åæºæ§æï¼ä¸æ¯ä¿å§ãä½ ä¸çå°æååä¸å¥½å°±èªå·±ä¸æï¼è¿æ¡çº¢çº¿è¦ä¸¥æ ¼æä½ã</p>
-<p><img alt="fig02-compare" loading="lazy" data-src="https://magebyte.oss-cn-shenzhen.aliyuncs.com/redis/fig02-compare.png" class="lazyload"></p>
-<h2 id="åç¬¬ä¸ä¸ªååªä¼åå¤´å¹²æ´»ä¸ä¼åä¸æ±æ¥">åãç¬¬ä¸ä¸ªåï¼åªä¼åå¤´å¹²æ´»ï¼ä¸ä¼åä¸æ±æ¥</h2>
-<p>è¿æ¯é£ä¸ªå·¥ç¨èåµãä»åè½¬ç®¡çæ¶è§å¾ï¼ææ´»å¹²å¥½å°±è¡ï¼æ±æ¥é½æ¯èçãææ¬¡ææä¾åºå»¶è¿å¯¼è´å·¥ææ»åï¼ä»æ²¡åæ¶æ¥ï¼ç´å°é¢å¯¼ä¸»å¨é®èµ·æè¯´ï¼è¢«æ¹äºä¸é¡¿ç¼ºä¹ç®¡çæè¯ã</p>
-<p>é¢å¯¼è¦çä»æ¥ä¸æ¯æåï¼æ¯ææ§æãä½ å¸¦å¢éå¹²æ´»ï¼è¿å¾è®©é¢å¯¼ç¥éè¿å±å°åªãéå°ä»ä¹é®é¢ãåå¤æä¹è§£ã</p>
-<p>è½å°å¨ä½ä¸ï¼å¶å®å°±æ¯ä¸æ ·ä¸è¥¿ãæ¥æ¥æçæ¿è®©è¿åº¦å¯è§ï¼å¨æ¥åæ­¥é£é©åå¡ç¹ï¼ä¸»å¨è·ä¸çº§å¯¹é½ç®æ ãå«ç­é¢å¯¼æ¥é®ï¼ç­ä»æ¥é®çæ¶åï¼å¾å¾å·²ç»æäºã</p>
-<p>æè§è¿ä¸ç§æ´éè½ççæ¬ãæçææ¯ç®¡çèç¹å«åææ±æ¥ï¼è§å¾é£æ¯å¨éåãç»æå¢éææå¾é¥±åï¼é¢å¯¼å´è§å¾ä¸å¤ï¼å ä¸ºé¢å¯¼çå°çåªæ¯ãæ²¡å£°é³ããåæ¥æå­¦ä¼ä¸å¥è¯ï¼æ±æ¥ä¸æ¯è¯æä½ æå¤å¿ï¼æ¯è®©ä¸é¢ç¥éå¢éå¨å¾åªèµ°ãéè¦ä»ä¹æ¯æ´ã</p>
-<p>åä¸ç®¡çä¸æ¯æé©¬å±ï¼æ¯èä¸ä¹å¡ãä½ ä¸åï¼ä¿¡æ¯å·®å°±ä¼åæä¸ä¿¡ä»»ï¼æååäºçæ¯æ´ä¸ªå¢éã</p>
-<h2 id="äºæä¹å¤æ­èªå·±éä¸éåä¸å¼ èªæµæ¸å">äºãæä¹å¤æ­èªå·±éä¸éåï¼ä¸å¼ èªæµæ¸å</h2>
-<p>èå®ä¸ä¸ªåï¼åå°æå¼å§é£ä¸ªè¯»èçé®é¢ãå°åºè¦ä¸è¦è½¬ã</p>
-<p>æç»ä½ åä¸ªé®é¢ï¼èèå®å®ç­ï¼ä¸ç¨éªèªå·±ã</p>
-<p>ç¬¬ä¸ï¼ä½ çå°å«äººå ä¸ºä½ èæé¿ãåèãæ¶¨å·¥èµï¼æ¯çå¿é«å´ï¼è¿æ¯æç¹é¸ãç®¡çèå¾å¤§ä¸åå·¥ä½ï¼æ¯æ­èå°è®©å«äººå±æãå¦æä½ äº«åçæ¯èªå·±ä¸å°ï¼è¿æ´»ä¼å¹²å¾å¾æ§å·´ã</p>
-<p>ç¬¬äºï¼ä½ è½ä¸è½å¿åéè¿å«äººå®æç®æ çå»¶è¿æ»¡è¶³ãä½ æ¹ä¸¤å°æ¶ä»£ç ç«å»æåé¦ï¼ä½å¸¦ä¸ä¸ªäººä¸¤ä¸ªææå¯è½çå°ååãåä¸äºæ¢åé¦çï¼ä¼å¿ä¸ä½ææ´»æ¢åæ¥ï¼ç¶ååå°ç¬¬äºä¸ªåã</p>
-<p>ç¬¬ä¸ï¼ä½ æ¿ä¸æ¿æææ²éå½ææ­£ç»å·¥ä½ãæçè¿ä¸ç»çå®æ°æ®ï¼ä¸ä¸ªå¸¦å¥½å ä¸ªå¢éçææ¯ç®¡çèï¼æ²éè½å å°ä»æ¶é´ç 40%ï¼ç®æ ç®¡ç 20%ï¼å©ä¸ææ¯æ¶æåå¶ä»ãå¦æä½ è§å¾å¼ä¼å°±æ¯æµªè´¹çå½ï¼åæ³æ¸æ¥è¿ç¹ã</p>
-<p>ç¬¬åï¼éå°èªå·±æä¸å®çææ¯é®é¢ï¼ä½ æ¯æï¼è¿æ¯ç¥éå»åªæ¾å¤§çãç®¡çèçææ¯èè´£ä¸æ¯æ ·æ ·ç²¾éï¼æ¯æä¸ä¸ªæ·±èé¢åï¼å©ä¸çé ç»ç»è½åè¡¥é½ã</p>
-<p><img alt="fig03-decision" loading="lazy" data-src="https://magebyte.oss-cn-shenzhen.aliyuncs.com/redis/fig03-decision.png" class="lazyload">åä¸ªé½ç­å¾èæï¼ä½ å¯ä»¥è®¤çèèãæä¸¤ä¸ä¸ªç­ä¸ä¸æ¥ï¼åå«æ¥ï¼å¯è½åªæ¯è¿æ²¡å°æ¶åãå¤§é¨åç­å¦ï¼é£å°±æ¾è¿èªå·±ï¼æææ¯è¿æ¡è·¯èµ°æ·±ä¹æºå¥½ã</p>
-<p>æå§ç»è§å¾ï¼ç®¡çä¸æ¯éèµ°ä¸å¯çç¬æ¨æ¡¥ãææ¯ä¸å®¶è·¯çº¿èµ°å°æ·±ï¼ä¸æ ·æè¯è¯­æãæå½±ååãå«è¢«ãä¸å½ç®¡çå°±æ²¡åéãçç¦èç»æ¶ã</p>
-<h2 id="å­è½¬äºä¹åææ¯æä¹å">å­ãè½¬äºä¹åï¼ææ¯æä¹å</h2>
-<p>è¿æ¯è¢«é®ç¬¬äºå¤çé®é¢ãè½¬äºç®¡çï¼æçäºï¼æè¢«å¹´è½»äººå·æï¼ç¦èå¾ç¡ä¸çã</p>
-<p>æççæ³å¾æç¡®ãææ¯ç®¡çèä¸éè¦æ ·æ ·ç²¾éï¼ä½å¿é¡»æä¸ä¸ªèªå·±çæ­£æè¿å»çæ·±èé¢åãä½ æ¯å¢éçææ¯å¤©è±æ¿ååºäººï¼ä¸æ¯ç¾ç§å¨ä¹¦ãéå°æä¸å®çé®é¢ï¼åæ¥ä½ ç®¡çèçä½ç¨ï¼å»æ¾é£ä¸ªé¢åçå¤§çæ¥ç ´ï¼è¿æ¬èº«å°±æ¯ç®¡çè½åçä½ç°ã</p>
-<p>å¯¹æ°ææ¯çææåº¦è¦ä¿çï¼ä½ç²¾åæéï¼å¿é¡»åèãæ¾å¼ä¸é¨ååä»£ç çæ¶é´ï¼æ¾å¼ä¸é¨åææ¯å¨é¢æ§ï¼æ¢æ¥çæ¯å¯¹ä¸å¡ãå¯¹ç®æ ãå¯¹äººçå¤æ­åãè¿ç¬è´¦ï¼é¿æçä¸äºã</p>
-<p>æè®¤è¯ä¸ä¸ªææ¯ VPï¼ä»ç°å¨å ä¹ä¸åä¸å¡ä»£ç ï¼ä½æ¯æ¬¡æ¶æè¯å®¡ä»è½ä¸ç¼çåºæ¹æ¡å¨åå¹´åä¼ä¸ä¼çãè¿å°±æ¯æ·±èåºæ¥çå¤æ­åï¼ä¸æ¯é å¤©å¤©å CRUD ç»åºæ¥çã</p>
-<p>æä»¥å«ç¦èæçãä½ æ¢äºä¸ç§æ¹å¼å¨é¿æ¬äºãä»ç¹çæèï¼åæçº¿åé¢çæèï¼è¿åèæ¯ææ¯äººæ´ç¨ç¼ºçè½åã</p>
-<h2 id="ä¸åå¨æå">ä¸ãåå¨æå</h2>
-<p>ç®¡çä¸æ¯ç»ç¹ï¼ä¹ä¸æ¯å¥å±ï¼å®æ¯ä¸ç§éæ©ãææ¯è¿å¨ä½ æéï¼ä¸çº¿ç®¡çèè¥æ¯åç°çä¸éåï¼åå¤´ç»§ç»­åä»£ç å®å¨å¯è¡ï¼å ä¸ºææ¯æ²¡ä¸¢ã</p>
-<p>æå§ç»è§å¾ï¼ä¸å¶çº ç»è¦ä¸è¦è½¬ç®¡çï¼ä¸å¦åæ³æ¸æ¥ææ³æä¸ºä»ä¹æ ·çäººãæè¿ä¸ªé®é¢ç­å¯¹äºï¼è½¬ä¸è½¬é½æ¯å¥½ç­æ¡ã</p>
-<p>å¦æè¿ç¯è®©ä½ å¯¹è½¬ç®¡çå°äºä¸ç¹è¿·è«ï¼ç¹ä¸ªãå¨çãè®©æ´å¤çº ç»çåå¼çå°ãä¸ç¯ææç®åææ¯ç®¡çèæä¹å¸¦åæ¯ä¸çæ°äººï¼æå´è¶£å³æ³¨ä¸ä¸ãèº«è¾¹æäººæ­£å¨è¢«æ¨ä¸ç®¡çå²ãæ­£ç¹è±«çï¼è¿ç¯å¯ä»¥ç´æ¥ç©ç»ä»ã<br>
-<img alt="beeaa00ee37c5db0e2fb2c5c5efe4f29" loading="lazy" data-src="https://img2024.cnblogs.com/blog/735767/202605/735767-20260526114014236-744639895.png" class="lazyload"></p>
-<h2 id="faq">FAQ</h2>
-<p><strong>è½¬ç®¡çåè¿æ³åä»£ç ï¼æä¹å®æï¼</strong><br>
-çæ¯å¯ä»¥ççï¼ä½è¦æå®å½æå¯ä¸èéä¸»ä¸ãåºå±ææ¯ç®¡çèå¤çä¸é¨åæ ¸å¿å¼åæ²¡é®é¢ï¼å³é®æ¯å«è®©åä»£ç æ¤å æ²éåç®æ ç®¡ççæ¶é´ãæçç»éªæ¯ï¼åªåé£äºè½å®ä¹ææ¯æ¹åãé¡ºæå¸¦äººçä»£ç ï¼çº¯æ¬ç çæ´»äº¤ç»å¢éã</p>
-<p><strong>ææ¯ç®¡çèè¦ä¸è¦è¿½ææ°æ¡æ¶ï¼</strong><br>
-è¦ä¿çææåº¦ï¼ä½ä¸ç¨æ ·æ ·è¿½ãä½ æéè¦çæ¯å¤æ­ãè¿ä¸ªææ¯å¯¹æä»¬çä¸å¡ææ²¡æç¨ãï¼èä¸æ¯äº²ææå®ç¨çãææ·±åº¦çç»ä¸ä¸ªæ·±èé¢åï¼å¹¿åº¦äº¤ç»å¢ééå¯¹åºçäººã</p>
-<p><strong>è¢«æ¨ä¸ç®¡çä½ä¸æ³åï¼è½æç»åï¼</strong><br>
-è½ï¼ä½è¦è®²ç­ç¥ãç´æ¥è¯´ä¸æ³å¾å¾è¢«å½ææ²¡éå¿ï¼æ´å¥½çè¯´æ³æ¯ï¼ææ³åæææææ¯æ¹ååæ·±ï¼åå¹´åçä¸å¡éè¦åå®ãææç»åè£æè·¯å¾éæ©ï¼æ¢è¯å®åä¸ä¼¤å³ç³»ã</p>
-<p><strong>ç®¡çå²åæ¶æå¸ï¼æä¹éï¼</strong><br>
-çä½ çæå°±ææ¥æºãæå°±ææ¥èªèªå·±æé¾é®é¢åä¸æ¥ï¼éæ¶æå¸ãæå°±ææ¥èªä¸ç¾¤äººå ä¸ºä½ èæäºåæï¼éç®¡çãä¸¤èåæé½ä¼å¾ææ¯å¸¦å¤´äººæ¶æï¼ä¸å¿ä¸æ¬¡å®æ­»ã</p>
-<p><strong>å¸¦ä¸å¥½å¢éï¼ä¼è¢«æ¢åå»åï¼</strong><br>
-ä¸çº¿ç®¡çèåä¸å¥½ï¼å¤§å¤ä¸æ¯è½åé®é¢ï¼æ¯æç»´æ²¡è½¬è¿æ¥ãçä¸éåï¼åå°å·¥ç¨å¸åºåå®å¨å¯è¡ï¼ææ¯æ²¡ä¸¢å°±æ°¸è¿æéè·¯ãæçæ¯ææå¸¦å¾çè¦ï¼è¿ç¡¬æçä¸æ¢åå¤´ã</p>
-
-
-</div>
-<div id="MySignature" role="contentinfo">
-    å æå¾®ä¿¡è¿å»ä¸å±ææ¯ç¾¤ï¼æ¬¢è¿è¯»èæåºæè§ï¼åæ¬¢è¯·å³æ³¨åå®¢åä¸ªäººå¬ä¼å·ï¼ç å¥å­è
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-08-25 11:45">2026-08-25 11:44</span>&nbsp;
-<a href="https://www.cnblogs.com/uniqueDong">ç å¥å­è</a>&nbsp;
-éè¯»(<span id="post_view_count">228</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(22673507);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FuniqueDong%2Fp%2F22673507&amp;targetId=22673507&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
     </description>
     </item>
 <item>
@@ -1747,8 +2109,8 @@ mvn spring-boot:run
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0.08472222222222223" data-date-updated="2026-08-25 13:39">2026-08-25 11:37</span>&nbsp;
 <a href="https://www.cnblogs.com/haoxianrui">ææ¥ææ¯</a>&nbsp;
-éè¯»(<span id="post_view_count">148</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
+éè¯»(<span id="post_view_count">200</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">2</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(22673027);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fhaoxianrui%2Fp%2F22673027&amp;targetId=22673027&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
@@ -2204,7 +2566,7 @@ workbook.Options.MaxSharedStringCount = 100_000;           // 10 ä¸æ¡ SS
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0.02361111111111111" data-date-updated="2026-08-25 11:15">2026-08-25 10:41</span>&nbsp;
 <a href="https://www.cnblogs.com/netcasewqs">é£äº</a>&nbsp;
-éè¯»(<span id="post_view_count">81</span>)&nbsp;
+éè¯»(<span id="post_view_count">102</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(22670368);return false;">æ¶è</a>&nbsp;
@@ -2214,113 +2576,276 @@ workbook.Options.MaxSharedStringCount = 100_000;           // 10 ä¸æ¡ SS
     </description>
     </item>
 <item>
-    <title><![CDATA[ Claude Code è¶ç¨è¶è´µï¼6 æç token + 1 ä¸ªä½æ¯æå·§ï¼æé¢åº¦æ¦¨å¹² ]]></title>
-    <link>https://www.cnblogs.com/xiexj/p/22671634</link>
-    <guid>b7af4762be1a116cb3d42845dd474109</guid>
+    <title><![CDATA[ å¨æDPå­¦ä¹ ç¬è®° ]]></title>
+    <link>https://www.cnblogs.com/CENSORED1145146/p/22649865</link>
+    <guid>44562fd4136778af82977aea5750fb2f</guid>
     <description>
     <![CDATA[ 
-	<article>
-		<div class="postTitle">
-			<h1><a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/xiexj/p/22671634" title="åå¸äº 2026-08-25 10:38">
+        <h1>
+            <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/CENSORED1145146/p/22649865" title="åå¸äº 2026-08-25 17:30">
     
 
-    <span role="heading" aria-level="2">Claude Code è¶ç¨è¶è´µï¼6 æç token + 1 ä¸ªä½æ¯æå·§ï¼æé¢åº¦æ¦¨å¹²</span>
+    <span role="heading" aria-level="2">å¨æDPå­¦ä¹ ç¬è®°</span>
     
 
 </a>
-</h1>
-		</div>
-		<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>ç¨ Claude Code åä»£ç ãå¹²æ´»ï¼ç½æ¯çç½ï¼ä½é¢åº¦ä¹æ¯çä¸ç»ç¨ã</p>
-<p>åæ ·ä¸ä¸ªä»»å¡ï¼æäººåå¤©å°±æé¢åº¦èåï¼æäººä¸æ´å¤©é½å¤ç¨ãå·®å«å¾å¾ä¸å¨"ç¨å¾å¤ä¸å¤"ï¼èå¨"ä¼ä¸ä¼ç¨"ã</p>
-<p>è¿ç¯åä¸¤é¨åï¼åç¨ 6 æè®©æ¯ä¸ä¸ª token é½è±å¨ååä¸ï¼é¢åº¦æ´èç¨ï¼ï¼åç¨ 1 ä¸ªä½æ¯æå·§è®©æ»¡é¢åº¦æ­£å¥½è½å¨ä½ æå¿çæ¶åãä¸å æ¯è¯­ï¼å°ç½ä¹è½çæã</p>
-<p>åä»ææ ¹ä¸çä¸è¥¿è¯´èµ·ââ</p>
-<h2 id="ä¸åææé±æ¯æ-token-ç®ç">ä¸ãåææï¼é±æ¯æ token ç®ç</h2>
-<p>ä½ åç» AI çæ¯å¥è¯ãAI åä½ çæ¯æ®µè¯ï¼é½ä¼åè¢«åæä¸å°åä¸å°åï¼æ¯åå«ä¸ä¸ª tokenãç¨æç token è¶å¤ï¼è±çè¶å¤ã</p>
-<p>è¿éæä¸ªå ä¹äººäººä¼ç¯çè¯¯ä¼ï¼ä»¥ä¸º AI ä¼"æä½ è¯éçå³é®è¯æåºæ¥ãæåºè¯ææ"ãå¹¶ä¸ä¼ã ä½ è¯´çæ¯ä¸ªå­ï¼åªææ¯å£æ°´è¯ï¼é½ä¼è¢«åæ ·åæ tokenï¼ä¸ä¸ªä¸å°ã</p>
-<p>é£"å"æ¯æä¹åçï¼çå¾å°±æï¼</p>
-<p>å®ä¸æ¯çè§£ä½ çææååï¼èæ¯æ¿ä½ çè¯å»æ¥ä¸æ¬æååå¥½ç"å¸¸ç¨è¯æåè¡¨"ï¼è¡¨éæçè¯ï¼ä¸æ´åç® 1 ä¸ª tokenï¼è¡¨éæ²¡æçï¼åªè½ä¸ä¸ªå­ä¸ä¸ªå­ç¡¬æï¼ä¸ä¸ªå­é¡¶å¥½å ä¸ªã</p>
-<p>è®°ä½è¿ä¸ª"æ¥è¡¨"æºå¶ï¼ä¸é¢å¾å¤æé½ä»è¿å¿æ¥ã</p>
-<h2 id="äºä¸ä¸ªå³é®è®¤ç¥aiåè¯æ¯å¬è¯è´µå¾å¤">äºãä¸ä¸ªå³é®è®¤ç¥ï¼AI"åè¯"æ¯"å¬è¯"è´µå¾å¤</h2>
-<p>åæ ·æ¯ tokenï¼è¿åä¸¤ç§ï¼</p>
-<p>ä½ åè¿å»çå«è¾å¥ tokenï¼ä¾¿å®ï¼</p>
-<p>AI ååºæ¥çå«è¾åº tokenï¼è´µââå¨ Claude ä¸å¤§çº¦æ¯è¾å¥ç 5 åä»·ã</p>
-<p>èä¸æ³¨æï¼AI ç»ä½ æç»ç­æ¡åï¼ä¼åå¨"å¿é"æ³ä¸å¤§æ®µï¼è¿æ®µæèå³ä½¿ä¸æ¾ç¤ºç»ä½ ï¼ä¹ç®è¾åº tokenãç§æ ·æ¶è´¹ã</p>
-<p>æä»¥çé±çæ ¸å¿æè·¯å°±ä¸å¥è¯ï¼è®© AI å°æ³ãå°è¯´ãå°è¿å·¥ã</p>
-<p>ä¸é¢ 6 æï¼é½å´ç»è¿ä¸ªã</p>
-<h2 id="ä¸ç-token-ç-6-æ">ä¸ãç token ç 6 æ</h2>
-<h2 id="æ-1--è¯´ä¸­æå°±ä¼åç¨å½äº§å¤§æ¨¡å">æ 1 Â· è¯´ä¸­æï¼å°±ä¼åç¨å½äº§å¤§æ¨¡å</h2>
-<p>åå°é£æ¬"å¸¸ç¨è¯æåè¡¨"ã</p>
-<p>ç¨å¤§éä¸­æè®­ç»çæ¨¡åï¼è¡¨éå¡æ»¡"ç¤¾åº""æä»¬"è¿ç±»å¸¸è§è¯ï¼åä¸­æåå¿«åçï¼å ä¹åªå­¦è¿è±æçæ¨¡åï¼éå°ä¸­æåªè½ä¸ä¸ªå­ä¸ä¸ªå­ç¡¬æï¼åä¸å¥è¯ååºç token å¤ä¸å¤§æªï¼é±ä¹å¤è±ä¸æªãåå ä¸å½äº§æ¨¡ååä»·æ®éæ´ä½ã</p>
-<p>æ³¨æï¼ä¸æ¯å½äº§æ¨¡å"æ´æä¸­æè¯­æ³"ï¼èæ¯å®"è§è¿çä¸­æå¤ãæåå¾å¥½"ãåçè¿æ¯æ¥è¡¨ã</p>
-<h2 id="æ-2--æè¯è¯´æ¸æ¥åèæ´çé±åå¸¸è¯">æ 2 Â· æè¯è¯´æ¸æ¥ï¼åèæ´çé±ï¼åå¸¸è¯ï¼</h2>
-<p>è¿æ¡æåç´è§ï¼åå¾è¶å¤ï¼ä¸æ¯ååºç token è¶å¤åï¼æ°æ°ç¸åã</p>
-<p>è¯´å¾å«ç³ï¼"å¸®æä¼åä¸è¿ä¸ª"ï¼â AI å¾åçä½ æ³å¹²åãåå¤è¯ãéäºè¿éæ¥ï¼è¿ä¸éçåè¿å·¥ç§çå¨æ¯è´µçè¾åº tokenã</p>
-<p>è¯´å¾æ¸æ¥ï¼"æè¿ä¸ªå½æ°éçå¾ªç¯æ¹æ mapï¼åéåä¸å¨ï¼ä¸è¦å¨æ³¨é"ï¼â AI ä¸çå°±æï¼ä¸æ­¥å°ä½ã</p>
-<p>ä½ å¤æçé£å åä¸ªå­æ¯ä¾¿å®çè¾å¥ï¼çä¸çå´æ¯è´µçæèåè¿å·¥ã</p>
-<p>ä¸å¥è¯ï¼å®å¯å¤åä¸¤å¥ï¼ä¹å«è®© AI é çã</p>
-<h2 id="æ-3--æä¸åçæ¾åé¢ç¨å¥½ç¼å­">æ 3 Â· æä¸åçæ¾åé¢ï¼ç¨å¥½"ç¼å­"</h2>
-<p>AI æä¸ªçé±æºå¶å«ç¼å­ï¼å¦æè¿æ¬¡è¯·æ±çå¼å¤´ä¸å¤§æ®µåä¸æ¬¡ä¸æ¨¡ä¸æ ·ï¼è¿é¨åè½ç´æ¥å¤ç¨ï¼åªæåä»·ç 10% æ¶è´¹ã</p>
-<p>å®é "åç¼å¹é"ââä»å¤´ä¸ä¸ªå­ä¸ä¸ªå­å¾ä¸æ¯ï¼ä½ç½®ååå®¹å®å¨ç¸åçæ´æ®µæç®å½ä¸­ã</p>
-<p>æä»¥ç¨æ³å°±ä¸æ¡ï¼åºå®ä¸åçæ¾æåé¢ï¼ç»å¸¸åçæ¾æåé¢ã æ¯æ¬¡é½è¦å¸¦çé¿ææ¡£ãåºå®è§åæ¾æåï¼å®ä»¬æ¯æ¬¡é½è½å½ä¸­ç¼å­ãåªè± 1 æï¼ä½ çæ­£ååçé£å¥æé®æ¾æåã</p>
-<p>å¥½æ¶æ¯ï¼æ­£å¸¸èå¤©æ¶åªè¦ä¸æ¹åé¢è¯´è¿çè¯ï¼åé¢çå¯¹è¯åå²æ¯è½®é½ä¼èªå¨å½ä¸­ï¼è¿é¨åä¸ç¨æå¿ã</p>
-<h2 id="æ-4--å¯¹è¯å¤ªé¿åæ¶-compact">æ 4 Â· å¯¹è¯å¤ªé¿ï¼åæ¶ /compact</h2>
-<p>èå¾è¶ä¹ï¼æ¯è½®é½è¦æåé¢ææåå®¹éæ°å¸¦ä¸éï¼è¶æ¥è¶æ²ãè¶æ¥è¶è´µï¼AI è¿ä¼å¼å§"è®°ä¸æ¸"æ©åç»èãè¿æ¶æ²ä¸ä¸ªå½ä»¤ï¼/compact</p>
-<p>å®ä¼æåé¢ä¸å¤§æ®µå¯¹è¯åæä¸æ®µæè¦ï¼AI è¿è®°å¾"åè¿ä»ä¹"ï¼ä½å°å¦ç»èè¢«æå äºã</p>
-<p>ä½ç§¯ä¸ä¸å°ä¸æ¥ï¼åé¢æ¥çèå°±çå¾å¤ãä»£ä»·æ¯ä¸¢æé¨åç»èï¼æä»¥å¨"ä¸ä¸ªé¶æ®µåä¸æ®µè½"æ¶åæåéã</p>
-<h2 id="æ-5--å®å æ¡è§ç©ä¸è®©-ai-è¯´åºè¯">æ 5 Â· å®å æ¡è§ç©ï¼ä¸è®© AI è¯´åºè¯</h2>
-<p>AI å¤©çç±éºå«ï¼"è¿æ¯ä¸ªå¾å¥½çé®é¢""å½ç¶å¯ä»¥ï¼ä¸é¢ææ¥ä¸ºæ¨è¯¦ç»è®²è§£â¦â¦"ââå¨æ¯ç½è±çè¾åº tokenã</p>
-<p>å¨é¡¹ç®ç CLAUDE.md æä»¶éç«å æ¡è§ç©ï¼ä¸å³æ°¸é¸ï¼</p>
-<p>é»è®¤ä¸­æåå¤ï¼ä»£ç ãå½ä»¤ãåéåãæä»¶è·¯å¾ä¿æè±æ</p>
-<p>ç»è®ºåè¡ï¼ç®æ´ç´æ¥ï¼ä¸åéºå«èæ¯</p>
-<p>ä¸å®¢å¥ï¼ä¸å¤¸"è¿æ¯ä¸ªå¥½é®é¢"ï¼ä¸ä»¥"å½ç¶å¯ä»¥"å¼å¤´</p>
-<p>æé®é¢ç´æ¥æåºï¼ææ´å¥½çåæ³ä¸»å¨è¯´</p>
-<p>è¡¥ä¸å¥ï¼è®© AI è¾åº JSON ä¸»è¦æ¯ä¸ºäº"è½è¢«ç¨åºè¯»ãæ ¼å¼ç»ä¸"ï¼ä¸ä¸å®æ´ç tokenï¼çæ­£ç é±çæ¯ä¸é¢è¿å æ¡é£æ ¼è§ç©ã</p>
-<h2 id="æ-6--å·¥å·æéå è½½å«ä¸è¡èå¨å¼">æ 6 Â· å·¥å·æéå è½½ï¼å«ä¸è¡èå¨å¼</h2>
-<p>Claude Code è½è°ç¨å¾å¤å·¥å·ï¼èç½ãè¯»æä»¶ãè·å½ä»¤â¦â¦ï¼ï¼æ¯ä¸ªå·¥å·ç"è¯´æä¹¦"é½è¦å¡è¿è¯·æ±ãæè¾å¥ token æ¶è´¹ã</p>
-<p>ä¸ä¸æ¥å¨å è½½å åä¸ªãå¤§åç¨ä¸ä¸ï¼æ¯ç½è±é±ãç¨å°åªä¸ªæå è½½åªä¸ªââæ°çæ¬å¾å¤å·¥å·å·²ç»æ¯"ç¨å°æ¶æå»åè¯´æä¹¦"ï¼è½çä¸ä¸å°ã</p>
-<h2 id="åè¿é¶è·-5-å°æ¶çªå£ææ¶é´å·®æé¢åº¦æ¦¨å¹²">åãè¿é¶ï¼è· 5 å°æ¶çªå£"ææ¶é´å·®"ï¼æé¢åº¦æ¦¨å¹²</h2>
-<p>åé¢ 6 ææ¯è®©æ¯ä¸ª token æ´å¼é±ï¼è¿ä¸ææ¯è®©é¢åº¦å¨å¯¹çæ¶é´å°ä½ã</p>
-<p>Claude Code çé¢åº¦æ¯æ 5 å°æ¶çæ»å¨çªå£æ¥çï¼ä»ä½ åç¬¬ä¸å¥è¯å¼å§è®¡æ¶ï¼è¿ä¸ªçªå£ç®¡ 5 å°æ¶ï¼5 å°æ¶ä¸è¿ï¼ä¸æ¬¡åæ¶æ¯å°±å¼ä¸ä¸ªæ°çæ»¡é¢çªå£ã</p>
-<p>ä¸åå¥é¤ï¼Pro / Maxï¼çå·ä½é¢åº¦åè§åä¼æå·®å¼ï¼Max è¿ææ¯å¨ä¸éï¼è¿éåªè®²"5 å°æ¶çªå£"è¿ä¸ªéç¨æºå¶ã</p>
-<p>å¤æ°äººçé®é¢æ¯ï¼ä¸åé¢åº¦ç¨ä¸å®ï¼æµªè´¹ï¼ï¼ä¸åä¸å¿å°±ä¸å¤ç¨ãæçåæ³æ¯ç¨ä½æ¯å»å¡çªå£çè¾¹çï¼</p>
-<p>ï¼æç¬¬ä¸ä¸ªçªå£"ç¹ç"ï¼å¯ä»¥è®¾ä¸ªé¹éï¼ä¸å¥è¯å°±è¡ï¼â çªå£ 1 è¦ç 7â12 ç¹ï¼ä¸åæ¬æ¥ç¨å¾å°ï¼æ²¡å³ç³»ã</p>
-<p>ï¼å¼ç¬¬äºä¸ªçªå£ â çªå£ 2 è¦ç 12â17 ç¹ãè 12â14 ç¹æ­£å¥½åä¼ãåºæ¬ä¸ç¨ï¼ç­ä½  14 ç¹åæ¥ï¼è¿ä¸ªçªå£è¿æ¯æ»¡çï¼å¨åå¹²å° 17 ç¹ã</p>
-<p>17 ç¹çªå£ 2 å°æï¼çªå£ 3 èªç¶è¦ç 17â22 ç¹çæä¸ã</p>
-<p>è¿æ ·ä¸ç®ï¼ä½ æ"ä¸åç¨ä¸æ»¡"çé¢åº¦è®©ç»äºåä¼æ¶æ®µå»"å«åº"ï¼ä¸åï¼14â17ï¼åæä¸ï¼17â22ï¼åæ¿å°ä¸ä¸ªæ»¡é¢çªå£ââç¸å½äºæå¿çä¸åå¤©æä¸¤åçé¢åº¦å¯ç¨ã</p>
-<p>å³é®å°±ä¸å¥ï¼å«ç­å°ä½ çæ­£å¿èµ·æ¥æå¼ç¬¬ä¸ä¸ªçªå£ï¼æ©ä¸åæå®ç¹çï¼ä¸­ååååä¼éå¼ä¸æ¬¡ã</p>
-<h2 id="æåä¸å¥è¯å¿æ³">æåï¼ä¸å¥è¯å¿æ³</h2>
-<p>ç¨ä¾¿å®çè¾å¥æè¯è¯´è¶³ï¼è®© AI å°æ³å°è¿å·¥ï¼åè®©æ»¡é¢çªå£æ­£å¥½è½å¨ä½ æå¿çæ¶åã</p>
-<p>ç token ä¸æ¯"å°è¯´è¯"ï¼èæ¯"æè¯è¯´å°ç¹å­ä¸ãæé¢åº¦ç¨å¨ååä¸"ã</p>
+
+        </h1>
+        <div class="postbody">
+            <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<h1 id="å¨ædpå±ç¶æ¯æ¯ç¤dpé£å°±ä¸å­¦äºbushi">å¨æDPï¼<s>å±ç¶æ¯æ¯ç¤DPï¼é£å°±ä¸å­¦äºï¼bushiï¼</s>ï¼</h1>
+<h2 id="1å¼å­">1.å¼å­</h2>
+<p>è®©æä»¬ä»ä¸ä¸ªå¸¸è§çé®é¢å¥æå§ï¼<br>
+ç»å®ä¸æ£µ <span class="math inline">\(n\)</span> ä¸ªç¹çæ ï¼ç¹å¸¦ç¹æï¼<span class="math inline">\(u\)</span>ç¹çç¹æä¸º<span class="math inline">\(a[u]\)</span>ï¼æ±åºè¿æ£µæ çæå¤§æç¬ç«éçæå¼å¤§å°ã</p>
+<details>
+<summary>$Tip$</summary>
+<pre><code>æ ä¸æå¤§ç¬ç«éé®é¢æ¯æå¨ç»å®çæ ä¸­ï¼æ¾å°ä¸ä¸ªå·ææå¤§èç¹æ°éçç¬ç«éãç¬ç«éæ¯æå¨æ ä¸­éæ©ä¸ç»èç¹ï¼ä½¿å¾è¿äºèç¹ä¸¤ä¸¤ä¹é´æ²¡æè¾¹ç¸è¿ãæ¢å¥è¯è¯´ï¼ä»»ä½ä¸¤ä¸ªéæ©çèç¹ä¹é´é½ä¸å­å¨ç´æ¥è¿æ¥ã
+</code></pre>
+</details>
+è§£æ³æ¾ç¶ï¼è®¾$dp[u][0/1]$åå«è¡¨ç¤ºä»¥uä¸ºæ ¹èç¹çå­æ ï¼ä¸é/éæ©uèç¹çæå¤§ç¬ç«éæå¼ãç±å®ä¹å¯æ¨åºç¶æè½¬ç§»æ¹ç¨ï¼
+<p></p><div class="math display">\[\begin{align}
+dp[u][0]&amp;=\sum_{v\in child(u)}^{} max(dp[v][0],dp[v][1])\\
+
+dp[u][1]&amp;=\sum_{v\in child(u)}^{} dp[v][0]
+\end{align}
+\]</div><p></p><p>è¾¹çæ¡ä»¶ä¸ºï¼</p>
+<p></p><div class="math display">\[\begin{align}
+dp[u][0]&amp;=0\\
+dp[u][1]&amp;=a[u]
+\end{align}
+\]</div><p></p><p><strong>æä»¥è¿éé¢å°±åå®äº......åï¼</strong></p>
+<h2 id="2åº">2.åº</h2>
+<p>è®©æä»¬åæ¥ççä¸§å¿çççåºé¢äººå¹²çå¥½äºï¼æ m æ¬¡æä½ï¼æ¯æ¬¡æä½ç»å® <span class="math inline">\(x\)</span>,<span class="math inline">\(y\)</span>ï¼è¡¨ç¤ºä¿®æ¹ç¹ <span class="math inline">\(x\)</span> çæå¼ä¸º <span class="math inline">\(y\)</span>ã</p>
+<p><span class="math inline">\(1\le n \le 10^5, 1\le m \le 10^5\)</span>ï¼å å¼ºççè³ä¸º <span class="math inline">\(1\le n \le 10^6,1\le m \le 10^6\)</span>ï¼æ´ç´ æ åé½è¿ä¸å»ï¼ï¼ï¼ï¼</p>
+<p><span class="math inline">\(OMG!!!\)</span> åºçåºé¢äººä¸ºäºæ¶å¿<span class="math inline">\(OIers\)</span>ç«ç¶ä¸§å¿ççå°æéææ°æ®åä¸ºå¨ææ°æ®äºï¼ï¼ï¼</p>
+<p>å¦ææä»¬æ¯æ¬¡ä¿®æ¹æå¼åé½æ´ååè·ä¸æ¬¡<span class="math inline">\(DP\)</span>ï¼é£ä¹æ¶é´å¤æåº¦å°±ä¼æ¥å°æäººç<span class="math inline">\(O(nm)\)</span>ï¼æ¾ç¶æ¯è¿ä¸äºè¿éé¢çã</p>
+<p>é£ä¹æä»¬åªè½å¦å¯»ä»æ³äºã</p>
+<p><strong>æ³¨æå°</strong>ï¼æ¶é´å¤æåº¦ä¹æä»¥å¦æ­¤ä¹é«ï¼æ¯å ä¸ºæ¯æ¬¡ä¿®æ¹åï¼æä»¬åªä¼å»ä¹ä¹å°å¨å±è·ä¸æ¬¡<span class="math inline">\(DP\)</span>ï¼ä½äºå®ä¸ï¼æ¯æ¬¡ä¿®æ¹åªä¼å½±åè¢«ä¿®æ¹çç¹å°æ ¹èç¹çè¿ä¸æ¡<strong>é¾</strong>ï¼æä»¥ä¸é¾æ³å°ä½¿ç¨æ é¾ååå¯¹å¶è¿è¡å¤çãï¼å½ç¶å¨å±å¹³è¡¡äºåæ ãToptreeãLCT<s>è¿ä¸ªå¸¸æ°å¤ªå¤§è¿æ¯ç®äºå§</s>ç­ä¹å¯ä»¥è¿è¡å¤çï¼çè³æ¶é´å¤æåº¦ä¸ºå<span class="math inline">\(log(n)\)</span>ï¼ä½æ¯è°åè½æç»å¥½æ³åå¥½åçæ åå¢ï¼ï¼</p>
+<h2 id="3æ­£é¢">3.æ­£é¢</h2>
+<p><s>ç»äºè®²å°è¿éäºqwq</s></p>
+<p>å°<span class="math inline">\(u\)</span>èç¹çå¿å­åä¸ºéå¿å­<span class="math inline">\(wson[u]\)</span>åè½»å¿å­ï¼éå¿å­è´¡ç®ç´æ¥ç´¯ç§¯å°<span class="math inline">\(u\)</span>èç¹ï¼è½»å¿å­çåç¬æ°å¼ä¸ä¸ªæ°ç»<span class="math inline">\(g[u][0/1]\)</span>ï¼åå«è¡¨ç¤º<br>
+ææ<span class="math inline">\(u\)</span>è½»å¿å­å¯¹ <span class="math inline">\(dp[u][0]\)</span> çè´¡ç®ä»¥åææè½»å¿å­å¯¹ <span class="math inline">\(dp[u][1]\)</span> çè´¡ç®åå ä¸<span class="math inline">\(u\)</span>èªå·±çç¹æï¼ä¹æä»¥å ä¸æ¯ä¸ºäºæ¹ä¾¿è½¬ç§»ï¼ï¼åï¼</p>
+<p></p><div class="math display">\[\begin{align}
+g[u][0]&amp;=\sum_{v\in child(u),v\neq wson[u]}^{}=max(dp[v][0],dp[v][1])\\
+g[u][1]&amp;=\sum_{v\in child(u),v\neq wson[u]}^{}=a[u]+dp[v][0]
+\end{align}
+\]</div><p></p><p>å:</p>
+<p></p><div class="math display">\[\begin{align}
+dp[u][0]&amp;=g[u][0]+max(dp[wson[u]][0],dp[wson[u]][1])\\
+dp[u][1]&amp;=g[u][1]+dp[wson[u]][0]
+\end{align}
+\]</div><p></p><p>äºæ¯ï¼æä»¬å°±å¯ä»¥æå¿«å°è¿è¡ç©éµä¼åäºï¼å®ä¹<span class="math inline">\(max-plus\)</span>ä¸ºå¹¿ä¹ä¸çç©éµä¹æ³ï¼åªè¦æ»¡è¶³ç»åå¾å³å¯ï¼ï¼<span class="math inline">\(max\)</span>ç¸å½äº<span class="math inline">\(+\)</span>,<span class="math inline">\(+\)</span>ç¸å½äº<span class="math inline">\(*\)</span>ï¼</p>
+<p>åï¼</p>
+<p></p><div class="math display">\[\begin{bmatrix}
+dp[u][0]\\
+dp[u][1]
+\end{bmatrix}
+=
+\begin{bmatrix}
+g[u][0]&amp;g[u][0]\\
+g[u][1]&amp;-\infty
+\end{bmatrix}
+\begin{bmatrix}
+dp[wson[u]][0]\\
+dp[wson[u]][1]
+\end{bmatrix}
+\]</div><p></p><p>å æ­¤ï¼å¯¹äºæ¯æ¡é¾ï¼è¥å®ä¹<span class="math inline">\(Top[u],End[u]\)</span>ä¸º<span class="math inline">\(u\)</span>æå¨é¾çé¡¶ç«¯åé¾é¡¶ç«¯æå¨é¾çç»æä½ç½®ï¼åå¯¹äº <span class="math inline">\(u\)</span> æå¨çä¸æ¡éé¾ï¼<strong>åªæé¾é¡¶ <span class="math inline">\(Top[u]\)</span> æ¯è½»èç¹</strong>ãé£ä¹ä¿®æ¹èç¹ <span class="math inline">\(u\)</span> æ¶ï¼é¾åæä¸ä»æ <span class="math inline">\(Top[u]\)</span> çç¶èç¹ <span class="math inline">\(father[Top[u]]\)</span> çè½¬ç§»ç©éµä¼è¢«ä¿®æ¹ãèèä¼ä¿®æ¹æä»ä¹æ ·ã</p>
+<p>é¦åï¼å¯ä»¥éè¿çº¿æ®µæ ç»´æ¤éé¾ä¸çè½¬ç§»ç©éµï¼å¹¶åæ¶ç»´æ¤åºé´ä¹ç§¯ï¼ä½æ¯éè¦æ³¨æè¿ç®é¡ºåºãæ­¤å¤å ä¸ºè¿è¡äºæ é¾ååï¼åæ <span class="math inline">\(dfn[u]=dfn[wson[u]]-1\)</span>ï¼å æ­¤çº¿æ®µæ ç»´æ¤æ¶âå·¦ä¹å³âå³å¯ã<br>
+ä¿®æ¹ <span class="math inline">\(g[i][1]\)</span> æ¶ï¼åªéè¦å¨çº¿æ®µæ ä¸åç¹ä¿®æ¹è½¬ç§»ç©éµå³å¯ã<br>
+ä¹åä¾¿æ¯ç®åº <span class="math inline">\(\begin{bmatrix}f[top[u]][0]\\f[top[u]][1]\end{bmatrix}\)</span>ï¼ä»èå©ç¨ <span class="math inline">\(f[Top[u]][0],f[Top[u]][1]\)</span> æ´æ° <span class="math inline">\(father[Top[u]]\)</span> çè½¬ç§»ç©éµã</p>
+<h2 id="4cä»£ç ">4.C++ä»£ç </h2>
+<p><a href="https://www.luogu.com.cn/problem/P4751" title="å¨æDPæ¨¡æ¿ï¼æ°æ®å å¼ºçï¼" target="_blank" rel="noopener nofollow">å¨æDPæ¨¡æ¿ï¼æ°æ®å å¼ºçï¼</a></p>
+<details>
+<summary>ç¹å»æ¥çä»£ç </summary>
+<pre><code>//æ³¨æï¼è¿æ¯å å¼ºççï¼ä¼æå¸¸æ°ä¼å
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+const int N=1e6+5,INF=0x3f3f3f3f;
+int n,m;
+int a[N];
+int head[N],to[N&lt;&lt;1],nxt[N&lt;&lt;1],tot;
+int fa[N],siz[N],wson[N],dfn[N],Top[N],End[N],rev[N],idx,root[N];
+//ç¶äº²ãå­æ å¤§å°ãéå¿å­ãdfsåºãé¾é¡¶ãé¾å°¾ãdfsåºçåæ å°ãç¼å·ãé¾é¡¶å¨çº¿æ®µæ ä¸çç¼å·
+int f[N][2];
+struct matrix{
+	int mat[2][2];
+	friend matrix operator *(matrix A,matrix B){
+		matrix C;
+		//æå¨å±å¼ï¼ä¼åå¸¸æ°
+		C.mat[0][0]=max(A.mat[0][0]+B.mat[0][0],A.mat[0][1]+B.mat[1][0]);
+		C.mat[0][1]=max(A.mat[0][0]+B.mat[0][1],A.mat[0][1]+B.mat[1][1]);
+		C.mat[1][0]=max(A.mat[1][0]+B.mat[0][0],A.mat[1][1]+B.mat[1][0]);
+		C.mat[1][1]=max(A.mat[1][0]+B.mat[0][1],A.mat[1][1]+B.mat[1][1]);
+		return C;
+	}
+};
+matrix val[N],tr[N&lt;&lt;2];
+int ls[N&lt;&lt;2],rs[N&lt;&lt;2],cnt;//å¨æå¼ç¹ï¼ä¼åå¸¸æ°
+
+void addedge(int u,int v){
+	to[++tot]=v;
+	nxt[tot]=head[u];
+	head[u]=tot;
+}
+
+inline void pushup(int u){
+	tr[u]=tr[ls[u]]*tr[rs[u]];
+	//æ³¨æï¼å¨æ¨å¯¼ç©éµå½¢å¼çç¶æè½¬ç§»æ¹ç¨æ¶ï¼æä»¬çè½¬ç§»ç©éµæ¯ä»å·¦ä¹å°å³çï¼æä»¥æ´æ°ä¹å¿é¡»æ¯è¿ä¸ªé¡ºåºï¼å¦åå¿é¡»ä»å³ä¹å°å·¦ï¼
+}
+
+void build(int &amp;u,int l,int r){
+	if(!u) u=++cnt;
+	if(l==r){
+		tr[u]=val[rev[l]];
+		return ;
+	}
+	int mid=(l+r)&gt;&gt;1;
+	build(ls[u],l,mid);
+	build(rs[u],mid+1,r);
+	pushup(u);
+}
+
+void update(int u,int l,int r,int pos){
+	//åç¹ä¿®æ¹
+	if(l==r){
+		tr[u]=val[rev[pos]];
+		return ;
+	}
+	int mid=(l+r)&gt;&gt;1;
+	if(pos&lt;=mid) update(ls[u],l,mid,pos);
+	else update(rs[u],mid+1,r,pos);
+	pushup(u);
+}
+
+void dfs1(int u){
+	siz[u]=1;
+	for(int i=head[u];i;i=nxt[i]){
+		int v=to[i];
+		if(v==fa[u]) continue;
+		fa[v]=u;
+		dfs1(v);
+		siz[u]+=siz[v];
+		if(siz[v]&gt;siz[wson[u]]) wson[u]=v;
+	}
+}
+
+void dfs2(int u,int topchain){
+	dfn[u]=++idx;
+	rev[dfn[u]]=u;
+	Top[u]=topchain;
+	End[topchain]=max(End[topchain],dfn[u]);
+	
+	//åå§å
+	f[u][0]=0;
+	f[u][1]=a[u];
+	
+	//åå§å
+	val[u].mat[0][0]=val[u].mat[0][1]=0;
+	val[u].mat[1][0]=a[u];
+	val[u].mat[1][1]=-INF;
+	
+	if(wson[u]){
+		dfs2(wson[u],topchain);
+		f[u][0]+=max(f[wson[u]][0],f[wson[u]][1]);
+		f[u][1]+=f[wson[u]][0];
+	}
+	for(int i=head[u];i;i=nxt[i]){
+		int v=to[i];
+		if(v==fa[u] || v==wson[u]) continue;
+		dfs2(v,v);
+		//æ ¹æ®å®ä¹è¿è¡ç¶æè½¬ç§»
+		f[u][0]+=max(f[v][0],f[v][1]);
+		f[u][1]+=f[v][0];
+		val[u].mat[0][0]+=max(f[v][0],f[v][1]);
+		val[u].mat[0][1]=val[u].mat[0][0];
+		val[u].mat[1][0]+=f[v][0];
+	}
+}
+
+void updatepath(int u,int nval){
+	val[u].mat[1][0]+=nval-a[u];
+	a[u]=nval;
+	
+	while(u){
+		matrix bef=tr[root[Top[u]]];
+		update(root[Top[u]],dfn[Top[u]],End[Top[u]],dfn[u]);
+		matrix aft=tr[root[Top[u]]];
+		//è¿å°±æ¯ä¸ºä»ä¹è¦è®°å½é¾é¡¶å¨çº¿æ®µæ ä¸çç¼å·çåå ãè¥ä¸è®°å½ï¼åéé¢å¤è°ç¨ä¸¤æ¬¡æ¥è¯¢å½æ°æ±åºé¾é¡¶çå¼ï¼è¿ä¼å¢å¤§å¸¸æ°ãå®éä¸ï¼æä»¬åªéè¦é¾é¡¶çå¼ï¼å¹¶ä¸éè¦å¤æçæ¥è¯¢æä½
+		//æä»¥ï¼è¿æ ·å³å¯ä¼åå¸¸æ°
+		u=fa[Top[u]];
+		if(!u) break;
+		val[u].mat[0][0]+=max(aft.mat[0][0],aft.mat[1][0])-max(bef.mat[0][0],bef.mat[1][0]);
+		val[u].mat[0][1]=val[u].mat[0][0];
+		val[u].mat[1][0]+=aft.mat[0][0]-bef.mat[0][0];
+		//æ ¹æ®å®ä¹è¿è¡æ´æ°
+	}
+}
+
+int main(){
+	cin.tie(nullptr)-&gt;sync_with_stdio(false);
+	cin&gt;&gt;n&gt;&gt;m;
+	for(int i=1;i&lt;=n;i++) cin&gt;&gt;a[i];
+	for(int i=1;i&lt;n;i++){
+		int u,v;
+		cin&gt;&gt;u&gt;&gt;v;
+		addedge(u,v);
+		addedge(v,u);
+	}
+	
+	dfs1(1);
+	dfs2(1,1);
+	for(int i=1;i&lt;=n;i++)
+		if(Top[i]==i) build(root[i],dfn[i],End[i]);//å¯¹äºæ¯æ¡éé¾åç¬å»ºæ 
+	
+	int lst=0;
+	while(m--){
+		int x,y;
+		cin&gt;&gt;x&gt;&gt;y;
+		updatepath(x^lst,y);
+		matrix ans=tr[root[1]];
+		lst=max(ans.mat[0][0],ans.mat[1][0]);
+		cout&lt;&lt;lst&lt;&lt;'\n';
+	}
+	return 0;
+}
+</code></pre>
+</details>
+<h2 id="5åè®°">5.åè®°</h2>
+<p><s>å¼å¼ï¼ç»äºåå®äºè¿ç¯åå®¢ã</s><br>
+æ¨èå¤§å®¶å»éè¯»ä¸ä¸TH911å¤§ä½¬çåå®¢ï¼ææå¾å¤çé®é½æ¯è¢«TH911å¤§ä½¬çåå®¢è§£å³çï¼<s>æä¸æ¯å ä¸ºå«äººççé¢æ¯æå¥½çå¢ï¼å¼ðï¼</s>ï¼<br>
+<a href="https://www.cnblogs.com/TH911/p/-/DDP" title="å¤§ä½¬çåå®¢" target="_blank">å¤§ä½¬çåå®¢</a></p>
 
 
 </div>
 <div class="clear"></div>
 
-	</article>
-	<div class="postDesc">posted on 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-08-25 10:38">2026-08-25 10:38</span>&nbsp;
-<a href="https://www.cnblogs.com/xiexj">ç¼ç¨ä¸ç</a>&nbsp;
-éè¯»(<span id="post_view_count">171</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">2</span>)&nbsp;
+        </div>
+        <p class="postfoot">
+            posted on 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-08-25 17:30">2026-08-25 17:30</span>&nbsp;
+<a href="https://www.cnblogs.com/CENSORED1145146">_CENSORED</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(22671634);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fxiexj%2Fp%2F22671634&amp;targetId=22671634&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
- ]]>
+<a href="javascript:void(0)" onclick="AddToWz(22649865);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FCENSORED1145146%2Fp%2F22649865&amp;targetId=22649865&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+
+        </p>
+     ]]>
     </description>
     </item>
 <item>
-    <title><![CDATA[ AI æµè¯ææä¸¨ä»å¤±è´¥ææ¥å°èªå¨ä¿®å¤ï¼åäº«æçPlaywright+Skill UIèªå¨åæµè¯å¤±è´¥è¯æ­æææ¹æ¡ï¼ ]]></title>
-    <link>https://www.cnblogs.com/jinjiangongzuoshi/p/22668285</link>
-    <guid>61a5560f58012462be69d0cea08559f5</guid>
+    <title><![CDATA[ å»é¢èç£ï¼è£ä¸ªEclipseMemoryAnalyzeré½è½å¡ä¸å°æ¶ ]]></title>
+    <link>https://www.cnblogs.com/grey-wolf/p/22681409</link>
+    <guid>94540f41b587f1bd91ccd4082024b827</guid>
     <description>
     <![CDATA[ 
             <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/jinjiangongzuoshi/p/22668285" title="åå¸äº 2026-08-25 08:41">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/grey-wolf/p/22681409" title="åå¸äº 2026-08-25 17:10">
     
 
-    <span role="heading" aria-level="2">AI æµè¯ææä¸¨ä»å¤±è´¥ææ¥å°èªå¨ä¿®å¤ï¼åäº«æçPlaywright+Skill UIèªå¨åæµè¯å¤±è´¥è¯æ­æææ¹æ¡ï¼</span>
+    <span role="heading" aria-level="2">å»é¢èç£ï¼è£ä¸ªEclipseMemoryAnalyzeré½è½å¡ä¸å°æ¶</span>
     
 
 </a>
@@ -2329,333 +2854,102 @@ workbook.Options.MaxSharedStringCount = 100_000;           // 10 ä¸æ¡ SS
             <div class="clear"></div>
             <div class="postBody">
                 <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>å¤§å®¶å¥½ï¼ææ¯çå¸ã</p>
-<p>ä¸ä¸ç¯æä»¬æãè·æµè¯ãäº¤ç»äº AIãç¯å¢èªå¨æ£æµãå¤±è´¥è¯æ®èªå¨ä¿å¨ãæ¥åèªå¨äº§åºï¼æ§è¡è¿ä¸ç¯ç¡®å®çå¿«äºã</p>
-<p>ä½æå¼æ¥åï¼å åæ¡èæ¬ç¨ä¾çº¢çï¼èæ¶è´¹åçäºè¿æçæ­£å¼å§ã</p>
-<p>è¿æ¡ä¸ºä»ä¹æï¼æ¯ç¯å¢ãæ¯èæ¬ãæ¯æ°æ®ï¼è¿æ¯çæ bugï¼</p>
-<p>æè§è¿å¤ªå¤äººé¢å¯¹ä¸ççº¢æ¡çååºï¼åéè·ä¸éãè¿äºå°±å½æ äºåçï¼æ²¡è¿å°±å¯¹çæ¥éä¿¡æ¯å¼å§çãçç¯å¢ãçæ°æ®ãçåç«¯æ¹äºä¸è¥¿ï¼ä¸çåä¸ªå°æ¶èµ·æ­¥ã</p>
-<h2 id="ä¸å¼å¤´è¯´ä¸¤å¥">ä¸ãå¼å¤´è¯´ä¸¤å¥</h2>
-<p>è¿ä¸ªç³»åä¸ç´å¨åä¸ä»¶äºï¼ç¨ Agent Skill æ UI èªå¨åæµè¯çåä¸ªç¯èéä¸ªèªå¨åã</p>
-<p>ä¸ä¸ç¯ç <code>ui-test-executor</code> è§£å³äºãè·ãçé®é¢ï¼é¡ºå¸¦çä¸äºå­ç±»å¤±è´¥è¯æ®ï¼æªå¾ãå½å±ãTraceãæ¥å¿ãé¡µé¢æºç ãç½ç»è¯·æ±ï¼å¨é¨å½æ¡£å¾æ´æ´é½é½ã</p>
-<p><strong>6 ç±» Artifactï¼ä»å¤±è´¥æ¶ééï¼ï¼</strong></p>
-<table>
-<thead>
-<tr>
-<th>ç±»å</th>
-<th>è§¦å</th>
-<th>è·¯å¾</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>screenshots</td>
-<td>setup/call å¤±è´¥</td>
-<td><code>artifacts/screenshots/</code></td>
-</tr>
-<tr>
-<td>page-source</td>
-<td>setup/call å¤±è´¥</td>
-<td><code>artifacts/page-source/</code></td>
-</tr>
-<tr>
-<td>console-logs</td>
-<td>setup/call å¤±è´¥</td>
-<td>5 æ®µåå¹¶ï¼Page Errors / Console / Network / Performance</td>
-</tr>
-<tr>
-<td>videos</td>
-<td>call å¤±è´¥</td>
-<td><code>artifacts/pytest-raw/&lt;slug&gt;/video.webm</code></td>
-</tr>
-<tr>
-<td>traces</td>
-<td>call å¤±è´¥</td>
-<td><code>artifacts/pytest-raw/&lt;slug&gt;/trace.zip</code></td>
-</tr>
-<tr>
-<td>har ç­ä»·</td>
-<td>å¤±è´¥</td>
-<td>åå¥ console-logs ç <code>## Network</code> æ®µ</td>
-</tr>
-</tbody>
-</table>
-<p>è¿äºè¯æ®æ¿å¨æï¼æ¥ä¸æ¥çé®é¢åæäºã<strong>ä¸ºä»ä¹æ</strong>ãã</p>
-<p><strong>å¤±è´¥åææ¯ UI èªå¨åéæåç»éªãä¹æéå¤çç¯èã</strong></p>
-<p>çæªå¾ãç¿»æ¥å¿ãè¯»å æ ãå¤æ­åå ãå¨æä¿®å¤ï¼æ¯ä¸æ­¥é½æç« æ³å¯å¾ªãèå¡æ¯ãæç« æ³å¯å¾ªãçäºï¼å°±å¼å¾åºåæ Skill äº¤ç» AIã</p>
-<p>æä»¥è¿ä¸ç¯ï¼æåäº <code>ui-failure-diagnoser</code>ï¼ä¸ä¸ªå¤±è´¥ç¨ä¾æºè½è¯æ­ä¸èªå¨ä¿®å¤ç Skillãå®æ¥è¿ä¸ä¸ç¯çä¸çå¤±è´¥æ¡£æ¡ï¼æãåæåå ãå®ä½æ ¹å ãæ§è¡ä¿®å¤ãè¿æ¡é¾å¨é¨èªå¨åã</p>
-<p>æ¬ç¯å°±èç¦è¿ä¸ª Skillï¼ä»å®é¢å¯¹çé®é¢è®²èµ·ï¼å°å®æä¹è§£å³ï¼åå°å®æè·ä¸éã</p>
-<h2 id="äºä¼ ç»å¤±è´¥è¯æ­æ¹å¼å­å¨ä»ä¹é®é¢">äºãä¼ ç»å¤±è´¥è¯æ­æ¹å¼å­å¨ä»ä¹é®é¢</h2>
-<p>æå¤±è´¥åæè¿ä»¶äºï¼æå¼æ¥è¯´ï¼é®é¢å¾å¾éä¸­å¨å ä¸ªä¸»è¦å°æ¹ã</p>
-<p><img src="https://image.kjdaohang.com/img/20260824161425378.png" alt="" loading="lazy"></p>
-<p><strong>1ãå¤±è´¥åå ï¼å¨é äººçã</strong></p>
-<p>ä¸æ¡ç¨ä¾æäºï¼å¯¹çæ»¡å±è±æå æ çåå ãçæ¯ç¯å¢ï¼éå¯æå¡è¯è¯ï¼çæ¯æ°æ®ï¼æ¢ä¸ªè´¦å·è¯è¯ï¼çæ¯åç«¯æ¹äºï¼ç¿»ç¿»ä»£ç æäº¤è®°å½ãçå¯¹äºç®è¿æ°å¥½ï¼çéäºä¸ä¸åå°±æ­è¿å»ã</p>
-<p><strong>2ãè¯¯å¤çä»£ä»·ï¼æ¯ä¸å¤è¿å¤§ã</strong></p>
-<p>ç¯å¢é®é¢è¢«å½æ bug æäºç¼ºé·åï¼å¼åçå®éåæ¥ï¼ä¸å¥ãç¯å¢æ²¡éå¥½ãè®©ä½ ç½ååå¤©æ¥åãæ´éè½çæ¯åè¿æ¥ï¼ç bug è¢«å½æå¶åå¤±è´¥éè·ä¸¤éè·è¿äºï¼ç¼ºé·å°±è¿ä¹æ¼å°çº¿ä¸ãæ¹åå¤éï¼åé¢å¨ç½å¹²ã</p>
-<p><strong>3ãè¯æ®å¨æï¼ä¸ä¼å³èã</strong></p>
-<p>ä¸ä¸ç¯çä¸çæªå¾ãæ¥å¿ãTrace é½å¨ï¼ä½äººææ¥æ¶å¾å°çå»æ¨ä¸ªæå¼ãæªå¾çä¸ç¼ï¼æ¥å¿ç¿»ä¸¤è¡ï¼Trace æ ¹æ¬ä¸ä¼å¼ãåæ¡è¯æ®å­¤é¶é¶èººçï¼çº¿ç´¢ä¹é´ä¸²ä¸èµ·æ¥ã</p>
-<p><strong>4ãä¸ä¸ªå¤±è´¥æ¥åå¤©ï¼ä¸çå¤±è´¥ç´æ¥èººå¹³ã</strong></p>
-<p>å¯¹äºå¾å¤æ°ææ¥è¯´ï¼ä¸æ¡ç¨ä¾ææ¥åå°æ¶ï¼åæ¡å°±æ¯ä¸ä¸åãCI çº¢ä¸ççæ¶åï¼æå¸¸å¬å°çå»ºè®®æ¯ãåéè·ä¸éççãï¼æ²¡äººçæç²¾åéæ¡åæã</p>
-<p><strong>5ãä¿®å¥½äºï¼åæ²¡è®°ä½ã</strong></p>
-<p>è¿æ¬¡è¸©çåï¼ä¸ä¸ªé¡¹ç®åæ ·åè¸©ä¸éãæ²¡æå¤±è´¥åç±»ãæ²¡ææ ¹å ç»è®¡ï¼è¯´ä¸åºå¢ééåªç±»å¤±è´¥æé¢ç¹ãåªä¸ªæ¨¡åæèå¼±ï¼æ¹è¿æ ä»ä¸æã</p>
-<p><strong>6ãå®ä½å°äºï¼ä¿®å¤è¿æ¯äººèã</strong></p>
-<p>åå æ¥æç½äºï¼æ¹ locatorãè° timeoutãæ¸èæ°æ®ï¼è¿æ¯å¾èªå·±ä¸è¡è¡å¨æãè¯æ­å ä¸¤å°æ¶ï¼ä¿®å¤åå ä¸å°æ¶ã</p>
-<p>è¿å ä»¶äºæä¸ªå±åç¹ãå¤æ­æè§åå¯ä¾ï¼ææ¥æè·¯å¾å¯å¾ªï¼ä¿®å¤æå¥è·¯å¯æãå¨æ¯ AI æé¿çæ´»ã</p>
-<blockquote>
-<p>é£è½ä¸è½è®© AI æãå¤±è´¥è¯æ­ãè¿ä¸æ­¥ä¹æ¥ç®¡äºï¼</p>
-</blockquote>
-<p>ç­æ¡æ¯ï¼<strong>å¯ä»¥</strong>ãèä¸å®ä¸åªæ¯ç»å»ºè®®ï¼è¿è½ç´æ¥æé®é¢ä¿®å¤é½åäºã</p>
-<h2 id="ä¸ui-failure-diagnoser-skill-æè½ä»ç»">ä¸ãui-failure-diagnoser Skill æè½ä»ç»</h2>
-<p>ç®åæ¥è¯´ï¼<code>ui-failure-diagnoser</code> æ¯ä¸ä¸ªä¸é¨è´è´£å¤±è´¥ç¨ä¾è¯æ­ä¸èªå¨ä¿®å¤ç Agent Skillã</p>
-<p>å®çè¾å¥æ­£å¥½æ¯ä¸ä¸ç¯ <code>ui-test-executor</code> çäº§åºï¼æµè¯æ§è¡ç»æå å­ç±»å¤±è´¥è¯æ®ï¼è¾åºæ¯ä¸ä»½ä¿®å¤æ¥åï¼å¤å å·²ç»æ¹å¥½çä»£ç åæ¸çå¹²åçæ°æ®ã</p>
-<p><strong>è¾å¥</strong>ï¼</p>
-<ul>
-<li>Skill 2 è¾åºç <code>ui_execution_results.json</code></li>
-<li>å¤±è´¥ç°åºæªå¾</li>
-<li>æµè§å¨æ§å¶å°æ¥å¿</li>
-<li>ç½ç»è¯·æ±è®°å½ï¼HAR æä»¶ï¼</li>
-</ul>
-<p><strong>å¤çé»è¾</strong>ï¼</p>
-<ol>
-<li><strong>æªå¾æºè½åæ</strong>ï¼AI åæå¤±è´¥æ¶å»çé¡µé¢æªå¾ï¼è¯å«åç´ æ¯å¦å­å¨ãæ¯å¦è¢«é®æ¡ãæ¯å¦éä½ï¼</li>
-<li><strong>æ¥å¿èªå¨è§£æ</strong>ï¼æåæµè§å¨æ§å¶å°æ¥éãç½ç»è¯·æ±å¼å¸¸ãJS éè¯¯å æ ï¼</li>
-<li><strong>å¤±è´¥æ¨¡å¼å¹é</strong>ï¼åºäºè§ååºååå²æ°æ®ï¼åç±»å¤±è´¥ç±»åï¼ç¯å¢/å®ä½/ç­å¾/æ°æ®/èæ¬/äº§åç¼ºé·ï¼ï¼</li>
-<li><strong>æ ¹å æ·±åº¦å®ä½</strong>ï¼
-<ul>
-<li>ç¯å¢é®é¢ï¼æµè§å¨é©±å¨ä¸å¹éãåè¾¨çå¼å¸¸ãæå¡æªå¯å¨ï¼</li>
-<li>å®ä½é®é¢ï¼åç´ å®ä½å¤±æãDOM ç»æåæ´ãå¨æ ID ååï¼</li>
-<li>ç­å¾é®é¢ï¼é¡µé¢å è½½è¶æ¶ãå¼æ­¥æ°æ®æªè¿åãå¨ç»æªç»æï¼</li>
-<li>æ°æ®é®é¢ï¼æµè¯æ°æ®è¢«æ±¡æãæ°æ®è¿æãæ°æ®ä¾èµç¼ºå¤±ï¼</li>
-<li>èæ¬é®é¢ï¼æä½é»è¾éè¯¯ãæ­è¨è¿ä¸¥ãåæ°æé éè¯¯ï¼</li>
-<li>äº§åç¼ºé·ï¼åç«¯ JS æ¥éãæ¥å£å¼å¸¸ãé¡µé¢æ ·å¼éä¹±ãåè½é»è¾éè¯¯ï¼</li>
-</ul>
-</li>
-<li><strong>ä¿®å¤å»ºè®®çæ</strong>ï¼éå¯¹æ¯ç±»å¤±è´¥ï¼çæå·ä½çä¿®å¤å»ºè®®ï¼æ´æ°å®ä½ç­ç¥ãè¡¥åç­å¾é»è¾ãè°æ´æ­è¨ç­ï¼ï¼</li>
-</ol>
-<p><strong>è¾åº</strong>ï¼</p>
-<ul>
-<li>å¤±è´¥ç¨ä¾ä¿®å¤åèæ¬</li>
-<li>å¤±è´¥ä¿®å¤æ¥åï¼å«å·ä½ä»£ç /å¤±è´¥åå åæ/ä¿®æ¹ç­ç¥ï¼</li>
-</ul>
-<p><strong>éç¨åºæ¯ï¼</strong></p>
-<ul>
-<li>æµè¯å¤±è´¥åèªå¨åæå¤±è´¥åå ãåç±»å¤±è´¥ç±»å</li>
-<li>è¯æ­ UI æµè¯å¤±è´¥æ ¹å ï¼ç¯å¢ãå®ä½å¨ãè¶æ¶ãæ°æ®ãèæ¬ãBugï¼</li>
-<li>åç´ æ¾ä¸å°ãé¡µé¢æ¸²ææ¢ãiframe åæ¢ç¼ºå¤±ç­èªå¨ä¿®å¤</li>
-<li>å·²ç¥ Bug æ³¨å¥ xfail/flaky markerï¼ä¸æ©ççå®ç¼ºé·</li>
-<li>æ¹éè¯æ­å¹¶ä¿®å¤å¤±è´¥ç¨ä¾</li>
-</ul>
-<p>å®çæ´ä¸ªè®¾è®¡éµå¾ªä¸¤æ¡ååã</p>
-<p><strong>ååç±»ï¼åå¨æã</strong> ä¸ä¸æ¥å°±çï¼åæå¤å®ä¿¡å·æå¤±è´¥åæå­ç±»ï¼æ¯ä¸ç±»å¯¹åºä¸å¥æç¡®çä¿®å¤ç­ç¥ãè¯æ­çç« æ³ï¼å¨é¨åºåæè§åã</p>
-<p><strong>è½ä¿®çä¿®ï¼ä¸è½ä¿®çæ åºæ¥ã</strong> è¿ä¸ª Skill æä¸æ¡ç¡¬çº¦æï¼<strong>æ°¸è¿ä¸ä¿®æ¹æµè¯ç¨ä¾çæ­è¨åä¸å¡è¯­ä¹</strong>ã</p>
-<p>å¯ä»¥æ¹é¡µé¢å¯¹è±¡å±çå®ä½å¨ï¼å¯ä»¥è°è¶æ¶åæ°ï¼å¯ä»¥å¨éç½®éææ è®°ï¼ä½æµè¯æ³éªè¯ä»ä¹ï¼å®ä¸ä¸ªå­é½ä¸ç¢°ãè¿æ¡åºçº¿å®ä½ï¼ä¿®å¤ææ¢æ¾å¿è®©å®åãèä¸æ¯ä¸ä¸ªå¨ä½é½æå®¡è®¡æ¥å¿ï¼æ¯ä¸å¤ä¿®æ¹é½æå¤ä»½ã</p>
-<p>è½å°æµç¨ä¸ï¼å®åºåæä¸å¥å¤±è´¥è¯æ­äºæ­¥æµç¨ã</p>
-<p><strong>å¤±è´¥å è½½ â åç±»å¤å® â æ ¹å å®ä½ â èªå¨ä¿®å¤ â éªè¯æ¥å</strong></p>
-<p><img src="https://image.kjdaohang.com/img/20260824152104760.png" alt="" loading="lazy"></p>
-<p>å¯¹çåé¢è¿å ä¸ªé®é¢ï¼ä¸æ­¥ä¸æ­¥çå®æ¯æä¹æçã</p>
-<h3 id="1-å¤±è´¥èªå¨åç±»">1. å¤±è´¥èªå¨åç±»</h3>
-<p>å­ç±»å¤±è´¥ï¼æ¯ä¸ç±»é½ææç¡®çå¤å®ä¿¡å·ãæ¯å¦ï¼</p>
-<table>
-<thead>
-<tr>
-<th>ç±»å</th>
-<th>å¤å®ä¿¡å·</th>
-<th>å¤ç</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>ENV_ERROR</strong></td>
-<td>æµè§å¨/åæªè£ãç«¯å£å ç¨</td>
-<td>â èªå¨ playwright install / pip install / lsof</td>
-</tr>
-<tr>
-<td><strong>LOCATOR_ERROR</strong></td>
-<td>Timeout + locator å¨ page-source ä¸å­å¨</td>
-<td>â AST ä¿®å¤ + pages.yaml å¯¹æ¯ + è¯­ä¹æ¨æ­</td>
-</tr>
-<tr>
-<td><strong>TIMEOUT_ERROR</strong></td>
-<td>Timeout + locator å­å¨ï¼æ¸²ææ¢ï¼</td>
-<td>â AST rewrite è° timeout / å  wait</td>
-</tr>
-<tr>
-<td><strong>DATA_ERROR</strong></td>
-<td>setup å¤±è´¥ + æ°æ®é®é¢</td>
-<td>â è° api-testdata-cleaner</td>
-</tr>
-<tr>
-<td><strong>SCRIPT_ERROR</strong></td>
-<td>AttributeError / Deprecated API</td>
-<td>â AST rewriteï¼typo / åºå¼ API / å¼æ­¥ç­å¾ï¼</td>
-</tr>
-<tr>
-<td><strong>BUG</strong></td>
-<td>Page Error / ç½ç» 5xx</td>
-<td>â ï¸&nbsp;æ³¨å¥ xfail/flaky marker</td>
-</tr>
-</tbody>
-</table>
-<p><strong>ç¯å¢éè¯¯</strong>ï¼æµè§å¨æ²¡è£ãä¾èµç¼ºå¤±ãç«¯å£å ç¨ãæå¡æ²¡èµ·ï¼ã<strong>å®ä½éè¯¯</strong>ï¼åç´ æ¾ä¸å°äºï¼ã<strong>è¶æ¶éè¯¯</strong>ï¼åç´ å¨ä½æ¸²ææ¢ï¼ã<strong>æ°æ®éè¯¯</strong>ï¼èæ°æ®ãå¯ä¸çº¦æå²çªï¼ã<strong>èæ¬éè¯¯</strong>ï¼æ¹æ³ååéãç¨äºåºå¼ APIï¼ã<strong>çå®ç¼ºé·</strong>ï¼æ§å¶å°æé¡µé¢æ¥éãæ¥å£ 5xxï¼ã</p>
-<p><img src="https://image.kjdaohang.com/img/20260824161638513.png" alt="" loading="lazy"></p>
-<p>å¤å®è¿æä¼åçº§ãç¯å¢æç¬¬ä¸ï¼å ä¸ºç¯å¢æäºï¼åé¢ææå¤±è´¥é½æ æä¹ãçå®ç¼ºé·æç¬¬äºï¼å ä¸ºå®æ¯æ ¹å ï¼å¶ä½æå¯ä¿®å¤æ§ä¾æ¬¡æä¸å»ã</p>
-<p>ä»¥åé äººççäºï¼ç°å¨å¯¹çä¿¡å·è¡¨ä¸æ¡æ¡å¤ãè¯¯å¤çéä¸æ¥ï¼ãç¯å¢é®é¢æåç»å¼åãè¿ç§ä¹é¾å°±æ²¡äºã</p>
-<h3 id="2-ä¸ä»ç»åºå»ºè®®è¿è½å¸®ä½ ç´æ¥ä¿®">2. ä¸ä»ç»åºå»ºè®®ï¼è¿è½å¸®ä½ ç´æ¥ä¿®</h3>
-<p>åå®ç±»ï¼æ¯ä¸ç±»ç´æ¥å¯¹åºä¿®å¤å¨ä½ï¼ä¸æ¯ç»ä½ ä¸æ®µãå»ºè®®ææ¥ãçæå­ã</p>
-<p><strong>è¶æ¶é®é¢</strong>ï¼ç´æ¥æ¹é¡µé¢å¯¹è±¡å±ï¼ç­å¾æ¶é´è°å¤§ï¼æèè¡¥ä¸ç­å¾é¡µé¢å è½½å®æçè¯­å¥ã</p>
-<p><strong>å®ä½æ¼ç§»</strong>ï¼æ¿ pages.yaml éçæ åå®ä¹åå¯¹æ¯ï¼åä»å¤±è´¥å¿«ç§éæ¾åéåç´ ï¼æ¨æ­åºæ°çå®ä½å¨ã<br>
-<strong>iframe é®é¢</strong>ï¼èªå¨è¡¥ä¸æ¡æ¶åæ¢ã</p>
-<p><strong>ç¯å¢ç¼ºå¤±</strong>ï¼ç´æ¥æ§è¡å®è£ï¼æµè§å¨æ²¡è£å°±è£æµè§å¨ã</p>
-<p><strong>èæ°æ®</strong>ï¼è°èµ·æ°æ®æ¸çæè½å¤çã</p>
-<p><strong>çå®ç¼ºé·</strong>ï¼å¨éç½®éæä¸æ è®°ï¼è®©è¿æ¡ç¨ä¾ä»¥ãé¢æå¤±è´¥ãçç¶æå­å¨ï¼æ¥åéæç¡®æ åºãçä¼¼äº§åç¼ºé·ï¼å»ºè®®æåãã</p>
-<p><img src="https://image.kjdaohang.com/img/20260824152832245.png" alt="" loading="lazy"></p>
-<h3 id="3-ä¿®å®èªå¨éªè¯ä¸è¡å°±åæ»">3. ä¿®å®èªå¨éªè¯ï¼ä¸è¡å°±åæ»</h3>
-<p>æ¯ä¸å¤ä»£ç ä¿®å¤ï¼èªå¨éè·é£ä¸æ¡ç¨ä¾éªè¯ã</p>
-<p>ä¿®å¥½äºï¼ä¿çãæ²¡ä¿®å¥½ï¼èªå¨åæ»å°å¤ä»½æä»¶ï¼æ¥åéå¦å®åãä¿®å¤æªçæï¼å»ºè®®äººå·¥ä»å¥ãã</p>
-<p>ä¸ä¼åºç°ãAI æ¹å®ææå±è¡èµ°äººï¼è·æ²¡è·å¾éä¸ç¥éãçæåµãä¿®å¤çææï¼å®èªå·±åéªä¸éã</p>
-<h3 id="4-å¨ç¨ççæ¥åè¯´è¯">4. å¨ç¨ççï¼æ¥åè¯´è¯</h3>
-<p>æææ§è¡è¿çå½ä»¤åè¿å®¡è®¡æ¥å¿ï¼æææ¹è¿çæä»¶çæå¤ä»½ï¼æåäº§åºä¸ä»½ä¿®å¤æ¥åãæ¥åéæåç±»ç»è®¡ï¼è¿è½®å¤±è´¥éç¯å¢é®é¢å å æ¡ãç bug å å æ¡ï¼ãæ ¹å ç»è®¡ï¼åªç±»æ ¹å æé¢ç¹ï¼ãæ¯æ¡å¤±è´¥çæç»ï¼åç±»ãæ ¹å ãåäºä»ä¹ä¿®å¤ãæ¹äºåªä¸ªæä»¶ï¼ã</p>
-<p>ä»¥åãè¸©è¿çåè®°ä¸ä½ãçé®é¢ï¼è¿éé¡ºæè§£å³äºãè·ä¸å è½®ï¼åªä¸ªæ¨¡åæèå¼±ãåªç±»é®é¢æé¢ç¹ï¼æ¥åç´æ¥åè¯ä½ ã</p>
-<h2 id="åskill-å®ææ¼ç»">åãSkill å®ææ¼ç»</h2>
-<h3 id="äººå·¥æ¨¡æå¤±è´¥">äººå·¥æ¨¡æå¤±è´¥</h3>
-<p>å¨èæ¬èªå¨åæ§è¡çéªæ¶ç¯èä¸­ï¼å¤±è´¥æªå¾ãå¼å¸¸å½å±ãç¨ä¾æéæ ¹å è¯æ­ãæ¥éèæ¬èªå¨ä¿®å¤ç­è½åï¼é½éè¦ä¾æçå®çèæ¬æ¥éåºæ¯æè½å®æ´éªè¯åè½æææ§ã</p>
-<p>å¦æè°è¯é¶æ®µï¼èæ¬æ§è¡å¨é¨éè¿ï¼æä»¬æ æ³ç¡®è®¤æéå¤çé»è¾ãååºæºå¶ãä¿®å¤æµç¨æ¯å¦è½æ­£å¸¸è§¦åï¼ææåºç° âåè½å¼åå®æï¼ä½çå®æ¥éåºæ¯ä¸å®å¨å¤±æâ çéæ§ç¼ºé·ã</p>
-<p>å æ­¤å¨éªæ¶èªå¨åéå¥è½ååï¼<strong>å»ºè®®ä¸»å¨ãå¯æ§å°æ¨¡æåç±»èæ¬å¤±è´¥æ¡ä¾</strong>ï¼äººä¸ºå¶é ç¨³å®å¯å¤ç°çæ¥éç¯å¢ï¼å®æ´æ ¡éªæ´å¥æéå¤çé¾è·¯çå¯ç¨æ§ãå®æ´æ§ä¸åç¡®æ§ã</p>
-<p>ä»¥ UI èªå¨åèæ¬ä¸ºä¾ï¼æç®ä¾¿ãç¨³å®ãæ ä¸å¡å¯ä½ç¨çæ¨¡ææ¹å¼ï¼äººå·¥ä¿®æ¹é¡µé¢åç´ å®ä½è¡¨è¾¾å¼ï¼ä¸»å¨ç ´å XPathãCSS éæ©å¨ãåç´  IDãclassName ç­å®ä½å±æ§ï¼ä½¿èæ¬è¿è¡æ¶ç¨³å®æåºãåç´ æªæ¾å°ãå¼å¸¸ï¼å®ç° 100% å¤ç°çå¤±è´¥åºæ¯ã</p>
-<p>æ¯å¦ï¼ä¸è¿°æä»¬ä»¥ç¨æ·ç»å½æ­£å¸¸åºæ¯ä¸ºä¾ï¼</p>
-<p><img src="https://image.kjdaohang.com/img/20260622194321404.png" alt="" loading="lazy"></p>
-<p>äººå·¥æå¨ä¿®æ¹ç»å½é¡µé¢å¯¹è±¡ä¸­å±æ§å¼ï¼æ¯å¦ä¿®æ¹ç¨æ·è¾å¥æ¡çå±æ§å¼ï¼ææå¨<code>placeholder</code>ä¸­å¢å ä¸ä¸ªç©ºæ ¼ï¼</p>
-<p><img src="https://image.kjdaohang.com/img/20260622194541951.png" alt="" loading="lazy"></p>
-<h3 id="éæ°è·æµè¯">éæ°è·æµè¯</h3>
-<p>å¨<code>Claude Code</code>ä¸­ï¼éè·ä¸è½®ï¼P0çº§åçæµè¯ç¨ä¾ï¼</p>
-<pre><code>è·ä¸ä¸ shop-lab-ui-test ç P0 åçç¨ä¾
+<h1 id="èæ¯">èæ¯</h1>
+<p>å¤§å®¶å¥½ï¼ææ¯éæ¥ãæè¿è¿ç»´åé¦æä¸ªé¡¹ç®çåå­æç¹é«ï¼æçæ¯ä¸æ¯åå­æ³æ¼ï¼æå°±è®©ä»ç»ædumpäºä¸ä¸åå­ï¼åå¤ç¨EclipseMemoryAnalyzerï¼MATï¼åæä¸ã</p>
+<p>dumpå½ä»¤ï¼ jmap -dump:live,format=b,file=heap.bin è¿ç¨pid</p>
+<h1 id="matä¸è½½">matä¸è½½</h1>
+<p><a href="https://eclipse.dev/mat/download/" target="_blank" rel="noopener nofollow">https://eclipse.dev/mat/download/</a></p>
+<p>ææ¯ä¸è½½çwindowsçæ¬ã</p>
+<p>ç¶åè§£åå³å¯ï¼æ³¨æè·¯å¾ä¸è¦æä¸­æåç©ºæ ¼ã</p>
+<p><img src="https://dump-1252523945.cos.ap-shanghai.myqcloud.com/img/image-20260825163123325.png" alt="image-20260825163123325" loading="lazy"></p>
+<h1 id="æ¥é">æ¥é</h1>
+<h2 id="jdk21å®è£">jdk21å®è£</h2>
+<p><img src="https://dump-1252523945.cos.ap-shanghai.myqcloud.com/img/image-20260825163221235.png" alt="image-20260825163221235" loading="lazy"></p>
+<p>ç±äºæéæ²¡æå¤æ¨¡ææ¨¡åï¼åªè½è®©è±ååå©æäºï¼æå¶å®æè§è±åå¨å¤æ¨¡æè¿åè¿ä¸éï¼å¹³æ¶çæ´»ä¸­æä¸ªå¥æä¸æï¼æä¸ªå¾å°±ä¸¢è¿å»äºã</p>
+<p>è±ååæçæ¯ä¸æ¯å¾éé£ä¸ªjaråä¸å­å¨ï¼é£å½ç¶ä¸è³äºï¼æçè³åç°dbeaverä¹ç¨äºè¿ä¸ªjaråï¼</p>
+<p><img src="https://dump-1252523945.cos.ap-shanghai.myqcloud.com/img/image-20260825163532020.png" alt="image-20260825163532020" loading="lazy"></p>
+<p>ç¶åä¸å¼å§æ¥äºä¸ï¼è¯´æ°çæ¬çmatè¦jdk17è³å°ï¼ä½ææ³çåç¡®è®¤ä¸ã</p>
+<p>ç¨jd-gui.exeåç¼è¯äºä¸ä¸,åç°æè¿ä¸ªMainç±»ï¼</p>
+<p><img src="https://dump-1252523945.cos.ap-shanghai.myqcloud.com/img/image-20260825163729396.png" alt="image-20260825163729396" loading="lazy"></p>
+<p>classå­èç ççæ¬æ¯jdk 17ï¼é£å°±è³å°å¾jdk17æè½æå¼è¿ä¸ªjaråäºï¼</p>
+<p><img src="https://dump-1252523945.cos.ap-shanghai.myqcloud.com/img/image-20260825163800606.png" alt="image-20260825163800606" loading="lazy"></p>
+<p>ææ¬å°è¿ä¸ªæ°çµèè¿æ²¡jdk17ï¼åªæjdk8ï¼é£åå®è£ä¸ä¸ã</p>
+<p>ç´æ¥è£ä¸ªjdk21å§ï¼</p>
+<p><a href="https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html" target="_blank" rel="noopener nofollow">https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html</a></p>
+<p>Windows x64 Installer</p>
+<p><img src="https://dump-1252523945.cos.ap-shanghai.myqcloud.com/img/image-20260825164015469.png" alt="image-20260825164015469" loading="lazy"></p>
+<h2 id="ä¿®æ¹matéç½®æä»¶ä½¿ç¨jdk21">ä¿®æ¹MATéç½®æä»¶ï¼ä½¿ç¨jdk21</h2>
+<p>å¨ç½ä¸æäºä¸æä¹æ¹éç½®ï¼ä»¥æå®jdk21æ¥æå¼matã</p>
+<p>ç¶åç´æ¥å°±æ¹äºä¸MemoryAnalyzer.iniï¼ç½ä¸ç­æ¡äºè±å«é¨ï¼æè¯äºå¥½å¤ç§éè¯¯æ¹æ¡ï¼å¦ï¼</p>
+<p><img src="https://dump-1252523945.cos.ap-shanghai.myqcloud.com/img/image-20260825164900901.png" alt="image-20260825164900901" loading="lazy"></p>
+<p>è¿æä»¥ä¸éè¯¯ç­æ¡ï¼</p>
+<pre><code class="language-shell">ä¸ºå¥æ³çå å¼å·ï¼å ä¸ºè·¯å¾ä¸­é´æç©ºæ ¼ï¼æä»¥æ³çå ä¸ä¸ï¼
+-vm
+"C:/Program Files/Java/jdk-21.0.12/bin/javaw.exe"
+
+-vm
+"C:/Program Files/Java/jdk-21.0.12/bin/"
+
+è¿æwindowsåææ ä¹è¯äºã
+
 </code></pre>
-<p><img src="https://image.kjdaohang.com/img/20260622195639473.png" alt="" loading="lazy"></p>
-<p>ä»æ§è¡ç»æå¯ç¥ï¼8æ¡ç¨ä¾ï¼ä»æ2æ¡ï¼ç¨æ·æ³¨åçèæ¬æ§è¡æåï¼ï¼ä¸ç¨æ·ç»å½æèä¾èµç¨æ·ç»å½çç¸å³èæ¬å¨é¨æ§è¡å¤±è´¥äºã</p>
-<p>èå¤±è´¥/éè¯¯çåå é½æ¯æå®ï¼</p>
-<pre><code>Locator.wait_for: Timeout 10000ms exceeded â waiting for get_by_placeholder("è¯·è¾å¥ ç¨æ·å") to be visible
+<p>ç»æåæ¥ï¼å¨cmdä¸­è¯æåäºï¼</p>
+<pre><code class="language-shell">è¿ä¸ªå¯ä»¥ï¼
+F:\tools\MAT\MemoryAnalyzer-1.17.0.20260601-win32.win32.x86_64&gt;MemoryAnalyzer.exe -vm "C:/Program Files/Java/jdk-21.0.12/bin/"
 </code></pre>
-<p>å¤±è´¥çåå ï¼æ¯ç±äº <code>login</code> é¡µé¢ç¨æ·åè¾å¥æ¡ 10 ç§åæ²¡åºç°ï¼login ç¨ä¾ç´æ¥ FAILEDï¼search ç¨ä¾å  fixture è° login å¨ setup   é¶æ®µ ERRORã</p>
-<p>å½ç¶ï¼å«çæ¥ï¼<strong>è¿äºç¨ä¾æ§è¡æ¥éæ¯å¨æä»¬çé¢æä¹å</strong>ï¼åæä»¬ä¸è¿°äººå·¥æ¨¡æçéè¯¯å®å¨å»åï¼å·²ç»è¾¾å°æ¨¡æç¨ä¾å¤±è´¥çç®çäºã</p>
-<h3 id="éªè¯ç¨ä¾å¤±è´¥åçäº§åºç©">éªè¯ç¨ä¾å¤±è´¥åçäº§åºç©</h3>
-<p>æ¥ç<code>test-results</code>ç®å½ä¸ç <code>summary.md</code>ï¼UIæµè¯æ§è¡æ¦è§æ¥åï¼</p>
-<p><img src="https://image.kjdaohang.com/img/20260622200700514.png" alt="" loading="lazy"></p>
-<p>æ¥ç<code>test-results</code>ç®å½ä¸ç <code>failure_analysis.md</code>ï¼å¤±è´¥ç¨ä¾æéåææ¥åï¼</p>
-<p><img src="https://image.kjdaohang.com/img/20260622200949641.png" alt="" loading="lazy"></p>
-<p>è¿å¥å°<code>test-results</code>-&gt; <code>pytest-raw</code>ç®å½ï¼æ¥çæ¯å¦æçæå¤±è´¥æªå¾ï¼pngæ ¼å¼ï¼ãå½å±ï¼webmæ ¼å¼ï¼ãtrace.zipç­æä»¶ã</p>
-<p><img src="https://image.kjdaohang.com/img/20260622201219365.png" alt="" loading="lazy"></p>
-<h3 id="èªå¨ä¿®å¤åç´ å®ä½å¤±æé®é¢">èªå¨ä¿®å¤åç´ å®ä½å¤±æé®é¢</h3>
-<p>æä»¬è°ç¨<code>ui-failure-diagnoser</code>æè½ï¼è®©å¶èªå¨ä¿®å¤<code>shop-lab-ui-test</code>é¡¹ç®èæ¬æè¿ä¸æ¬¡æ§è¡å¤±è´¥çç¨ä¾ã</p>
-<p>å¨æè½åè¡¨ä¸­éæ© <code>ui-failure-diagnoser</code>ï¼è¾å¥ä¸å¥æä»¤ã</p>
-<pre><code class="language-bash">/ui-failure-diagnoser åæé£è½®è·æçç¨ä¾ï¼å¸®æè¯æ­ä¸ä¸ï¼
-è½ä¿®çèªå¨ä¿®ï¼ä¿®å®éªè¯ä¸ä¸
-</code></pre>
-<p><img src="https://image.kjdaohang.com/img/20260623111900425.png" alt="" loading="lazy"></p>
-<p>ä»ä¸è¿°æ§è¡ç»æå¯ç¥ï¼å¨å©ç¨<code>ui-failure-diagnoser</code>æè½èªå¨è¯æ­å¤±è´¥ç¨ä¾æ¶ï¼å»ºè®®æå¥½æä¾pages.yamlæä»¶è·¯å¾ï¼è®©å¶ä½ä¸ºåºçº¿æ°æ®å¯¹æ¯ã</p>
-<p><img src="https://image.kjdaohang.com/img/20260623112119951.png" alt="" loading="lazy"></p>
-<p><img src="https://image.kjdaohang.com/img/20260623120112448.png" alt="" loading="lazy"></p>
-<p>å¤±è´¥ç¨ä¾ä¿®å¤æ§è¡å®æåï¼è¿ä¼å¨<code>test-results</code>ç®å½ä¸ï¼çæä¸ä»½<code>ui_repair_report.md</code>ï¼UIå¤±è´¥ä¿®å¤è¯æ­æ¥åï¼ï¼å¨æ¥åéè¿ä¼æ³¨æå·ä½ä¿®æ¹çä»£ç ä½ç½®ï¼æ¹å¨çå·ä½ä»£ç ç­ä¿¡æ¯ã(<strong>æ­¤æ¬¡å·²ç»æåçå°ä¹åæä»¬äººå·¥æ¨¡æçåç´ å®ä½åæ´å¯¼è´çç»å½èæ¬æ¥éçé®é¢ï¼èªå¨ä¿®å¤å¥½äº</strong>)</p>
-<p><img src="https://image.kjdaohang.com/img/20260623120852389.png" alt="" loading="lazy"></p>
-<blockquote>
-<p>ä¸è¿°æ¯ä»¥åç´ å®ä½åæ´ä½ä¸ºæ¡ä¾å®ææ¼ç¤ºï¼ä½çå®é¡¹ç®è¿­ä»£åºæ¯è¿æ¯ç¤ºä¾å¤æï¼åç«¯çæ¬è¿­ä»£æ¶ç»å¸¸ä¼åºç°é¡µé¢å¤§è§æ¨¡éæãæ´ä½ DOM å±çº§è°æ´ãæ¹éç»ä»¶ç±»åä¿®æ¹ãElement Plus å¼¹çª / ä¸æç»ä»¶ Teleport æè½½é»è¾æ¹å¨ç­æåµï¼ä¼é ææ°åçè³ä¸ç¾ä¸ªé¡µé¢åç´ çå®ä½ä¿¡æ¯åæ­¥å¤±æã</p>
-</blockquote>
-<p>å¦ææ²¿ç¨ä¼ ç»äººå·¥ç»´æ¤æ¨¡å¼ï¼æµè¯äººååªè½éè¡éåæ¥éæ¥å¿ãéä¸ªæå¼åç«¯é¡µé¢æ ¸å¯¹ DOMãæå¨ä¿®æ¹<code>pages.yaml</code>éç½®ä¸ Page é¡µé¢å¯¹è±¡èæ¬ï¼æ´å¥ä¿®å¤æµç¨è¥æ¯äººå·¥æä½ä¸æ¥ï¼å­å¨ä¸å¤§æ¾èçç¹ï¼</p>
+<p>ä½ææåæ ·éç½®å¼å°éç½®æä»¶éï¼è¿æ¯ä¸è¡ï¼ç¶åè±åç»æè¯´ï¼iniæä»¶éä¸è½ç¨å¼å·ï¼é£å°±è¿æ ·ï¼</p>
+<p><img src="https://dump-1252523945.cos.ap-shanghai.myqcloud.com/img/image-20260825165337303.png" alt="image-20260825165337303" loading="lazy"></p>
+<p>ç»æè¿æ¯æ¥éã</p>
+<p>è±ååä¸é¡¿åæï¼è¯´è¦ä¸ä½ å°±æ¯æä»¶çæ ¼å¼æ¯utf8ï¼å¸¦äºbomï¼ï¼å¯¼è´è¿ä¸è¡æ ¼å¼æé®é¢ï¼</p>
+<p><img src="https://dump-1252523945.cos.ap-shanghai.myqcloud.com/img/image-20260825165459000.png" alt="image-20260825165459000" loading="lazy"></p>
+<h2 id="vscodeå®è£hex-editoræä»¶ç´æ¥æ¥çäºè¿å¶">vscodeå®è£Hex Editoræä»¶ç´æ¥æ¥çäºè¿å¶</h2>
+<p>æ­£å¸¸æ¥è¯´ï¼å¨notepad++ä¹ç±»æèvscodeéï¼çå°æ¯utf8ï¼å¯è½åºæ¬è½ç¡®å®æ¯UTF8è¿æ¯å¸¦bomçutf8.</p>
+<p>ä¸ºäºçå¾æ¸æ¸æ¥æ¥ï¼æä»¬å¯ä»¥ç´æ¥çäºè¿å¶ã</p>
+<p>vscodeä¸­æä¸ªhex editoræä»¶ï¼</p>
+<p><img src="https://dump-1252523945.cos.ap-shanghai.myqcloud.com/img/image-20260825165808873.png" alt="image-20260825165808873" loading="lazy"></p>
+<p>æä»¶ä¸å³é®ï¼</p>
+<p><img src="https://dump-1252523945.cos.ap-shanghai.myqcloud.com/img/image-20260825165832883.png" alt="image-20260825165832883" loading="lazy"></p>
+<p>éè¿åå ä¸ªå­èå°±è½çåºæ¥ææ²¡æbomï¼</p>
 <ul>
-<li>1ãä¿®å¤å¨ææé¿ï¼å¤§é¢ç§¯åæ´åºæ¯ä¸éè¦æå¥å¤§éäººååå¤æ ¸å¯¹ï¼</li>
-<li>2ãäººå·¥æä½ææåºç°éæ¼ï¼é¨åä½é¢æ§è¡ãæ¬¡è¦æ¨¡åçå¤±æåç´ å®¹æè¢«å¿½ç¥ï¼éçéæ§èªå¨åç¼ºé·ï¼</li>
-<li>3ãéå¤æºæ¢°æä½å ç¨å¤§éæµè¯å·¥æ¶ï¼æ¤å ä¸å¡ç¨ä¾å¼åãæµç¨éªè¯çæ ¸å¿å·¥ä½æ¶é´ï¼èªå¨åèæ¬ç»´æ¤ææ¬å±é«ä¸ä¸ã</li>
+<li>å¦æè¾åºå¼å¤´æ¯ <code>EF BB BF</code> â å­å¨ UTFâ8 BOM</li>
 </ul>
-<p>ä½ç°å¨ï¼ä¾æ AI Agent Skill è½åï¼æä»¬å¯ä»¥å½»åºè§£å³å¤§é¢ç§¯é¡µé¢æ¹çå¸¦æ¥çèæ¬æ¹éä¿®å¤é¾é¢ï¼å½¢ææ ååèªå¨åä¿®å¤é­ç¯ï¼å®æ´æä½é¾è·¯å¦ä¸ï¼</p>
-<ol>
-<li>åç«¯é¡µé¢è¿­ä»£åå¸ãDOM ç»æå®ææ¹å¨åï¼æ éäººå·¥éæ¡æ¢³çåæ´åç´ ï¼ç´æ¥è°ç¨<code>ui-page-parser</code>é¡µé¢è§£ææè½ï¼</li>
-<li><code>ui-page-parser</code>ä¼èªå¨éåç®æ é¡µé¢ï¼æåææ° DOM èç¹ãç»ä»¶å±æ§ãå¯ç¨ CSS/XPath å®ä½è¡¨è¾¾å¼ï¼æ¹éçæä¸å½åé¡µé¢å®å¨å¹éçå¨æ°<code>pages.yaml</code>æ åé¡µé¢å¯¹è±¡åºåæä»¶ï¼ä¸æ¬¡æ§åæ­¥ææåç´ çææ°å®ä½ä¿¡æ¯ï¼</li>
-<li>å°å¨æ°çæç<code>pages.yaml</code>åºåæä»¶ä½ä¸ºå¥åï¼ä¼ å¥<code>ui-failure-diagnoser</code>æéè¯æ­ä¿®å¤æè½ï¼</li>
-<li><code>ui-failure-diagnoser</code>ä¼èªå¨å¯¹æ¯æ§çèæ¬ãå®ä½éç½®ãå½åè¿è¡é¡µé¢ DOM å¿«ç§ä¸æ°ç<code>pages.yaml</code>ç­æ°æ®ï¼æºè½è¯å«ææå é¡µé¢åç´ åæ´å¼åçå®ä½å¤±è´¥ç¨ä¾ï¼æ¹éå®æä¿®å¤å¨ä½ï¼</li>
-<li>æ¹éä¿®å¤å®æåï¼å¯ç´æ¥éè¿<code>ui-test-executor</code>æ§è¡è°åº¦æè½éè·å¨éç¨ä¾ï¼éªè¯ææé¡µé¢æ¹çç¸å³ç¼ºé·å¨é¨ä¿®å¤çæã</li>
-</ol>
-<p>æ´å¥æµç¨å¨ç¨æ éäººå·¥éç¹ææ¥ãæå¨ä¿®æ¹ä»£ç ï¼ä»é¡µé¢è§£æãåºåæä»¶æ´æ°å°æ¹éèªå¨ä¿®å¤å¨é¨ç± AI æè½ä¸²èå®æï¼å¤§å¹éä½å¤§è§æ¨¡ UI æ¹çåçèªå¨åç»´æ¤ææ¬ï¼åæ¶è§é¿äººå·¥æ¼æ¹ãæ¹éå¸¦æ¥çèæ¬ä¸ç¨³å®é®é¢ï¼çæ­£å®ç°é¡µé¢è¿­ä»£ä¸èªå¨åèæ¬ç»´æ¤çæ ç¼åæ­¥ã</p>
-<h3 id="èªå¨ä¿®å¤é¡µé¢å è½½flakyé®é¢">èªå¨ä¿®å¤é¡µé¢å è½½Flakyé®é¢</h3>
-<p>ç»è¿ä¸ä¸è½® AI æ¹éèªå¨ä¿®å¤åï¼ææç±é¡µé¢åç´ å®ä½åæ´å¼åçèæ¬æ¥éå·²å¨é¨å¤çå®æ¯ï¼ç»å¤§å¤æ°ä¸å¡ç¨ä¾åå¯æ­£å¸¸ç¨³å®æ§è¡ã</p>
-<p>ä½å¶ä¸­ååæç´¢æ¨¡åç 3 æ¡åæ°åç¨ä¾ï¼åå«ä½¿ç¨ææºãå°ç±³ãæè¡¨ä½ä¸ºæç´¢å³é®è¯ï¼ä¾æ§æç»­æ§è¡å¤±è´¥ï¼è¿ç±»æ¥éååç´ å®ä½å¤±æä¸å±äºåä¸ç±»æéæ ¹æºï¼å±äºå¸åç UI å¼æ­¥å è½½æ¶åºç±» Flaky é®é¢ã</p>
-<p><img src="https://image.kjdaohang.com/img/20260623122035577.png" alt="" loading="lazy"></p>
-<p><strong>ä¸ºä»ä¹æç´¢ææ¶ä¼åºç°æ¥éï¼åå å¶å®å¾ç®åï¼</strong></p>
-<p>å¨èæ¬æ§è¡æç´¢ä¸å¡æµç¨æ¶ï¼æ´ä½æä½æ¶åºå¦ä¸ï¼</p>
-<p><strong>è¾å¥æç´¢å³é®è¯âç¹å»æç´¢æé®åèµ·åç«¯æ¥è¯¢æ¥å£âåç«¯å¼æ­¥è¯·æ±åååè¡¨æ°æ®å¹¶æ¸²æé¡µé¢</strong>ï¼</p>
-<p>èèæ¬åç½®çåºç¡æ­è¨é»è¾å¾å¾å¹¶æ²¡æå¢å éå¯¹æ§çå è½½ç¶æç­å¾å¤æ­ï¼ä»å¨ç¹å»æç´¢åç«å»æ§è¡ç»ææ ¡éªã</p>
-<p>å½ç½ç»å­å¨æ³¢å¨ãæ¥å£ååºå­å¨å è½½å»¶è¿æ¶ï¼åç«¯ååæ°æ®å°æªè¿åãé¡µé¢åååè¡¨ DOM è¿æªå®ææ¸²æï¼é¡µé¢ä¼ç­æå±ç¤º âææ ååâ ç©ºç¶æï¼</p>
-<p>æ­¤æ¶èæ¬ä¼æåè§¦åæ­è¨ï¼å¯¹æ¯é¡µé¢å®æ¶åå®¹ä¸é¢æçåååè¡¨æ°æ®ï¼ç´æ¥å¤å®ç¨ä¾å¤±è´¥ãç®åæ¥è¯´ï¼<strong>é¡µé¢æ°æ®è¿æ²¡å è½½å®æï¼æ­è¨å°±æåæ§è¡ï¼æ¶åºéä½é ææ ¡éªä¸éè¿</strong>ã</p>
-<p>éå¯¹è¿ç±»é¡µé¢å¼æ­¥å è½½Flakyé®é¢ï¼å¯ä»¥ä»ç¶å¯ä»¥ç´æ¥è°ç¨<code>ui-failure-diagnoser</code> æè½ èªå¨å¸®æä»¬ä¿®å¤ã</p>
-<p><img src="https://image.kjdaohang.com/img/20260623151505855.png" alt="" loading="lazy"></p>
-<p><img src="https://image.kjdaohang.com/img/20260623153107865.png" alt="" loading="lazy"></p>
-<p>è¯¥ç±»<strong>å¼æ­¥æ¶åºå è½½é®é¢å¨UI èªå¨åæµè¯ä¸­éå¸¸å¸¸è§ï¼ä¹æ¯UIèªå¨åé«é¢ä¸ç¨³å®ç¨ä¾çæ ¸å¿æ¥æºä¹ä¸</strong>ã</p>
-<p>å³ä¾¿é¡µé¢åç´ éç½®å®å¨æ­£ç¡®ï¼ç½ç»ãæ¥å£ãåç«¯æ¸²æéåº¦çå¾®å°æ³¢å¨é½ä¼å¯¼è´ç¨ä¾å¶åå¤±è´¥ãèä¾é Agent  Skill ä½ç³»çæºè½ç­å¾ç­ç¥ãæéåç±»è¯æ­è½åï¼æ éäººå·¥éè¡ä¿®æ¹æ¯æ¡æç´¢ç¨ä¾ä»£ç ï¼ç±Skillç»ä¸å°è£å¨å±å¼æ­¥ç­å¾é»è¾ï¼ä»åºå±æ¶é¤å è½½å»¶è¿å¯¼è´çæ ¡éªæ¥éï¼å¤§å¹éä½èæ¬ä¸ç¨³å®æ§ã</p>
-<h2 id="äºå°ç»">äºãå°ç»</h2>
-<p>åè¯´è¯´æççå®æåã</p>
-<p><img src="https://image.kjdaohang.com/img/20260824162211424.png" alt="" loading="lazy"></p>
-<p>è¿å¥ä¸è¥¿å®æµç¨ä¸æ¥ï¼ææå¨æçå°æ¹ä¸æ¯ä¿®å¾å¤å¿«ï¼èæ¯ãå¤±è´¥ãè¿ä»¶äºçæ§è´¨åäºã<strong>ä»¥åå¤±è´¥æ¯è´æï¼ä¸ççº¢æ¡æå³çä¸ä¸åçææ¥ï¼ç°å¨å¤±è´¥æ¯æ°æ®ï¼æ¯ä¸æ¡é½æåç±»ãææ ¹å ãæå¤çç»æ</strong>ãè·ä¸å è½®ï¼åªä¸ªæ¨¡åæèå¼±ãåªç±»é®é¢æé¢ç¹ï¼æ¥åç´æ¥æå¨ä½ é¢åãæµè¯å¢éç¬¬ä¸æ¬¡å¯ä»¥æ¿çå¤±è´¥ç»è®¡å»èè´¨éï¼èä¸æ¯æ±çä¸å å¾åå»æç«ã</p>
-<p>ä¹æäººé®æï¼è®© AI å»æ¹æµè¯èæ¬ï¼ä¸æå¤±æ§åã</p>
-<p>ææ°æ°è§å¾ï¼äººèç»´æ¤ææ¯æå®¹æå¤±æ§çé£ç§ãæ¹æ¼äºãæ¹éäºãæçä¸æ¹äºï¼è¿äºæ¯å¤©é½å¨çå®åçï¼èä¸æ²¡æä»»ä½è®°å½ãAI ä¿®å¤åèå¤å¤ççï¼æ¹ä»ä¹æå¤ä»½ï¼æ¹å®èªå¨éè·éªè¯ï¼è·ä¸éèªå·±åæ»ï¼æ¯ä¸æ­¥æä½é½èººå¨å®¡è®¡æ¥å¿éãçè¦è¿½æº¯èµ·æ¥ï¼å®æ¯èªå·±ä¸å¨æ¹äºä»ä¹è®°å¾æ¸æ¥å¾å¤ã</p>
-<p>å½ç¶ï¼è¾¹çå¿é¡»è®²æ¸æ¥ã<code>ui-failure-diagnoser</code> æ¥ç®¡çæ¯ãåç±»ãå®ä½ãä¿®å¤ãéªè¯ãè¿äºæè§åå¯ä¾çæ´»ï¼å®æä¸æ¡ç¡¬çº¦æï¼æ°¸è¿ä¸ç¢°æµè¯ç¨ä¾çæ­è¨åä¸å¡è¯­ä¹ãä¸é¢è¿äºäºï¼ä»ç¶éè¦äººæ¥æå³ã</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">AI è´è´£çäº</th>
-<th style="text-align: left">äººè´è´£çäº</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left">å­ç±»å¤±è´¥èªå¨åç±»</td>
-<td style="text-align: left">æ½æ¥åç±»æ¯å¦åç¡®ï¼å°¤å¶çç¼ºé·é£ä¸æ¡</td>
-</tr>
-<tr>
-<td style="text-align: left">å®ä½æ¼ç§»èªå¨ä¿®å¤</td>
-<td style="text-align: left">Review ä¿®æ¹çå®ä½å¨æ¯å¦ç¬¦åä¸å¡è¯­ä¹</td>
-</tr>
-<tr>
-<td style="text-align: left">ç¯å¢ç¼ºå¤±èªå¨å®è£</td>
-<td style="text-align: left">ç¡®è®¤ CI ç¯å¢çåæ´æ¯å¦ç¬¦åå¢éè§è</td>
-</tr>
-<tr>
-<td style="text-align: left">èæ°æ®èªå¨æ¸ç</td>
-<td style="text-align: left">å¤æ­æ°æ®é®é¢èåçæµç¨æ¼æ´</td>
-</tr>
-<tr>
-<td style="text-align: left">çå®ç¼ºé·ææ å¹¶é«äº®</td>
-<td style="text-align: left">ç¡®è®¤ç¼ºé·ãåæ¸å¤ç°æ­¥éª¤ãæäº¤å¼å</td>
-</tr>
-</tbody>
-</table>
-<p>ç¹å«æéä¸å¥ãã<strong>é¢æå¤±è´¥</strong>ãçæ è®°æ¯åååãAI åºäºæ§å¶å°æ¥éå¤å®çç¼ºé·ï¼åç¡®çå¾é«ï¼ä½<strong>æ è®°æ¬èº«ä¸è½ä»£æ¿ç¡®è®¤</strong>ãæææå¤±è´¥é½æä¸æ è®°è®©æ¥ååç»¿ï¼æ¯ç¨å¦ä¸ç§æ¹å¼æ©çé®é¢ãæ è®°æ¯ç»ææ¥è®©è·¯çï¼ä¸æ¯ç»æ¼æµå¼é¨çã</p>
-<p>åé¡¾ä¸ä¸æ´ä¸ªè¿ç¨ã</p>
-<p><strong>çç¹ã</strong> å¤±è´¥åå é äººçï¼è¯¯å¤ä»£ä»·é«ï¼è¯æ®ä¸ä¼å³èï¼æ¹éå¤±è´¥æ²¡äººæ¥ï¼è¸©åæ²¡è®°å½ï¼ä¿®å¤é äººèã</p>
-<p><strong>æ¹æ¡ã</strong> <code>ui-failure-diagnoser</code> æè¯æ­åºåæãå¤±è´¥å è½½ãåç±»å¤å®ãæ ¹å å®ä½ãèªå¨ä¿®å¤ãéªè¯æ¥åãçäºæ­¥æµç¨ãæä¿¡å·åç±»ä¸é æè§ï¼çè¯æ®å¤æ¹åï¼ä¿®å¤ç´æ¥è½å°å¹¶èªå¨éªè¯ï¼å¨ç¨ççã</p>
-<p><strong>ææã</strong> å®æéçå è½®éªè¯ææè¯´æåãäººå·¥æ¨¡æçå®ä½å¤±æï¼ä¸å¥æä»¤èªå¨ä¿®å¤ï¼è¿æ¹å¨ä½ç½®é½åè¿æ¥åï¼åç«¯å¤§æ¹çå¯¼è´å åä¸ªåç´ æ¹éå¤±æçåºæ¯ï¼æ¥ä¸é¡µé¢è§£ææè½éæ°çæåºåæä»¶ï¼æ´æ¡é¾è·¯ç§æ ·èªå¨è·éï¼è¿æé¡½åºçå¼æ­¥å è½½ flakyï¼ä¹ä»æ ¹ä¸æ²»äºãè¿äºæ´»ä»¥åæ¯ä¸å¤©èµ·æ­¥ï¼ç°å¨æ¯å åéå ä¸ä»½æ¥åã</p>
-<p><strong>è¾¹çã</strong> AI è´è´£è¯æ­åä¿®å¤ï¼äººè´è´£å®æ§åæäº¤ãæ­è¨åä¸å¡è¯­ä¹ï¼æ°¸è¿æ¯äººçé¢å°ã</p>
-<p>å¤§å®¶å¯ä»¥èªå·±æ ¹æ®æ¬ææä¾çæè·¯å¼å skillï¼å¦æéè¦ç°æçæç¨å skillï¼ä¹å¯ä»¥å å¥ã<a href="https://mp.weixin.qq.com/s/o5wAaaJ17hpzyoBvqaKoug" target="_blank" rel="noopener nofollow"><strong>çå¸ . AI è¿åç¤¾</strong></a>ãè·åï¼éé¢æåç±» AI ææ¯è½å°ä¿å§çº§å¾ææç¨ãè§é¢æç¨ï¼åæ¬ AI æµè¯å¨æµç¨çå®ææç¨ï¼ä¿å§çº§æææåé¥­æç¨ï¼è·çæç¨æä½ï¼é¶åºç¡ä¹è½å¿«éä¸æã</p>
-<blockquote>
-<p>æ¸©é¦¨æéï¼ãAI æµè¯ãåªæ¯ AI è¿åç¤¾å«å¤§æè½çåä¹ä¸ã</p>
-</blockquote>
-<p>æåå¤è¯´ä¸å¥ãæä¸ç´è§å¾ï¼UI èªå¨ååä¸ä¸å»çå¢éï¼å¾å°æ¯èæ¬åä¸åºæ¥ï¼å¤§å¤æ¯ç»´æ¤ä¸å¨äºãèæ¬ç»´æ¤åæçæ¶é´ï¼ææ¯æµè¯åå­¦èº«ä¸æè¢«ä½ä¼°çææ¬ãæè¿é¨åäº¤åºå»ï¼äººçæ¶é´æè½åå°çæ­£å¼é±çå°æ¹ï¼çé£é©ãå¤è´¨éãå®ä½åå¸åçé£éé¨ã</p>
-<p>å°è¿éï¼æ§è¡åè¯æ­ä¸¤ç¯é½çé¡ºäºãè·å®æè¯æ®ï¼å¤±è´¥æç»è®ºï¼ä¿®å¤æéªè¯ã</p>
-<p>ä¸ä¸ç¯ï¼æä»¬æè¿äºæä¸æ¥çæ§è¡ç»æãè¯æ­ç»è®ºååå²æ°æ®ï¼äº¤ç» <code>ui-report-generator</code>ï¼åæä¸ä»½è½æ¯æåå¸å³ç­çæµè¯æ¥åãæä»¬ä¸ç¯è§ã</p>
+<p><img src="https://dump-1252523945.cos.ap-shanghai.myqcloud.com/img/image-20260825165926456.png" alt="image-20260825165926456" loading="lazy"></p>
+<p>æçè¯´ï¼æä¸é¢é£ä¸ªæ²¡bomï¼ç»æè¿æ¯æé®é¢ã</p>
+<p>è±ååç»æåæäºä¸ï¼è¿æ¬¡å¯æ¯çåæå°ç¹ä¸äºï¼åæ¥æ¯ç­æ¨ªçº¿æç¹é®é¢ï¼</p>
+<p><img src="https://dump-1252523945.cos.ap-shanghai.myqcloud.com/img/image-20260825170317624.png" alt="image-20260825170317624" loading="lazy"></p>
+<p>ç¶åæå¨éæ°æ²äºä¸ç­æ¨ªçº¿ãè¿ççå¯ä»¥äºãå§æ§½...</p>
+<h2 id="åå­è°æ´">åå­è°æ´</h2>
+<p>matéè¦èªå·±è°æ´ä¸åå­ï¼ä¸ç¶dumpæä»¶å¾å¤§å°±æä¸å¼ï¼</p>
+<p><img src="https://dump-1252523945.cos.ap-shanghai.myqcloud.com/img/image-20260825170740982.png" alt="image-20260825170740982" loading="lazy"></p>
+<h1 id="æ»ç»">æ»ç»</h1>
+<p>ååæçæ¶åï¼æ¾å°äºmatå¯¹åºçgithubï¼åç°readmeéé¢å°±åäºè¦æä¹è®¾ç½®vmï¼ç»æå½æ¶æ²¡çå°è¿ä¸ªé¡µé¢ãæè¾åå¤©ã</p>
+<p><a href="https://github.com/eclipse-mat/mat/wiki/faq" target="_blank" rel="noopener nofollow">https://github.com/eclipse-mat/mat/wiki/faq</a></p>
+<p>è´´ä¸ä¸æè¿çéç½®ï¼</p>
+<pre><code class="language-shell">-vm
+C:/Program Files/Java/jdk-21.0.12/bin/
+-startup
+plugins/org.eclipse.equinox.launcher_1.7.100.v20251111-0406.jar
+--launcher.library
+plugins/org.eclipse.equinox.launcher.win32.win32.x86_64_1.3.0.v20260203-2149
+-vmargs
+--add-exports=java.base/jdk.internal.org.objectweb.asm=ALL-UNNAMED
+-Xmx2048m
+</code></pre>
+<p><img src="https://dump-1252523945.cos.ap-shanghai.myqcloud.com/img/image-20260825170819538.png" alt="image-20260825170819538" loading="lazy"></p>
 
 
-</div>
-<div id="MySignature" role="contentinfo">
-    ææ¯æ¹åä¸çï¼
-         --çè¯ç»å
 </div>
 <div class="clear"></div>
 
             </div>
             <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-08-25 08:41">2026-08-25 08:41</span>&nbsp;
-<a href="https://www.cnblogs.com/jinjiangongzuoshi">çå¸</a>&nbsp;
-éè¯»(<span id="post_view_count">141</span>)&nbsp;
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-08-25 17:10">2026-08-25 17:10</span>&nbsp;
+<a href="https://www.cnblogs.com/grey-wolf">ä¸å½æ¢¦å</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(22668285);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fjinjiangongzuoshi%2Fp%2F22668285&amp;targetId=22668285&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+<a href="javascript:void(0)" onclick="AddToWz(22681409);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fgrey-wolf%2Fp%2F22681409&amp;targetId=22681409&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
