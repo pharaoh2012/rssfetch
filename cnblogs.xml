@@ -3,12 +3,599 @@
     <channel>
         <title><![CDATA[ ä¸»é¡µ - åå®¢å­ ]]></title>
         <link><![CDATA[ https://www.cnblogs.com/ ]]></link>
-        <lastBuildDate>2026-09-14T16:07:27.235Z</lastBuildDate>
+        <lastBuildDate>2026-09-15T00:10:29.042Z</lastBuildDate>
         <description><![CDATA[
         ä¸»é¡µ - åå®¢å­ RSS
     ]]></description>
         <language>zh-cn</language>
         <item>
+    <title><![CDATA[ ä¸æ¬¡RabbitMQéå¯å¼åçç½å³éªå´©å¤ç ]]></title>
+    <link>https://www.cnblogs.com/zhangs1986/p/22947591</link>
+    <guid>451e4f091260295412419d413b7aaff1</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/zhangs1986/p/22947591" title="åå¸äº 2026-09-15 08:00">
+    
+
+    <span role="heading" aria-level="2">ä¸æ¬¡RabbitMQéå¯å¼åçç½å³éªå´©å¤ç</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p><img src="https://img2024.cnblogs.com/blog/273387/202609/273387-20260912170725153-1580399781.png" alt="aafe485de814c29d821bdfedb2695aaf_6dHGAvlTiAAAAAElFTkSuQmCC" loading="lazy"></p>
+<p>æä¸çäº§åè­¦ç¾¤éçªç¶å¼å§å·å±ãç½å³ Pod ä¸æ­éå¯ï¼æå®¢æ·åé¦æä½é¡µé¢æ¶å¥½æ¶åï¼K8s äºä»¶éæ¸ä¸è²çï¼</p>
+<pre><code class="language-Plain">Readiness probe failed: Get "http://192.168.5.1:7888/actuator/health":
+read tcp 192.168.5.90:53038-&gt;192.168.5.1:7888: read: connection reset by peer
+</code></pre>
+<p>æå¼ç½å³çæ¥å¿æ¥çåæ¥æ¯MQè¿ä¸ä¸ï¼ä¸ç´å¨æ¥å¼å¸¸ï¼çªç¶æ³èµ·æ¥ä»æè¿ç»´å¨åMQçåçº§ï¼è¯ä¼°åçº§ä¸è¶è¿3åéï¼ä½ä»¥ç°å¨æåµçå·²ç»è¶è¿8åéï¼ä¹åæåå°management.health.rabbit.enabled ææå·²ç»è®¾æ false äºåãå½æ¶ç¬¬ä¸ååºæ¯ï¼RabbitMQ éå¯è·ä½ ä»¬çå¥åº·æ£æ¥æä»ä¹å³ç³»ï¼</p>
+<p>æå¡æ¡æ¶ï¼çº¿ä¸ Kubernetes éç¾¤è·çä¸å¥å¾®æå¡æ¶æï¼Spring Cloud Gateway åç½å³ï¼base-server ååºç¡æå¡ï¼Nacos åæ³¨åä¸­å¿åéç½®ä¸­å¿ï¼RabbitMQ åæ¶æ¯æ»çº¿ãæ´ä½è·äºå ä¸ªæï¼æ²¡åºè¿ä»ä¹å¤§é®é¢ã</p>
+<p>ç´å°ä»æè¿ç»´é£è¾¹ç RabbitMQ åçº§åäºä¸æ¬¡æ»å¨éå¯ã</p>
+<h2 id="ææ¥ç½å³connection-reset-by-peer">ææ¥ç½å³ï¼connection reset by peer</h2>
+<p>åçæ¥å¿connection reset by peer è¯´æ TCP è¿æ¥è¢« Pod åçè¿ç¨ç´æ¥æç»äºï¼åæ ¸åç RSTãéå¸¸æå³çè¿ç¨è¦ä¹æ²¡å¯å¨å®ï¼è¦ä¹æ ¹æ¬æ²¡è½åå¤çæ°è¿æ¥ã</p>
+<p>podçæ¢éè·¯å¾ /actuator/healthï¼initialDelaySeconds: 40ã40 ç§çå¯å¨å»¶è¿ï¼æ­£å¸¸æåµä¸ç»°ç»°æä½ã</p>
+<p>ä½æ¥å¿éåç°äºè¿ä¹ä¸æ¡ï¼</p>
+<pre><code class="language-Plain">logger: c.j.servicemesh.gateway.service.AccessLogService
+msg: access logs save error:{}
+org.springframework.amqp.AmqpIOException: java.io.IOException
+    at org.springframework.amqp.rabbit.core.RabbitAdmin.initialize(RabbitAdmin.java:591)
+    at org.springframework.amqp.rabbit.connection.CachingConnectionFactory.createConnection(...)
+    ...
+    at com.join.servicemesh.gateway.service.AccessLogService.sendLog(AccessLogService.java:186)
+</code></pre>
+<p>AccessLogService.sendLog() æ¯ä¸ª @Async æ¹æ³ï¼å¾ RabbitMQ åè®¿é®æ¥å¿ãRabbitMQ æäºä¹åï¼amqpTemplate.convertAndSend() ä¸ä¼ç«å»å¤±è´¥ââSpring AMQP åç½®äº RetryTemplateï¼ä¼åå¤éè¯ç­å¾éè¿ï¼åæ¬¡é»å¡å¯ä»¥å¡ 30 å° 60 ç§ã</p>
+<p>è¿æ¬èº«æ²¡ä»ä¹ï¼@Async åï¼å¨ç¬ç«çº¿ç¨æ± éè·ï¼ä¸å½±åä¸»é¾è·¯ã</p>
+<p><strong>ç´å°æå»çäºçº¿ç¨æ± çéç½®ã</strong></p>
+<pre><code class="language-Java">executor.setCorePoolSize(50);
+executor.setMaxPoolSize(100);
+executor.setQueueCapacity(200);
+executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+</code></pre>
+<p>CallerRunsPolicy çå°è¿åä¸ªå­çæ¶åï¼æåºæ¬å°±ç¥éé®é¢åºå¨åªäºã</p>
+<p>çº¿ç¨æ± çæ§è¡é»è¾æ¯è¿æ ·çï¼ååå»ºæ ¸å¿çº¿ç¨ï¼50ä¸ªï¼ï¼æ ¸å¿çº¿ç¨æ»¡äºæ¾éåï¼200ä¸ªï¼ï¼éåæ»¡äºç»§ç»­åå»ºçº¿ç¨ç´å°æå¤§çº¿ç¨æ°ï¼100ä¸ªï¼ãå½çº¿ç¨åéåå¨æ»¡çæ¶åï¼è§¦åæç»ç­ç¥ã</p>
+<p>CallerRunsPolicy çè¡ä¸ºæ¯ï¼<strong>è°æäº¤çä»»å¡ï¼è°èªå·±æ¥æ§è¡ã</strong></p>
+<p>é£æäº¤ä»»å¡çæ¯è°ï¼æ¯ Netty ç Event Loop çº¿ç¨ã</p>
+<p>äºæ¯æéé¾å°±æ¸æ°äºï¼</p>
+<pre><code class="language-Plain">RabbitMQ éå¯
+  â convertAndSend() é»å¡ç­å¾éè¿ï¼30~60ç§ï¼
+  â @Async çº¿ç¨æ± é 100 ä¸ªçº¿ç¨å¨é¨å¡å¨ RabbitMQ ä¸
+  â éåå¡æ»¡ 200 ä¸ªä»»å¡
+  â åæ¥è¯·æ±ï¼è§¦å CallerRunsPolicy
+  â Netty Event Loop çº¿ç¨äº²èªæ§è¡ sendLog()
+  â Event Loop çº¿ç¨ä¹è¢«é»å¡
+  â æ´ä¸ªç½å³æ æ³æ¥åä»»ä½è¿æ¥
+  â K8s æ¢éæè¿æ¥ï¼æ¶å° RST
+  â connection reset by peer
+</code></pre>
+<p>ä¸ä¸ªåæ¥å¿çè¾å©åè½ï¼ææ´ä¸ªç½å³ææ­»äºã</p>
+<p>å¨åºç¡è®¾æ½æå¨æé´ï¼å¦æè¿æ¥æ± æ°å¥½è¢«ææ»¡ï¼è¿æç¤ºå¨éä¾¿åªä¸ªå¡ä¸ä¸ï¼health ç«¯ç¹å°±ååºä¸åºæ¥äºã10 ç§è¶æ¶ä¸å°ï¼K8s å¤å® liveness å¤±è´¥ã</p>
+<p>æ´ä¸¥éçæ¯ liveness å¤±è´¥ä¸æ¯ææµéï¼æ¯<strong>ç´æ¥éå¯ Pod</strong>ãPod éå¯ â å¯å¨è¿ç¨ä¸­ RabbitMQ è¿æ²¡æ¢å¤ â åå¤±è´¥ â æ éå¾ªç¯ã</p>
+<h2 id="æä¹ä¿®å¤">æä¹ä¿®å¤</h2>
+<p><strong>ç¬¬ä¸å¤ï¼çº¿ç¨æ± æç»ç­ç¥æ¹ä¸º DiscardPolicyã</strong></p>
+<pre><code class="language-Java">executor.setRejectedExecutionHandler(new ThreadPoolExecutor.DiscardPolicy());
+</code></pre>
+<p>DiscardPolicy å¨çº¿ç¨æ± æ»¡çæ¶åç´æ¥ä¸¢å¼ä»»å¡ï¼ä¸æå¼å¸¸ï¼ä¸é»å¡è°ç¨èãä¸¢å æ¡è®¿é®æ¥å¿æ æè°ï¼ç½å³çæ ¸å¿èè´£æ¯è½¬åè¯·æ±ï¼ä¸è½å ä¸ºæ¥å¿åä¸åºå»å°±æèªå·±ææäºã</p>
+<p>CallerRunsPolicy éåä»ä¹åºæ¯ï¼è®¢åå¤çãæ¯ä»åè°è¿ç§ä»»å¡å¿é¡»æ§è¡çä¸å¡ãæ¿å®æ¥åæ¥å¿ï¼å±äºç¨å¤§ç®æèå­ï¼è¿æå°äºèªå·±èä¸ã</p>
+<p><strong>ç¬¬äºå¤ï¼convertAndSend å  try-catch éç¦»ã</strong></p>
+<pre><code class="language-Java">try {
+    amqpTemplate.convertAndSend(QueueConstants.QUEUE_ACCESS_LOGS, map);
+} catch (Exception e) {
+    log.warn("access log amqp send failed, will be discarded: {}", e.getMessage());
+}
+</code></pre>
+<p>è¿æ¯ä¸ªååºãå³ä½¿çº¿ç¨æ± æ²¡æ»¡ï¼åä¸ª @Async çº¿ç¨ä¹ä¸åºè¯¥å¨ RabbitMQ éè¿ä¸å¡å¤ªä¹ãcatch ä½å¼å¸¸ï¼å¿«ééæ¾çº¿ç¨ã</p>
+<h2 id="äºåå¤ç">äºåå¤ç</h2>
+<p>1. è¾å©åè½åæ ¸å¿é¾è·¯å¿é¡»ç©çéç¦»</p>
+<p>åæ¥å¿ãæåç¹ãä¸æ¥ææ ï¼è¿äºé½æ¯è¾å©åè½ãå®ä»¬ççº¿ç¨æ± ãè¿æ¥æ± ãè¶æ¶éç½®é½åºè¯¥åæ ¸å¿é¾è·¯éç¦»å¼ãè¿æ¬¡çé®é¢æ¬è´¨ä¸æ¯æ¥å¿åéçé»å¡æ©æ£å°äºè¯·æ±è½¬åçä¸»é¾è·¯ã</p>
+<p>2. CallerRunsPolicy ä¸æ¯ä¸è½è¯</p>
+<p>å¾å¤äººè§å¾ CallerRunsPolicy æ¯ä¸ª"ä¿é©"ç­ç¥ââä»»å¡ä¸ä¼ä¸¢ï¼è¿è½èªå¨ååãä½å¨å¼æ­¥åºæ¯ä¸ï¼å®æä»»å¡åéå°è°ç¨èçº¿ç¨æ§è¡ï¼å¦æè°ç¨èæ¯ Web å®¹å¨çå·¥ä½çº¿ç¨ï¼é£å°±æ¯å¨ç»èªå·±åé·ãéæç»ç­ç¥ä¹åï¼åæ³æ¸æ¥"è°ç¨èçº¿ç¨è¢«é»å¡ä¼ææ ·"ã</p>
+<p>3. å¥åº·æ¢éè¦è¶è½»è¶å¥½</p>
+<p>show-details: ALWAYS æ¯ä¸ªæ¹ä¾¿è°è¯çéç½®ï¼ä½å¨çäº§ç¯å¢éå K8s æ¢éä½¿ç¨ï¼ç­äºç»æ¯æ¬¡å¥åº·æ£æ¥é½å äº N ä¸ªç»ä»¶çè¿éæ§æµè¯ãä»»ä½ä¸ä¸ªç»ä»¶æå¨é½å¯è½å¯¼è´æ¢éè¶æ¶ãæ¢éå°±åºè¯¥æ¯"ä½ è¿æ´»çå"è¿ç§æç®é®é¢ï¼ä¸æ¯"ä½ ææé¶ä»¶é½å¥½å"è¿ç§å¨é¢ä½æ£ã</p>
+<p>4. ä¸ä¸ª RabbitMQ éå¯ä¸åºè¯¥å¯¼è´æå¡éªå´©</p>
+<p>RabbitMQ å¨è¿ä¸ªæ¶æéåªæ¿æè®¿é®æ¥å¿æéåæ¶æ¯æ»çº¿çèè´£ï¼ä¸æ¯æ ¸å¿é¾è·¯ä¸çç»ä»¶ãä½å®çä¸æ¬¡éå¯å¯¼è´äºç½å³ç«çªï¼è¯´æç³»ç»å¯¹éæ ¸å¿ä¾èµçæééç¦»åå¾ä¸å¤ãæ ¸å¿ååï¼<strong>ä»»ä½ä¸ä¸ªéæ ¸å¿ç»ä»¶çæéï¼é½ä¸åºè¯¥å¯¼è´æ ¸å¿æå¡ä¸å¯ç¨ã</strong></p>
+<p>ä¹åç½å³é®é¢ä¹åè¿ãå¹²è´§åäº«Gatewayè¸©åå®å½ï¼Nettyç´æ¥åå­æç½å³åå®äºOutOfDirectMemoryError<br>
+ãï¼ä¸è¿è¿æ¬¡æ¯å¦ä¸ä¸ªé®é¢ãæ¬æ¬¡æç»æ¹å¨éå¾å°ï¼æç»ç­ç¥ã try-catchãä½å®ä½é®é¢çè¿ç¨ï¼æçº¿ç¨æ± æ¨¡åãNetty Event LoopãSpring AMQP éè¿æºå¶ãK8s æ¢éè¡ä¸ºé½è¿äºä¸éãææ¶åä¿®å¤ä¸ä¸ªçº¿ä¸é®é¢ï¼æ¹çä»£ç ä¸è¶è¿åè¡ï¼ä½çè§£è¿åè¡ä¸ºä»ä¹è¦æ¹ï¼å¯è½éè¦ä¸æ´ä¸ªä¸åã</p>
+
+
+</div>
+<div id="MySignature" role="contentinfo">
+    <div style="background: rgb(230, 250, 230); padding: 10px 10px 10px 10px; border: 1px dashed rgb(224, 224, 224); font-family: å¾®è½¯éé»; font-size: 13px">
+ä½èï¼<a href="http://www.cnblogs.com/zhangs1986/" target="_blank">ä¸ä¸ªç åçæ¥å¸¸</a>
+<br>å¬ä¼å·ãä¸ä¸ªç åçæ¥å¸¸ã
+
+<br>
+åºå¤ï¼<a href="http://zhangs1986.cnblogs.com/" target="_blank">http://zhangs1986.cnblogs.com/</a>
+<br>
+ç äºï¼<a href="https://gitee.com/huanzui" target="_blank">https://gitee.com/huanzui</a>
+<br>
+æ¬æçæå½ä½èååå®¢å­å±æï¼æ¬¢è¿è½¬è½½ï¼ä½æªç»ä½èåæå¿é¡»ä¿çæ­¤æ®µå£°æï¼ä¸å¨æç« é¡µé¢ææ¾ä½ç½®ç»åºåæè¿æ¥ï¼å¦åä¿çè¿½ç©¶æ³å¾è´£ä»»çæå©ã
+
+ 
+<div style="position: fixed; right: 140px; bottom: 40px" id="div_diggc">            
+    <div class="diggit" style="height: 25px; background-image: none; color: #FFFFFF; background-color: #2DAEBF; border: medium none; font-weight: bold; text-decoration: none">
+        <span class="diggnum"><a style="color: #FFFFFF; font-size: 12pt" href="#top">Top</a></span>         
+    </div>            
+</div>
+ 
+</div>
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-09-15 08:00">2026-09-15 08:00</span>&nbsp;
+<a href="https://www.cnblogs.com/zhangs1986">ä¸ä¸ªç åçæ¥å¸¸</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(22947591);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fzhangs1986%2Fp%2F22947591&amp;targetId=22947591&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ åéç¸ä¼¼åº¦ãæ··åç¸ä¼¼åº¦ãå³é®è¯ç¸ä¼¼åº¦ççè§£ ]]></title>
+    <link>https://www.cnblogs.com/zjdxr-up/p/22965538</link>
+    <guid>7d281085e54a51da174d05c9d59299ed</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/zjdxr-up/p/22965538" title="åå¸äº 2026-09-15 07:25">
+    
+
+    <span role="heading" aria-level="2">åéç¸ä¼¼åº¦ãæ··åç¸ä¼¼åº¦ãå³é®è¯ç¸ä¼¼åº¦ççè§£</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>è¿ä¸ä¸ªæ¦å¿µæ¯ç¥è¯åºæ£ç´¢å RAG ç³»ç»éææ ¸å¿çå¹éç­ç¥ãçè§£å®ä»¬ï¼å³é®è¦æä½ä¸ä¸ªæ ¸å¿é®é¢ï¼<strong>æä¹å¤æ­ä¸¤æ®µæå­âåä¸åâï¼</strong></p>
+<h3 id="-ä¸å¥è¯çè§£ä¸è">ð¯ ä¸å¥è¯çè§£ä¸è</h3>
+<ul>
+<li><strong>å³é®è¯ç¸ä¼¼åº¦</strong>ï¼çä¸¤æ®µæå­<strong>ææ²¡æç¸åçè¯</strong>ãåæ¥å­å¸ï¼æå­é¢å¹éã</li>
+<li><strong>åéç¸ä¼¼åº¦</strong>ï¼çä¸¤æ®µæå­<strong>ææåä¸å</strong>ãåçè§£è¯­ä¹ï¼æå«ä¹å¹éã</li>
+<li><strong>æ··åç¸ä¼¼åº¦</strong>ï¼æä¸é¢ä¸¤ç§<strong>ç»åèµ·æ¥</strong>ï¼æ¢çå­é¢åçè¯­ä¹ï¼åé¿è¡¥ç­ã</li>
+</ul>
+<h3 id="-å³é®è¯ç¸ä¼¼åº¦keyword-similarity">ð å³é®è¯ç¸ä¼¼åº¦ï¼Keyword Similarityï¼</h3>
+<p><strong>æ¯ä»ä¹</strong>ï¼åºäºå­é¢è¯æ±çå¹éãå®æææ¬çæè¯çéåï¼éè¿ç»è®¡å±ååºç°çè¯æ¥å¤æ­ç¸ä¼¼ç¨åº¦ãæç»å¸çæ¯ <strong>BM25</strong> ç®æ³ï¼ä»¥åæ©æç TF-IDFã</p>
+<p><strong>æä¹çè§£</strong>ï¼å°±åä½ ç¨ Ctrl+F å¨ææ¡£éæå³é®è¯ãä¸¤æ®µæå­å±æçè¯è¶å¤ãè¿äºè¯è¶éè¦ï¼è¶ç½è§ï¼ï¼ç¸ä¼¼åº¦å°±è¶é«ãå®<strong>ä¸çè§£è¯­ä¹</strong>ï¼åªè®¤å­é¢ã</p>
+<p><strong>ç¤ºä¾</strong>ï¼</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left">ææ¬ A</th>
+<th style="text-align: left">ææ¬ B</th>
+<th style="text-align: left">å³é®è¯ç¸ä¼¼åº¦</th>
+<th style="text-align: left">åå </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left">âè¹æææºçµæ± ç»­èªâ</td>
+<td style="text-align: left">âiPhone çµæ± è½ç¨å¤ä¹â</td>
+<td style="text-align: left"><strong>ä½</strong></td>
+<td style="text-align: left">åªæâçµæ± âä¸ä¸ªè¯éåï¼âè¹æâåâiPhoneâå­é¢ä¸å</td>
+</tr>
+<tr>
+<td style="text-align: left">âè¹æææºçµæ± ç»­èªâ</td>
+<td style="text-align: left">âè¹æææºçµæ± å®¹éâ</td>
+<td style="text-align: left"><strong>é«</strong></td>
+<td style="text-align: left">å±æâè¹æââææºââçµæ± âä¸ä¸ªè¯</td>
+</tr>
+<tr>
+<td style="text-align: left">âå¦ä½éæ¬¾â</td>
+<td style="text-align: left">âæä¹éè´§â</td>
+<td style="text-align: left"><strong>ä½</strong></td>
+<td style="text-align: left">å­é¢å ä¹æ²¡æéåè¯</td>
+</tr>
+</tbody>
+</table>
+<p><strong>ä¼ç¹</strong>ï¼ç²¾ç¡®ãå¯è§£éãå¯¹ç½è§è¯åä¸æåè¯ï¼å¦åå·ãä»£ç ãäººåï¼éå¸¸ææã<br>
+<strong>ç¼ºç¹</strong>ï¼æ æ³å¤çåä¹è¯ãè¿ä¹è¯ãæ¢ä¸ç§è¯´æ³çæåµã</p>
+<h3 id="-åéç¸ä¼¼åº¦vector-similarity">ð§  åéç¸ä¼¼åº¦ï¼Vector Similarityï¼</h3>
+<p><strong>æ¯ä»ä¹</strong>ï¼åºäºè¯­ä¹çå¹éãå®æææ¬éè¿ Embedding æ¨¡åè½¬æ¢æä¸ä¸²æ°å­ï¼åéï¼ï¼åè®¡ç®ä¸¤ä¸ªåéå¨ç©ºé´ä¸­çè·ç¦»æå¤¹è§ãå¸¸ç¨ç®æ³æ¯<strong>ä½å¼¦ç¸ä¼¼åº¦</strong>ã</p>
+<p><strong>æä¹çè§£</strong>ï¼ææ¯æ®µæå­æ³è±¡æé«ç»´ç©ºé´éçä¸ä¸ªç¹ï¼ææç¸è¿çæå­ï¼å®ä»¬çç¹å°±é å¾è¿ãå®<strong>çè§£è¯­ä¹</strong>ï¼ä½å¯è½å¿½ç¥ç²¾ç¡®çå­é¢ç»èã</p>
+<p><strong>ç¤ºä¾</strong>ï¼</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left">ææ¬ A</th>
+<th style="text-align: left">ææ¬ B</th>
+<th style="text-align: left">åéç¸ä¼¼åº¦</th>
+<th style="text-align: left">åå </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left">âè¹æææºçµæ± ç»­èªâ</td>
+<td style="text-align: left">âiPhone çµæ± è½ç¨å¤ä¹â</td>
+<td style="text-align: left"><strong>é«</strong></td>
+<td style="text-align: left">è¯­ä¹ä¸é½å¨é®ææºçµæ± ä½¿ç¨æ¶é¿</td>
+</tr>
+<tr>
+<td style="text-align: left">âå¦ä½éæ¬¾â</td>
+<td style="text-align: left">âæä¹éè´§â</td>
+<td style="text-align: left"><strong>é«</strong></td>
+<td style="text-align: left">è¯­ä¹ä¸é½æ¯æ³éæåå</td>
+</tr>
+<tr>
+<td style="text-align: left">âè¹æææºçµæ± ç»­èªâ</td>
+<td style="text-align: left">âè¹æå¬å¸è´¢æ¥â</td>
+<td style="text-align: left"><strong>ä½</strong></td>
+<td style="text-align: left">è½ç¶é½æâè¹æâï¼ä½è¯­ä¹ä¸»é¢å®å¨ä¸å</td>
+</tr>
+</tbody>
+</table>
+<p><strong>ä¼ç¹</strong>ï¼è½å¤çåä¹è¯ãæ¢è¿°ãè·¨è¯­è¨å¹éï¼çè§£è½åå¼ºã<br>
+<strong>ç¼ºç¹</strong>ï¼å¯¹ç²¾ç¡®çä¸æåè¯ãæ°å­ãä»£ç ä¸ææï¼å¯è½åºç°âè¯­ä¹ç¸è¿ä½äºå®éè¯¯âçå¹éï¼ä¾èµ Embedding æ¨¡åçè´¨éã</p>
+<h3 id="-æ··åç¸ä¼¼åº¦hybrid-similarity">ð æ··åç¸ä¼¼åº¦ï¼Hybrid Similarityï¼</h3>
+<p><strong>æ¯ä»ä¹</strong>ï¼æå³é®è¯ç¸ä¼¼åº¦ååéç¸ä¼¼åº¦<strong>ç»åèµ·æ¥</strong>ï¼éå¸¸åæ³æ¯åå«è®¡ç®ä¸¤ç§åæ°ï¼åéè¿å æææåºèåï¼å¦ RRFï¼Reciprocal Rank Fusionï¼å¾å°æç»ç»æã</p>
+<p><strong>æä¹çè§£</strong>ï¼ç¸å½äºåæ¶æ´¾ä¸¤ä¸ªæ£ç´¢åå»æ¾èµæââä¸ä¸ªæå­é¢æ¾ï¼ä¸ä¸ªæè¯­ä¹æ¾ï¼æåæä¸¤äººçç»æåå¹¶æåºãè¿æ ·æ¢è½æä½ç²¾ç¡®å¹éï¼åä¸æ¼æè¯­ä¹ç¸å³çåå®¹ã</p>
+<p><strong>ç¤ºä¾</strong>ï¼</p>
+<p>åè®¾ç¥è¯åºéæä¸æ®µææ¡£ï¼ç¨æ·é®âiPhone çµæ± ç»­èªæä¹æ ·âï¼</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left">ææ¡£</th>
+<th style="text-align: left">å³é®è¯åæ°</th>
+<th style="text-align: left">åéåæ°</th>
+<th style="text-align: left">æ··åå</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left">âiPhone çµæ± ç»­èªå®æµâ</td>
+<td style="text-align: left">é«</td>
+<td style="text-align: left">é«</td>
+<td style="text-align: left"><strong>æé«</strong></td>
+</tr>
+<tr>
+<td style="text-align: left">âè¹æææºçµæ± è½ç¨å¤ä¹â</td>
+<td style="text-align: left">ä½ï¼å­é¢ä¸åï¼</td>
+<td style="text-align: left">é«ï¼è¯­ä¹ç¸è¿ï¼</td>
+<td style="text-align: left"><strong>è¾é«</strong></td>
+</tr>
+<tr>
+<td style="text-align: left">âè¹æå¬å¸åå¸æ°è´¢æ¥â</td>
+<td style="text-align: left">ä½</td>
+<td style="text-align: left">ä½</td>
+<td style="text-align: left"><strong>æä½</strong></td>
+</tr>
+</tbody>
+</table>
+<p>å¦æåªç¨å³é®è¯ï¼ç¬¬äºæ®µä¼è¢«æ¼æï¼å¦æåªç¨åéï¼å¯è½æç¬¬ä¸æ®µè¯¯å¤ãæ··åç­ç¥è½åæ¶é¿åè¿ä¸¤ä¸ªé®é¢ã</p>
+<p><strong>ä¼ç¹</strong>ï¼å¼é¡¾ç²¾ç¡®æ§åè¯­ä¹çè§£ï¼æ¯ç®å RAG ç³»ç»çä¸»æµæ¹æ¡ã<br>
+<strong>ç¼ºç¹</strong>ï¼å®ç°æ´å¤æï¼éè¦è°æéãååæ°å½ä¸åï¼è®¡ç®ææ¬ä¹æ´é«ã</p>
+<h3 id="-ä¸èå¯¹æ¯æ»ç»">ð ä¸èå¯¹æ¯æ»ç»</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left">ç»´åº¦</th>
+<th style="text-align: left">å³é®è¯ç¸ä¼¼åº¦</th>
+<th style="text-align: left">åéç¸ä¼¼åº¦</th>
+<th style="text-align: left">æ··åç¸ä¼¼åº¦</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left"><strong>å¹éä¾æ®</strong></td>
+<td style="text-align: left">å­é¢è¯æ±</td>
+<td style="text-align: left">è¯­ä¹å«ä¹</td>
+<td style="text-align: left">ä¸¤èç»å</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>å¸åç®æ³</strong></td>
+<td style="text-align: left">BM25ãTF-IDF</td>
+<td style="text-align: left">ä½å¼¦ç¸ä¼¼åº¦ãEmbedding</td>
+<td style="text-align: left">RRFãå æèå</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>åä¹è¯å¤ç</strong></td>
+<td style="text-align: left">å·®</td>
+<td style="text-align: left">å¥½</td>
+<td style="text-align: left">å¥½</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>ä¸æåè¯/æ°å­</strong></td>
+<td style="text-align: left">å¥½</td>
+<td style="text-align: left">å·®</td>
+<td style="text-align: left">å¥½</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>å¯è§£éæ§</strong></td>
+<td style="text-align: left">å¼º</td>
+<td style="text-align: left">å¼±</td>
+<td style="text-align: left">ä¸­</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>è®¡ç®ææ¬</strong></td>
+<td style="text-align: left">ä½</td>
+<td style="text-align: left">ä¸­é«</td>
+<td style="text-align: left">é«</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>å¸ååºæ¯</strong></td>
+<td style="text-align: left">ç²¾ç¡®æç´¢ãä»£ç æ£ç´¢</td>
+<td style="text-align: left">è¯­ä¹é®ç­ãè·¨è¯­è¨</td>
+<td style="text-align: left">çäº§çº§ RAG</td>
+</tr>
+</tbody>
+</table>
+<h3 id="-å®éåºç¨ä¸­æä¹é">ð¡ å®éåºç¨ä¸­æä¹é</h3>
+<ul>
+<li><strong>åªç¨å³é®è¯</strong>ï¼éåå¯¹ç²¾ç¡®æ§è¦æ±æé«çåºæ¯ï¼æ¯å¦æä»£ç ãææ³å¾æ¡æãæäº§ååå·ã</li>
+<li><strong>åªç¨åé</strong>ï¼éåå¼æ¾å¼çè¯­ä¹é®ç­ï¼æ¯å¦å®¢ææºå¨äººãç¥è¯åºé®ç­ã</li>
+<li><strong>ç¨æ··å</strong>ï¼çäº§ç¯å¢ç RAG ç³»ç»éå¸¸é»è®¤éè¿ä¸ªï¼å ä¸ºçå®ç¨æ·çæé®æ¹å¼ååä¸åï¼åä¸ç­ç¥å¾é¾è¦çå¨ã</li>
+</ul>
+<p>ä¸ä¸ªå¸¸è§çè½å°åæ³æ¯ï¼<strong>åç¨æ··åç¸ä¼¼åº¦å¬åä¸æ¹åéææ¡£ï¼åç¨ Rerank æ¨¡ååç²¾æ</strong>ï¼è¿æ ·æ¢è½ä¿è¯å¬åçï¼åè½æåæç»æåºçåç¡®æ§ã</p>
+
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-09-15 07:25">2026-09-15 07:25</span>&nbsp;
+<a href="https://www.cnblogs.com/zjdxr-up">æªæ¥AIç¬è®°</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(22965538);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fzjdxr-up%2Fp%2F22965538&amp;targetId=22965538&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ Linux æ¥å¿ç¥å¨ journalctl å®å¨æåï¼å½»åºæ¿ä»£ä¼ ç»æ¥å¿æ¥çæ¹å¼ ]]></title>
+    <link>https://www.cnblogs.com/swizard/p/22974770</link>
+    <guid>1d7a833930bef21f3a5dfac44de179f1</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/swizard/p/22974770" title="åå¸äº 2026-09-15 06:24">
+    
+
+    <span role="heading" aria-level="2">Linux æ¥å¿ç¥å¨ journalctl å®å¨æåï¼å½»åºæ¿ä»£ä¼ ç»æ¥å¿æ¥çæ¹å¼</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
+<div data-page-id="EXtIdz4Opo2yjpxCLhIcQqFZnTc" data-lark-html-role="root" data-docx-has-block-data="true">
+<div class="ace-line ace-line old-record-id-EXtIdz4Opo2yjpxCLhIcQqFZnTc">&nbsp;</div>
+<div class="ace-line ace-line old-record-id-ZcgOfUsujdXfGNcxukXcosVxnpf">å¨ CentOS 7+ãUbuntu 16.04+ ç°ä»£ Linux ç³»ç»ä¸­ï¼<code>systemd</code> æ¥ç®¡äºç³»ç»åæå¡çææç®¡çå·¥ä½ï¼åæ¶å¸¦æ¥äºå¨æ°çæ¥å¿ç®¡çå·¥å· <strong>journalctl</strong>ã</div>
+<div class="ace-line ace-line old-record-id-DqcafxkcVd51fFcvmTmcHFmgn2b">ä»¥å¾æä»¬ææ¥é®é¢ï¼éè¦æ¨ä¸ªæ¥ç<code>/var/log/messages</code>ã<code>/var/log/nginx</code>ã<code>/var/log/secure</code> ç­é¶æ£æ¥å¿æä»¶ï¼æä¹±ä¸ä½æãè <strong>journalctl ç»ä¸æ¶éç³»ç»ãåæ ¸ãæææå¡ãç¨åºçæ¥å¿</strong>ï¼æ¯æç²¾åè¿æ»¤ãæ¶é´åæº¯ãå®æ¶çæ§ãæ¥å¿å½æ¡£ï¼æ¯è¿ç»´ãåç«¯å¼åææ¥æå¡å¨é®é¢çå¿å¤ç¥å¨ã</div>
+<div class="ace-line ace-line old-record-id-IaQYfqgyudgy1ZcqoDQcTM9bn6e">æ¬ææ´ç <strong>é¶åºç¡å¥é¨ â é«é¢å®æ â çäº§åºæ¯ â æ¥å¿æ¸çä¼å</strong> å¨å¥ç¨æ³ï¼çå®ç´æ¥åå«ä¼ ç»æ¥å¿ææ¥æ¹å¼ã</div>
+<h2 class="heading-2 ace-line old-record-id-FCOdfkC7Ndae0scCE6QcvKTDnhe">ä¸ãjournalctl æ¯ä»ä¹ï¼æ ¸å¿ä¼å¿</h2>
+<h3 class="heading-3 ace-line old-record-id-EpPFfcvxRdVoExcD5ClcFJrbnEd">1. å·¥ä½åç</h3>
+<div class="ace-line ace-line old-record-id-LhpgfaqLtdm96IcXfQecWFSNnzg"><code>journalctl</code> æ¯ systemd éå¥çæ¥å¿æ¥çå·¥å·ï¼ç³»ç»ææç»ä»¶çæ¥å¿é½ä¼ç»ä¸åå¥ <code>/var/log/journal/</code> äºè¿å¶æ¥å¿æä»¶ï¼ä¸åæ£è½åå¤ã</div>
+<div class="ace-line ace-line old-record-id-ActGfc3lQdFADtcPwmxclDm5nwg">åºå«äºä¼ ç»ææ¬æ¥å¿ï¼å®å­å¨çæ¯<strong>ç»æåäºè¿å¶æ¥å¿</strong>ï¼èªå¸¦åæ°æ®ï¼æå¡åãè¿ç¨IDãç¨æ·IDãæ¥å¿çº§å«ãæ¶é´æ³ï¼ï¼æ¯æç²¾åç­éï¼æçè¿è¶ grep ææ¬æ£ç´¢ã</div>
+<h3 class="heading-3 ace-line old-record-id-YuY7fybZQdBQl1cVWVbcg8DSnWe">2. æ ¸å¿ä¼å¿</h3>
+<ul class="list-bullet1">
+<li class="ace-line ace-line old-record-id-MtfRf5wY1dmXdzckHVAcmGARnNb" data-list="bullet">
+<div><strong>ç»ä¸ç®¡ç</strong>ï¼ç³»ç»æ¥å¿ãåæ ¸æ¥å¿ãææèªå®ä¹æå¡æ¥å¿å¨é¨æ´å</div>
+</li>
+<li class="ace-line ace-line old-record-id-Y2wLfK9qndVwX5cDolFck0z8nRh" data-list="bullet">
+<div><strong>ç²¾åè¿æ»¤</strong>ï¼ææå¡ãæ¶é´ãæ¥å¿çº§å«ãè¿ç¨ãç¨æ·ç²¾åç­é</div>
+</li>
+<li class="ace-line ace-line old-record-id-M9nLfzgaqdh5hmcYo1UcbRT2n6d" data-list="bullet">
+<div><strong>å¼æºåæº¯</strong>ï¼å¯æ¥çåå²å¼æºçæ¥å¿ï¼ææ¥å¼æºå¯å¨æé</div>
+</li>
+<li class="ace-line ace-line old-record-id-M711fVeA5daqYYcyaIWcc0pXnCh" data-list="bullet">
+<div><strong>å®æ¶çæ§</strong>ï¼ç±»ä¼¼ tail -fï¼å®æ¶è¾åºææ°æ¥å¿</div>
+</li>
+<li class="ace-line ace-line old-record-id-CyMcfh4CsdtsEjcgt1ycbdF4nhh" data-list="bullet">
+<div><strong>èªå¨å½æ¡£</strong>ï¼æ¯æéå¶æ¥å¿å¤§å°ãè¿æèªå¨æ¸çï¼é¿åç£ççæ»¡</div>
+</li>
+</ul>
+<h2 class="heading-2 ace-line old-record-id-Mt3JfOjcSda5o5c7C5lcLX12nWc">äºãåºç¡å¥é¨ï¼æç®åçæ¥çå½ä»¤</h2>
+<h3 class="heading-3 ace-line old-record-id-ZFZAf0rbcd6ke4cuMtCcD67YnHh">1. æ¥çå¨é¨ç³»ç»æ¥å¿</h3>
+<div class="ace-line ace-line old-record-id-Hh4ifxyLKdByZ1cZALQc31v1nzc">ç´æ¥æ§è¡å½ä»¤ï¼è¾åºç³»ç»æææ¥å¿ï¼ææ¶é´æ­£åºå±ç¤ºï¼æ§æ¥å¿å¨åï¼æ°æ¥å¿å¨åï¼ï¼</div>
+<pre class="ace-line old-record-id-XVrLfe0BtdII3vchLKlc5ItBnhf highlighter-hljs">&nbsp;</pre>
+<div>journalctl</div>
+<pre class="ace-line old-record-id-XVrLfe0BtdII3vchLKlc5ItBnhf highlighter-hljs">&nbsp;</pre>
+<div class="ace-line ace-line old-record-id-TRXSf6Yggd11Njc4agOcWb0Onjd">é»è®¤è¿å¥åé¡µæ¨¡å¼ï¼æä½å¿«æ·é®ï¼</div>
+<ul class="list-bullet1">
+<li class="ace-line ace-line old-record-id-LN6YfaA6kdPOuacKthIcdUQGnBe" data-list="bullet">
+<div>ç©ºæ ¼ï¼ç¿»é¡µ</div>
+</li>
+<li class="ace-line ace-line old-record-id-HVmaf4vzadJrm5cfyvLc34Yrn4g" data-list="bullet">
+<div>åè½¦ï¼éè¡ä¸æ»</div>
+</li>
+<li class="ace-line ace-line old-record-id-Q990fYcQLdBVEacNIHycEyj5n9c" data-list="bullet">
+<div>qï¼éåºæ¥ç</div>
+</li>
+</ul>
+<h3 class="heading-3 ace-line old-record-id-TkpUfHOindhj7RcduRvc3BcGnPf">2. ååºæ¥çï¼ææ°æ¥å¿å¨åï¼</h3>
+<div class="ace-line ace-line old-record-id-FCngfkKu9dVM6HcvkVfclFGmnSh">é»è®¤æ¥å¿ä»æ§å°æ°ï¼ææ¥é®é¢ä¸æ¹ä¾¿ï¼<code>-r</code> åæ°ååè¾åºï¼ææ°æ¥å¿ä¼åå±ç¤ºï¼</div>
+<pre class="ace-line old-record-id-V8XyfrW52dP7gwcwXfOcfVppnfe highlighter-hljs">&nbsp;</pre>
+<div>journalctl -r</div>
+<pre class="ace-line old-record-id-V8XyfrW52dP7gwcwXfOcfVppnfe highlighter-hljs">&nbsp;</pre>
+<h3 class="heading-3 ace-line old-record-id-XrTOfElGpdCSfvcMFy5cXzFonzf">3. æ¥çæè¿ N è¡æ¥å¿</h3>
+<div class="ace-line ace-line old-record-id-OKHafadMHdLrR1cniwfcbMjDnce">ç­ä»·äº tail å½ä»¤ï¼å¿«éæ¥çææ°æ¥å¿ï¼</div>
+<pre class="ace-line old-record-id-SyMEfLel5duOU1c4f3ccnaEknac highlighter-hljs">&nbsp;</pre>
+<div># æ¥çæå100è¡æ¥å¿ journalctl -n 100 # é»è®¤æ¥çæå10è¡ journalctl -n</div>
+<pre class="ace-line old-record-id-SyMEfLel5duOU1c4f3ccnaEknac highlighter-hljs">&nbsp;</pre>
+<h3 class="heading-3 ace-line old-record-id-XPWzfQ1O5dkDeCcHPuacgz9Vndg">4. å®æ¶çæ§æ¥å¿ï¼é«é¢å¸¸ç¨ï¼</h3>
+<div class="ace-line ace-line old-record-id-GNxKfjRd3dvx3ncvjgkc59dDnTe">ç­ä»·äº <code>tail -f</code>ï¼å®æ¶å·æ°ææ°æ¥å¿ï¼éåå¨æææ¥æå¡æ¥éï¼</div>
+<pre class="ace-line old-record-id-LxLJfSNDrdO01Zcb5mbccxdVnad highlighter-hljs">&nbsp;</pre>
+<div>journalctl -f</div>
+<pre class="ace-line old-record-id-LxLJfSNDrdO01Zcb5mbccxdVnad highlighter-hljs">&nbsp;</pre>
+<h2 class="heading-2 ace-line old-record-id-RM8wfoOZedUMiUcPOD7c7EpFn3e">ä¸ãæ ¸å¿è¿é¶ï¼ç²¾åè¿æ»¤æ¥å¿ï¼çäº§å¿å¤ï¼</h2>
+<h3 class="heading-3 ace-line old-record-id-SiVLfgglzdJYJYciOjwceJysn14">1. ææå¡ç­éæ¥å¿ï¼æå¸¸ç¨ï¼</h3>
+<div class="ace-line ace-line old-record-id-JN3Rf0jmtdozRPczwryciZIgnJe">éè¿ <code>-u</code> åæ°æå® systemd æå¡ï¼åªæ¥çå¯¹åºæå¡æ¥å¿ï¼ç²¾åå®ä½é®é¢ãæ¯æ NginxãMySQLãSSHãèªå®ä¹åå°æå¡ç­ã</div>
+<pre class="ace-line old-record-id-L55rfzojudQHxccVq1QcnzOknqc highlighter-hljs">&nbsp;</pre>
+<div># æ¥ç nginx æå¡å¨é¨æ¥å¿ journalctl -u nginx.service # æ¥ç ssh æå¡å®æ¶æ¥å¿ journalctl -u sshd.service -f # åæ¶æ¥çå¤ä¸ªæå¡æ¥å¿ journalctl -u nginx -u mysql</div>
+<pre class="ace-line old-record-id-L55rfzojudQHxccVq1QcnzOknqc highlighter-hljs">&nbsp;</pre>
+<div class="ace-line ace-line old-record-id-AliMfmv3gdcZ5gcsThac8XfFn9c">ð¡ æ­é <code>systemctl status æå¡å</code>ï¼åçæå¡ç¶æï¼åç¨ journalctl æ¥è¯¦ç»æ¥éï¼æ¯ææ¥æå¡å¼å¸¸çæ åæµç¨ã</div>
+<h3 class="heading-3 ace-line old-record-id-LXogf7KSgdIsEFciXMec6fKOnmf">2. ææ¶é´èå´ç­é</h3>
+<div class="ace-line ace-line old-record-id-PQhnfA1YadFW0LcliXRcK2iDnWe">æ¯æäººæ§åæ¶é´è¯­æ³ï¼æ éè®¡ç®æ¶é´æ³ï¼çµæ´»ç­éæå®æ¶æ®µæ¥å¿ï¼</div>
+<pre class="ace-line old-record-id-NDgifqBuqdI60Ic7LKsce8hbnlb highlighter-hljs">&nbsp;</pre>
+<div># æ¥çä»å¤©æææ¥å¿ journalctl --since today # æ¥çæè¿1å°æ¶æ¥å¿ journalctl --since "1 hour ago" # æ¥çæ¨å¤©çæ¥å¿ journalctl --since yesterday --until today # æå®ç²¾ç¡®æ¶é´èå´ journalctl --since "2026-09-01 10:00:00" --until "2026-09-01 12:00:00"</div>
+<pre class="ace-line old-record-id-NDgifqBuqdI60Ic7LKsce8hbnlb highlighter-hljs">&nbsp;</pre>
+<h3 class="heading-3 ace-line old-record-id-NRyqfnvVbdjeM1cT9mXcZ1w9nPc">3. ææ¥å¿çº§å«ç­éï¼åªçæ¥éï¼</h3>
+<div class="ace-line ace-line old-record-id-RV1efSDX1dSuFLcgmF0cGnmZnxc">éè¿ <code>-p</code> åæ°è¿æ»¤æ¥å¿ç­çº§ï¼ææ¥é®é¢æ¶ç´æ¥è¿æ»¤æ æä¿¡æ¯ï¼åªçéè¯¯ãè­¦åæ¥å¿ã</div>
+<div class="ace-line ace-line old-record-id-ALYpfbwR1dhJtXcxaxtcHDiTnYd">æ¥å¿çº§å«ä¼åçº§ï¼ä»ä½å°é«ï¼ï¼<code>debug &lt; info &lt; notice &lt; warning &lt; err &lt; crit &lt; alert &lt; emerg</code></div>
+<pre class="ace-line old-record-id-VZHBfG7L6dNZyvc3HhbckEUFnzf highlighter-hljs">&nbsp;</pre>
+<div># åªæ¥çéè¯¯åä»¥ä¸çº§å«æ¥å¿ï¼çäº§ææ¥é¦éï¼ journalctl -p err # æ¥çè­¦åãéè¯¯æ¥å¿ journalctl -p warning # ç»åæå¡+æ¶é´+éè¯¯çº§å«ï¼ç²¾åææ¥ journalctl -u nginx --since "1 hour ago" -p err</div>
+<pre class="ace-line old-record-id-VZHBfG7L6dNZyvc3HhbckEUFnzf highlighter-hljs">&nbsp;</pre>
+<h3 class="heading-3 ace-line old-record-id-B6lefy0Wed8Jd2cNRorcUiNFnGe">4. æå¼æºæ¹æ¬¡ç­éæ¥å¿</h3>
+<div class="ace-line ace-line old-record-id-JJH1fBwTGdHMMNcBsHXcrOK8nVe">æå¡å¨éå¯åï¼æ§æ¥å¿ä¸ä¼ä¸¢å¤±ï¼å¯éè¿å¼æºæ¹æ¬¡åæº¯åå²å¯å¨æ¥å¿ï¼ä¸æ²»<strong>å¼æºå¯å¨å¤±è´¥ãéå¯æ¥é</strong>é®é¢ã</div>
+<pre class="ace-line old-record-id-Hf4NfIFWtdkJ2OcPqdLcDXlSnte highlighter-hljs">&nbsp;</pre>
+<div># æ¥çææå¼æºè®°å½ journalctl --list-boots # æ¥çæ¬æ¬¡å¼æºä»¥æ¥çæææ¥å¿ journalctl -b # æ¥çä¸ä¸æ¬¡å¼æºçæ¥å¿ï¼ææ¥éå¯åçæ¥éï¼ journalctl -b -1 # æ¥çä¸¤æ¬¡å¼æºåçæ¥å¿ journalctl -b -2</div>
+<pre class="ace-line old-record-id-Hf4NfIFWtdkJ2OcPqdLcDXlSnte highlighter-hljs">&nbsp;</pre>
+<h3 class="heading-3 ace-line old-record-id-DGEpfHCc9dkSSMcaWIKcBCg8n6d">5. é«çº§ç­éï¼æè¿ç¨ãç¨æ·ãåæ ¸</h3>
+<pre class="ace-line old-record-id-DvbIfHX9gdL73qcv8C2cfNwTnFe highlighter-hljs">&nbsp;</pre>
+<div># æ¥çåæ ¸æ¥å¿ï¼ç­ä»·äº dmesgï¼ journalctl -k # æ¥ç root ç¨æ·ï¼UID=0ï¼çæææ¥å¿ journalctl _UID=0 --since today # æ¥çæå®è¿ç¨çæ¥å¿ journalctl _PID=1234</div>
+<pre class="ace-line old-record-id-DvbIfHX9gdL73qcv8C2cfNwTnFe highlighter-hljs">&nbsp;</pre>
+<h2 class="heading-2 ace-line old-record-id-RPTlfGmUVdoGYGcEmcEc7hWenKv">åãå®ç¨è¾åºæ ¼å¼ä¼å</h2>
+<div class="ace-line ace-line old-record-id-Peh0fVWnRdmB9Bc57LVcjPZ6nIb">é»è®¤æ¥å¿æ ¼å¼åé¿ï¼å¯èªå®ä¹è¾åºæ ¼å¼ï¼ééä¸åææ¥åºæ¯ï¼</div>
+<pre class="ace-line old-record-id-IiYPfcNl2dKVCmc3Wzhcht7xn2g highlighter-hljs">&nbsp;</pre>
+<div># ç®æ´æ¨¡å¼ï¼åªè¾åºæ¥å¿åå®¹ï¼éèå¤ä½åæ°æ® journalctl -u nginx -o cat # JSON æ ¼å¼è¾åºï¼éåç¨åºè§£æãæ¥å¿å¯¹æ¥ï¼ journalctl -u nginx -o json-pretty # å®æ´è¯¦ç»æ ¼å¼ï¼ææ¥çé¾æçç¨ï¼ journalctl -o verbose</div>
+<pre class="ace-line old-record-id-IiYPfcNl2dKVCmc3Wzhcht7xn2g highlighter-hljs">&nbsp;</pre>
+<h2 class="heading-2 ace-line old-record-id-SGsGfoeqVdWsxkc63ssc9jqTnuc">äºãæ¥å¿å¯¼åºä¸æ¸çï¼çäº§å³é®ï¼</h2>
+<h3 class="heading-3 ace-line old-record-id-D60CfyEA3dKIWacwVVfchtyEnah">1. å¯¼åºæ¥å¿å¤ä»½</h3>
+<div class="ace-line ace-line old-record-id-KbWgfIofNdNx8YcuXOZcxYVwn1d">ææ¥é®é¢åå¯å¯¼åºæå®æ¥å¿ï¼ç¨äºçå­ãå¤çãä¸æ¥ï¼</div>
+<pre class="ace-line old-record-id-UQ5HffCrHdGWkFcuyW5ckwQsn3c highlighter-hljs">&nbsp;</pre>
+<div># å¯¼åºä»æ¥ Nginx éè¯¯æ¥å¿å°æä»¶ journalctl -u nginx --since today -p err &gt; nginx-error.log</div>
+<pre class="ace-line old-record-id-UQ5HffCrHdGWkFcuyW5ckwQsn3c highlighter-hljs">&nbsp;</pre>
+<h3 class="heading-3 ace-line old-record-id-RmHQfFSiZdpRzVcUiyIcF6uAn4g">2. æå¨æ¸çæ§æ¥å¿ï¼é¿åç£ççæ»¡ï¼</h3>
+<div class="ace-line ace-line old-record-id-GYfHfksi0dFgqcc3NPVcvzLTnNh">journalctl æ¥å¿é»è®¤æç»­ç´¯ç§¯ï¼é¿æä¸æ¸çä¼å ç¨å¤§éç£çç©ºé´ï¼çäº§ç¯å¢å¿é¡»å®æç»´æ¤ï¼</div>
+<pre class="ace-line old-record-id-VsU5fiRHgdHuPFcy03acCNUrnPh highlighter-hljs">&nbsp;</pre>
+<div># åªä¿çæè¿ 100M æ¥å¿ journalctl --vacuum-size=100M # åªä¿çæè¿ 1 ä¸ªææ¥å¿ journalctl --vacuum-time=1month # åªä¿çæè¿ 7 å¤©æ¥å¿ journalctl --vacuum-time=7d</div>
+<pre class="ace-line old-record-id-VsU5fiRHgdHuPFcy03acCNUrnPh highlighter-hljs">&nbsp;</pre>
+<h3 class="heading-3 ace-line old-record-id-N0jgfzTm4d79AKcfbcScG5Tanwg">3. æ°¸ä¹éç½®æ¥å¿å¤§å°éå¶ï¼æ¨èï¼</h3>
+<div class="ace-line ace-line old-record-id-Nro1fNv7edevdOc4oH9ctJNdnmf">ä¿®æ¹éç½®æä»¶ï¼æ°¸ä¹éå¶æ¥å¿æå¤§å ç¨ç©ºé´ï¼èªå¨æ¸çè¿ææ¥å¿ï¼</div>
+<pre class="ace-line old-record-id-E5eQfbraVdV2UFcEoVpcsIBGnbh highlighter-hljs">&nbsp;</pre>
+<div># ç¼è¾éç½®æä»¶ vim /etc/systemd/journald.conf # ä¿®æ¹ä»¥ä¸åæ° SystemMaxUse=500M # æ¥å¿æå¤§å ç¨500M SystemMaxFileSize=100M # éå¯æå¡çæ systemctl restart systemd-journald</div>
+<pre class="ace-line old-record-id-E5eQfbraVdV2UFcEoVpcsIBGnbh highlighter-hljs">&nbsp;</pre>
+<h2 class="heading-2 ace-line old-record-id-PvidflacldEONMcIx5scwup0nbb">å­ãçäº§é«é¢ææ¥åºæ¯ï¼ç´æ¥å¤å¶å³ç¨ï¼</h2>
+<div class="ace-line ace-line old-record-id-EfZEfBLpKdKL8ccAylyc9A3Gnmb">æ´çè¿ç»´æ¥å¸¸æå¸¸ç¨çç»åå½ä»¤ï¼ç´æ¥ééåç±»æéææ¥åºæ¯ï¼</div>
+<pre class="ace-line old-record-id-Kbvpfw4y1d7WrdcXARncaNMjnBh highlighter-hljs">&nbsp;</pre>
+<div># 1. å®æ¶çæ§ SSH ç»å½æ¥é journalctl -u sshd -f -p err # 2. ææ¥ Nginx æè¿1å°æ¶ææéè¯¯æ¥å¿ journalctl -u nginx --since "1 hour ago" -p err -r # 3. æ¥çæå¡å¨ä¸æ¬¡å¼æºçå¯å¨æ¥é journalctl -b -1 -p err # 4. æ¥çä»æ¥ç³»ç»ææä¸¥ééè¯¯ journalctl --since today -p crit # 5. å®æ¶çæ§èªå®ä¹æå¡æ¥å¿ journalctl -u myserver.service -f</div>
+<pre class="ace-line old-record-id-Kbvpfw4y1d7WrdcXARncaNMjnBh highlighter-hljs">&nbsp;</pre>
+<h2 class="heading-2 ace-line old-record-id-TFWDf6QL8d7ZNLcWcuBc8Q4rnIg">ä¸ãå¸¸è§è¸©åä¸æ³¨æäºé¡¹</h2>
+<ul class="list-bullet1">
+<li class="ace-line ace-line old-record-id-MgwSfZyEIdS0UWcr8c1cblHBnkb" data-list="bullet">
+<div><strong>æéé®é¢</strong>ï¼æ®éç¨æ·æ§è¡é¨åç­éå½ä»¤å¯è½æ ç»æï¼ææ¥ç³»ç»æ¥å¿å»ºè®®å  <code>sudo</code></div>
+</li>
+<li class="ace-line ace-line old-record-id-Shi9fiypEdp4tncaEJ7cDhmdnUf" data-list="bullet">
+<div><strong>æ¥å¿ä¸¢å¤±é®é¢</strong>ï¼é¨åæç®ç³»ç»é»è®¤å³é­æä¹åæ¥å¿ï¼éå¯åæ¥å¿æ¸ç©ºãå¼å¯æ¹å¼ï¼ä¿®æ¹ <code>/etc/systemd/journald.conf</code>ï¼è®¾ç½® <code>Storage=persistent</code></div>
+</li>
+<li class="ace-line ace-line old-record-id-LIPifeC7DdDPTJcztG6cF0yOnje" data-list="bullet">
+<div><strong>åé¡µå¡é¡¿</strong>ï¼æ¥å¿éè¿å¤§æ¶ï¼å  <code>--no-pager</code> ç´æ¥ä¸æ¬¡æ§è¾åºï¼é¿ååé¡µå¡é¡¿</div>
+</li>
+<li class="ace-line ace-line old-record-id-YAPQfu1kidk67lc8xoCctY2Unf4" data-list="bullet">
+<div><strong>åºåå¤§å°å</strong>ï¼æå¡åå¿é¡»åç¡®ï¼å¦ <code>sshd.service</code> ä¸è½åæ ssh.service</div>
+</li>
+</ul>
+<h2 class="heading-2 ace-line old-record-id-RgqYfS9TIdK5uPcFeekcN4ajnGQ">å«ãå½ä»¤éæ¥è¡¨ï¼æ¶èå¤ç¨ï¼</h2>
+<div>
+<table class="ace-table" data-ace-table-col-widths="200;200"><colgroup><col width="200"><col width="200"></colgroup>
+<thead>
+<tr>
+<th colspan="1" rowspan="1">
+<div class="ace-line ace-line old-record-id-Muj8fvhwidG70dcRI7Hcj8u4nvb">å½ä»¤</div>
+</th>
+<th colspan="1" rowspan="1">
+<div class="ace-line ace-line old-record-id-Qbxaflf5HdwmcLcLlaAcTYubnud">ä½ç¨</div>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="1" rowspan="1">
+<div class="ace-line ace-line old-record-id-ATa5fzOqfdRTFJcYIo1c5MStnsh">journalctl -r</div>
+</td>
+<td colspan="1" rowspan="1">
+<div class="ace-line ace-line old-record-id-C46XffOPNdiRvgcNU7McGDYlnrd">ååºæ¥çæ¥å¿ï¼ææ°å¨åï¼</div>
+</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">
+<div class="ace-line ace-line old-record-id-J4EMfbnlJdUfNgcp6R5cOyP5nJe">journalctl -f</div>
+</td>
+<td colspan="1" rowspan="1">
+<div class="ace-line ace-line old-record-id-T4bIfExvDd83U0c0zrbcE9yUnVc">å®æ¶çæ§æ¥å¿</div>
+</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">
+<div class="ace-line ace-line old-record-id-GnUDfVxTAdinnpcP9ALcAhbLn6b">journalctl -u æå¡å</div>
+</td>
+<td colspan="1" rowspan="1">
+<div class="ace-line ace-line old-record-id-Bzq0fthcTdGGSrcDUAPcUL6JnAb">ç­éæå®æå¡æ¥å¿</div>
+</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">
+<div class="ace-line ace-line old-record-id-S5AofsVxtdff2jcYxn5cq7zBnFh">journalctl -p err</div>
+</td>
+<td colspan="1" rowspan="1">
+<div class="ace-line ace-line old-record-id-VKijfweS7dXTSccSECUcNsvOnAb">åªæ¥çéè¯¯çº§å«æ¥å¿</div>
+</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">
+<div class="ace-line ace-line old-record-id-QdJAfX0Tfd9LrOcSgnGcH9KOn0c">journalctl -b</div>
+</td>
+<td colspan="1" rowspan="1">
+<div class="ace-line ace-line old-record-id-HviZfVlUVdQDoTc5OiScnuVtnKc">æ¥çæ¬æ¬¡å¼æºæ¥å¿</div>
+</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">
+<div class="ace-line ace-line old-record-id-QtaefbyuPdgpI9cd7ZycYLVRnL6">journalctl --since "1 hour ago"</div>
+</td>
+<td colspan="1" rowspan="1">
+<div class="ace-line ace-line old-record-id-SS7mfOxyWdbvrVcUqC2cVgg9nrd">ç­éæå®æ¶é´èå´æ¥å¿</div>
+</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">
+<div class="ace-line ace-line old-record-id-BIedfh7dgdQlF9cEB9VcLeH8nYg">journalctl --vacuum-size=100M</div>
+</td>
+<td colspan="1" rowspan="1">
+<div class="ace-line ace-line old-record-id-GwAIfxjSMdUsZFcU1oecRu10n2e">æ¸çæ§æ¥å¿ï¼ä¿çæå®å¤§å°</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 class="heading-2 ace-line old-record-id-BZwZf43Eld9sZocES5EcVBATnDh">æ»ç»</h2>
+<div class="ace-line ace-line old-record-id-CumwfoPtvdJX6IckVu8cc49xnfe"><code>journalctl</code> æ¯ç°ä»£ Linux ç³»ç»çæ¥å¿æ ¸å¿å·¥å·ï¼ç¸æ¯ä¼ ç»ææ¬æ¥å¿ï¼å·å¤<strong>ç»ä¸ãç²¾åãé«æãå¯åæº¯</strong>çä¼å¿ãææ¡è¿å¥ç¨æ³ï¼å¯è¦ç 99% çæå¡å¨æ¥å¿ææ¥åºæ¯ï¼å½»åºåå«æ¨ä¸ªæ¾æ¥å¿æä»¶ãç¯ç grep çä½ææä½ã</div>
+<div class="ace-line ace-line old-record-id-Yx5ffekK8d6rhccYHwfcqRcwnGc">æ¥å¸¸ææ¥ä¼åè®°ä½æ ¸å¿ç»åï¼<strong>æå¡ç­é + æ¶é´èå´ + éè¯¯çº§å« + å®æ¶çæ§</strong>ï¼è¶³å¤åºå¯¹ææçäº§æéã</div>
+</div>
+
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-09-15 06:25">2026-09-15 06:24</span>&nbsp;
+<a href="https://www.cnblogs.com/swizard">Swizard</a>&nbsp;
+éè¯»(<span id="post_view_count">0</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(22974770);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fswizard%2Fp%2F22974770&amp;targetId=22974770&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
     <title><![CDATA[ åºäºBlazorå®ç°çé¡¹ç®ç®¡çç³»ç» ]]></title>
     <link>https://www.cnblogs.com/known/p/22972193</link>
     <guid>a1da183dbfbb51790ab9bb42cc118d74</guid>
@@ -234,7 +821,7 @@
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-09-14 22:10">2026-09-14 22:10</span>&nbsp;
 <a href="https://www.cnblogs.com/known">known</a>&nbsp;
-éè¯»(<span id="post_view_count">27</span>)&nbsp;
+éè¯»(<span id="post_view_count">60</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(22972193);return false;">æ¶è</a>&nbsp;
@@ -1218,7 +1805,7 @@ Stage 2 (è®­ç» Student/VLA):
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-09-14 20:52">2026-09-14 20:52</span>&nbsp;
 <a href="https://www.cnblogs.com/rossiXYZ">ç½è¥¿çæè</a>&nbsp;
-éè¯»(<span id="post_view_count">21</span>)&nbsp;
+éè¯»(<span id="post_view_count">44</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(22957370);return false;">æ¶è</a>&nbsp;
@@ -1365,7 +1952,7 @@ scanf("%d", &amp;value);
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-09-14 20:45">2026-09-14 20:44</span>&nbsp;
 <a href="https://www.cnblogs.com/zw-awa">Zw-awa</a>&nbsp;
-éè¯»(<span id="post_view_count">19</span>)&nbsp;
+éè¯»(<span id="post_view_count">36</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(22971849);return false;">æ¶è</a>&nbsp;
@@ -1890,11 +2477,434 @@ ready = true
             <div class="postDesc">posted @ 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-09-14 17:52">2026-09-14 17:51</span>&nbsp;
 <a href="https://www.cnblogs.com/ThinkerQAQ">ThinkerQAQ</a>&nbsp;
-éè¯»(<span id="post_view_count">77</span>)&nbsp;
+éè¯»(<span id="post_view_count">93</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(22969810);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FThinkerQAQ%2Fp%2F22969810&amp;targetId=22969810&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ ç¨ WorkBuddy åäºä¸ä¸ªè¿°èç¥å¨ï¼èæ¿ç´å¼å¥½ææè§ ]]></title>
+    <link>https://www.cnblogs.com/tangshiye/p/22968082</link>
+    <guid>d317b5a3409ebfe1ba357e391d9f80d0</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/tangshiye/p/22968082" title="åå¸äº 2026-09-14 16:28">
+    
+
+    <span role="heading" aria-level="2">ç¨ WorkBuddy åäºä¸ä¸ªè¿°èç¥å¨ï¼èæ¿ç´å¼å¥½ææè§</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p>å¤§å®¶å¥½ï¼ææ¯æ±¤å¸ç·ã</p>
+<p>ä¸å°è¿°èï¼ä½ æ¯ä¸æ¯æçè¦æ­»ï¼</p>
+<p>æ¹æ¡å¨ Word éï¼æ°æ®å¨ Excel éï¼ä¼è®®ç»è®ºèººå¨é®ä»¶éã</p>
+<p>æä»¶å¤¹éè¿æå ä¸ªçæ¬çè¡¨æ ¼æ°æ®ï¼å°åºåªä¸ªç®æ°ï¼å¾æ¨ä¸ªæå¼çã</p>
+<p>æææ¾é½äºï¼è¿å¾æ³æä¹è®²ã</p>
+<p>åäºåªäºäºï¼å¸¦æ¥äºä»ä¹ç»æï¼åªäºæ¯èªå·±è´è´£çï¼æ»ä¸è½æä¸ä¸ªæçå¨æ¥æ¼èµ·æ¥ï¼ä»ç¬¬ä¸å¨çå°æåä¸å¨ã</p>
+<p>è¿æ¬¡æå¸¦ä½ ç¨ WorkBuddyï¼æé¶æ£èµææ´çå¥½ï¼ååºæ°æ®æ±æ»è¡¨åå¾è¡¨ï¼åçæè¿°èå¤§çº²ãPPT åéé¡µè®²ç¨¿ã</p>
+<p>æåæè¿å¥æµç¨å­æä¸ä¸ªè¿°è Skillï¼ä¸æ¬¡ææ°ææå°±æ¥çç¨ã</p>
+<h2 id="ç¬¬ä¸æ­¥åå»ºä¸ä¸ªè¿°èèµæåº">ç¬¬ä¸æ­¥ï¼åå»ºä¸ä¸ªè¿°èèµæåº</h2>
+<p>æåè®© WorkBuddy å¨æ¬å°å»ºå¥½æä»¶å¤¹ï¼æå­£åº¦å­æ¾è¿°èèµæã</p>
+<pre><code class="language-text">è¯·å¨å½åå·¥ä½ç©ºé´è·¯å¾åå»ºâ2026è¿°èèµæåºâã
+éé¢å»ºç«ä¸å­£åº¦ãäºå­£åº¦ãä¸å­£åº¦ãåå­£åº¦æä»¶å¤¹ã
+æ¯ä¸ªå­£åº¦ä¸å»ºç«ä¸ä¸ªå­æä»¶å¤¹ã
+01-å·¥ä½è¿ç¨ã02-ææä¸æ°æ®ã03-å¤çä¸è®¡åã
+å·²æååæä»¶å¤¹å°±ä¿çï¼ä¸è¦çå¶ä¸­çæä»¶ã
+å®æååè¯æå®éåå»ºçè·¯å¾ã
+</code></pre>
+<p><img alt="image-20260910174542089" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2625446/202609/2625446-20260914162812921-1007893864.jpg" class="lazyload"></p>
+<p>è¿ä¸ç±»æ­£å¥½å¯¹åºè¿°èè¦è®²çä¸ä»¶äºï¼åäºä»ä¹ãååºäºä»ä¹ãæ¥ä¸æ¥æä¹æ¹ã</p>
+<p>æä»¶å¤¹å»ºå¥½ï¼ä»¥åæ¯å¨çæ¹æ¡ãæ¥è¡¨åå¤çå°±æå°æ¹æ¾äºã</p>
+<p><img alt="image-20260910175846310" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2625446/202609/2625446-20260914162813018-253597810.jpg" class="lazyload"></p>
+<h2 id="ç¬¬äºæ­¥ææ´çè§åäº¤ä»£æ¸æ¥">ç¬¬äºæ­¥ï¼ææ´çè§åäº¤ä»£æ¸æ¥</h2>
+<p>æä»¶å¤¹å»ºå¥½äºï¼ååè¯ WorkBuddy å»åªéæ¾èµæãæä»ä¹è§ååã</p>
+<p>ä»¥åææ°æä»¶ï¼å°±ä¸ç¨éæ°äº¤ä»£ä¸éã</p>
+<pre><code class="language-text">è¯·ä¸ºâ2026è¿°èèµæåºâå¶å®å¹¶ä¿å­èµæå½æ¡£è§åã
+
+æ¥æºæä»¶å¤¹ä¸ºãå¾æ´çãï¼ç®æ æä»¶å¤¹ä¸º[2026è¿°èèµæåº]ã
+æ ¹æ®æä»¶åå®¹ä¸­çä¸å¡æ¶é´å¤æ­æå±å­£åº¦ï¼åæä¸»è¦ç¨éå½å¥â01-å·¥ä½è¿ç¨ââ02-ææä¸æ°æ®âæâ03-å¤çä¸è®¡åâã
+åä¸ä»½æä»¶åªå½å¥æå¹éçä¸ç±»ï¼æ¿ä¸åæ¶ååºè®©æç¡®è®¤ï¼ä¸é¢å¤åå»ºåç±»ã
+ä¿çåæä»¶ï¼éè¿å¤å¶å®æå½æ¡£ï¼ä¸è¦çååæä»¶ã
+æ¥æä¸æãçæ¬å²çªææ æ³è¯»åçæä»¶ï¼åç¬ååºè®©æç¡®è®¤ã
+æ¯æ¬¡æ´çåçææ´æ°è®°å½ï¼åæå¤çäºåªäºæä»¶ãåå«æ¾å¨åªéã
+ä»¥åæè¯´âæ´çè¿°èèµæâæ¶ï¼å°±æè¿å¥è§åå¤çå¾æ´çç®å½ä¸­çæ°å¢ææã
+</code></pre>
+<p><img alt="image-20260910175913711" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2625446/202609/2625446-20260914162813022-417733671.jpg" class="lazyload"></p>
+<p>è§åç¡®è®¤åï¼åè¾å¥âæ´çè¿°èèµæâã</p>
+<p><img alt="image-20260910191846974" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2625446/202609/2625446-20260914162813065-545279200.jpg" class="lazyload"></p>
+<p>æ´çåï¼å¯¹çæ´æ°è®°å½å°±è½æ¾å°æ¯ä»½æä»¶çå»åã</p>
+<p>æä¼æ½æ¥å ä»½ï¼ççå­£åº¦ææ²¡æåéãä¸åçæ¬ææ²¡ææ··å¨ä¸èµ·ã</p>
+<p><img alt="image-20260910192833826" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2625446/202609/2625446-20260914162813051-2089985649.jpg" class="lazyload"></p>
+<h2 id="ç¬¬ä¸æ­¥æ¸æ´æ°æ®çææ±æ»è¡¨åå¾è¡¨">ç¬¬ä¸æ­¥ï¼æ¸æ´æ°æ®ï¼çææ±æ»è¡¨åå¾è¡¨</h2>
+<p>æ¥ä¸æ¥ï¼è®© WorkBuddy æ¸çéå¤è®°å½ãç»ä¸æ¥æåéé¢åä½ï¼åæè¿°èè¦ç¨çæ°å­åææ±æ»è¡¨åå¾è¡¨ã</p>
+<pre><code class="language-text">è¯·è¯»åãäºå­£åº¦ãèµæç®å½ä¸­çæ°æ®æä»¶ï¼æ´çè¿°èéè¦çæ ¸å¿æ°æ®ã
+
+åååºè¯»åçæä»¶åå·¥ä½è¡¨ï¼æ£æ¥éå¤è®°å½ãç¼ºå¤±å¼ãæ¥ææ ¼å¼ãäº§ååç§°åéé¢åä½ã
+éå¤æ°æ®åæå¤æ­ä¾æ®ï¼ç¼ºå¤±å¼ä¸è¦ç´æ¥å¡«é¶ï¼æå²çªçå£å¾åé®æã
+æ ¹æ®ç°ææ°æ®è®¡ç®æ¬å­£åº¦éè¦æ±æ¥çææ ï¼åæå¬å¼ãç»è®¡æé´åæ¥æºæä»¶ã
+çææ°æ®æ±æ»è¡¨ï¼å¹¶æ ¹æ®æ°æ®éæ©åéçè¶å¿å¾æå¯¹æ¯å¾ã
+æ åºéè¦äººå·¥ç¡®è®¤çæ°æ®ï¼ä¿çåæä»¶ï¼å¦å­æ¸æ´åçç»æã
+</code></pre>
+<p>ç¢°å°æ°æ®å£å¾å²çªï¼WorkBuddy ä¼æ¾æç¡®è®¤ã</p>
+<p><img alt="image-20260910193339458" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2625446/202609/2625446-20260914162813037-726979564.jpg" class="lazyload"></p>
+<p>æ¿å°æ±æ»è¡¨åå¾è¡¨ï¼æä¸ä¸ªæ ¸å¿ææ å¤ç®ï¼åæ ¸å¯¹åä½åç»è®¡å¨æãè¿äºæ°å­åé¢å°±è½ç¨æ¥è®²é¡¹ç®ç»æã</p>
+<p><img alt="image-20260910193819918" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2625446/202609/2625446-20260914162813114-271959685.jpg" class="lazyload"></p>
+<p><img alt="image-20260910193925502" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2625446/202609/2625446-20260914162813024-907289330.jpg" class="lazyload"></p>
+<h2 id="ç¬¬åæ­¥çæè¿°èå¤§çº²å-ppt-åç¨¿">ç¬¬åæ­¥ï¼çæè¿°èå¤§çº²å PPT åç¨¿</h2>
+<p>èµæåæ°æ®é½äºï¼å°±è®© WorkBuddy çæè¿°èå¤§çº²å PPTï¼è¿éé¡µè®²ç¨¿ä¸èµ·åå¤å¥½ã</p>
+<p>è¿æ¬¡æç»ç´å±è´è´£äººæ±æ¥ãæ¶é¿ 30 åéæ¥åãä½ ç¨çæ¶åï¼æ¢æèªå·±çè¦æ±ã</p>
+<pre><code class="language-text">è¯·åºäºãå·²æ ¸å¯¹çå­£åº¦èµæãç®å½ï¼çæå­£åº¦è¿°èå¤§çº²å PPT åç¨¿ã
+æ±æ¥å¯¹è±¡ä¸ºç´å±è´è´£äººï¼æ±æ¥æ¶é¿ä¸º30åéã
+
+åå®¹åæ¬å·¥ä½æ¦è§ãéç¹é¡¹ç®ãæ ¸å¿æ°æ®ãä¸å¡ç»æãé®é¢å¤çåä¸å­£åº¦è®¡åã
+æ¯ä¸ªéç¹é¡¹ç®è®²æ¸ç®æ ãéåçè¡å¨ãæç»ç»æåæçå·ä½è´¡ç®ã
+å³é®ç»è®ºåæ°å­æ ææ¥æºï¼è¯æ®ä¸è¶³çå°æ¹æ è®°å¾è¡¥åï¼ä¸ç¼é ä¸ªäººæç»©ã
+PPT ä½¿ç¨ç®æ´çèåºé£æ ¼ï¼æ¯é¡µçªåºä¸ä¸ªä¸»è¦ç»è®ºï¼å³é®æ°æ®éå½é«äº®ã
+éä¸éé¡µè®²ç¨¿ï¼å¹¶è¾åºå¯ç¼è¾ç PPT æä»¶ã
+</code></pre>
+<p><img alt="image-20260910194020895" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2625446/202609/2625446-20260914162812970-1805873802.jpg" class="lazyload"></p>
+<p>å¨å³ä¾§ç»æåºæå¼çææä»¶ï¼åçå¤§çº²çé¡ºåºï¼åçæ¯ä¸é¡µ PPTã</p>
+<p><img alt="image-20260910195057783" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2625446/202609/2625446-20260914162813109-74166764.jpg" class="lazyload"></p>
+<p>æãå®æäºå¾å¤å·¥ä½ãæ¢æå·ä½é¡¹ç®åç»æï¼å«æåä¸åæä¸»å¯¼ã</p>
+<p>åè¯çæ¹ä¸æ®µæå­ï¼ç¡®è®¤æä»¶è½ç¼è¾ï¼åé¢å°±è½æèªå·±çæ±æ¥æ¶é´è°æ´ã</p>
+<p><img alt="image-20260910195030685" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2625446/202609/2625446-20260914162812950-996418966.jpg" class="lazyload"></p>
+<p>è¿ä»½åç¨¿å·²ç»æäºæ­£å¼æ±æ¥çæ ·å­ã</p>
+<p>èåºç®çº¦é£ï¼å³é®æ°æ®æé«äº®ï¼éç¹é¡¹ç®ãä¸å¡ç»æåä¸ªäººè´¡ç®é½åå¾æ¸æ¥ã</p>
+<p>åäºä»ä¹ãç»æææ ·ãèªå·±è´¡ç®äºä»ä¹ï¼é¡ºçå°±è½è®²ä¸æ¥ï¼ç¬¦åå¸¸è§è¿°èæ±æ¥çè¦æ±ã</p>
+<h2 id="ç¬¬äºæ­¥æåé¢çæµç¨æ´çæ-skill">ç¬¬äºæ­¥ï¼æåé¢çæµç¨æ´çæ Skill</h2>
+<p>åé¢å æ­¥è·éåï¼è®© WorkBuddy ææ´å¥æµç¨å­æä¸ä¸ªè¿°è Skillã</p>
+<p>ä½ å¯ä»¥æå®çè§£æä¿å­å¥½çå·¥ä½æ­¥éª¤ï¼ä¸æ¬¡è°ç¨å°±ä¸ç¨éæ°æä¸éé¿æä»¤ã</p>
+<pre><code class="language-text">è¯·æä»¥ä¸å·²ç»ç¡®è®¤çæä½åå»ºä¸º WorkBuddy çèªå®ä¹æè½ï¼Skillï¼ï¼åç§°ä¸ºâèåºè¿°èâã
+åå«èµæå½æ¡£ãæ°æ®æ¸æ´ä¸æ ¡éªãå¾è¡¨çæãè¿°èå¤§çº²å PPT åç¨¿çæã
+ä¿çåæç¡®å®çå½æ¡£è§åãæ°æ®å¤çè§ååæ±æ¥è¦æ±ã
+è°ç¨æ¶åç¡®è®¤èµæè·¯å¾ãå­£åº¦ãå²ä½åæ±æ¥æ¶é¿ã
+éå°æ¥æä¸æãçæ¬å²çªææ°æ®å£å¾ä¸ä¸è´ï¼åè®©æç¡®è®¤ã
+åè¯æ Skill çä¿å­ä½ç½®åå®éè°ç¨æ¹æ³ã
+å¦æå½åç¯å¢æ æ³ä¿å­ä¸ºå¯è°ç¨ç Skillï¼è¯·è¯´æï¼å¹¶åä¿å­ææµç¨ææ¡£ã
+</code></pre>
+<p><img alt="image-20260910195159540" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2625446/202609/2625446-20260914162812937-167643204.jpg" class="lazyload"></p>
+<p>åå»ºå®æåï¼æå¼æè½æ ï¼å¨âå·²å®è£âä¸­ç¡®è®¤è½çå°âèåºè¿°èâã</p>
+<p><img alt="image-20260910195725642" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2625446/202609/2625446-20260914162813056-418809055.jpg" class="lazyload"></p>
+<p>åæ°å»ºä»»å¡ï¼éæ©åä¸ä¸ªå·¥ä½ç©ºé´ï¼è¾å¥âä½¿ç¨èåºè¿°èæè½ï¼çæç¬¬äºå­£åº¦è¿°èæ±æ¥å¤§çº²å PPTâï¼åæ¶å¸¦ä¸èµæè·¯å¾åå²ä½è¦æ±ã</p>
+<p>è¿æ¬¡è°ç¨è½æ²¿ç¨åæçè§åãæ¾å°ææå¹¶çææä»¶ï¼è¿°è Skill å°±è·éäºãä»¥ååå¤æ±æ¥ï¼å¸¦ä¸èµæåè¦æ±ï¼ç´æ¥è°ç¨è¿å¥æµç¨ã</p>
+<p><img alt="image-20260910195636654" loading="lazy" data-src="https://img2024.cnblogs.com/blog/2625446/202609/2625446-20260914162813084-204039860.jpg" class="lazyload"></p>
+<h2 id="åå¨æå">åå¨æå</h2>
+<p>WorkBuddy è¿å¥æµç¨çå¿çå°æ¹ï¼æ¯è½ææ£è½çèµæä¸è·¯æ´çæå¯ä¿®æ¹çæ±æ¥æä»¶ï¼åæåæ³å­ä¸æ¥åå¤ç¨ã</p>
+<p>å¹³æ¶å¤ç§¯ç´¯ä¸ç¹ï¼è¿°èåå°±å°ç¬å¤ã</p>
+<p>ä½ å¯ä»¥åæ¿æè¿ä¸ä¸ªé¡¹ç®è¯è¯ï¼å¤å¶ä¸ä»½æ¹æ¡ãå ç¯å¨æ¥åä¸å¼ æ°æ®è¡¨ï¼ç§çåé¢çæ­¥éª¤ï¼è®© WorkBuddy æ´çåºä¸ä»½ç­æ±æ¥ã</p>
+<p>æä»¶åå¾å¯¹ä¸å¯¹ãæ°å­ç®å¾åä¸åãè´¡ç®åå¾å®ä¸å®ï¼èªå·±æä¸éå³ã</p>
+<p>å®å­ä»¬ï¼èµ¶ç´§å»è¯è¯å§ã</p>
+<blockquote>
+<p>WorkBuddyãè±åå·¥ä½ãCoze å®ææç¨ï¼æ¶µç PPTãæä»¶æ´çãæ°æ®åæãèªåªä½ãç¥è¯åºãèªå¨åç­ï¼10 ä¸å­å¹²è´§ï¼æç»­æ´æ°ï¼éæ¶å¼æ¾ð <a href="https://tangshiye.cn/" target="_blank" rel="noopener nofollow">tangshiye.cn</a></p>
+</blockquote>
+
+
+</div>
+<div id="MySignature" role="contentinfo">
+    <p>æ¬ææ¥èªåå®¢å­ï¼ä½èï¼<a href="https://www.cnblogs.com/tangshiye/" target="_blank">AIæ¶æå¸æ±¤å¸ç·</a>ï¼è½¬è½½è¯·æ³¨æåæé¾æ¥ï¼<a href="https://www.cnblogs.com/tangshiye/p/22968082" target="_blank">https://www.cnblogs.com/tangshiye/p/22968082</a></p>
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-09-14 16:29">2026-09-14 16:28</span>&nbsp;
+<a href="https://www.cnblogs.com/tangshiye">AIæ¶æå¸æ±¤å¸ç·</a>&nbsp;
+éè¯»(<span id="post_view_count">262</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(22968082);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Ftangshiye%2Fp%2F22968082&amp;targetId=22968082&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
+</div>
+         ]]>
+    </description>
+    </item>
+<item>
+    <title><![CDATA[ DeepSeek Harness æç çä¸æ¯åè´¹ï¼æ¯æ spawn å­ Agent åæäºåè®® ]]></title>
+    <link>https://www.cnblogs.com/uniqueDong/p/22964159</link>
+    <guid>d3089047c95ddc70ed7d7bc956609db6</guid>
+    <description>
+    <![CDATA[ 
+            <h1 class="postTitle">
+                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/uniqueDong/p/22964159" title="åå¸äº 2026-09-14 12:10">
+    
+
+    <span role="heading" aria-level="2">DeepSeek Harness æç çä¸æ¯åè´¹ï¼æ¯æ spawn å­ Agent åæäºåè®®</span>
+    
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
+<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/735767/202609/735767-20260914121039702-973124206.png" class="lazyload"></p>
+<p>ä¸å¨æè®© Claude Code å¹²ä¸ä¸ªéææ´»ï¼è·å°ä¸ååç°å®å¨å·å·å¼ subagentï¼ä¸å±å¥ä¸å±ï¼ç­æååºè¿æ¥ token å·²ç»ç§ç©¿äºä¸å±ä¸ä¸æã</p>
+<p>æç¯çå±å¹ä¸é£ä¸ªææ ¹æ¬æ²¡ææçå­ä»»å¡ï¼ç¬¬ä¸ååºä¸æ¯ãæ¨¡åçèªæãï¼èæ¯ãè¿ç©æå°åºæ¯è°æ´¾åºå»çï¼å®æ´¾äºå å±ï¼ææä¹ç¥éå®è¿è½ä¸è½åæ´¾ãã</p>
+<p>è¯´å®è¯ï¼è¿æ¯æç¨ Claude Code å¤§åå¹´ä¸ç´å«æ­çå°æ¹ãå­ Agent å¾å¥½ç¨ï¼ä½ spawn ä¸ spawnãåµå¥å¤æ·±ãè½ä¸è½ç»­è°ï¼å¨é æ¨¡åè¯» prompt èªå·±æï¼æ²¡æç¡¬çº¦æãä½ å¨ subagent ç description éåãä¸è¦åµå¥ãï¼å®å¿æå¥½å°±å¬ï¼å¿æä¸å¥½å°±å½æ²¡çè§ã</p>
+<p>ç¶åè¿å¨ DeepSeek æåºäº Harness v0.1ï¼4 å¤© 145,505 é¢æ [GitHub 2026-08-17]ãææå® subagent å­ç³»ç»çç±»åæºç ä»å¤´è¯»äºä¸éï¼è¯»å®æå¤§çæåä¸æ¯ãåè´¹çé¦ãï¼èæ¯ä»ä»¬ææä¸é¢é£ä¸ªå«æ­ï¼åæäºä¸å¥å¸¦ç±»åãå¸¦è½åååãå¸¦æä¹åæ·±åº¦çæ¾å¼åè®®ã</p>
+<p>è¿ç¯å°±æè¿ä»¶äºãä¸è npx ä¸é®å¯å¨ï¼ä¸è star æ°å¥è§ï¼èç¹åªæç¿»æºç æçå¾è§çä¸è¥¿ã</p>
+<h2 id="åç»ç»è®º">åç»ç»è®º</h2>
+<p>å¦æä½ åªæ³ç¥éè¿ä¸è¥¿è·æææ²¡æå³ç³»ï¼çè¿å¼ è¡¨ã</p>
+<table>
+<thead>
+<tr>
+<th>ä½ æ¯è°</th>
+<th>ç°å¨è¯¥å¹²å</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>å¤©å¤©ç¨ Claude Code subagentï¼è¢«åµå¥åä¸ä¸æä¸²å°åè¿</td>
+<td>å¿è¯»ï¼DSH çåè®®è®¾è®¡è½ç´æ¥çº æ­£ä½ å¯¹ agent è¾¹çççè§£</td>
+</tr>
+<tr>
+<td>å¨è¯ä¼°èªå»º agent runtime / åå¤ agent ç¼æ</td>
+<td>å¼ºçå»ºè®®è¯»æºç ï¼å®ç Capability Seam æ½è±¡å¼å¾æ</td>
+</tr>
+<tr>
+<td>æ³æ¾ä¸ª Cursor æ¿ä»£ååä¸å¡ä»£ç </td>
+<td>å«å²å¨ï¼è¿æ¯ harness ä¸æ¯ IDEï¼rc.7 è¿å¨å¤©å¤© breaking</td>
+</tr>
+<tr>
+<td>åªæ³è¹­ç­ç¹åæåå</td>
+<td>çå°è¿å°±å¤äºï¼ä¸é¢å¾ç¡¬</td>
+</tr>
+</tbody>
+</table>
+<p>ä¸å¥è¯å®ä½ï¼DSH ä¸æ¯ Cursor ç«åï¼å®æ¯ <strong>Agent = Model + Harness</strong> è¿ä¸ªå¬å¼éç Harness å± [deepseek.com/harness]ãæ¨¡åè´è´£æèï¼harness è´è´£ç»æ¨¡åãçè§£ç¯å¢ãä½¿ç¨å·¥å·ãå¨çå®åºæ¯æç»­å·¥ä½ãçè½åãClaude CodeãCodex èªå·±ä¹æ¯ harnessï¼åªä¸è¿å®ä»¬æ¯å°è£å¥½çäº§åï¼DSH æ³åçæ¯æ harness æ¬èº«æå¼ï¼è®©æ¯ä¸å±é½å¯æ¿æ¢ã</p>
+<p><img alt="DSH å¨ Agent ææ¯æ ä¸­çåå±å®ä½ï¼Model ä¸ Harness çå³ç³»ï¼Harness åé¨ model adapterãtool registryãsession logãagent loop åå¤§æä»¶åæå¨ Cordis åæ ¸ä¹ä¸ï¼agent loop æ¬èº«ä¹æ¯æä»¶" loading="lazy" data-src="https://magebyte.oss-cn-shenzhen.aliyuncs.com/myself/078-deepseek-harness-subagent-vs-claude-code-fig01.png" class="lazyload"></p>
+<h2 id="ä¸åçæä»¶åæ¬-agent-loop-èªå·±">ä¸åçæä»¶ï¼åæ¬ agent loop èªå·±</h2>
+<p>è¦çæå­ Agent åè®®ï¼å¾åçæ DSH çéª¨æ¶ï¼å ä¸ºå­ Agent å¨è¿å¥éª¨æ¶éæ ¹æ¬ä¸æ¯æ ¸å¿ç»ä»¶ï¼èæ¯ä¸ä¸ªãå¯éè½åãã</p>
+<p>DSH åºäºä¸ä¸ªå« Cordis çåæ ¸ï¼cordiverse/cordisï¼5,366 starsï¼ï¼èä¸ç´æ¥ vendored è¿äºä»åº [DSH vendor/]ãCordis æ¬èº«å¥ agent è½åé½æ²¡æï¼å®åªåä¸ä»¶äºï¼æä»¶çå è½½ãå¸è½½åä¾èµç®¡çãå¨è¿ä¸ªåæ ¸ä¹ä¸ï¼DSH æææä¸è¥¿é½åæäºæä»¶ï¼model adapter æ¯æä»¶ï¼tool registry æ¯æä»¶ï¼session log æ¯æä»¶ï¼<strong>è¿ agent loop æ¬èº«é½æ¯æä»¶</strong>ã</p>
+<p>è¿å¥è¯åéå¾éãæ²¡æä¸ä¸ªä¸å¯ patch çç¹ææ ¸å¿ãä½ æ³æ¢æ¨¡åï¼æä¸ª adapter æä»¶ï¼ä½ æ³æ¢ææ´ä¸ª agent å¾ªç¯é»è¾ï¼ä¹æ¯æä¸ªæä»¶çäºãæ©å± DSH ä¸æ¯å» fork æºç æ¹æ ¸å¿ï¼èæ¯å¨å«çæä»¶æè¾¹åæä¸ä¸ªï¼æ³¨åæ¯ effectï¼æä»¶å¸è½½æ¶èªå¨åæ»ã</p>
+<p>éç½®å±å« Profile + Bundleãä¸ä¸ª profile æ¯æåº bundle å±å åºæ¥çæä»¶æ ã<code>dsh-base</code> æ¯æ¯ä¸ª profile çç¬¬ä¸å±ï¼è£ model adaptersãtoolsãpersistenceãsandboxãapproval policyï¼<code>dsh-web-app</code> å æµè§å¨ï¼<code>dsh-headless</code> å ä¸æ¬¡æ§ runnerãpatch æè¡ id æ¿æ¢æ´è¡ configã</p>
+<p>è¿éæä¸ªå³é®æ¦å¿µå« <strong>Capability Seam</strong>ï¼ä¸ä¸ª seam = Service Definitionï¼å£°ææ¥å£ï¼+ Service Providerï¼å®ç°ï¼+ Consumerï¼éå¸¸æ¯ç»æ¨¡åç¨çå·¥å·ï¼ãä¸èé½å¤ï¼è¿ä¸ªè½åæç®å¨ç³»ç»éãç«ä½äºãã</p>
+<p>å­ Agentï¼å°±æ¯è¿æ ·ä¸ä¸ª seamã</p>
+<h2 id="å­-agent-ä¸ºä»ä¹æ¯-seam-èä¸æ¯-loop-çä¸é¨å">å­ Agent ä¸ºä»ä¹æ¯ seam èä¸æ¯ loop çä¸é¨å</h2>
+<p>å¤§å¤æ° agent æ¡æ¶ï¼åæ¬ Claude Codeï¼çå¤çæ¹å¼æ¯ï¼æå­ Agent è°ç¨ç¡¬ç¼ç æä¸ä¸ªå·¥å·ï¼å« Agent å·¥å·ï¼æ¨¡åå³å®è°ä¸è°ãè°åªä¸ª subagent_typeãè¿æ¯ãloop çä¸é¨åãã</p>
+<p>DSH ä¸è¿ä¹å¹²ãå®æ subagent åæäºä¸ä¸ªå bash å¹³çº§ç<strong>å¯éè½å</strong>ï¼ç±»åå®ä¹ä¸å¨ core éãä½ subagent å bash æä¸ªæ¬è´¨åºå«ï¼bash åªåè®¸ä¸ä¸ª executorï¼ä½ ä¸è½åæ¶æ³¨åä¸¤ä¸ª bash å®ç°ï¼subagent å´åè®¸<strong>å¤ä¸ª provider æåå­å±å­</strong>ï¼å¨é¨æå¨ <code>ctx.subagents</code> ä¸ã</p>
+<p>è¿ä¸ªè®¾è®¡çæ½å°è¯æ¯ï¼ãæä¹ spawn ä¸ä¸ªå­ agentãæ ¹æ¬æ²¡æå¯ä¸ç­æ¡ãä½ å¯ä»¥å¨åè¿ç¨é spawnï¼å¯ä»¥ fork ä¸ä¸ªå¸¦ç¶ä¸ä¸æçï¼å¯ä»¥èµ°è¿ç¨ ACP åè®®ï¼çè³å¯ä»¥ææ´ä¸ª Claude Code æ Codex å½æåç«¯æèµ·æ¥ãæ¡æ¶ä¸è¯¥æ¿ä½ å³å®ï¼å®åªè´è´£å®åè®®ã</p>
+<p>DSH åç½®äº 6 ä¸ª provider [DSH æºç  packages/subagent/]ï¼æç»ä½ ä¸ä¸ªä¸ªæåºæ¥ã</p>
+<table>
+<thead>
+<tr>
+<th>Provider</th>
+<th>æºå¶</th>
+<th>è¦ä¸è¦ç¶ä¸ä¸æ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>spawn-in-process</code></td>
+<td>åè¿ç¨æ°å»º agent</td>
+<td>ä¸ç»§æ¿</td>
+</tr>
+<tr>
+<td><code>fork-in-process</code></td>
+<td>åè¿ç¨ forkï¼ç»§æ¿ç¶å·²å®æ turn åç¼</td>
+<td>ç»§æ¿ seed</td>
+</tr>
+<tr>
+<td><code>acp</code></td>
+<td>Agent Client Protocol è¿ç¨ agent</td>
+<td>ä¸ç»§æ¿</td>
+</tr>
+<tr>
+<td><code>codex</code></td>
+<td>æèµ· <code>codex app-server --stdio</code></td>
+<td>ä¸å¤å¶ç¶å¯¹è¯</td>
+</tr>
+<tr>
+<td><code>claude-code</code></td>
+<td>è° <code>@anthropic-ai/claude-agent-sdk@0.3.220</code></td>
+<td>persistSession:false</td>
+</tr>
+<tr>
+<td><code>dsh-sdk</code></td>
+<td>DSH èªå·±ç JSON-RPC SDK</td>
+<td>æ descriptor</td>
+</tr>
+</tbody>
+</table>
+<p>æ³¨æåé¢ä¸¤ä¸ªï¼DSH æèªå·±çç´æ¥ç«ååæäº subagent backendï¼è¿äºæåç¬å¼ä¸èè®²ï¼æå§æ§å¾å¼ºã</p>
+<p><img alt="ctx.subagents provider æ³¨åè¡¨ç»æï¼æåå­æè½½ 6 ä¸ªåç½® providerï¼ååè¿ç¨ç» spawn-in-process ä¸ fork-in-processãè¿ç¨ç» acp ä¸ dsh-sdkãå¤é¨äº§åè¿ç¨ç» codex ä¸ claude-codeï¼ä¸ç±»å±å­" loading="lazy" data-src="https://magebyte.oss-cn-shenzhen.aliyuncs.com/myself/078-deepseek-harness-subagent-vs-claude-code-fig02.png" class="lazyload"></p>
+<h2 id="åä¸ªå¸å°å¼æè½åä¸å¹éä»è¿è¡æ¶æåå°å¯å¨æ¶">åä¸ªå¸å°å¼ï¼æãè½åä¸å¹éãä»è¿è¡æ¶æåå°å¯å¨æ¶</h2>
+<p>è¿æ¯æè§å¾æ´ä¸ª DSH æå¼å¾æçè®¾è®¡ãæ¯ä¸ª provider å¨å¯å¨åå¿é¡»å£°æèªå·±æ¯æåªäºè½åï¼å°±åä¸ªå¸å°å¼ã</p>
+<pre><code class="language-ts">// æ¥æºï¼DSH æºç  packages/subagent/src/types.ts
+interface SubagentCapabilities {
+  readonly outputSchema: boolean  // è½ä¸è½è¿åç»æåè¾åº
+  readonly depthLimit: boolean    // è½ä¸è½éµå®å§æ´¾æ·±åº¦ä¸é
+  readonly toolFilter: boolean    // è½ä¸è½è£åªå­ agent çå·¥å·é
+  readonly persona: boolean       // è½ä¸è½ç»å­ agent ç¬ç«äººæ ¼
+}
+</code></pre>
+<p>ççç®åå¯¹å§ãç çæ¯ååå¥ï¼å¦æç¶ agent åèµ·ä¸ä¸ªè¯·æ±ï¼è¦æ±å­ agent å¿é¡»æ¯ææä¸ªè½åï¼æ¯å¦æè¦ä½ è¿åç»æå outputSchemaï¼ï¼èè¿ä¸ª provider å£°æå®ä¸æ¯æï¼DSH çåæ³ä¸æ¯ãåæ¥çï¼åä¸å°æåãï¼èæ¯<strong>å¯å¨æ¶ç´æ¥æ <code>SubagentError('UNSUPPORTED_CAPABILITY')</code> æç»å¯å¨</strong>ã</p>
+<p>å®æ¹ç®¡è¿å« fail loud, no silent degradationï¼å¤±è´¥è¦åï¼ä¸è®¸éææéçº§ã</p>
+<p>ä½ å¯è½è§å¾è¿æä»ä¹äºä¸èµ·ãæç»ä½ ç Claude Code çå¯¹ç§é¢ãClaude Code ç Agent å·¥å·é  prompt éç description è®©æ¨¡åãçè§£ãè¿ä¸ª subagent è½å¹²ä»ä¹ãæ¨¡åè¯»å® descriptionï¼è§å¾å®è½å¹²ï¼å°±æä»»å¡æ´¾è¿å»ï¼ç»æè¿ä¸ª subagent å¶å®ä¸æ¯æç»æåè¾åºï¼æèå·¥å·éä¸å¯¹ï¼å®ä¸ä¼æåæç»ï¼å®ä¼ãæ¥äºç¶ååä¸å¥½ãï¼æåç»ä½ ä¸å¨ä¼¼æ¯èéçèªç¶è¯­è¨ãä½ ææ¥åå¤©æåç°æ¯è½åä¸å¹éã</p>
+<p>DSH æè¿ä»¶äºä»ãæ¨¡åé è¯­ä¹çãåæäºãprovider ç¨ç±»åå£°æï¼è¿è¡æ¶æå¥çº¦æ ¡éªããåä¸ªå¸å°å¼å°±æ¯ä¸ä»½ååï¼ç­¾å­ç»æ¼ï¼åä¸å°å°±å«ä¸æ¡ã</p>
+<p>è¿ææ¯åè®®ã</p>
+<h2 id="ä¸æ¬¡æ§-vs-å¯ç»­ä¸¤ç§çå½å¨æ">ä¸æ¬¡æ§ vs å¯ç»­ï¼ä¸¤ç§çå½å¨æ</h2>
+<p>DSH çå­ agent æä¸¤ç§æ´»æ³ï¼one-shot å continuableãè¿ä¸ªåºåä¹æ¯ Claude Code å®å¨æ²¡æçã</p>
+<p><strong>One-shotï¼ä¸æ¬¡æ§ï¼</strong> å¥½çè§£ï¼<code>SubagentRun</code> å°±æ¯ä¸ä¸ªå¥æï¼æ´¾åºå»ï¼å¹²å®ï¼è¿åä¸ä¸ª <code>SubagentResult</code>ï¼å®äºãæ²¡æ steeringï¼æ²¡æ resumeãç»æéå¸¦ outputãstructuredï¼å¦æè¯·æ±äº outputSchemaï¼å stopReasonï¼stopReason å°±é£å ç§ï¼completed / aborted / error / max-tokens / refusalã</p>
+<p><strong>Continuableï¼å¯ç»­ï¼</strong> ææ¯çæ­£æææçä¸è¥¿ãå®æ¯ä¸ä¸ª<strong>æä¹åçå­ Session</strong>ï¼å¯ä»¥è·¨å¤æ¬¡å¯¹è¯çè³è·¨å·å¯å¨å­å¨ãä¸ä¸ª continuable å­ agent æå¤æä¸ä¸ªè¿ç¨å Activationï¼é©»çæï¼ï¼Activation ä¸æ¯ request ä¹ä¸æ¯ Taskï¼å®è½å¨éé¢è·å¤ä¸ª FIFO turnï¼çè³å¨å®èªå·±æ´¾åºå»çå­ä»£è¿å¨è·çæ¶åä¿æé©»çã</p>
+<p>è¿éæå ä¸ªæä½å¾è®²æ¸æ¥ã</p>
+<p><code>startContinuable()</code> åé¢çä¸ä¸ªç¨³å®ç child idï¼provider è¿åä¸ä¸ª detached ç <code>ContinuableCreateSpec</code>ï¼éé¢åªæå¯éç parent-history seedï¼ç¶å continuation manager èªå·±é  agentãå»º inboxãæäº¤åå§ promptãæ³¨æï¼<strong>provider ä¸åä¸ continuable çåç»­çå½å¨æ</strong>ãå·æ¢å¤æ ¹æ¬ä¸ç»è¿ providerï¼manager æ¿éç¨ descriptor å  <code>ctx.agents.resume()</code> å°±æå®æèµ·æ¥äºã</p>
+<p><code>followup()</code> æ¯å¯ä¸çç»­æ¶æ¯æä½ãå¦æ Activation å¨ runningï¼å°±å¥éï¼å¦æå¨ waitingï¼å°±å¤éï¼å¦æåæ ¹æ²¡æ Activationï¼å°±å·å¯å¨ä¸ä¸ªæ°çãä¸ä¸ªæ¥å£æä¸ç§ç¶æå¨åä½ã</p>
+<p><code>interrupt()</code> æ¯å¯ä¸å¬å¼çåæ­¢æä½ï¼æææ£æ¥åè° <code>Agent.cancel(cause, {keepInbox:true})</code>ï¼ä¸ await éæ­¢ï¼ä¸æ¸ inboxï¼ä¹ä¸å¨å®çåä»£ãæææ¯ä½ ææ­å®ï¼å®æ¶ä»¶ç®±éæ²¡å¤ççæ¶æ¯è¿å¨ï¼åä»£ä¹ç»§ç»­è·ã</p>
+<p>è¿æä¸ª <code>reportFrom()</code>ï¼å­å°ç¶çåæ¥ééï¼å­è¯æ¯å­èªå·±ï¼è°ç¨èä¸è½æå®æ¶ä»¶äººãè°æ´¾çå®ï¼å®å°±æ¥ç»è°ï¼ä¸é æ¶æ¯éçå­æ®µææã</p>
+<p>è¿å¥ä¸è¥¿è§£å³çé®é¢æ¯ï¼é¿ä»»å¡éå­ agent ä¸è¯¥æ¯ãä¸é¤å­ä¹°åããä½ æ´¾ä¸ä¸ªå­ agent å»åä»£ç æ£ç´¢ï¼å®å¯è½éè¦è¢«è¿½é®ãè¢«ææ­ãè¢«è¦æ±é¶æ®µæ§æ±æ¥ï¼ç¶åè¿ä¸¤å¤©å·å¯å¨åæ¥æ¥çå¹²ãClaude Code ç subagent åä¸å°ï¼å®å°±æ¯ä¸æ¬¡æ§å½æ°è°ç¨ï¼æ²¡æãä¼è¯ãçæ¦å¿µã</p>
+<p><img alt="one-shot ä¸ continuable ä¸¤ç§å­ agent çå½å¨æå¯¹æ¯ï¼å·¦æ ä¸æ¬¡æ§ start å° SubagentResult å disposeï¼å³æ  continuable å« Activation ç¶ææº running waiting settled ä¸ followup interrupt reportFrom æä½" loading="lazy" data-src="https://magebyte.oss-cn-shenzhen.aliyuncs.com/myself/078-deepseek-harness-subagent-vs-claude-code-fig03.png" class="lazyload"></p>
+<h2 id="å§æ´¾æ·±åº¦æä¹ååµå¥ä¸å±æ¯ç¡¬æç»ä¸æ¯è½¯æé">å§æ´¾æ·±åº¦æä¹åï¼åµå¥ä¸å±æ¯ç¡¬æç»ä¸æ¯è½¯æé</h2>
+<p>åå°æå¼å¤´é£ä¸ªçç¹ï¼æ¨¡åå·å· spawn äºä¸å± subagentãDSH æä¹é²çã</p>
+<p>å®æå§æ´¾æ·±åº¦æä¹åå¨ <code>SessionHeader.delegationDepth</code> å­æ®µéï¼è¿è¡æ¶è¿æä¸ª <code>AgentOptions.subagentDepth</code>ï¼ä¸¤èåè¾å¤§å¼ãå­ agent åå»ºæ¶ï¼æä¹åç¶ depth å  1ãå³é®æ¯<strong>å·å¯å¨ä¸è½æè¿ä¸ªæ·±åº¦éä¸æ¥</strong>ï¼ä½  resume ä¸ä¸ª depth ä¸º 2 ç sessionï¼å®è¿æ¯ 2ï¼æ²¡æ³é éå¯æ´ç½ãä¸æ¦è¶è¿éç½®ç <code>maxDepth</code>ï¼ç´æ¥ç¡¬æç»ã</p>
+<p>è¿è· Claude Code çåºå«æ¯æ¬è´¨æ§çãClaude Code çãä¸è¦åµå¥ãåå¨ prompt éï¼æ¯è½¯çº¦æï¼æ¨¡åå¬ä¸å¬æ¯ç¼åï¼DSH ç maxDepth åå¨æä¹åç session header éï¼æ¯ç¡¬çº¦æï¼è¶äºå°±æ¯ errorï¼æ¨¡ååæ³ spawn ä¹ spawn ä¸åºæ¥ã</p>
+<p>åè®²ä¸ä¸ª fork çç»èï¼å¾è§ååã<code>fork-in-process</code> ç¨ <code>CreateAgentOptions.seed</code> ç»å­ agent ä¼ ç¶ logï¼ä½ä¼ çä¸æ¯æ´ä¸ªåå²ï¼èæ¯ç¶ log ç<strong>å¹³è¡¡å·²å®æ turn åç¼</strong>ï¼ä¹å°±æ¯æªå°æåä¸ä¸ª <code>turn/end</code> ä¸ºæ­¢ï¼è¿è¡ä¸­çé£ä¸ªä¸å¹³è¡¡ turn è¢«æé¤æãä¸ºä»ä¹è¿ä¹æ ï¼å ä¸º DSH ç session log æ¯ append-only çï¼æä¸ªè¿è¡æ¶ä¸åéå« Model-visible ç­ä»·äº loggedï¼ä»»ä½å°è¾¾æ¨¡åçä¸è¥¿å¿é¡»è½ä» log éå»ºãä¼ ä¸ä¸ªåæª turn è¿å»ï¼replay çæ¶å invariants ä¼å¯¹ä¸ä¸ãä¼ ãå¹³è¡¡åç¼ãå°±æ¯ä¸ºäºä¿è¯å­ agent replay åºæ¥çç¶æè·ç¶ agent å¨é£ä¸ªæ¶é´ç¹å®å¨ä¸è´ã</p>
+<p>è¿å°±æ¯æºç çº§éè¯»æè½çå°çä¸è¥¿ï¼äººå®¶ä¸æ¯éä¾¿ fork ä¸ä¸ï¼æ¯è¿ãæªå°åªãé½æåè®®å±é¢ççç±ã</p>
+<h2 id="ä¸ç§-harness-å²å­¦æ¨ªè¯">ä¸ç§ Harness å²å­¦æ¨ªè¯</h2>
+<p>éºå«å¤äºï¼ä¸æ¡ãClaude CodeãCodexãDSH ä¸å®¶å¨å­ Agent è¿ä»¶äºä¸çè®¾è®¡å²å­¦ï¼ææ´çæè¿å¼ è¡¨ã</p>
+<table>
+<thead>
+<tr>
+<th>ç»´åº¦</th>
+<th>Claude Code</th>
+<th>Codex</th>
+<th>DeepSeek Harness</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>å­ agent æ¨¡å</td>
+<td>Agent å·¥å·å  subagent_typeï¼åè¿ç¨ï¼æ¨¡åå³å® spawn</td>
+<td>app-server stdio æ²ç®±è¿ç¨ï¼å®¡æ¹é©±å¨</td>
+<td>å½å provider æ³¨åè¡¨ï¼å¤ provider å±å­ï¼è½åæ¾å¼åå</td>
+</tr>
+<tr>
+<td>è°å®è¾¹ç</td>
+<td>æ¨¡åï¼é  prompt å description</td>
+<td>äº§åå å®¡æ¹ç­ç¥</td>
+<td>provider è½åå£°æå  start æ¶ fail-loud æ ¡éª</td>
+</tr>
+<tr>
+<td>éç¦»</td>
+<td>åè¿ç¨ç¬ç«ä¸ä¸æ</td>
+<td>è¿ç¨å  sandbox</td>
+<td>provider å¯éï¼åè¿ç¨ spawn/forkãè¿ç¨ ACPãå¤é¨äº§åè¿ç¨</td>
+</tr>
+<tr>
+<td>å¯æ¿æ¢æ§</td>
+<td>Skill/MCP å¯å ï¼loop ä¸å¯æ¢</td>
+<td>æ²ç®±/å®¡æ¹å¯éï¼æ ¸å¿åºå®</td>
+<td>ä¸åçæä»¶ï¼agent loop æ¬èº«å¯æ¢</td>
+</tr>
+<tr>
+<td>å§æ´¾æ·±åº¦</td>
+<td>è½¯çº¦æï¼prompt å¼å¯¼</td>
+<td>äº§åèªç®¡</td>
+<td>æä¹å delegationDepth å  maxDepth ç¡¬æç»</td>
+</tr>
+<tr>
+<td>ç¶å­ä¸ä¸æ</td>
+<td>å­æ¶ promptï¼ä¸æ¶ç¶åå²</td>
+<td>ä¸ä¼ ç¶å¯¹è¯</td>
+<td>fork å¯ä¼ å¹³è¡¡ turn åç¼ï¼å¶ä»ä¸ä¼ </td>
+</tr>
+<tr>
+<td>å¯ç»­å­ agent</td>
+<td>æ </td>
+<td>æ ï¼ephemeral</td>
+<td>continuable å  Activation å  followup/interrupt/report</td>
+</tr>
+<tr>
+<td>è·¨äº§åå§æ´¾</td>
+<td>ä¸è½å§æ´¾ç» Codex</td>
+<td>ä¸è½å§æ´¾ç» CC</td>
+<td>claude-code å codex é½æ¯åç½® providerï¼å¯äºå§</td>
+</tr>
+</tbody>
+</table>
+<p>ææä¸ä¸ªææ insight çå·®å¼å±å¼ã</p>
+<p><strong>ç¬¬ä¸ï¼è°æ¥å³å®å­ä»»å¡çè¾¹çã</strong> Claude Code æè¿ä¸ªæåäº¤ç»äºæ¨¡åï¼æ¨¡åè¯» description èªå·±å¤æ­è¦ä¸è¦ spawnãspawn è°ãè¿å¾çµæ´»ï¼ä½è¾¹çæ¯éå¼çãè¯­ä¹çãéæ¶å¯è½æ¼ç§»ãCodex ææåæ¶ç»äº§ååå®¡æ¹ç­ç¥ï¼æ´å¯æ§ä½æ´æ­»ãDSH èµ°äºç¬¬ä¸æ¡è·¯ï¼è¾¹çç± provider çè½åå£°æå³å®ï¼å¯å¨é£ä¸å»ç¨ç±»åç³»ç»æ ¡éªï¼è¿äºå°±è¿äºï¼è¿ä¸äºç´æ¥æç»ãè¿æ¯æãè¾¹çãä»ä¸ä¸ª prompt å·¥ç¨é®é¢åæäºä¸ä¸ªåè®®å¥çº¦é®é¢ã</p>
+<p><strong>ç¬¬äºï¼å¯ç»­å­ agent è¿ä»¶äºï¼åªæ DSH æã</strong> Claude Code å Codex çå­ agent é½æ¯ ephemeral çï¼ä¸æ¬¡è°ç¨ä¸æ¬¡æ¶äº¡ãä½çå®çé¿ä»»å¡éï¼å­ agent ç»å¸¸éè¦è¢«è¿½é®åç»­è°ãDSH ç continuable å  Activation å  cold resume æ¯ç®åæå¨å¼æº agent æ¡æ¶éçå°æå®æ´çå­ä¼è¯çå½å¨æè®¾è®¡ãä»£ä»·æ¯å¤æåº¦ï¼è¿å¥ continuation manager çå¿æºè´æä¸ä½ï¼ä½å®è§£å³çæ¯çé®é¢ã</p>
+<p><strong>ç¬¬ä¸ï¼è·¨äº§åå§æ´¾ã</strong> è¿ä¸ªä¸ä¸èç»è®²ï¼å®æ¯æ´å¼ è¡¨éæé¢ è¦çä¸æ ¼ã</p>
+<p><img alt="ä¸ç§ harness å²å­¦å¯¹æ¯ï¼Claude Code åè¿ç¨æ¨¡åå³å®åãCodex æ²ç®±äº§åå®¡æ¹åãDeepSeek Harness å§æ´¾å¼è½ååååï¼ä¸èå³å®å­ä»»å¡è¾¹ççæååå«å½å±æ¨¡åãäº§åç­ç¥ä¸ provider è½åå¥çº¦" loading="lazy" data-src="https://magebyte.oss-cn-shenzhen.aliyuncs.com/myself/078-deepseek-harness-subagent-vs-claude-code-fig04.png" class="lazyload"></p>
+<h2 id="æç«ååæèªå·±ç-subagent-backend">æç«ååæèªå·±ç subagent backend</h2>
+<p>è¿ä¸èæ¯å¨ææææå§æ§çé¨åï¼ä½ åç¨³ã</p>
+<p>DSH åç½®äº <code>codex</code> å <code>claude-code</code> ä¸¤ä¸ª providerãæææ¯ï¼ä½ å¨ DSH éè·ä¸ä¸ª agentï¼è¿ä¸ª agent å¯ä»¥æå­ä»»å¡å§æ´¾ç» Codexï¼ä¹å¯ä»¥å§æ´¾ç» Claude Codeã<strong>DSH æå®çç´æ¥ç«åï¼åæäºèªå·±çæ§è¡åç«¯ã</strong></p>
+<p>æè¯»äºå®æ¹é£ä»½ Agent Noteï¼<code>2026-08-04-claude-code-and-codex-subagent-backends.md</code>ï¼ï¼éé¢çè®¾è®¡å³ç­éå¸¸å»æï¼æç»ä½ æã</p>
+<p>è¿ä¸¤ä¸ª provider é½æ¯ <strong>one-shot only</strong>ï¼<code>inheritsParentContext: false</code>ï¼ä¸å£°æä»»ä½å¯éè½åãæ¯æ¬¡å§æ´¾ï¼æèµ·ä¸ä¸ªå¨æ°çäº§åè¿ç¨åä¸ä¸ªä¸å¯ç»­çäº§åä¼è¯ãåªæ¥åç¬ç«ææ¬ä»»å¡ï¼æç¶ session ç cwd ä¼ è¿å»ï¼<strong>ä¸å¤å¶ç¶å¯¹è¯</strong>ã</p>
+<p>å·ä½å°å®ç°ï¼Codex provider å¯å¨ <code>codex app-server --stdio</code>ï¼å»ºä¸ä¸ª <code>ephemeral:true</code> ç threadï¼<code>turn/completed</code> æ¯æå¨ç»æãå¦æä»»å¡æ§è¡ä¸­éè¦å®¡æ¹èæ²¡äººå¨ï¼å®¡æ¹ç­ç¥é»è®¤ cancel æ declineï¼ä¸æäºä»»ä½æéãCodex è¿è¾¹ pin çæ¯ 0.147.0ï¼èµ° Responses åè®®ã</p>
+<p>Claude Code provider ç¨ <code>@anthropic-ai/claude-agent-sdk</code> ç <code>query()</code>ï¼<code>persistSession:false</code>ï¼ç¦ç¨ AskUserQuestionï¼èä¸ææä¸ä¼  <code>canUseTool</code> å elicitation åè°ï¼æææ¯ä¸æ¦éè¦äººæºäº¤äºå°±ç´æ¥å¤±è´¥ï¼ä¸å¼¹é®é¢ãpin çæ¯ SDK 0.3.220 / CLI 2.1.220 [DSH package.json]ã</p>
+<p>äº§åè¿ç¨ç± <code>dsh-subprocess</code> ç»ä¸ç®¡ï¼å­æ®æ¸æ´ãè¿ç¨æ ç»æ­¢ãæ´æ éåºè§å¯é½å¨è¿ä¸å±ã</p>
+<p>ä¸ºä»ä¹è®¾è®¡å¾è¿ä¹ãç»ãï¼æ¯æ¬¡é½å¨æ°è¿ç¨ãä¸ä¼ ä¸ä¸æãæ äººäº¤äºå°±å¤±è´¥ãå®æ¹åè¯æ¯ï¼æ¯æ¬¡å§æ´¾ä»åºå¨æ°äº§åè¿ç¨å ç¬ç«æ¨¡åä¸ä¸æçä»£ä»·ï¼äº§å payload åå°ç¶çº§çåªææç»ææ¬ãè¿ä¸æ¯å·æï¼è¿æ¯<strong>å®å¨è¾¹ç</strong>ã</p>
+<p>ä½ æ³ï¼å¦æå­ agent æ¯ä¸ä¸ªå®æ´ç Claude Code è¿ç¨ï¼å®é»è®¤ç»§æ¿äºä½ ç¶ä¼è¯çå¨é¨ä¸ä¸æåæéï¼é£å®å°±ä¸æ¯ãå­ agentãäºï¼å®æ¯ä½ ç¶ agent çä¸ä¸ªåèº«ï¼è¾¹çç¬é´å´©å¡ãæå®åæ one-shotãæ ä¸ä¸æãæ å®¡æ¹å°±æ­»ï¼ç­äºå¨ DSH çç¼æå±åå¤é¨äº§åä¹é´ç»äºä¸éæ¸æ¸æ¥æ¥ççº¿ï¼ä½ å°±æ¯ä¸ªå¹²ç¬ç«ææ¬æ´»çä¸´æ¶å·¥ï¼å¹²å®äº¤ç»æï¼å«æ³ç¢°æçä¼è¯ç¶æã</p>
+<p>è¿æä¸ªç»èï¼è¿ä¸¤ä¸ª provider <strong>é»è®¤ä¸è£å¨ dsh-base é</strong>ï¼æ¯ production-install exclusionï¼éè¦ä½ å¨ Profile éæ¾å¼å®è£ãæ¾å° host å¹³é¢ï¼åç± Agent Preset å³å®è¦ä¸è¦æ´é²å¯¹åºå·¥å·ãä¹å°±æ¯è¯´ï¼DSH å¢éèªå·±é½è§å¾è¿æ¯ä¸ªé«çº§è½åï¼ä¸æç®è®©æ°æä¸ä¸æ¥å°±ç©è·¨äº§åå§æ´¾ã</p>
+<p>è¿ä¸èçæ¶æå¤æ­æçç»ä½ ï¼ä¸ä¸ªæ¡æ¶æ¢æç«ååæèªå·±ç backendï¼è¦ä¹æ¯çå¦ï¼è¦ä¹æ¯å®å¯¹èªå·±ãç¼æå±ãçå®ä½æè¶³å¤çèªä¿¡ãæå¾åäºåèã</p>
+<h2 id="é¢è§ççåä»¥åç°å¨å¼ä¸å¼å¾ä¸æ">é¢è§ççåï¼ä»¥åç°å¨å¼ä¸å¼å¾ä¸æ</h2>
+<p>å¹å®äºï¼è¯´ç¹å®å¨çãè¿ä¸è¥¿ç°å¨æ¯ rcï¼èä¸æ¯ rc.7ï¼ä¸æ¯ 1.0ã</p>
+<p>ä»åº 2026-08-13 æåå»ºï¼å°æåç¨¿è¿å¤© 4 å¤© [GitHub repo.created_at]ãnpm ä¸ latest æ¯ rc.6ï¼next æ¯ rc.7 [npm view 2026-08-17]ãå®æ¹ README ææç½ç½åç THERE WILL BE COMPATIBILITY-BREAKING CHANGESã<code>SESSION_FORMAT_VERSION</code> æ¯ 0ï¼æ²¡æå¼å®¹æ¿è¯ºï¼SQLite ç¨åè°ç SCHEMA_VERSION æç»æ§æ ¼å¼ï¼æææ¯ä½ ä»å¤©å­ç sessionï¼æå¤©åçº§å¯è½å°±è¯»ä¸åºæ¥äºã</p>
+<p>ç¯å¢é¨æ§ä¹ä¸ä½ï¼Node è¦ <code>^22.19.0 || &gt;=24.0.0</code>ï¼åç®¡çå¨ pin äº pnpm 11.7.0 [DSH package.json engines]ãå¤´å·è´¡ç®è tianyicui ä¸ä¸ªäººæäº 5262 ä¸ª commit [gh contributors]ï¼ä½ å¤§æ¦è½æåå°è¿é¡¹ç®ç°å¨æå¤æ©æãå¤éä¸­å¨å°æ°äººæéã</p>
+<p>å¯å¨å½ä»¤åæ¯ç®åã</p>
+<pre><code class="language-bash"># éè¦ Node &gt;= 22.19ï¼å®æ¹ä¸é®å¯å¨ Web UIï¼ææ¬æºæ²ç®±ç½ç»è¶æ¶æ²¡è·æçé¢ï¼å½ä»¤æ¥èª READMEï¼
+npx @deepseek-ai/dsh web
+# é»è®¤çå¬ http://127.0.0.1:3080
+</code></pre>
+<p>ä½æå¿é¡»è¯å®ï¼æè¿è¾¹ npx å¨æ²ç®±éå®è£è¶æ¶ï¼æ²¡æ¿å°å®æ¶ Web UI æªå¾ãè¿ç¯æ¯æºç çº§æè§£ï¼æè¯»å®äºæ¶æææ¡£ãsubagent ç types.ts/index.ts/continuation.tsãCodex å Claude Code provider ç Agent Noteãsandbox ææ¡£å base bundle READMEï¼ä½æä¸ç¼é  UI æä½ä½éªãå¸é¢ä¸é£äºãæè·äºä¸é DSH çé¦ãçæç« ï¼ä½ çä¸ªå¿ç¼ï¼å¾å¤å¯è½ npx é½æ²¡è£å®ã</p>
+<p>æçä¸æå»ºè®®åä¸æ¡£ã</p>
+<ul>
+<li>å¦æä½ æ¯å agent åºç¡è®¾æ½çï¼ç°å¨å°±å»è¯»æºç ï¼éç¹è¯» <code>packages/subagent/</code>ï¼Capability Seam å continuation manager è¿ä¸¤å¥æ½è±¡å¼åç¥¨ä»·ï¼åªææåä¸ç¨ DSHã</li>
+<li>å¦æä½ æ¯æ³æ¿å®å½çäº§å·¥å·åä¸å¡çï¼ç­ 1.0ãrc é¶æ®µå¤©å¤© breakingï¼session æ ¼å¼é½ä¸å¼å®¹ï¼å«æ¿çäº§é¡¹ç®éªè·ã</li>
+<li>å¦æä½ æ¯æ¥åç­é¹çï¼star ä¸ä¸æ¾è§å¯åè¡¨å°±è¡ï¼çæåèµ·æ¥ï¼awesome list é½æ¯ä»å¤©æå»ºçã</li>
+</ul>
+<h2 id="å¸¸è§é®é¢">å¸¸è§é®é¢</h2>
+<p><strong>DSH å Cursor å°åºæ¯ä¸æ¯ç«åã</strong></p>
+<p>ä¸æ¯ãCursor æ¯ IDEï¼æ¯å¸¦ç¼è¾å¨çäº§åï¼DSH æ¯ agent harness/runtimeï¼æ¯ç»æ¨¡åæä¾å·¥å·ãä¼è¯ãæ²ç®±ãå­ agent ç¼æçåºå±æ¡æ¶ãå®ç¡®å®å¸¦ä¸ª Web UIï¼ä½å®ä½æ¯ harness çä¸ä¸ªçé¢ï¼ä¸æ¯ IDEãæ´è´´åçç±»æ¯æ¯ï¼DSH æ³å agent çç Express/Fastifyï¼è Cursor æ¯ agent çç Chromeã</p>
+<p><strong>6 ä¸ª provider éææ¥å¸¸è¯¥ç¨åªä¸ªã</strong></p>
+<p>ä½ å¨ DSH åé¨ç¼æï¼ä¼å <code>spawn-in-process</code>ï¼è¦éç¦»å°±ç¨å®ï¼å <code>fork-in-process</code>ï¼éè¦ç»§æ¿ç¶ä¸ä¸æåæ¥åæ¶ç¨ï¼ãè·¨æºå¨æè·¨å¢éç¨ <code>acp</code>ã<code>claude-code</code> å <code>codex</code> æ¯é«çº§è½åï¼éè¦è·¨äº§åå§æ´¾æ¶åå¼ï¼èä¸è¦æ¥åæ¯æ¬¡å¨æ°è¿ç¨çä»£ä»·ã<code>dsh-sdk</code> æ¯ç»å¤é¨ç¨åºéè¿ JSON-RPC æ¥å¥ç¨çã</p>
+<p><strong>continuable å­ agent å¬çå¼ºå¤§ï¼æ¯ä¸æ¯è¯¥ä¸å¾ç¨å®ã</strong></p>
+<p>ä¸æ¯ãcontinuable ææä¹å sessionãæ Activationãæ inboxï¼å¤æåº¦åèµæºå¼éé½æ¯ one-shot é«ä¸å¤§æªãç»å¤§å¤æ°ä¸æ¬¡æ§å­ä»»å¡ï¼one-shot å°±å¤äºãåªæå½ä½ æç¡®éè¦è¿½é®ãææ­ãè·¨å·å¯å¨ç»­è°æ¶ï¼æå¼å¾ä¸ continuableãå«ä¸ºäºç¨èç¨ã</p>
+<p><strong>å§æ´¾æ·±åº¦ maxDepth è®¾å¤å°åéã</strong></p>
+<p>æ²¡æé¶å¼¹ï¼ä½æçç»éªæ¯å«è¶è¿ 2 å° 3 å±ãDSH æå®æä¹åç¡¬æç»æ¯å¥½äºï¼ä½ä½ è¦èªå·±æ³æ¸æ¥ä¸ºä»ä¹éè¦æ·±å±å§æ´¾ãå¤§å¤æ°ãéè¦åµå¥ãçåºæ¯ï¼å¶å®æ¯ä»»å¡æè§£æ²¡åå¥½ï¼èä¸æ¯ççéè¦ 5 å± subagentãæ maxDepth å½è®¾è®¡ååï¼é¼èªå·±æä»»å¡æå¹³ã</p>
+<p><strong>Claude Code ç¨æ·ç°å¨è½ä» DSH å·å¸ä»ä¹ã</strong></p>
+<p>å°±ç®ä¸ç¨ DSHï¼ä½ ä¹å¯ä»¥åé´å®çåè®®æç»´ï¼å¨èªå·±ç subagent description éæãè¾å¥å¥çº¦ãè¾åºå¥çº¦ãè½åè¾¹çãåæ­»ï¼æä¸æ¯æçè½åæ¾å¼æ åºæ¥èä¸æ¯è®©æ¨¡åçï¼å¨ç¼æé»è¾éèªå·±åæ·±åº¦è®¡æ°åç¡¬æªæ­ï¼æä¸æ¬¡æ§ä»»å¡åå¯ç»­ä¼è¯å¨è®¾è®¡å±é¢åå¼ãåè®®ä¸ä¸å®è¦æ¡æ¶ç»ï¼ä½ èªå·±å¨ prompt å±åèæ¬å±ä¹è½ç«ã</p>
+<h2 id="åå¨æå">åå¨æå</h2>
+<p>åå°æå¼å¤´ç¯çå±å¹çé£ä¸ªä¸åã</p>
+<p>æå½æ¶å«æ­çæ ¹æ¬ä¸æ¯ãæ¨¡åå·å·å¼ subagentãè¿ä»¶äºæ¬èº«ï¼èæ¯<strong>æ²¡æäººå¨åè®®å±é¢åç­ãè°ææ spawnãè½ spawn æä»ä¹æ ·ãåµå¥å¤æ·±ãè¿ä¸ä¸ªé®é¢</strong>ãClaude Code æç­æ¡èå¨ prompt éï¼Codex æç­æ¡æ¶å¨äº§åç­ç¥éï¼DSH ç¬¬ä¸æ¬¡æç­æ¡æå°äºå°é¢ä¸ï¼ç¨ç±»åãç¨è½åå£°æãç¨æä¹åæ·±åº¦ï¼åæäºä¸ä»½å¯ä»¥æ ¡éªãå¯ä»¥æç»ãå¯ä»¥è·¨äº§åå¤ç¨çååã</p>
+<p>æä¸ç¡®å® DSH æåè½ä¸è½æï¼rc.7 ç breaking èå¥ååæ ¸å¿è´¡ç®èçéä¸­åº¦é½æ¯çå®é£é©ãä½æç¡®å®ä¸ä»¶äºï¼agent harness è¿ä¸ªå±æªæ¥ä¸å®ä¼å¾ãæ¾å¼åè®®ãæ¹åèµ°ï¼èä¸æ¯æ°¸è¿é æ¨¡åè¯» prompt èªå·±æãéå¼çä¸è¥¿ç»å°è¢«æ¾å¼åï¼è½è¢«ç±»åç³»ç»çº¦æçï¼å°±ä¸è¯¥çç»å¿æã</p>
+<p>ä½ å¨ç¨ Claude Code ç subagent æ¶è¸©è¿ä»ä¹åï¼åµå¥å¤±æ§ãä¸ä¸æä¸²å°ãè¿æ¯å­ä»»å¡ä¸å»ä¸åï¼è¯è®ºåºèèï¼ææ³ççæå¤å°äººè·æåè¿ä¸æ ·çç½ªã</p>
+<p>å Agent å¼åçæåï¼ä¸ç¯ææç®å¨ææ DSH ç continuation manager æä¸éï¼ç¨æå°å¯è¿è¡ä»£ç è®²é continuable å­ session çç¶ææºãæå´è¶£çè¯ï¼å³æ³¨ãç å¥è·³å¨ãï¼ååºæ¥ä½ è½ç¬¬ä¸æ¶é´çå°ãèº«è¾¹æäººå¨å agent ç¼æéåçï¼è¿ç¯å¯ä»¥ç´æ¥ç©ç»ä»ï¼çå¾ä»åè¸©ä¸éè½¯çº¦æçåã</p>
+<hr>
+<p><strong>ð¤ éå¥å®ææå</strong></p>
+<p>æ´çäºä¸ä»½ãAI Agent å¥é¨å®ææåãï¼ä»é¶å°å¯è¿è¡ä»£ç ï¼å« 5 ä¸ªè¸©ååºæ¯åçäº§çº§æ¨¡æ¿ã</p>
+<p><strong>åå¤ãagentãå³å¯è·åã</strong></p>
+<p><strong>è½¬åç»æ­£å¨å­¦ AI å¼åçæå</strong>ï¼å°èµ°å¼¯è·¯ ð<br>
+<img alt="beeaa00ee37c5db0e2fb2c5c5efe4f29" loading="lazy" data-src="https://img2024.cnblogs.com/blog/735767/202605/735767-20260526114014236-744639895.png" class="lazyload"></p>
+
+
+</div>
+<div id="MySignature" role="contentinfo">
+    å æå¾®ä¿¡è¿å»ä¸å±ææ¯ç¾¤ï¼æ¬¢è¿è¯»èæåºæè§ï¼åæ¬¢è¯·å³æ³¨åå®¢åä¸ªäººå¬ä¼å·ï¼ç å¥å­è
+</div>
+<div class="clear"></div>
+
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-09-14 12:11">2026-09-14 12:10</span>&nbsp;
+<a href="https://www.cnblogs.com/uniqueDong">ç å¥å­è</a>&nbsp;
+éè¯»(<span id="post_view_count">432</span>)&nbsp;
+è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(22964159);return false;">æ¶è</a>&nbsp;
+<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2FuniqueDong%2Fp%2F22964159&amp;targetId=22964159&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
          ]]>
     </description>
@@ -1958,1045 +2968,13 @@ ready = true
 	<div class="postDesc">posted on 
 <span id="post-date" data-last-update-days="0" data-date-updated="2026-09-14 10:42">2026-09-14 10:42</span>&nbsp;
 <a href="https://www.cnblogs.com/xiexj">ç¼ç¨ä¸ç</a>&nbsp;
-éè¯»(<span id="post_view_count">201</span>)&nbsp;
+éè¯»(<span id="post_view_count">213</span>)&nbsp;
 è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
 &nbsp;
 <a href="javascript:void(0)" onclick="AddToWz(22961980);return false;">æ¶è</a>&nbsp;
 <a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fxiexj%2Fp%2F22961980&amp;targetId=22961980&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
 </div>
  ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ é«å¹¶åä¸çæ½å¥ç³»ç»ï¼ä¸åªæ¯æ£åºå­ï¼è¿è¦é²ä½å¼ä¸é£æ§ ]]></title>
-    <link>https://www.cnblogs.com/zrui-xyu/p/22960699</link>
-    <guid>51d767b557a21e480c1306dfa469ea8f</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/zrui-xyu/p/22960699" title="åå¸äº 2026-09-14 09:40">
-    
-
-    <span role="heading" aria-level="2">é«å¹¶åä¸çæ½å¥ç³»ç»ï¼ä¸åªæ¯æ£åºå­ï¼è¿è¦é²ä½å¼ä¸é£æ§</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                    <div id="cnblogs_post_description" style="display: none">
-        
-        æè§£çäº§çº§é«å¹¶åæ½å¥ç³»ç»æ ¸å¿è®¾è®¡ï¼èç¦é«å¹¶åè¶åãé»äº§ä½å¼ãæµééªå´©ä¸å¤§é¾é¢ï¼è¯¦è§£Redis+Luaåå­æ£ååºå­ãåæ¬¡IOå®æå¨æ ¡éªçé«æ§è½æ¹æ¡ãæ­å»ºç«¯ç½äºä¸å±é²ä½å¼é£æ§ä½ç³»ï¼ç»åMQå¼æ­¥åå³°ãç­ç¹Keyææ£ãå¤çº§éçº§å®¹ç¾æºå¶ï¼è§£å³æ°æ®ä¸è´æ§ä¸èµæé£é©ï¼éå®æ´å¯è½å°ä»£ç ï¼åéçµåè¥éé«å¹¶åæ ¸å¿æ¶æã
-    </div>
-<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<h2 id="é«å¹¶åæ½å¥ç³»ç»å¨é¾è·¯è®¾è®¡ä»é²è¶åå°åä½å¼">é«å¹¶åæ½å¥ç³»ç»å¨é¾è·¯è®¾è®¡ï¼ä»é²è¶åå°åä½å¼</h2>
-<blockquote>
-<p>æ¯é¢å¤§ä¿ãå¹´ä¼ãè¥éæ´»å¨ï¼"æ½å¥"å ä¹æ¯æ éãä½çæ­£è½ææ½å¥ç³»ç»åç¨³çäººï¼è¿æ¯æ³è±¡ä¸­å°ãæ¬æä»ä¸ä¸ªçå®çé«å¹¶åæ½å¥ç³»ç»åºåï¼ä»æ¶æåå±ãåºå­åå­æ£åãå¨é¾è·¯é²ä½å¼ãå¤å±é£æ§ï¼å°ååºå®¹ç¾ï¼å¸¦ä½ å®æ´æè§£ä¸ä¸ªçäº§çº§æ½å¥ç³»ç»çè®¾è®¡æè·¯ä¸æ ¸å¿ä»£ç ãå¨æå¹²è´§ï¼å»ºè®®æ¶èã</p>
-</blockquote>
-<hr>
-<h2 id="ä¸åæ³æ¸æ¥æ½å¥ç³»ç»å°åºå¨è§£ä»ä¹é¢">ä¸ãåæ³æ¸æ¥ï¼æ½å¥ç³»ç»å°åºå¨è§£ä»ä¹é¢ï¼</h2>
-<p>å¾å¤äººç¬¬ä¸ååºæ¯"æ½å¥ä¸å°±æ¯æ£åºå­åï¼"ââè¿æ°æ°æ¯æå±é©çè¯¯åºã</p>
-<p>ä¸ä¸ªçäº§çº§æ½å¥ç³»ç»ï¼æ¬è´¨è¦åæ¶è§£å³<strong>ä¸ä¸ªæ ¸å¿çç¾</strong>ï¼</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">æ ¸å¿çç¾</th>
-<th style="text-align: left">æ¬è´¨é®é¢</th>
-<th style="text-align: left">è®¾è®¡ç®æ </th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><strong>é«å¹¶ååºå­å®å¨</strong></td>
-<td style="text-align: left">å³°å¼æµéä¸å¥åç»å¯¹ä¸è½è¶åãä¸å°å</td>
-<td style="text-align: left">Redis + Lua åå­æ£åï¼å¼æ­¥åå³°è½åº</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>å¨é¾è·¯é²ä½å¼</strong></td>
-<td style="text-align: left">èæ¬ãç¾æ¯åãè®¾å¤ååºæ¹éå·å¥</td>
-<td style="text-align: left">ç«¯-ç½-äºä¸å±çºµæ·±é²å¾¡ï¼åä¸­å¥ååº</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>å¤å±çº§é£æ§</strong></td>
-<td style="text-align: left">è§åè¿ä¸¥è¯¯æç¨æ·ï¼è¿æ¾é æèµæ</td>
-<td style="text-align: left">å®æ¶è§åå¼æ + ç¦»çº¿å¤§æ°æ®ï¼é«ä»·å¼å¥åäºæ¬¡å¤æ ¸</td>
-</tr>
-</tbody>
-</table>
-<p>æè¿ä¸ä¸ªçç¾æ³æ¸æ¥ï¼æ¶æèªç¶å°±åºæ¥äºã</p>
-<hr>
-<h2 id="äºæ´ä½æ¶ææµéè¿æ»¤--é£é©å³ç­--åå­æ£åºå­--å¼æ­¥æä¹å">äºãæ´ä½æ¶æï¼æµéè¿æ»¤ â é£é©å³ç­ â åå­æ£åºå­ â å¼æ­¥æä¹å</h2>
-<pre><code class="language-text">ç¨æ·ç«¯
-  â
-  â¼
-ââââââââââââââââââââââââââââââââ
-â  æ¥å¥å±ï¼ç½å³ / Nginx          â  â éæµãé´æãè¯·æ±ç­¾åãéªè¯ç 
-ââââââââââââââââ¬ââââââââââââââââ
-               â¼
-ââââââââââââââââââââââââââââââââ
-â  åç½®æ ¡éªå±                    â  â å¹ç­æ ¡éªãåä¸æ¬¡æ°éå¶ãè®¾å¤æçº¹
-ââââââââââââââââ¬ââââââââââââââââ
-               â¼
-ââââââââââââââââââââââââââââââââ
-â  å®æ¶é£æ§å¼æ                  â  â è§åå¼ææåï¼é«é£é©ç´æ¥"åä¸­å¥"
-ââââââââââââââââ¬ââââââââââââââââ
-               â¼
-ââââââââââââââââââââââââââââââââ
-â  æ½å¥æ ¸å¿æå¡                  â  â æ¦çå¹é + Redis Lua åå­æ£åºå­
-ââââââââââââââââ¬ââââââââââââââââ
-               â¼
-ââââââââââââââââââââââââââââââââ
-â  æ¶æ¯éåï¼RocketMQ / Kafkaï¼  â  â åå³°ãå¼æ­¥è½åºãè§¦ååå¥
-ââââââââââââââââ¬ââââââââââââââââ
-               â¼
-ââââââââââââââââââââââââââââââââ
-â  æ°æ®åº / ç¦»çº¿é£æ§å¹³å°          â  â ä¸­å¥è®°å½æä¹åãT+1 èç±»åæ
-ââââââââââââââââââââââââââââââââ
-</code></pre>
-<p><strong>æ ¸å¿æè·¯ä¸å¥è¯</strong>ï¼æ¯ä¸å±é½æé²å¾¡ï¼å±å±è¿æ»¤åï¼çæ­£å°è¾¾æ ¸å¿æ£åºå­é»è¾çè¯·æ±å·²ç»éå¸¸å¹²åã</p>
-<hr>
-<p>å³äºè¿ä¸ªé®é¢çåºå±åçåæ´å¤å®æç»èï¼ææ´çäºä¸ä»½ãå¤§åé¢è¯æåãï¼åå«å¤§åé«é¢é¢è¯é¢ãæºç è§£æåæ§è½è°ä¼æ¡ä¾ã<br>
-å³æ³¨å¬ä¼å·ãRainçJavaå¤§ç¥ä¹è·¯ãï¼åå¤âJavaâå³å¯åè´¹é¢åï¼æç»­æ´æ°ä¸­ã</p>
-<hr>
-<h2 id="ä¸ç¡¬æ ¸é¨åé«å¹¶ååºå­åå­æ£å">ä¸ãç¡¬æ ¸é¨åï¼é«å¹¶ååºå­åå­æ£å</h2>
-<h3 id="31-åºå­é¢ç­æ´»å¨å¨ç¨ä¸ç¢°æ°æ®åº">3.1 åºå­é¢ç­ï¼æ´»å¨å¨ç¨ä¸ç¢°æ°æ®åº</h3>
-<p>æ´»å¨å¼å§åï¼å°ææå¥ååºå­ãä¸­å¥æ¦çéç½®å¨éé¢ç­å° Redisï¼</p>
-<ul>
-<li><code>lottery:stock:{activityId}:{prizeId}</code> â å¥åå©ä½åºå­</li>
-<li><code>prize:daily:{prizeId}:{date}</code> â å¥åæ¥åæ¾é</li>
-<li><code>user:daily:win:{uid}:{date}</code> â ç¨æ·æ¯æ¥ä¸­å¥æ¬¡æ°</li>
-<li><code>lottery:idempotent:{requestId}</code> â å¹ç­æ è®°</li>
-</ul>
-<p>æ´ä¸ªæ½å¥æ ¸å¿æµç¨<strong>åªæä½ Redisï¼ä¸æ¥æ°æ®åº</strong>ï¼è¿æ¯æä½ä¸çº§ QPS çåºç¡ã</p>
-<h3 id="32-lua-èæ¬ä¸æ¬¡-io-å®æå¨é¨æ ¡éªä¸æ£å">3.2 Lua èæ¬ï¼ä¸æ¬¡ IO å®æå¨é¨æ ¡éªä¸æ£å</h3>
-<p>è¿æ¯æ´ä¸ªç³»ç»<strong>ææ ¸å¿çææ¯ç¹</strong>ãæ½å¥æ¦çå¹éåï¼ç¨ä¸æ®µ Lua èæ¬å¨ Redis ä¸­åå­æ§è¡ãå¹ç­æ ¡éª + åºå­æ£å + ä¸è¶³åè¡¥ãï¼</p>
-<pre><code class="language-lua">-- lottery_deduct_stock.lua
--- KEYS[1] å¹ç­æ ¡éª key: lottery:idempotent:{requestId}
--- KEYS[2] ç®æ å¥ååºå­ key: lottery:stock:{activityId}:{prizeId}
--- KEYS[3] ç¨æ·å½æ¥ä¸­å¥æ¬¡æ° key: user:daily:win:{uid}:{date}
--- KEYS[4] å¥åå½æ¥éé key: prize:daily:{prizeId}:{date}
--- ARGV[1] å¹ç­è¿ææ¶é´ï¼ç§ï¼ä¸æ´»å¨æ¶é¿å¯¹é½ï¼
--- ARGV[2] åæ¬¡æ£åæ°ï¼åºå®ä¸º 1ï¼
--- ARGV[3] å¥åå½æ¥ä¸é
--- ARGV[4] ç¨æ·å½æ¥ä¸é
--- ARGV[5] å¥å IDï¼ç¨äºè¿åï¼
-
--- â  å¹ç­æ ¡éªï¼éå¤è¯·æ±ç´æ¥æ¦æª
-if redis.call('EXISTS', KEYS[1]) == 1 then
-    return {0, 'duplicate_request'}
-end
-
--- â¡ å¥åæ»åºå­æ ¡éª
-local stock = redis.call('GET', KEYS[2])
-if not stock or tonumber(stock) &lt;= 0 then
-    return {-1, 'stock_empty'}
-end
-
--- â¢ å¥åæ¥éæ ¡éª
-local daily_prize = redis.call('GET', KEYS[4])
-if daily_prize and tonumber(daily_prize) &gt;= tonumber(ARGV[3]) then
-    return {-2, 'prize_daily_limit'}
-end
-
--- â£ ç¨æ·æ¥éæ ¡éª
-local user_daily = redis.call('GET', KEYS[3])
-if user_daily and tonumber(user_daily) &gt;= tonumber(ARGV[4]) then
-    return {-3, 'user_daily_limit'}
-end
-
--- â¤ å¨é¨æ ¡éªéè¿ï¼åå­æ£å
-redis.call('DECRBY', KEYS[2], ARGV[2])
-redis.call('INCR', KEYS[3])
-redis.call('INCR', KEYS[4])
-
--- â¥ åå¥å¹ç­æ è®°
-redis.call('SETEX', KEYS[1], ARGV[1], 'WIN')
-
-return {1, ARGV[5]}
-</code></pre>
-<p><strong>ä¸ºä»ä¹è¿æ®µèæ¬æ¯çµé­ï¼</strong></p>
-<ul>
-<li><strong>åæ¬¡ç½ç» IO</strong>ï¼æææ ¡éª + æ£åå¨ä¸æ¬¡ Redis è°ç¨ä¸­å®æï¼æ²¡æå¤æ¬¡ RTT çå¼é</li>
-<li><strong>åå­æ§ä¿è¯</strong>ï¼Redis åçº¿ç¨æ§è¡ Lua èæ¬ï¼å¤©ç¶æ éï¼æç»è¶å</li>
-<li><strong>å¹ç­é²æ¤</strong>ï¼åä¸ requestId éå¤æäº¤ç´æ¥è¿åï¼ä¸ä¼éå¤ä¸­å¥</li>
-<li><strong>åºå­åè¡¥</strong>ï¼æ£åååºå­ä¸è¶³æ¶èªå¨ INCR åè¡¥ï¼é¿åè´æ°å¼å¸¸</li>
-<li><strong>æ§è½æé«</strong>ï¼åæºå¯è¾¾ 10W+ QPS</li>
-</ul>
-<h3 id="33-java-è°ç¨å±çäº§çº§è½å°">3.3 Java è°ç¨å±ï¼çäº§çº§è½å°</h3>
-<pre><code class="language-java">@Service
-public class LotteryService {
-
-    @Resource
-    private StringRedisTemplate stringRedisTemplate;
-
-    // é¢å è½½ Lua èæ¬ï¼å¯å¨æ¶ä¸æ¬¡æ§è§£æï¼é¿åè¿è¡æ¶éå¤è§£æå¼é
-    private final DefaultRedisScript&lt;List&gt; deductStockScript;
-
-    public LotteryService() {
-        deductStockScript = new DefaultRedisScript&lt;&gt;();
-        deductStockScript.setScriptSource(
-            new ClassPathResource("lua/lottery_deduct_stock.lua"));
-        deductStockScript.setResultType(List.class);
-    }
-
-    public LotteryResultDTO doLottery(String requestId, Long activityId,
-                                       Long userId, Long prizeId) {
-        // 1. åç½®æ ¡éªï¼æ´»å¨æææãç¨æ·åä¸æ¬¡æ°ï¼çç¥ï¼
-
-        // 2. æ¦çå¹éï¼åºäºæ¬å°ç¼å­çæ¦çéç½®ï¼è®¡ç®å½ä¸­å¥å
-        if (prizeId == null) {
-            return LotteryResultDTO.fail("æªä¸­å¥");
-        }
-
-        // 3. ç»è£ Redis Key
-        String today = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE);
-        List&lt;String&gt; keys = Arrays.asList(
-            "lottery:idempotent:" + requestId,           // å¹ç­ key
-            "lottery:stock:" + activityId + ":" + prizeId, // å¥ååºå­
-            "user:daily:win:" + userId + ":" + today,    // ç¨æ·æ¥é
-            "prize:daily:" + prizeId + ":" + today       // å¥åæ¥é
-        );
-
-        // 4. æ§è¡ Lua åå­æ£å
-        List result;
-        try {
-            result = stringRedisTemplate.execute(
-                deductStockScript, keys,
-                String.valueOf(24 * 3600),  // å¹ç­è¿æ 24h
-                "1",                         // æ£åæ°
-                "100",                       // å¥åæ¥ä¸é
-                "3",                         // ç¨æ·æ¥ä¸é
-                String.valueOf(prizeId)
-            );
-        } catch (Exception e) {
-            // Redis å¼å¸¸éçº§ï¼åæ¢æ°æ®åºä¹è§éæ£åºå­
-            log.error("Redis æ£åºå­å¼å¸¸ï¼éçº§å°æ°æ®åº", e);
-            return deductStockByDbWithOptimisticLock(activityId, prizeId, userId);
-        }
-
-        // 5. ç»æåæ¯å¤ç
-        int code = Integer.parseInt(result.get(0).toString());
-        if (code == 0) {
-            return LotteryResultDTO.fail("éå¤è¯·æ±");
-        } else if (code &lt; 0) {
-            return LotteryResultDTO.fail("æªä¸­å¥");
-        }
-
-        // 6. ä¸­å¥æåï¼å¼æ­¥ MQ è½åº + è§¦ååå¥
-        rocketMQTemplate.asyncSend("lottery_win_topic",
-            buildWinMessage(requestId, activityId, userId, prizeId),
-            new SendCallback() { /* å¤±è´¥éè¯ + å¯¹è´¦ååº */ });
-
-        return LotteryResultDTO.win(prizeId);
-    }
-}
-</code></pre>
-<p><strong>ä»£ç äº®ç¹</strong>ï¼</p>
-<ul>
-<li>Lua èæ¬<strong>é¢å è½½</strong>ï¼å¯å¨æ¶è§£æä¸æ¬¡ï¼è¿è¡æ¶é¶é¢å¤å¼é</li>
-<li>Redis å¼å¸¸æ¶<strong>èªå¨éçº§</strong>å°æ°æ®åºä¹è§éï¼version å­æ®µï¼ï¼ä¿è¯æç«¯åºæ¯ä¸è¶å</li>
-<li>ä¸­å¥å<strong>å¼æ­¥ MQ</strong> åå³°ï¼æ¶è´¹ç«¯åå¹ç­æ ¡éªï¼æ¯æä¸çº§ QPS</li>
-</ul>
-<hr>
-<h2 id="åçºµæ·±é²å¾¡å¨é¾è·¯é²ä½å¼ä½ç³»">åãçºµæ·±é²å¾¡ï¼å¨é¾è·¯é²ä½å¼ä½ç³»</h2>
-<p>ä¸è½åªå"æ£åºå­"ï¼è¦ååç­<strong>"è¿ä¸ªè¯·æ±ææ²¡æèµæ ¼æ£"</strong>ã</p>
-<h3 id="41-ä¸å±é²å¾¡æ¶æ">4.1 ä¸å±é²å¾¡æ¶æ</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">é²æ¤å±çº§</th>
-<th style="text-align: left">æ ¸å¿ææ®µ</th>
-<th style="text-align: left">è§£å³çé®é¢</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><strong>ç«¯ä¾§ï¼ç¬¬ä¸éï¼</strong></td>
-<td style="text-align: left">è®¾å¤æçº¹ + JS æ··æ· + å¨æä»¤ç</td>
-<td style="text-align: left">è¯å«æ¨¡æå¨ãè®¾å¤ååºï¼é²æ¥å£æåéæ¾</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>æ¥å¥å±ï¼ç¬¬äºéï¼</strong></td>
-<td style="text-align: left">ä»¤çæ¡¶éæµ + æ»åéªè¯ + è¯·æ±ç­¾å</td>
-<td style="text-align: left">åç¨æ· 1æ¬¡/ç§ï¼IP 10æ¬¡/ç§ï¼é²æ´åå·å¥</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>ä¸å¡å±ï¼ç¬¬ä¸éï¼</strong></td>
-<td style="text-align: left">è®¾å¤æçº¹ + å®åæ ¡éª + è¡ä¸ºå¼å¸¸æ£æµ</td>
-<td style="text-align: left">æ¦æªä¸æºå¤å·ãèæå·ãèæ¬åæä½</td>
-</tr>
-</tbody>
-</table>
-<h3 id="42-é£æ§å¼æå®æ¶å³ç­åä¸­å¥ååº">4.2 é£æ§å¼æï¼å®æ¶å³ç­ï¼åä¸­å¥ååº</h3>
-<p>é£æ§å¼ææ¥æ¶ç¨æ·è¡ä¸ºç¹å¾ï¼å®æ¶ç®åï¼</p>
-<ul>
-<li><strong>è®¾å¤ç»´åº¦</strong>ï¼æ¯å¦ root/è¶ç±ãè®¾å¤æçº¹æ¯å¦å½ä¸­é»åº</li>
-<li><strong>è´¦å·ç»´åº¦</strong>ï¼æ³¨åæ¶é¿ãå¥½åæ°ãå®åç­çº§ãåå²è¡ä¸º</li>
-<li><strong>ç½ç»ç»´åº¦</strong>ï¼IP å½å±å°åå¨é¢çãå IP å¤è´¦å·æ£æµ</li>
-<li><strong>è¡ä¸ºç»´åº¦</strong>ï¼è¯·æ±é¢çãæ¶é´é´éè§å¾æ§ãæä½è½¨è¿¹</li>
-</ul>
-<p><strong>å³é®è§åç¤ºä¾</strong>ï¼</p>
-<pre><code class="language-java">// è´£ä»»é¾æ¨¡å¼ï¼å¯ææçè§åå¼æ
-public abstract class RiskRule {
-    public abstract RiskResult evaluate(UserContext ctx);
-}
-
-// è§å1ï¼æ°æ³¨å(&lt;24h)ç¨æ·ä¸­å¤§å¥ â é«é£é©
-public class NewUserBigPrizeRule extends RiskRule {
-    public RiskResult evaluate(UserContext ctx) {
-        if (ctx.getRegisterHours() &lt; 24 &amp;&amp; ctx.getPrizeLevel() &gt; 5) {
-            return RiskResult.reject("æ°ç¨æ·ä¸­å¤§å¥é£é©");
-        }
-        return RiskResult.pass();
-    }
-}
-
-// è§å2ï¼å IP ä¸å¤è´¦å· â ç¾æ¯åç¹å¾
-public class IPBatchRule extends RiskRule {
-    public RiskResult evaluate(UserContext ctx) {
-        long count = redisTemplate.opsForSet()
-            .size("ip:users:" + ctx.getIp());
-        if (count &gt; 5) {
-            return RiskResult.reject("IP ä¸è´¦å·å¼å¸¸å¤");
-        }
-        return RiskResult.pass();
-    }
-}
-
-// é£æ§å¼æï¼éåè§åé¾ï¼ä»»ä¸æ¦æªå³æç»
-public class RiskEngine {
-    private List&lt;RiskRule&gt; rules = Arrays.asList(
-        new NewUserBigPrizeRule(), new IPBatchRule());
-
-    public boolean pass(UserContext ctx) {
-        for (RiskRule rule : rules) {
-            if (rule.evaluate(ctx).isReject()) return false;
-        }
-        return true;
-    }
-}
-</code></pre>
-<p><strong>æç çä¸æ</strong>ï¼é£æ§è¿å"é«é£é©"æ¶ï¼æå¡ç«¯<strong>ç´æ¥è¿å"è°¢è°¢åä¸"æé»è®¤å¥å</strong>ï¼ä¸æ£çå®å¤§å¥åºå­ãè¡¨é¢ä¸çç¨æ·"æ²¡ä¸­å¥"ï¼å®éä¸ä»çè¯·æ±æ ¹æ¬æ²¡è¿å¥çæ­£çæ½å¥æ± ãé»äº§å®å¨æ æç¥ã</p>
-<h3 id="43-åç½®ç¦»çº¿é£æ§æç»­è¿å">4.3 åç½®ç¦»çº¿é£æ§ï¼æç»­è¿å</h3>
-<p>T+1 ç¨ Spark è·å¨éç¨æ·è¡ä¸ºæ°æ®ï¼éè¿èç±»ç®æ³è¯å«ç¾æ¯åéç¾¤ãæ¹éæ³¨åè´¦å·ï¼æ´æ°é£é©æ ç­¾åæ­¥å° Redisï¼ä¾å®æ¶é£æ§ä½¿ç¨ã<strong>é²æ¤è½åéæ¶é´æç»­è¿­ä»£</strong>ã</p>
-<p>é«ä»·å¼å¥åï¼ææºãç°éç­ï¼ä¸­å¥åï¼è¿ä¼è§¦å<strong>æ·±åº¦é£æ§ + äººå·¥å¤æ ¸</strong>ï¼ç¡®è®¤éä½å¼è´¦å·ååå¥ï¼åä½å¤§é¢èµæã</p>
-<hr>
-<h2 id="äºååºä¸å®¹ç¾çäº§ç¯å¢ä¸è½æ²¡æçå®å¨ç½">äºãååºä¸å®¹ç¾ï¼çäº§ç¯å¢ä¸è½æ²¡æçå®å¨ç½</h2>
-<h3 id="51-åºå­åè¡¥æºå¶">5.1 åºå­åè¡¥æºå¶</h3>
-<p>ä¸­å¥ååéå»¶è¿æ¶æ¯ï¼15 åéæªé¢å¥/æªå¡«åæ¶è´§å°åçè®¢åï¼èªå¨è§¦ååºå­åè¡¥ãåè¡¥æä½åæ ·ç¨ Lua åå­æ§è¡ï¼å¹¶å¢å å¹ç­æ è®°é¿åéå¤åè¡¥å¯¼è´åºå­èé«ã</p>
-<h3 id="52-éçº§ååºç­ç¥">5.2 éçº§ååºç­ç¥</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">å¼å¸¸åºæ¯</th>
-<th style="text-align: left">éçº§æ¹æ¡</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left">Redis å®æº</td>
-<td style="text-align: left">èªå¨åæ¢æ°æ®åºä¹è§éï¼version å­æ®µï¼æ£åºå­ + å¨å±éæµ</td>
-</tr>
-<tr>
-<td style="text-align: left">é£æ§ç³»ç»æé</td>
-<td style="text-align: left">éçº§ä¸ºä»æ ¡éªé»åå + åºç¡éæµï¼ä¿è¯æ ¸å¿æµç¨å¯ç¨</td>
-</tr>
-<tr>
-<td style="text-align: left">æ°æ®åºååè¿é«</td>
-<td style="text-align: left">å³é­ä¸­å¥è®°å½æ¥è¯¢ç­éæ ¸å¿æ¥å£</td>
-</tr>
-<tr>
-<td style="text-align: left">æ°æ´»å¨ä¸çº¿</td>
-<td style="text-align: left">ç°åº¦æ¾éï¼å¼å¸¸èªå¨çæ­éçº§ä¸º"è°¢è°¢åä¸"</td>
-</tr>
-</tbody>
-</table>
-<h3 id="53-æ°æ®ä¸è´æ§ä¿é">5.3 æ°æ®ä¸è´æ§ä¿é</h3>
-<ul>
-<li><strong>äºå¡æ¶æ¯</strong>ï¼RocketMQï¼æ<strong>æ¬å°æ¶æ¯è¡¨ + å®æ¶è¡¥å¿</strong>ï¼Redis æ£åæåä½ MQ åéå¤±è´¥æ¶ï¼ç¡®ä¿ä¸ä¸¢å¥å</li>
-<li><strong>æ¯æ¥å®æ¶å¯¹è´¦</strong>ï¼åæ¨è·æ¹ï¼æ ¸å¯¹ Redis åºå­ãæ°æ®åºåºå­ãä¸­å¥è®°å½ä¸èä¸è´æ§ï¼ä¿®å¤å¼å¸¸æ°æ®</li>
-<li><strong>å¹ç­æ§</strong>ï¼æ¯ä¸ªæ½å¥è¯·æ±æºå¸¦å¯ä¸ requestIdï¼Redis ç¼å­ç»æï¼éå¤æäº¤ç´æ¥è¿å</li>
-</ul>
-<h3 id="54-ç­é¨å¥åç­ç¹-key-ææ£">5.4 ç­é¨å¥åç­ç¹ Key ææ£</h3>
-<p>å¤´é¨å¤§å¥çåºå­ Key å¯è½æä¸ºè¶çº§ç­ç¹ï¼å Redis åç CPU è¢«ææ»¡ãè§£å³æ¹æ¡ï¼<strong>åºå­åç</strong>ââå°åä¸ªå¥ååºå­ææ N ä¸ªå­ Keyï¼å¦ <code>stock:0</code> ~ <code>stock:9</code>ï¼ï¼æ£åæ¶éæºéæ©å­ Keyï¼å°ç­ç¹æµéåæ£å°å¤ä¸ª Redis åçã</p>
-<hr>
-<h2 id="å­åç«¯ååå«å¿½è§ä½éªå±çä¼å">å­ãåç«¯ååï¼å«å¿½è§ä½éªå±çä¼å</h2>
-<ul>
-<li>æ½å¥æé®ç¹å»å<strong>ç«å³ç½®ç°</strong>ï¼é²æ­¢éå¤æäº¤</li>
-<li>ç»æ loading å¨ç»ï¼éä½ç¨æ·ç¦èåéå¤ç¹å»</li>
-<li>æ´»å¨åè®¡æ¶ + åºå­ä½éå±ç¤ºï¼è¥é ç´§è¿«æ</li>
-<li>åç«¯ JS æ··æ· + å¨æä»¤çï¼æ½å¥æé®ç¹å»åæçæä¸æ¬¡æ§ tokenï¼é²ææ¥å£éæ¾</li>
-</ul>
-<hr>
-<h2 id="ä¸æ ¸å¿ææ¯é¾ç¹éæ¥è¡¨">ä¸ãæ ¸å¿ææ¯é¾ç¹éæ¥è¡¨</h2>
-<table>
-<thead>
-<tr>
-<th style="text-align: left">é¾ç¹</th>
-<th style="text-align: left">é®é¢æ¬è´¨</th>
-<th style="text-align: left">è½å°æ¹æ¡</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left"><strong>å¥åè¶å</strong></td>
-<td style="text-align: left">å¹¶åä¸å¤è¯·æ±åæ¶æ£åºå­</td>
-<td style="text-align: left">Redis + Lua åå­èæ¬ï¼åæ¬¡ IO å®ææ ¡éª+æ£å</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>ç­ç¹ Key</strong></td>
-<td style="text-align: left">ç­é¨å¥å Redis key è®¿é®éä¸­</td>
-<td style="text-align: left">åºå­åçææ£ + æ¬å°é¢æ£ + å®æ¶åè¡¥</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>é»äº§è¯å«</strong></td>
-<td style="text-align: left">èæ¬ãæ¨¡æå¨ãè®¾å¤ååºé¾åºå</td>
-<td style="text-align: left">ç«¯-ç½-äºä¸å±çºµæ·± + åä¸­å¥ååº</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>æ°æ®ä¸è´æ§</strong></td>
-<td style="text-align: left">Redis æ£æåä½æ¶æ¯ä¸¢å¤±</td>
-<td style="text-align: left">äºå¡æ¶æ¯ / æ¬å°æ¶æ¯è¡¨ + å®æ¶å¯¹è´¦</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>é£æ§å»¶è¿</strong></td>
-<td style="text-align: left">å¤æè§åè®¡ç®ææ¢æ¥å£</td>
-<td style="text-align: left">è½»éè§ååç½®ç½å³ï¼æ ¸å¿è§ååå­å¹¶è¡è®¡ç®ï¼å¤æè§åå¼æ­¥åç½®</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>æ¦çä¸åºå­çç¾</strong></td>
-<td style="text-align: left">æ½ä¸­å¥åä½åºå­å·²ç©º</td>
-<td style="text-align: left">Lua æ£åå¤±è´¥èªå¨éçº§å°å¶ä»å¥åæ"æªä¸­å¥"ï¼åç«¯æ æç¥</td>
-</tr>
-<tr>
-<td style="text-align: left"><strong>å³°å¼éªå´©</strong></td>
-<td style="text-align: left">åæ­¥ååºæä¸ä½</td>
-<td style="text-align: left">Redis æç®¡æ ¸å¿è¯»å + MQ åå³°å¼æ­¥è½åº + éçº§ååº</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="å«æ»ç»">å«ãæ»ç»</h2>
-<p>ä¸ä¸ªé«å¹¶åæ½å¥ç³»ç»çæ¬è´¨æ¯ï¼</p>
-<blockquote>
-<p><strong>å¨å·¨å¤§æµéä¸ï¼ç¨æå°çç­ç¹èµæºï¼Redis + Luaï¼åå­åå°å®æ"èµæ ¼æ ¡éª + åºå­æ£å"ï¼ç¨å¼æ­¥è§£è¦å¤çèæ¶çåè´§ä¸è®°å½ï¼å¹¶å å å¤ç»´åº¦çºµæ·±é£æ§ï¼æä½å¼æå¤±éå°æä½ã</strong></p>
-</blockquote>
-<p>è®°ä½ä¸ä¸ªå³é®è¯ï¼<strong>åå­æ£åãçºµæ·±é²å¾¡ãå¼æ­¥ååº</strong>ãæè¿ä¸ä»¶äºåæå®ï¼æ½å¥ç³»ç»å°±ç¨³äºã</p>
-<hr>
-<p>å¦ææ¬æå¯¹ä½ æå¸®å©ï¼æ¬¢è¿å³æ³¨æçå¬ä¼å·ãRainçJavaå¤§ç¥ä¹è·¯ãã<br>
-ä¸æ³¨ Java é¢è¯ãæºç ãé«å¹¶åå®æï¼åå¤âJavaâé¢åãå¤§åé¢è¯æåãï¼æç»­æ´æ°ã</p>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-09-14 09:41">2026-09-14 09:40</span>&nbsp;
-<a href="https://www.cnblogs.com/zrui-xyu">RainçJavaå¤§ç¥å®æå</a>&nbsp;
-éè¯»(<span id="post_view_count">221</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(22960699);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fzrui-xyu%2Fp%2F22960699&amp;targetId=22960699&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ .NETä¸ä½æºè¸©åï¼ä¸ºä»ä¹ææ¶è¯»åæ°æ®éè¦Sleepï¼ ]]></title>
-    <link>https://www.cnblogs.com/wackysoft/p/22947367</link>
-    <guid>6db5fd7ff3ab3bffc9a745ee7f8ace9f</guid>
-    <description>
-    <![CDATA[ 
-	<div class="postTitle">
-		<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/wackysoft/p/22947367" title="åå¸äº 2026-09-14 09:21">
-    
-
-    <span role="heading" aria-level="2">.NETä¸ä½æºè¸©åï¼ä¸ºä»ä¹ææ¶è¯»åæ°æ®éè¦Sleepï¼</span>
-    
-
-</a>
-
-	</div>
-	<div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
-<h1 data-layout-id="0"><span><span>åè¨</span></span></h1>
-<p data-layout-id="1"><span>å¤§å®¶å¥½ï¼ææ¯ wackyã</span></p>
-<p data-layout-id="2"><span>ä»å¤©è¿ç¯æç« ï¼ä¹æ¯æºèªäºä¸ä¸ªçå®çæ¢è®¨ãæ¾ç»ææåè¯´ï¼åä¸ä½æºå¼åå¯¹æ¥PLCçæ¶åï¼ææ¶ä¼åºç°çå­¦ï¼è¯»åä¸å°å®æ´çæ°æ®ãè¿æ¶å°±éè¦å ä¸ä¸ªThread.Sleep(30)ï¼æèä¸ä¸ªç±»ä¼¼çæ¶é´é´éï¼å°±å®å¨å¥½äºï¼è³äºä¸ºä»ä¹ï¼å®å¨æä¸æ¸æ¥ã</span></p>
-<p data-layout-id="3"><span>æç¸ä¿¡åºè¯¥ä¸å°äººé½éå°è¿ç±»ä¼¼çæåµï¼åæ¬æèªå·±ï¼æ¾ç»åæ°æ®ééçæ¶åï¼ä¹å è¿ç±»ä¼¼çä»£ç ï¼ä½æ¯å½æ¶æ²¡æ³æç½ä¸ºä»ä¹ï¼åªæ¯ä»¥ä¸ºä¸ä½æºè¿åæ°æ®å­å¨å»¶è¿çç°è±¡ãä½æ¯éçæ¶é´çæ¨ç§»åç»éªçç§¯ç´¯ï¼æè®¤ä¸ºä»»ä½é®é¢é½æè¿¹å¯å¾ªï¼æ°å¥½è¿æå¨æ¢³çå·¥æ§ç³»åæç« çæ¶åï¼æ³æç½äºè¿ä¸ªé®é¢ï¼æè®¤ä¸ºæä»¥ä¸ä¸¤ç§å¯è½æ§ï¼</span></p>
-<h1 data-layout-id="4"><span><span>PLCæ«æå¨ææªå°</span></span></h1>
-<p data-layout-id="5"><span><span>åèæä»¬ä¹ååçåå®¹ï¼<a class="normal_text_link mp_article_text_link" href="https://mp.weixin.qq.com/s?__biz=MzA5ODExOTcxMg==&amp;mid=2453724085&amp;idx=1&amp;sn=1954f941fab100dd732174e9679d258d&amp;scene=21#wechat_redirect" target="_blank" data-linktype="2" rel="noopener nofollow"><span>.NETå·¥æ§æ¦å¿µç§æ®ââPLCæ«æå¨æï¼çè§£äºå®æç®å¥äºå·¥æ§çé¨</span></a></span></span></p>
-<p data-layout-id="6"><span>PLCæ¯å­å¨æ«æå¨æçæ¦å¿µçï¼å¦æä¸ä¸ªæ«æå¨æè¿äºï¼ä½æ¯æªå°ä¸ä¸ä¸ªæ«æå¨æï¼è¿æ¶ä½ åå¥½åéäºä¸ä¸ªè¯»åæ°æ®çæä»¤ï¼é£ä¹PLCå³ä½¿æ¶å°äºæ¥æï¼ä¹åªä¼è¿åæ§æ°æ®ï¼å ä¸ºæ²¡ææææ°çå¼ç»å°éä¿¡ç¼å²åºã</span></p>
-<p data-layout-id="7"><span>ä½æ¯è¿ç§æåµçå¯è½æ§å¶å®å¾ä½ï¼å ä¸ºæä»¬çé®é¢æ¯"è¯»ä¸å°å®æ´çæ°æ®"ï¼èä¸æ¯"ä¸ç´è¯»åçæ¯æ§æ°æ®"ï¼é£ä¹å°±è¦å¼å¥ç¬¬äºç§å¯è½æ§ã</span></p>
-<h1 data-layout-id="8"><span><span>TCPå­å¨ç²å/åå</span></span></h1>
-<p data-layout-id="9"><span>è¿ä¸ªå°±æ¯æä»¬ä»å¤©è¦æ¢è®¨çéç¹äºï¼å ä¸ºTCPåè®®å±äºæµå¼åè®®ï¼å®æ¯æ²¡ææ¥æè¾¹ççãæä»¥è¿å°±ä¼åºç°PLCåéäºä¸å100å­èï¼æä»¬ä¸ä½æºå¯è½ä¼æ¶å°ï¼</span></p>
-<ul class="list-paddingleft-1">
-<li><span>å¨é¨å®æ´æ°æ®ï¼</span></li>
-<li><span>ææä¸¤æ®µ(åå);</span></li>
-<li><span>ä¸¤åæ°æ®åå¹¶å°ä¸èµ·(ç²å)ã</span></li>
-</ul>
-<p data-layout-id="13"><span>æä»¬ä¸è¬å¨ä¸ä½æºä¸­æ¥æ¶æ°æ®çåæ³æ¯è¿ç§ï¼</span></p>
-<div class="cnblogs_code">
-<pre><span style="color: rgba(0, 0, 255, 1)">using</span><span style="color: rgba(0, 0, 0, 1)"> System;
-</span><span style="color: rgba(0, 0, 255, 1)">using</span><span style="color: rgba(0, 0, 0, 1)"> System.Net.Sockets;
-
-</span><span style="color: rgba(0, 0, 255, 1)">class</span><span style="color: rgba(0, 0, 0, 1)"> Program
-{
-    </span><span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">void</span> Main(<span style="color: rgba(0, 0, 255, 1)">string</span><span style="color: rgba(0, 0, 0, 1)">[] args)
-    {
-        </span><span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> PLC IPåç«¯å£ Modbus TCPé»è®¤502</span>
-        <span style="color: rgba(0, 0, 255, 1)">string</span> plcIp = <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">127.0.0.1</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">;
-        </span><span style="color: rgba(0, 0, 255, 1)">int</span> port = <span style="color: rgba(128, 0, 128, 1)">502</span><span style="color: rgba(0, 0, 0, 1)">;
-
-        Socket socket </span>= <span style="color: rgba(0, 0, 255, 1)">new</span><span style="color: rgba(0, 0, 0, 1)"> Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        </span><span style="color: rgba(0, 0, 255, 1)">try</span><span style="color: rgba(0, 0, 0, 1)">
-        {
-            socket.Connect(plcIp, port);
-
-            </span><span style="color: rgba(0, 0, 255, 1)">byte</span>[] recvBuffer = <span style="color: rgba(0, 0, 255, 1)">new</span> <span style="color: rgba(0, 0, 255, 1)">byte</span>[<span style="color: rgba(128, 0, 128, 1)">4096</span>]; <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> æ¥æ¶ç¼å²åºå¤§å°</span>
-            <span style="color: rgba(0, 0, 255, 1)">int</span> recvLen =<span style="color: rgba(0, 0, 0, 1)"> socket.Receive(recvBuffer);
-
-            </span><span style="color: rgba(0, 0, 255, 1)">byte</span>[] result = <span style="color: rgba(0, 0, 255, 1)">new</span> <span style="color: rgba(0, 0, 255, 1)">byte</span><span style="color: rgba(0, 0, 0, 1)">[recvLen];
-            Array.Copy(recvBuffer, result, recvLen);
-
-            </span><span style="color: rgba(0, 0, 255, 1)">string</span> hexStr = BitConverter.ToString(result).Replace(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">-</span><span style="color: rgba(128, 0, 0, 1)">"</span>, <span style="color: rgba(128, 0, 0, 1)">"</span> <span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">);
-
-            socket.Close();
-        }
-        </span><span style="color: rgba(0, 0, 255, 1)">catch</span><span style="color: rgba(0, 0, 0, 1)"> (Exception ex)
-        {
-            Console.WriteLine(</span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">å¼å¸¸ï¼</span><span style="color: rgba(128, 0, 0, 1)">"</span> +<span style="color: rgba(0, 0, 0, 1)"> ex.Message);
-        }
-        Console.ReadKey();
-    }
-}</span></pre>
-</div>
-<p data-layout-id="15"><span>çä¼¼æ²¡ä»»ä½æ¯çï¼å®éä¸è¿éé¢æä¸¤ä¸ªå¾å¤§çé®é¢ï¼ç¬¬ä¸ä¸ªé®é¢æ¯socket.Receiveçæ¶åï¼æä»¬è¯»åçæ¯socketåæ ¸ç¼å²åºä¸­å·²ç»å°è¾¾çæ°æ®ï¼æå¤å°å°±ä¼è¯»å¤å°ï¼è¿ä¸ªå®éä¸ä¸ä¸å®ä¼å¡«æ»¡æ°ç»ï¼ç¬¬äºä¸ªé®é¢æ¯åªå¤çæ¬æ¬¡è¯»å°ç recvLen ä¸ªå­èï¼è¯»å®å°±ç»æï¼ä¸ä¼ç»§ç»­æ¶å©ä¸çæ°æ®ï¼è¿æ ·ä¹å°±å¯¼è´äºæ°æ®å¯è½æ¯ååï¼å¹¶ä¸å¨ã</span></p>
-<p data-layout-id="16"><span>è¿ä¹å°±è½è§£éä¸ºä»ä¹æä»¬å å¥äºThread.Sleep(30)åä¼åå¾æ­£å¸¸ï¼å ä¸ºè¿æ ·å¯ä»¥è®©å©ä¸çæ°æ®å¨é¨è¿å¥äºç¼å²åºï¼ä¸ä¸æ¬¡åReceiveå°±å¯ä»¥æ¿å°å®æ´çå¸§ã</span></p>
-<p data-layout-id="17"><span>ä½æ¯è¿æ ·å¶å®åªæ¯ä¸ä¸ªåå·§çåæ³ï¼å¹¶ä¸é è°±ï¼å¯è½æ¯30æ¯«ç§ï¼ä¹å¯è½éè¦50~100æ¯«ç§ï¼å¦ææç½ç»æ³¢å¨ãPLCè´è½½é«çæåµæ¶ï¼è¿ä¸ªæ¹æ³å¯è½å°±ä¼å¤±çµãèä¸ä¸åçè®¾å¤å¯è½éè¦Sleepçæ¶é´ä¹ä¸åï¼åä¸ä½æºå¼åæ¶å°±å¾ä¸åå°æ ¹æ®ä¸åçè®¾å¤æ¥åæ¹ï¼ä¹æ¯ä¸ä»¶å¾éº»ç¦çäºã</span></p>
-<p data-layout-id="18"><span>é£ä¹ç©¶ç«è¦å¦ä½è§£å³ç²åæèååçé®é¢å¢ï¼è¿éè¦å¼å¥ä¸ä¸ªæ¦å¿µï¼ç¯å½¢ç¼å²åºã</span></p>
-<h1 data-layout-id="19"><span><span>ç¯å½¢ç¼å²åº(Ring Buffer)</span></span></h1>
-<p data-layout-id="20"><span>ç¯å½¢ç¼å²åºåç§°å¾ªç¯ç¼å²åºæç¯å½¢éåï¼æ¯ä¸ç§é»è¾ä¸é¦å°¾ç¸è¿çåºå®å¤§å°æ°ç»ç»æãå½æ°æ®åå¥ç¼å²åºæ«å°¾æ¶ï¼ä¼èªå¨åç»å°å¼å¤´ç»§ç»­åå¥ï¼è¯»åæ°æ®æ¶ä¹å¯ä»¥å¾ªç¯è¯»åï¼å½¢æä¸ä¸ªâç¯âçææãå®éµå¾ª<span>FIFOï¼åè¿ååºï¼ååï¼ä¿è¯æ°æ®æåå¥é¡ºåºè¢«è¯»å ã</span></span></p>
-<p data-layout-id="21"><span>ç¯å½¢ç¼å²åºçè®¾è®¡ä¸­éè¦ä¸é¢å ä¸ªç»ä»¶ï¼</span></p>
-<ul class="list-paddingleft-1">
-<li><span>ç¼å²åºæ°ç»ï¼åºå®å¤§å°çè¿ç»­åå­ç©ºé´ï¼ç¨äºå­å¨æ°æ®ã</span></li>
-<li><span>åæéï¼æåä¸ä¸ä¸ªåå¥çä½ç½®ã</span></li>
-<li><span>è¯»æéï¼æåä¸ä¸ä¸ªè¯»åçä½ç½®ã</span></li>
-<li><span>å¤§å°è®¡æ°å¨ï¼å½åç¼å²åºææå­èæ°éã</span></li>
-</ul>
-<p data-layout-id="26"><span>æäºä¸è¿°è¦ç´ åï¼æä»¬å¨è®¾è®¡ç¯å½¢ç¼å²åºå°±æäºä»¥ä¸ç¤ºä¾ï¼</span></p>
-<div class="cnblogs_code">
-<pre><span style="color: rgba(0, 0, 255, 1)">internal</span> <span style="color: rgba(0, 0, 255, 1)">class</span><span style="color: rgba(0, 0, 0, 1)"> RingBuffer
-    {
-        </span><span style="color: rgba(0, 0, 255, 1)">private</span> <span style="color: rgba(0, 0, 255, 1)">readonly</span> <span style="color: rgba(0, 0, 255, 1)">byte</span><span style="color: rgba(0, 0, 0, 1)">[] _buffer;
-        </span><span style="color: rgba(0, 0, 255, 1)">private</span> <span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> _readPos;
-        </span><span style="color: rgba(0, 0, 255, 1)">private</span> <span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> _writePos;
-        </span><span style="color: rgba(0, 0, 255, 1)">private</span> <span style="color: rgba(0, 0, 255, 1)">readonly</span> <span style="color: rgba(0, 0, 255, 1)">object</span> _lockObj = <span style="color: rgba(0, 0, 255, 1)">new</span> <span style="color: rgba(0, 0, 255, 1)">object</span><span style="color: rgba(0, 0, 0, 1)">();
-
-        </span><span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">int</span> Capacity =&gt;<span style="color: rgba(0, 0, 0, 1)"> _buffer.Length;
-        </span><span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> DataLen
-        {
-            </span><span style="color: rgba(0, 0, 255, 1)">get</span><span style="color: rgba(0, 0, 0, 1)">
-            {
-                </span><span style="color: rgba(0, 0, 255, 1)">lock</span><span style="color: rgba(0, 0, 0, 1)"> (_lockObj)
-                {
-                    </span><span style="color: rgba(0, 0, 255, 1)">return</span> (_writePos - _readPos + Capacity) %<span style="color: rgba(0, 0, 0, 1)"> Capacity;
-                }
-            }
-        }
-
-        </span><span style="color: rgba(0, 0, 255, 1)">public</span> RingBuffer(<span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> capacity)
-        {
-            _buffer </span>= <span style="color: rgba(0, 0, 255, 1)">new</span> <span style="color: rgba(0, 0, 255, 1)">byte</span><span style="color: rgba(0, 0, 0, 1)">[capacity];
-            _readPos </span>= <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">;
-            _writePos </span>= <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">;
-        }
-
-        </span><span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">int</span> Write(<span style="color: rgba(0, 0, 255, 1)">byte</span>[] data, <span style="color: rgba(0, 0, 255, 1)">int</span> offset, <span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> len)
-        {
-            </span><span style="color: rgba(0, 0, 255, 1)">lock</span><span style="color: rgba(0, 0, 0, 1)"> (_lockObj)
-            {
-                </span><span style="color: rgba(0, 0, 255, 1)">if</span> (len &lt;= <span style="color: rgba(128, 0, 128, 1)">0</span>) <span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">;
-                </span><span style="color: rgba(0, 0, 255, 1)">int</span> free = Capacity -<span style="color: rgba(0, 0, 0, 1)"> DataLen;
-                </span><span style="color: rgba(0, 0, 255, 1)">int</span> realWrite =<span style="color: rgba(0, 0, 0, 1)"> Math.Min(len, free);
-                </span><span style="color: rgba(0, 0, 255, 1)">for</span> (<span style="color: rgba(0, 0, 255, 1)">int</span> i = <span style="color: rgba(128, 0, 128, 1)">0</span>; i &lt; realWrite; i++<span style="color: rgba(0, 0, 0, 1)">)
-                {
-                    _buffer[_writePos] </span>= data[offset +<span style="color: rgba(0, 0, 0, 1)"> i];
-                    _writePos </span>= (_writePos + <span style="color: rgba(128, 0, 128, 1)">1</span>) %<span style="color: rgba(0, 0, 0, 1)"> Capacity;
-                }
-                </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)"> realWrite;
-            }
-        }
-
-        </span><span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">bool</span> Peek(<span style="color: rgba(0, 0, 255, 1)">byte</span>[] target, <span style="color: rgba(0, 0, 255, 1)">int</span> offset, <span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> len)
-        {
-            </span><span style="color: rgba(0, 0, 255, 1)">lock</span><span style="color: rgba(0, 0, 0, 1)"> (_lockObj)
-            {
-                </span><span style="color: rgba(0, 0, 255, 1)">if</span> (DataLen &lt; len) <span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(0, 0, 255, 1)">false</span><span style="color: rgba(0, 0, 0, 1)">;
-                </span><span style="color: rgba(0, 0, 255, 1)">int</span> pos =<span style="color: rgba(0, 0, 0, 1)"> _readPos;
-                </span><span style="color: rgba(0, 0, 255, 1)">for</span> (<span style="color: rgba(0, 0, 255, 1)">int</span> i = <span style="color: rgba(128, 0, 128, 1)">0</span>; i &lt; len; i++<span style="color: rgba(0, 0, 0, 1)">)
-                {
-                    target[offset </span>+ i] =<span style="color: rgba(0, 0, 0, 1)"> _buffer[pos];
-                    pos </span>= (pos + <span style="color: rgba(128, 0, 128, 1)">1</span>) %<span style="color: rgba(0, 0, 0, 1)"> Capacity;
-                }
-                </span><span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(0, 0, 255, 1)">true</span><span style="color: rgba(0, 0, 0, 1)">;
-            }
-        }
-
-        </span><span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">void</span> Skip(<span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> len)
-        {
-            </span><span style="color: rgba(0, 0, 255, 1)">lock</span><span style="color: rgba(0, 0, 0, 1)"> (_lockObj)
-            {
-                len </span>=<span style="color: rgba(0, 0, 0, 1)"> Math.Min(len, DataLen);
-                _readPos </span>= (_readPos + len) %<span style="color: rgba(0, 0, 0, 1)"> Capacity;
-            }
-        }
-    }</span></pre>
-</div>
-<p data-layout-id="28"><span>ç¼å²åºä¸æ¬¡æ§æbyteæ°ç»å¨é¨åéï¼å¨ç¨ä¸éè¦è¿è¡æ©å®¹ï¼è¿æ ·å¯ä»¥ææåå°GCååã</span></p>
-<p data-layout-id="29"><span>è®¡ç®ææå­èæ°éæ¶ï¼æä»¬ä½¿ç¨äº<span>(_writePos - _readPos + Capacity) % Capacityçæ¹å¼å»è¿è¡è®¡ç®ï¼è¿éç+ Capacityæ¯ä¸ºäºé²æ­¢_writePos &lt; _readPos (åæéç»åäºæ°ç»å¼å¤´ï¼åå¨åé¢ï¼èè¯»å¨åé¢)ï¼åæ³åºç°è´æ°ï¼åæ¨¡ä¼åºéã</span></span></p>
-<p data-layout-id="30"><span>ç¶åæä»¬ç<span>Writeæ¹æ³è´è´£æsocketæ¶å°çå­èåå¥ç¯å½¢ç¼å­ï¼è¿éä¼åè®¡ç®ç©ºä½ç©ºé´freeï¼å¨ç¼å²åºæ»¡çæ¶åï¼ä¼ä¸¢å¼æ°æ¥çæ°æ®ãç¶ååéä¸ªå­èåå¥ï¼åå®åç§»å¨åæéï¼%Capacityæ¥å®ç°ç¯å½¢åç»ãæåä¼è¿åå®éåå¥çå­èæ°éï¼ç¨äºå¶ä»é»è¾åå¤æ­ã</span></span></p>
-<p data-layout-id="31"><span>è¿éæä»¬è¿å®ä¹äºä¸ä¸ª<span>Peekæ¹æ³ï¼ä¸»è¦æ¯ç¨äºé¢è§æ¥æå¤´ï¼èä¸æ¶è´¹ä»»ä½æ°æ®ãå¦ææ°æ®ä¸å¤ï¼åç´æ¥è¿åfalseï¼ä¿çå­èï¼ç­å¾ä¸ä¸è½®socketæ¥æ¶ãè¿ä¸ªPeekæ¹æ³ä¸ä¼ç§»å¨è¯»æéï¼ä¹ä¸ä¼å é¤ç¼å­çæ°æ®ï¼åªæç¡®è®¤æ¿å°äºå®æ´æ¥æä¹åï¼æä¼è°ç¨Skipç§»å¨è¯»æéï¼æç®æ¶è´¹ã</span></span></p>
-<p data-layout-id="32"><span><span>Skip<span>æ¹æ³è´è´£ç§»å¨è¯»æéï¼ä¸»è¦æ¯ä¸ºäºå¨è§£ææåä¸æ´å¸§ä¹åï¼è¯»æéç´æ¥åè¿ï¼ä»£è¡¨è¿ä¸æ®µå­èæ°æ®å¤çå®æï¼å¯ä»¥ä¸¢å¼ãè¿éæ²¡æåä»»ä½çæ°ç»æ·è´ï¼åªç§»å¨äºç´¢å¼ï¼è¿æ ·ä¹ä¿è¯äºç¯å½¢ç¼å²åºçé«æè¿è¡ã</span></span></span></p>
-<p data-layout-id="33"><span>æ»ç»ä¸ä¸ææçæµç¨ï¼å¤§æ¦æ¯è¿æ ·ï¼</span></p>
-<p><img alt="image" loading="lazy" data-src="https://img2024.cnblogs.com/blog/443744/202609/443744-20260912142732813-1283255067.png" class="lazyload"></p>
-<p>&nbsp;</p>
-<p data-layout-id="35"><span>æä»¬è¿å¨è¯»åæä½ä¸­å äºéï¼é²æ­¢åºç°çº¿ç¨å®å¨çé®é¢ã</span></p>
-<h1 data-layout-id="36"><span><span>åè®°</span></span></h1>
-<p data-layout-id="37"><span>ä»å¤©æä»¬è¿ç¯æï¼ä»ä¸ºä»ä¹è¦å Sleepå¼å§è®²èµ·ï¼å¼å¥äºTCPç²ååååäº§çé®é¢çåå ï¼å¹¶å å¥äºç¯å½¢ç¼å²åºçæ¦å¿µãäºå®ä¸ç¯å½¢ç¼å²åºçè®¾è®¡å¹¶ä¸å¤æï¼ä¸»è¦å°±æ¯åºå®æ°ç»+è¯»åç´¢å¼+æ¨¡è¿ç®æ¥å®ç°å¾ªç¯ï¼ä½å®å´å¯ä»¥ææè§£å³ç²ååååçé®é¢ï¼ä¸å¤±ä¸ºä¸ä¸ªå¥½çè§£å³æ¹æ¡ã</span></p>
-<p data-layout-id="38"><span>æä»¥æä»¬åç»­å¨éå°é¾ä»¥è§£éçé®é¢æ¶ï¼ä¸å®è¦æ½æ¶é´æ³ä¸æ³é®é¢æ¬è´¨å¯è½äº§ççåå ãè¯ç¶ï¼Sleepå¯ä»¥è§£å³å½ä¸çé®é¢ï¼ä½ä¿ä¸äºä¸ä¸ãå¸ææ¯ä½å¼åäººåé½å¯ä»¥ä»è¿ä¸ªé®é¢ä¸­ææææï¼é»ç¼èªå·±çæ½è±¡æç»´åè®¾è®¡è½åï¼æé¿ä¸ºæ´å¥½çèªå·±ï¼è¯¸åå±åï¼</span></p>
-<p data-layout-id="38"><span>æ¬æé¦åäºæçå¬ä¼å·ãwackyçç¢ç¢å¿µãï¼æ¬¢è¿å³æ³¨è¿½æ´ï¼</span></p>
-<p data-layout-id="38"><span><img alt="qrcode_for_gh_7c93e745425f_258" loading="lazy" data-src="https://img2024.cnblogs.com/blog/443744/202608/443744-20260802085831699-404926374.jpg" class="lazyload"></span></p>
-<p>&nbsp;</p>
-
-</div>
-<div class="clear"></div>
-
-	<div class="postDesc">posted on 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-09-14 09:21">2026-09-14 09:21</span>&nbsp;
-<a href="https://www.cnblogs.com/wackysoft">Wackysoft</a>&nbsp;
-éè¯»(<span id="post_view_count">457</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">2</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(22947367);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fwackysoft%2Fp%2F22947367&amp;targetId=22947367&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
- ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ HyMT2Sharpåå¸ï¼ä¸ä¸ªçº¯C#ãé«åº¦ä¼åçæ¬å°ç¿»è¯åº ]]></title>
-    <link>https://www.cnblogs.com/sdcb/p/22956801/20260913-hymt2sharp-intro</link>
-    <guid>00f957493421f4ec01c20977be893a26</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/sdcb/p/22956801/20260913-hymt2sharp-intro" title="åå¸äº 2026-09-14 08:50">
-    
-
-    <span role="heading" aria-level="2">HyMT2Sharpåå¸ï¼ä¸ä¸ªçº¯C#ãé«åº¦ä¼åçæ¬å°ç¿»è¯åº</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>å¤§å®¶å¥½ï¼ä»å¤©ææ­£å¼å¼æºåå¸ <strong>HyMT2Sharp</strong>ï¼NuGet: <code>Sdcb.HyMT2Sharp.Model</code>ï¼ï¼Githubä»åºï¼ <a href="https://github.com/sdcb/HyMT2Sharp" target="_blank" rel="noopener nofollow">https://github.com/sdcb/HyMT2Sharp</a> ãè¿æ¯ä¸ä¸ªçº¯ C# ç <a href="https://huggingface.co/tencent/Hy-MT2-1.8B" target="_blank" rel="noopener nofollow">è¾è®¯æ··åç¿»è¯å¤§æ¨¡åMT2</a>ï¼<code>Hy-MT2</code>ï¼<strong>éå®æ¹</strong> CPU æ¨çå®ç°ï¼ä¸ä¾èµ llama.cppï¼ä¸ä¾èµ ONNX Runtimeï¼èªå¸¦ AVX2 åæ ¸ï¼é¢åè¿ç¨åè°ç¨ã</p>
-<p><img src="https://img2024.cnblogs.com/blog/233608/202609/233608-20260913172148150-946866388.png" alt="cover" loading="lazy"></p>
-<p>ä»åºè¯­è¨ç»è®¡æ¡ä¹æ¯çº¯ç´«è²çââçº¯C#ãæéä¸æè¿åï¼ä½ èªå·±ä¸ä¸ä»½ GGUF å°±è½è·ã</p>
-<p><img src="https://img2024.cnblogs.com/blog/233608/202609/233608-20260913181457371-1637493551.png" alt="csharp-100-percent" loading="lazy"></p>
-<p>æä¸ç¹å¿é¡»åè¯´æ¸æ¥ï¼<strong>Q2_0C å 1.25-bit STQ1_0 è¿ä¸¤ç§ GGUFï¼å®æ¹ llama.cpp æ ¹æ¬è·ä¸äºã</strong> è¾è®¯æ¾åºäºéåæä»¶ï¼éå¥çæ¯ä»ä»¬èªå·±çç¡¬ä»¶å éè·¯å¾ï¼éç¨ CPU ä¸çè§£ç ãGEMV/GEMMãpanel éæï¼æ¯ HyMT2Sharp éæ°èªç çãQ4_K_M è¿è½æ¿ llama.cpp å¯¹ä¸ä¸éåº¦ï¼Q2 / Q1.25 æ²¡æè¿æ¡å¯¹ç§åºçº¿ââä¸æ¯æä»¬ä¸æ¿ææ¯ï¼æ¯ä¸æ¸¸å°±æ²¡æè¿æ¡è·¯ã</p>
-<h2 id="å®æå¤å¿«">å®æå¤å¿«ï¼</h2>
-<p>å¤§å®¶æå³å¿çè¯å®è¿æ¯ï¼çº¯ C# åçå°æ¨¡åæ¨çï¼ä¼ä¸ä¼è¢« llama.cpp æå¨å°ä¸æ©æ¦ï¼</p>
-<p>æµè¯ç¯å¢æ¯ Ryzen 7 5800Xï¼Zen 3ï¼ãWindowsãReleaseã8 çº¿ç¨ï¼<code>avx2=True</code>ã<code>vnni=False</code>ãä¸è®¡æ¨¡åå è½½ä¸ warmupï¼prefill ä¸º 512 token ä¸æ¬¡å¹³åï¼decode ä¸º 512 token ä¸ä¸æåè¿ç»­çæ 128 tokenã</p>
-<table>
-<thead>
-<tr>
-<th>æ¨¡å</th>
-<th style="text-align: right">prefill 512</th>
-<th style="text-align: right">decode 128</th>
-<th>prefill ä¸æ¬¡</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>HyMT2Sharp Q1.25 / STQ1_0</td>
-<td style="text-align: right"><strong>553.63 tok/s</strong></td>
-<td style="text-align: right">43.10 tok/s</td>
-<td>570.5 / 531.1 / 560.8</td>
-</tr>
-<tr>
-<td>HyMT2Sharp Q2_0C</td>
-<td style="text-align: right">541.00 tok/s</td>
-<td style="text-align: right"><strong>43.79 tok/s</strong></td>
-<td>560.4 / 506.6 / 559.7</td>
-</tr>
-<tr>
-<td>HyMT2Sharp Q4_K_M</td>
-<td style="text-align: right">416.33 tok/s</td>
-<td style="text-align: right">24.79 tok/s</td>
-<td>417.0 / 412.7 / 419.4</td>
-</tr>
-<tr>
-<td>llama.cpp Q4_K_Mï¼build 10894ï¼</td>
-<td style="text-align: right">254.93 Â± 3.10 tok/s</td>
-<td style="text-align: right">27.39 Â± 0.37 tok/s</td>
-<td><code>llama-bench -p 512 -n 128 -t 8 -ngl 0</code></td>
-</tr>
-</tbody>
-</table>
-<p>Q4_K_M ä¸ï¼è¿ä»½ C# å®ç°ç prefill å·²ç»æ¯ llama.cpp å¿«ä¸æªãQ1.25 / Q2 ç decode è¿è½åå¾ä¸èµ°ä¸æ¡£ââè¿ä¸¤æ¡£éå<strong>æ²¡æ llama.cpp å¯¹ç§è¡</strong>ï¼å ä¸ºå®æ¹ llama.cpp ä¸è¯å« <code>Q2_0C</code> / <code>STQ1_0</code>ãè¡¨éé£è¡ llama.cpp åªè¦ç Q4_K_Mï¼æ¯æ­¤åè®°å½ï¼æ²¡æè·æ¬è½®ç»å¨ä¸èµ·å¤æµã5800X è¿ç»­æ»¡è½½æ¶é¢çåæ¸©åº¦ä¼é£ï¼è¿äºæ°å­ä¸æ¯ç¡¬ä»¶ä¸éã</p>
-<p>æ¢å¥è¯è¯´ï¼Q4 æ¯çæ¯âåä¸æ¡å¤§å®¶é½è®¤è¯çè·¯ï¼C# è½ä¸è½æ´å¿«âï¼Q2 / Q1.25 æ¯çæ¯âè¿æ¡è·¯å®æ¹ CPU åç«¯æ ¹æ¬æ²¡éºï¼æä»¬èªå·±ä» GGUF block å¸å±æ å° AVX2 kernelâãè¾è®¯ä¾§ä¸»è¦ç»çæ¯ç¡¬ä»¶å éè·¯å¾ï¼HyMT2Sharp çæ¨çåç«¯æ¯éæ°åçï¼ä¸æ¯æ llama.cpp åä¸å±ã</p>
-<p>å½ç¶è¦æ³¼ä¸¤çå·æ°´ï¼</p>
-<ul>
-<li>ç®ååªæ¯æ <strong>x86 CPU</strong> æ¨çï¼AVX2 è·¯å¾ï¼ãApple Silicon é£å¥åç½® GPU å·²ç»å¾å¼ºï¼è¿ä¸ªåºææ¶ç¨ä¸ä¸ã</li>
-<li>æµè¿çéååªæ <strong>Q4_K_MãQ2_0Cã1.25-bit STQ1_0</strong>ï¼å¶å®æ ¼å¼åæ´å¤§å°ºå¯¸ç Hy-MT2 æ²¡æµè¿ã</li>
-</ul>
-<p>å¤ç°å½ä»¤ï¼</p>
-<pre><code class="language-powershell">dotnet run --project src/HyMT2Sharp.Benchmark -c Release -- --model "D:\_\model\Hy-MT2-1.8B-1.25Bit.gguf" --bench-prefill 512 --bench-decode 128 --threads 8
-dotnet run --project src/HyMT2Sharp.Benchmark -c Release -- --model "D:\_\model\Hy-MT2-1.8B-Q4_K_M.gguf" --bench-prefill 512 --bench-decode 128 --threads 8
-dotnet run --project src/HyMT2Sharp.Benchmark -c Release -- --model "D:\_\model\Hy-MT2-1.8B-2Bit.gguf" --bench-prefill 512 --bench-decode 128 --threads 8
-</code></pre>
-<h2 id="nuget-å">NuGet å</h2>
-<p>å®¢æ·å·¥ç¨ä¸è¬åªè£å¥å£åï¼å¦å¤ä¸¤ä¸ªä¼ä¼ éå¼ç¨è¿æ¥ï¼</p>
-<pre><code class="language-powershell">dotnet add package Sdcb.HyMT2Sharp.Model
-</code></pre>
-<table>
-<thead>
-<tr>
-<th>å</th>
-<th>è¯´æ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>Sdcb.HyMT2Sharp.Model</code></td>
-<td>æ¨çå¥å£ï¼å è½½ GGUFãåè¯ãKV cacheã<code>Forward</code></td>
-</tr>
-<tr>
-<td><code>Sdcb.HyMT2Sharp.Gguf</code></td>
-<td>GGUF v2/v3 è¯»åï¼éå¸¸è¢« Model ä¼ éå¼ç¨ï¼</td>
-</tr>
-<tr>
-<td><code>Sdcb.HyMT2Sharp.Kernels</code></td>
-<td>AVX2 / AVX-VNNI éå kernelï¼éå¸¸è¢« Model ä¼ éå¼ç¨ï¼</td>
-</tr>
-</tbody>
-</table>
-<p><code>HyMT2Sharp.Cli</code>ã<code>HyMT2Sharp.Server</code>ã<code>HyMT2Sharp.Benchmark</code> æ¯ä»åºéçç¤ºä¾ååºåå·¥å·ï¼ä¸å NuGetã</p>
-<p>GGUF éè¦èªå·±ä¸ï¼</p>
-<ul>
-<li><a href="https://huggingface.co/tencent/Hy-MT2-1.8B-1.25Bit-GGUF" target="_blank" rel="noopener nofollow">Hy-MT2-1.8B-1.25Bit-GGUF</a></li>
-<li><a href="https://huggingface.co/tencent/Hy-MT2-1.8B-2Bit-GGUF" target="_blank" rel="noopener nofollow">Hy-MT2-1.8B-2Bit-GGUF</a></li>
-<li><a href="https://huggingface.co/tencent/Hy-MT2-1.8B-GGUF" target="_blank" rel="noopener nofollow">Hy-MT2-1.8B-GGUF</a>ï¼å« Q4_K_Mï¼</li>
-</ul>
-<h2 id="cli-ç¨æ³">CLI ç¨æ³</h2>
-<p>ä»ä»åºç´æ¥è·ï¼æ <code>--model</code> æ¢æä½ çè·¯å¾ï¼ï¼</p>
-<pre><code class="language-powershell">dotnet run --project src/HyMT2Sharp.Cli -c Release -- --model "D:\_\model\Hy-MT2-1.8B-Q4_K_M.gguf"
-</code></pre>
-<p>ä¸ä¼  <code>--threads</code> æ¶æ CPU ææèªå¨ç»ç©ç P-coreï¼5800X ä¸æ¯ 8 çº¿ç¨ï¼ç»ç©çæ ¸ãä¸å  SMTï¼ãå  <code>--prompt</code> è·åè½®åéåºï¼çç¥å°±è¿å¥å¤è½®å¯¹è¯ã</p>
-<pre><code class="language-powershell">dotnet run --project src/HyMT2Sharp.Cli -c Release -- --model "D:\_\model\Hy-MT2-1.8B-Q4_K_M.gguf" --prompt "Translate the following segment into Chinese, without additional explanationï¼SimdPaddleOCR is officially released today (NuGet: Sdcb.SimdPaddleOCR). It is a complete OCR inference engine written entirely in C#. It does not depend on Paddle Inference or ONNX Runtime, and it does not require shipping OpenCV native libraries." --max-tokens 128
-</code></pre>
-<h2 id="ç½é¡µçç¨æ³">ç½é¡µçç¨æ³</h2>
-<p><code>HyMT2Sharp.Server</code> æä¾ OpenAI å¼å®¹ç <code>POST /v1/chat/completions</code>ï¼å« SSE æµå¼ï¼ï¼å¹¶èªå¸¦èå¤©é¡µï¼</p>
-<pre><code class="language-powershell">dotnet run --project src/HyMT2Sharp.Server -c Release -- --model "D:\_\model\Hy-MT2-1.8B-Q4_K_M.gguf"
-</code></pre>
-<p><img src="https://img2024.cnblogs.com/blog/233608/202609/233608-20260913172202175-404636165.png" alt="web" loading="lazy"></p>
-<p>æµè§å¨æå¼ <code>http://127.0.0.1:8080</code>ãä¹å¯ä»¥ç´æ¥ curlï¼</p>
-<pre><code class="language-powershell">curl http://127.0.0.1:8080/v1/chat/completions -H "Content-Type: application/json" -d "{\"messages\":[{\"role\":\"user\",\"content\":\"Translate the following segment into Chinese, without additional explanationï¼SimdPaddleOCR is officially released today (NuGet: Sdcb.SimdPaddleOCR). It is a complete OCR inference engine written entirely in C#. It does not depend on Paddle Inference or ONNX Runtime, and it does not require shipping OpenCV native libraries.\"}],\"max_tokens\":128}"
-</code></pre>
-<h2 id="è¿ç¨åè°ç¨">è¿ç¨åè°ç¨</h2>
-<p><code>HunyuanDenseModel</code> è´è´£å è½½ãåè¯ãKV cache å <code>Forward</code>ãåºéæ²¡æåç½® <code>Generate</code> / <code>ArgMax</code>ï¼éæ ·åæ¼æ¥çç»è°ç¨æ¹ãä¸é¢æ¯ä¸ä¸ªæå° greedy æµå¼ç¤ºä¾ï¼</p>
-<pre><code class="language-csharp">using Sdcb.HyMT2Sharp.Model;
-
-using HunyuanDenseModel model = new(@"D:\_\model\Hy-MT2-1.8B-1.25Bit.gguf");
-
-await foreach (string piece in Generate(model, "Translate the following segment into Chinese, without additional explanationï¼SimdPaddleOCR is officially released today (NuGet: Sdcb.SimdPaddleOCR). It is a complete OCR inference engine written entirely in C#. It does not depend on Paddle Inference or ONNX Runtime, and it does not require shipping OpenCV native libraries."))
-    Console.Write(piece);
-
-static async IAsyncEnumerable&lt;string&gt; Generate(
-    HunyuanDenseModel model,
-    string user,
-    int maxTokens = 128,
-    [EnumeratorCancellation] CancellationToken cancellationToken = default)
-{
-    int[] prompt = model.Tokenizer.Encode(ChatTemplate.RenderHunyuanDense([new ChatMessage("user", user)]));
-    float[] logits = model.Forward(model.AlignPrompt(prompt).Suffix);
-    await Task.Yield();
-
-    List&lt;int&gt; generated = [];
-    string visible = "";
-    for (int i = 0; i &lt; maxTokens; i++)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-        int token = ArgMax(logits);
-        if (model.Tokenizer.IsStop(token))
-            break;
-
-        generated.Add(token);
-        string next = model.Tokenizer.DecodeVisible(generated);
-        if (next.Length &gt; visible.Length &amp;&amp; next.StartsWith(visible, StringComparison.Ordinal))
-            yield return next[visible.Length..];
-        visible = next;
-
-        logits = model.Forward([token]);
-        await Task.Yield();
-    }
-}
-
-static int ArgMax(float[] logits)
-{
-    int best = 0;
-    for (int i = 1; i &lt; logits.Length; i++)
-        if (logits[i] &gt; logits[best])
-            best = i;
-    return best;
-}
-</code></pre>
-<p><code>threads = 0</code>ï¼é»è®¤ï¼èªå¨ç»ç©ç P-coreãå®ä¾ä¸æ¯çº¿ç¨å®å¨çï¼å¹¶åè¯·æ±è¯·æéæåç¨åçå®ä¾ã</p>
-<h2 id="èµ·æºä»-simdpaddleocr-å°ç¿»è¯å°æ¨¡å">èµ·æºï¼ä» SimdPaddleOCR å°ç¿»è¯å°æ¨¡å</h2>
-<p>å å¤©åæåäº <a href="https://www.cnblogs.com/sdcb/p/22863347/20260907-simdpaddleocr-intro" target="_blank">SimdPaddleOCR</a>ââç¨è¶è¿ 1000 ç¾åç gpt-5.6-sol å Fable 5ï¼ååºä¸ä¸ªæ¬å°é«åº¦ä¼åè¿ççº¯ C# OCR æ¨çåºãåå®ä¹åææç¹æçï¼æäº <code>System.Runtime.Intrinsics</code> / <code>System.Numerics.Vectors</code>ï¼çº¯ C# å¨ AI é¢åè¿å¯ä»¥å¹²ä»ä¹ï¼</p>
-<p>ç®åè½å°äºè¾è®¯æ··åç Hy-MT2ãå®æå°åå·åªæ 1.8Bï¼è¶³å¤å¡è¿æ¬æºãæå¯¹æ¯è¿ Firefox ç Bergamotï¼ä½ç§¯ä¸å° 50MBï¼ï¼Bergamot å¾è½»ï¼ä½ Hy-MT2 çè¯ææ´èªç¶ãè¯´å¹²å°±å¹²ã</p>
-<h2 id="å·®ç¹å°±æ²¡æ°å¼é¡¹ç®tensorsharp">å·®ç¹å°±æ²¡æ°å¼é¡¹ç®ï¼TensorSharp</h2>
-<p>åæå¶å®æ²¡åå¤æ°å¼ä»åºãçº¯ C# ä¸çéå·²ç»æ <a href="https://github.com/zhongkaifu/TensorSharp" target="_blank" rel="noopener nofollow">TensorSharp</a>ï¼å®ä¹ä¸å¼ç¨ llama.cppãVulkan / CUDA åç«¯çèµ·æ¥å¾æ¼äº®ï¼æäº¤è®°å½éè¿è½å¤æ¬¡çå° Fable 5.1 çèº«å½±ââä½èæ¾ç¶æ¯è®¤çæ³æå®ä¼åå¥½çã</p>
-<p>ä½æå®æµä¸æ¥ï¼å®ç <strong>CPU åç«¯</strong>æ²¡æé¢æ³ä¸­é£ä¹å¿«ãå½æ¶åä¸å°æºå¨ä¸ï¼æç®¡ CPU è·¯å¾æ¯ llama.cpp æ¢äº 80% ä»¥ä¸ï¼</p>
-<table>
-<thead>
-<tr>
-<th>å®ç°</th>
-<th style="text-align: right">pp512 tok/s</th>
-<th style="text-align: right">tg128 tok/s</th>
-<th style="text-align: right">vs llama.cpp prefill</th>
-<th style="text-align: right">vs llama.cpp decode</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>llama.cpp</td>
-<td style="text-align: right">356.59 Â± 2.65</td>
-<td style="text-align: right">27.47 Â± 1.24</td>
-<td style="text-align: right">100%</td>
-<td style="text-align: right">100%</td>
-</tr>
-<tr>
-<td>HyMT2Sharpï¼æ¬è½®ï¼</td>
-<td style="text-align: right">163.13</td>
-<td style="text-align: right">19.94</td>
-<td style="text-align: right">46%</td>
-<td style="text-align: right">73%</td>
-</tr>
-<tr>
-<td>HyMT2Sharpï¼æ­¤å decode å³°å¼ï¼</td>
-<td style="text-align: right">131.55</td>
-<td style="text-align: right">21.82</td>
-<td style="text-align: right">37%</td>
-<td style="text-align: right">79%</td>
-</tr>
-<tr>
-<td>TensorSharp <code>--backend cpu</code>ï¼æç®¡ï¼</td>
-<td style="text-align: right">45.4</td>
-<td style="text-align: right">13.4</td>
-<td style="text-align: right">13%</td>
-<td style="text-align: right">49%</td>
-</tr>
-<tr>
-<td>TensorSharp <code>ggml_cpu</code></td>
-<td style="text-align: right">139.6</td>
-<td style="text-align: right">18.0</td>
-<td style="text-align: right">39%</td>
-<td style="text-align: right">66%</td>
-</tr>
-</tbody>
-</table>
-<p>è¿å¼ è¡¨æ¯æ©æå¯¹ç§ï¼ä¸æ¯ä»å¤©é£å° 5800X ä¸çå¤æµï¼åä¸é¢ç 553 tok/s <strong>æ²¡æå¯¹æ¯å³ç³»</strong>ãå®åªè¯´æä¸ä»¶äºï¼å½æ¶å¦æåªæ¯âæ¿ä¸ä¸ªç°æççº¯ C# å¼ éåºå¥ä¸å»âï¼CPU ä¸è¿æ¯ä¼è¾ç» llama.cpp ä¸å¤§æªã</p>
-<p>äºæ¯è¿ä¸ªé¡¹ç®å¼äºãåè±äºä¸ç¾ç¾åçæ®éæ¨¡ååå åç¾åç Fable 5.1 å»æ  kernelãpanel GEMMãéåè·¯å¾ä¹åï¼ææäºæé¦é£å¼ è¡¨ãQ4_K è¿è½å¯¹ç llama.cpp çç°æç®å­æç£¨ï¼<strong>Q2_0C / STQ1_0 æ²¡æç°æ CPU åç«¯å¯ä»¥æ</strong>ï¼block å¸å±ãåéåãAVX2 GEMV/GEMM é½æ¯æè¾è®¯æ¾åºç GGUF èªå·±ååºæ¥çã</p>
-<p>ä¸ä¸ª C# åçä¸è¥¿ï¼prefill å¯ä»¥æ¯ llama.cpp æ´å¿«ââåææ¯ä½ æ¥åå®ç°å¨åªå x86 CPUãè¿ä¸æ¯âC# å¨é¢è¶è¶ llama.cppâï¼åªæ¯å¨è¿æ¡è¢«æ è¿ç Hy-MT2 è·¯å¾ä¸ï¼æç®¡ä»£ç ä¹è½æ AVX2 åé¥±ãQ2 / Q1.25 æ´è¿ä¸æ­¥ï¼å®æ¹éç¨æ¨çæ èµ°ä¸éï¼HyMT2Sharp æè¿æ¡è·¯éºä¸äºã</p>
-<h2 id="å¼æºä¸äº¤æµ">å¼æºä¸äº¤æµ</h2>
-<p>ä»åºï¼<a href="https://github.com/sdcb/HyMT2Sharp" target="_blank" rel="noopener nofollow">https://github.com/sdcb/HyMT2Sharp</a> åæ¬¢çè¯ç»ä¸ª Starãè®¸å¯è¯æ¯ Apache-2.0ã</p>
-<p>å¤§å®¶å¯ä»¥æ«æçå¾®ä¿¡å ç¾¤ï¼<img src="https://io.starworks.cc:88/cv-public/2026/ocr-wxg-qr.png?0913" alt="" loading="lazy"></p>
-<p>å¦æç¾¤æ»¡äºæèä¸æ¹ä¾¿å å¾®ä¿¡ï¼ä¹å¯ä»¥å å¥.NETéªæä½ QQ ç¾¤ï¼<strong>495782587</strong> æå¾å¤§å®¶çå®è´µæè§ï¼</p>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-09-14 08:50">2026-09-14 08:50</span>&nbsp;
-<a href="https://www.cnblogs.com/sdcb">.NETéªæä½</a>&nbsp;
-éè¯»(<span id="post_view_count">975</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">8</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(22956801);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fsdcb%2Fp%2F22956801%2F20260913-hymt2sharp-intro&amp;targetId=22956801&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ æè¿ç«çåºåçï¼FDE å°åºæ¯ä¸ªä»ä¹å²ä½ï¼ ]]></title>
-    <link>https://www.cnblogs.com/jinjiangongzuoshi/p/22959919</link>
-    <guid>cd22c0e726895539bd3d2f8fd063e5a6</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/jinjiangongzuoshi/p/22959919" title="åå¸äº 2026-09-14 08:42">
-    
-
-    <span role="heading" aria-level="2">æè¿ç«çåºåçï¼FDE å°åºæ¯ä¸ªä»ä¹å²ä½ï¼</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>åå å¤©åä¸ä½åé¢å®å½å¤å¤§å FDE çåå­¦èäºå¾ä¹ï¼è¶èè¶è§å¾ï¼å¾å¤äººå¯¹è¿ä¸ª AI æ°å²ä½ççè§£ï¼ä»ç¬¬ä¸æ­¥å°±åäºãä¼å Agentï¼ä¸ç­äºè½å FDEãæéæäºå ä¸ª Demoï¼ä¹ä¸ç­äºè½æ¿å°è¿ä¸ªå²ä½ç Offerã</p>
-<p>ä»å¤©å°±æçå®é¢è¯æå¼ï¼ççä¼ä¸å°åºå¨æä»ä¹æ ·çäººã</p>
-<h2 id="fde-å°åºæ¯ä¸ªä»ä¹å²ä½">FDE å°åºæ¯ä¸ªä»ä¹å²ä½</h2>
-<p><img src="https://image.kjdaohang.com/img/20260913172747391.png" alt="" loading="lazy"></p>
-<p>FDE å¨ç§° Forward Deployment Engineerï¼ä¸­æä¸è¬è¯ä½åæ²¿é¨ç½²å·¥ç¨å¸ï¼ä¹æäººå«åçº¿é¨ç½²å·¥ç¨å¸ã</p>
-<blockquote>
-<p>æä¸ªæ¯æ¹ï¼ä¼ä¸è±å¤§ä»·é±ä¹°åä¸æ´å¥æºè½å¨æ¿è®¾å¤ï¼ç»ææ²¡äººä¼ç§çèªå®¶èåéèãè°ç«åï¼ç§æ ·å¼ä¸äºé¥­ãFDE å°±æ¯åå®¶æ´¾æ¥çå¸åï¼å¸¸é©»ä½ å®¶åå¨ï¼è®¾å¤æ¯ç°æçï¼ä»çæ¬äºæ¯å¨ä½ å®¶ç¶å°ä¸ï¼çåºä½ ç¹çèã</p>
-</blockquote>
-<p>å¾å¤äººæå®å½æ AI æ¶ä»£çæ°ç¨åºåï¼ä»¥ä¸ºå°±æ¯ä¼æ¼å¤§æ¨¡åå·¥å·çææ¯å²ãçå®æåµå·®å¾è¿ãè¿ä¸ªå²ä½å¹²çäºï¼æ¯æ AI å¨ä¼ä¸éç¨åºç»æï¼ä¸åç«å¨ææ¯ä¾§ï¼ä¸åç«å¨ä¸å¡ä¾§ã</p>
-<p>è¿ä¸ªæ¨¡å¼ææ©æ¯ Palantir è·éçï¼æææèªå®¶ææ¯çå·¥ç¨å¸ç´æ¥æ´¾å°å®¢æ·ç°åºï¼æ³¡å¨å®¢æ·çä¸å¡éï¼æéç¨è½åå¯¹æ¥å°å·ä½ççäº§ç¯å¢ãOpenAI ç°å¨æè¿å¥å­¦äºè¿æ¥ï¼å®ç½æç Forward Deployed Engineer çæèï¼æ°å å¡ãæ§éå±±é½å¨æã</p>
-<p>ææ OpenAI é£ä»½ JD å®æ´è¯»äºä¸éï¼å¶ä¸­å å¥å³é®æè¿°å¼å¾åç¬ä½ä¼ãä¸æéè¦çæç¥å®¢æ·åä½ï¼ä¸»å¯¼åæ²¿æ¨¡åå¨çäº§ç¯å¢éçç«¯å°ç«¯é¨ç½²ãä»éæ±æ¢³çãææ¯è¯ä¼°ãç³»ç»è®¾è®¡ï¼ä¸è·¯è´è´£å°å¼åä¸çº¿ãå¸¸é©»å®¢æ·ç°åºï¼ä¸åæ¶é´å¨åºå·®ã</p>
-<p>è¦æ±ä¹æå¾å¾ç´ç½ãäºå¹´ä»¥ä¸å·¥ç¨æææ¯é¨ç½²ç»éªï¼å¶ä¸­è¦æé¢åå®¢æ·çå·¥ä½ç»åãè½ç¨ PythonãJavaScript åçäº§çº§ä»£ç ãåè¿åºäºå¤§æ¨¡åçç³»ç»ï¼å¹¶ä¸çè§£æ¨¡åè¡ä¸ºæä¹å½±åäº§åä½éªã</p>
-<p>èªèµæ¹é¢ï¼æèä¿¡æ¯æ¾ç¤ºè¿ä¸ªå²ä½åºèªå¨ 16 ä¸å° 28 ä¸ç¾åä¹é´ãå½åæèå¹³å°ä¸ä¹å¼å§åºç°ç±»ä¼¼å²ä½ï¼æèª 35K å° 55K çé½æãæåªä½ç»è®¡ï¼ä¸¤å¹´éç¸å³å²ä½æ°éæ¶¨äºååå¤åï¼è¢«ç§°ä½ AI åæç«çæ°å²ä½ã</p>
-<h2 id="ä¸ºä»ä¹ä¼æè¿ä¸ªå²ä½">ä¸ºä»ä¹ä¼æè¿ä¸ªå²ä½</h2>
-<p><img src="https://image.kjdaohang.com/img/20260913171735978.png" alt="" loading="lazy"></p>
-<p>é£ä¸ºä»ä¹ä¼åºç°è¿ä¸ªå²ä½ï¼å ä¸ºç°å¨å¤§åé½æèªå·±çå¤§æ¨¡åãAIå¹³å°ãAgentå¼åå·¥å·é½æ¯ç°æçã</p>
-<p>ä½æ¯ä¼ä¸å®¢æ·æ¿å°è¿äºè½åä¹åï¼å°±ä¼éå°ä¸ä¸ªéå¸¸ç°å®çé®é¢ï¼AIå°åºæä¹å»æ¥è¿èªå·±çä¸å¡ï¼æµç¨æä¹æ¹ï¼æ°æ®æä¹æ¥ï¼ç­ç¥æä¹è®¾è®¡ï¼ä¸çº¿ä»¥åææä¸å¥½æä¹åï¼ä¸ä¸²é®é¢å¨ååºæ¥äºã</p>
-<p>èè¿äºé®é¢ï¼ä¸æ¯åçº¯çä¸ä¸ªæ¨¡åå·¥ç¨å¸è½è§£å³çï¼æ¨¡åå¢éç®¡çæ¯æ¨¡åæ¬èº«å¥½ä¸å¥½ï¼è³äºå®¢æ·åé¨çæµç¨ãæ°æ®ãæéãç»ç»æ¹å¼ï¼ä»ä»¬æ¢çä¸å°ï¼ä¹æ¹ä¸å¨ã</p>
-<p>äºæ¯å°±ç¼ºä¸ä¸ªè¿æ¥ææ¯åä¸å¡çäººãFDE å°±æ¯ä¸ºè¿ä¸ªç¼ºå£è®¾çã</p>
-<h2 id="å®åå®åä¸æ¯ä¸åäº">å®åå®åä¸æ¯ä¸åäº</h2>
-<p>å¾å¤äººé®ï¼FDE æ¯ä¸æ¯å°±æ¯ AI çå®åã</p>
-<p><img src="https://image.kjdaohang.com/img/20260913171949901.png" alt="" loading="lazy"></p>
-<p>å·®å«å¶å®å¾å¤§ãå®åçä¸»æåºå¨ç­¾çº¦ä¹åï¼æ ¸å¿å¨ä½æ¯æäº§åè®²æ¸æ¥ï¼è®©å®¢æ·æ¿æä¹°åã</p>
-<p>FDE æ¯å®¢æ·éè´­å®æä¹åè¿åºï¼æè¿ä¸å¡ç°åºï¼ææ¹æ¡ååºæ¥ãè·èµ·æ¥ãä¸ä¸ªæäº§åè®²è§£å°±å¤äºï¼å¦ä¸ä¸ªè¦æææ¯ãæéæ±ï¼çè³éæ°è®¾è®¡å®¢æ·çä¸å¡æµç¨ãOpenAI é£ä»½ JD éä¸é¨åäºï¼è¿ä¸ªå²ä½ä¸åæ¶é´å¨å®¢æ·é£è¾¹åºå·®ï¼å·¥ç¨å¸ç´æ¥åµè¿å®¢æ·çå·¥ç¨åä¸å¡å¢ééå¹²æ´»ã</p>
-<h2 id="fdeèçå¶å®æ¯ä¸ç§è½å">FDEï¼èçå¶å®æ¯ä¸ç§è½å</h2>
-<p>è¿æ¯ä»å¤©ææ³è®²éçé¨åãé£ä½åå­¦é¢å®çæåæ¯ï¼åªä¼ææ¯çäººåºæ¬èµ°ä¸å°åé¢å è½®ã</p>
-<p><img src="https://image.kjdaohang.com/img/20260913172133362.png" alt="" loading="lazy"></p>
-<p><strong>ç¬¬ä¸ç§ï¼AI åºç¨å¼åè½åã</strong></p>
-<p>åä¼è° API é¡¶å¤ç®å¥åºå¸ãé¢è¯å®è¦å¬ä½ è®² RAG æä¹æ­ãæ£ç´¢ææä¸å¥½æä¹è°ãAgent æä¹è®¾è®¡ãå¤ä¸ªæºè½ä½ä¹é´æä¹ååãæ¾å°ä¼ä¸çå®åºæ¯é AI æä¹è¿è½¬ãè¿äºé®é¢æ¯ä¸ä¸ªé½è½å¾ä¸è¿½å¥½å å±ï¼èæ¦å¿µç³å¼ä¸è¿å»ã</p>
-<p><strong>ç¬¬äºç§ï¼å·¥ç¨åè½åã</strong></p>
-<p>è¿æ¯å¾å¤ Demo é«ææå¤§çç­æ¿ãæ¬å°è·éä¸ä¸ª Agent æå¤å®¹æï¼è·çæç¨ä¸ä¸¤å¤©å°±è½æå®ãé¾çæ¯ä¼ä¸ä¸çº¿ä¹åçäºãåç­éäºæä¹åï¼ä»»å¡æ§è¡å¤±è´¥æä¹åï¼ææ¬æä¹æ§å¶ï¼æ°æ®æéæä¹ç®¡ï¼ç³»ç»æä¹çæ§ã</p>
-<p>è¿å ä»¶äºï¼æµè¯åå­¦åºè¯¥ç¹å«ç¼çãçº¿ä¸çæ§ãå¼å¸¸ååºãæéè¾¹çãè´¨éè¯ä¼°ï¼æ¬æ¥å°±æ¯æµè¯å·¥ç¨å¸æ¯å¤©æäº¤éçä¸è¥¿ãçè¦è½¬è¿ä¸ªæ¹åï¼æµè¯èæ¯å¨è¿éåèå¯è½æ¯ä¼å¿ã</p>
-<p><strong>ç¬¬ä¸ç§ï¼ä¸å¡æ²éè½åã</strong></p>
-<p>è¿æ¯ç¨åºåæå®¹æå¿½ç¥çä¸é¡¹ã</p>
-<p>FDE ä¸æ¯åå¨çµèååä¸æ´å¤©ä»£ç çå²ä½ï¼å¤§éæ¶é´å¨è·å®¢æ·èãä½ çä¸å¡ç®æ æ¯ä»ä¹ï¼ç°å¨çæµç¨åªéæèäººåï¼åªäºç¯èéåäº¤ç» AIï¼åªäºåå³ä¸è½äº¤ãèå®ä¹åï¼æä¸å¡é®é¢ç¿»è¯æ AI æ¹æ¡ãè¿ä¸å³ä¼ç­æå¤§éåªä¼ææ¯çäººï¼ä»£ç åå¾åæ¼äº®ï¼è®²ä¸æ¸æ¥ä¸å¡ä»·å¼ï¼ä¸æ ·è¿ä¸äºã</p>
-<h2 id="åè¿-agent-é¡¹ç®è½è½¬-fde-å">åè¿ Agent é¡¹ç®ï¼è½è½¬ FDE å</h2>
-<p>å¯ä»¥è¯ï¼ä½åæä¸ä¸ªé¢æææ­£ãä¸ªäºº Demo åä¼ä¸çº§ AI é¡¹ç®ä¹é´ï¼éçç¸å½å¤§çä¸æ®µè·ç¦»ã</p>
-<p>ä¼ä¸é¢è¯å®æ³å¬çæ¯ä½ è§£å³äºåªä¸ªçå®ä¸å¡é®é¢ãäººå·¥ææ¬éäºå¤å°ï¼å¤çæçæäºå¤å°ï¼åªä¸ªå¡äºåå¹´çæµç¨ç¶é¢è¢«æéäºãå¸¦çè¿äºæ°å­å»è®²é¡¹ç®ï¼åæ¼ç¤ºä¸ä¸ªæºè½å©æçåè½æ¸åï¼æ¯ä¸¤åºå®å¨ä¸åçé¢è¯ã</p>
-<h2 id="fde-ä¼ä¸ä¼è¢«-ai-æ¿ä»£">FDE ä¼ä¸ä¼è¢« AI æ¿ä»£</h2>
-<p>ç­ææå¤æ­ä¸ä¼ãé»è¾å¾ç®åï¼AI è½åè¶å¼ºï¼ä¼ä¸åèè¶éè¦æäººå¸®å®æè½åç¨å°ä¸å¡éãèµ°è¿å®¢æ·ç°åºãææ¸æµç¨ãæ¨å¨ä¸çº¿è¿äºäºï¼æ¨¡åæ¿ä¸äºã</p>
-<p>ä½æä¸ç±»äººä¸å®ä¼è¢«æ·æ±°ï¼å°±æ¯åªä¼è°ç¨æ¨¡åãæ¼æ¥å·¥ä½æµï¼å¯¹ä¸å¡åå·¥ç¨è½å°é½ä¸ççäººãè¿é¨åæ´»ï¼AI èªå·±å°±è½å¹²ãæåç«å¾ä½ç FDEï¼æ¯æå·¥ç¨ãæä¸å¡ï¼è¿è½æé¡¹ç®æ¨å°ä¸çº¿çäººã</p>
-<h2 id="æ³è¿-ai-èµéæä¹åå¤">æ³è¿ AI èµéï¼æä¹åå¤</h2>
-<p>å«æåæ°å¨æ¼å¨å¤å­¦å ä¸ªæ¡æ¶ä¸ï¼æ¡æ¶åå¹´ä¸æ¢ï¼è½åææ¯å¸¦å¾èµ°çãå¼å¾è±æ¶é´æç£¨çè¿æ¯é£ä¸æ ·ï¼AI åºç¨å¼åãä¼ä¸é¡¹ç®è½å°ãè§£å³çå®ä¸å¡é®é¢ãåä¸¤æ ·æ°æ°è¦å¨çå®é¡¹ç®éæç»å¾åºæ¥ã</p>
-<p>ååç­ä¸ä¸æ é¢çé®é¢ï¼<strong>FDE å°åºæ¯ä¸ªä»ä¹å²ä½</strong>ï¼</p>
-<p>FDEï¼ç®åæ¥è¯´ï¼æ¯å±äºé©»å®¢æ·ç°åºçå·¥ç¨äº¤ä»å²ï¼è´è´£æAI å¤§æ¨¡åäº§åè½åéæè½å°å°å®¢æ·ç°åºï¼å¨å®¢æ·ç°åºå®æä»éæ±æ¢³çãæ¹æ¡è®¾è®¡å°é¨ç½²ä¸çº¿çå¨æµç¨ï¼æAIè½åæ¥è¿ä¸å¡æµç¨ï¼ä¸æç»å¯¹ä¸å¡ææè´è´£ã</p>
-<blockquote>
-<p>æååä¸ªå°è°æ¥ãå¦æä½ æ­£å¨èè AI äº§åç»çæè FDE æ¹åï¼ä½ ç°å¨æ´ç¼ºåªä¸åï¼æ¯ææ¯è½åï¼è¿æ¯ä¼ä¸é¡¹ç®ç»éªï¼è¯è®ºåºèèï¼åé¢æå¯ä»¥æå¤§å®¶ç¼ºçä¸è¥¿ï¼å±å¼åå·ä½æä¹è¡¥ã</p>
-</blockquote>
-
-
-</div>
-<div id="MySignature" role="contentinfo">
-    ææ¯æ¹åä¸çï¼
-         --çè¯ç»å
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-09-14 08:42">2026-09-14 08:42</span>&nbsp;
-<a href="https://www.cnblogs.com/jinjiangongzuoshi">çå¸</a>&nbsp;
-éè¯»(<span id="post_view_count">540</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">0</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(22959919);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fjinjiangongzuoshi%2Fp%2F22959919&amp;targetId=22959919&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
-    </description>
-    </item>
-<item>
-    <title><![CDATA[ äº§ååä¸çº¿åå¼å ]]></title>
-    <link>https://www.cnblogs.com/cicada-smile/p/22959772</link>
-    <guid>023fa7075a13b65e628da9842f68134d</guid>
-    <description>
-    <![CDATA[ 
-            <h1 class="postTitle">
-                <a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/cicada-smile/p/22959772" title="åå¸äº 2026-09-14 08:10">
-    
-
-    <span role="heading" aria-level="2">äº§ååä¸çº¿åå¼å</span>
-    
-
-</a>
-
-            </h1>
-            <div class="clear"></div>
-            <div class="postBody">
-                    <div id="cnblogs_post_description" style="display: none">
-        <img src="https://img2024.cnblogs.com/blog/1691717/202609/1691717-20260914080842943-870998402.png" alt="äº§ååä¸çº¿åå¼å" class="desc_img">
-        ç¤¾äº¤åªä½ä¸æä¸ªç©æ³ï¼æèªå·±åå¸ä¸å»ï¼ç§ç½åçå»ºè®®ç©åå½¢è®°ï¼å¾é¾è¯´æ¸æ¥ï¼ä»ä¹æ¯åå®¹ï¼ä»ä¹æ¯äº§åï¼ä»ä¹æ¯è¥éãä½ä¸è´¹å¹ç°ä¹åï¼å¯ä»¥èéå¤§éçåä¸èã
-    </div>
-<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
-<p>ä½ä¸ºäºèç½æ°å·¥ï¼æè¿ä¸¤å¹´ä¸ç´å¨ç¢ç£¨ï¼AIä¼ç»ä¸ªäººå¸¦æ¥åªäºå½±åï¼ä¹å¨å¾å¤å·¥ä½ä¸­ä½¿ç¨äººå·¥æºè½ï¼ä½éåºè½åè¿æ¯è·ä¸ä¸AIçåå±ã</p>
-<p>å¨è¿ä¸ªç¡®å®çè¶å¿ä¸­ï¼å¹»æ³åä¸ªæç½äººã</p>
-<p>é®é¢è¿æ²¡æ³éå½»ï¼å½±åå·²ç»çº·è³æ²æ¥ã</p>
-<p>äºèç½å¬å¸ææ ¸å¿çèµäº§ï¼å°±æ¯ä¸å¡èµæºåäº§åæå¡ï¼å®ç°çäº§å°æ¶è´¹çæµè½¬ï¼ä»èææåºæ¬çåä¸æ¨¡å¼ã</p>
-<p>ä¹ææå·¥äººä¼è°ä¾ï¼çé©¬ææ¯çæ­£çä¼è´¨èµäº§ã</p>
-<p>éçAIåå¸åºçåå±ï¼äº§åç åæµç¨ä¹å¨æç¶ååã</p>
-<p>å¨è¿å»çäºèç½æ¨¡å¼éï¼äº§åå¢ééè¿åæå¸åºï¼ææååæ°åç§éæ±ï¼ç¶åæé äº§åææå¡ï¼æ¨åå¸åºä¹åï¼éè¿æ°æ®åç¨æ·åé¦åæææï¼åæ¨å¨äº§åçåå±æ¹åã</p>
-<p>çå®çç¯å¢ä¸­ï¼æµç¨è¿æ¯æè¿°çæ´å¤æã</p>
-<p>ä¸ºä»ä¹æ®ééç¨è¿ç§æ¨¡å¼ï¼èªç¶æ¯ä»å®è·µä¸­æ»ç»åºæ¥ï¼åéäºè¿å»çææ¯åå·¥å·æ°´å¹³ï¼ç åå¢éè¿æ ·æ§è¡ï¼ç¨è¾å°çä»£ä»·éªè¯ï¼äº§ååå¸åºçå¹éåº¦ã</p>
-<p>ä¹æææ¾ççº¦æå­å¨ï¼éè¦ä¸å®çèµéåæ¶é´ã</p>
-<p>è¿å°±ä¸å¾ä¸æä¸ä¸ªæè¶£çç°è±¡ï¼å¨äºèç½ä¸åé¶æ®µï¼éå¸¸ç¨ä¸å¹´è¡¡éä¸å®¶å¬å¸çå®åï¼éçäºèç½çº¢å©çæ¶å¤±ï¼è¿ä¸ªæ¶é´ä»ä¸å¹´éå°ä¸å¹´ï¼ç°å¨æ¯å­å°ä¸ä¸ªæã</p>
-<p>ä¿¡å¿è¶æ¥è¶å°ï¼æ­¢ææ¶é´çº¿è¶æ¥è¶ç­ã</p>
-<p>éçäººå·¥æºè½ä¸å°å±æï¼å¾å¤äºæé½å¨å§å£ä¹ä¸­åå½¢ï¼å¶ä¸­å£°å¿æµ©å¤§çè«è¿äºäºèç½è¡ä¸ï¼ææå²å»åçå°±æ¯äº§åååå®¹ï¼å¹¶ä¸ä¸¤èçè¾¹çæ­£å¨æ¨¡ç³ã</p>
-<p>æäº§åå½æåå®¹ï¼ç¤¾åªåä¸çº¿åå¼åã</p>
-<p>äºèç½çä¼ä¸åæ°å·¥ï¼å¾æé¿æä¿¡æ¯å·®ï¼å°¤å¶æ¯AIè¿ç§é¢ è¦æ§çææ¯ï¼23å¹´åçç«å°±å³æ³¨ï¼24å¹´å¼å§å°èå´å°è¯ï¼25å¹´å¨é¢æ¥æ±ï¼26å¹´ä¼å¦ä½æ­ç®ä»¥å¾ã</p>
-<p>ä¿¡æ¯åå°æ°å­åï¼åå°æºè½åï¼æçå¦åè±ç¼°çéçªä¸è¬ã</p>
-<p>å¨AIå·¥å·çæ¯æä¸ï¼åªææ¯ä¸ªä½ææ³æ³ï¼ä¹å¯ä»¥å¿«éçåæäº§åï¼åæ¶åå¸å¨èªåªä½åå¸åºï¼å¾å°çå®çæ´å¯åé¦åï¼åè°æ´äº§åçåçº§æ¹åã</p>
-<p>ä¸æ§çäºæ³æ³åäº§åï¼ä»¥å¨æµç¨çå¿«éè¿­ä»£ï¼ä½ä¸ºæ ¸å¿ç«äºåã</p>
-<p>æ©ä¸ååºçæ³æ³ï¼ä¸åç¨AIååºè®¾è®¡å¾åäº§åååï¼æä¸ç´æ¥åå¸å¨ç¤¾äº¤åªä½ï¼ç¬¬äºå¤©å°±æ½¦èçä¸çº¿ä¸çï¼ç¼è±ç¼­ä¹±çæä½åè¥éã</p>
-<p>æä¸ææä»¥çåå¤äººï¼ççä¸æ£ä¸æ£ã</p>
-<p>å¦æè¶³å¤çå¸å¼æ³¨æåï¼ä¼åºç°å¾å¤è®¨è®ºå£°åæ½å¨ç¨æ·ï¼å½ç¶è¦æ¯æ²¡æå³æ³¨ï¼æå½åå¸ä¸æ¡èªåªä½åå®¹ï¼éªè¯å¸åºçææ¬ä½çç¦»è°±ï¼è¿æ°å¥½è¿è½æ¶ä¸æ³¢æµéã</p>
-<p>ä¹è®¸æäººä¼æ¨¡ä»¿ä½ çæ³æ³ï¼ä½æ¯å¾é¾å¤å¶æ´ä¸ªæµç¨ã</p>
-<p>ä¸ä¸¤ä¸ªäººçå°å¢éï¼åå©AIçè½åå¿«éè¿­ä»£ï¼ä¸ä¼ ç»çäº§åç åææ¬è´¨å·®å¼ï¼ä»¥åæ´å¾åå³èµ·é¨åäºï¼åä¸æç´æ¥å³é¨ï¼ç°å¨è¾¹å¿æ´»è¾¹ååï¼å°±ç®äº§ååä¸åºå»ï¼è³å°æèªå·±æ¨åºå»ã</p>
-<p>æ¶é´åäººåä»¥åè¥éï¼å¯ä»¥å¤ä¸ªç»´åº¦éä½æå¥ã</p>
-<p>ææ¯åè§è§çç»åï¼äº§ååè¥éçæ­éï¼é½å¯ä»¥è½»æ¾çç©åºè±æ ·ï¼è¿å°±æ¯AIè½åå¸¦æ¥çææï¼èå½±åæ¬èº«ä¼æä¸ºæ°çéæ±ï¼è¿è¦ä»çæ´»æ´å¯ååæã</p>
-<p>æ³å°ä¸å¥æè¶£çå°è¯ï¼</p>
-<p>ä¸æµ·åçæï¼è¦ä½¿å²çåè¹ï¼é¡ºææç¹ä»ä¹ï¼ä¸è¦ç©ºæèå½ã</p>
-<p>ç¤¾äº¤åªä½ä¸æä¸ªç©æ³ï¼æèªå·±åå¸ä¸å»ï¼ç§ç½åçå»ºè®®ç©åå½¢è®°ï¼å¾é¾è¯´æ¸æ¥ï¼ä»ä¹æ¯åå®¹ï¼ä»ä¹æ¯äº§åï¼ä»ä¹æ¯è¥éã</p>
-<p>ä½ä¸è´¹å¹ç°ä¹åï¼å¯ä»¥èéå¤§éçåä¸èã</p>
-<p>AIå·¥ä½æµ<br>
-<a href="https://github.com/chaos-pro/chaos-flow" target="_blank" rel="noopener nofollow">https://github.com/chaos-pro/chaos-flow</a></p>
-<p>åå®¹å½æ¡£<br>
-<a href="https://github.com/chaos-pro/chaos-weblog" target="_blank" rel="noopener nofollow">https://github.com/chaos-pro/chaos-weblog</a></p>
-
-
-</div>
-<div class="clear"></div>
-
-            </div>
-            <div class="postDesc">posted @ 
-<span id="post-date" data-last-update-days="0" data-date-updated="2026-09-14 08:10">2026-09-14 08:10</span>&nbsp;
-<a href="https://www.cnblogs.com/cicada-smile">ä¸èå¼</a>&nbsp;
-éè¯»(<span id="post_view_count">259</span>)&nbsp;
-è¯è®º(<span id="post_comment_count">1</span>)&nbsp;
-&nbsp;
-<a href="javascript:void(0)" onclick="AddToWz(22959772);return false;">æ¶è</a>&nbsp;
-<a href="https://report.cnblogs.com?targetLink=https%3A%2F%2Fwww.cnblogs.com%2Fcicada-smile%2Fp%2F22959772&amp;targetId=22959772&amp;targetType=0" target="_blank">ä¸¾æ¥</a>
-</div>
-         ]]>
     </description>
     </item>
         </channel>
